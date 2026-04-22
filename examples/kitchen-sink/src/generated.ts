@@ -3297,6 +3297,21 @@ export namespace $NamedDefaultPartial {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("$NamedDefaultPartial"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -3321,19 +3336,6 @@ export namespace $NamedDefaultPartial {
         label: "$NamedDefaultPartial",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("$NamedDefaultPartial"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -3654,6 +3656,21 @@ export namespace $DefaultPartial {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("$DefaultPartial"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -3678,19 +3695,6 @@ export namespace $DefaultPartial {
         label: "$DefaultPartial",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("$DefaultPartial"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -4028,6 +4032,22 @@ export namespace UuidV4IriIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UuidV4IriIdentifierInterface"),
+        uuidV4IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -4056,20 +4076,6 @@ export namespace UuidV4IriIdentifierInterface {
         label: "UuidV4IriIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("UuidV4IriIdentifierInterface"),
-        uuidV4IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -4566,6 +4572,22 @@ export namespace UuidV4IriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UuidV4IriIdentifierClass"),
+        uuidV4IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -4594,20 +4616,6 @@ export namespace UuidV4IriIdentifierClass {
         label: "UuidV4IriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("UuidV4IriIdentifierClass"),
-        uuidV4IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -6268,67 +6276,14 @@ export namespace UnionDiscriminantsClass {
   };
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "UnionDiscriminantsClass" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/setIriOrStringProperty`,
-            type: "Control",
-          },
-        ],
-        label: "UnionDiscriminantsClass",
-        type: "Group",
-      };
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
+
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
@@ -6446,12 +6401,67 @@ export namespace UnionDiscriminantsClass {
           .describe("Union that can be discriminated by typeof."),
       }) satisfies z.ZodType<$Json>;
     }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "UnionDiscriminantsClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setIriOrStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "UnionDiscriminantsClass",
+        type: "Group",
+      };
     }
   }
 
@@ -10606,6 +10616,55 @@ export namespace TermPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("TermPropertiesClass"),
+        blankNodeTermProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional(),
+        booleanTermProperty: z.boolean().optional(),
+        dateTermProperty: z.iso.date().optional(),
+        dateTimeTermProperty: z.iso.datetime().optional(),
+        iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
+        literalTermProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .optional(),
+        numberTermProperty: z.number().optional(),
+        stringTermProperty: z.string().optional(),
+        termProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -10663,53 +10722,6 @@ export namespace TermPropertiesClass {
         label: "TermPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("TermPropertiesClass"),
-        blankNodeTermProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional(),
-        booleanTermProperty: z.boolean().optional(),
-        dateTermProperty: z.iso.date().optional(),
-        dateTimeTermProperty: z.iso.datetime().optional(),
-        iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-        literalTermProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .optional(),
-        numberTermProperty: z.number().optional(),
-        stringTermProperty: z.string().optional(),
-        termProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
-            }),
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
-              "@language": z.string().optional(),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ])
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -11912,6 +11924,22 @@ export namespace Sha256IriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("Sha256IriIdentifierClass"),
+        sha256IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -11940,20 +11968,6 @@ export namespace Sha256IriIdentifierClass {
         label: "Sha256IriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("Sha256IriIdentifierClass"),
-        sha256IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -12408,6 +12422,27 @@ export namespace RecursiveClassUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("RecursiveClassUnionMember2"),
+        recursiveClassUnionMember2Property: z
+          .lazy(
+            (): z.ZodType<RecursiveClassUnion.$Json> =>
+              RecursiveClassUnion.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -12436,25 +12471,6 @@ export namespace RecursiveClassUnionMember2 {
         label: "RecursiveClassUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("RecursiveClassUnionMember2"),
-        recursiveClassUnionMember2Property: z
-          .lazy(
-            (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -13008,6 +13024,27 @@ export namespace RecursiveClassUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("RecursiveClassUnionMember1"),
+        recursiveClassUnionMember1Property: z
+          .lazy(
+            (): z.ZodType<RecursiveClassUnion.$Json> =>
+              RecursiveClassUnion.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -13036,25 +13073,6 @@ export namespace RecursiveClassUnionMember1 {
         label: "RecursiveClassUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("RecursiveClassUnionMember1"),
-        recursiveClassUnionMember1Property: z
-          .lazy(
-            (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -13616,6 +13634,24 @@ export namespace PropertyVisibilitiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyVisibilitiesClass"),
+        privateProperty: z.string(),
+        protectedProperty: z.string(),
+        publicProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -13652,22 +13688,6 @@ export namespace PropertyVisibilitiesClass {
         label: "PropertyVisibilitiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyVisibilitiesClass"),
-        privateProperty: z.string(),
-        protectedProperty: z.string(),
-        publicProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -14250,6 +14270,23 @@ export namespace PropertyPathsClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyPathsClass"),
+        inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
+        predicatePathProperty: z.string().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -14282,21 +14319,6 @@ export namespace PropertyPathsClass {
         label: "PropertyPathsClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyPathsClass"),
-        inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
-        predicatePathProperty: z.string().optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -15022,6 +15044,40 @@ export namespace PropertyNamesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyNamesClass"),
+        actualPropertyName1: z
+          .string()
+          .describe("sh:path: overrides property shape identifier"),
+        actualPropertyName2: z
+          .string()
+          .describe("sh:name: overrides sh:path and rdfs:label"),
+        actualPropertyName3: z
+          .string()
+          .describe(
+            "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
+          ),
+        actualPropertyName4: z
+          .string()
+          .describe("rdfs:label: overrides sh:path"),
+        actualPropertyName5: z
+          .string()
+          .describe(
+            "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
+          ),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -15068,38 +15124,6 @@ export namespace PropertyNamesClass {
         label: "PropertyNamesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyNamesClass"),
-        actualPropertyName1: z
-          .string()
-          .describe("sh:path: overrides property shape identifier"),
-        actualPropertyName2: z
-          .string()
-          .describe("sh:name: overrides sh:path and rdfs:label"),
-        actualPropertyName3: z
-          .string()
-          .describe(
-            "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
-          ),
-        actualPropertyName4: z
-          .string()
-          .describe("rdfs:label: overrides sh:path"),
-        actualPropertyName5: z
-          .string()
-          .describe(
-            "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
-          ),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -15954,6 +15978,39 @@ export namespace PropertyCardinalitiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyCardinalitiesClass"),
+        emptyStringSetProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .describe("Set: minCount implicitly=0, no maxCount"),
+        nonEmptyStringSetProperty: z
+          .string()
+          .array()
+          .nonempty()
+          .min(1)
+          .describe("Set: minCount=1, no maxCount"),
+        optionalStringProperty: z
+          .string()
+          .optional()
+          .describe("Option: maxCount=1, minCount=0"),
+        requiredStringProperty: z
+          .string()
+          .describe("Required: maxCount=minCount=1"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -15994,37 +16051,6 @@ export namespace PropertyCardinalitiesClass {
         label: "PropertyCardinalitiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyCardinalitiesClass"),
-        emptyStringSetProperty: z
-          .string()
-          .array()
-          .default(() => [])
-          .describe("Set: minCount implicitly=0, no maxCount"),
-        nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
-          .min(1)
-          .describe("Set: minCount=1, no maxCount"),
-        optionalStringProperty: z
-          .string()
-          .optional()
-          .describe("Option: maxCount=1, minCount=0"),
-        requiredStringProperty: z
-          .string()
-          .describe("Required: maxCount=minCount=1"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -16676,6 +16702,22 @@ export namespace PartialInterfaceUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterfaceUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -16704,20 +16746,6 @@ export namespace PartialInterfaceUnionMember2 {
         label: "PartialInterfaceUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterfaceUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -17263,6 +17291,22 @@ export namespace PartialInterfaceUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterfaceUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -17291,20 +17335,6 @@ export namespace PartialInterfaceUnionMember1 {
         label: "PartialInterfaceUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterfaceUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -17884,6 +17914,22 @@ export namespace PartialClassUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClassUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -17912,20 +17958,6 @@ export namespace PartialClassUnionMember2 {
         label: "PartialClassUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClassUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -18447,6 +18479,22 @@ export namespace PartialClassUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClassUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -18475,20 +18523,6 @@ export namespace PartialClassUnionMember1 {
         label: "PartialClassUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClassUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -18988,6 +19022,21 @@ export namespace NewName2Class {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NewName2Class"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -19012,19 +19061,6 @@ export namespace NewName2Class {
         label: "NewName2Class",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NewName2Class"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -19451,6 +19487,21 @@ export namespace NewName1Class {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NewName1Class"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -19475,19 +19526,6 @@ export namespace NewName1Class {
         label: "NewName1Class",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NewName1Class"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -19976,6 +20014,24 @@ export namespace OrderedPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("OrderedPropertiesClass"),
+        orderedPropertyC: z.string(),
+        orderedPropertyB: z.string(),
+        orderedPropertyA: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -20012,22 +20068,6 @@ export namespace OrderedPropertiesClass {
         label: "OrderedPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("OrderedPropertiesClass"),
-        orderedPropertyC: z.string(),
-        orderedPropertyB: z.string(),
-        orderedPropertyA: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -21244,6 +21284,37 @@ export namespace NumericPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NumericPropertiesClass"),
+        byteNumericProperty: z.number().optional(),
+        decimalNumericProperty: z.string().optional(),
+        doubleNumericProperty: z.number().optional(),
+        floatNumericProperty: z.number().optional(),
+        integerNumericProperty: z.string().optional(),
+        intNumericProperty: z.number().optional(),
+        longNumericProperty: z.string().optional(),
+        negativeIntegerNumericProperty: z.string().optional(),
+        nonNegativeIntegerNumericProperty: z.string().optional(),
+        nonPositiveIntegerNumericProperty: z.string().optional(),
+        positiveIntegerNumericProperty: z.string().optional(),
+        shortNumericProperty: z.number().optional(),
+        unsignedByteNumericProperty: z.number().optional(),
+        unsignedIntNumericProperty: z.number().optional(),
+        unsignedLongNumericProperty: z.string().optional(),
+        unsignedShortNumericProperty: z.number().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -21332,35 +21403,6 @@ export namespace NumericPropertiesClass {
         label: "NumericPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NumericPropertiesClass"),
-        byteNumericProperty: z.number().optional(),
-        decimalNumericProperty: z.string().optional(),
-        doubleNumericProperty: z.number().optional(),
-        floatNumericProperty: z.number().optional(),
-        integerNumericProperty: z.string().optional(),
-        intNumericProperty: z.number().optional(),
-        longNumericProperty: z.string().optional(),
-        negativeIntegerNumericProperty: z.string().optional(),
-        nonNegativeIntegerNumericProperty: z.string().optional(),
-        nonPositiveIntegerNumericProperty: z.string().optional(),
-        positiveIntegerNumericProperty: z.string().optional(),
-        shortNumericProperty: z.number().optional(),
-        unsignedByteNumericProperty: z.number().optional(),
-        unsignedIntNumericProperty: z.number().optional(),
-        unsignedLongNumericProperty: z.string().optional(),
-        unsignedShortNumericProperty: z.number().optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -23478,6 +23520,53 @@ export namespace NodeKindsClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NodeKindsClass"),
+        blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("BlankNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ]),
+        iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ]),
+        literalNodeKindProperty: z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        }),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -23526,51 +23615,6 @@ export namespace NodeKindsClass {
         label: "NodeKindsClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NodeKindsClass"),
-        blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ]),
-        iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ]),
-        literalNodeKindProperty: z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        }),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -24440,6 +24484,22 @@ export namespace NoRdfTypeClassUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NoRdfTypeClassUnionMember2"),
+        noRdfTypeClassUnionMember2Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -24468,20 +24528,6 @@ export namespace NoRdfTypeClassUnionMember2 {
         label: "NoRdfTypeClassUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NoRdfTypeClassUnionMember2"),
-        noRdfTypeClassUnionMember2Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -24909,6 +24955,22 @@ export namespace NoRdfTypeClassUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NoRdfTypeClassUnionMember1"),
+        noRdfTypeClassUnionMember1Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -24937,20 +24999,6 @@ export namespace NoRdfTypeClassUnionMember1 {
         label: "NoRdfTypeClassUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NoRdfTypeClassUnionMember1"),
-        noRdfTypeClassUnionMember1Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -25425,6 +25473,23 @@ export namespace NamedUnionPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NamedUnionPropertiesClass"),
+        namedUnion1Property: NamedUnion1.$Json.schema(),
+        namedUnion2Property: NamedUnion2.$Json.schema(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -25457,21 +25522,6 @@ export namespace NamedUnionPropertiesClass {
         label: "NamedUnionPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NamedUnionPropertiesClass"),
-        namedUnion1Property: NamedUnion1.$Json.schema(),
-        namedUnion2Property: NamedUnion2.$Json.schema(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -26252,6 +26302,40 @@ export namespace MutablePropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("MutablePropertiesClass"),
+        mutableListProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .optional()
+          .describe(
+            "List-valued property that can't be reassigned but whose value can be mutated",
+          ),
+        mutableSetProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .describe(
+            "Set-valued property that can't be reassigned but whose value can be mutated",
+          ),
+        mutableStringProperty: z
+          .string()
+          .optional()
+          .describe("String-valued property that can be re-assigned"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -26288,38 +26372,6 @@ export namespace MutablePropertiesClass {
         label: "MutablePropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("MutablePropertiesClass"),
-        mutableListProperty: z
-          .string()
-          .array()
-          .default(() => [])
-          .optional()
-          .describe(
-            "List-valued property that can't be reassigned but whose value can be mutated",
-          ),
-        mutableSetProperty: z
-          .string()
-          .array()
-          .default(() => [])
-          .describe(
-            "Set-valued property that can't be reassigned but whose value can be mutated",
-          ),
-        mutableStringProperty: z
-          .string()
-          .optional()
-          .describe("String-valued property that can be re-assigned"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -27318,6 +27370,36 @@ export namespace ListPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ListPropertiesClass"),
+        iriListProperty: z
+          .object({ "@id": z.string().min(1) })
+          .array()
+          .default(() => [])
+          .optional(),
+        objectListProperty: NonClass.$Json
+          .schema()
+          .array()
+          .default(() => [])
+          .optional(),
+        stringListProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -27353,34 +27435,6 @@ export namespace ListPropertiesClass {
         label: "ListPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ListPropertiesClass"),
-        iriListProperty: z
-          .object({ "@id": z.string().min(1) })
-          .array()
-          .default(() => [])
-          .optional(),
-        objectListProperty: NonClass.$Json
-          .schema()
-          .array()
-          .default(() => [])
-          .optional(),
-        stringListProperty: z
-          .string()
-          .array()
-          .default(() => [])
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -28144,6 +28198,22 @@ export namespace PartialInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -28172,20 +28242,6 @@ export namespace PartialInterface {
         label: "PartialInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -29557,6 +29613,46 @@ export namespace LazyPropertiesInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazyPropertiesInterface"),
+        optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedIriIdentifierInterfaceProperty:
+          $NamedDefaultPartial.$Json.schema().optional(),
+        optionalPartialInterfaceToResolvedInterfaceProperty:
+          PartialInterface.$Json.schema().optional(),
+        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
+          PartialInterface.$Json.schema().optional(),
+        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
+          PartialInterfaceUnion.$Json.schema().optional(),
+        requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json.schema(),
+        requiredPartialInterfaceToResolvedInterfaceProperty:
+          PartialInterface.$Json.schema(),
+        setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+          .schema()
+          .array()
+          .default(() => []),
+        setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
+          .schema()
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -29612,44 +29708,6 @@ export namespace LazyPropertiesInterface {
         label: "LazyPropertiesInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazyPropertiesInterface"),
-        optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedIriIdentifierInterfaceProperty:
-          $NamedDefaultPartial.$Json.schema().optional(),
-        optionalPartialInterfaceToResolvedInterfaceProperty:
-          PartialInterface.$Json.schema().optional(),
-        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
-          PartialInterface.$Json.schema().optional(),
-        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-          PartialInterfaceUnion.$Json.schema().optional(),
-        requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json.schema(),
-        requiredPartialInterfaceToResolvedInterfaceProperty:
-          PartialInterface.$Json.schema(),
-        setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
-          .schema()
-          .array()
-          .default(() => []),
-        setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
-          .schema()
-          .array()
-          .default(() => []),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -32799,6 +32857,48 @@ export namespace LazyPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazyPropertiesClass"),
+        optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedClassUnionProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedIriIdentifierClassProperty:
+          $NamedDefaultPartial.$Json.schema().optional(),
+        optionalPartialClassToResolvedClassProperty: PartialClass.$Json
+          .schema()
+          .optional(),
+        optionalPartialClassToResolvedClassUnionProperty: PartialClass.$Json
+          .schema()
+          .optional(),
+        optionalPartialClassUnionToResolvedClassUnionProperty:
+          PartialClassUnion.$Json.schema().optional(),
+        requiredLazyToResolvedClassProperty: $DefaultPartial.$Json.schema(),
+        requiredPartialClassToResolvedClassProperty:
+          PartialClass.$Json.schema(),
+        setLazyToResolvedClassProperty: $DefaultPartial.$Json
+          .schema()
+          .array()
+          .default(() => []),
+        setPartialClassToResolvedClassProperty: PartialClass.$Json
+          .schema()
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -32854,46 +32954,6 @@ export namespace LazyPropertiesClass {
         label: "LazyPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazyPropertiesClass"),
-        optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedClassUnionProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedIriIdentifierClassProperty:
-          $NamedDefaultPartial.$Json.schema().optional(),
-        optionalPartialClassToResolvedClassProperty: PartialClass.$Json
-          .schema()
-          .optional(),
-        optionalPartialClassToResolvedClassUnionProperty: PartialClass.$Json
-          .schema()
-          .optional(),
-        optionalPartialClassUnionToResolvedClassUnionProperty:
-          PartialClassUnion.$Json.schema().optional(),
-        requiredLazyToResolvedClassProperty: $DefaultPartial.$Json.schema(),
-        requiredPartialClassToResolvedClassProperty:
-          PartialClass.$Json.schema(),
-        setLazyToResolvedClassProperty: $DefaultPartial.$Json
-          .schema()
-          .array()
-          .default(() => []),
-        setPartialClassToResolvedClassProperty: PartialClass.$Json
-          .schema()
-          .array()
-          .default(() => []),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -34717,6 +34777,22 @@ export namespace LazilyResolvedIriIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedIriIdentifierInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -34747,20 +34823,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
         label: "LazilyResolvedIriIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedIriIdentifierInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -35236,6 +35298,22 @@ export namespace LazilyResolvedIriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedIriIdentifierClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -35264,20 +35342,6 @@ export namespace LazilyResolvedIriIdentifierClass {
         label: "LazilyResolvedIriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedIriIdentifierClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -35676,6 +35740,22 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -35706,20 +35786,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         label: "LazilyResolvedInterfaceUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -36276,6 +36342,22 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -36306,20 +36388,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         label: "LazilyResolvedInterfaceUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -36912,6 +36980,22 @@ export namespace LazilyResolvedClassUnionMember2 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedClassUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -36940,20 +37024,6 @@ export namespace LazilyResolvedClassUnionMember2 {
         label: "LazilyResolvedClassUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedClassUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -37485,6 +37555,22 @@ export namespace LazilyResolvedClassUnionMember1 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedClassUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -37513,20 +37599,6 @@ export namespace LazilyResolvedClassUnionMember1 {
         label: "LazilyResolvedClassUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedClassUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -38027,6 +38099,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -38058,20 +38146,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         label: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -38680,6 +38754,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -38710,20 +38800,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         label: "LazilyResolvedBlankNodeOrIriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -39282,6 +39358,31 @@ export namespace LanguageInPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LanguageInPropertiesClass"),
+        languageInLiteralProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .array()
+          .nonempty()
+          .min(1)
+          .describe("literal property for testing languageIn"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -39310,29 +39411,6 @@ export namespace LanguageInPropertiesClass {
         label: "LanguageInPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LanguageInPropertiesClass"),
-        languageInLiteralProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .array()
-          .nonempty()
-          .min(1)
-          .describe("literal property for testing languageIn"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -39895,6 +39973,25 @@ export namespace JsPrimitiveUnionPropertyClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("JsPrimitiveUnionPropertyClass"),
+        jsPrimitiveUnionProperty: z
+          .union([z.boolean(), z.number(), z.string()])
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -39923,23 +40020,6 @@ export namespace JsPrimitiveUnionPropertyClass {
         label: "JsPrimitiveUnionPropertyClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("JsPrimitiveUnionPropertyClass"),
-        jsPrimitiveUnionProperty: z
-          .union([z.boolean(), z.number(), z.string()])
-          .array()
-          .default(() => []),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -40721,6 +40801,21 @@ export namespace IriIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IriIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -40745,19 +40840,6 @@ export namespace IriIdentifierInterface {
         label: "IriIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IriIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -41223,6 +41305,21 @@ export namespace IriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IriIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -41247,19 +41344,6 @@ export namespace IriIdentifierClass {
         label: "IriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IriIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -41676,6 +41760,14 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   };
 
   export namespace $Json {
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
+        interfaceUnionMemberCommonParentProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -41704,13 +41796,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         label: "InterfaceUnionMemberCommonParent",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
-        interfaceUnionMemberCommonParentProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -42099,6 +42184,24 @@ export namespace InterfaceUnionMember2 {
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember2"),
+          interfaceUnionMember2Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -42114,22 +42217,6 @@ export namespace InterfaceUnionMember2 {
         label: "InterfaceUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember2"),
-          interfaceUnionMember2Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -42671,6 +42758,24 @@ export namespace InterfaceUnionMember1 {
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember1"),
+          interfaceUnionMember1Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -42686,22 +42791,6 @@ export namespace InterfaceUnionMember1 {
         label: "InterfaceUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember1"),
-          interfaceUnionMember1Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -43251,6 +43340,22 @@ export namespace Interface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("Interface"),
+        interfaceProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -43279,20 +43384,6 @@ export namespace Interface {
         label: "Interface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("Interface"),
-        interfaceProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -43772,6 +43863,27 @@ export namespace IndirectRecursiveHelperClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IndirectRecursiveHelperClass"),
+        indirectRecursiveProperty: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveClass.$Json> =>
+              IndirectRecursiveClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -43799,25 +43911,6 @@ export namespace IndirectRecursiveHelperClass {
         label: "IndirectRecursiveHelperClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IndirectRecursiveHelperClass"),
-        indirectRecursiveProperty: z
-          .lazy(
-            (): z.ZodType<IndirectRecursiveClass.$Json> =>
-              IndirectRecursiveClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -44363,6 +44456,27 @@ export namespace IndirectRecursiveClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IndirectRecursiveClass"),
+        indirectRecursiveHelperProperty: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
+              IndirectRecursiveHelperClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -44390,25 +44504,6 @@ export namespace IndirectRecursiveClass {
         label: "IndirectRecursiveClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IndirectRecursiveClass"),
-        indirectRecursiveHelperProperty: z
-          .lazy(
-            (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
-              IndirectRecursiveHelperClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -45168,6 +45263,34 @@ export namespace InPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("InPropertiesClass"),
+        inBooleansProperty: z.literal(true).optional(),
+        inDateTimesProperty: z.iso.datetime().optional(),
+        inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
+        inIntegersProperty: z.enum(["1", "2"]).optional(),
+        inIrisProperty: z
+          .object({
+            "@id": z.enum([
+              "http://example.com/InPropertiesIri1",
+              "http://example.com/InPropertiesIri2",
+            ]),
+          })
+          .optional(),
+        inStringsProperty: z.enum(["text", "html"]).optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -45216,32 +45339,6 @@ export namespace InPropertiesClass {
         label: "InPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InPropertiesClass"),
-        inBooleansProperty: z.literal(true).optional(),
-        inDateTimesProperty: z.iso.datetime().optional(),
-        inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
-        inIntegersProperty: z.enum(["1", "2"]).optional(),
-        inIrisProperty: z
-          .object({
-            "@id": z.enum([
-              "http://example.com/InPropertiesIri1",
-              "http://example.com/InPropertiesIri2",
-            ]),
-          })
-          .optional(),
-        inStringsProperty: z.enum(["text", "html"]).optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -46260,6 +46357,25 @@ export namespace InIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.enum([
+          "http://example.com/InIdentifierInstance1",
+          "http://example.com/InIdentifierInstance2",
+        ]),
+        $type: z.literal("InIdentifierClass"),
+        inIdentifierProperty: z.string().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -46288,23 +46404,6 @@ export namespace InIdentifierClass {
         label: "InIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.enum([
-          "http://example.com/InIdentifierInstance1",
-          "http://example.com/InIdentifierInstance2",
-        ]),
-        $type: z.literal("InIdentifierClass"),
-        inIdentifierProperty: z.string().optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -46856,6 +46955,18 @@ export namespace IdentifierOverride1ClassStatic {
   };
 
   export namespace $Json {
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+        identifierOverrideProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -46884,17 +46995,6 @@ export namespace IdentifierOverride1ClassStatic {
         label: "IdentifierOverride1Class",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-        identifierOverrideProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -47220,16 +47320,6 @@ export namespace IdentifierOverride2ClassStatic {
   export type $Json = IdentifierOverride1ClassStatic.$Json;
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride1ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride2Class",
-        type: "Group",
-      };
-    }
     export function schema() {
       return IdentifierOverride1ClassStatic.$Json.schema().merge(
         z.object({
@@ -47241,6 +47331,17 @@ export namespace IdentifierOverride2ClassStatic {
           ]),
         }),
       ) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride1ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride2Class",
+        type: "Group",
+      };
     }
   }
 
@@ -47498,16 +47599,14 @@ export namespace IdentifierOverride3ClassStatic {
   export type $Json = IdentifierOverride2ClassStatic.$Json;
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride2ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride3Class",
-        type: "Group",
-      };
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
+
     export function schema() {
       return IdentifierOverride2ClassStatic.$Json.schema().merge(
         z.object({
@@ -47520,12 +47619,16 @@ export namespace IdentifierOverride3ClassStatic {
         }),
       ) satisfies z.ZodType<$Json>;
     }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride2ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride3Class",
+        type: "Group",
+      };
     }
   }
 
@@ -47955,16 +48058,14 @@ export namespace IdentifierOverride4ClassStatic {
   export type $Json = IdentifierOverride3ClassStatic.$Json;
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride3ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride4Class",
-        type: "Group",
-      };
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
+
     export function schema() {
       return IdentifierOverride3ClassStatic.$Json.schema().merge(
         z.object({
@@ -47976,12 +48077,16 @@ export namespace IdentifierOverride4ClassStatic {
         }),
       ) satisfies z.ZodType<$Json>;
     }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride3ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride4Class",
+        type: "Group",
+      };
     }
   }
 
@@ -48405,6 +48510,23 @@ export namespace IdentifierOverride5Class {
   export type $Json = IdentifierOverride4ClassStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return IdentifierOverride4ClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("IdentifierOverride5Class"),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -48414,21 +48536,6 @@ export namespace IdentifierOverride5Class {
         label: "IdentifierOverride5Class",
         type: "Group",
       };
-    }
-    export function schema() {
-      return IdentifierOverride4ClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride5Class"),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -48915,6 +49022,23 @@ export namespace HasValuePropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("HasValuePropertiesClass"),
+        hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
+        hasLiteralValueProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -48947,21 +49071,6 @@ export namespace HasValuePropertiesClass {
         label: "HasValuePropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("HasValuePropertiesClass"),
-        hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
-        hasLiteralValueProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -49461,6 +49570,22 @@ export namespace FlattenClassUnionMember3 {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("FlattenClassUnionMember3"),
+        flattenClassUnionMember3Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -49489,20 +49614,6 @@ export namespace FlattenClassUnionMember3 {
         label: "FlattenClassUnionMember3",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("FlattenClassUnionMember3"),
-        flattenClassUnionMember3Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -50050,6 +50161,22 @@ export namespace ExternClassPropertyClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExternClassPropertyClass"),
+        externClassProperty: ExternClass.$Json.schema().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -50077,20 +50204,6 @@ export namespace ExternClassPropertyClass {
         label: "ExternClassPropertyClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExternClassPropertyClass"),
-        externClassProperty: ExternClass.$Json.schema().optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -50633,6 +50746,14 @@ export namespace AbstractBaseClassForExternClassStatic {
   };
 
   export namespace $Json {
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExternClass"),
+        abstractBaseClassForExternClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -50661,13 +50782,6 @@ export namespace AbstractBaseClassForExternClassStatic {
         label: "AbstractBaseClassForExternClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExternClass"),
-        abstractBaseClassForExternClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -51066,6 +51180,22 @@ export namespace ExplicitRdfTypeClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExplicitRdfTypeClass"),
+        explicitRdfTypeProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -51094,20 +51224,6 @@ export namespace ExplicitRdfTypeClass {
         label: "ExplicitRdfTypeClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExplicitRdfTypeClass"),
-        explicitRdfTypeProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -51642,6 +51758,22 @@ export namespace ExplicitFromToRdfTypesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExplicitFromToRdfTypesClass"),
+        explicitFromToRdfTypesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -51670,20 +51802,6 @@ export namespace ExplicitFromToRdfTypesClass {
         label: "ExplicitFromToRdfTypesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExplicitFromToRdfTypesClass"),
-        explicitFromToRdfTypesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -52234,6 +52352,27 @@ export namespace DirectRecursiveClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DirectRecursiveClass"),
+        directRecursiveProperty: z
+          .lazy(
+            (): z.ZodType<DirectRecursiveClass.$Json> =>
+              DirectRecursiveClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -52261,25 +52400,6 @@ export namespace DirectRecursiveClass {
         label: "DirectRecursiveClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DirectRecursiveClass"),
-        directRecursiveProperty: z
-          .lazy(
-            (): z.ZodType<DirectRecursiveClass.$Json> =>
-              DirectRecursiveClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -53039,6 +53159,27 @@ export namespace DefaultValuePropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DefaultValuePropertiesClass"),
+        dateDefaultValueProperty: z.iso.date(),
+        dateTimeDefaultValueProperty: z.iso.datetime(),
+        falseBooleanDefaultValueProperty: z.boolean(),
+        numberDefaultValueProperty: z.number(),
+        stringDefaultValueProperty: z.string(),
+        trueBooleanDefaultValueProperty: z.boolean(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -53087,25 +53228,6 @@ export namespace DefaultValuePropertiesClass {
         label: "DefaultValuePropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DefaultValuePropertiesClass"),
-        dateDefaultValueProperty: z.iso.date(),
-        dateTimeDefaultValueProperty: z.iso.datetime(),
-        falseBooleanDefaultValueProperty: z.boolean(),
-        numberDefaultValueProperty: z.number(),
-        stringDefaultValueProperty: z.string(),
-        trueBooleanDefaultValueProperty: z.boolean(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -54562,6 +54684,45 @@ export namespace DateUnionPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DateUnionPropertiesClass"),
+        dateOrDateTimeProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+          ])
+          .optional(),
+        dateOrStringProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+            z.object({ type: z.literal("string"), value: z.string() }),
+          ])
+          .optional(),
+        dateTimeOrDateProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+          ])
+          .optional(),
+        stringOrDateProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("string"), value: z.string() }),
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -54602,43 +54763,6 @@ export namespace DateUnionPropertiesClass {
         label: "DateUnionPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DateUnionPropertiesClass"),
-        dateOrDateTimeProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-          ])
-          .optional(),
-        dateOrStringProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-            z.object({ type: z.literal("string"), value: z.string() }),
-          ])
-          .optional(),
-        dateTimeOrDateProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-          ])
-          .optional(),
-        stringOrDateProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("string"), value: z.string() }),
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-          ])
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -57234,79 +57358,14 @@ export namespace ConvertibleTypePropertiesClass {
   };
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "ConvertibleTypePropertiesClass" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleIriNonEmptySetProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleIriOptionProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleIriProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleIriSetProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySetProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleLiteralOptionProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleLiteralProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleLiteralSetProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermNonEmptySetProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermOptionProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/convertibleTermSetProperty`,
-            type: "Control",
-          },
-        ],
-        label: "ConvertibleTypePropertiesClass",
-        type: "Group",
-      };
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
+
     export function schema() {
       return z.object({
         "@id": z.string().min(1),
@@ -57428,12 +57487,79 @@ export namespace ConvertibleTypePropertiesClass {
           .default(() => []),
       }) satisfies z.ZodType<$Json>;
     }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ConvertibleTypePropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermSetProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConvertibleTypePropertiesClass",
+        type: "Group",
+      };
     }
   }
 
@@ -58906,6 +59032,27 @@ export namespace BaseInterfaceWithPropertiesStatic {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "BaseInterfaceWithProperties",
+          "BaseInterfaceWithoutProperties",
+          "ConcreteChildInterface",
+          "ConcreteParentInterface",
+        ]),
+        baseInterfaceWithPropertiesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -58934,25 +59081,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
         label: "BaseInterfaceWithProperties",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "BaseInterfaceWithProperties",
-          "BaseInterfaceWithoutProperties",
-          "ConcreteChildInterface",
-          "ConcreteParentInterface",
-        ]),
-        baseInterfaceWithPropertiesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -59519,16 +59647,14 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
   export namespace $Json {
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          BaseInterfaceWithPropertiesStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "BaseInterfaceWithoutProperties",
-        type: "Group",
-      };
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
+
     export function schema() {
       return BaseInterfaceWithPropertiesStatic.$Json.schema().merge(
         z.object({
@@ -59541,12 +59667,16 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         }),
       ) satisfies z.ZodType<$Json>;
     }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          BaseInterfaceWithPropertiesStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "BaseInterfaceWithoutProperties",
+        type: "Group",
+      };
     }
   }
 
@@ -60054,6 +60184,24 @@ export namespace ConcreteParentInterfaceStatic {
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return BaseInterfaceWithoutPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+          concreteParentInterfaceProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -60067,22 +60215,6 @@ export namespace ConcreteParentInterfaceStatic {
         label: "ConcreteParentInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return BaseInterfaceWithoutPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
-          concreteParentInterfaceProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -60651,6 +60783,24 @@ export namespace ConcreteChildInterface {
   } & ConcreteParentInterfaceStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return ConcreteParentInterfaceStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildInterface"),
+          concreteChildInterfaceProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -60664,22 +60814,6 @@ export namespace ConcreteChildInterface {
         label: "ConcreteChildInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return ConcreteParentInterfaceStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildInterface"),
-          concreteChildInterfaceProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -61293,6 +61427,14 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   };
 
   export namespace $Json {
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        abstractBaseClassWithPropertiesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -61321,13 +61463,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         label: "AbstractBaseClassWithProperties",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-        abstractBaseClassWithPropertiesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -61656,6 +61791,15 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
 
   export namespace $Json {
+    export function schema() {
+      return AbstractBaseClassWithPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -61665,14 +61809,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         label: "AbstractBaseClassWithoutProperties",
         type: "Group",
       };
-    }
-    export function schema() {
-      return AbstractBaseClassWithPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-        }),
-      ) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -61989,6 +62125,24 @@ export namespace ConcreteParentClassStatic {
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return AbstractBaseClassWithoutPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
+          concreteParentClassProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -62004,22 +62158,6 @@ export namespace ConcreteParentClassStatic {
         label: "ConcreteParentClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return AbstractBaseClassWithoutPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
-          concreteParentClassProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -62547,6 +62685,24 @@ export namespace ConcreteChildClass {
   } & ConcreteParentClassStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return ConcreteParentClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildClass"),
+          concreteChildClassProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -62560,22 +62716,6 @@ export namespace ConcreteChildClass {
         label: "ConcreteChildClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return ConcreteParentClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildClass"),
-          concreteChildClassProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -63094,6 +63234,14 @@ export namespace ClassUnionMemberCommonParentStatic {
   };
 
   export namespace $Json {
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
+        classUnionMemberCommonParentProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -63122,13 +63270,6 @@ export namespace ClassUnionMemberCommonParentStatic {
         label: "ClassUnionMemberCommonParent",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
-        classUnionMemberCommonParentProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
     }
   }
 
@@ -63490,6 +63631,24 @@ export namespace ClassUnionMember2 {
   } & ClassUnionMemberCommonParentStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember2"),
+          classUnionMember2Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -63503,22 +63662,6 @@ export namespace ClassUnionMember2 {
         label: "ClassUnionMember2",
         type: "Group",
       };
-    }
-    export function schema() {
-      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember2"),
-          classUnionMember2Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -64015,6 +64158,24 @@ export namespace ClassUnionMember1 {
   } & ClassUnionMemberCommonParentStatic.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember1"),
+          classUnionMember1Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -64028,22 +64189,6 @@ export namespace ClassUnionMember1 {
         label: "ClassUnionMember1",
         type: "Group",
       };
-    }
-    export function schema() {
-      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember1"),
-          classUnionMember1Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -64564,6 +64709,22 @@ export namespace NonClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NonClass"),
+        nonClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -64592,20 +64753,6 @@ export namespace NonClass {
         label: "NonClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NonClass"),
-        nonClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -65007,6 +65154,22 @@ export namespace PartialClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -65035,20 +65198,6 @@ export namespace PartialClass {
         label: "PartialClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -65689,6 +65838,51 @@ export namespace ClassPropertiesClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ClassPropertiesClass"),
+        iriClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          ),
+        multiClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          ),
+        nodeClassProperty1: NonClass.$Json
+          .schema()
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+          ),
+        nodeClassProperty2: PartialClass.$Json
+          .schema()
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
+          ),
+        singleClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          ),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -65731,49 +65925,6 @@ export namespace ClassPropertiesClass {
         label: "ClassPropertiesClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ClassPropertiesClass"),
-        iriClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          ),
-        multiClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          ),
-        nodeClassProperty1: NonClass.$Json
-          .schema()
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
-          ),
-        nodeClassProperty2: PartialClass.$Json
-          .schema()
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
-          ),
-        singleClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          ),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -66581,6 +66732,21 @@ export namespace BlankNodeOrIriIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeOrIriIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -66605,19 +66771,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
         label: "BlankNodeOrIriIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeOrIriIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -67115,6 +67268,21 @@ export namespace BlankNodeOrIriIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeOrIriIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -67139,19 +67307,6 @@ export namespace BlankNodeOrIriIdentifierClass {
         label: "BlankNodeOrIriIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeOrIriIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -67558,6 +67713,21 @@ export namespace BlankNodeIdentifierInterface {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -67582,19 +67752,6 @@ export namespace BlankNodeIdentifierInterface {
         label: "BlankNodeIdentifierInterface",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -68071,6 +68228,21 @@ export namespace BlankNodeIdentifierClass {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -68095,19 +68267,6 @@ export namespace BlankNodeIdentifierClass {
         label: "BlankNodeIdentifierClass",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 

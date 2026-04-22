@@ -197,9 +197,9 @@ export class ObjectType extends AbstractType {
       }
 
       const jsonModuleDeclarations: Code[] = [
-        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
       ];
 
       staticModuleDeclarations.push(
@@ -208,7 +208,7 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
         ...(jsonModuleDeclarations.length > 0
           ? [
-              code`export namespace ${syntheticNamePrefix}Json { ${joinCode(jsonModuleDeclarations)} }`,
+              code`export namespace ${syntheticNamePrefix}Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
             ]
           : []),
         ObjectType_filterFunctionDeclaration.call(this),

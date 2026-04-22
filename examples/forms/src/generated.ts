@@ -673,6 +673,22 @@ export namespace NestedNodeShape {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NestedNodeShape"),
+        requiredStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -702,20 +718,6 @@ export namespace NestedNodeShape {
         label: "NestedNodeShape",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NestedNodeShape"),
-        requiredStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
@@ -1139,6 +1141,30 @@ export namespace FormNodeShape {
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("FormNodeShape"),
+        emptyStringSetProperty: z
+          .string()
+          .array()
+          .default(() => []),
+        nestedObjectProperty: NestedNodeShape.$Json.schema(),
+        nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
+        optionalStringProperty: z.string().optional(),
+        requiredIntegerProperty: z.number(),
+        requiredStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
       const scopePrefix = parameters?.scopePrefix ?? "#";
       return {
@@ -1191,28 +1217,6 @@ export namespace FormNodeShape {
         label: "Form",
         type: "Group",
       };
-    }
-    export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("FormNodeShape"),
-        emptyStringSetProperty: z
-          .string()
-          .array()
-          .default(() => []),
-        nestedObjectProperty: NestedNodeShape.$Json.schema(),
-        nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
-        optionalStringProperty: z.string().optional(),
-        requiredIntegerProperty: z.number(),
-        requiredStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
-    }
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
     }
   }
 
