@@ -4,6 +4,6 @@ import type { UnionType } from "./UnionType.js";
 
 export interface Ast {
   readonly namedIntersectionTypes: readonly IntersectionType[];
+  readonly namedObjectTypes: readonly ObjectType[];
   readonly namedUnionTypes: readonly UnionType[];
-  readonly objectTypes: readonly ObjectType[];
 }
