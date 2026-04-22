@@ -69,6 +69,7 @@ export namespace ExternClass {
   export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
   export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
   export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+  export const $Json = AbstractBaseClassForExternClassStatic.$Json;
 
   // Called by interface functions
   export function $equals(left: ExternClass, right: ExternClass) {
@@ -132,11 +133,6 @@ export namespace ExternClass {
   export const $fromRdfType = dataFactory.namedNode(
     "http://example.com/ExternClass",
   );
-
-  export const $jsonZodSchema =
-    AbstractBaseClassForExternClassStatic.$jsonZodSchema;
-  export const $jsonUiSchema =
-    AbstractBaseClassForExternClassStatic.$jsonUiSchema;
 
   export const $schema = AbstractBaseClassForExternClassStatic.$schema;
 

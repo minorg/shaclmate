@@ -76,8 +76,8 @@ ${joinCode(
     return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
   }
 
-  get jsonZodSchemaFunctionDeclaration(): Code {
-    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema};`;
+  get jsonSchemaFunctionDeclaration(): Code {
+    return code`export const schema = () => ${this.inlineJsonSchema};`;
   }
 
   @Memoize()
@@ -124,21 +124,21 @@ ${joinCode(
     }
 
     if (this.features.has("json")) {
-      staticModuleDeclarations[`${syntheticNamePrefix}Json`] =
-        this.jsonTypeAliasDeclaration;
+      staticModuleDeclarations[`${syntheticNamePrefix}Json`] = code`\
+${this.jsonTypeAliasDeclaration}
+
+export namespace ${syntheticNamePrefix}Json {
+  ${this.jsonSchemaFunctionDeclaration}
+
+  export function ${syntheticNamePrefix}parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
+    const jsonSafeParseResult = schema().safeParse(json);
+    if (!jsonSafeParseResult.success) { return ${imports.Left}(jsonSafeParseResult.error); }
+    return ${imports.Right}(jsonSafeParseResult.data);
+  }
+}`;
 
       staticModuleDeclarations[`${syntheticNamePrefix}fromJson`] =
         code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction};`;
-
-      staticModuleDeclarations[`${syntheticNamePrefix}jsonZodSchema`] =
-        this.jsonZodSchemaFunctionDeclaration;
-
-      staticModuleDeclarations[`${syntheticNamePrefix}parseJson`] = code`\
-export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
-  const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(json);
-  if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }
-  return ${imports.Right}(${syntheticNamePrefix}fromJson(${syntheticNamePrefix}jsonSafeParseResult.data));
-}`;
 
       staticModuleDeclarations[`${syntheticNamePrefix}toJson`] =
         code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction};`;
@@ -209,17 +209,17 @@ export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either
     return this.inlineJsonType;
   }
 
-  override jsonZodSchema({
+  override jsonSchema({
     context,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
+  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
     if (this.features.has("json")) {
-      const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
+      const expression = code`${this.staticModuleName}.${syntheticNamePrefix}Json.schema()`;
       if (context === "property" && this.recursive) {
         return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }
-    return this.inlineJsonZodSchema;
+    return this.inlineJsonSchema;
   }
 
   override toJsonExpression({

@@ -8,8 +8,8 @@ export class DateTimeType extends AbstractDateType {
   );
   override readonly kind = "DateTimeType";
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractDateType["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractDateType["jsonSchema"]>[0],
   ): Code {
     return code`${imports.z}.iso.datetime()`;
   }

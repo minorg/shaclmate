@@ -188,12 +188,10 @@ export class OptionType<
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
-  override jsonZodSchema(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
-    >[0],
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {
-    return code`${this.itemType.jsonZodSchema(parameters)}.optional()`;
+    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
   }
 
   override toJsonExpression({

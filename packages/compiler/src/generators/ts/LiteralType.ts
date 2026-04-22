@@ -52,9 +52,9 @@ export class LiteralType extends AbstractLiteralType {
     );
   }
 
-  override jsonZodSchema({
+  override jsonSchema({
     includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): Code {
+  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? code`, termType: ${imports.z}.literal("Literal")`
       : "";

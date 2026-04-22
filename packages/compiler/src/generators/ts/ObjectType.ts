@@ -25,12 +25,11 @@ import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectTyp
 import { ObjectType_hashFunctionOrMethodDeclarations } from "./_ObjectType/ObjectType_hashFunctionOrMethodDeclarations.js";
 import { ObjectType_interfaceDeclaration } from "./_ObjectType/ObjectType_interfaceDeclaration.js";
 import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
+import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
 import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
 import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
-import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
-import { ObjectType_parseJsonFunctionDeclaration } from "./_ObjectType/ObjectType_parseJsonFunctionDeclaration.js";
 import { ObjectType_propertiesFromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromJsonFunctionDeclaration.js";
 import { ObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
@@ -142,6 +141,11 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
+  get _discriminantProperty(): ObjectType.DiscriminantProperty {
+    return this.lazyDiscriminantProperty(this);
+  }
+
+  @Memoize()
   get ancestorObjectTypes(): readonly ObjectType[] {
     return this.lazyAncestorObjectTypes();
   }
@@ -192,10 +196,21 @@ export class ObjectType extends AbstractType {
         }
       }
 
+      const jsonModuleDeclarations: Code[] = [
+        ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
+      ];
+
       staticModuleDeclarations.push(
         ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
         ...identifierTypeDeclarations.call(this),
         ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
+        ...(jsonModuleDeclarations.length > 0
+          ? [
+              code`export namespace ${syntheticNamePrefix}Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
+            ]
+          : []),
         ObjectType_filterFunctionDeclaration.call(this),
         ObjectType_filterTypeDeclaration.call(this),
         ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
@@ -211,10 +226,6 @@ export class ObjectType extends AbstractType {
         ).toList(),
         ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
         ObjectType_isTypeFunctionDeclaration.call(this),
-        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonZodSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_parseJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_propertiesFromJsonFunctionDeclaration.bind(
           this,
         )().toList(),
@@ -390,16 +401,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
-  }
-
-  @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
-  }
-
-  @Memoize()
   get toRdfjsResourceType(): Code {
     if (this.parentObjectTypes.length > 0) {
       return this.parentObjectTypes[0].toRdfjsResourceType;
@@ -409,8 +410,13 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get _discriminantProperty(): ObjectType.DiscriminantProperty {
-    return this.lazyDiscriminantProperty(this);
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
+  }
+
+  @Memoize()
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
   }
 
   @Memoize()
@@ -462,6 +468,19 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     }
   }
 
+  override jsonSchema({
+    context,
+  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
+    let expression = code`${this.staticModuleName}.${syntheticNamePrefix}Json.schema()`;
+    if (
+      context === "property" &&
+      this.properties.some((property) => property.recursive)
+    ) {
+      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+    }
+    return expression;
+  }
+
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return new AbstractType.JsonType(
@@ -473,21 +492,8 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      code`${this.staticModuleName}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
-  }
-
-  override jsonZodSchema({
-    context,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
-    let expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
-    if (
-      context === "property" &&
-      this.properties.some((property) => property.recursive)
-    ) {
-      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
-    }
-    return expression;
   }
 
   newExpression({ parameters }: { parameters: Code }): Code {

@@ -434,20 +434,20 @@ ${joinCode(
     }
   }
 
-  protected get inlineJsonZodSchema(): Code {
+  protected get inlineJsonSchema(): Code {
     switch (this.discriminant.kind) {
       case "envelope":
         return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.concreteMembers.map(
             ({ type, primaryDiscriminantValue }) =>
-              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonZodSchema({ context: "type" })} })`,
+              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
           ),
           { on: "," },
         )}])`;
       case "inline":
         return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.concreteMembers.map(({ type }) =>
-            type.jsonZodSchema({
+            type.jsonSchema({
               includeDiscriminantProperty: true,
               context: "type",
             }),
@@ -457,7 +457,7 @@ ${joinCode(
       case "typeof":
         return code`${imports.z}.union([${joinCode(
           this.concreteMembers.map(({ type }) =>
-            type.jsonZodSchema({ context: "type" }),
+            type.jsonSchema({ context: "type" }),
           ),
           { on: "," },
         )}])`;

@@ -22,8 +22,8 @@ export class BigIntType extends AbstractNumericType<bigint> {
     return expression;
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractNumericType<bigint>["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractNumericType<bigint>["jsonSchema"]>[0],
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:

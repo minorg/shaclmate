@@ -33,8 +33,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     };
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractPrimitiveType<number>["jsonSchema"]>[0],
   ): Code {
     if (this.primitiveIn.length === 1) {
       return code`${imports.z}.literal(${this.primitiveIn[0]})`;

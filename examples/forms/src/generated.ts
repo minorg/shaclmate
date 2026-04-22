@@ -672,6 +672,55 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty: string;
   };
 
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NestedNodeShape"),
+        requiredStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NestedNodeShape" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Required string",
+            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "NestedNodeShape",
+        type: "Group",
+      };
+    }
+  }
+
   export function $filter(
     filter: NestedNodeShape.$Filter,
     value: NestedNodeShape,
@@ -748,57 +797,6 @@ export namespace NestedNodeShape {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NestedNodeShape" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          label: "Required string",
-          scope: `${scopePrefix}/properties/requiredStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NestedNodeShape",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NestedNodeShape"),
-      requiredStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, NestedNodeShape> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NestedNodeShape.$Json): {
@@ -1142,6 +1140,86 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   };
 
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("FormNodeShape"),
+        emptyStringSetProperty: z
+          .string()
+          .array()
+          .default(() => []),
+        nestedObjectProperty: NestedNodeShape.$Json.schema(),
+        nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
+        optionalStringProperty: z.string().optional(),
+        requiredIntegerProperty: z.number(),
+        requiredStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "FormNodeShape" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Empty string set",
+            scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+            type: "Control",
+          },
+          NestedNodeShape.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/nestedObjectProperty`,
+          }),
+          {
+            label: "Non-empty string set",
+            scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+            type: "Control",
+          },
+          {
+            label: "Optional string",
+            scope: `${scopePrefix}/properties/optionalStringProperty`,
+            type: "Control",
+          },
+          {
+            label: "Required integer",
+            scope: `${scopePrefix}/properties/requiredIntegerProperty`,
+            type: "Control",
+          },
+          {
+            label: "Required string",
+            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "Form",
+        type: "Group",
+      };
+    }
+  }
+
   export function $filter(
     filter: FormNodeShape.$Filter,
     value: FormNodeShape,
@@ -1266,88 +1344,6 @@ export namespace FormNodeShape {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "FormNodeShape" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          label: "Empty string set",
-          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
-          type: "Control",
-        },
-        NestedNodeShape.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/nestedObjectProperty`,
-        }),
-        {
-          label: "Non-empty string set",
-          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          label: "Optional string",
-          scope: `${scopePrefix}/properties/optionalStringProperty`,
-          type: "Control",
-        },
-        {
-          label: "Required integer",
-          scope: `${scopePrefix}/properties/requiredIntegerProperty`,
-          type: "Control",
-        },
-        {
-          label: "Required string",
-          scope: `${scopePrefix}/properties/requiredStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "Form",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("FormNodeShape"),
-      emptyStringSetProperty: z
-        .string()
-        .array()
-        .default(() => []),
-      nestedObjectProperty: NestedNodeShape.$jsonZodSchema(),
-      nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
-      optionalStringProperty: z.string().optional(),
-      requiredIntegerProperty: z.number(),
-      requiredStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, FormNodeShape> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: FormNodeShape.$Json): {
@@ -1853,18 +1849,20 @@ export namespace $Object {
 
   export type $Json = FormNodeShape.$Json | NestedNodeShape.$Json;
 
-  export const $jsonZodSchema = () =>
-    z.discriminatedUnion("$type", [
-      FormNodeShape.$jsonZodSchema(),
-      NestedNodeShape.$jsonZodSchema(),
-    ]);
+  export namespace $Json {
+    export const schema = () =>
+      z.discriminatedUnion("$type", [
+        FormNodeShape.$Json.schema(),
+        NestedNodeShape.$Json.schema(),
+      ]);
 
-  export function $parseJson(json: unknown): Either<Error, $Object> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
+    export function $parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
     }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export const $schema = {
