@@ -105,7 +105,7 @@ export class ShapesGraphToAstTransformer {
 
     return Either.of({
       namedIntersectionTypes: astNamedIntersectionTypes,
-      objectTypes: astObjectTypes.concat(
+      namedObjectTypes: astObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
       ),
       namedUnionTypes: astNamedUnionTypes,

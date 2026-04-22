@@ -1,8 +1,8 @@
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
+import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -14,15 +14,17 @@ export class ZodGenerator implements Generator {
   generate(ast_: ast.Ast): string {
     const declarations: Code[] = [];
 
-    for (const objectType of ast.ObjectType.toposort(ast_.objectTypes).map(
-      (astObjectType) => this.typeFactory.createObjectType(astObjectType),
+    for (const namedObjectType of ast.ObjectType.toposort(
+      ast_.namedObjectTypes,
+    ).map((astObjectType) =>
+      this.typeFactory.createNamedObjectType(astObjectType),
     )) {
       declarations.push(code`\
-export namespace ${objectType.staticModuleName} {
-  ${joinCode(ObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList())}
+export namespace ${namedObjectType.staticModuleName} {
+  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
 
   export namespace ${syntheticNamePrefix}Json {
-    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList())}
+    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(namedObjectType)().toList())}
   }
 }`);
     }

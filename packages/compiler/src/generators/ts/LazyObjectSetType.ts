@@ -2,8 +2,8 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import type { SetType } from "./SetType.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -51,10 +51,10 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
-    if (this.partialType.itemType.kind === "ObjectType") {
+    if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as NamedObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,

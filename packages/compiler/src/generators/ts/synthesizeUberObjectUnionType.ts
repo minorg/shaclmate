@@ -5,23 +5,23 @@ import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
  * Synthesize the $Object union.
  */
 export function synthesizeUberObjectUnionType(parameters: {
-  objectTypes: readonly ObjectType[];
+  namedObjectTypes: readonly NamedObjectType[];
 }): NamedObjectUnionType {
-  const objectTypes = parameters.objectTypes.filter(
-    (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),
+  const namedObjectTypes = parameters.namedObjectTypes.filter(
+    (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
   );
-  invariant(objectTypes.length > 0);
+  invariant(namedObjectTypes.length > 0);
 
-  const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
-    for (const nodeKind of objectType.identifierType.nodeKinds) {
+  const nodeKinds = namedObjectTypes.reduce((nodeKinds, namedObjectType) => {
+    for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
       nodeKinds.add(nodeKind);
     }
     return nodeKinds;
@@ -54,8 +54,8 @@ export function synthesizeUberObjectUnionType(parameters: {
 
   return new NamedObjectUnionType({
     comment: Maybe.empty(),
-    features: objectTypes.reduce((features, objectType) => {
-      for (const feature of objectType.features) {
+    features: namedObjectTypes.reduce((features, namedObjectType) => {
+      for (const feature of namedObjectType.features) {
         features.add(feature);
       }
       features.delete("graphql");
@@ -63,9 +63,9 @@ export function synthesizeUberObjectUnionType(parameters: {
     }, new Set<TsFeature>()),
     identifierType,
     label: Maybe.empty(),
-    members: objectTypes.map((objectType) => ({
+    members: namedObjectTypes.map((namedObjectType) => ({
       discriminantValue: Maybe.empty(),
-      type: objectType,
+      type: namedObjectType,
     })),
     name: `${syntheticNamePrefix}Object`,
     recursive: false,

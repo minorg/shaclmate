@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -41,11 +41,11 @@ export class LazyObjectType extends AbstractLazyObjectType<
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
-    if (this.partialType.kind === "ObjectType") {
+    if (this.partialType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
-        // Don't check instanceof value since the ObjectType may be an interface
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
+        // Don't check instanceof value since the NamedObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,

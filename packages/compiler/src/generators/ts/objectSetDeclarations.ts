@@ -1,5 +1,5 @@
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
@@ -9,24 +9,29 @@ export function objectSetDeclarations({
   namedObjectUnionTypes,
   ...parameters
 }: {
-  objectTypes: readonly ObjectType[];
+  namedObjectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): readonly Code[] {
-  const objectTypes = parameters.objectTypes.filter(
-    (objectType) =>
-      !objectType.abstract && !objectType.extern && !objectType.synthetic,
+  const namedObjectTypes = parameters.namedObjectTypes.filter(
+    (namedObjectType) =>
+      !namedObjectType.abstract &&
+      !namedObjectType.extern &&
+      !namedObjectType.synthetic,
   );
-  let objectTypesWithRdfFeatureCount = 0;
-  let objectTypesWithSparqlFeatureCount = 0;
-  for (const objectType of objectTypes) {
-    if (!objectType.features.has("rdf") && !objectType.features.has("sparql")) {
+  let namedObjectTypesWithRdfFeatureCount = 0;
+  let namedObjectTypesWithSparqlFeatureCount = 0;
+  for (const namedObjectType of namedObjectTypes) {
+    if (
+      !namedObjectType.features.has("rdf") &&
+      !namedObjectType.features.has("sparql")
+    ) {
       continue;
     }
-    if (objectType.features.has("rdf")) {
-      objectTypesWithRdfFeatureCount++;
+    if (namedObjectType.features.has("rdf")) {
+      namedObjectTypesWithRdfFeatureCount++;
     }
-    if (objectType.features.has("sparql")) {
-      objectTypesWithSparqlFeatureCount++;
+    if (namedObjectType.features.has("sparql")) {
+      namedObjectTypesWithSparqlFeatureCount++;
     }
   }
 
@@ -48,8 +53,8 @@ export function objectSetDeclarations({
   }
 
   if (
-    objectTypesWithRdfFeatureCount === 0 &&
-    objectTypesWithSparqlFeatureCount === 0 &&
+    namedObjectTypesWithRdfFeatureCount === 0 &&
+    namedObjectTypesWithSparqlFeatureCount === 0 &&
     namedObjectUnionTypesWithRdfFeatureCount === 0 &&
     namedObjectUnionTypesWithSparqlFeatureCount === 0
   ) {
@@ -58,24 +63,24 @@ export function objectSetDeclarations({
 
   const declarations: Code[] = [
     objectSetInterfaceDeclaration({
-      objectTypes,
+      namedObjectTypes: namedObjectTypes,
       namedObjectUnionTypes,
     }),
   ];
 
-  if (objectTypesWithRdfFeatureCount > 0) {
+  if (namedObjectTypesWithRdfFeatureCount > 0) {
     declarations.push(
       rdfjsDatasetObjectSetClassDeclaration({
-        objectTypes,
+        namedObjectTypes: namedObjectTypes,
         namedObjectUnionTypes,
       }),
     );
   }
 
-  if (objectTypesWithSparqlFeatureCount > 0) {
+  if (namedObjectTypesWithSparqlFeatureCount > 0) {
     declarations.push(
       sparqlObjectSetClassDeclaration({
-        objectTypes,
+        namedObjectTypes: namedObjectTypes,
         namedObjectUnionTypes,
       }),
     );

@@ -159,7 +159,7 @@ export class AstJsonGenerator implements Generator {
   generate(ast: ast.Ast): string {
     return JSON.stringify(
       {
-        objectTypes: ast.objectTypes.map((objectType) => ({
+        objectTypes: ast.namedObjectTypes.map((objectType) => ({
           kind: objectType.kind,
           comment: objectType.comment.extract(),
           identifierMintingStrategy:

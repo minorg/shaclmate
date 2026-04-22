@@ -29,9 +29,9 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { NamedUnionType } from "./NamedUnionType.js";
-import { ObjectType } from "./ObjectType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
@@ -47,11 +47,11 @@ export class TypeFactory {
   > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectType.Property
+    NamedObjectType.Property
   > = new TermMap();
   private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectType
+    NamedObjectType
   > = new TermMap();
 
   createNamedObjectUnionType(
@@ -75,9 +75,9 @@ export class TypeFactory {
       ),
       label: astType.label,
       members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (objectType) => ({
+        (namedObjectType) => ({
           discriminantValue: Maybe.empty(),
-          type: this.createObjectType(objectType),
+          type: this.createNamedObjectType(namedObjectType),
         }),
       ),
       name: tsName(astType.name.unsafeCoerce()),
@@ -92,7 +92,7 @@ export class TypeFactory {
     return namedObjectUnionType;
   }
 
-  createObjectType(astType: ast.ObjectType): ObjectType {
+  createNamedObjectType(astType: ast.ObjectType): NamedObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -110,7 +110,7 @@ export class TypeFactory {
     const staticModuleName =
       astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
-    const objectType = new ObjectType({
+    const namedObjectType = new NamedObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
       declarationType: astType.tsObjectDeclarationType,
@@ -122,23 +122,23 @@ export class TypeFactory {
       label: astType.label,
       lazyAncestorObjectTypes: () =>
         astType.ancestorObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyChildObjectTypes: () =>
         astType.childObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyDescendantObjectTypes: () =>
         astType.descendantObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
-      lazyDiscriminantProperty: (objectType: ObjectType) => {
+      lazyDiscriminantProperty: (namedObjectType: NamedObjectType) => {
         // Discriminant property
         const discriminantOwnValue = !astType.abstract
-          ? objectType.discriminantValue
+          ? namedObjectType.discriminantValue
           : undefined;
         const discriminantDescendantValues = new Set<string>();
-        for (const descendantObjectType of objectType.descendantObjectTypes) {
+        for (const descendantObjectType of namedObjectType.descendantObjectTypes) {
           if (!descendantObjectType.abstract) {
             discriminantDescendantValues.add(
               descendantObjectType.discriminantValue,
@@ -146,10 +146,10 @@ export class TypeFactory {
           }
         }
 
-        return new ObjectType.DiscriminantProperty({
+        return new NamedObjectType.DiscriminantProperty({
           name: `${syntheticNamePrefix}type`,
-          objectType,
-          type: new ObjectType.DiscriminantProperty.Type({
+          namedObjectType,
+          type: new NamedObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
             ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
@@ -157,22 +157,22 @@ export class TypeFactory {
           visibility: "public",
         });
       },
-      lazyIdentifierProperty: (objectType: ObjectType) =>
-        new ObjectType.IdentifierProperty({
+      lazyIdentifierProperty: (namedObjectType: NamedObjectType) =>
+        new NamedObjectType.IdentifierProperty({
           identifierMintingStrategy: astType.identifierMintingStrategy,
           identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
           name: `${syntheticNamePrefix}identifier`,
-          objectType,
+          namedObjectType,
           type: identifierType,
           typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
           visibility: "public",
         }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
-      lazyProperties: (objectType: ObjectType) => {
-        const properties: ObjectType.Property[] = astType.properties
+      lazyProperties: (namedObjectType: NamedObjectType) => {
+        const properties: NamedObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -185,27 +185,27 @@ export class TypeFactory {
           .map((astProperty) =>
             this.createObjectTypeProperty({
               astObjectTypeProperty: astProperty,
-              objectType,
+              namedObjectType,
             }),
           );
 
         if (
-          objectType._discriminantProperty.type.ownValues.length > 0 ||
-          objectType._discriminantProperty.type.descendantValues.length > 0
+          namedObjectType._discriminantProperty.type.ownValues.length > 0 ||
+          namedObjectType._discriminantProperty.type.descendantValues.length > 0
         ) {
-          properties.splice(0, 0, objectType._discriminantProperty);
+          properties.splice(0, 0, namedObjectType._discriminantProperty);
         }
 
         // Some ObjectTypes have an identifierPrefix property, depending on their identifier minting strategy.
-        if (objectTypeNeedsIdentifierPrefixProperty(astType)) {
+        if (namedObjectTypeNeedsIdentifierPrefixProperty(astType)) {
           properties.splice(
             0,
             0,
-            new ObjectType.IdentifierPrefixProperty({
+            new NamedObjectType.IdentifierPrefixProperty({
               name: `${syntheticNamePrefix}identifierPrefix`,
-              objectType,
+              namedObjectType,
               own: !astType.ancestorObjectTypes.some(
-                objectTypeNeedsIdentifierPrefixProperty,
+                namedObjectTypeNeedsIdentifierPrefixProperty,
               ),
               type: new StringType({
                 comment: astType.comment,
@@ -221,8 +221,8 @@ export class TypeFactory {
           );
         }
 
-        // Every ObjectType has an identifier property. Some are abstract.
-        properties.splice(0, 0, objectType.identifierProperty);
+        // Every NamedObjectType has an identifier property. Some are abstract.
+        properties.splice(0, 0, namedObjectType.identifierProperty);
 
         return properties;
       },
@@ -234,9 +234,9 @@ export class TypeFactory {
     });
     this.cachedObjectTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
-      objectType,
+      namedObjectType,
     );
-    return objectType;
+    return namedObjectType;
   }
 
   createType(
@@ -265,7 +265,7 @@ export class TypeFactory {
       case "LiteralType":
         return this.createLiteralType(astType, parameters);
       case "ObjectType":
-        return this.createObjectType(astType);
+        return this.createNamedObjectType(astType);
       case "OptionType":
         return this.createOptionType(astType);
       case "SetType":
@@ -365,10 +365,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -378,10 +378,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -392,10 +392,10 @@ export class TypeFactory {
       label: astType.label,
 
       partialType: this.createType(astType.partialType) as
-        | ObjectType
+        | NamedObjectType
         | NamedObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
-        | ObjectType
+        | NamedObjectType
         | NamedObjectUnionType,
     });
   }
@@ -552,11 +552,11 @@ export class TypeFactory {
 
   private createObjectTypeProperty({
     astObjectTypeProperty,
-    objectType,
+    namedObjectType,
   }: {
     astObjectTypeProperty: ast.ObjectType.Property;
-    objectType: ObjectType;
-  }): ObjectType.Property {
+    namedObjectType: NamedObjectType;
+  }): NamedObjectType.Property {
     {
       const cachedProperty =
         this.cachedObjectTypePropertiesByShapeIdentifier.get(
@@ -567,12 +567,12 @@ export class TypeFactory {
       }
     }
 
-    const property = new ObjectType.ShaclProperty({
+    const property = new NamedObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,
       mutable: astObjectTypeProperty.mutable,
-      objectType,
+      namedObjectType,
       name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
@@ -621,10 +621,10 @@ export class TypeFactory {
   }
 }
 
-function objectTypeNeedsIdentifierPrefixProperty(
-  objectType: ast.ObjectType,
+function namedObjectTypeNeedsIdentifierPrefixProperty(
+  namedObjectType: ast.ObjectType,
 ): boolean {
-  return objectType.identifierMintingStrategy
+  return namedObjectType.identifierMintingStrategy
     .map((identifierMintingStrategy) => {
       switch (identifierMintingStrategy) {
         case "blankNode":

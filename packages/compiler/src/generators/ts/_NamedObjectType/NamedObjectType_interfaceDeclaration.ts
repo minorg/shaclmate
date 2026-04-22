@@ -1,0 +1,23 @@
+import type { NamedObjectType } from "../NamedObjectType.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { tsComment } from "../tsComment.js";
+
+export function NamedObjectType_interfaceDeclaration(
+  this: NamedObjectType,
+): Code {
+  return code`\
+${this.comment
+  .alt(this.label)
+  .map(tsComment)
+  .orDefault("")}export interface ${this.name}${
+    this.parentObjectTypes.length > 0
+      ? ` extends ${this.parentObjectTypes
+          .map((parentObjectType) => parentObjectType.name)
+          .join(", ")}`
+      : ""
+  } {
+  ${joinCode(
+    this.properties.flatMap((property) => property.declaration.toList()),
+  )}
+}`;
+}

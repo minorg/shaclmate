@@ -19,9 +19,9 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { NamedUnionType } from "./NamedUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
 import { snippets } from "./snippets.js";
@@ -181,7 +181,7 @@ export namespace ListType {
     | LiteralType
     | NamedObjectUnionType
     | NamedUnionType
-    | ObjectType
+    | NamedObjectType
     | StringType
     | TermType;
 
@@ -201,7 +201,7 @@ export namespace ListType {
       case "LiteralType":
       case "NamedObjectUnionType":
       case "NamedUnionType":
-      case "ObjectType":
+      case "NamedObjectType":
       case "StringType":
       case "TermType":
         return true;

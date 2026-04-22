@@ -2280,7 +2280,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
-    objectType: {
+    namedObjectType: {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
@@ -2315,11 +2315,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
-    } else if (objectType.$fromRdfTypes.length > 0) {
+    } else if (namedObjectType.$fromRdfTypes.length > 0) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const fromRdfType of namedObjectType.$fromRdfTypes) {
         for (const resource of resourceSet.instancesOf(fromRdfType, {
           graph,
         })) {
@@ -2352,7 +2352,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType
+        namedObjectType
           .$fromRdfResource(resource, fromRdfResourceOptions)
           .ifRight((object) => {
             resources.push({ object, resource });
@@ -2373,7 +2373,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdfResource(
+        const objectEither = namedObjectType.$fromRdfResource(
           resource,
           fromRdfResourceOptions,
         );
@@ -2383,7 +2383,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         object = objectEither.unsafeCoerce();
       }
 
-      if (query?.filter && !objectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
         continue;
       }
 
@@ -2402,7 +2402,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
-    objectTypes: readonly {
+    namedObjectTypes: readonly {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
@@ -2431,7 +2431,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let resources: {
       object?: ObjectT;
-      objectType?: {
+      namedObjectType?: {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
@@ -2446,19 +2446,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       }));
       sortResources = false;
     } else if (
-      objectTypes.every((objectType) => objectType.$fromRdfTypes.length > 0)
+      namedObjectTypes.every(
+        (namedObjectType) => namedObjectType.$fromRdfTypes.length > 0,
+      )
     ) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const objectType of objectTypes) {
-        for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const namedObjectType of namedObjectTypes) {
+        for (const fromRdfType of namedObjectType.$fromRdfTypes) {
           for (const resource of resourceSet.instancesOf(fromRdfType, {
             graph,
           })) {
             if (!identifierSet.has(resource.identifier)) {
               identifierSet.add(resource.identifier);
-              resources.push({ objectType, resource });
+              resources.push({ namedObjectType, resource });
             }
           }
         }
@@ -2486,12 +2488,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object types
         const resource = resourceSet.resource(quad.subject);
-        for (const objectType of objectTypes) {
+        for (const namedObjectType of namedObjectTypes) {
           if (
-            objectType
+            namedObjectType
               .$fromRdfResource(resource, fromRdfResourceOptions)
               .ifRight((object) => {
-                resources.push({ object, objectType, resource });
+                resources.push({ object, namedObjectType, resource });
               })
               .isRight()
           ) {
@@ -2512,23 +2514,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (let { object, objectType, resource } of resources) {
+    for (let { object, namedObjectType, resource } of resources) {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
-        if (objectType) {
-          objectEither = objectType.$fromRdfResource(
+        if (namedObjectType) {
+          objectEither = namedObjectType.$fromRdfResource(
             resource,
             fromRdfResourceOptions,
           );
         } else {
           objectEither = Left(new Error("no object types"));
-          for (const tryObjectType of objectTypes) {
+          for (const tryObjectType of namedObjectTypes) {
             objectEither = tryObjectType.$fromRdfResource(
               resource,
               fromRdfResourceOptions,
             );
             if (objectEither.isRight()) {
-              objectType = tryObjectType;
+              namedObjectType = tryObjectType;
               break;
             }
           }
@@ -2538,11 +2540,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         object = objectEither.unsafeCoerce();
       }
-      if (!objectType) {
-        throw new Error("objectType should be set here");
+      if (!namedObjectType) {
+        throw new Error("namedObjectType should be set here");
       }
 
-      if (query?.filter && !objectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
         continue;
       }
 

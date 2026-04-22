@@ -1,28 +1,30 @@
 import { imports } from "./imports.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export function objectSetInterfaceDeclaration({
-  objectTypes,
+  namedObjectTypes,
   namedObjectUnionTypes,
 }: {
-  objectTypes: readonly ObjectType[];
+  namedObjectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   return code`\
 export interface ${syntheticNamePrefix}ObjectSet {
   ${joinCode(
-    objectTypes
-      .flatMap((objectType) =>
-        Object.values(objectSetMethodSignatures({ objectType })),
+    namedObjectTypes
+      .flatMap((namedObjectType) =>
+        Object.values(objectSetMethodSignatures({ namedObjectType })),
       )
       .concat(
         namedObjectUnionTypes.flatMap((namedObjectUnionType) =>
           Object.values(
-            objectSetMethodSignatures({ objectType: namedObjectUnionType }),
+            objectSetMethodSignatures({
+              namedObjectType: namedObjectUnionType,
+            }),
           ),
         ),
       )
