@@ -11,14 +11,14 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
-export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
+export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType> {
   readonly #identifierType: BlankNodeType | IdentifierType | IriType;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
@@ -30,7 +30,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
   } & Omit<
-    ConstructorParameters<typeof AbstractNamedUnionType<ObjectType>>[0],
+    ConstructorParameters<typeof AbstractNamedUnionType<NamedObjectType>>[0],
     "identifierType"
   >) {
     super({ ...superParameters, identifierType: Maybe.of(identifierType) });
@@ -50,7 +50,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   }
 
   @Memoize()
-  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+  get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
     return NamedObjectType_objectSetMethodNames.call(this);
   }
 
@@ -238,7 +238,7 @@ export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.#identifier
       string,
       {
         memberTypesWithProperty: boolean[];
-        property: ObjectType.ShaclProperty<Type>;
+        property: NamedObjectType.ShaclProperty<Type>;
       }
     > = {};
 

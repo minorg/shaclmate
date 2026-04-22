@@ -1,8 +1,10 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
+export function identifierTypeDeclarations(
+  this: NamedObjectType,
+): readonly Code[] {
   const ancestorObjectTypeWithSameIdentifierType =
     this.ancestorObjectTypes.find(
       (ancestorObjectType) =>

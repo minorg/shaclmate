@@ -1,5 +1,5 @@
 import { imports } from "./imports.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -24,10 +24,10 @@ export function unsupportedObjectSetMethodDeclarations({
   objectType: {
     readonly filterType: Code;
     readonly identifierTypeAlias: Code;
-    readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
+    readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
     readonly name: string;
   };
-}): Readonly<Record<keyof ObjectType.ObjectSetMethodNames, Code>> {
+}): Readonly<Record<keyof NamedObjectType.ObjectSetMethodNames, Code>> {
   const methodSignatures = objectSetMethodSignatures({
     objectType,
     parameterNamePrefix: "_",

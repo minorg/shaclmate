@@ -1,6 +1,6 @@
 import { imports } from "./imports.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -11,7 +11,7 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes,
   namedObjectUnionTypes,
 }: {
-  objectTypes: readonly ObjectType[];
+  objectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   const parameters = {

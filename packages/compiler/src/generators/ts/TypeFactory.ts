@@ -29,9 +29,9 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { NamedUnionType } from "./NamedUnionType.js";
-import { ObjectType } from "./ObjectType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
@@ -47,11 +47,11 @@ export class TypeFactory {
   > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectType.Property
+    NamedObjectType.Property
   > = new TermMap();
   private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
-    ObjectType
+    NamedObjectType
   > = new TermMap();
 
   createNamedObjectUnionType(
@@ -92,7 +92,7 @@ export class TypeFactory {
     return namedObjectUnionType;
   }
 
-  createObjectType(astType: ast.ObjectType): ObjectType {
+  createObjectType(astType: ast.ObjectType): NamedObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -110,7 +110,7 @@ export class TypeFactory {
     const staticModuleName =
       astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
-    const objectType = new ObjectType({
+    const objectType = new NamedObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
       declarationType: astType.tsObjectDeclarationType,
@@ -132,7 +132,7 @@ export class TypeFactory {
         astType.descendantObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
-      lazyDiscriminantProperty: (objectType: ObjectType) => {
+      lazyDiscriminantProperty: (objectType: NamedObjectType) => {
         // Discriminant property
         const discriminantOwnValue = !astType.abstract
           ? objectType.discriminantValue
@@ -146,10 +146,10 @@ export class TypeFactory {
           }
         }
 
-        return new ObjectType.DiscriminantProperty({
+        return new NamedObjectType.DiscriminantProperty({
           name: `${syntheticNamePrefix}type`,
           objectType,
-          type: new ObjectType.DiscriminantProperty.Type({
+          type: new NamedObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
             ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
@@ -157,8 +157,8 @@ export class TypeFactory {
           visibility: "public",
         });
       },
-      lazyIdentifierProperty: (objectType: ObjectType) =>
-        new ObjectType.IdentifierProperty({
+      lazyIdentifierProperty: (objectType: NamedObjectType) =>
+        new NamedObjectType.IdentifierProperty({
           identifierMintingStrategy: astType.identifierMintingStrategy,
           identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
           name: `${syntheticNamePrefix}identifier`,
@@ -171,8 +171,8 @@ export class TypeFactory {
         astType.parentObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
-      lazyProperties: (objectType: ObjectType) => {
-        const properties: ObjectType.Property[] = astType.properties
+      lazyProperties: (objectType: NamedObjectType) => {
+        const properties: NamedObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -201,7 +201,7 @@ export class TypeFactory {
           properties.splice(
             0,
             0,
-            new ObjectType.IdentifierPrefixProperty({
+            new NamedObjectType.IdentifierPrefixProperty({
               name: `${syntheticNamePrefix}identifierPrefix`,
               objectType,
               own: !astType.ancestorObjectTypes.some(
@@ -365,10 +365,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -378,10 +378,10 @@ export class TypeFactory {
       comment: astType.comment,
       label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        ObjectType | NamedObjectUnionType
+        NamedObjectType | NamedObjectUnionType
       >,
     });
   }
@@ -392,10 +392,10 @@ export class TypeFactory {
       label: astType.label,
 
       partialType: this.createType(astType.partialType) as
-        | ObjectType
+        | NamedObjectType
         | NamedObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
-        | ObjectType
+        | NamedObjectType
         | NamedObjectUnionType,
     });
   }
@@ -555,8 +555,8 @@ export class TypeFactory {
     objectType,
   }: {
     astObjectTypeProperty: ast.ObjectType.Property;
-    objectType: ObjectType;
-  }): ObjectType.Property {
+    objectType: NamedObjectType;
+  }): NamedObjectType.Property {
     {
       const cachedProperty =
         this.cachedObjectTypePropertiesByShapeIdentifier.get(
@@ -567,7 +567,7 @@ export class TypeFactory {
       }
     }
 
-    const property = new ObjectType.ShaclProperty({
+    const property = new NamedObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,

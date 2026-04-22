@@ -5,15 +5,15 @@ import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
  * Synthesize the $Object union.
  */
 export function synthesizeUberObjectUnionType(parameters: {
-  objectTypes: readonly ObjectType[];
+  objectTypes: readonly NamedObjectType[];
 }): NamedObjectUnionType {
   const objectTypes = parameters.objectTypes.filter(
     (objectType) => !objectType.extern, // && !objectType.name.startsWith(syntheticNamePrefix),

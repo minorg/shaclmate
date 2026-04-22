@@ -1,9 +1,9 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_isTypeFunctionDeclaration(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Code {
   return code`\
 export function is${this.name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {

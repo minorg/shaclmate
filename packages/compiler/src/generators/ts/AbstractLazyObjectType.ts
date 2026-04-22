@@ -3,8 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import type { OptionType } from "./OptionType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
@@ -198,7 +198,7 @@ export abstract class AbstractLazyObjectType<
 }
 
 export namespace AbstractLazyObjectType {
-  export type ObjectTypeConstraint = ObjectType | NamedObjectUnionType;
+  export type ObjectTypeConstraint = NamedObjectType | NamedObjectUnionType;
   export type PartialTypeConstraint =
     | ObjectTypeConstraint
     | OptionType<ObjectTypeConstraint>

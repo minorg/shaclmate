@@ -2,7 +2,7 @@ import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { PropertyVisibility } from "../../../enums/PropertyVisibility.js";
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
@@ -10,7 +10,7 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
-  protected readonly objectType: ObjectType;
+  protected readonly objectType: NamedObjectType;
 
   /**
    * Optional property to include in the parameters object of a class constructor.
@@ -108,7 +108,7 @@ export abstract class AbstractProperty<
     visibility,
   }: {
     name: string;
-    objectType: ObjectType;
+    objectType: NamedObjectType;
     type: TypeT;
     visibility: PropertyVisibility;
   }) {

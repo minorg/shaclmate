@@ -50,7 +50,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
-export class ObjectType extends AbstractType {
+export class NamedObjectType extends AbstractType {
   private readonly imports: readonly string[];
 
   protected readonly toRdfTypes: readonly NamedNode[];
@@ -100,17 +100,19 @@ export class ObjectType extends AbstractType {
     identifierType: BlankNodeType | IdentifierType | IriType;
     imports: readonly string[];
     label: Maybe<string>;
-    lazyAncestorObjectTypes: () => readonly ObjectType[];
-    lazyChildObjectTypes: () => readonly ObjectType[];
+    lazyAncestorObjectTypes: () => readonly NamedObjectType[];
+    lazyChildObjectTypes: () => readonly NamedObjectType[];
     lazyDiscriminantProperty: (
-      objectType: ObjectType,
-    ) => ObjectType.DiscriminantProperty;
+      objectType: NamedObjectType,
+    ) => NamedObjectType.DiscriminantProperty;
     lazyIdentifierProperty: (
-      objectType: ObjectType,
-    ) => ObjectType.IdentifierProperty;
-    lazyDescendantObjectTypes: () => readonly ObjectType[];
-    lazyParentObjectTypes: () => readonly ObjectType[];
-    lazyProperties: (objectType: ObjectType) => readonly ObjectType.Property[];
+      objectType: NamedObjectType,
+    ) => NamedObjectType.IdentifierProperty;
+    lazyDescendantObjectTypes: () => readonly NamedObjectType[];
+    lazyParentObjectTypes: () => readonly NamedObjectType[];
+    lazyProperties: (
+      objectType: NamedObjectType,
+    ) => readonly NamedObjectType.Property[];
     name: string;
     recursive: boolean;
     staticModuleName: string;
@@ -141,17 +143,17 @@ export class ObjectType extends AbstractType {
   }
 
   @Memoize()
-  get _discriminantProperty(): ObjectType.DiscriminantProperty {
+  get _discriminantProperty(): NamedObjectType.DiscriminantProperty {
     return this.lazyDiscriminantProperty(this);
   }
 
   @Memoize()
-  get ancestorObjectTypes(): readonly ObjectType[] {
+  get ancestorObjectTypes(): readonly NamedObjectType[] {
     return this.lazyAncestorObjectTypes();
   }
 
   @Memoize()
-  get childObjectTypes(): readonly ObjectType[] {
+  get childObjectTypes(): readonly NamedObjectType[] {
     return this.lazyChildObjectTypes();
   }
 
@@ -285,7 +287,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get descendantObjectTypes(): readonly ObjectType[] {
+  get descendantObjectTypes(): readonly NamedObjectType[] {
     return this.lazyDescendantObjectTypes();
   }
 
@@ -340,7 +342,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get identifierProperty(): ObjectType.IdentifierProperty {
+  get identifierProperty(): NamedObjectType.IdentifierProperty {
     return this.lazyIdentifierProperty(this);
   }
 
@@ -355,12 +357,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+  get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
     return NamedObjectType_objectSetMethodNames.call(this);
   }
 
   @Memoize()
-  get ownProperties(): readonly ObjectType.Property[] {
+  get ownProperties(): readonly NamedObjectType.Property[] {
     if (this.parentObjectTypes.length === 0) {
       // Consider that a root of the object type hierarchy "owns" the identifier and type discriminant properties
       // for all of its subtypes in the hierarchy.
@@ -371,19 +373,19 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly ObjectType.ShaclProperty<Type>[] {
+  get ownShaclProperties(): readonly NamedObjectType.ShaclProperty<Type>[] {
     return this.properties.filter(
       (property) => property.kind === "ShaclProperty",
     );
   }
 
   @Memoize()
-  get parentObjectTypes(): readonly ObjectType[] {
+  get parentObjectTypes(): readonly NamedObjectType[] {
     return this.lazyParentObjectTypes();
   }
 
   @Memoize()
-  get properties(): readonly ObjectType.Property[] {
+  get properties(): readonly NamedObjectType.Property[] {
     const properties = this.lazyProperties(this);
     const propertyNames = new Set<string>();
     for (const property of properties) {
@@ -539,28 +541,28 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     }
   }
 
-  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
+  private readonly lazyAncestorObjectTypes: () => readonly NamedObjectType[];
 
-  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
+  private readonly lazyChildObjectTypes: () => readonly NamedObjectType[];
 
-  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
+  private readonly lazyDescendantObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyDiscriminantProperty: (
-    objectType: ObjectType,
-  ) => ObjectType.DiscriminantProperty;
+    objectType: NamedObjectType,
+  ) => NamedObjectType.DiscriminantProperty;
 
   private readonly lazyIdentifierProperty: (
-    objectType: ObjectType,
-  ) => ObjectType.IdentifierProperty;
+    objectType: NamedObjectType,
+  ) => NamedObjectType.IdentifierProperty;
 
-  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
+  private readonly lazyParentObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyProperties: (
-    objectType: ObjectType,
-  ) => readonly ObjectType.Property[];
+    objectType: NamedObjectType,
+  ) => readonly NamedObjectType.Property[];
 }
 
-export namespace ObjectType {
+export namespace NamedObjectType {
   export const IdentifierPrefixProperty = _IdentifierPrefixProperty;
   export type IdentifierPrefixProperty = _IdentifierPrefixProperty;
   export const IdentifierProperty = _IdentifierProperty;

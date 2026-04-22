@@ -1,5 +1,5 @@
 import { Maybe } from "purify-ts";
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
@@ -8,7 +8,7 @@ import { NamedObjectType_hashFunctionOrMethodDeclarations } from "./NamedObjectT
 import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
 import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
 
-function NamedObjectType_constructorDeclaration(this: ObjectType): Code {
+function NamedObjectType_constructorDeclaration(this: NamedObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
     property.constructorParametersSignature.toList(),
   );
@@ -58,7 +58,7 @@ ${joinCode(statements)}
 }`;
 }
 
-export function NamedObjectType_classDeclaration(this: ObjectType): Code {
+export function NamedObjectType_classDeclaration(this: NamedObjectType): Code {
   this.ensureAtMostOneSuperObjectType();
 
   return code`\
@@ -89,7 +89,7 @@ ${joinCode(
 }
 
 function NamedObjectType_toStringMethodDeclaration(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("json")) {
     return Maybe.empty();

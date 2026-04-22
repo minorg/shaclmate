@@ -1,5 +1,5 @@
 import { imports } from "./imports.js";
-import type { ObjectType } from "./ObjectType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -7,14 +7,14 @@ export function objectSetMethodSignatures(parameters: {
   objectType: {
     readonly filterType: Code;
     readonly identifierTypeAlias: Code;
-    readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
+    readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
     readonly name: string;
   };
   parameterNamePrefix?: string;
   queryT?: string;
 }): Readonly<
   Record<
-    keyof ObjectType.ObjectSetMethodNames,
+    keyof NamedObjectType.ObjectSetMethodNames,
     {
       readonly name: string;
       readonly parameters: Code;

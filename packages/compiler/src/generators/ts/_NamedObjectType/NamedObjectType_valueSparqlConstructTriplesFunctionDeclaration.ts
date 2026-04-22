@@ -1,11 +1,11 @@
 import { Maybe } from "purify-ts";
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {
     return Maybe.empty();

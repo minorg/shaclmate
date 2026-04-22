@@ -1,7 +1,7 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { imports } from "../imports.js";
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -15,7 +15,7 @@ const variables = {
 };
 
 export function NamedObjectType_focusSparqlWherePatternsFunctionDeclaration(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {
     return Maybe.empty();

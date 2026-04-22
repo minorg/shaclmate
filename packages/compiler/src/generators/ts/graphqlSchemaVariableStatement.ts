@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { imports } from "./imports.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -9,7 +9,7 @@ function graphqlQueryObjectType({
   objectTypes,
   namedObjectUnionTypes,
 }: {
-  objectTypes: readonly ObjectType[];
+  objectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   return code`new ${imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
@@ -87,7 +87,7 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${obj
 }
 
 export function graphqlSchemaVariableStatement(parameters: {
-  objectTypes: readonly ObjectType[];
+  objectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: NamedObjectUnionType[];
 }): Maybe<Code> {
   const objectTypes = parameters.objectTypes.filter(

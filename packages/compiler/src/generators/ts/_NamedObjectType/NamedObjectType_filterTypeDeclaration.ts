@@ -1,8 +1,10 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_filterTypeDeclaration(this: ObjectType): Code {
+export function NamedObjectType_filterTypeDeclaration(
+  this: NamedObjectType,
+): Code {
   const members: Code[] = [];
   if (this.properties.length > 0) {
     const filterProperties: Record<string, Code> = {};

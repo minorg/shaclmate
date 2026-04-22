@@ -1,9 +1,9 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_schemaVariableStatement(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Code {
   return code`\
 export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(

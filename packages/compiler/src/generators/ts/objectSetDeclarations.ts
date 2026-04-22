@@ -1,5 +1,5 @@
+import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { ObjectType } from "./ObjectType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
@@ -9,7 +9,7 @@ export function objectSetDeclarations({
   namedObjectUnionTypes,
   ...parameters
 }: {
-  objectTypes: readonly ObjectType[];
+  objectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): readonly Code[] {
   const objectTypes = parameters.objectTypes.filter(

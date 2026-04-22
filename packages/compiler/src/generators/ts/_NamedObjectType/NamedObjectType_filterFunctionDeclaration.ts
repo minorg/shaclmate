@@ -1,9 +1,9 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_filterFunctionDeclaration(
-  this: ObjectType,
+  this: NamedObjectType,
 ): Code {
   const statements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {

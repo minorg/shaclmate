@@ -1,4 +1,4 @@
-import type { ObjectType } from "../ObjectType.js";
+import type { NamedObjectType } from "../NamedObjectType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
@@ -6,7 +6,7 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 const hasherVariable = code`_hasher`;
 
 export function NamedObjectType_hashFunctionOrMethodDeclarations(
-  this: ObjectType,
+  this: NamedObjectType,
 ): readonly Code[] {
   if (!this.features.has("hash")) {
     return [];
