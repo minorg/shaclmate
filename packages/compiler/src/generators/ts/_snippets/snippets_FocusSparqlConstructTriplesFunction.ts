@@ -5,7 +5,7 @@ import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 export const snippets_FocusSparqlConstructTriplesFunction = conditionalOutput(
   `${syntheticNamePrefix}FocusSparqlConstructTriplesFunction`,
   code`\
-type ${syntheticNamePrefix}FocusSparqlConstructTriplesFunction<FilterT, SchemaT> = 
+type ${syntheticNamePrefix}FocusSparqlConstructTriplesFunction<FilterT> = 
   (parameters: {
     filter: FilterT | undefined;
     focusIdentifier: ${imports.NamedNode} | ${imports.Variable};

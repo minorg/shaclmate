@@ -66,6 +66,10 @@ export class ExternClass extends AbstractBaseClassForExternClass {
 }
 
 export namespace ExternClass {
+  export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
+  export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
+  export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+
   // Called by interface functions
   export function $equals(left: ExternClass, right: ExternClass) {
     return left.$equals(right);
@@ -118,12 +122,16 @@ export namespace ExternClass {
   }
 
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
+
+  export const $focusSparqlConstructTriples =
+    AbstractBaseClassForExternClassStatic.$focusSparqlConstructTriples;
+  export const $focusSparqlWherePatterns =
+    AbstractBaseClassForExternClassStatic.$focusSparqlWherePatterns;
+
   export const $fromRdfType = dataFactory.namedNode(
     "http://example.com/ExternClass",
   );
-  export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
-  export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
-  export type $Json = AbstractBaseClassForExternClassStatic.$Json;
+
   export const $jsonZodSchema =
     AbstractBaseClassForExternClassStatic.$jsonZodSchema;
   export const $jsonUiSchema =
@@ -131,8 +139,8 @@ export namespace ExternClass {
 
   export const $schema = AbstractBaseClassForExternClassStatic.$schema;
 
-  export const $sparqlConstructTriples =
-    AbstractBaseClassForExternClassStatic.$sparqlConstructTriples;
-  export const $sparqlWherePatterns =
-    AbstractBaseClassForExternClassStatic.$sparqlWherePatterns;
+  export const $valueSparqlConstructTriples =
+    AbstractBaseClassForExternClassStatic.$valueSparqlConstructTriples;
+  export const $valueSparqlWherePatterns =
+    AbstractBaseClassForExternClassStatic.$valueSparqlWherePatterns;
 }

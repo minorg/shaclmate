@@ -11,7 +11,7 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_numericSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}numericSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}numericSparqlWherePatterns<T extends bigint | number>: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_NumericFilter}<T>, ${snippets_NumericSchema}<T>> = ({ filter, valueVariable, ...otherParameters }) => {
+function $numericSparqlWherePatterns<T extends bigint | number>({ filter, valueVariable, ...otherParameters }: Parameters<${snippets_ValueSparqlWherePatternsFunction}<${snippets_NumericFilter}<T>, ${snippets_NumericSchema}<T>>>[0]): ReturnType<${snippets_ValueSparqlWherePatternsFunction}<${snippets_NumericFilter}<T>, ${snippets_NumericSchema}<T>>> {
   const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
 
   if (filter) {

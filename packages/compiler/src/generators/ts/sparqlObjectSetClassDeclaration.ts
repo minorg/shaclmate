@@ -14,16 +14,14 @@ export function sparqlObjectSetClassDeclaration({
   objectTypes: readonly ObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
-  const sparqlWherePatternsFunctionType = code`(parameters: { filter: ObjectFilterT | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string; }) => readonly ${snippets.SparqlPattern}[]`;
-
   const parameters = {
     constructObjectType: code`objectType: {\
+  ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;
   ${syntheticNamePrefix}fromRdfResource:  ${snippets.FromRdfResourceFunction}<ObjectT>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
-  ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
-    selectObjectTypeType: code`objectType: { ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
+    selectObjectTypeType: code`objectType: { ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
   };
 
   const typeParameters = {
@@ -233,7 +231,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       patterns = patterns.concat(query.where(this.${syntheticNamePrefix}objectVariable));
     }
 
-    patterns = patterns.concat(objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.${syntheticNamePrefix}objectVariable.value }));
+    patterns = patterns.concat(objectType.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.${syntheticNamePrefix}objectVariable.value }));
 
     patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
 

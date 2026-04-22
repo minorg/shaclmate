@@ -6,7 +6,7 @@ import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 export const snippets_FocusSparqlWherePatternsFunction = conditionalOutput(
   `${syntheticNamePrefix}FocusSparqlWherePatternsFunction`,
   code`\
-type ${syntheticNamePrefix}FocusSparqlWherePatternsFunction<FilterT, SchemaT> =
+type ${syntheticNamePrefix}FocusSparqlWherePatternsFunction<FilterT> =
   (parameters: {
     filter: FilterT | undefined;
     focusIdentifier: ${imports.NamedNode} | ${imports.Variable};
