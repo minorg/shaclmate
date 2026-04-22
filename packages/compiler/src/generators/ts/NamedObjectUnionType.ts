@@ -1,3 +1,4 @@
+import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
@@ -12,7 +13,7 @@ import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   private readonly identifierType: BlankNodeType | IdentifierType | IriType;
@@ -58,10 +59,96 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   }
 
   protected override get staticModuleDeclarations(): readonly Code[] {
-    let staticModuleDeclarations = super.staticModuleDeclarations.concat();
+    return super.staticModuleDeclarations.concat(
+      ...this.identifierTypeDeclarations,
+      ...this.focusSparqlConstructTriplesFunctionDeclaration.toList(),
+      ...this.focusSparqlWherePatternsFunctionDeclaration.toList(),
+      ...this.fromRdfResourceFunctionDeclaration.toList(),
+      ...this.graphqlTypeVariableStatement.toList(),
+      ...this.isTypeFunctionDeclaration.toList(),
+      this.schemaVariableStatement,
+      ...this.toRdfResourceFunctionDeclaration.toList(),
+    );
+  }
 
-    if (this.features.has("graphql")) {
-      staticModuleDeclarations.push(code`\
+  private get focusSparqlConstructTriplesFunctionDeclaration(): Maybe<Code> {
+    if (!this.features.has("sparql")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(code`\
+export function ${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
+  return [${joinCode(
+    this.concreteMemberTypeDescriptors.map(
+      ({ memberType }) =>
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+    ),
+    { on: ", " },
+  )}];
+}`);
+  }
+
+  private get focusSparqlWherePatternsFunctionDeclaration(): Maybe<Code> {
+    if (!this.features.has("sparql")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(code`\
+export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
+${joinCode([
+  code`let patterns: ${snippets.SparqlPattern}[] = [];`,
+  code`\
+if (focusIdentifier.termType === "Variable") {
+  patterns = patterns.concat(${this.identifierType.valueSparqlWherePatternsFunction}({
+      filter: filter?.${syntheticNamePrefix}identifier,
+      ignoreRdfType: false,
+      preferredLanguages,
+      propertyPatterns: [],
+      schema: ${this.identifierType.schema},
+      valueVariable: focusIdentifier,
+      variablePrefix,
+  }));
+}`,
+  code`patterns.push({ patterns: [${joinCode(
+    this.concreteMemberTypeDescriptors.map(
+      ({ memberType }) =>
+        code`${{
+          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+          type: literalOf("group"),
+        }}`,
+    ),
+    { on: ", " },
+  )}], type: "union" });`,
+  code`return patterns;`,
+])}
+}`);
+  }
+
+  private get fromRdfResourceFunctionDeclaration(): Maybe<Code> {
+    if (!this.features.has("rdf")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(code`\
+export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
+  ${this.concreteMemberTypeDescriptors.reduce(
+    (expression, { memberType }) => {
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
+      return expression !== null
+        ? code`${expression}.altLazy(() => ${memberTypeExpression})`
+        : memberTypeExpression;
+    },
+    null as Code | null,
+  )};`);
+  }
+
+  private get graphqlTypeVariableStatement(): Maybe<Code> {
+    if (!this.features.has("graphql")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(
+      code`\
 export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
@@ -73,52 +160,23 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
           { on: ", " },
         )}]`,
       }});
-`);
-    }
+`,
+    );
+  }
 
-    staticModuleDeclarations = staticModuleDeclarations.concat(
+  private get identifierTypeDeclarations(): readonly Code[] {
+    return [
       code`export type ${syntheticNamePrefix}Identifier = ${this.identifierType.name};`,
       code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.identifierType.fromStringFunction, this.identifierType.toStringFunction])} }`,
-    );
+    ];
+  }
 
-    if (this.features.has("rdf")) {
-      staticModuleDeclarations = staticModuleDeclarations.concat(
-        code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
-  ${this.concreteMemberTypeDescriptors.reduce(
-    (expression, { memberType }) => {
-      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
-      return expression !== null
-        ? code`${expression}.altLazy(() => ${memberTypeExpression})`
-        : memberTypeExpression;
-    },
-    null as Code | null,
-  )};`,
-
-        code`\
-export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
-${joinCode(
-  this.concreteMemberTypeDescriptors
-    .map(({ memberType }) => {
-      let returnExpression: Code;
-      switch (memberType.declarationType) {
-        case "class":
-          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(options)`;
-          break;
-        case "interface":
-          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
-          break;
-      }
-      return code`if (${memberType.staticModuleName}.is${memberType.name}(value)) { return ${returnExpression}; }`;
-    })
-    .concat(code`throw new Error("unrecognized type");`),
-)}
-}`,
-      );
+  private get isTypeFunctionDeclaration(): Maybe<Code> {
+    if (this._name === `${syntheticNamePrefix}Object`) {
+      return Maybe.empty();
     }
 
-    if (this._name !== `${syntheticNamePrefix}Object`) {
-      staticModuleDeclarations.push(code`\
+    return Maybe.of(code`\
     export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
         this.memberTypes.map(
@@ -128,11 +186,6 @@ ${joinCode(
         { on: " || " },
       )};
     }`);
-    }
-
-    staticModuleDeclarations.push(this.schemaVariableStatement);
-
-    return staticModuleDeclarations;
   }
 
   private get schemaVariableStatement(): Code {
@@ -191,6 +244,32 @@ ${{
   ...super.schemaObject,
   properties: code`{ ${joinCode(propertiesObject, { on: "; " })} }`,
 }} as const;`;
+  }
+
+  private get toRdfResourceFunctionDeclaration(): Maybe<Code> {
+    if (!this.features.has("rdf")) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(code`\
+export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
+${joinCode(
+  this.concreteMemberTypeDescriptors
+    .map(({ memberType }) => {
+      let returnExpression: Code;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(options)`;
+          break;
+        case "interface":
+          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
+          break;
+      }
+      return code`if (${memberType.staticModuleName}.is${memberType.name}(value)) { return ${returnExpression}; }`;
+    })
+    .concat(code`throw new Error("unrecognized type");`),
+)}
+}`);
   }
 
   override graphqlResolveExpression({
