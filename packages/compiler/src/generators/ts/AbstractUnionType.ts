@@ -78,7 +78,7 @@ export abstract class AbstractUnionType<
             // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
             const memberOwnDiscriminantPropertyValues =
               new Set<AbstractType.DiscriminantProperty.Value>();
-            for (const member of this.members) {
+            for (const member of members) {
               for (const ownDiscriminantPropertyValue of member.type.discriminantProperty.unsafeCoerce()
                 .ownValues) {
                 memberOwnDiscriminantPropertyValues.add(

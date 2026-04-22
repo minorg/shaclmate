@@ -186,8 +186,8 @@ export abstract class AbstractLazyObjectType<
     );
 
     const caseBlocks = resolvedNamedObjectUnionType.members.map(
-      ({ discriminantValues, type }) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${type.newExpression({ parameters: variables.resolvedObjectUnion })};`;
+      ({ discriminantValues }, memberI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(

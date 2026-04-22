@@ -14,7 +14,7 @@ export class UnionType<
     return this.members.every(
       (member) =>
         member.type.kind === "ObjectType" ||
-        (member.type.kind === "UnionType" && member.type.isObjectUnionType),
+        (member.type.kind === "UnionType" && member.type.isObjectUnionType()),
     );
   }
 }

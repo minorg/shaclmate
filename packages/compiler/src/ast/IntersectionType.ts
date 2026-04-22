@@ -17,7 +17,7 @@ export class IntersectionType<
       (member) =>
         member.type.kind === "ObjectType" ||
         (member.type.kind === "IntersectionType" &&
-          member.type.isObjectIntersectionType),
+          member.type.isObjectIntersectionType()),
     );
   }
 }
