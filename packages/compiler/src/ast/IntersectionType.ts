@@ -13,11 +13,14 @@ export class IntersectionType<
   override readonly kind = "IntersectionType";
 
   isObjectIntersectionType(): this is ObjectIntersectionType {
-    return this.members.every(
-      (member) =>
-        member.type.kind === "ObjectType" ||
-        (member.type.kind === "IntersectionType" &&
-          member.type.isObjectIntersectionType()),
+    return (
+      this.members.length > 0 &&
+      this.members.every(
+        (member) =>
+          member.type.kind === "ObjectType" ||
+          (member.type.kind === "IntersectionType" &&
+            member.type.isObjectIntersectionType()),
+      )
     );
   }
 }
