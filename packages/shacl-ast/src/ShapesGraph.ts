@@ -542,7 +542,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }) {
-      return generated.NodeShape.$fromRdf(resource, {
+      return generated.NodeShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
@@ -555,7 +555,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, Ontology> {
-      return generated.Ontology.$fromRdf(resource, {
+      return generated.Ontology.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
@@ -568,7 +568,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, PropertyGroup> {
-      return generated.PropertyGroup.$fromRdf(resource, {
+      return generated.PropertyGroup.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map((propertyGroup) => new PropertyGroup(propertyGroup));
@@ -583,7 +583,7 @@ export namespace ShapesGraph {
       resource: Resource;
       shapesGraph: DefaultShapesGraph;
     }): Either<Error, DefaultPropertyShape> {
-      return generated.PropertyShape.$fromRdf(resource, {
+      return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       }).map(
