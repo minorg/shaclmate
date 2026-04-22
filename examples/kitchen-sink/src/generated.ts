@@ -1767,8 +1767,30 @@ type $PropertiesFromRdfResourceFunction<T> = (
 export type $PropertyPath = RdfjsResourcePropertyPath;
 
 export namespace $PropertyPath {
-  export const $fromRdfResource = RdfjsResourcePropertyPath.$fromRdf;
-  export const $toRdfResource = RdfjsResourcePropertyPath.$toRdf;
+  export type $Filter = object;
+
+  export function $filter(_filter: $Filter, _value: $PropertyPath): boolean {
+    return true;
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
+    RdfjsResourcePropertyPath.$fromRdf;
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    $PropertyPath
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => $fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const $schema: Readonly<object> = {};
+
+  export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
+    RdfjsResourcePropertyPath.$toRdf;
 }
 
 namespace $RdfVocabularies {
