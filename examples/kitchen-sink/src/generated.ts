@@ -2742,6 +2742,14 @@ export namespace NamedUnion1 {
   export const $jsonZodSchema = () =>
     z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
 
+  export function $parseJson(json: unknown): Either<Error, NamedUnion1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (value: NamedUnion1): NamedUnion1.$Json => {
     if (typeof value === "object") {
       return { "@id": value.value };
@@ -2984,6 +2992,14 @@ export namespace NamedUnion2 {
       z.object({ type: z.literal("date"), value: z.iso.date() }),
       z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
     ]);
+
+  export function $parseJson(json: unknown): Either<Error, NamedUnion2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (value: NamedUnion2): NamedUnion2.$Json => {
     if (value.type === "date") {
@@ -68875,6 +68891,14 @@ export namespace ClassUnion {
       ClassUnionMember2.$jsonZodSchema(),
     ]);
 
+  export function $parseJson(json: unknown): Either<Error, ClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (value: ClassUnion): ClassUnion.$Json => {
     if (ClassUnionMember1.isClassUnionMember1(value)) {
       return value.$toJson();
@@ -69344,6 +69368,14 @@ export namespace FlattenClassUnion {
       ClassUnionMember2.$jsonZodSchema(),
       FlattenClassUnionMember3.$jsonZodSchema(),
     ]);
+
+  export function $parseJson(json: unknown): Either<Error, FlattenClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (
     value: FlattenClassUnion,
@@ -69854,6 +69886,14 @@ export namespace InterfaceUnion {
       InterfaceUnionMember2.$jsonZodSchema(),
     ]);
 
+  export function $parseJson(json: unknown): Either<Error, InterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (value: InterfaceUnion): InterfaceUnion.$Json => {
     if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
       return InterfaceUnionMember1.$toJson(value);
@@ -70307,6 +70347,16 @@ export namespace LazilyResolvedClassUnion {
       LazilyResolvedClassUnionMember1.$jsonZodSchema(),
       LazilyResolvedClassUnionMember2.$jsonZodSchema(),
     ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (
     value: LazilyResolvedClassUnion,
@@ -70804,6 +70854,16 @@ export namespace LazilyResolvedInterfaceUnion {
       LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
     ]);
 
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedInterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (
     value: LazilyResolvedInterfaceUnion,
   ): LazilyResolvedInterfaceUnion.$Json => {
@@ -71299,6 +71359,14 @@ export namespace PartialClassUnion {
       PartialClassUnionMember2.$jsonZodSchema(),
     ]);
 
+  export function $parseJson(json: unknown): Either<Error, PartialClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (
     value: PartialClassUnion,
   ): PartialClassUnion.$Json => {
@@ -71752,6 +71820,16 @@ export namespace PartialInterfaceUnion {
       PartialInterfaceUnionMember1.$jsonZodSchema(),
       PartialInterfaceUnionMember2.$jsonZodSchema(),
     ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialInterfaceUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (
     value: PartialInterfaceUnion,
@@ -72211,6 +72289,16 @@ export namespace NoRdfTypeClassUnion {
       NoRdfTypeClassUnionMember2.$jsonZodSchema(),
     ]);
 
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NoRdfTypeClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
   export const $toJson = (
     value: NoRdfTypeClassUnion,
   ): NoRdfTypeClassUnion.$Json => {
@@ -72660,6 +72748,16 @@ export namespace RecursiveClassUnion {
       RecursiveClassUnionMember1.$jsonZodSchema(),
       RecursiveClassUnionMember2.$jsonZodSchema(),
     ]);
+
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, RecursiveClassUnion> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (
     value: RecursiveClassUnion,
@@ -75574,6 +75672,14 @@ export namespace $Object {
       $DefaultPartial.$jsonZodSchema(),
       $NamedDefaultPartial.$jsonZodSchema(),
     ]);
+
+  export function $parseJson(json: unknown): Either<Error, $Object> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
+    if (!$jsonSafeParseResult.success) {
+      return Left($jsonSafeParseResult.error);
+    }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
   export const $toJson = (value: $Object): $Object.$Json => {
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {

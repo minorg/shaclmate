@@ -60,6 +60,10 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     return code`typeof ${this.schema}`;
   }
 
+  protected override get inlineFilterType(): Code {
+    return code`${super.inlineFilterType} & { readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType}; }`;
+  }
+
   protected override get staticModuleDeclarations(): readonly Code[] {
     return super.staticModuleDeclarations.concat(
       ...this.identifierTypeDeclarations,
@@ -128,10 +132,6 @@ if (focusIdentifier.termType === "Variable") {
   code`return patterns;`,
 ])}
 }`);
-  }
-
-  protected override get inlineFilterType(): Code {
-    return code`${super.inlineFilterType} & { readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType}; }`;
   }
 
   private get fromRdfResourceFunctionDeclaration(): Maybe<Code> {

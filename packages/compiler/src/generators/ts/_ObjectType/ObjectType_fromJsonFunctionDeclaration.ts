@@ -1,5 +1,4 @@
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
