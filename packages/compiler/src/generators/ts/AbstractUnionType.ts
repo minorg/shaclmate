@@ -313,7 +313,9 @@ ${joinCode(
   this.concreteMemberTypeDescriptors.map(
     ({ jsonTypeCheck, memberType, primaryDiscriminantValue, payload }) => {
       let memberTypeFromJsonExpression = memberType.fromJsonExpression({
-        variables: { value: payload(code`value`) },
+        variables: {
+          value: code`(${payload(code`value`)} as ${memberType.jsonType().name})`,
+        },
       });
       if (this.discriminant.kind === "envelope") {
         memberTypeFromJsonExpression = code`{ ${this.discriminant.name}: "${primaryDiscriminantValue}" as const, value: ${memberTypeFromJsonExpression} }`;

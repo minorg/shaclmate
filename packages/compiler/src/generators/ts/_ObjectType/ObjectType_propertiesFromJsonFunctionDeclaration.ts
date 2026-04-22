@@ -1,7 +1,5 @@
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -16,19 +14,15 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const initializers: string[] = [];
-  const returnType: Code[] = [];
+  const initializers: Code[] = [];
   const statements: Code[] = [];
-  const returnTypeSignatures: Code[] = [];
+  const propertyReturnTypeSignatures: Code[] = [];
+  const returnType: Code[] = [];
 
-  const chains: { expression: Code; variable: string }[] = [];
-
-  this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    chains.push({
-      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
-      variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
-    });
-    initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
+  this.parentObjectTypes.forEach((parentObjectType) => {
+    initializers.push(
+      code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
+    );
     returnType.push(
       code`ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>`,
     );
@@ -39,32 +33,20 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
       variables,
     });
     if (propertyFromJsonStatements.length > 0) {
+      propertyReturnTypeSignatures.push(
+        code`${property.name}: ${property.type.name};`,
+      );
+      initializers.push(code`${property.name}`);
       statements.push(...propertyFromJsonStatements);
-      initializers.push(property.name);
-      returnTypeSignatures.push(code`${property.name}: ${property.type.name};`);
     }
   }
+  statements.push(code`return { ${joinCode(initializers, { on: ", " })} };`);
 
-  const resultExpression = `{ ${initializers.join(", ")} }`;
-  if (chains.length === 0) {
-    statements.push(code`return ${resultExpression}`);
-  } else {
-    statements.push(
-      code`return ${chains
-        .reverse()
-        .reduce(
-          (acc, { expression, variable }, chainI) =>
-            code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
-          code`(${resultExpression})`,
-        )}`,
-    );
-  }
-
-  if (returnTypeSignatures.length > 0) {
+  if (propertyReturnTypeSignatures.length > 0) {
     returnType.splice(
       0,
       0,
-      code`{ ${joinCode(returnTypeSignatures, { on: " " })} }`,
+      code`{ ${joinCode(propertyReturnTypeSignatures, { on: " " })} }`,
     );
   }
 

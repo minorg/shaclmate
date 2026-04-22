@@ -93,7 +93,7 @@ export class ListType<
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
     return new AbstractCollectionType.JsonType(
-      code`readonly (${this.itemType.jsonType().name})[]`,
+      code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`,
     );
   }
 

@@ -48,7 +48,7 @@ export class SetType<
 
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
-    const name = code`readonly (${this.itemType.jsonType().name})[]`;
+    const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`;
     if (this.minCount === 0) {
       return new AbstractCollectionType.JsonType(name, { optional: true });
     }

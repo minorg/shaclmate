@@ -207,6 +207,9 @@ export abstract class AbstractCollectionType<
     if (!this._mutable && this.minCount > 0) {
       expression = code`${imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
+    if (this.minCount === 0) {
+      expression = code`(${expression} ?? [])`;
+    }
     const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: valueVariable },
