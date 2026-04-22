@@ -9,19 +9,6 @@ export class UnionType<
   MemberTypeT extends UnionType.MemberType = UnionType.MemberType,
 > extends AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT> {
   override readonly kind = "UnionType";
-  readonly memberDiscriminantValues: readonly string[];
-
-  constructor({
-    memberDiscriminantValues,
-    ...superParameters
-  }: {
-    memberDiscriminantValues: readonly string[];
-  } & ConstructorParameters<
-    typeof AbstractCompoundType<UnionType.Member<MemberTypeT>, MemberTypeT>
-  >[0]) {
-    super(superParameters);
-    this.memberDiscriminantValues = memberDiscriminantValues;
-  }
 
   isObjectUnionType(): this is ObjectUnionType {
     return this.members.every(
@@ -35,7 +22,7 @@ export class UnionType<
 export namespace UnionType {
   export interface Member<TypeT extends UnionType.MemberType>
     extends AbstractCompoundType.Member<TypeT> {
-    readonly discriminantValue: Maybe<string>;
+    readonly discriminantValue: Maybe<number | string>;
   }
 
   export type MemberType = AbstractCompoundType.MemberType;

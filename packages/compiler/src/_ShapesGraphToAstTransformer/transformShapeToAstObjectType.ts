@@ -29,8 +29,8 @@ function isObjectTypePropertyRequired(property: {
     case "SetType":
       return property.type.minCount > 0;
     case "UnionType":
-      return property.type.memberTypes.every((memberType) =>
-        isObjectTypePropertyRequired({ type: memberType }),
+      return property.type.members.every((member) =>
+        isObjectTypePropertyRequired({ type: member.type }),
       );
     case "BlankNodeType":
     case "IdentifierType":

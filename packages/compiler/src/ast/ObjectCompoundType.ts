@@ -70,22 +70,22 @@ export namespace ObjectCompoundType {
   ): readonly ObjectType[] {
     const memberObjectTypes_: ObjectType[] = [];
 
-    for (const memberType of objectCompoundType.memberTypes) {
-      switch (memberType.kind) {
+    for (const member of objectCompoundType.members) {
+      switch (member.type.kind) {
         case "ObjectType":
-          memberObjectTypes_.push(memberType);
+          memberObjectTypes_.push(member.type);
           break;
         case "IntersectionType":
         case "UnionType": {
-          invariant(memberType.kind === objectCompoundType.kind);
-          memberObjectTypes_.push(...memberObjectTypes(memberType));
+          invariant(member.type.kind === objectCompoundType.kind);
+          memberObjectTypes_.push(...memberObjectTypes(member.type));
           break;
         }
       }
     }
 
     invariant(
-      memberObjectTypes_.length >= objectCompoundType.memberTypes.length,
+      memberObjectTypes_.length >= objectCompoundType.members.length,
       "object compound type has no member ObjectType's",
     );
 

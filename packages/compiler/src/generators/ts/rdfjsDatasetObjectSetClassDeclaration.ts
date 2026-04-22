@@ -135,10 +135,10 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
     ${joinCode(
-      objectType.memberTypes
-        .filter((memberType) => !memberType.abstract)
-        .map((memberType) =>
-          runtimeObjectType(objectType.filterFunction, memberType),
+      objectType.members
+        .filter((member) => !member.type.abstract)
+        .map((member) =>
+          runtimeObjectType(objectType.filterFunction, member.type),
         ),
       { on: ", " },
     )}

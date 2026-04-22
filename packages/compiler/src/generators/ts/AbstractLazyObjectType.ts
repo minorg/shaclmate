@@ -181,13 +181,13 @@ export abstract class AbstractLazyObjectType<
     variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
-      resolvedNamedObjectUnionType.memberTypes.length ===
-        partialNamedObjectUnionType.memberTypes.length,
+      resolvedNamedObjectUnionType.members.length ===
+        partialNamedObjectUnionType.members.length,
     );
 
-    const caseBlocks = resolvedNamedObjectUnionType.memberTypeDescriptors.map(
-      ({ discriminantValues }, objectTypeI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+    const caseBlocks = resolvedNamedObjectUnionType.members.map(
+      ({ discriminantValues, type }) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${type.newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(

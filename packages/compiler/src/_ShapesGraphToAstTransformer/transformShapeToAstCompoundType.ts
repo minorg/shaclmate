@@ -54,7 +54,7 @@ export function transformShapeToAstCompoundType(
 
         invariant(memberShapes.length > 0);
 
-        const memberDiscriminantValues: string[] = [];
+        const memberDiscriminantValues = new Set<number | string>();
         const compoundType: ast.IntersectionType | ast.UnionType = new (
           compoundTypeKind === "IntersectionType"
             ? ast.IntersectionType
@@ -63,7 +63,6 @@ export function transformShapeToAstCompoundType(
           comment: shape.comment,
           label: shape.label,
           name: shapeAstTypeName(shape),
-          memberDiscriminantValues,
           shapeIdentifier: shape.identifier,
           tsFeatures,
         });
@@ -114,23 +113,21 @@ export function transformShapeToAstCompoundType(
                   );
                 }
 
-                let memberDiscriminantValue: string | undefined;
+                let memberDiscriminantValue: number | string | undefined;
                 if (compoundTypeKind === "UnionType") {
                   if (memberShape.kind === "NodeShape") {
                     memberDiscriminantValue =
                       memberShape.discriminantValue.extract();
                   }
                   if (memberDiscriminantValue) {
-                    if (
-                      memberDiscriminantValues.includes(memberDiscriminantValue)
-                    ) {
+                    if (memberDiscriminantValues.has(memberDiscriminantValue)) {
                       return Left(
                         new Error(
                           `${shape} member ${memberShape} has a duplicate discriminant value: ${memberDiscriminantValue}`,
                         ),
                       );
                     }
-                    memberDiscriminantValues.push(memberDiscriminantValue);
+                    memberDiscriminantValues.add(memberDiscriminantValue);
                   }
                 }
 

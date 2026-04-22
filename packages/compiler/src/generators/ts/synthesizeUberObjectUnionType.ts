@@ -62,9 +62,11 @@ export function synthesizeUberObjectUnionType(parameters: {
       return features;
     }, new Set<TsFeature>()),
     identifierType,
-    memberDiscriminantValues: [],
     label: Maybe.empty(),
-    memberTypes: objectTypes,
+    members: objectTypes.map((objectType) => ({
+      discriminantValue: Maybe.empty(),
+      type: objectType,
+    })),
     name: `${syntheticNamePrefix}Object`,
     recursive: false,
   });

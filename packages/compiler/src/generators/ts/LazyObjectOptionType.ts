@@ -74,8 +74,8 @@ export class LazyObjectOptionType extends Super {
     } else if (
       this.resolveType.itemType.kind === "NamedObjectUnionType" &&
       this.partialType.itemType.kind === "NamedObjectUnionType" &&
-      this.resolveType.itemType.memberTypes.length ===
-        this.partialType.itemType.memberTypes.length
+      this.resolveType.itemType.members.length ===
+        this.partialType.itemType.members.length
     ) {
       const maybeMap = code`.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
 

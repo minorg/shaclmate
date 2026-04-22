@@ -92,8 +92,8 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     return Maybe.of(code`\
 export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
-    this.concreteMemberTypeDescriptors.map(
-      ({ memberType }) =>
+    this.concreteMembers.map(
+      ({ type: memberType }) =>
         code`...${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
     ),
     { on: ", " },
@@ -123,8 +123,8 @@ if (focusIdentifier.termType === "Variable") {
   }));
 }`,
   code`patterns.push({ patterns: [${joinCode(
-    this.concreteMemberTypeDescriptors.map(
-      ({ memberType }) =>
+    this.concreteMembers.map(
+      ({ type: memberType }) =>
         code`${{
           patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
           type: literalOf("group"),
@@ -144,8 +144,8 @@ if (focusIdentifier.termType === "Variable") {
 
     return Maybe.of(code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
-  ${this.concreteMemberTypeDescriptors.reduce(
-    (expression, { memberType }) => {
+  ${this.concreteMembers.reduce(
+    (expression, { type: memberType }) => {
       const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
@@ -167,9 +167,9 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
         types: code`[${joinCode(
-          this.memberTypes
-            .filter((memberType) => !memberType.abstract)
-            .map((memberType) => memberType.graphqlType.nullableName),
+          this.members
+            .filter((member) => !member.type.abstract)
+            .map((member) => member.type.graphqlType.nullableName),
           { on: ", " },
         )}]`,
       }});
@@ -192,9 +192,9 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
     return Maybe.of(code`\
     export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
-        this.memberTypes.map(
-          (memberType) =>
-            code`${memberType.staticModuleName}.is${memberType.name}(object)`,
+        this.members.map(
+          (member) =>
+            code`${member.type.staticModuleName}.is${member.type.name}(object)`,
         ),
         { on: " || " },
       )};
@@ -210,9 +210,9 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
       }
     > = {};
 
-    this.memberTypes.forEach((memberType, memberTypeI) => {
-      for (const memberTypeProperty of memberType.ownProperties.concat(
-        memberType.ancestorObjectTypes.flatMap(
+    this.members.forEach((member, memberI) => {
+      for (const memberTypeProperty of member.type.ownProperties.concat(
+        member.type.ancestorObjectTypes.flatMap(
           (ancestorObjectType) => ancestorObjectType.ownProperties,
         ),
       )) {
@@ -227,16 +227,16 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
               memberTypeProperty.path,
             )
           ) {
-            commonProperty.memberTypesWithProperty[memberTypeI] = true;
+            commonProperty.memberTypesWithProperty[memberI] = true;
           }
         } else {
           commonPropertiesByName[memberTypeProperty.name] = commonProperty = {
             memberTypesWithProperty: new Array<boolean>(
-              this.memberTypes.length,
+              this.members.length,
             ).fill(false),
             property: memberTypeProperty,
           };
-          commonProperty.memberTypesWithProperty[memberTypeI] = true;
+          commonProperty.memberTypesWithProperty[memberI] = true;
         }
       }
     });
@@ -267,8 +267,8 @@ ${{
     return Maybe.of(code`\
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
-  this.concreteMemberTypeDescriptors
-    .map(({ memberType }) => {
+  this.concreteMembers
+    .map(({ type: memberType }) => {
       let returnExpression: Code;
       switch (memberType.declarationType) {
         case "class":

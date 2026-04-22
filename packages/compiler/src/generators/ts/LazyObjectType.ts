@@ -55,8 +55,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     } else if (
       this.resolveType.kind === "NamedObjectUnionType" &&
       this.partialType.kind === "NamedObjectUnionType" &&
-      this.resolveType.memberTypes.length ===
-        this.partialType.memberTypes.length
+      this.resolveType.members.length === this.partialType.members.length
     ) {
       conversions.push({
         conversionExpression: (value) =>

@@ -239,9 +239,11 @@ export class TypeFactory {
         ast.ObjectCompoundType.identifierType(astType),
       ),
       label: astType.label,
-      memberDiscriminantValues: [],
-      memberTypes: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (objectType) => this.createObjectType(objectType),
+      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
+        (objectType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createObjectType(objectType),
+        }),
       ),
       name: tsName(astType.name.unsafeCoerce()),
       recursive: astType.recursive,
@@ -611,10 +613,10 @@ export class TypeFactory {
             features: astType.tsFeatures,
             identifierType: Maybe.empty(),
             label: astType.label,
-            memberDiscriminantValues: astType.memberDiscriminantValues,
-            memberTypes: astType.memberTypes.map((astType) =>
-              this.createType(astType),
-            ),
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
             name,
             recursive: astType.recursive,
           }),
@@ -625,10 +627,10 @@ export class TypeFactory {
             comment: astType.comment,
             label: astType.label,
             identifierType: Maybe.empty(),
-            memberDiscriminantValues: astType.memberDiscriminantValues,
-            memberTypes: astType.memberTypes.map((astType) =>
-              this.createType(astType),
-            ),
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
             recursive: astType.recursive,
           }),
       );
