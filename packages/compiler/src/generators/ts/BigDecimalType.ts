@@ -79,7 +79,7 @@ export class BigDecimalType extends AbstractLiteralType {
   }
 
   @Memoize()
-  override jsonZodSchema(): Code {
+  override jsonSchema(): Code {
     return code`${imports.z}.string()`;
   }
 

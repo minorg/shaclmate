@@ -119,8 +119,8 @@ export class TermType<
     );
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractTermType["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractTermType["jsonSchema"]>[0],
   ): Code {
     return code`${imports.z}.discriminatedUnion("termType", [${joinCode(
       [...this.nodeKinds].map((nodeKind) => {

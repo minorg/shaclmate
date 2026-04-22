@@ -256,12 +256,10 @@ export abstract class AbstractCollectionType<
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
-  override jsonZodSchema(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
-    >[0],
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {
-    let schema = code`${this.itemType.jsonZodSchema(parameters)}.array()`;
+    let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
     if (this.minCount > 0) {
       schema = code`${schema}.nonempty().min(${this.minCount})`;
     } else {

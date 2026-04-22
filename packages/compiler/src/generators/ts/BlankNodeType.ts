@@ -52,10 +52,10 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     );
   }
 
-  override jsonZodSchema({
+  override jsonSchema({
     includeDiscriminantProperty,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? code`, termType: ${imports.z}.literal("BlankNode")`

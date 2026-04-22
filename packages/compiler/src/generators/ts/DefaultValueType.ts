@@ -207,12 +207,10 @@ export class DefaultValueType<
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
-  override jsonZodSchema(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
-    >[0],
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {
-    return this.itemType.jsonZodSchema(parameters);
+    return this.itemType.jsonSchema(parameters);
   }
 
   override toJsonExpression(

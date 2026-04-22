@@ -147,7 +147,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get jsonZodSchema(): AbstractProperty<TypeT>["jsonZodSchema"] {
-    let schema = this.type.jsonZodSchema({
+    let schema = this.type.jsonSchema({
       context: "property",
     });
     this.comment.alt(this.description).ifJust((description) => {

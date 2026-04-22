@@ -45,8 +45,8 @@ export class StringType extends AbstractPrimitiveType<string> {
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:

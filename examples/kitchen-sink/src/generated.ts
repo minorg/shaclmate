@@ -3292,6 +3292,47 @@ export namespace $NamedDefaultPartial {
     readonly $type: "$NamedDefaultPartial";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "$NamedDefaultPartial" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "$NamedDefaultPartial",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("$NamedDefaultPartial"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: $NamedDefaultPartial.$Filter,
     value: $NamedDefaultPartial,
@@ -3385,53 +3426,6 @@ export namespace $NamedDefaultPartial {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "$NamedDefaultPartial" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "$NamedDefaultPartial",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("$NamedDefaultPartial"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, $NamedDefaultPartial> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: $NamedDefaultPartial.$Json): {
@@ -3655,6 +3649,47 @@ export namespace $DefaultPartial {
     readonly $type: "$DefaultPartial";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "$DefaultPartial" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "$DefaultPartial",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("$DefaultPartial"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: $DefaultPartial.$Filter,
     value: $DefaultPartial,
@@ -3747,51 +3782,6 @@ export namespace $DefaultPartial {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "$DefaultPartial" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "$DefaultPartial",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("$DefaultPartial"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, $DefaultPartial> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: $DefaultPartial.$Json): {
@@ -4033,6 +4023,52 @@ export namespace UuidV4IriIdentifierInterface {
     readonly uuidV4IriProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "UuidV4IriIdentifierInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/uuidV4IriProperty`,
+            type: "Control",
+          },
+        ],
+        label: "UuidV4IriIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UuidV4IriIdentifierInterface"),
+        uuidV4IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: UuidV4IriIdentifierInterface.$Filter,
     value: UuidV4IriIdentifierInterface,
@@ -4158,58 +4194,6 @@ export namespace UuidV4IriIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "UuidV4IriIdentifierInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/uuidV4IriProperty`,
-          type: "Control",
-        },
-      ],
-      label: "UuidV4IriIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("UuidV4IriIdentifierInterface"),
-      uuidV4IriProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, UuidV4IriIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -4577,6 +4561,52 @@ export namespace UuidV4IriIdentifierClass {
     readonly uuidV4IriProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "UuidV4IriIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/uuidV4IriProperty`,
+            type: "Control",
+          },
+        ],
+        label: "UuidV4IriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UuidV4IriIdentifierClass"),
+        uuidV4IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: UuidV4IriIdentifierClass.$Filter,
     value: UuidV4IriIdentifierClass,
@@ -4702,58 +4732,6 @@ export namespace UuidV4IriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "UuidV4IriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/uuidV4IriProperty`,
-          type: "Control",
-        },
-      ],
-      label: "UuidV4IriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("UuidV4IriIdentifierClass"),
-      uuidV4IriProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, UuidV4IriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: UuidV4IriIdentifierClass.$Json): {
@@ -6284,6 +6262,194 @@ export namespace UnionDiscriminantsClass {
       | string
     )[];
   };
+
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "UnionDiscriminantsClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setIriOrStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "UnionDiscriminantsClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("UnionDiscriminantsClass"),
+        optionalClassOrClassOrStringProperty: z
+          .discriminatedUnion("type", [
+            z.object({
+              type: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              type: z.literal("ClassUnionMember2"),
+              value: ClassUnionMember2.$Json.schema(),
+            }),
+            z.object({ type: z.literal("string"), value: z.string() }),
+          ])
+          .optional()
+          .describe(
+            "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+          ),
+        optionalIriOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .optional()
+          .describe(
+            "Union that can be discriminated by an inline discriminant property (termType).",
+          ),
+        optionalIriOrStringProperty: z
+          .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .optional()
+          .describe("Union that can be discriminated by typeof."),
+        requiredClassOrClassOrStringProperty: z
+          .discriminatedUnion("type", [
+            z.object({
+              type: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              type: z.literal("ClassUnionMember2"),
+              value: ClassUnionMember2.$Json.schema(),
+            }),
+            z.object({ type: z.literal("string"), value: z.string() }),
+          ])
+          .describe(
+            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          ),
+        requiredIriOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .describe(
+            "Union that can be discriminated by an inline discriminant property (termType).",
+          ),
+        requiredIriOrStringProperty: z
+          .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .describe("Union that can be discriminated by typeof."),
+        setClassOrClassOrStringProperty: z
+          .discriminatedUnion("type", [
+            z.object({
+              type: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              type: z.literal("ClassUnionMember2"),
+              value: ClassUnionMember2.$Json.schema(),
+            }),
+            z.object({ type: z.literal("string"), value: z.string() }),
+          ])
+          .array()
+          .default(() => [])
+          .describe(
+            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          ),
+        setIriOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .array()
+          .default(() => [])
+          .describe(
+            "Union that can be discriminated by an inline discriminant property (termType).",
+          ),
+        setIriOrStringProperty: z
+          .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .array()
+          .default(() => [])
+          .describe("Union that can be discriminated by typeof."),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
 
   export function $filter(
     filter: UnionDiscriminantsClass.$Filter,
@@ -8196,200 +8362,6 @@ export namespace UnionDiscriminantsClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "UnionDiscriminantsClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredIriOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/setIriOrStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "UnionDiscriminantsClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("UnionDiscriminantsClass"),
-      optionalClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("string"), value: z.string() }),
-        ])
-        .optional()
-        .describe(
-          "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
-        ),
-      optionalIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .optional()
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      optionalIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .optional()
-        .describe("Union that can be discriminated by typeof."),
-      requiredClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("string"), value: z.string() }),
-        ])
-        .describe(
-          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-        ),
-      requiredIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      requiredIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .describe("Union that can be discriminated by typeof."),
-      setClassOrClassOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({
-            type: z.literal("ClassUnionMember1"),
-            value: ClassUnionMember1.$jsonZodSchema(),
-          }),
-          z.object({
-            type: z.literal("ClassUnionMember2"),
-            value: ClassUnionMember2.$jsonZodSchema(),
-          }),
-          z.object({ type: z.literal("string"), value: z.string() }),
-        ])
-        .array()
-        .default(() => [])
-        .describe(
-          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
-        ),
-      setIriOrLiteralProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            termType: z.literal("Literal"),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          }),
-        ])
-        .array()
-        .default(() => [])
-        .describe(
-          "Union that can be discriminated by an inline discriminant property (termType).",
-        ),
-      setIriOrStringProperty: z
-        .union([z.object({ "@id": z.string().min(1) }), z.string()])
-        .array()
-        .default(() => [])
-        .describe("Union that can be discriminated by typeof."),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, UnionDiscriminantsClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: UnionDiscriminantsClass.$Json): {
@@ -10629,6 +10601,114 @@ export namespace TermPropertiesClass {
         };
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "TermPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/blankNodeTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/booleanTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateTimeTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/iriTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/literalTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/numberTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/stringTermProperty`,
+            type: "Control",
+          },
+          { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
+        ],
+        label: "TermPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("TermPropertiesClass"),
+        blankNodeTermProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional(),
+        booleanTermProperty: z.boolean().optional(),
+        dateTermProperty: z.iso.date().optional(),
+        dateTimeTermProperty: z.iso.datetime().optional(),
+        iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
+        literalTermProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .optional(),
+        numberTermProperty: z.number().optional(),
+        stringTermProperty: z.string().optional(),
+        termProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: TermPropertiesClass.$Filter,
     value: TermPropertiesClass,
@@ -11134,115 +11214,6 @@ export namespace TermPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "TermPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/blankNodeTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/booleanTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeTermProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/iriTermProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/literalTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/numberTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringTermProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/termProperty`, type: "Control" },
-      ],
-      label: "TermPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("TermPropertiesClass"),
-      blankNodeTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      booleanTermProperty: z.boolean().optional(),
-      dateTermProperty: z.iso.date().optional(),
-      dateTimeTermProperty: z.iso.datetime().optional(),
-      iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      literalTermProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .optional(),
-      numberTermProperty: z.number().optional(),
-      stringTermProperty: z.string().optional(),
-      termProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, TermPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: TermPropertiesClass.$Json): {
@@ -11936,6 +11907,52 @@ export namespace Sha256IriIdentifierClass {
     readonly sha256IriProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "Sha256IriIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/sha256IriProperty`,
+            type: "Control",
+          },
+        ],
+        label: "Sha256IriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("Sha256IriIdentifierClass"),
+        sha256IriProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: Sha256IriIdentifierClass.$Filter,
     value: Sha256IriIdentifierClass,
@@ -12061,58 +12078,6 @@ export namespace Sha256IriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "Sha256IriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/sha256IriProperty`,
-          type: "Control",
-        },
-      ],
-      label: "Sha256IriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("Sha256IriIdentifierClass"),
-      sha256IriProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, Sha256IriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: Sha256IriIdentifierClass.$Json): {
@@ -12438,6 +12403,57 @@ export namespace RecursiveClassUnionMember2 {
     readonly recursiveClassUnionMember2Property?: RecursiveClassUnion.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "RecursiveClassUnionMember2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/recursiveClassUnionMember2Property`,
+            type: "Control",
+          },
+        ],
+        label: "RecursiveClassUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("RecursiveClassUnionMember2"),
+        recursiveClassUnionMember2Property: z
+          .lazy(
+            (): z.ZodType<RecursiveClassUnion.$Json> =>
+              RecursiveClassUnion.$jsonZodSchema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: RecursiveClassUnionMember2.$Filter,
     value: RecursiveClassUnionMember2,
@@ -12605,63 +12621,6 @@ export namespace RecursiveClassUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "RecursiveClassUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/recursiveClassUnionMember2Property`,
-          type: "Control",
-        },
-      ],
-      label: "RecursiveClassUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("RecursiveClassUnionMember2"),
-      recursiveClassUnionMember2Property: z
-        .lazy(
-          (): z.ZodType<RecursiveClassUnion.$Json> =>
-            RecursiveClassUnion.$jsonZodSchema(),
-        )
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -13044,6 +13003,57 @@ export namespace RecursiveClassUnionMember1 {
     readonly recursiveClassUnionMember1Property?: RecursiveClassUnion.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "RecursiveClassUnionMember1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/recursiveClassUnionMember1Property`,
+            type: "Control",
+          },
+        ],
+        label: "RecursiveClassUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("RecursiveClassUnionMember1"),
+        recursiveClassUnionMember1Property: z
+          .lazy(
+            (): z.ZodType<RecursiveClassUnion.$Json> =>
+              RecursiveClassUnion.$jsonZodSchema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: RecursiveClassUnionMember1.$Filter,
     value: RecursiveClassUnionMember1,
@@ -13211,63 +13221,6 @@ export namespace RecursiveClassUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "RecursiveClassUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/recursiveClassUnionMember1Property`,
-          type: "Control",
-        },
-      ],
-      label: "RecursiveClassUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("RecursiveClassUnionMember1"),
-      recursiveClassUnionMember1Property: z
-        .lazy(
-          (): z.ZodType<RecursiveClassUnion.$Json> =>
-            RecursiveClassUnion.$jsonZodSchema(),
-        )
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -13658,6 +13611,62 @@ export namespace PropertyVisibilitiesClass {
     readonly publicProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PropertyVisibilitiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/privateProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/protectedProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/publicProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PropertyVisibilitiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyVisibilitiesClass"),
+        privateProperty: z.string(),
+        protectedProperty: z.string(),
+        publicProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PropertyVisibilitiesClass.$Filter,
     value: PropertyVisibilitiesClass,
@@ -13829,62 +13838,6 @@ export namespace PropertyVisibilitiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyVisibilitiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/privateProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/protectedProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/publicProperty`, type: "Control" },
-      ],
-      label: "PropertyVisibilitiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PropertyVisibilitiesClass"),
-      privateProperty: z.string(),
-      protectedProperty: z.string(),
-      publicProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PropertyVisibilitiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PropertyVisibilitiesClass.$Json): {
@@ -14292,6 +14245,57 @@ export namespace PropertyPathsClass {
     readonly predicatePathProperty?: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PropertyPathsClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inversePathProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/predicatePathProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PropertyPathsClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyPathsClass"),
+        inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
+        predicatePathProperty: z.string().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PropertyPathsClass.$Filter,
     value: PropertyPathsClass,
@@ -14524,61 +14528,6 @@ export namespace PropertyPathsClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyPathsClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inversePathProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/predicatePathProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyPathsClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PropertyPathsClass"),
-      inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
-      predicatePathProperty: z.string().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, PropertyPathsClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PropertyPathsClass.$Json): {
@@ -15068,6 +15017,88 @@ export namespace PropertyNamesClass {
     readonly actualPropertyName5: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PropertyNamesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/actualPropertyName1`,
+            type: "Control",
+          },
+          {
+            label: "ignorePropertyName2",
+            scope: `${scopePrefix}/properties/actualPropertyName2`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/actualPropertyName3`,
+            type: "Control",
+          },
+          {
+            label: "actualPropertyName4",
+            scope: `${scopePrefix}/properties/actualPropertyName4`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/actualPropertyName5`,
+            type: "Control",
+          },
+        ],
+        label: "PropertyNamesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyNamesClass"),
+        actualPropertyName1: z
+          .string()
+          .describe("sh:path: overrides property shape identifier"),
+        actualPropertyName2: z
+          .string()
+          .describe("sh:name: overrides sh:path and rdfs:label"),
+        actualPropertyName3: z
+          .string()
+          .describe(
+            "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
+          ),
+        actualPropertyName4: z
+          .string()
+          .describe("rdfs:label: overrides sh:path"),
+        actualPropertyName5: z
+          .string()
+          .describe(
+            "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
+          ),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PropertyNamesClass.$Filter,
     value: PropertyNamesClass,
@@ -15372,88 +15403,6 @@ export namespace PropertyNamesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyNamesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/actualPropertyName1`,
-          type: "Control",
-        },
-        {
-          label: "ignorePropertyName2",
-          scope: `${scopePrefix}/properties/actualPropertyName2`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/actualPropertyName3`,
-          type: "Control",
-        },
-        {
-          label: "actualPropertyName4",
-          scope: `${scopePrefix}/properties/actualPropertyName4`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/actualPropertyName5`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyNamesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PropertyNamesClass"),
-      actualPropertyName1: z
-        .string()
-        .describe("sh:path: overrides property shape identifier"),
-      actualPropertyName2: z
-        .string()
-        .describe("sh:name: overrides sh:path and rdfs:label"),
-      actualPropertyName3: z
-        .string()
-        .describe("shaclmate:name: overrides sh:name, sh:path, and rdfs:label"),
-      actualPropertyName4: z.string().describe("rdfs:label: overrides sh:path"),
-      actualPropertyName5: z
-        .string()
-        .describe(
-          "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
-        ),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, PropertyNamesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PropertyNamesClass.$Json): {
@@ -16000,6 +15949,81 @@ export namespace PropertyCardinalitiesClass {
     readonly requiredStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PropertyCardinalitiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/emptyStringSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/optionalStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/requiredStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PropertyCardinalitiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PropertyCardinalitiesClass"),
+        emptyStringSetProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .describe("Set: minCount implicitly=0, no maxCount"),
+        nonEmptyStringSetProperty: z
+          .string()
+          .array()
+          .nonempty()
+          .min(1)
+          .describe("Set: minCount=1, no maxCount"),
+        optionalStringProperty: z
+          .string()
+          .optional()
+          .describe("Option: maxCount=1, minCount=0"),
+        requiredStringProperty: z
+          .string()
+          .describe("Required: maxCount=minCount=1"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PropertyCardinalitiesClass.$Filter,
     value: PropertyCardinalitiesClass,
@@ -16245,87 +16269,6 @@ export namespace PropertyCardinalitiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PropertyCardinalitiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/emptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonEmptyStringSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/requiredStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PropertyCardinalitiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PropertyCardinalitiesClass"),
-      emptyStringSetProperty: z
-        .string()
-        .array()
-        .default(() => [])
-        .describe("Set: minCount implicitly=0, no maxCount"),
-      nonEmptyStringSetProperty: z
-        .string()
-        .array()
-        .nonempty()
-        .min(1)
-        .describe("Set: minCount=1, no maxCount"),
-      optionalStringProperty: z
-        .string()
-        .optional()
-        .describe("Option: maxCount=1, minCount=0"),
-      requiredStringProperty: z
-        .string()
-        .describe("Required: maxCount=minCount=1"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PropertyCardinalitiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -16728,6 +16671,52 @@ export namespace PartialInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialInterfaceUnionMember2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialInterfaceUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterfaceUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialInterfaceUnionMember2.$Filter,
     value: PartialInterfaceUnionMember2,
@@ -16916,58 +16905,6 @@ export namespace PartialInterfaceUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialInterfaceUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialInterfaceUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialInterfaceUnionMember2"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -17321,6 +17258,52 @@ export namespace PartialInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialInterfaceUnionMember1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialInterfaceUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterfaceUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialInterfaceUnionMember1.$Filter,
     value: PartialInterfaceUnionMember1,
@@ -17509,58 +17492,6 @@ export namespace PartialInterfaceUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialInterfaceUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialInterfaceUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialInterfaceUnionMember1"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -17948,6 +17879,52 @@ export namespace PartialClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialClassUnionMember2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialClassUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClassUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialClassUnionMember2.$Filter,
     value: PartialClassUnionMember2,
@@ -18136,58 +18113,6 @@ export namespace PartialClassUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialClassUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialClassUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialClassUnionMember2"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialClassUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PartialClassUnionMember2.$Json): {
@@ -18517,6 +18442,52 @@ export namespace PartialClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialClassUnionMember1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialClassUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClassUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialClassUnionMember1.$Filter,
     value: PartialClassUnionMember1,
@@ -18705,58 +18676,6 @@ export namespace PartialClassUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialClassUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialClassUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialClassUnionMember1"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, PartialClassUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PartialClassUnionMember1.$Json): {
@@ -19064,6 +18983,47 @@ export namespace NewName2Class {
     readonly $type: "NewName2Class";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NewName2Class" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "NewName2Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NewName2Class"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NewName2Class.$Filter,
     value: NewName2Class,
@@ -19213,51 +19173,6 @@ export namespace NewName2Class {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NewName2Class" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "NewName2Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NewName2Class"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, NewName2Class> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NewName2Class.$Json): {
@@ -19531,6 +19446,47 @@ export namespace NewName1Class {
     readonly $type: "NewName1Class";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NewName1Class" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "NewName1Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NewName1Class"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NewName1Class.$Filter,
     value: NewName1Class,
@@ -19680,51 +19636,6 @@ export namespace NewName1Class {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NewName1Class" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "NewName1Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NewName1Class"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, NewName1Class> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NewName1Class.$Json): {
@@ -20060,6 +19971,62 @@ export namespace OrderedPropertiesClass {
     readonly orderedPropertyA: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "OrderedPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/orderedPropertyC`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/orderedPropertyB`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/orderedPropertyA`,
+            type: "Control",
+          },
+        ],
+        label: "OrderedPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("OrderedPropertiesClass"),
+        orderedPropertyC: z.string(),
+        orderedPropertyB: z.string(),
+        orderedPropertyA: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: OrderedPropertiesClass.$Filter,
     value: OrderedPropertiesClass,
@@ -20244,68 +20211,6 @@ export namespace OrderedPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "OrderedPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/orderedPropertyC`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/orderedPropertyB`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/orderedPropertyA`,
-          type: "Control",
-        },
-      ],
-      label: "OrderedPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("OrderedPropertiesClass"),
-      orderedPropertyC: z.string(),
-      orderedPropertyB: z.string(),
-      orderedPropertyA: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, OrderedPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: OrderedPropertiesClass.$Json): {
@@ -21334,6 +21239,127 @@ export namespace NumericPropertiesClass {
     readonly unsignedShortNumericProperty?: number;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NumericPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/byteNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/decimalNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/doubleNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/floatNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/integerNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/intNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/longNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/negativeIntegerNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/nonNegativeIntegerNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/nonPositiveIntegerNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/positiveIntegerNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/shortNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/unsignedByteNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/unsignedIntNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/unsignedLongNumericProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/unsignedShortNumericProperty`,
+            type: "Control",
+          },
+        ],
+        label: "NumericPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NumericPropertiesClass"),
+        byteNumericProperty: z.number().optional(),
+        decimalNumericProperty: z.string().optional(),
+        doubleNumericProperty: z.number().optional(),
+        floatNumericProperty: z.number().optional(),
+        integerNumericProperty: z.string().optional(),
+        intNumericProperty: z.number().optional(),
+        longNumericProperty: z.string().optional(),
+        negativeIntegerNumericProperty: z.string().optional(),
+        nonNegativeIntegerNumericProperty: z.string().optional(),
+        nonPositiveIntegerNumericProperty: z.string().optional(),
+        positiveIntegerNumericProperty: z.string().optional(),
+        shortNumericProperty: z.number().optional(),
+        unsignedByteNumericProperty: z.number().optional(),
+        unsignedIntNumericProperty: z.number().optional(),
+        unsignedLongNumericProperty: z.string().optional(),
+        unsignedShortNumericProperty: z.number().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NumericPropertiesClass.$Filter,
     value: NumericPropertiesClass,
@@ -22122,133 +22148,6 @@ export namespace NumericPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NumericPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/byteNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/decimalNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/doubleNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/floatNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/integerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/intNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/longNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/negativeIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonNegativeIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonPositiveIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/positiveIntegerNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/shortNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedByteNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedIntNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedLongNumericProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/unsignedShortNumericProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NumericPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NumericPropertiesClass"),
-      byteNumericProperty: z.number().optional(),
-      decimalNumericProperty: z.string().optional(),
-      doubleNumericProperty: z.number().optional(),
-      floatNumericProperty: z.number().optional(),
-      integerNumericProperty: z.string().optional(),
-      intNumericProperty: z.number().optional(),
-      longNumericProperty: z.string().optional(),
-      negativeIntegerNumericProperty: z.string().optional(),
-      nonNegativeIntegerNumericProperty: z.string().optional(),
-      nonPositiveIntegerNumericProperty: z.string().optional(),
-      positiveIntegerNumericProperty: z.string().optional(),
-      shortNumericProperty: z.number().optional(),
-      unsignedByteNumericProperty: z.number().optional(),
-      unsignedIntNumericProperty: z.number().optional(),
-      unsignedLongNumericProperty: z.string().optional(),
-      unsignedShortNumericProperty: z.number().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NumericPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NumericPropertiesClass.$Json): {
@@ -23574,6 +23473,103 @@ export namespace NodeKindsClass {
     };
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NodeKindsClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/blankNodeKindProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/blankNodeOrIriNodeKindProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/blankNodeOrLiteralNodeKindProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/iriNodeKindProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/iriOrLiteralNodeKindProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/literalNodeKindProperty`,
+            type: "Control",
+          },
+        ],
+        label: "NodeKindsClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NodeKindsClass"),
+        blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("BlankNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ]),
+        iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
+        iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ]),
+        literalNodeKindProperty: z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        }),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NodeKindsClass.$Filter,
     value: NodeKindsClass,
@@ -23920,107 +23916,6 @@ export namespace NodeKindsClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NodeKindsClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/blankNodeKindProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/blankNodeOrIriNodeKindProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/blankNodeOrLiteralNodeKindProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/iriNodeKindProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/iriOrLiteralNodeKindProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/literalNodeKindProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NodeKindsClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NodeKindsClass"),
-      blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-      blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-      blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("BlankNode"),
-        }),
-        z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-          termType: z.literal("Literal"),
-        }),
-      ]),
-      iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-      iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("NamedNode"),
-        }),
-        z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-          termType: z.literal("Literal"),
-        }),
-      ]),
-      literalNodeKindProperty: z.object({
-        "@language": z.string().optional(),
-        "@type": z.string().optional(),
-        "@value": z.string(),
-      }),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, NodeKindsClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NodeKindsClass.$Json): {
@@ -24540,6 +24435,52 @@ export namespace NoRdfTypeClassUnionMember2 {
     readonly noRdfTypeClassUnionMember2Property: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NoRdfTypeClassUnionMember2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember2Property`,
+            type: "Control",
+          },
+        ],
+        label: "NoRdfTypeClassUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NoRdfTypeClassUnionMember2"),
+        noRdfTypeClassUnionMember2Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NoRdfTypeClassUnionMember2.$Filter,
     value: NoRdfTypeClassUnionMember2,
@@ -24668,58 +24609,6 @@ export namespace NoRdfTypeClassUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NoRdfTypeClassUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember2Property`,
-          type: "Control",
-        },
-      ],
-      label: "NoRdfTypeClassUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NoRdfTypeClassUnionMember2"),
-      noRdfTypeClassUnionMember2Property: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -25015,6 +24904,52 @@ export namespace NoRdfTypeClassUnionMember1 {
     readonly noRdfTypeClassUnionMember1Property: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NoRdfTypeClassUnionMember1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember1Property`,
+            type: "Control",
+          },
+        ],
+        label: "NoRdfTypeClassUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NoRdfTypeClassUnionMember1"),
+        noRdfTypeClassUnionMember1Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NoRdfTypeClassUnionMember1.$Filter,
     value: NoRdfTypeClassUnionMember1,
@@ -25143,58 +25078,6 @@ export namespace NoRdfTypeClassUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NoRdfTypeClassUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember1Property`,
-          type: "Control",
-        },
-      ],
-      label: "NoRdfTypeClassUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NoRdfTypeClassUnionMember1"),
-      noRdfTypeClassUnionMember1Property: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -25537,6 +25420,57 @@ export namespace NamedUnionPropertiesClass {
     readonly namedUnion2Property: NamedUnion2.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NamedUnionPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/namedUnion1Property`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/namedUnion2Property`,
+            type: "Control",
+          },
+        ],
+        label: "NamedUnionPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NamedUnionPropertiesClass"),
+        namedUnion1Property: NamedUnion1.$jsonZodSchema(),
+        namedUnion2Property: NamedUnion2.$jsonZodSchema(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: NamedUnionPropertiesClass.$Filter,
     value: NamedUnionPropertiesClass,
@@ -25758,63 +25692,6 @@ export namespace NamedUnionPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NamedUnionPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/namedUnion1Property`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/namedUnion2Property`,
-          type: "Control",
-        },
-      ],
-      label: "NamedUnionPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NamedUnionPropertiesClass"),
-      namedUnion1Property: NamedUnion1.$jsonZodSchema(),
-      namedUnion2Property: NamedUnion2.$jsonZodSchema(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, NamedUnionPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NamedUnionPropertiesClass.$Json): {
@@ -26370,6 +26247,78 @@ export namespace MutablePropertiesClass {
     readonly mutableStringProperty?: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "MutablePropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/mutableListProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/mutableSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/mutableStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "MutablePropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("MutablePropertiesClass"),
+        mutableListProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .optional()
+          .describe(
+            "List-valued property that can't be reassigned but whose value can be mutated",
+          ),
+        mutableSetProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .describe(
+            "Set-valued property that can't be reassigned but whose value can be mutated",
+          ),
+        mutableStringProperty: z
+          .string()
+          .optional()
+          .describe("String-valued property that can be re-assigned"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: MutablePropertiesClass.$Filter,
     value: MutablePropertiesClass,
@@ -26650,84 +26599,6 @@ export namespace MutablePropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "MutablePropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableListProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/mutableStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "MutablePropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("MutablePropertiesClass"),
-      mutableListProperty: z
-        .string()
-        .array()
-        .default(() => [])
-        .optional()
-        .describe(
-          "List-valued property that can't be reassigned but whose value can be mutated",
-        ),
-      mutableSetProperty: z
-        .string()
-        .array()
-        .default(() => [])
-        .describe(
-          "Set-valued property that can't be reassigned but whose value can be mutated",
-        ),
-      mutableStringProperty: z
-        .string()
-        .optional()
-        .describe("String-valued property that can be re-assigned"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, MutablePropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: MutablePropertiesClass.$Json): {
@@ -27442,6 +27313,73 @@ export namespace ListPropertiesClass {
     readonly stringListProperty?: readonly string[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ListPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/iriListProperty`,
+            type: "Control",
+          },
+          NonClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/objectListProperty`,
+          }),
+          {
+            scope: `${scopePrefix}/properties/stringListProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ListPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ListPropertiesClass"),
+        iriListProperty: z
+          .object({ "@id": z.string().min(1) })
+          .array()
+          .default(() => [])
+          .optional(),
+        objectListProperty: NonClass.$Json
+          .schema()
+          .array()
+          .default(() => [])
+          .optional(),
+        stringListProperty: z
+          .string()
+          .array()
+          .default(() => [])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ListPropertiesClass.$Filter,
     value: ListPropertiesClass,
@@ -27739,75 +27677,6 @@ export namespace ListPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ListPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/iriListProperty`, type: "Control" },
-        NonClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/objectListProperty`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/stringListProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ListPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ListPropertiesClass"),
-      iriListProperty: z
-        .object({ "@id": z.string().min(1) })
-        .array()
-        .default(() => [])
-        .optional(),
-      objectListProperty: NonClass.$jsonZodSchema()
-        .array()
-        .default(() => [])
-        .optional(),
-      stringListProperty: z
-        .string()
-        .array()
-        .default(() => [])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ListPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ListPropertiesClass.$Json): {
@@ -28270,6 +28139,52 @@ export namespace PartialInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialInterface.$Filter,
     value: PartialInterface,
@@ -28396,56 +28311,6 @@ export namespace PartialInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialInterface"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, PartialInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PartialInterface.$Json): {
@@ -29687,6 +29552,103 @@ export namespace LazyPropertiesInterface {
     readonly setPartialInterfaceToResolvedInterfaceProperty?: readonly PartialInterface.$Json[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LazyPropertiesInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedInterfaceProperty`,
+          }),
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedInterfaceUnionProperty`,
+          }),
+          $NamedDefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierInterfaceProperty`,
+          }),
+          PartialInterface.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalPartialInterfaceToResolvedInterfaceProperty`,
+          }),
+          PartialInterface.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+          }),
+          {
+            scope: `${scopePrefix}/properties/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
+            type: "Control",
+          },
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedInterfaceProperty`,
+          }),
+          PartialInterface.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/requiredPartialInterfaceToResolvedInterfaceProperty`,
+          }),
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/setLazyToResolvedInterfaceProperty`,
+          }),
+          PartialInterface.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/setPartialInterfaceToResolvedInterfaceProperty`,
+          }),
+        ],
+        label: "LazyPropertiesInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazyPropertiesInterface"),
+        optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedIriIdentifierInterfaceProperty:
+          $NamedDefaultPartial.$Json.schema().optional(),
+        optionalPartialInterfaceToResolvedInterfaceProperty:
+          PartialInterface.$Json.schema().optional(),
+        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
+          PartialInterface.$Json.schema().optional(),
+        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
+          PartialInterfaceUnion.$jsonZodSchema().optional(),
+        requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json.schema(),
+        requiredPartialInterfaceToResolvedInterfaceProperty:
+          PartialInterface.$Json.schema(),
+        setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+          .schema()
+          .array()
+          .default(() => []),
+        setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
+          .schema()
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazyPropertiesInterface.$Filter,
     value: LazyPropertiesInterface,
@@ -30392,110 +30354,6 @@ export namespace LazyPropertiesInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazyPropertiesInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedInterfaceProperty`,
-        }),
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedInterfaceUnionProperty`,
-        }),
-        $NamedDefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierInterfaceProperty`,
-        }),
-        PartialInterface.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalPartialInterfaceToResolvedInterfaceProperty`,
-        }),
-        PartialInterface.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-          type: "Control",
-        },
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedInterfaceProperty`,
-        }),
-        PartialInterface.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/requiredPartialInterfaceToResolvedInterfaceProperty`,
-        }),
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/setLazyToResolvedInterfaceProperty`,
-        }),
-        PartialInterface.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/setPartialInterfaceToResolvedInterfaceProperty`,
-        }),
-      ],
-      label: "LazyPropertiesInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazyPropertiesInterface"),
-      optionalLazyToResolvedInterfaceProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalLazyToResolvedIriIdentifierInterfaceProperty: $NamedDefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalPartialInterfaceToResolvedInterfaceProperty:
-        PartialInterface.$jsonZodSchema().optional(),
-      optionalPartialInterfaceToResolvedInterfaceUnionProperty:
-        PartialInterface.$jsonZodSchema().optional(),
-      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-        PartialInterfaceUnion.$jsonZodSchema().optional(),
-      requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$jsonZodSchema(),
-      requiredPartialInterfaceToResolvedInterfaceProperty:
-        PartialInterface.$jsonZodSchema(),
-      setLazyToResolvedInterfaceProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .array()
-        .default(() => []),
-      setPartialInterfaceToResolvedInterfaceProperty:
-        PartialInterface.$jsonZodSchema()
-          .array()
-          .default(() => []),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazyPropertiesInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: LazyPropertiesInterface.$Json): {
@@ -32936,6 +32794,105 @@ export namespace LazyPropertiesClass {
     readonly setPartialClassToResolvedClassProperty?: readonly PartialClass.$Json[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LazyPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassProperty`,
+          }),
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassUnionProperty`,
+          }),
+          $NamedDefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierClassProperty`,
+          }),
+          PartialClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalPartialClassToResolvedClassProperty`,
+          }),
+          PartialClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/optionalPartialClassToResolvedClassUnionProperty`,
+          }),
+          {
+            scope: `${scopePrefix}/properties/optionalPartialClassUnionToResolvedClassUnionProperty`,
+            type: "Control",
+          },
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedClassProperty`,
+          }),
+          PartialClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/requiredPartialClassToResolvedClassProperty`,
+          }),
+          $DefaultPartial.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/setLazyToResolvedClassProperty`,
+          }),
+          PartialClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/setPartialClassToResolvedClassProperty`,
+          }),
+        ],
+        label: "LazyPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazyPropertiesClass"),
+        optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedClassUnionProperty: $DefaultPartial.$Json
+          .schema()
+          .optional(),
+        optionalLazyToResolvedIriIdentifierClassProperty:
+          $NamedDefaultPartial.$Json.schema().optional(),
+        optionalPartialClassToResolvedClassProperty: PartialClass.$Json
+          .schema()
+          .optional(),
+        optionalPartialClassToResolvedClassUnionProperty: PartialClass.$Json
+          .schema()
+          .optional(),
+        optionalPartialClassUnionToResolvedClassUnionProperty:
+          PartialClassUnion.$jsonZodSchema().optional(),
+        requiredLazyToResolvedClassProperty: $DefaultPartial.$Json.schema(),
+        requiredPartialClassToResolvedClassProperty:
+          PartialClass.$Json.schema(),
+        setLazyToResolvedClassProperty: $DefaultPartial.$Json
+          .schema()
+          .array()
+          .default(() => []),
+        setPartialClassToResolvedClassProperty: PartialClass.$Json
+          .schema()
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazyPropertiesClass.$Filter,
     value: LazyPropertiesClass,
@@ -33610,109 +33567,6 @@ export namespace LazyPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazyPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassProperty`,
-        }),
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedClassUnionProperty`,
-        }),
-        $NamedDefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalLazyToResolvedIriIdentifierClassProperty`,
-        }),
-        PartialClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalPartialClassToResolvedClassProperty`,
-        }),
-        PartialClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/optionalPartialClassToResolvedClassUnionProperty`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/optionalPartialClassUnionToResolvedClassUnionProperty`,
-          type: "Control",
-        },
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/requiredLazyToResolvedClassProperty`,
-        }),
-        PartialClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/requiredPartialClassToResolvedClassProperty`,
-        }),
-        $DefaultPartial.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/setLazyToResolvedClassProperty`,
-        }),
-        PartialClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/setPartialClassToResolvedClassProperty`,
-        }),
-      ],
-      label: "LazyPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazyPropertiesClass"),
-      optionalLazyToResolvedClassProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalLazyToResolvedClassUnionProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalLazyToResolvedIriIdentifierClassProperty: $NamedDefaultPartial
-        .$jsonZodSchema()
-        .optional(),
-      optionalPartialClassToResolvedClassProperty:
-        PartialClass.$jsonZodSchema().optional(),
-      optionalPartialClassToResolvedClassUnionProperty:
-        PartialClass.$jsonZodSchema().optional(),
-      optionalPartialClassUnionToResolvedClassUnionProperty:
-        PartialClassUnion.$jsonZodSchema().optional(),
-      requiredLazyToResolvedClassProperty: $DefaultPartial.$jsonZodSchema(),
-      requiredPartialClassToResolvedClassProperty:
-        PartialClass.$jsonZodSchema(),
-      setLazyToResolvedClassProperty: $DefaultPartial
-        .$jsonZodSchema()
-        .array()
-        .default(() => []),
-      setPartialClassToResolvedClassProperty: PartialClass.$jsonZodSchema()
-        .array()
-        .default(() => []),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazyPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: LazyPropertiesClass.$Json): {
@@ -34858,6 +34712,54 @@ export namespace LazilyResolvedIriIdentifierInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: {
+                  const: "LazilyResolvedIriIdentifierInterface" as const,
+                },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedIriIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedIriIdentifierInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedIriIdentifierInterface.$Filter,
     value: LazilyResolvedIriIdentifierInterface,
@@ -34992,60 +34894,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: {
-                const: "LazilyResolvedIriIdentifierInterface" as const,
-              },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedIriIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedIriIdentifierInterface"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedIriIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -35383,6 +35231,52 @@ export namespace LazilyResolvedIriIdentifierClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LazilyResolvedIriIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedIriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedIriIdentifierClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedIriIdentifierClass.$Filter,
     value: LazilyResolvedIriIdentifierClass,
@@ -35517,58 +35411,6 @@ export namespace LazilyResolvedIriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedIriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedIriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedIriIdentifierClass"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedIriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -35829,6 +35671,54 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: {
+                  const: "LazilyResolvedInterfaceUnionMember2" as const,
+                },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedInterfaceUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedInterfaceUnionMember2.$Filter,
     value: LazilyResolvedInterfaceUnionMember2,
@@ -36023,58 +35913,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedInterfaceUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedInterfaceUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -36433,6 +36271,54 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: {
+                  const: "LazilyResolvedInterfaceUnionMember1" as const,
+                },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedInterfaceUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedInterfaceUnionMember1.$Filter,
     value: LazilyResolvedInterfaceUnionMember1,
@@ -36627,58 +36513,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedInterfaceUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedInterfaceUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -37073,6 +36907,52 @@ export namespace LazilyResolvedClassUnionMember2 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LazilyResolvedClassUnionMember2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedClassUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedClassUnionMember2"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedClassUnionMember2.$Filter,
     value: LazilyResolvedClassUnionMember2,
@@ -37264,58 +37144,6 @@ export namespace LazilyResolvedClassUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedClassUnionMember2" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedClassUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedClassUnionMember2"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -37652,6 +37480,52 @@ export namespace LazilyResolvedClassUnionMember1 {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LazilyResolvedClassUnionMember1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedClassUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedClassUnionMember1"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedClassUnionMember1.$Filter,
     value: LazilyResolvedClassUnionMember1,
@@ -37843,58 +37717,6 @@ export namespace LazilyResolvedClassUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LazilyResolvedClassUnionMember1" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedClassUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedClassUnionMember1"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -38200,6 +38022,55 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: {
+                  const:
+                    "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
+                },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
     value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
@@ -38394,61 +38265,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: {
-                const:
-                  "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
-              },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -38859,6 +38675,54 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: {
+                  const: "LazilyResolvedBlankNodeOrIriIdentifierClass" as const,
+                },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LazilyResolvedBlankNodeOrIriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
     value: LazilyResolvedBlankNodeOrIriIdentifierClass,
@@ -39058,60 +38922,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: {
-                const: "LazilyResolvedBlankNodeOrIriIdentifierClass" as const,
-              },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LazilyResolvedBlankNodeOrIriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -39467,6 +39277,61 @@ export namespace LanguageInPropertiesClass {
     }[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "LanguageInPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/languageInLiteralProperty`,
+            type: "Control",
+          },
+        ],
+        label: "LanguageInPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("LanguageInPropertiesClass"),
+        languageInLiteralProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .array()
+          .nonempty()
+          .min(1)
+          .describe("literal property for testing languageIn"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: LanguageInPropertiesClass.$Filter,
     value: LanguageInPropertiesClass,
@@ -39601,67 +39466,6 @@ export namespace LanguageInPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "LanguageInPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/languageInLiteralProperty`,
-          type: "Control",
-        },
-      ],
-      label: "LanguageInPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("LanguageInPropertiesClass"),
-      languageInLiteralProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .array()
-        .nonempty()
-        .min(1)
-        .describe("literal property for testing languageIn"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, LanguageInPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: LanguageInPropertiesClass.$Json): {
@@ -40086,6 +39890,55 @@ export namespace JsPrimitiveUnionPropertyClass {
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "JsPrimitiveUnionPropertyClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/jsPrimitiveUnionProperty`,
+            type: "Control",
+          },
+        ],
+        label: "JsPrimitiveUnionPropertyClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("JsPrimitiveUnionPropertyClass"),
+        jsPrimitiveUnionProperty: z
+          .union([z.boolean(), z.number(), z.string()])
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: JsPrimitiveUnionPropertyClass.$Filter,
     value: JsPrimitiveUnionPropertyClass,
@@ -40487,61 +40340,6 @@ export namespace JsPrimitiveUnionPropertyClass {
     }
   }
 
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "JsPrimitiveUnionPropertyClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/jsPrimitiveUnionProperty`,
-          type: "Control",
-        },
-      ],
-      label: "JsPrimitiveUnionPropertyClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("JsPrimitiveUnionPropertyClass"),
-      jsPrimitiveUnionProperty: z
-        .union([z.boolean(), z.number(), z.string()])
-        .array()
-        .default(() => []),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, JsPrimitiveUnionPropertyClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
-  }
-
   export function $propertiesFromJson(
     $json: JsPrimitiveUnionPropertyClass.$Json,
   ): {
@@ -40918,6 +40716,47 @@ export namespace IriIdentifierInterface {
     readonly $type: "IriIdentifierInterface";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IriIdentifierInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "IriIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IriIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IriIdentifierInterface.$Filter,
     value: IriIdentifierInterface,
@@ -41070,53 +40909,6 @@ export namespace IriIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "IriIdentifierInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "IriIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("IriIdentifierInterface"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IriIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: IriIdentifierInterface.$Json): {
@@ -41426,6 +41218,47 @@ export namespace IriIdentifierClass {
     readonly $type: "IriIdentifierClass";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IriIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "IriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IriIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IriIdentifierClass.$Filter,
     value: IriIdentifierClass,
@@ -41578,51 +41411,6 @@ export namespace IriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "IriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "IriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("IriIdentifierClass"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, IriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: IriIdentifierClass.$Json): {
@@ -41883,6 +41671,45 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     readonly interfaceUnionMemberCommonParentProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "InterfaceUnionMemberCommonParent" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/interfaceUnionMemberCommonParentProperty`,
+            type: "Control",
+          },
+        ],
+        label: "InterfaceUnionMemberCommonParent",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
+        interfaceUnionMemberCommonParentProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: InterfaceUnionMemberCommonParentStatic.$Filter,
     value: InterfaceUnionMemberCommonParent,
@@ -41973,48 +41800,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InterfaceUnionMemberCommonParent" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMemberCommonParentProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMemberCommonParent",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
-      interfaceUnionMemberCommonParentProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -42309,6 +42094,41 @@ export namespace InterfaceUnionMember2 {
     readonly interfaceUnionMember2Property: string;
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          InterfaceUnionMemberCommonParentStatic.$Json.uiSchema({
+            scopePrefix,
+          }),
+          {
+            scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
+            type: "Control",
+          },
+        ],
+        label: "InterfaceUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember2"),
+          interfaceUnionMember2Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: InterfaceUnionMember2.$Filter,
     value: InterfaceUnionMember2,
@@ -42497,45 +42317,6 @@ export namespace InterfaceUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember2"),
-        interfaceUnionMember2Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, InterfaceUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: InterfaceUnionMember2.$Json): {
@@ -42885,6 +42666,41 @@ export namespace InterfaceUnionMember1 {
     readonly interfaceUnionMember1Property: string;
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          InterfaceUnionMemberCommonParentStatic.$Json.uiSchema({
+            scopePrefix,
+          }),
+          {
+            scope: `${scopePrefix}/properties/interfaceUnionMember1Property`,
+            type: "Control",
+          },
+        ],
+        label: "InterfaceUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember1"),
+          interfaceUnionMember1Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: InterfaceUnionMember1.$Filter,
     value: InterfaceUnionMember1,
@@ -43073,45 +42889,6 @@ export namespace InterfaceUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMember1Property`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember1"),
-        interfaceUnionMember1Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, InterfaceUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: InterfaceUnionMember1.$Json): {
@@ -43469,6 +43246,52 @@ export namespace Interface {
     readonly interfaceProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "Interface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/interfaceProperty`,
+            type: "Control",
+          },
+        ],
+        label: "Interface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("Interface"),
+        interfaceProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: Interface.$Filter,
     value: Interface,
@@ -43588,56 +43411,6 @@ export namespace Interface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "Interface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/interfaceProperty`,
-          type: "Control",
-        },
-      ],
-      label: "Interface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("Interface"),
-      interfaceProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, Interface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: Interface.$Json): {
@@ -43994,6 +43767,56 @@ export namespace IndirectRecursiveHelperClass {
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IndirectRecursiveHelperClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          IndirectRecursiveClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/indirectRecursiveProperty`,
+          }),
+        ],
+        label: "IndirectRecursiveHelperClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IndirectRecursiveHelperClass"),
+        indirectRecursiveProperty: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveClass.$Json> =>
+              IndirectRecursiveClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IndirectRecursiveHelperClass.$Filter,
     value: IndirectRecursiveHelperClass,
@@ -44158,62 +43981,6 @@ export namespace IndirectRecursiveHelperClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "IndirectRecursiveHelperClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        IndirectRecursiveClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/indirectRecursiveProperty`,
-        }),
-      ],
-      label: "IndirectRecursiveHelperClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("IndirectRecursiveHelperClass"),
-      indirectRecursiveProperty: z
-        .lazy(
-          (): z.ZodType<IndirectRecursiveClass.$Json> =>
-            IndirectRecursiveClass.$jsonZodSchema(),
-        )
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IndirectRecursiveHelperClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -44591,6 +44358,56 @@ export namespace IndirectRecursiveClass {
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IndirectRecursiveClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          IndirectRecursiveHelperClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/indirectRecursiveHelperProperty`,
+          }),
+        ],
+        label: "IndirectRecursiveClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("IndirectRecursiveClass"),
+        indirectRecursiveHelperProperty: z
+          .lazy(
+            (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
+              IndirectRecursiveHelperClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IndirectRecursiveClass.$Filter,
     value: IndirectRecursiveClass,
@@ -44758,62 +44575,6 @@ export namespace IndirectRecursiveClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "IndirectRecursiveClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        IndirectRecursiveHelperClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/indirectRecursiveHelperProperty`,
-        }),
-      ],
-      label: "IndirectRecursiveClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("IndirectRecursiveClass"),
-      indirectRecursiveHelperProperty: z
-        .lazy(
-          (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
-            IndirectRecursiveHelperClass.$jsonZodSchema(),
-        )
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IndirectRecursiveClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: IndirectRecursiveClass.$Json): {
@@ -45402,6 +45163,84 @@ export namespace InPropertiesClass {
     readonly inStringsProperty?: "text" | "html";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "InPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inBooleansProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inDateTimesProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inDoublesProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inIntegersProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inIrisProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inStringsProperty`,
+            type: "Control",
+          },
+        ],
+        label: "InPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("InPropertiesClass"),
+        inBooleansProperty: z.literal(true).optional(),
+        inDateTimesProperty: z.iso.datetime().optional(),
+        inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
+        inIntegersProperty: z.enum(["1", "2"]).optional(),
+        inIrisProperty: z
+          .object({
+            "@id": z.enum([
+              "http://example.com/InPropertiesIri1",
+              "http://example.com/InPropertiesIri2",
+            ]),
+          })
+          .optional(),
+        inStringsProperty: z.enum(["text", "html"]).optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: InPropertiesClass.$Filter,
     value: InPropertiesClass,
@@ -45792,85 +45631,6 @@ export namespace InPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inBooleansProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inDateTimesProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inDoublesProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inIntegersProperty`,
-          type: "Control",
-        },
-        { scope: `${scopePrefix}/properties/inIrisProperty`, type: "Control" },
-        {
-          scope: `${scopePrefix}/properties/inStringsProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("InPropertiesClass"),
-      inBooleansProperty: z.literal(true).optional(),
-      inDateTimesProperty: z.iso.datetime().optional(),
-      inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
-      inIntegersProperty: z.enum(["1", "2"]).optional(),
-      inIrisProperty: z
-        .object({
-          "@id": z.enum([
-            "http://example.com/InPropertiesIri1",
-            "http://example.com/InPropertiesIri2",
-          ]),
-        })
-        .optional(),
-      inStringsProperty: z.enum(["text", "html"]).optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, InPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: InPropertiesClass.$Json): {
@@ -46495,6 +46255,55 @@ export namespace InIdentifierClass {
     readonly inIdentifierProperty?: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "InIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/inIdentifierProperty`,
+            type: "Control",
+          },
+        ],
+        label: "InIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.enum([
+          "http://example.com/InIdentifierInstance1",
+          "http://example.com/InIdentifierInstance2",
+        ]),
+        $type: z.literal("InIdentifierClass"),
+        inIdentifierProperty: z.string().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: InIdentifierClass.$Filter,
     value: InIdentifierClass,
@@ -46687,59 +46496,6 @@ export namespace InIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "InIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/inIdentifierProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.enum([
-        "http://example.com/InIdentifierInstance1",
-        "http://example.com/InIdentifierInstance2",
-      ]),
-      $type: z.literal("InIdentifierClass"),
-      inIdentifierProperty: z.string().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, InIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: InIdentifierClass.$Json): {
@@ -47095,6 +46851,49 @@ export namespace IdentifierOverride1ClassStatic {
     readonly identifierOverrideProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "IdentifierOverride1Class" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/identifierOverrideProperty`,
+            type: "Control",
+          },
+        ],
+        label: "IdentifierOverride1Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+        identifierOverrideProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: IdentifierOverride1ClassStatic.$Filter,
     value: IdentifierOverride1Class,
@@ -47184,52 +46983,6 @@ export namespace IdentifierOverride1ClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "IdentifierOverride1Class" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/identifierOverrideProperty`,
-          type: "Control",
-        },
-      ],
-      label: "IdentifierOverride1Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.enum([
-        "IdentifierOverride3Class",
-        "IdentifierOverride4Class",
-        "IdentifierOverride5Class",
-      ]),
-      identifierOverrideProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -47462,6 +47215,31 @@ export namespace IdentifierOverride2ClassStatic {
 
   export type $Json = IdentifierOverride1ClassStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride1ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride2Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return IdentifierOverride1ClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: IdentifierOverride2ClassStatic.$Filter,
     value: IdentifierOverride2Class,
@@ -47518,32 +47296,6 @@ export namespace IdentifierOverride2ClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride1ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride2Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride1ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-      }),
-    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -47741,6 +47493,38 @@ export namespace IdentifierOverride3ClassStatic {
 
   export type $Json = IdentifierOverride2ClassStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride2ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride3Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return IdentifierOverride2ClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IdentifierOverride3ClassStatic.$Filter,
     value: IdentifierOverride3Class,
@@ -47913,42 +47697,6 @@ export namespace IdentifierOverride3ClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride2ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride3Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride2ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride3Class> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -48202,6 +47950,37 @@ export namespace IdentifierOverride4ClassStatic {
 
   export type $Json = IdentifierOverride3ClassStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride3ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride4Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return IdentifierOverride3ClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IdentifierOverride4ClassStatic.$Filter,
     value: IdentifierOverride4Class,
@@ -48372,38 +48151,6 @@ export namespace IdentifierOverride4ClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride3ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride4Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride3ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["IdentifierOverride4Class", "IdentifierOverride5Class"]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride4Class> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -48653,6 +48400,34 @@ export namespace IdentifierOverride5Class {
 
   export type $Json = IdentifierOverride4ClassStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          IdentifierOverride4ClassStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "IdentifierOverride5Class",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return IdentifierOverride4ClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("IdentifierOverride5Class"),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: IdentifierOverride5Class.$Filter,
     value: IdentifierOverride5Class,
@@ -48808,38 +48583,6 @@ export namespace IdentifierOverride5Class {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [IdentifierOverride4ClassStatic.$jsonUiSchema({ scopePrefix })],
-      label: "IdentifierOverride5Class",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return IdentifierOverride4ClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IdentifierOverride5Class"),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride5Class> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -49167,6 +48910,57 @@ export namespace HasValuePropertiesClass {
     readonly hasLiteralValueProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "HasValuePropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/hasIriValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/hasLiteralValueProperty`,
+            type: "Control",
+          },
+        ],
+        label: "HasValuePropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("HasValuePropertiesClass"),
+        hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
+        hasLiteralValueProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: HasValuePropertiesClass.$Filter,
     value: HasValuePropertiesClass,
@@ -49324,63 +49118,6 @@ export namespace HasValuePropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "HasValuePropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/hasIriValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/hasLiteralValueProperty`,
-          type: "Control",
-        },
-      ],
-      label: "HasValuePropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("HasValuePropertiesClass"),
-      hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
-      hasLiteralValueProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, HasValuePropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: HasValuePropertiesClass.$Json): {
@@ -49719,6 +49456,52 @@ export namespace FlattenClassUnionMember3 {
     readonly flattenClassUnionMember3Property: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "FlattenClassUnionMember3" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/flattenClassUnionMember3Property`,
+            type: "Control",
+          },
+        ],
+        label: "FlattenClassUnionMember3",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("FlattenClassUnionMember3"),
+        flattenClassUnionMember3Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: FlattenClassUnionMember3.$Filter,
     value: FlattenClassUnionMember3,
@@ -49907,58 +49690,6 @@ export namespace FlattenClassUnionMember3 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "FlattenClassUnionMember3" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/flattenClassUnionMember3Property`,
-          type: "Control",
-        },
-      ],
-      label: "FlattenClassUnionMember3",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("FlattenClassUnionMember3"),
-      flattenClassUnionMember3Property: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, FlattenClassUnionMember3> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: FlattenClassUnionMember3.$Json): {
@@ -50314,6 +50045,51 @@ export namespace ExternClassPropertyClass {
     readonly externClassProperty?: ExternClass.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ExternClassPropertyClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          ExternClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/externClassProperty`,
+          }),
+        ],
+        label: "ExternClassPropertyClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExternClassPropertyClass"),
+        externClassProperty: ExternClass.$Json.schema().optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ExternClassPropertyClass.$Filter,
     value: ExternClassPropertyClass,
@@ -50508,57 +50284,6 @@ export namespace ExternClassPropertyClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExternClassPropertyClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        ExternClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/externClassProperty`,
-        }),
-      ],
-      label: "ExternClassPropertyClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ExternClassPropertyClass"),
-      externClassProperty: ExternClass.$jsonZodSchema().optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ExternClassPropertyClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ExternClassPropertyClass.$Json): {
@@ -50903,6 +50628,45 @@ export namespace AbstractBaseClassForExternClassStatic {
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "AbstractBaseClassForExternClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/abstractBaseClassForExternClassProperty`,
+            type: "Control",
+          },
+        ],
+        label: "AbstractBaseClassForExternClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExternClass"),
+        abstractBaseClassForExternClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: AbstractBaseClassForExternClassStatic.$Filter,
     value: AbstractBaseClassForExternClass,
@@ -50992,48 +50756,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "AbstractBaseClassForExternClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/abstractBaseClassForExternClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "AbstractBaseClassForExternClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ExternClass"),
-      abstractBaseClassForExternClassProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -51339,6 +51061,52 @@ export namespace ExplicitRdfTypeClass {
     readonly explicitRdfTypeProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ExplicitRdfTypeClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/explicitRdfTypeProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ExplicitRdfTypeClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExplicitRdfTypeClass"),
+        explicitRdfTypeProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ExplicitRdfTypeClass.$Filter,
     value: ExplicitRdfTypeClass,
@@ -51526,58 +51294,6 @@ export namespace ExplicitRdfTypeClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExplicitRdfTypeClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/explicitRdfTypeProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ExplicitRdfTypeClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ExplicitRdfTypeClass"),
-      explicitRdfTypeProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ExplicitRdfTypeClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ExplicitRdfTypeClass.$Json): {
@@ -51921,6 +51637,52 @@ export namespace ExplicitFromToRdfTypesClass {
     readonly explicitFromToRdfTypesProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ExplicitFromToRdfTypesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/explicitFromToRdfTypesProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ExplicitFromToRdfTypesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ExplicitFromToRdfTypesClass"),
+        explicitFromToRdfTypesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ExplicitFromToRdfTypesClass.$Filter,
     value: ExplicitFromToRdfTypesClass,
@@ -52109,58 +51871,6 @@ export namespace ExplicitFromToRdfTypesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ExplicitFromToRdfTypesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/explicitFromToRdfTypesProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ExplicitFromToRdfTypesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ExplicitFromToRdfTypesClass"),
-      explicitFromToRdfTypesProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ExplicitFromToRdfTypesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -52519,6 +52229,56 @@ export namespace DirectRecursiveClass {
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "DirectRecursiveClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          DirectRecursiveClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/directRecursiveProperty`,
+          }),
+        ],
+        label: "DirectRecursiveClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DirectRecursiveClass"),
+        directRecursiveProperty: z
+          .lazy(
+            (): z.ZodType<DirectRecursiveClass.$Json> =>
+              DirectRecursiveClass.$Json.schema(),
+          )
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: DirectRecursiveClass.$Filter,
     value: DirectRecursiveClass,
@@ -52682,62 +52442,6 @@ export namespace DirectRecursiveClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DirectRecursiveClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        DirectRecursiveClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/directRecursiveProperty`,
-        }),
-      ],
-      label: "DirectRecursiveClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("DirectRecursiveClass"),
-      directRecursiveProperty: z
-        .lazy(
-          (): z.ZodType<DirectRecursiveClass.$Json> =>
-            DirectRecursiveClass.$jsonZodSchema(),
-        )
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, DirectRecursiveClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: DirectRecursiveClass.$Json): {
@@ -53330,6 +53034,77 @@ export namespace DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty: boolean;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "DefaultValuePropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateDefaultValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateTimeDefaultValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/falseBooleanDefaultValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/numberDefaultValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/stringDefaultValueProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/trueBooleanDefaultValueProperty`,
+            type: "Control",
+          },
+        ],
+        label: "DefaultValuePropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DefaultValuePropertiesClass"),
+        dateDefaultValueProperty: z.iso.date(),
+        dateTimeDefaultValueProperty: z.iso.datetime(),
+        falseBooleanDefaultValueProperty: z.boolean(),
+        numberDefaultValueProperty: z.number(),
+        stringDefaultValueProperty: z.string(),
+        trueBooleanDefaultValueProperty: z.boolean(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: DefaultValuePropertiesClass.$Filter,
     value: DefaultValuePropertiesClass,
@@ -53701,83 +53476,6 @@ export namespace DefaultValuePropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DefaultValuePropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/falseBooleanDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/numberDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringDefaultValueProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/trueBooleanDefaultValueProperty`,
-          type: "Control",
-        },
-      ],
-      label: "DefaultValuePropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("DefaultValuePropertiesClass"),
-      dateDefaultValueProperty: z.iso.date(),
-      dateTimeDefaultValueProperty: z.iso.datetime(),
-      falseBooleanDefaultValueProperty: z.boolean(),
-      numberDefaultValueProperty: z.number(),
-      stringDefaultValueProperty: z.string(),
-      trueBooleanDefaultValueProperty: z.boolean(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, DefaultValuePropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -54859,6 +54557,87 @@ export namespace DateUnionPropertiesClass {
       | { type: "date"; value: string };
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "DateUnionPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateOrDateTimeProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/dateTimeOrDateProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/stringOrDateProperty`,
+            type: "Control",
+          },
+        ],
+        label: "DateUnionPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("DateUnionPropertiesClass"),
+        dateOrDateTimeProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+          ])
+          .optional(),
+        dateOrStringProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+            z.object({ type: z.literal("string"), value: z.string() }),
+          ])
+          .optional(),
+        dateTimeOrDateProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+          ])
+          .optional(),
+        stringOrDateProperty: z
+          .discriminatedUnion("type", [
+            z.object({ type: z.literal("string"), value: z.string() }),
+            z.object({ type: z.literal("date"), value: z.iso.date() }),
+          ])
+          .optional(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: DateUnionPropertiesClass.$Filter,
     value: DateUnionPropertiesClass,
@@ -55788,93 +55567,6 @@ export namespace DateUnionPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "DateUnionPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateOrDateTimeProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateOrStringProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/dateTimeOrDateProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/stringOrDateProperty`,
-          type: "Control",
-        },
-      ],
-      label: "DateUnionPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("DateUnionPropertiesClass"),
-      dateOrDateTimeProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-        ])
-        .optional(),
-      dateOrStringProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-          z.object({ type: z.literal("string"), value: z.string() }),
-        ])
-        .optional(),
-      dateTimeOrDateProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-        ])
-        .optional(),
-      stringOrDateProperty: z
-        .discriminatedUnion("type", [
-          z.object({ type: z.literal("string"), value: z.string() }),
-          z.object({ type: z.literal("date"), value: z.iso.date() }),
-        ])
-        .optional(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, DateUnionPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: DateUnionPropertiesClass.$Json): {
@@ -57537,6 +57229,210 @@ export namespace ConvertibleTypePropertiesClass {
     )[];
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ConvertibleTypePropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleIriSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleLiteralSetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermNonEmptySetProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermOptionProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/convertibleTermSetProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConvertibleTypePropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ConvertibleTypePropertiesClass"),
+        convertibleIriNonEmptySetProperty: z
+          .object({ "@id": z.string().min(1) })
+          .array()
+          .nonempty()
+          .min(1),
+        convertibleIriOptionProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional(),
+        convertibleIriProperty: z.object({ "@id": z.string().min(1) }),
+        convertibleIriSetProperty: z
+          .object({ "@id": z.string().min(1) })
+          .array()
+          .default(() => []),
+        convertibleLiteralNonEmptySetProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .array()
+          .nonempty()
+          .min(1),
+        convertibleLiteralOptionProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .optional(),
+        convertibleLiteralProperty: z.object({
+          "@language": z.string().optional(),
+          "@type": z.string().optional(),
+          "@value": z.string(),
+        }),
+        convertibleLiteralSetProperty: z
+          .object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+          })
+          .array()
+          .default(() => []),
+        convertibleTermNonEmptySetProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ])
+          .array()
+          .nonempty()
+          .min(1),
+        convertibleTermOptionProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ])
+          .optional(),
+        convertibleTermProperty: z.discriminatedUnion("termType", [
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("BlankNode"),
+          }),
+          z.object({
+            "@id": z.string().min(1),
+            termType: z.literal("NamedNode"),
+          }),
+          z.object({
+            "@language": z.string().optional(),
+            "@type": z.string().optional(),
+            "@value": z.string(),
+            termType: z.literal("Literal"),
+          }),
+        ]),
+        convertibleTermSetProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("BlankNode"),
+            }),
+            z.object({
+              "@id": z.string().min(1),
+              termType: z.literal("NamedNode"),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+              termType: z.literal("Literal"),
+            }),
+          ])
+          .array()
+          .default(() => []),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ConvertibleTypePropertiesClass.$Filter,
     value: ConvertibleTypePropertiesClass,
@@ -58141,216 +58037,6 @@ export namespace ConvertibleTypePropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ConvertibleTypePropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleIriNonEmptySetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleIriOptionProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleIriProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleIriSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleLiteralNonEmptySetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleLiteralOptionProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleLiteralProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleLiteralSetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleTermNonEmptySetProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleTermOptionProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleTermProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/convertibleTermSetProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConvertibleTypePropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ConvertibleTypePropertiesClass"),
-      convertibleIriNonEmptySetProperty: z
-        .object({ "@id": z.string().min(1) })
-        .array()
-        .nonempty()
-        .min(1),
-      convertibleIriOptionProperty: z
-        .object({ "@id": z.string().min(1) })
-        .optional(),
-      convertibleIriProperty: z.object({ "@id": z.string().min(1) }),
-      convertibleIriSetProperty: z
-        .object({ "@id": z.string().min(1) })
-        .array()
-        .default(() => []),
-      convertibleLiteralNonEmptySetProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .array()
-        .nonempty()
-        .min(1),
-      convertibleLiteralOptionProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .optional(),
-      convertibleLiteralProperty: z.object({
-        "@language": z.string().optional(),
-        "@type": z.string().optional(),
-        "@value": z.string(),
-      }),
-      convertibleLiteralSetProperty: z
-        .object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        })
-        .array()
-        .default(() => []),
-      convertibleTermNonEmptySetProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .array()
-        .nonempty()
-        .min(1),
-      convertibleTermOptionProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .optional(),
-      convertibleTermProperty: z.discriminatedUnion("termType", [
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("BlankNode"),
-        }),
-        z.object({
-          "@id": z.string().min(1),
-          termType: z.literal("NamedNode"),
-        }),
-        z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-          termType: z.literal("Literal"),
-        }),
-      ]),
-      convertibleTermSetProperty: z
-        .discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ])
-        .array()
-        .default(() => []),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ConvertibleTypePropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -59215,6 +58901,57 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "BaseInterfaceWithProperties" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/baseInterfaceWithPropertiesProperty`,
+            type: "Control",
+          },
+        ],
+        label: "BaseInterfaceWithProperties",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "BaseInterfaceWithProperties",
+          "BaseInterfaceWithoutProperties",
+          "ConcreteChildInterface",
+          "ConcreteParentInterface",
+        ]),
+        baseInterfaceWithPropertiesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BaseInterfaceWithPropertiesStatic.$Filter,
     value: BaseInterfaceWithProperties,
@@ -59428,63 +59165,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BaseInterfaceWithProperties" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/baseInterfaceWithPropertiesProperty`,
-          type: "Control",
-        },
-      ],
-      label: "BaseInterfaceWithProperties",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.enum([
-        "BaseInterfaceWithProperties",
-        "BaseInterfaceWithoutProperties",
-        "ConcreteChildInterface",
-        "ConcreteParentInterface",
-      ]),
-      baseInterfaceWithPropertiesProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BaseInterfaceWithProperties> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -59834,6 +59514,38 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          BaseInterfaceWithPropertiesStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "BaseInterfaceWithoutProperties",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return BaseInterfaceWithPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "BaseInterfaceWithoutProperties",
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
     value: BaseInterfaceWithoutProperties,
@@ -60012,44 +59724,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-      ],
-      label: "BaseInterfaceWithoutProperties",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return BaseInterfaceWithPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "BaseInterfaceWithoutProperties",
-          "ConcreteChildInterface",
-          "ConcreteParentInterface",
-        ]),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BaseInterfaceWithoutProperties> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -60375,6 +60049,39 @@ export namespace ConcreteParentInterfaceStatic {
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          BaseInterfaceWithoutPropertiesStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            scope: `${scopePrefix}/properties/concreteParentInterfaceProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConcreteParentInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return BaseInterfaceWithoutPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+          concreteParentInterfaceProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ConcreteParentInterfaceStatic.$Filter,
     value: ConcreteParentInterface,
@@ -60578,45 +60285,6 @@ export namespace ConcreteParentInterfaceStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        BaseInterfaceWithoutPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteParentInterfaceProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteParentInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
-        concreteParentInterfaceProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ConcreteParentInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -60978,6 +60646,39 @@ export namespace ConcreteChildInterface {
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ConcreteParentInterfaceStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            scope: `${scopePrefix}/properties/concreteChildInterfaceProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConcreteChildInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return ConcreteParentInterfaceStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildInterface"),
+          concreteChildInterfaceProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ConcreteChildInterface.$Filter,
     value: ConcreteChildInterface,
@@ -61166,45 +60867,6 @@ export namespace ConcreteChildInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ConcreteParentInterfaceStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteChildInterfaceProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteChildInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return ConcreteParentInterfaceStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ConcreteChildInterface"),
-        concreteChildInterfaceProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ConcreteChildInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ConcreteChildInterface.$Json): {
@@ -61626,6 +61288,45 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "AbstractBaseClassWithProperties" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/abstractBaseClassWithPropertiesProperty`,
+            type: "Control",
+          },
+        ],
+        label: "AbstractBaseClassWithProperties",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        abstractBaseClassWithPropertiesProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: AbstractBaseClassWithPropertiesStatic.$Filter,
     value: AbstractBaseClassWithProperties,
@@ -61716,48 +61417,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "AbstractBaseClassWithProperties" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/abstractBaseClassWithPropertiesProperty`,
-          type: "Control",
-        },
-      ],
-      label: "AbstractBaseClassWithProperties",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-      abstractBaseClassWithPropertiesProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -61992,6 +61651,27 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          AbstractBaseClassWithPropertiesStatic.$Json.uiSchema({ scopePrefix }),
+        ],
+        label: "AbstractBaseClassWithoutProperties",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return AbstractBaseClassWithPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
     value: AbstractBaseClassWithoutProperties,
@@ -62047,30 +61727,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        AbstractBaseClassWithPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-      ],
-      label: "AbstractBaseClassWithoutProperties",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return AbstractBaseClassWithPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-      }),
-    ) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -62328,6 +61984,41 @@ export namespace ConcreteParentClassStatic {
     readonly concreteParentClassProperty: string;
   } & AbstractBaseClassWithoutPropertiesStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          AbstractBaseClassWithoutPropertiesStatic.$Json.uiSchema({
+            scopePrefix,
+          }),
+          {
+            scope: `${scopePrefix}/properties/concreteParentClassProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConcreteParentClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return AbstractBaseClassWithoutPropertiesStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
+          concreteParentClassProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ConcreteParentClassStatic.$Filter,
     value: ConcreteParentClass,
@@ -62531,45 +62222,6 @@ export namespace ConcreteParentClassStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        AbstractBaseClassWithoutPropertiesStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteParentClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteParentClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return AbstractBaseClassWithoutPropertiesStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
-        concreteParentClassProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ConcreteParentClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ConcreteParentClassStatic.$Json): {
@@ -62890,6 +62542,39 @@ export namespace ConcreteChildClass {
     readonly concreteChildClassProperty: string;
   } & ConcreteParentClassStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ConcreteParentClassStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            scope: `${scopePrefix}/properties/concreteChildClassProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ConcreteChildClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return ConcreteParentClassStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildClass"),
+          concreteChildClassProperty: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ConcreteChildClass.$Filter,
     value: ConcreteChildClass,
@@ -63078,43 +62763,6 @@ export namespace ConcreteChildClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ConcreteParentClassStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/concreteChildClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ConcreteChildClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return ConcreteParentClassStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ConcreteChildClass"),
-        concreteChildClassProperty: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, ConcreteChildClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ConcreteChildClass.$Json): {
@@ -63441,6 +63089,45 @@ export namespace ClassUnionMemberCommonParentStatic {
     readonly classUnionMemberCommonParentProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ClassUnionMemberCommonParent" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classUnionMemberCommonParentProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ClassUnionMemberCommonParent",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
+        classUnionMemberCommonParentProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+  }
+
   export function $filter(
     filter: ClassUnionMemberCommonParentStatic.$Filter,
     value: ClassUnionMemberCommonParent,
@@ -63529,48 +63216,6 @@ export namespace ClassUnionMemberCommonParentStatic {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ClassUnionMemberCommonParent" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/classUnionMemberCommonParentProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ClassUnionMemberCommonParent",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
-      classUnionMemberCommonParentProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
   }
 
   export function $propertiesFromJson(
@@ -63840,6 +63485,39 @@ export namespace ClassUnionMember2 {
     readonly classUnionMember2Property: string;
   } & ClassUnionMemberCommonParentStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassUnionMemberCommonParentStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            scope: `${scopePrefix}/properties/classUnionMember2Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassUnionMember2",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember2"),
+          classUnionMember2Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ClassUnionMember2.$Filter,
     value: ClassUnionMember2,
@@ -64027,43 +63705,6 @@ export namespace ClassUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ClassUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/classUnionMember2Property`,
-          type: "Control",
-        },
-      ],
-      label: "ClassUnionMember2",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return ClassUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ClassUnionMember2"),
-        classUnionMember2Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, ClassUnionMember2> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ClassUnionMember2.$Json): {
@@ -64369,6 +64010,39 @@ export namespace ClassUnionMember1 {
     readonly classUnionMember1Property: string;
   } & ClassUnionMemberCommonParentStatic.$Json;
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassUnionMemberCommonParentStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            scope: `${scopePrefix}/properties/classUnionMember1Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassUnionMember1",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
+        z.object({
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember1"),
+          classUnionMember1Property: z.string(),
+        }),
+      ) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ClassUnionMember1.$Filter,
     value: ClassUnionMember1,
@@ -64556,43 +64230,6 @@ export namespace ClassUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        ClassUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/classUnionMember1Property`,
-          type: "Control",
-        },
-      ],
-      label: "ClassUnionMember1",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return ClassUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ClassUnionMember1"),
-        classUnionMember1Property: z.string(),
-      }),
-    ) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, ClassUnionMember1> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ClassUnionMember1.$Json): {
@@ -64922,6 +64559,52 @@ export namespace NonClass {
     readonly nonClassProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "NonClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/nonClassProperty`,
+            type: "Control",
+          },
+        ],
+        label: "NonClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("NonClass"),
+        nonClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -65038,56 +64721,6 @@ export namespace NonClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "NonClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/nonClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "NonClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("NonClass"),
-      nonClassProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, NonClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: NonClass.$Json): {
@@ -65369,6 +65002,52 @@ export namespace PartialClass {
     readonly lazilyResolvedStringProperty: string;
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "PartialClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
+            type: "Control",
+          },
+        ],
+        label: "PartialClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("PartialClass"),
+        lazilyResolvedStringProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: PartialClass.$Filter,
     value: PartialClass,
@@ -65493,56 +65172,6 @@ export namespace PartialClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "PartialClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/lazilyResolvedStringProperty`,
-          type: "Control",
-        },
-      ],
-      label: "PartialClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("PartialClass"),
-      lazilyResolvedStringProperty: z.string(),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(json: unknown): Either<Error, PartialClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: PartialClass.$Json): {
@@ -66055,6 +65684,95 @@ export namespace ClassPropertiesClass {
     readonly singleClassProperty?: { readonly "@id": string };
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ClassPropertiesClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/iriClassProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/multiClassProperty`,
+            type: "Control",
+          },
+          NonClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/nodeClassProperty1`,
+          }),
+          PartialClass.$Json.uiSchema({
+            scopePrefix: `${scopePrefix}/properties/nodeClassProperty2`,
+          }),
+          {
+            scope: `${scopePrefix}/properties/singleClassProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ClassPropertiesClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("ClassPropertiesClass"),
+        iriClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          ),
+        multiClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          ),
+        nodeClassProperty1: NonClass.$Json
+          .schema()
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+          ),
+        nodeClassProperty2: PartialClass.$Json
+          .schema()
+          .optional()
+          .describe(
+            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
+          ),
+        singleClassProperty: z
+          .object({ "@id": z.string().min(1) })
+          .optional()
+          .describe(
+            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          ),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: ClassPropertiesClass.$Filter,
     value: ClassPropertiesClass,
@@ -66402,99 +66120,6 @@ export namespace ClassPropertiesClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "ClassPropertiesClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/iriClassProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/multiClassProperty`,
-          type: "Control",
-        },
-        NonClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/nodeClassProperty1`,
-        }),
-        PartialClass.$jsonUiSchema({
-          scopePrefix: `${scopePrefix}/properties/nodeClassProperty2`,
-        }),
-        {
-          scope: `${scopePrefix}/properties/singleClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "ClassPropertiesClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("ClassPropertiesClass"),
-      iriClassProperty: z
-        .object({ "@id": z.string().min(1) })
-        .optional()
-        .describe(
-          "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-        ),
-      multiClassProperty: z
-        .object({ "@id": z.string().min(1) })
-        .optional()
-        .describe(
-          "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-        ),
-      nodeClassProperty1: NonClass.$jsonZodSchema()
-        .optional()
-        .describe(
-          "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
-        ),
-      nodeClassProperty2: PartialClass.$jsonZodSchema()
-        .optional()
-        .describe(
-          "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
-        ),
-      singleClassProperty: z
-        .object({ "@id": z.string().min(1) })
-        .optional()
-        .describe(
-          "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-        ),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, ClassPropertiesClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: ClassPropertiesClass.$Json): {
@@ -66951,6 +66576,47 @@ export namespace BlankNodeOrIriIdentifierInterface {
     readonly $type: "BlankNodeOrIriIdentifierInterface";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "BlankNodeOrIriIdentifierInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "BlankNodeOrIriIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeOrIriIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BlankNodeOrIriIdentifierInterface.$Filter,
     value: BlankNodeOrIriIdentifierInterface,
@@ -67110,53 +66776,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BlankNodeOrIriIdentifierInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "BlankNodeOrIriIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("BlankNodeOrIriIdentifierInterface"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BlankNodeOrIriIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -67491,6 +67110,47 @@ export namespace BlankNodeOrIriIdentifierClass {
     readonly $type: "BlankNodeOrIriIdentifierClass";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "BlankNodeOrIriIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "BlankNodeOrIriIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeOrIriIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BlankNodeOrIriIdentifierClass.$Filter,
     value: BlankNodeOrIriIdentifierClass,
@@ -67644,53 +67304,6 @@ export namespace BlankNodeOrIriIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BlankNodeOrIriIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "BlankNodeOrIriIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("BlankNodeOrIriIdentifierClass"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BlankNodeOrIriIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -67940,6 +67553,47 @@ export namespace BlankNodeIdentifierInterface {
     readonly $type: "BlankNodeIdentifierInterface";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "BlankNodeIdentifierInterface" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "BlankNodeIdentifierInterface",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeIdentifierInterface"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BlankNodeIdentifierInterface.$Filter,
     value: BlankNodeIdentifierInterface,
@@ -68093,53 +67747,6 @@ export namespace BlankNodeIdentifierInterface {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BlankNodeIdentifierInterface" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "BlankNodeIdentifierInterface",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("BlankNodeIdentifierInterface"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BlankNodeIdentifierInterface> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson(
@@ -68459,6 +68066,47 @@ export namespace BlankNodeIdentifierClass {
     readonly $type: "BlankNodeIdentifierClass";
   };
 
+  export namespace $Json {
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "BlankNodeIdentifierClass" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+        ],
+        label: "BlankNodeIdentifierClass",
+        type: "Group",
+      };
+    }
+    export function schema() {
+      return z.object({
+        "@id": z.string().min(1),
+        $type: z.literal("BlankNodeIdentifierClass"),
+      }) satisfies z.ZodType<$Json>;
+    }
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+  }
+
   export function $filter(
     filter: BlankNodeIdentifierClass.$Filter,
     value: BlankNodeIdentifierClass,
@@ -68612,53 +68260,6 @@ export namespace BlankNodeIdentifierClass {
       default:
         return false;
     }
-  }
-
-  export function $jsonSchema() {
-    return z.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "BlankNodeIdentifierClass" as const },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-      ],
-      label: "BlankNodeIdentifierClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return z.object({
-      "@id": z.string().min(1),
-      $type: z.literal("BlankNodeIdentifierClass"),
-    }) satisfies z.ZodType<$Json>;
-  }
-
-  export function $parseJson(
-    json: unknown,
-  ): Either<Error, BlankNodeIdentifierClass> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    return Right($fromJson($jsonSafeParseResult.data));
   }
 
   export function $propertiesFromJson($json: BlankNodeIdentifierClass.$Json): {
@@ -69058,8 +68659,8 @@ export namespace ClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
+      ClassUnionMember1.$Json.schema(),
+      ClassUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(json: unknown): Either<Error, ClassUnion> {
@@ -69577,9 +69178,9 @@ export namespace FlattenClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
+      ClassUnionMember1.$Json.schema(),
+      ClassUnionMember2.$Json.schema(),
+      FlattenClassUnionMember3.$Json.schema(),
     ]);
 
   export function $parseJson(json: unknown): Either<Error, FlattenClassUnion> {
@@ -70065,8 +69666,8 @@ export namespace InterfaceUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
+      InterfaceUnionMember1.$Json.schema(),
+      InterfaceUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(json: unknown): Either<Error, InterfaceUnion> {
@@ -70538,8 +70139,8 @@ export namespace LazilyResolvedClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
+      LazilyResolvedClassUnionMember1.$Json.schema(),
+      LazilyResolvedClassUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(
@@ -71055,8 +70656,8 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
+      LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+      LazilyResolvedInterfaceUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(
@@ -71556,8 +71157,8 @@ export namespace PartialClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
+      PartialClassUnionMember1.$Json.schema(),
+      PartialClassUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(json: unknown): Either<Error, PartialClassUnion> {
@@ -72026,8 +71627,8 @@ export namespace PartialInterfaceUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
+      PartialInterfaceUnionMember1.$Json.schema(),
+      PartialInterfaceUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(
@@ -72500,8 +72101,8 @@ export namespace NoRdfTypeClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember1.$Json.schema(),
+      NoRdfTypeClassUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(
@@ -72966,8 +72567,8 @@ export namespace RecursiveClassUnion {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
+      RecursiveClassUnionMember1.$Json.schema(),
+      RecursiveClassUnionMember2.$Json.schema(),
     ]);
 
   export function $parseJson(
@@ -78527,82 +78128,82 @@ export namespace $Object {
 
   export const $jsonZodSchema = () =>
     z.discriminatedUnion("$type", [
-      BlankNodeIdentifierClass.$jsonZodSchema(),
-      BlankNodeIdentifierInterface.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      ClassPropertiesClass.$jsonZodSchema(),
-      PartialClass.$jsonZodSchema(),
-      NonClass.$jsonZodSchema(),
-      ClassUnionMember1.$jsonZodSchema(),
-      ClassUnionMember2.$jsonZodSchema(),
-      ConcreteChildClass.$jsonZodSchema(),
-      ConcreteParentClassStatic.$jsonZodSchema(),
-      ConcreteChildInterface.$jsonZodSchema(),
-      ConcreteParentInterfaceStatic.$jsonZodSchema(),
-      BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
-      BaseInterfaceWithPropertiesStatic.$jsonZodSchema(),
-      ConvertibleTypePropertiesClass.$jsonZodSchema(),
-      DateUnionPropertiesClass.$jsonZodSchema(),
-      DefaultValuePropertiesClass.$jsonZodSchema(),
-      DirectRecursiveClass.$jsonZodSchema(),
-      ExplicitFromToRdfTypesClass.$jsonZodSchema(),
-      ExplicitRdfTypeClass.$jsonZodSchema(),
-      ExternClassPropertyClass.$jsonZodSchema(),
-      FlattenClassUnionMember3.$jsonZodSchema(),
-      HasValuePropertiesClass.$jsonZodSchema(),
-      IdentifierOverride5Class.$jsonZodSchema(),
-      IdentifierOverride4ClassStatic.$jsonZodSchema(),
-      IdentifierOverride3ClassStatic.$jsonZodSchema(),
-      InIdentifierClass.$jsonZodSchema(),
-      InPropertiesClass.$jsonZodSchema(),
-      IndirectRecursiveClass.$jsonZodSchema(),
-      IndirectRecursiveHelperClass.$jsonZodSchema(),
-      Interface.$jsonZodSchema(),
-      InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2.$jsonZodSchema(),
-      IriIdentifierClass.$jsonZodSchema(),
-      IriIdentifierInterface.$jsonZodSchema(),
-      JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
-      LanguageInPropertiesClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember1.$jsonZodSchema(),
-      LazilyResolvedClassUnionMember2.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember1.$jsonZodSchema(),
-      LazilyResolvedInterfaceUnionMember2.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierClass.$jsonZodSchema(),
-      LazilyResolvedIriIdentifierInterface.$jsonZodSchema(),
-      LazyPropertiesClass.$jsonZodSchema(),
-      LazyPropertiesInterface.$jsonZodSchema(),
-      PartialInterface.$jsonZodSchema(),
-      ListPropertiesClass.$jsonZodSchema(),
-      MutablePropertiesClass.$jsonZodSchema(),
-      NamedUnionPropertiesClass.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
-      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
-      NodeKindsClass.$jsonZodSchema(),
-      NumericPropertiesClass.$jsonZodSchema(),
-      OrderedPropertiesClass.$jsonZodSchema(),
-      NewName1Class.$jsonZodSchema(),
-      NewName2Class.$jsonZodSchema(),
-      PartialClassUnionMember1.$jsonZodSchema(),
-      PartialClassUnionMember2.$jsonZodSchema(),
-      PartialInterfaceUnionMember1.$jsonZodSchema(),
-      PartialInterfaceUnionMember2.$jsonZodSchema(),
-      PropertyCardinalitiesClass.$jsonZodSchema(),
-      PropertyNamesClass.$jsonZodSchema(),
-      PropertyPathsClass.$jsonZodSchema(),
-      PropertyVisibilitiesClass.$jsonZodSchema(),
-      RecursiveClassUnionMember1.$jsonZodSchema(),
-      RecursiveClassUnionMember2.$jsonZodSchema(),
-      Sha256IriIdentifierClass.$jsonZodSchema(),
-      TermPropertiesClass.$jsonZodSchema(),
-      UnionDiscriminantsClass.$jsonZodSchema(),
-      UuidV4IriIdentifierClass.$jsonZodSchema(),
-      UuidV4IriIdentifierInterface.$jsonZodSchema(),
-      $DefaultPartial.$jsonZodSchema(),
-      $NamedDefaultPartial.$jsonZodSchema(),
+      BlankNodeIdentifierClass.$Json.schema(),
+      BlankNodeIdentifierInterface.$Json.schema(),
+      BlankNodeOrIriIdentifierClass.$Json.schema(),
+      BlankNodeOrIriIdentifierInterface.$Json.schema(),
+      ClassPropertiesClass.$Json.schema(),
+      PartialClass.$Json.schema(),
+      NonClass.$Json.schema(),
+      ClassUnionMember1.$Json.schema(),
+      ClassUnionMember2.$Json.schema(),
+      ConcreteChildClass.$Json.schema(),
+      ConcreteParentClassStatic.$Json.schema(),
+      ConcreteChildInterface.$Json.schema(),
+      ConcreteParentInterfaceStatic.$Json.schema(),
+      BaseInterfaceWithoutPropertiesStatic.$Json.schema(),
+      BaseInterfaceWithPropertiesStatic.$Json.schema(),
+      ConvertibleTypePropertiesClass.$Json.schema(),
+      DateUnionPropertiesClass.$Json.schema(),
+      DefaultValuePropertiesClass.$Json.schema(),
+      DirectRecursiveClass.$Json.schema(),
+      ExplicitFromToRdfTypesClass.$Json.schema(),
+      ExplicitRdfTypeClass.$Json.schema(),
+      ExternClassPropertyClass.$Json.schema(),
+      FlattenClassUnionMember3.$Json.schema(),
+      HasValuePropertiesClass.$Json.schema(),
+      IdentifierOverride5Class.$Json.schema(),
+      IdentifierOverride4ClassStatic.$Json.schema(),
+      IdentifierOverride3ClassStatic.$Json.schema(),
+      InIdentifierClass.$Json.schema(),
+      InPropertiesClass.$Json.schema(),
+      IndirectRecursiveClass.$Json.schema(),
+      IndirectRecursiveHelperClass.$Json.schema(),
+      Interface.$Json.schema(),
+      InterfaceUnionMember1.$Json.schema(),
+      InterfaceUnionMember2.$Json.schema(),
+      IriIdentifierClass.$Json.schema(),
+      IriIdentifierInterface.$Json.schema(),
+      JsPrimitiveUnionPropertyClass.$Json.schema(),
+      LanguageInPropertiesClass.$Json.schema(),
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Json.schema(),
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json.schema(),
+      LazilyResolvedClassUnionMember1.$Json.schema(),
+      LazilyResolvedClassUnionMember2.$Json.schema(),
+      LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+      LazilyResolvedInterfaceUnionMember2.$Json.schema(),
+      LazilyResolvedIriIdentifierClass.$Json.schema(),
+      LazilyResolvedIriIdentifierInterface.$Json.schema(),
+      LazyPropertiesClass.$Json.schema(),
+      LazyPropertiesInterface.$Json.schema(),
+      PartialInterface.$Json.schema(),
+      ListPropertiesClass.$Json.schema(),
+      MutablePropertiesClass.$Json.schema(),
+      NamedUnionPropertiesClass.$Json.schema(),
+      NoRdfTypeClassUnionMember1.$Json.schema(),
+      NoRdfTypeClassUnionMember2.$Json.schema(),
+      NodeKindsClass.$Json.schema(),
+      NumericPropertiesClass.$Json.schema(),
+      OrderedPropertiesClass.$Json.schema(),
+      NewName1Class.$Json.schema(),
+      NewName2Class.$Json.schema(),
+      PartialClassUnionMember1.$Json.schema(),
+      PartialClassUnionMember2.$Json.schema(),
+      PartialInterfaceUnionMember1.$Json.schema(),
+      PartialInterfaceUnionMember2.$Json.schema(),
+      PropertyCardinalitiesClass.$Json.schema(),
+      PropertyNamesClass.$Json.schema(),
+      PropertyPathsClass.$Json.schema(),
+      PropertyVisibilitiesClass.$Json.schema(),
+      RecursiveClassUnionMember1.$Json.schema(),
+      RecursiveClassUnionMember2.$Json.schema(),
+      Sha256IriIdentifierClass.$Json.schema(),
+      TermPropertiesClass.$Json.schema(),
+      UnionDiscriminantsClass.$Json.schema(),
+      UuidV4IriIdentifierClass.$Json.schema(),
+      UuidV4IriIdentifierInterface.$Json.schema(),
+      $DefaultPartial.$Json.schema(),
+      $NamedDefaultPartial.$Json.schema(),
     ]);
 
   export function $parseJson(json: unknown): Either<Error, $Object> {

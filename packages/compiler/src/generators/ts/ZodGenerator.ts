@@ -1,8 +1,8 @@
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
+import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
-import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
 import { snippets } from "./snippets.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -21,7 +21,7 @@ export namespace ${objectType.staticModuleName} {
 ${joinCode(
   [
     ...ObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList(),
-    ...ObjectType_jsonZodSchemaFunctionDeclaration.bind(objectType)().toList(),
+    ...ObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList(),
   ],
   { on: "\n\n" },
 )}

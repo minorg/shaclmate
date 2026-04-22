@@ -52,8 +52,8 @@ export abstract class AbstractNumericType<
     };
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractPrimitiveType<ValueT>["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractPrimitiveType<ValueT>["jsonSchema"]>[0],
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:

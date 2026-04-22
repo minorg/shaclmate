@@ -209,9 +209,9 @@ export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either
     return this.inlineJsonType;
   }
 
-  override jsonZodSchema({
+  override jsonSchema({
     context,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
+  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
     if (this.features.has("json")) {
       const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
       if (context === "property" && this.recursive) {

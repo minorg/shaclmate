@@ -144,10 +144,10 @@ export abstract class AbstractLazyObjectType<
     return this.partialType.jsonUiSchemaElement(parameters);
   }
 
-  override jsonZodSchema(
-    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+  override jsonSchema(
+    parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {
-    return this.partialType.jsonZodSchema(parameters);
+    return this.partialType.jsonSchema(parameters);
   }
 
   override toJsonExpression({

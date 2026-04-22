@@ -68,8 +68,8 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     return this.inlineJsonType;
   }
 
-  override jsonZodSchema(
-    _parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+  override jsonSchema(
+    _parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {
     return this.inlineJsonZodSchema;
   }

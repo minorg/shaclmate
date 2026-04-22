@@ -87,10 +87,10 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
     );
   }
 
-  override jsonZodSchema({
+  override jsonSchema({
     includeDiscriminantProperty,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
   >[0]): Code {
     let idSchema: Code;
     if (this.in_.length > 0) {
