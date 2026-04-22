@@ -68832,6 +68832,7 @@ export namespace ClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
       readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
@@ -68839,6 +68840,12 @@ export namespace ClassUnion {
   } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (filter: ClassUnion.$Filter, value: ClassUnion) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["ClassUnionMember1"] !== undefined &&
       ClassUnionMember1.isClassUnionMember1(value)
@@ -69279,6 +69286,7 @@ export namespace FlattenClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
       readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
@@ -69290,6 +69298,12 @@ export namespace FlattenClassUnion {
     filter: FlattenClassUnion.$Filter,
     value: FlattenClassUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["ClassUnionMember1"] !== undefined &&
       ClassUnionMember1.isClassUnionMember1(value)
@@ -69810,6 +69824,7 @@ export namespace InterfaceUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
       readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
@@ -69820,6 +69835,12 @@ export namespace InterfaceUnion {
     filter: InterfaceUnion.$Filter,
     value: InterfaceUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["InterfaceUnionMember1"] !== undefined &&
       InterfaceUnionMember1.isInterfaceUnionMember1(value)
@@ -70264,6 +70285,7 @@ export namespace LazilyResolvedClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
       readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
@@ -70274,6 +70296,12 @@ export namespace LazilyResolvedClassUnion {
     filter: LazilyResolvedClassUnion.$Filter,
     value: LazilyResolvedClassUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["LazilyResolvedClassUnionMember1"] !== undefined &&
       LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
@@ -70762,6 +70790,7 @@ export namespace LazilyResolvedInterfaceUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
       readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
@@ -70772,6 +70801,12 @@ export namespace LazilyResolvedInterfaceUnion {
     filter: LazilyResolvedInterfaceUnion.$Filter,
     value: LazilyResolvedInterfaceUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["LazilyResolvedInterfaceUnionMember1"] !== undefined &&
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
@@ -71279,6 +71314,7 @@ export namespace PartialClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
       readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
@@ -71289,6 +71325,12 @@ export namespace PartialClassUnion {
     filter: PartialClassUnion.$Filter,
     value: PartialClassUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["PartialClassUnionMember1"] !== undefined &&
       PartialClassUnionMember1.isPartialClassUnionMember1(value)
@@ -71741,6 +71783,7 @@ export namespace PartialInterfaceUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
       readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
@@ -71751,6 +71794,12 @@ export namespace PartialInterfaceUnion {
     filter: PartialInterfaceUnion.$Filter,
     value: PartialInterfaceUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["PartialInterfaceUnionMember1"] !== undefined &&
       PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)
@@ -72209,6 +72258,7 @@ export namespace NoRdfTypeClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
       readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
@@ -72219,6 +72269,12 @@ export namespace NoRdfTypeClassUnion {
     filter: NoRdfTypeClassUnion.$Filter,
     value: NoRdfTypeClassUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["NoRdfTypeClassUnionMember1"] !== undefined &&
       NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)
@@ -72669,6 +72725,7 @@ export namespace RecursiveClassUnion {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
       readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
@@ -72679,6 +72736,12 @@ export namespace RecursiveClassUnion {
     filter: RecursiveClassUnion.$Filter,
     value: RecursiveClassUnion,
   ) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["RecursiveClassUnionMember1"] !== undefined &&
       RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)
@@ -73894,6 +73957,7 @@ export namespace $Object {
   };
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly BlankNodeIdentifierClass?: BlankNodeIdentifierClass.$Filter;
       readonly BlankNodeIdentifierInterface?: BlankNodeIdentifierInterface.$Filter;
@@ -73976,6 +74040,12 @@ export namespace $Object {
   } & { readonly $identifier?: $IdentifierFilter };
 
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
     if (
       filter.on?.["BlankNodeIdentifierClass"] !== undefined &&
       BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)

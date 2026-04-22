@@ -18,7 +18,7 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
-  private readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  readonly #identifierType: BlankNodeType | IdentifierType | IriType;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "NamedObjectUnionType";
@@ -28,9 +28,12 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     ...superParameters
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
-  } & ConstructorParameters<typeof AbstractNamedUnionType<ObjectType>>[0]) {
-    super(superParameters);
-    this.identifierType = identifierType;
+  } & Omit<
+    ConstructorParameters<typeof AbstractNamedUnionType<ObjectType>>[0],
+    "identifierType"
+  >) {
+    super({ ...superParameters, identifierType: Maybe.of(identifierType) });
+    this.#identifierType = identifierType;
   }
 
   @Memoize()
@@ -61,7 +64,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   }
 
   protected override get inlineFilterType(): Code {
-    return code`${super.inlineFilterType} & { readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType}; }`;
+    return code`${super.inlineFilterType} & { readonly ${syntheticNamePrefix}identifier?: ${this.#identifierType.filterType}; }`;
   }
 
   protected override get staticModuleDeclarations(): readonly Code[] {
@@ -109,12 +112,12 @@ ${joinCode([
   code`let patterns: ${snippets.SparqlPattern}[] = [];`,
   code`\
 if (focusIdentifier.termType === "Variable") {
-  patterns = patterns.concat(${this.identifierType.valueSparqlWherePatternsFunction}({
+  patterns = patterns.concat(${this.#identifierType.valueSparqlWherePatternsFunction}({
       filter: filter?.${syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
-      schema: ${this.identifierType.schema},
+      schema: ${this.#identifierType.schema},
       valueVariable: focusIdentifier,
       variablePrefix,
   }));
@@ -176,8 +179,8 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
 
   private get identifierTypeDeclarations(): readonly Code[] {
     return [
-      code`export type ${syntheticNamePrefix}Identifier = ${this.identifierType.name};`,
-      code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.identifierType.fromStringFunction, this.identifierType.toStringFunction])} }`,
+      code`export type ${syntheticNamePrefix}Identifier = ${this.#identifierType.name};`,
+      code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.#identifierType.fromStringFunction, this.#identifierType.toStringFunction])} }`,
     ];
   }
 

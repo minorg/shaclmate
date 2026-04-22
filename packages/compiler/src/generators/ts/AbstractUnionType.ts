@@ -3,9 +3,13 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { IdentifierType } from "./IdentifierType.js";
+import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import { removeUndefined } from "./removeUndefined.js";
 import { snippets } from "./snippets.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -23,22 +27,28 @@ export abstract class AbstractUnionType<
   MemberTypeT extends Type,
 > extends AbstractType {
   private readonly discriminant: Discriminant;
+  private readonly identifierType: Maybe<
+    BlankNodeType | IdentifierType | IriType
+  >;
 
   override readonly abstract = false;
   readonly memberTypes: readonly MemberTypeT[];
   override readonly recursive: boolean;
 
   constructor({
+    identifierType,
     memberDiscriminantValues,
     memberTypes,
     recursive,
     ...superParameters
   }: {
+    identifierType: Maybe<BlankNodeType | IdentifierType | IriType>;
     memberDiscriminantValues: readonly string[];
     memberTypes: readonly MemberTypeT[];
     recursive: boolean;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
+    this.identifierType = identifierType;
     invariant(memberTypes.length >= 2);
     this.memberTypes = memberTypes;
     this.recursive = recursive;
@@ -280,8 +290,16 @@ ${joinCode(
   protected get inlineFilterFunction(): Code {
     return code`\
 ((filter: ${this.filterType}, value: ${this.name}) => {
-${joinCode(
-  this.memberTypeDescriptors.map(
+${joinCode([
+  ...this.identifierType
+    .map(
+      (identifierType) => code`\
+if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
+  return false;
+}`,
+    )
+    .toList(),
+  ...this.memberTypeDescriptors.map(
     ({ memberType, primaryDiscriminantValue, payload, typeCheck }) => code`\
 if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeCheck(code`value`)}) {
   if (!${memberType.filterFunction}(filter.on[${literalOf(primaryDiscriminantValue)}], ${payload(code`value`)})) {
@@ -289,7 +307,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
   }
 }`,
   ),
-)}
+])}
 
   return true;
 })`;
@@ -297,13 +315,17 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 
   @Memoize()
   protected get inlineFilterType(): Code {
-    return code`{ readonly on?: { ${joinCode(
-      this.memberTypeDescriptors.map(
-        ({ memberType, primaryDiscriminantValue }) =>
-          code`readonly ${literalOf(primaryDiscriminantValue)}?: ${memberType.filterType}`,
-      ),
-      { on: ";" },
-    )} } }`;
+    return code`\
+  {
+   ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}
+   readonly on?: { ${joinCode(
+     this.memberTypeDescriptors.map(
+       ({ memberType, primaryDiscriminantValue }) =>
+         code`readonly ${literalOf(primaryDiscriminantValue)}?: ${memberType.filterType}`,
+     ),
+     { on: ";" },
+   )} }
+  }`;
   }
 
   protected get inlineFromJsonFunction(): Code {
