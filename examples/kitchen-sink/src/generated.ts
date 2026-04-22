@@ -68827,19 +68827,6 @@ export namespace BlankNodeIdentifierClass {
 export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
 
 export namespace ClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<ClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (left: ClassUnion, right: ClassUnion) => {
     if (
       ClassUnionMember1.isClassUnionMember1(left) &&
@@ -69173,6 +69160,19 @@ export namespace ClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<ClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<ClassUnion> =
     ((value, _options) => {
       if (ClassUnionMember1.isClassUnionMember1(value)) {
@@ -69268,22 +69268,6 @@ export type FlattenClassUnion =
   | FlattenClassUnionMember3;
 
 export namespace FlattenClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<FlattenClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: FlattenClassUnion,
     right: FlattenClassUnion,
@@ -69697,6 +69681,22 @@ export namespace FlattenClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<FlattenClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<FlattenClassUnion> =
     ((value, _options) => {
       if (ClassUnionMember1.isClassUnionMember1(value)) {
@@ -69817,19 +69817,6 @@ export namespace FlattenClassUnion {
 export type InterfaceUnion = InterfaceUnionMember1 | InterfaceUnionMember2;
 
 export namespace InterfaceUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<InterfaceUnion> = (
-    value,
-    options,
-  ) => {
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (left: InterfaceUnion, right: InterfaceUnion) => {
     if (
       InterfaceUnionMember1.isInterfaceUnionMember1(left) &&
@@ -70180,6 +70167,19 @@ export namespace InterfaceUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<InterfaceUnion> = (
+    value,
+    options,
+  ) => {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<InterfaceUnion> =
     ((value, _options) => {
       if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
@@ -70274,22 +70274,6 @@ export type LazilyResolvedClassUnion =
   | LazilyResolvedClassUnionMember2;
 
 export namespace LazilyResolvedClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedClassUnion
-  > = (value, options) => {
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: LazilyResolvedClassUnion,
     right: LazilyResolvedClassUnion,
@@ -70668,6 +70652,22 @@ export namespace LazilyResolvedClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<
+    LazilyResolvedClassUnion
+  > = (value, options) => {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedClassUnion> =
     ((value, _options) => {
       if (
@@ -70770,26 +70770,6 @@ export type LazilyResolvedInterfaceUnion =
   | LazilyResolvedInterfaceUnionMember2;
 
 export namespace LazilyResolvedInterfaceUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<
-    LazilyResolvedInterfaceUnion
-  > = (value, options) => {
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: LazilyResolvedInterfaceUnion,
     right: LazilyResolvedInterfaceUnion,
@@ -71193,6 +71173,26 @@ export namespace LazilyResolvedInterfaceUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<
+    LazilyResolvedInterfaceUnion
+  > = (value, options) => {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion> =
     ((value, _options) => {
       if (
@@ -71301,19 +71301,6 @@ export type PartialClassUnion =
   | PartialClassUnionMember2;
 
 export namespace PartialClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<PartialClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: PartialClassUnion,
     right: PartialClassUnion,
@@ -71673,6 +71660,19 @@ export namespace PartialClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<PartialClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialClassUnion> =
     ((value, _options) => {
       if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
@@ -71769,19 +71769,6 @@ export type PartialInterfaceUnion =
   | PartialInterfaceUnionMember2;
 
 export namespace PartialInterfaceUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<PartialInterfaceUnion> = (
-    value,
-    options,
-  ) => {
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: PartialInterfaceUnion,
     right: PartialInterfaceUnion,
@@ -72147,6 +72134,19 @@ export namespace PartialInterfaceUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<PartialInterfaceUnion> = (
+    value,
+    options,
+  ) => {
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialInterfaceUnion> =
     ((value, _options) => {
       if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
@@ -72243,19 +72243,6 @@ export type NoRdfTypeClassUnion =
   | NoRdfTypeClassUnionMember2;
 
 export namespace NoRdfTypeClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<NoRdfTypeClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: NoRdfTypeClassUnion,
     right: NoRdfTypeClassUnion,
@@ -72613,6 +72600,19 @@ export namespace NoRdfTypeClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<NoRdfTypeClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NoRdfTypeClassUnion> =
     ((value, _options) => {
       if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
@@ -72709,19 +72709,6 @@ export type RecursiveClassUnion =
   | RecursiveClassUnionMember2;
 
 export namespace RecursiveClassUnion {
-  export const $toRdfResource: $ToRdfResourceFunction<RecursiveClassUnion> = (
-    value,
-    options,
-  ) => {
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (
     left: RecursiveClassUnion,
     right: RecursiveClassUnion,
@@ -73079,6 +73066,19 @@ export namespace RecursiveClassUnion {
     throw new Error("unable to serialize to JSON");
   };
 
+  export const $toRdfResource: $ToRdfResourceFunction<RecursiveClassUnion> = (
+    value,
+    options,
+  ) => {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
+  };
+
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<RecursiveClassUnion> =
     ((value, _options) => {
       if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
@@ -73256,288 +73256,6 @@ export type $Object =
   | $NamedDefaultPartial;
 
 export namespace $Object {
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
-      return BlankNodeIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return BlankNodeOrIriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClass.isPartialClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NonClass.isNonClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteChildClass.isConcreteChildClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
-      return ConcreteChildInterface.$toRdfResource(value, options);
-    }
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
-      return ConcreteParentInterfaceStatic.$toRdfResource(value, options);
-    }
-    if (
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        value,
-      )
-    ) {
-      return BaseInterfaceWithoutPropertiesStatic.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
-    ) {
-      return BaseInterfaceWithPropertiesStatic.$toRdfResource(value, options);
-    }
-    if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (InIdentifierClass.isInIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (InPropertiesClass.isInPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (Interface.isInterface(value)) {
-      return Interface.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return InterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return InterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
-      return IriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        value,
-      )
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        value,
-      )
-    ) {
-      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
-    ) {
-      return value.$toRdfResource(options);
-    }
-    if (
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        value,
-      )
-    ) {
-      return LazilyResolvedIriIdentifierInterface.$toRdfResource(
-        value,
-        options,
-      );
-    }
-    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
-      return LazyPropertiesInterface.$toRdfResource(value, options);
-    }
-    if (PartialInterface.isPartialInterface(value)) {
-      return PartialInterface.$toRdfResource(value, options);
-    }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NodeKindsClass.isNodeKindsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NewName1Class.isNewName1Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (NewName2Class.isNewName2Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
-    }
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
-    }
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyNamesClass.isPropertyNamesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyPathsClass.isPropertyPathsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
-    }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return value.$toRdfResource(options);
-    }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return value.$toRdfResource(options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (left: $Object, right: $Object) => {
     if (
       BlankNodeIdentifierClass.isBlankNodeIdentifierClass(left) &&
@@ -79525,6 +79243,288 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to JSON");
+  };
+
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
+      return BlankNodeIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClass.isPartialClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NonClass.isNonClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteChildClass.isConcreteChildClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
+      return ConcreteChildInterface.$toRdfResource(value, options);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
+      return ConcreteParentInterfaceStatic.$toRdfResource(value, options);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        value,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toRdfResource(value, options);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (InIdentifierClass.isInIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (InPropertiesClass.isInPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (Interface.isInterface(value)) {
+      return Interface.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
+      return IriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        value,
+      )
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+    ) {
+      return value.$toRdfResource(options);
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toRdfResource(
+        value,
+        options,
+      );
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
+      return LazyPropertiesInterface.$toRdfResource(value, options);
+    }
+    if (PartialInterface.isPartialInterface(value)) {
+      return PartialInterface.$toRdfResource(value, options);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NodeKindsClass.isNodeKindsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NewName1Class.isNewName1Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (NewName2Class.isNewName2Class(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toRdfResource(value, options);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toRdfResource(value, options);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
+      return value.$toRdfResource(options);
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
+      return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.$toRdfResource(options);
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return value.$toRdfResource(options);
+    }
+    throw new Error("unrecognized type");
   };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((

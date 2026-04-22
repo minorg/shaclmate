@@ -1704,19 +1704,6 @@ export namespace FormNodeShape {
 export type $Object = FormNodeShape | NestedNodeShape;
 
 export namespace $Object {
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.$toRdfResource(value, options);
-    }
-    if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $equals = (left: $Object, right: $Object) => {
     if (
       FormNodeShape.isFormNodeShape(left) &&
@@ -1912,6 +1899,19 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to JSON");
+  };
+
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (FormNodeShape.isFormNodeShape(value)) {
+      return FormNodeShape.$toRdfResource(value, options);
+    }
+    if (NestedNodeShape.isNestedNodeShape(value)) {
+      return NestedNodeShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
   };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
