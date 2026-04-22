@@ -15,7 +15,7 @@ export class ZodGenerator implements Generator {
     const declarations: Code[] = [];
 
     for (const objectType of ast.ObjectType.toposort(ast_.objectTypes).map(
-      (astObjectType) => this.typeFactory.createObjectType(astObjectType),
+      (astObjectType) => this.typeFactory.createNamedObjectType(astObjectType),
     )) {
       declarations.push(code`\
 export namespace ${objectType.staticModuleName} {

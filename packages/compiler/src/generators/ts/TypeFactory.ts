@@ -77,7 +77,7 @@ export class TypeFactory {
       members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
         (objectType) => ({
           discriminantValue: Maybe.empty(),
-          type: this.createObjectType(objectType),
+          type: this.createNamedObjectType(objectType),
         }),
       ),
       name: tsName(astType.name.unsafeCoerce()),
@@ -92,7 +92,7 @@ export class TypeFactory {
     return namedObjectUnionType;
   }
 
-  createObjectType(astType: ast.ObjectType): NamedObjectType {
+  createNamedObjectType(astType: ast.ObjectType): NamedObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -122,15 +122,15 @@ export class TypeFactory {
       label: astType.label,
       lazyAncestorObjectTypes: () =>
         astType.ancestorObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyChildObjectTypes: () =>
         astType.childObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyDescendantObjectTypes: () =>
         astType.descendantObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyDiscriminantProperty: (objectType: NamedObjectType) => {
         // Discriminant property
@@ -169,7 +169,7 @@ export class TypeFactory {
         }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
-          this.createObjectType(astType),
+          this.createNamedObjectType(astType),
         ),
       lazyProperties: (objectType: NamedObjectType) => {
         const properties: NamedObjectType.Property[] = astType.properties
@@ -265,7 +265,7 @@ export class TypeFactory {
       case "LiteralType":
         return this.createLiteralType(astType, parameters);
       case "ObjectType":
-        return this.createObjectType(astType);
+        return this.createNamedObjectType(astType);
       case "OptionType":
         return this.createOptionType(astType);
       case "SetType":

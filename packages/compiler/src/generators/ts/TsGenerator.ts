@@ -23,7 +23,7 @@ export class TsGenerator implements Generator {
     }
 
     const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
-      (astObjectType) => this.typeFactory.createObjectType(astObjectType),
+      (astObjectType) => this.typeFactory.createNamedObjectType(astObjectType),
     );
 
     const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
