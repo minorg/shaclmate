@@ -58,10 +58,10 @@ export class IdentifierProperty extends AbstractProperty<
 
     const hasQuestionToken =
       this.identifierMintingStrategy.isJust() ||
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
         ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       );
 
@@ -144,7 +144,7 @@ export class IdentifierProperty extends AbstractProperty<
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-          memoizeMintedIdentifier = !this.objectType.mutable;
+          memoizeMintedIdentifier = !this.namedObjectType.mutable;
           mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
           break;
         case "uuidv4":
@@ -165,19 +165,19 @@ export class IdentifierProperty extends AbstractProperty<
 
     // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
     if (
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
         ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       )
     ) {
-      if (this.objectType.parentObjectTypes.length > 0) {
+      if (this.namedObjectType.parentObjectTypes.length > 0) {
         // If this object type isn't the root, delegate up.
         const checkSuperIdentifierTermTypeStatements =
           checkIdentifierTermTypeStatements(
             "identifier",
-            this.objectType.parentObjectTypes[0].identifierType.nodeKinds,
+            this.namedObjectType.parentObjectTypes[0].identifierType.nodeKinds,
           );
         if (checkSuperIdentifierTermTypeStatements.length === 0) {
           return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
@@ -259,7 +259,7 @@ export class IdentifierProperty extends AbstractProperty<
   // }
 
   private get abstract(): boolean {
-    return this.objectType.abstract;
+    return this.namedObjectType.abstract;
   }
 
   @Memoize()
@@ -270,27 +270,27 @@ export class IdentifierProperty extends AbstractProperty<
     readonly?: boolean;
     visibility?: PropertyVisibility;
   }> {
-    if (this.objectType.declarationType === "interface") {
+    if (this.namedObjectType.declarationType === "interface") {
       return Maybe.of({ readonly: true });
     }
 
-    if (this.objectType.parentObjectTypes.length > 0) {
+    if (this.namedObjectType.parentObjectTypes.length > 0) {
       // An ancestor will declare the identifier property.
       return Maybe.empty();
     }
 
     if (
       this.identifierMintingStrategy.isJust() ||
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
         ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       )
     ) {
       return Maybe.of({
         hasQuestionToken: true,
-        visibility: this.objectType.descendantObjectTypes.some(
+        visibility: this.namedObjectType.descendantObjectTypes.some(
           (descendantObjectType) =>
             descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
         )
@@ -317,13 +317,14 @@ export class IdentifierProperty extends AbstractProperty<
 
   private get declarationName(): string {
     if (
-      this.objectType.declarationType === "class" &&
+      this.namedObjectType.declarationType === "class" &&
       (this.identifierMintingStrategy.isJust() ||
-        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
           ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
         ) ||
-        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        this.namedObjectType.descendantObjectTypes.some(
+          (descendantObjectType) =>
+            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
         ))
     ) {
       // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
@@ -335,7 +336,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   private get override(): boolean {
-    return this.objectType.parentObjectTypes.length > 0;
+    return this.namedObjectType.parentObjectTypes.length > 0;
   }
 
   override constructorStatements({
@@ -352,7 +353,7 @@ export class IdentifierProperty extends AbstractProperty<
     let lhs: string;
     const statements: Code[] = [];
     const typeConversions = this.type.conversions;
-    switch (this.objectType.declarationType) {
+    switch (this.namedObjectType.declarationType) {
       case "class": {
         if (this.declaration.isNothing()) {
           return [];
@@ -374,7 +375,7 @@ export class IdentifierProperty extends AbstractProperty<
       );
     }
     this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-      switch (this.objectType.declarationType) {
+      switch (this.namedObjectType.declarationType) {
         case "class":
           // The identifier will be minted lazily in the get accessor
           invariant(this.getAccessorDeclaration.isJust());
@@ -391,12 +392,12 @@ export class IdentifierProperty extends AbstractProperty<
             case "sha256":
               logger.warn(
                 "minting %s identifiers with %s is unsupported",
-                this.objectType.declarationType,
+                this.namedObjectType.declarationType,
                 identifierMintingStrategy,
               );
               return;
             case "uuidv4":
-              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${${imports.uuid}.v4()}\`)`;
+              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.namedObjectType.discriminantValue}:"}\${${imports.uuid}.v4()}\`)`;
               break;
           }
           conversionBranches.push(
@@ -475,7 +476,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
+        schema: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.namedObjectType.identifierProperty.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

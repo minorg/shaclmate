@@ -85,7 +85,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   override get declaration(): Maybe<Code> {
     const lhs: Code[] = [];
     if (
-      this.objectType.declarationType === "class" &&
+      this.namedObjectType.declarationType === "class" &&
       this.visibility !== "public"
     ) {
       lhs.push(code`${this.visibility}`);
@@ -164,7 +164,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       ...super.schemaObject,
       // comment: this.comment.map(JSON.stringify).extract(),
       // description: this.description.map(JSON.stringify).extract(),
-      path: this.objectType.features.has("rdf")
+      path: this.namedObjectType.features.has("rdf")
         ? propertyPathToCode(this.path)
         : undefined,
       // label: this.label.map(JSON.stringify).extract(),
@@ -184,7 +184,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   >[0]): readonly Code[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
-      switch (this.objectType.declarationType) {
+      switch (this.namedObjectType.declarationType) {
         case "class":
           return [code`this.${this.name} = ${variables.parameter};`];
         case "interface":
@@ -194,7 +194,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
     let lhs: string;
     const statements: Code[] = [];
-    switch (this.objectType.declarationType) {
+    switch (this.namedObjectType.declarationType) {
       case "class":
         lhs = `this.${this.name}`;
         break;
@@ -249,7 +249,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
+              propertyPath: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },

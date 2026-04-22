@@ -50,7 +50,7 @@ export class LazyObjectOptionType extends Super {
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
-    if (this.partialType.itemType.kind === "ObjectType") {
+    if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push(
         {
           conversionExpression: (value) =>

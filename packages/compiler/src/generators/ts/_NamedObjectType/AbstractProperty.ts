@@ -10,7 +10,7 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
-  protected readonly objectType: NamedObjectType;
+  protected readonly namedObjectType: NamedObjectType;
 
   /**
    * Optional property to include in the parameters object of a class constructor.
@@ -87,7 +87,7 @@ export abstract class AbstractProperty<
   readonly name: string;
 
   /**
-   * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
+   * Is the property's type the NamedObjectType or does its type indirectly reference the NamedObjectType?
    */
   abstract readonly recursive: boolean;
 
@@ -103,17 +103,17 @@ export abstract class AbstractProperty<
 
   constructor({
     name,
-    objectType,
+    namedObjectType,
     type,
     visibility,
   }: {
     name: string;
-    objectType: NamedObjectType;
+    namedObjectType: NamedObjectType;
     type: TypeT;
     visibility: PropertyVisibility;
   }) {
     this.name = name;
-    this.objectType = objectType;
+    this.namedObjectType = namedObjectType;
     this.type = type;
     this.visibility = visibility;
   }

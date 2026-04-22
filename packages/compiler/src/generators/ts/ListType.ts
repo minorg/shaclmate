@@ -201,7 +201,7 @@ export namespace ListType {
       case "LiteralType":
       case "NamedObjectUnionType":
       case "NamedUnionType":
-      case "ObjectType":
+      case "NamedObjectType":
       case "StringType":
       case "TermType":
         return true;

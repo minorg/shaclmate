@@ -8,20 +8,20 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration({
-  objectTypes,
+  namedObjectTypes,
   namedObjectUnionTypes,
 }: {
-  objectTypes: readonly NamedObjectType[];
+  namedObjectTypes: readonly NamedObjectType[];
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): Code {
   const parameters = {
-    constructObjectType: code`objectType: {\
+    constructObjectType: code`namedObjectType: {\
   ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;
   ${syntheticNamePrefix}fromRdfResource:  ${snippets.FromRdfResourceFunction}<ObjectT>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${imports.NamedNode} | ${imports.Variable}; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
 }`,
     query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
-    selectObjectTypeType: code`objectType: { ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
+    selectObjectTypeType: code`namedObjectType: { ${syntheticNamePrefix}focusSparqlWherePatterns: ${snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
   };
 
   const typeParameters = {
@@ -42,22 +42,22 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   }
 
 ${joinCode(
-  [...objectTypes, ...namedObjectUnionTypes].flatMap(
-    (objectType): readonly Code[] => {
-      if (!objectType.features.has("sparql")) {
+  [...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
+    (namedObjectType): readonly Code[] => {
+      if (!namedObjectType.features.has("sparql")) {
         return Object.values(
           unsupportedObjectSetMethodDeclarations({
-            objectType,
+            namedObjectType,
           }),
         );
       }
 
       const methodSignatures = objectSetMethodSignatures({
-        objectType,
+        namedObjectType,
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
       });
 
-      const runtimeObjectType = objectType.staticModuleName;
+      const runtimeObjectType = namedObjectType.staticModuleName;
 
       return [
         code`\
@@ -66,15 +66,15 @@ async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${
 }`,
         code`\
 async ${methodSignatures.objectCount.name}(${methodSignatures.objectCount.parameters}): ${methodSignatures.objectCount.returnType} {
-  return this.${syntheticNamePrefix}objectCount<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+  return this.${syntheticNamePrefix}objectCount<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
         code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
-  return this.${syntheticNamePrefix}objectIdentifiers<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+  return this.${syntheticNamePrefix}objectIdentifiers<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
         code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
-  return this.${syntheticNamePrefix}objects<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+  return this.${syntheticNamePrefix}objects<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       ];
     },
@@ -132,7 +132,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       offset = 0;
     }
 
-    const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
+    const wherePatterns = this.${syntheticNamePrefix}wherePatterns(namedObjectType, query);
     if (wherePatterns.length === 0) {
       return ${imports.Left}(new Error("no SPARQL WHERE patterns for identifiers"));
     }
@@ -160,12 +160,12 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 
   protected async ${syntheticNamePrefix}objects<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.constructObjectType}, ${parameters.query}): Promise<${imports.Either}<Error, readonly ObjectT[]>> {
     return ${imports.EitherAsync}(async ({ liftEither }) => {
-      const identifiers = await liftEither(await this.${syntheticNamePrefix}objectIdentifiers<ObjectFilterT, ObjectIdentifierT>(objectType, query));
+      const identifiers = await liftEither(await this.${syntheticNamePrefix}objectIdentifiers<ObjectFilterT, ObjectIdentifierT>(namedObjectType, query));
       if (identifiers.length === 0) {
         return [];
       }
 
-      const constructQueryString = objectType.${syntheticNamePrefix}sparqlConstructQueryString({
+      const constructQueryString = namedObjectType.${syntheticNamePrefix}sparqlConstructQueryString({
         subject: this.${syntheticNamePrefix}objectVariable,
         where: [{
           type: "values" as const,
@@ -182,14 +182,14 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       const dataset = ${imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdfResource(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
+        objects.push(await liftEither(namedObjectType.${syntheticNamePrefix}fromRdfResource(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
       }
       return objects;
     });
   }
 
   protected async ${syntheticNamePrefix}objectCount<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(${parameters.selectObjectTypeType}, ${parameters.query}): Promise<${imports.Either}<Error, number>> {
-    const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
+    const wherePatterns = this.${syntheticNamePrefix}wherePatterns(namedObjectType, query);
     if (wherePatterns.length === 0) {
       return ${imports.Left}(new Error("no SPARQL WHERE patterns for count"));
     }
@@ -231,7 +231,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       patterns = patterns.concat(query.where(this.${syntheticNamePrefix}objectVariable));
     }
 
-    patterns = patterns.concat(objectType.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.${syntheticNamePrefix}objectVariable.value }));
+    patterns = patterns.concat(namedObjectType.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.${syntheticNamePrefix}objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.${syntheticNamePrefix}objectVariable.value }));
 
     patterns = ${snippets.normalizeSparqlWherePatterns}(patterns).concat();
 

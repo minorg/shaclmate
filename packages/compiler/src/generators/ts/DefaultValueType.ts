@@ -143,7 +143,7 @@ export class DefaultValueType<
         return Maybe.of(this.defaultValueTermExpression);
       case "AnonymousUnionType":
       case "ListType":
-      case "ObjectType":
+      case "NamedObjectType":
       case "NamedObjectUnionType":
       case "NamedUnionType":
         return Maybe.empty();

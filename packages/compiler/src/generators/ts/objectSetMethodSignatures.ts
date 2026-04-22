@@ -4,7 +4,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export function objectSetMethodSignatures(parameters: {
-  objectType: {
+  namedObjectType: {
     readonly filterType: Code;
     readonly identifierTypeAlias: Code;
     readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
@@ -22,31 +22,31 @@ export function objectSetMethodSignatures(parameters: {
     }
   >
 > {
-  const { objectType } = parameters;
+  const { namedObjectType } = parameters;
   const parameterNamePrefix = parameters?.parameterNamePrefix ?? "";
   const queryT = parameters.queryT ?? `${syntheticNamePrefix}ObjectSet.Query`;
 
-  const methodNames = objectType.objectSetMethodNames;
+  const methodNames = namedObjectType.objectSetMethodNames;
   return {
     object: {
       name: methodNames.object,
-      parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
-      returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>>`,
+      parameters: code`${parameterNamePrefix}identifier: ${namedObjectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
+      returnType: code`Promise<${imports.Either}<Error, ${namedObjectType.name}>>`,
     },
     objectCount: {
       name: methodNames.objectCount,
-      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>, "filter">`,
+      parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>, "filter">`,
       returnType: code`Promise<${imports.Either}<Error, number>>`,
     },
     objectIdentifiers: {
       name: methodNames.objectIdentifiers,
-      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
-      returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
+      parameters: code`${parameterNamePrefix}query?: ${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>`,
+      returnType: code`Promise<${imports.Either}<Error, readonly ${namedObjectType.identifierTypeAlias}[]>>`,
     },
     objects: {
       name: methodNames.objects,
-      parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}, ${objectType.identifierTypeAlias}>`,
-      returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.name}[]>>`,
+      parameters: code`${parameterNamePrefix}query?: ${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>`,
+      returnType: code`Promise<${imports.Either}<Error, readonly ${namedObjectType.name}[]>>`,
     },
   };
 }

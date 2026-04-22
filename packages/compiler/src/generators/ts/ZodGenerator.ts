@@ -14,15 +14,17 @@ export class ZodGenerator implements Generator {
   generate(ast_: ast.Ast): string {
     const declarations: Code[] = [];
 
-    for (const objectType of ast.ObjectType.toposort(ast_.namedObjectTypes).map(
-      (astObjectType) => this.typeFactory.createNamedObjectType(astObjectType),
+    for (const namedObjectType of ast.ObjectType.toposort(
+      ast_.namedObjectTypes,
+    ).map((astObjectType) =>
+      this.typeFactory.createNamedObjectType(astObjectType),
     )) {
       declarations.push(code`\
-export namespace ${objectType.staticModuleName} {
-  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList())}
+export namespace ${namedObjectType.staticModuleName} {
+  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
 
   export namespace ${syntheticNamePrefix}Json {
-    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList())}
+    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(namedObjectType)().toList())}
   }
 }`);
     }

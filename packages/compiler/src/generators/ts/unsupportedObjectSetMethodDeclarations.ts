@@ -19,9 +19,9 @@ async ${name}(${parameters}): ${returnType} {
 }
 
 export function unsupportedObjectSetMethodDeclarations({
-  objectType,
+  namedObjectType,
 }: {
-  objectType: {
+  namedObjectType: {
     readonly filterType: Code;
     readonly identifierTypeAlias: Code;
     readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
@@ -29,7 +29,7 @@ export function unsupportedObjectSetMethodDeclarations({
   };
 }): Readonly<Record<keyof NamedObjectType.ObjectSetMethodNames, Code>> {
   const methodSignatures = objectSetMethodSignatures({
-    objectType,
+    namedObjectType,
     parameterNamePrefix: "_",
   });
   return {

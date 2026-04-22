@@ -62,7 +62,7 @@ export class NamedObjectType extends AbstractType {
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
-  override readonly kind = "ObjectType";
+  override readonly kind = "NamedObjectType";
   override readonly name: string;
   override readonly recursive: boolean;
   readonly staticModuleName: string;
@@ -103,15 +103,15 @@ export class NamedObjectType extends AbstractType {
     lazyAncestorObjectTypes: () => readonly NamedObjectType[];
     lazyChildObjectTypes: () => readonly NamedObjectType[];
     lazyDiscriminantProperty: (
-      objectType: NamedObjectType,
+      namedObjectType: NamedObjectType,
     ) => NamedObjectType.DiscriminantProperty;
     lazyIdentifierProperty: (
-      objectType: NamedObjectType,
+      namedObjectType: NamedObjectType,
     ) => NamedObjectType.IdentifierProperty;
     lazyDescendantObjectTypes: () => readonly NamedObjectType[];
     lazyParentObjectTypes: () => readonly NamedObjectType[];
     lazyProperties: (
-      objectType: NamedObjectType,
+      namedObjectType: NamedObjectType,
     ) => readonly NamedObjectType.Property[];
     name: string;
     recursive: boolean;
@@ -548,17 +548,17 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   private readonly lazyDescendantObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyDiscriminantProperty: (
-    objectType: NamedObjectType,
+    namedObjectType: NamedObjectType,
   ) => NamedObjectType.DiscriminantProperty;
 
   private readonly lazyIdentifierProperty: (
-    objectType: NamedObjectType,
+    namedObjectType: NamedObjectType,
   ) => NamedObjectType.IdentifierProperty;
 
   private readonly lazyParentObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyProperties: (
-    objectType: NamedObjectType,
+    namedObjectType: NamedObjectType,
   ) => readonly NamedObjectType.Property[];
 }
 

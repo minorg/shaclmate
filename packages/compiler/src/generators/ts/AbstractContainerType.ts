@@ -115,7 +115,7 @@ export namespace AbstractContainerType {
       case "LiteralType":
       case "NamedObjectUnionType":
       case "NamedUnionType":
-      case "ObjectType":
+      case "NamedObjectType":
       case "StringType":
       case "TermType":
         return true;

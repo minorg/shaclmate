@@ -38,7 +38,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   }
 
   override get declaration(): Maybe<Code> {
-    if (this.objectType.declarationType === "interface") {
+    if (this.namedObjectType.declarationType === "interface") {
       return Maybe.empty();
     }
 
@@ -53,7 +53,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
 
   @Memoize()
   override get equalsFunction(): Maybe<Code> {
-    return this.objectType.declarationType === "class"
+    return this.namedObjectType.declarationType === "class"
       ? Maybe.of(code`${snippets.strictEquals}`)
       : Maybe.empty();
   }
@@ -70,7 +70,7 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
   }: Parameters<
     AbstractProperty<StringType>["constructorStatements"]
   >[0]): readonly Code[] {
-    switch (this.objectType.declarationType) {
+    switch (this.namedObjectType.declarationType) {
       case "class":
         return this.declaration
           .map(() => [code`this._${this.name} = ${variables.parameter};`])

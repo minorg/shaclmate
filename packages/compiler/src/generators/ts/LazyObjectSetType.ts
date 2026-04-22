@@ -51,7 +51,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
-    if (this.partialType.itemType.kind === "ObjectType") {
+    if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
           code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as NamedObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,

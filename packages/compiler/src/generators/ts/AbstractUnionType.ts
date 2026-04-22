@@ -131,7 +131,7 @@ export abstract class AbstractUnionType<
                   switch (member.type.kind) {
                     case "NamedObjectUnionType":
                     case "NamedUnionType":
-                    case "ObjectType":
+                    case "NamedObjectType":
                       return code`${member.type.staticModuleName}.is${member.type.name}(${instance})`;
                   }
                 }
@@ -478,7 +478,7 @@ ${joinCode(
           { on: "|" },
         )})`;
       case "inline":
-        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
+        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated NamedObjectType "type"),
         // just join their names with "|"
         return code`(${joinCode(
           this.members.map(({ type }) => code`${type.name}`),
