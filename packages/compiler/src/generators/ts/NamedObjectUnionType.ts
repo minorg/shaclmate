@@ -93,8 +93,8 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
 export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMembers.map(
-      ({ type: memberType }) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+      (member) =>
+        code`...${member.type.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
     ),
     { on: ", " },
   )}];
@@ -124,9 +124,9 @@ if (focusIdentifier.termType === "Variable") {
 }`,
   code`patterns.push({ patterns: [${joinCode(
     this.concreteMembers.map(
-      ({ type: memberType }) =>
+      (member) =>
         code`${{
-          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+          patterns: code`${member.type.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),
@@ -145,8 +145,8 @@ if (focusIdentifier.termType === "Variable") {
     return Maybe.of(code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
   ${this.concreteMembers.reduce(
-    (expression, { type: memberType }) => {
-      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
+    (expression, member) => {
+      const memberTypeExpression = code`(${member.type.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -268,17 +268,17 @@ ${{
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
   this.concreteMembers
-    .map(({ type: memberType }) => {
+    .map((member) => {
       let returnExpression: Code;
-      switch (memberType.declarationType) {
+      switch (member.type.declarationType) {
         case "class":
           returnExpression = code`value.${syntheticNamePrefix}toRdfResource(options)`;
           break;
         case "interface":
-          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
+          returnExpression = code`${member.type.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
           break;
       }
-      return code`if (${memberType.staticModuleName}.is${memberType.name}(value)) { return ${returnExpression}; }`;
+      return code`if (${member.type.staticModuleName}.is${member.type.name}(value)) { return ${returnExpression}; }`;
     })
     .concat(code`throw new Error("unrecognized type");`),
 )}

@@ -162,11 +162,9 @@ export abstract class AbstractUnionType<
               switch (this.discriminant.kind) {
                 case "envelope":
                   return code`${instance}.value`;
-                // return code`(${instance}.value as ${memberType.name})`;
                 case "inline":
                 case "typeof":
                   return instance;
-                // return code`(${instance} as ${memberType.name})`;
               }
             },
             wrap: (instance: Code): Code => {
@@ -335,14 +333,16 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
     return code`\
 ((value: ${this.jsonType().name}): ${this.name} => {
 ${joinCode(
-  this.concreteMembers.map(({ jsonTypeCheck, type, unwrap, wrap }) => {
-    const memberTypeFromJsonExpression = type.fromJsonExpression({
-      variables: {
-        value: code`(${unwrap(code`value`)} as ${type.jsonType().name})`,
-      },
-    });
-    return code`if (${jsonTypeCheck(code`value`)}) { return ${wrap(memberTypeFromJsonExpression)}; }`;
-  }),
+  this.concreteMembers.map(
+    ({ jsonTypeCheck, type, unwrap, wrap }) =>
+      code`if (${jsonTypeCheck(code`value`)}) { return ${wrap(
+        type.fromJsonExpression({
+          variables: {
+            value: code`(${unwrap(code`value`)} as ${type.jsonType().name})`,
+          },
+        }),
+      )}; }`,
+  ),
 )}
 
   throw new Error("unable to deserialize JSON");
@@ -533,16 +533,13 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
 ((value: ${this.name}): ${this.jsonType().name} => {
 ${joinCode(
   this.concreteMembers.map(
-    ({ type, unwrap, primaryDiscriminantValue, typeCheck }) => {
-      let memberTypeToJsonExpression = type.toJsonExpression({
-        includeDiscriminantProperty: this.discriminant.kind === "inline",
-        variables: { value: unwrap(code`value`) },
-      });
-      if (this.discriminant.kind === "envelope") {
-        memberTypeToJsonExpression = code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${primaryDiscriminantValue}" as const, value: ${memberTypeToJsonExpression} }`;
-      }
-      return code`if (${typeCheck(code`value`)}) { return ${memberTypeToJsonExpression}; }`;
-    },
+    ({ type, typeCheck, unwrap, wrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${wrap(
+        type.toJsonExpression({
+          includeDiscriminantProperty: this.discriminant.kind === "inline",
+          variables: { value: unwrap(code`value`) },
+        }),
+      )}; }`,
   ),
 )}
 

@@ -472,13 +472,13 @@ export namespace ObjectType {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);
             }
-            for (const { type: memberType } of currentPropertyType.members) {
+            for (const member of currentPropertyType.members) {
               if (
                 helper(
                   stack.concat({
                     objectType,
                     property,
-                    propertyType: propertyType.concat(memberType),
+                    propertyType: propertyType.concat(member.type),
                   }),
                 )
               ) {
