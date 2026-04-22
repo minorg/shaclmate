@@ -26,7 +26,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
         })
           .transform()
           .unsafeCoerce();
-        for (const astObjectType of ast.objectTypes) {
+        for (const astObjectType of ast.namedObjectTypes) {
           if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
             continue;
           }
@@ -42,9 +42,9 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform object types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.objectTypes).toHaveLength(84);
+          expect(ast.namedObjectTypes).toHaveLength(84);
         } else {
-          expect(ast.objectTypes).not.toHaveLength(0);
+          expect(ast.namedObjectTypes).not.toHaveLength(0);
         }
       });
 
