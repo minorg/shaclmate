@@ -17,6 +17,12 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
+function singleEntryRecord<T>(key: string, value: T): Record<string, T> {
+  const record: Record<string, T> = {};
+  record[key] = value;
+  return record;
+}
+
 export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
   readonly #identifierType: BlankNodeType | IdentifierType | IriType;
 
@@ -63,29 +69,47 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     return code`typeof ${this.schema}`;
   }
 
-  protected override get staticModuleDeclarations(): readonly Code[] {
-    return super.staticModuleDeclarations.concat(
+  protected override get staticModuleDeclarations(): Record<string, Code> {
+    return {
+      ...super.staticModuleDeclarations,
       ...this.identifierTypeDeclarations,
-      ...this.focusSparqlConstructTriplesFunctionDeclaration.toList(),
-      ...this.focusSparqlWherePatternsFunctionDeclaration.toList(),
-      ...this.fromRdfResourceFunctionDeclaration.toList(),
-      ...this.graphqlTypeVariableStatement.toList(),
-      ...this.isTypeFunctionDeclaration.toList(),
-      this.schemaVariableStatement,
-      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call(this).toList(),
-      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call(
-        this,
-      ).toList(),
-      ...this.toRdfResourceFunctionDeclaration.toList(),
-    );
+      ...this.focusSparqlConstructTriplesFunctionDeclaration,
+      ...this.focusSparqlWherePatternsFunctionDeclaration,
+      ...this.fromRdfResourceFunctionDeclaration,
+      ...this.graphqlTypeVariableStatement,
+      ...this.isTypeFunctionDeclaration,
+      ...this.schemaVariableStatement,
+      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call(this)
+        .map((code_) =>
+          singleEntryRecord(
+            `${syntheticNamePrefix}sparqlConstructQuery`,
+            code_,
+          ),
+        )
+        .orDefault({}),
+      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call(this)
+        .map((code_) =>
+          singleEntryRecord(
+            `${syntheticNamePrefix}sparqlConstructQueryString`,
+            code_,
+          ),
+        )
+        .orDefault({}),
+      ...this.toRdfResourceFunctionDeclaration,
+    };
   }
 
-  private get focusSparqlConstructTriplesFunctionDeclaration(): Maybe<Code> {
+  private get focusSparqlConstructTriplesFunctionDeclaration(): Record<
+    string,
+    Code
+  > {
     if (!this.features.has("sparql")) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(code`\
+    return singleEntryRecord(
+      `${syntheticNamePrefix}focusSparqlConstructTriples`,
+      code`\
 export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMembers.map(
@@ -94,15 +118,21 @@ export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focu
     ),
     { on: ", " },
   )}];
-}`);
+}`,
+    );
   }
 
-  private get focusSparqlWherePatternsFunctionDeclaration(): Maybe<Code> {
+  private get focusSparqlWherePatternsFunctionDeclaration(): Record<
+    string,
+    Code
+  > {
     if (!this.features.has("sparql")) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(code`\
+    return singleEntryRecord(
+      `${syntheticNamePrefix}focusSparqlWherePatterns`,
+      code`\
 export function ${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${snippets.SparqlPattern}[] = [];`,
@@ -130,15 +160,18 @@ if (focusIdentifier.termType === "Variable") {
   )}], type: "union" });`,
   code`return patterns;`,
 ])}
-}`);
+}`,
+    );
   }
 
-  private get fromRdfResourceFunctionDeclaration(): Maybe<Code> {
+  private get fromRdfResourceFunctionDeclaration(): Record<string, Code> {
     if (!this.features.has("rdf")) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(code`\
+    return singleEntryRecord(
+      `${syntheticNamePrefix}fromRdfResource`,
+      code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
   ${this.concreteMembers.reduce(
     (expression, member) => {
@@ -148,15 +181,17 @@ export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFu
         : memberTypeExpression;
     },
     null as Code | null,
-  )};`);
+  )};`,
+    );
   }
 
-  private get graphqlTypeVariableStatement(): Maybe<Code> {
+  private get graphqlTypeVariableStatement(): Record<string, Code> {
     if (!this.features.has("graphql")) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(
+    return singleEntryRecord(
+      `${syntheticNamePrefix}GraphQL`,
       code`\
 export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
@@ -172,19 +207,23 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
     );
   }
 
-  private get identifierTypeDeclarations(): readonly Code[] {
-    return [
-      code`export type ${syntheticNamePrefix}Identifier = ${this.#identifierType.name};`,
-      code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.#identifierType.fromStringFunction, this.#identifierType.toStringFunction])} }`,
-    ];
+  private get identifierTypeDeclarations(): Record<string, Code> {
+    return singleEntryRecord(
+      `${syntheticNamePrefix}Identifier`,
+      code`\
+export type ${syntheticNamePrefix}Identifier = ${this.#identifierType.name};
+export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.#identifierType.fromStringFunction, this.#identifierType.toStringFunction])} }`,
+    );
   }
 
-  private get isTypeFunctionDeclaration(): Maybe<Code> {
+  private get isTypeFunctionDeclaration(): Record<string, Code> {
     if (this._name === `${syntheticNamePrefix}Object`) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(code`\
+    return singleEntryRecord(
+      `is${this._name}`,
+      code`\
     export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
         this.concreteMembers.map(
@@ -193,10 +232,11 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         ),
         { on: " || " },
       )};
-    }`);
+    }`,
+    );
   }
 
-  private get schemaVariableStatement(): Code {
+  private get schemaVariableStatement(): Record<string, Code> {
     const commonPropertiesByName: Record<
       string,
       {
@@ -246,20 +286,25 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
       propertiesObject.push(code`${property.name}: ${property.schema}`);
     }
 
-    return code`\
+    return singleEntryRecord(
+      `${syntheticNamePrefix}schema`,
+      code`\
 export const ${syntheticNamePrefix}schema =
 ${{
   ...super.schemaObject,
   properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
-}} as const;`;
+}} as const;`,
+    );
   }
 
-  private get toRdfResourceFunctionDeclaration(): Maybe<Code> {
+  private get toRdfResourceFunctionDeclaration(): Record<string, Code> {
     if (!this.features.has("rdf")) {
-      return Maybe.empty();
+      return {};
     }
 
-    return Maybe.of(code`\
+    return singleEntryRecord(
+      ``,
+      code`\
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
   this.concreteMembers
@@ -277,7 +322,8 @@ ${joinCode(
     })
     .concat(code`throw new Error("unrecognized type");`),
 )}
-};`);
+};`,
+    );
   }
 
   override graphqlResolveExpression({

@@ -36,11 +36,18 @@ export abstract class AbstractNamedUnionType<
       code`export type ${def(this._name)} = ${this.inlineName};`,
     ];
 
-    const staticModuleDeclarations = this.staticModuleDeclarations;
+    const staticModuleDeclarations = Object.entries(
+      this.staticModuleDeclarations,
+    );
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
 export namespace ${def(this.staticModuleName)} {
-${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
+${joinCode(
+  staticModuleDeclarations
+    .sort((left, right) => left[0].localeCompare(right[0]))
+    .map((_) => _[1]),
+  { on: "\n\n" },
+)}
 }`);
     }
 
@@ -98,48 +105,63 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     return this.inlineValueSparqlWherePatternsFunction;
   }
 
-  protected get staticModuleDeclarations(): readonly Code[] {
-    const staticModuleDeclarations: Code[] = [];
+  protected get staticModuleDeclarations(): Record<string, Code> {
+    const staticModuleDeclarations: Record<string, Code> = {};
 
     if (this.features.has("equals")) {
-      staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}equals = ${this.inlineEqualsFunction};`,
-      );
+      staticModuleDeclarations[`${syntheticNamePrefix}equals`] =
+        code`export const ${syntheticNamePrefix}equals = ${this.inlineEqualsFunction};`;
     }
-    staticModuleDeclarations.push(
-      code`export type ${syntheticNamePrefix}Filter = ${this.inlineFilterType};`,
-      code`export const ${syntheticNamePrefix}filter = ${this.inlineFilterFunction};`,
-    );
+
+    staticModuleDeclarations[`${syntheticNamePrefix}Filter`] =
+      code`export type ${syntheticNamePrefix}Filter = ${this.inlineFilterType};`;
+    staticModuleDeclarations[`${syntheticNamePrefix}filter`] =
+      code`export const ${syntheticNamePrefix}filter = ${this.inlineFilterFunction};`;
+
     if (this.features.has("hash")) {
-      staticModuleDeclarations.push(
-        code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`,
-      );
+      staticModuleDeclarations[`${syntheticNamePrefix}hash`] =
+        code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
     }
+
     if (this.features.has("json")) {
-      staticModuleDeclarations.push(
-        this.jsonTypeAliasDeclaration,
-        code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction};`,
-        this.jsonZodSchemaFunctionDeclaration,
-        code`\
+      staticModuleDeclarations[`${syntheticNamePrefix}Json`] =
+        this.jsonTypeAliasDeclaration;
+
+      staticModuleDeclarations[`${syntheticNamePrefix}fromJson`] =
+        code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction};`;
+
+      staticModuleDeclarations[`${syntheticNamePrefix}jsonZodSchema`] =
+        this.jsonZodSchemaFunctionDeclaration;
+
+      staticModuleDeclarations[`${syntheticNamePrefix}parseJson`] = code`\
 export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
   const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(json);
   if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }
   return ${imports.Right}(${syntheticNamePrefix}fromJson(${syntheticNamePrefix}jsonSafeParseResult.data));
-}`,
-        code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction};`,
-      );
+}`;
+
+      staticModuleDeclarations[`${syntheticNamePrefix}toJson`] =
+        code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction};`;
     }
+
     if (this.features.has("rdf")) {
-      staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`,
-        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction};`,
-      );
+      staticModuleDeclarations[`${syntheticNamePrefix}fromRdfResourceValues`] =
+        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
+
+      staticModuleDeclarations[`${syntheticNamePrefix}toRdfResourceValues`] =
+        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction};`;
     }
+
     if (this.features.has("sparql")) {
-      staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`,
-        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`,
-      );
+      staticModuleDeclarations[
+        `${syntheticNamePrefix}valueSparqlConstructTriples`
+      ] =
+        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
+
+      staticModuleDeclarations[
+        `${syntheticNamePrefix}valueSparqlWherePatterns`
+      ] =
+        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
     return staticModuleDeclarations;
