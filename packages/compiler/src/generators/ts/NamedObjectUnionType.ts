@@ -77,11 +77,11 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
     }
 
     return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMemberTypeDescriptors.map(
       ({ memberType }) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
     ),
     { on: ", " },
   )}];
@@ -94,7 +94,7 @@ export function ${syntheticNamePrefix}sparqlConstructTriples({ filter, focusIden
     }
 
     return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${snippets.SparqlPattern}[] = [];`,
   code`\
@@ -113,7 +113,7 @@ if (focusIdentifier.termType === "Variable") {
     this.concreteMemberTypeDescriptors.map(
       ({ memberType }) =>
         code`${{
-          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
+          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${memberType.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(memberType.name)}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),
@@ -122,6 +122,10 @@ if (focusIdentifier.termType === "Variable") {
   code`return patterns;`,
 ])}
 }`);
+  }
+
+  protected override get inlineFilterType(): Code {
+    return code`${super.inlineFilterType} & { readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType}; }`;
   }
 
   private get fromRdfResourceFunctionDeclaration(): Maybe<Code> {
