@@ -1,3 +1,4 @@
+import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
@@ -27,17 +28,17 @@ ${joinCode(
 }`);
     }
 
-    for (const namedUnionType of ast_.namedUnionTypes
-      .filter((_) => _.isObjectUnionType())
-      .map((astObjectUnionType) =>
-        this.typeFactory.createNamedObjectUnionType(astObjectUnionType),
-      )) {
+    for (const astNamedUnionType of ast_.namedUnionTypes.map(
+      (astNamedUnionType) =>
+        this.typeFactory.createUnionType(astNamedUnionType),
+    )) {
+      invariant(astNamedUnionType.kind !== "AnonymousUnionType");
       declarations.push(code`\
-export namespace ${namedUnionType.staticModuleName} {
+export namespace ${astNamedUnionType.staticModuleName} {
 ${joinCode(
   [
-    namedUnionType.jsonTypeAliasDeclaration,
-    namedUnionType.jsonZodSchemaFunctionDeclaration,
+    astNamedUnionType.jsonTypeAliasDeclaration,
+    astNamedUnionType.jsonZodSchemaFunctionDeclaration,
   ],
   { on: "\n\n" },
 )}

@@ -3,11 +3,14 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import base62 from "@sindresorhus/base62";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
+
 import * as ast from "../../ast/index.js";
+
 import { logger } from "../../logger.js";
 import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
@@ -37,27 +40,6 @@ import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
 
-const reservedTsIdentifiers = reservedTsIdentifiers_({
-  includeGlobalProperties: true,
-});
-
-function tsName(name: string, options?: { synthetic?: boolean }): string {
-  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
-  if (reservedTsIdentifiers.has(name)) {
-    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
-    return `$_${name}$`;
-  }
-
-  let tsName = name.replaceAll(
-    /\P{ID_Continue}/gu,
-    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
-  );
-  if (options?.synthetic) {
-    tsName = `${syntheticNamePrefix}${tsName}`;
-  }
-  return tsName;
-}
-
 export class TypeFactory {
   private cachedNamedObjectUnionTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -71,6 +53,44 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectType
   > = new TermMap();
+
+  createNamedObjectUnionType(
+    astType: ast.ObjectUnionType,
+  ): NamedObjectUnionType {
+    {
+      const cachedNamedObjectUnionType =
+        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
+          astType.shapeIdentifier,
+        );
+      if (cachedNamedObjectUnionType) {
+        return cachedNamedObjectUnionType;
+      }
+    }
+
+    const namedObjectUnionType = new NamedObjectUnionType({
+      comment: astType.comment,
+      features: astType.tsFeatures,
+      identifierType: this.createIdentifierType(
+        ast.ObjectCompoundType.identifierType(astType),
+      ),
+      label: astType.label,
+      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
+        (objectType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createObjectType(objectType),
+        }),
+      ),
+      name: tsName(astType.name.unsafeCoerce()),
+      recursive: astType.recursive,
+    });
+
+    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      namedObjectUnionType,
+    );
+
+    return namedObjectUnionType;
+  }
 
   createObjectType(astType: ast.ObjectType): ObjectType {
     {
@@ -219,44 +239,6 @@ export class TypeFactory {
     return objectType;
   }
 
-  createNamedObjectUnionType(
-    astType: ast.ObjectUnionType,
-  ): NamedObjectUnionType {
-    {
-      const cachedNamedObjectUnionType =
-        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
-          astType.shapeIdentifier,
-        );
-      if (cachedNamedObjectUnionType) {
-        return cachedNamedObjectUnionType;
-      }
-    }
-
-    const namedObjectUnionType = new NamedObjectUnionType({
-      comment: astType.comment,
-      features: astType.tsFeatures,
-      identifierType: this.createIdentifierType(
-        ast.ObjectCompoundType.identifierType(astType),
-      ),
-      label: astType.label,
-      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (objectType) => ({
-          discriminantValue: Maybe.empty(),
-          type: this.createObjectType(objectType),
-        }),
-      ),
-      name: tsName(astType.name.unsafeCoerce()),
-      recursive: astType.recursive,
-    });
-
-    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      namedObjectUnionType,
-    );
-
-    return namedObjectUnionType;
-  }
-
   createType(
     astType: ast.Type,
     parameters?: { defaultValue?: Literal | NamedNode },
@@ -293,6 +275,44 @@ export class TypeFactory {
       case "UnionType":
         return this.createUnionType(astType);
     }
+  }
+
+  createUnionType(
+    astType: ast.UnionType,
+  ): AnonymousUnionType | NamedUnionType | NamedObjectUnionType {
+    if (astType.isObjectUnionType()) {
+      return this.createNamedObjectUnionType(astType);
+    }
+
+    return astType.name
+      .map<AnonymousUnionType | NamedUnionType>(
+        (name) =>
+          new NamedUnionType({
+            comment: astType.comment,
+            features: astType.tsFeatures,
+            identifierType: Maybe.empty(),
+            label: astType.label,
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
+            name,
+            recursive: astType.recursive,
+          }),
+      )
+      .orDefaultLazy(
+        () =>
+          new AnonymousUnionType({
+            comment: astType.comment,
+            label: astType.label,
+            identifierType: Maybe.empty(),
+            members: astType.members.map((member) => ({
+              discriminantValue: member.discriminantValue,
+              type: this.createType(member.type),
+            })),
+            recursive: astType.recursive,
+          }),
+      );
   }
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
@@ -599,42 +619,6 @@ export class TypeFactory {
       nodeKinds: astType.nodeKinds,
     });
   }
-
-  private createUnionType(astType: ast.UnionType) {
-    if (astType.isObjectUnionType()) {
-      return this.createNamedObjectUnionType(astType);
-    }
-
-    return astType.name
-      .map<AnonymousUnionType | NamedUnionType>(
-        (name) =>
-          new NamedUnionType({
-            comment: astType.comment,
-            features: astType.tsFeatures,
-            identifierType: Maybe.empty(),
-            label: astType.label,
-            members: astType.members.map((member) => ({
-              discriminantValue: member.discriminantValue,
-              type: this.createType(member.type),
-            })),
-            name,
-            recursive: astType.recursive,
-          }),
-      )
-      .orDefaultLazy(
-        () =>
-          new AnonymousUnionType({
-            comment: astType.comment,
-            label: astType.label,
-            identifierType: Maybe.empty(),
-            members: astType.members.map((member) => ({
-              discriminantValue: member.discriminantValue,
-              type: this.createType(member.type),
-            })),
-            recursive: astType.recursive,
-          }),
-      );
-  }
 }
 
 function objectTypeNeedsIdentifierPrefixProperty(
@@ -655,3 +639,24 @@ function objectTypeNeedsIdentifierPrefixProperty(
     })
     .orDefault(false);
 }
+
+function tsName(name: string, options?: { synthetic?: boolean }): string {
+  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
+  if (reservedTsIdentifiers.has(name)) {
+    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
+    return `$_${name}$`;
+  }
+
+  let tsName = name.replaceAll(
+    /\P{ID_Continue}/gu,
+    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
+  );
+  if (options?.synthetic) {
+    tsName = `${syntheticNamePrefix}${tsName}`;
+  }
+  return tsName;
+}
+
+const reservedTsIdentifiers = reservedTsIdentifiers_({
+  includeGlobalProperties: true,
+});
