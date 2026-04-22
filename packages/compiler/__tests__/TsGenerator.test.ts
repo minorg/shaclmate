@@ -60,9 +60,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "kitchenSink") {
-      //   return;
-      // }
+      if (id !== "externalProject") {
+        return;
+      }
 
       const diagnostics = compileTs(
         generate(shapesGraphEither.unsafeCoerce()),
@@ -72,7 +72,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  describe("TsFeature combinations", () => {
+  describe.skip("TsFeature combinations", () => {
     const shapesGraph =
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);

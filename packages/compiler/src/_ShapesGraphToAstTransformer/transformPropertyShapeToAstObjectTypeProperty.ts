@@ -222,7 +222,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
                 astResolveType,
               );
             case "UnionType":
-              if (!astResolveType.isObjectUnionType()) {
+              if (
+                // This check relies on .members being populated, which may not happen in cycles
+                astResolveType.members.length > 0 &&
+                !astResolveType.isObjectUnionType()
+              ) {
                 return Left(
                   new Error(
                     `${propertyShape} resolve cannot refer to a ${astResolveType.kind} with non-ObjectType members`,
@@ -230,7 +234,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
                 );
               }
               return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
-                astResolveType,
+                astResolveType as ast.ObjectUnionType,
               );
             default:
               return Left(

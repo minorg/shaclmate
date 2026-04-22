@@ -11,10 +11,13 @@ export class UnionType<
   override readonly kind = "UnionType";
 
   isObjectUnionType(): this is ObjectUnionType {
-    return this.members.every(
-      (member) =>
-        member.type.kind === "ObjectType" ||
-        (member.type.kind === "UnionType" && member.type.isObjectUnionType()),
+    return (
+      this.members.length > 0 &&
+      this.members.every(
+        (member) =>
+          member.type.kind === "ObjectType" ||
+          (member.type.kind === "UnionType" && member.type.isObjectUnionType()),
+      )
     );
   }
 }

@@ -1,4 +1,3 @@
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -51,7 +50,6 @@ export abstract class AbstractCompoundType<
   }
 
   get members(): readonly MemberT[] {
-    invariant(this.#members.length > 0);
     return this.#members;
   }
 
