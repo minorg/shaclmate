@@ -250,7 +250,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
 export const ${syntheticNamePrefix}schema =
 ${{
   ...super.schemaObject,
-  properties: code`{ ${joinCode(propertiesObject, { on: "; " })} }`,
+  properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
 }} as const;`;
   }
 
