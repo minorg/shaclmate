@@ -16,13 +16,13 @@ export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfjsResourceProperty
 export namespace ${syntheticNamePrefix}PropertyPath {
   export type $Filter = object;
 
-  export function $filter(_filter: $Filter, _value: PropertyPath): boolean {
+  export function $filter(_filter: $Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
     return true;
   }
 
   export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.${syntheticNamePrefix}fromRdf;
 
-  export const $fromRdfResourceValues: ${snippets_FromRdfResourceValuesFunction}> = (values, options) =>
+  export const $fromRdfResourceValues: ${snippets_FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value

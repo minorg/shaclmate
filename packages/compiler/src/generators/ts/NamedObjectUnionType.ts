@@ -172,8 +172,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
           ),
           { on: ", " },
         )}]`,
-      }});
-`,
+      }});`,
     );
   }
 
@@ -282,7 +281,7 @@ ${joinCode(
     })
     .concat(code`throw new Error("unrecognized type");`),
 )}
-}`);
+};`);
   }
 
   override graphqlResolveExpression({

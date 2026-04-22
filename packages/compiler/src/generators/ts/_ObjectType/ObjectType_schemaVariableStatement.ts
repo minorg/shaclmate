@@ -16,6 +16,5 @@ export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(
         ),
       ),
     { on: ", " },
-  )} } } as const;
-`;
+  )} } } as const;`;
 }

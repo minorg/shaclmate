@@ -70,7 +70,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
   }
 
   get jsonZodSchemaFunctionDeclaration(): Code {
-    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema}`;
+    return code`export const ${syntheticNamePrefix}jsonZodSchema = () => ${this.inlineJsonZodSchema};`;
   }
 
   @Memoize()
@@ -103,7 +103,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
 
     if (this.features.has("equals")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}equals = ${this.inlineEqualsFunction}`,
+        code`export const ${syntheticNamePrefix}equals = ${this.inlineEqualsFunction};`,
       );
     }
     staticModuleDeclarations.push(
@@ -118,7 +118,7 @@ ${joinCode(staticModuleDeclarations.concat(), { on: "\n\n" })}
     if (this.features.has("json")) {
       staticModuleDeclarations.push(
         this.jsonTypeAliasDeclaration,
-        code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction}`,
+        code`export const ${syntheticNamePrefix}fromJson = ${this.inlineFromJsonFunction};`,
         this.jsonZodSchemaFunctionDeclaration,
         code`\
 export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
@@ -126,13 +126,13 @@ export function ${syntheticNamePrefix}parseJson(json: unknown): ${imports.Either
   if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }
   return ${imports.Right}(${syntheticNamePrefix}fromJson(${syntheticNamePrefix}jsonSafeParseResult.data));
 }`,
-        code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction}`,
+        code`export const ${syntheticNamePrefix}toJson = ${this.inlineToJsonFunction};`,
       );
     }
     if (this.features.has("rdf")) {
       staticModuleDeclarations.push(
-        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction}`,
-        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction}`,
+        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`,
+        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction};`,
       );
     }
     if (this.features.has("sparql")) {

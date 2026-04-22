@@ -641,6 +641,10 @@ function objectTypeNeedsIdentifierPrefixProperty(
 }
 
 function tsName(name: string, options?: { synthetic?: boolean }): string {
+  if (name[0] === "$") {
+    return name;
+  }
+
   // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
   if (reservedTsIdentifiers.has(name)) {
     // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.

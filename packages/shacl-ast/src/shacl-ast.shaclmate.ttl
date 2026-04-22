@@ -129,7 +129,7 @@ shaclmate:PropertyGroup-labels
 
 shaclmate:PropertyPath
     shaclmate:extern true ;
-    shaclmate:name "PropertyPath" ;
+    shaclmate:name "$PropertyPath" ;
     a sh:NodeShape ;
     rdfs:comment "Extern PropertyPath since shaclmate is not sophisticated enough to deal with all property path variants yet" .
 

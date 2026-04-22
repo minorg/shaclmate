@@ -120,5 +120,5 @@ export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}propertiesFromRdfResource: ${snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
 ${joinCode(statements)}
-}`);
+};`);
 }
