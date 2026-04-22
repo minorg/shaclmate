@@ -4,7 +4,7 @@ import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
+export function NamedObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly features: ReadonlySet<TsFeature>;
   readonly filterType: Code;
   readonly staticModuleName: string;

@@ -5,7 +5,7 @@ import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_fromRdfTypeVariableStatement(
+export function NamedObjectType_fromRdfTypeVariableStatement(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("rdf")) {

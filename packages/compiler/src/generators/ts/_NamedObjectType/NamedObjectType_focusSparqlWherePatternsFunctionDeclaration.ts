@@ -14,7 +14,7 @@ const variables = {
   variablePrefix: code`parameters.variablePrefix`,
 };
 
-export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
+export function NamedObjectType_focusSparqlWherePatternsFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {

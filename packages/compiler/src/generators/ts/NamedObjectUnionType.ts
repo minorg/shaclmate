@@ -2,9 +2,9 @@ import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
-import { ObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
+import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { AbstractNamedUnionType } from "./AbstractNamedUnionType.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -51,7 +51,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return ObjectType_objectSetMethodNames.call(this);
+    return NamedObjectType_objectSetMethodNames.call(this);
   }
 
   @Memoize()
@@ -74,7 +74,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
       ...this.graphqlTypeVariableStatement,
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
-      ...ObjectType_sparqlConstructQueryFunctionDeclaration.call(this)
+      ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call(this)
         .map((code_) =>
           singleEntryRecord(
             `${syntheticNamePrefix}sparqlConstructQuery`,
@@ -82,7 +82,9 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<ObjectType> {
           ),
         )
         .orDefault({}),
-      ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call(this)
+      ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call(
+        this,
+      )
         .map((code_) =>
           singleEntryRecord(
             `${syntheticNamePrefix}sparqlConstructQueryString`,

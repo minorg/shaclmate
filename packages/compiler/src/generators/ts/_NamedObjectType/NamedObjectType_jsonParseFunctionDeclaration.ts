@@ -4,7 +4,7 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_jsonParseFunctionDeclaration(
+export function NamedObjectType_jsonParseFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("json")) {

@@ -10,35 +10,35 @@ import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectTyp
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_NamedObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
-import { ObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
-import { ObjectType_createFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_createFunctionDeclaration.js";
-import { ObjectType_equalsFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionOrMethodDeclaration.js";
-import { ObjectType_filterFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_filterFunctionDeclaration.js";
-import { ObjectType_filterTypeDeclaration } from "./_NamedObjectType/NamedObjectType_filterTypeDeclaration.js";
-import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
-import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
-import { ObjectType_fromJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromJsonFunctionDeclaration.js";
-import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceFunctionDeclaration.js";
-import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceValuesFunctionDeclaration.js";
-import { ObjectType_fromRdfTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_fromRdfTypeVariableStatement.js";
-import { ObjectType_graphqlTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_graphqlTypeVariableStatement.js";
-import { ObjectType_hashFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionOrMethodDeclarations.js";
-import { ObjectType_interfaceDeclaration } from "./_NamedObjectType/NamedObjectType_interfaceDeclaration.js";
-import { ObjectType_isTypeFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_isTypeFunctionDeclaration.js";
-import { ObjectType_jsonParseFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonParseFunctionDeclaration.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
-import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonUiSchemaFunctionDeclaration.js";
-import { ObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
-import { ObjectType_propertiesFromJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromJsonFunctionDeclaration.js";
-import { ObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
-import { ObjectType_schemaVariableStatement } from "./_NamedObjectType/NamedObjectType_schemaVariableStatement.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { ObjectType_toJsonFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { ObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
-import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
-import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
+import { NamedObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
+import { NamedObjectType_createFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_createFunctionDeclaration.js";
+import { NamedObjectType_equalsFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionOrMethodDeclaration.js";
+import { NamedObjectType_filterFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_filterFunctionDeclaration.js";
+import { NamedObjectType_filterTypeDeclaration } from "./_NamedObjectType/NamedObjectType_filterTypeDeclaration.js";
+import { NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
+import { NamedObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
+import { NamedObjectType_fromJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromJsonFunctionDeclaration.js";
+import { NamedObjectType_fromRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceFunctionDeclaration.js";
+import { NamedObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceValuesFunctionDeclaration.js";
+import { NamedObjectType_fromRdfTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_fromRdfTypeVariableStatement.js";
+import { NamedObjectType_graphqlTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_graphqlTypeVariableStatement.js";
+import { NamedObjectType_hashFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionOrMethodDeclarations.js";
+import { NamedObjectType_interfaceDeclaration } from "./_NamedObjectType/NamedObjectType_interfaceDeclaration.js";
+import { NamedObjectType_isTypeFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_isTypeFunctionDeclaration.js";
+import { NamedObjectType_jsonParseFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonParseFunctionDeclaration.js";
+import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
+import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
+import { NamedObjectType_jsonUiSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonUiSchemaFunctionDeclaration.js";
+import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
+import { NamedObjectType_propertiesFromJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromJsonFunctionDeclaration.js";
+import { NamedObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
+import { NamedObjectType_schemaVariableStatement } from "./_NamedObjectType/NamedObjectType_schemaVariableStatement.js";
+import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
+import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
+import { NamedObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_NamedObjectType/Property.js";
 import { ShaclProperty as _ShaclProperty } from "./_NamedObjectType/ShaclProperty.js";
 import { AbstractType } from "./AbstractType.js";
@@ -180,77 +180,81 @@ export class ObjectType extends AbstractType {
 
       switch (this.declarationType) {
         case "class": {
-          declarations.push(ObjectType_classDeclaration.call(this));
+          declarations.push(NamedObjectType_classDeclaration.call(this));
           break;
         }
         case "interface": {
-          declarations.push(ObjectType_interfaceDeclaration.call(this));
+          declarations.push(NamedObjectType_interfaceDeclaration.call(this));
           staticModuleDeclarations.push(
-            ...ObjectType_createFunctionDeclaration.call(this).toList(),
-            ...ObjectType_equalsFunctionOrMethodDeclaration.bind(
+            ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
+            ...NamedObjectType_equalsFunctionOrMethodDeclaration.bind(
               this,
             )().toList(),
-            ...ObjectType_hashFunctionOrMethodDeclarations.call(this),
+            ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
           );
           break;
         }
       }
 
       const jsonModuleDeclarations: Code[] = [
-        ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
-        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_jsonParseFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
       ];
 
       staticModuleDeclarations.push(
-        ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
+        ...NamedObjectType_graphqlTypeVariableStatement.call(this).toList(),
         ...identifierTypeDeclarations.call(this),
-        ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
+        ...NamedObjectType_jsonTypeAliasDeclaration.call(this).toList(),
         ...(jsonModuleDeclarations.length > 0
           ? [
               code`export namespace ${syntheticNamePrefix}Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
             ]
           : []),
-        ObjectType_filterFunctionDeclaration.call(this),
-        ObjectType_filterTypeDeclaration.call(this),
-        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
+        NamedObjectType_filterFunctionDeclaration.call(this),
+        NamedObjectType_filterTypeDeclaration.call(this),
+        ...NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
+        ...NamedObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
-        ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
-        ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
+        ...NamedObjectType_fromJsonFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_fromRdfResourceFunctionDeclaration.call(
           this,
         ).toList(),
-        ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
-        ObjectType_isTypeFunctionDeclaration.call(this),
-        ...ObjectType_propertiesFromJsonFunctionDeclaration.bind(
+        ...NamedObjectType_fromRdfResourceValuesFunctionDeclaration.call(
+          this,
+        ).toList(),
+        ...NamedObjectType_fromRdfTypeVariableStatement.call(this).toList(),
+        NamedObjectType_isTypeFunctionDeclaration.call(this),
+        ...NamedObjectType_propertiesFromJsonFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_propertiesFromRdfResourceFunctionDeclaration.bind(
+        ...NamedObjectType_propertiesFromRdfResourceFunctionDeclaration.bind(
           this,
         )().toList(),
-        ObjectType_schemaVariableStatement.call(this),
-        ...ObjectType_sparqlConstructQueryFunctionDeclaration.bind(
+        NamedObjectType_schemaVariableStatement.call(this),
+        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
+        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
         ...(this.declarationType === "interface"
-          ? ObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList()
-          : []),
-        ...(this.declarationType === "interface"
-          ? ObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
+          ? NamedObjectType_toJsonFunctionOrMethodDeclaration.call(
               this,
             ).toList()
           : []),
-        ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
+        ...(this.declarationType === "interface"
+          ? NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
+              this,
+            ).toList()
+          : []),
+        ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...ObjectType_valueSparqlWherePatternsFunctionDeclaration.bind(
+        ...NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.bind(
           this,
         )().toList(),
       );
@@ -352,7 +356,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return ObjectType_objectSetMethodNames.call(this);
+    return NamedObjectType_objectSetMethodNames.call(this);
   }
 
   @Memoize()

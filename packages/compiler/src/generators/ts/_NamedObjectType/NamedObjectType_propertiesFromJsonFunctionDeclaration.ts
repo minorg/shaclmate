@@ -7,7 +7,7 @@ const variables = {
   jsonObject: code`${syntheticNamePrefix}json`,
 };
 
-export function ObjectType_propertiesFromJsonFunctionDeclaration(
+export function NamedObjectType_propertiesFromJsonFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("json")) {

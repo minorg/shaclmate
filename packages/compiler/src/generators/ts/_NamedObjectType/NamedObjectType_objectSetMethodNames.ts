@@ -1,7 +1,7 @@
 import { camelCase, trainCase } from "change-case";
 import plur from "plur";
 
-export function ObjectType_objectSetMethodNames(this: {
+export function NamedObjectType_objectSetMethodNames(this: {
   readonly name: string;
 }) {
   const prefixSingular = camelCase(this.name);

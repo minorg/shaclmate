@@ -4,7 +4,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_valueSparqlWherePatternsFunctionDeclaration(
+export function NamedObjectType_valueSparqlWherePatternsFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("sparql")) {

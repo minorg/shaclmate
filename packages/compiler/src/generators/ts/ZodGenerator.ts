@@ -1,8 +1,8 @@
 import { invariant } from "ts-invariant";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
+import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
+import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -19,10 +19,10 @@ export class ZodGenerator implements Generator {
     )) {
       declarations.push(code`\
 export namespace ${objectType.staticModuleName} {
-  ${joinCode(ObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList())}
+  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(objectType)().toList())}
 
   export namespace ${syntheticNamePrefix}Json {
-    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList())}
+    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(objectType)().toList())}
   }
 }`);
     }

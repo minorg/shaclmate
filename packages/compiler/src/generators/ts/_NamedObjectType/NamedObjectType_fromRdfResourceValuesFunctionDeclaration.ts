@@ -4,7 +4,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function ObjectType_fromRdfResourceValuesFunctionDeclaration(
+export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("rdf")) {

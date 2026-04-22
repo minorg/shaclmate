@@ -18,7 +18,7 @@ const variables = {
   resource: code`${syntheticNamePrefix}resource`,
 };
 
-export function ObjectType_propertiesFromRdfResourceFunctionDeclaration(
+export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
   this: ObjectType,
 ): Maybe<Code> {
   if (!this.features.has("rdf")) {
