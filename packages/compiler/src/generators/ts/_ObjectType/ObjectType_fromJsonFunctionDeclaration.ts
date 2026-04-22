@@ -15,12 +15,12 @@ export function ObjectType_fromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  let propertiesFromJsonExpression = code`${syntheticNamePrefix}propertiesFromJson(json)`;
+  let returnExpression = code`${syntheticNamePrefix}propertiesFromJson(json)`;
   if (this.declarationType === "class") {
-    propertiesFromJsonExpression = code`${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
+    returnExpression = code`new ${this.name}(${returnExpression})`;
   }
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<Error, ${this.name}> {
-  return ${propertiesFromJsonExpression};
+export function ${syntheticNamePrefix}fromJson(json: ${this.jsonType().name}): ${this.name} {
+  return ${returnExpression};
 }`);
 }

@@ -30,6 +30,7 @@ import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_js
 import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
 import { ObjectType_jsonZodSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonZodSchemaFunctionDeclaration.js";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_parseJsonFunctionDeclaration } from "./_ObjectType/ObjectType_parseJsonFunctionDeclaration.js";
 import { ObjectType_propertiesFromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromJsonFunctionDeclaration.js";
 import { ObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
 import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
@@ -213,6 +214,7 @@ export class ObjectType extends AbstractType {
         ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
         ...ObjectType_jsonZodSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_parseJsonFunctionDeclaration.call(this).toList(),
         ...ObjectType_propertiesFromJsonFunctionDeclaration.bind(
           this,
         )().toList(),
@@ -427,7 +429,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
+    return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({

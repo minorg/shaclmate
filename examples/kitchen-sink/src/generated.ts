@@ -3284,11 +3284,9 @@ export namespace $NamedDefaultPartial {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, $NamedDefaultPartial> {
-    return $propertiesFromJson(json).map(
-      (properties) => new $NamedDefaultPartial(properties),
-    );
+    json: $NamedDefaultPartial.$Json,
+  ): $NamedDefaultPartial {
+    return new $NamedDefaultPartial($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -3376,16 +3374,21 @@ export namespace $NamedDefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, $NamedDefaultPartial> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: $NamedDefaultPartial.$Json): {
+    $identifier: NamedNode;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -3643,10 +3646,8 @@ export namespace $DefaultPartial {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, $DefaultPartial> {
-    return $propertiesFromJson(json).map(
-      (properties) => new $DefaultPartial(properties),
-    );
+  export function $fromJson(json: $DefaultPartial.$Json): $DefaultPartial {
+    return new $DefaultPartial($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$DefaultPartial> = (
@@ -3735,18 +3736,21 @@ export namespace $DefaultPartial {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, $DefaultPartial> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: $DefaultPartial.$Json): {
+    $identifier: BlankNode | NamedNode;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -4055,8 +4059,8 @@ export namespace UuidV4IriIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, UuidV4IriIdentifierInterface> {
+    json: UuidV4IriIdentifierInterface.$Json,
+  ): UuidV4IriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -4148,23 +4152,27 @@ export namespace UuidV4IriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: NamedNode;
-      $type: "UuidV4IriIdentifierInterface";
-      uuidV4IriProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, UuidV4IriIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: UuidV4IriIdentifierInterface.$Json,
+  ): {
+    $identifier: NamedNode;
+    $type: "UuidV4IriIdentifierInterface";
+    uuidV4IriProperty: string;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
     const $type = "UuidV4IriIdentifierInterface" as const;
-    const uuidV4IriProperty = $jsonObject["uuidV4IriProperty"];
-    return Right({ $identifier, $type, uuidV4IriProperty });
+    const uuidV4IriProperty = $json["uuidV4IriProperty"];
+    return { $identifier, $type, uuidV4IriProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -4595,11 +4603,9 @@ export namespace UuidV4IriIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, UuidV4IriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new UuidV4IriIdentifierClass(properties),
-    );
+    json: UuidV4IriIdentifierClass.$Json,
+  ): UuidV4IriIdentifierClass {
+    return new UuidV4IriIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -4690,17 +4696,23 @@ export namespace UuidV4IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: NamedNode; uuidV4IriProperty: string }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, UuidV4IriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const uuidV4IriProperty = $jsonObject["uuidV4IriProperty"];
-    return Right({ $identifier, uuidV4IriProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: UuidV4IriIdentifierClass.$Json): {
+    $identifier: NamedNode;
+    uuidV4IriProperty: string;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    const uuidV4IriProperty = $json["uuidV4IriProperty"];
+    return { $identifier, uuidV4IriProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -8085,11 +8097,9 @@ export namespace UnionDiscriminantsClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, UnionDiscriminantsClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new UnionDiscriminantsClass(properties),
-    );
+    json: UnionDiscriminantsClass.$Json,
+  ): UnionDiscriminantsClass {
+    return new UnionDiscriminantsClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -8322,51 +8332,50 @@ export namespace UnionDiscriminantsClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      optionalClassOrClassOrStringProperty: Maybe<
-        | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "string"; value: string }
-      >;
-      optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
-      optionalIriOrStringProperty: Maybe<NamedNode | string>;
-      requiredClassOrClassOrStringProperty:
-        | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "string"; value: string };
-      requiredIriOrLiteralProperty: NamedNode | Literal;
-      requiredIriOrStringProperty: NamedNode | string;
-      setClassOrClassOrStringProperty: readonly (
-        | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
-        | {
-            type: "ClassUnionMember2";
-            value: ClassUnionMember2;
-          }
-        | { type: "string"; value: string }
-      )[];
-      setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
-      setIriOrStringProperty: readonly (NamedNode | string)[];
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, UnionDiscriminantsClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: UnionDiscriminantsClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    optionalClassOrClassOrStringProperty: Maybe<
+      | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | { type: "ClassUnionMember2"; value: ClassUnionMember2 }
+      | { type: "string"; value: string }
+    >;
+    optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
+    optionalIriOrStringProperty: Maybe<NamedNode | string>;
+    requiredClassOrClassOrStringProperty:
+      | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | {
+          type: "ClassUnionMember2";
+          value: ClassUnionMember2;
+        }
+      | { type: "string"; value: string };
+    requiredIriOrLiteralProperty: NamedNode | Literal;
+    requiredIriOrStringProperty: NamedNode | string;
+    setClassOrClassOrStringProperty: readonly (
+      | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | {
+          type: "ClassUnionMember2";
+          value: ClassUnionMember2;
+        }
+      | { type: "string"; value: string }
+    )[];
+    setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
+    setIriOrStringProperty: readonly (NamedNode | string)[];
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const optionalClassOrClassOrStringProperty = Maybe.fromNullable(
-      $jsonObject["optionalClassOrClassOrStringProperty"],
+      $json["optionalClassOrClassOrStringProperty"],
     ).map((item) =>
       ((
         value:
@@ -8386,13 +8395,13 @@ export namespace UnionDiscriminantsClass {
         if (value.type === "ClassUnionMember1") {
           return {
             type: "ClassUnionMember1" as const,
-            value: ClassUnionMember1.$fromJson(value.value).unsafeCoerce(),
+            value: ClassUnionMember1.$fromJson(value.value),
           };
         }
         if (value.type === "ClassUnionMember2") {
           return {
             type: "ClassUnionMember2" as const,
-            value: ClassUnionMember2.$fromJson(value.value).unsafeCoerce(),
+            value: ClassUnionMember2.$fromJson(value.value),
           };
         }
         if (value.type === "string") {
@@ -8403,7 +8412,7 @@ export namespace UnionDiscriminantsClass {
       })(item),
     );
     const optionalIriOrLiteralProperty = Maybe.fromNullable(
-      $jsonObject["optionalIriOrLiteralProperty"],
+      $json["optionalIriOrLiteralProperty"],
     ).map((item) =>
       ((
         value:
@@ -8433,7 +8442,7 @@ export namespace UnionDiscriminantsClass {
       })(item),
     );
     const optionalIriOrStringProperty = Maybe.fromNullable(
-      $jsonObject["optionalIriOrStringProperty"],
+      $json["optionalIriOrStringProperty"],
     ).map((item) =>
       ((value: { readonly "@id": string } | string): NamedNode | string => {
         if (typeof value === "object") {
@@ -8464,13 +8473,13 @@ export namespace UnionDiscriminantsClass {
       if (value.type === "ClassUnionMember1") {
         return {
           type: "ClassUnionMember1" as const,
-          value: ClassUnionMember1.$fromJson(value.value).unsafeCoerce(),
+          value: ClassUnionMember1.$fromJson(value.value),
         };
       }
       if (value.type === "ClassUnionMember2") {
         return {
           type: "ClassUnionMember2" as const,
-          value: ClassUnionMember2.$fromJson(value.value).unsafeCoerce(),
+          value: ClassUnionMember2.$fromJson(value.value),
         };
       }
       if (value.type === "string") {
@@ -8478,7 +8487,7 @@ export namespace UnionDiscriminantsClass {
       }
 
       throw new Error("unable to deserialize JSON");
-    })($jsonObject["requiredClassOrClassOrStringProperty"]);
+    })($json["requiredClassOrClassOrStringProperty"]);
     const requiredIriOrLiteralProperty = ((
       value:
         | { readonly "@id": string; readonly termType: "NamedNode" }
@@ -8504,7 +8513,7 @@ export namespace UnionDiscriminantsClass {
       }
 
       throw new Error("unable to deserialize JSON");
-    })($jsonObject["requiredIriOrLiteralProperty"]);
+    })($json["requiredIriOrLiteralProperty"]);
     const requiredIriOrStringProperty = ((
       value: { readonly "@id": string } | string,
     ): NamedNode | string => {
@@ -8516,8 +8525,8 @@ export namespace UnionDiscriminantsClass {
       }
 
       throw new Error("unable to deserialize JSON");
-    })($jsonObject["requiredIriOrStringProperty"]);
-    const setClassOrClassOrStringProperty = $jsonObject[
+    })($json["requiredIriOrStringProperty"]);
+    const setClassOrClassOrStringProperty = $json[
       "setClassOrClassOrStringProperty"
     ].map((item) =>
       ((
@@ -8538,13 +8547,13 @@ export namespace UnionDiscriminantsClass {
         if (value.type === "ClassUnionMember1") {
           return {
             type: "ClassUnionMember1" as const,
-            value: ClassUnionMember1.$fromJson(value.value).unsafeCoerce(),
+            value: ClassUnionMember1.$fromJson(value.value),
           };
         }
         if (value.type === "ClassUnionMember2") {
           return {
             type: "ClassUnionMember2" as const,
-            value: ClassUnionMember2.$fromJson(value.value).unsafeCoerce(),
+            value: ClassUnionMember2.$fromJson(value.value),
           };
         }
         if (value.type === "string") {
@@ -8554,7 +8563,7 @@ export namespace UnionDiscriminantsClass {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
-    const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
+    const setIriOrLiteralProperty = $json["setIriOrLiteralProperty"].map(
       (item) =>
         ((
           value:
@@ -8583,20 +8592,19 @@ export namespace UnionDiscriminantsClass {
           throw new Error("unable to deserialize JSON");
         })(item),
     );
-    const setIriOrStringProperty = $jsonObject["setIriOrStringProperty"].map(
-      (item) =>
-        ((value: { readonly "@id": string } | string): NamedNode | string => {
-          if (typeof value === "object") {
-            return dataFactory.namedNode(value["@id"]);
-          }
-          if (typeof value === "string") {
-            return value;
-          }
+    const setIriOrStringProperty = $json["setIriOrStringProperty"].map((item) =>
+      ((value: { readonly "@id": string } | string): NamedNode | string => {
+        if (typeof value === "object") {
+          return dataFactory.namedNode(value["@id"]);
+        }
+        if (typeof value === "string") {
+          return value;
+        }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
+        throw new Error("unable to deserialize JSON");
+      })(item),
     );
-    return Right({
+    return {
       $identifier,
       optionalClassOrClassOrStringProperty,
       optionalIriOrLiteralProperty,
@@ -8607,7 +8615,7 @@ export namespace UnionDiscriminantsClass {
       setClassOrClassOrStringProperty,
       setIriOrLiteralProperty,
       setIriOrStringProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -10900,10 +10908,10 @@ export namespace TermPropertiesClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, TermPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new TermPropertiesClass(properties),
-    );
+  export function $fromJson(
+    json: TermPropertiesClass.$Json,
+  ): TermPropertiesClass {
+    return new TermPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -11055,46 +11063,48 @@ export namespace TermPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      blankNodeTermProperty: Maybe<BlankNode>;
-      booleanTermProperty: Maybe<boolean>;
-      dateTermProperty: Maybe<Date>;
-      dateTimeTermProperty: Maybe<Date>;
-      iriTermProperty: Maybe<NamedNode>;
-      literalTermProperty: Maybe<Literal>;
-      numberTermProperty: Maybe<number>;
-      stringTermProperty: Maybe<string>;
-      termProperty: Maybe<BlankNode | NamedNode | Literal>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, TermPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: TermPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    blankNodeTermProperty: Maybe<BlankNode>;
+    booleanTermProperty: Maybe<boolean>;
+    dateTermProperty: Maybe<Date>;
+    dateTimeTermProperty: Maybe<Date>;
+    iriTermProperty: Maybe<NamedNode>;
+    literalTermProperty: Maybe<Literal>;
+    numberTermProperty: Maybe<number>;
+    stringTermProperty: Maybe<string>;
+    termProperty: Maybe<BlankNode | NamedNode | Literal>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const blankNodeTermProperty = Maybe.fromNullable(
-      $jsonObject["blankNodeTermProperty"],
+      $json["blankNodeTermProperty"],
     ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
     const booleanTermProperty = Maybe.fromNullable(
-      $jsonObject["booleanTermProperty"],
+      $json["booleanTermProperty"],
     );
-    const dateTermProperty = Maybe.fromNullable(
-      $jsonObject["dateTermProperty"],
-    ).map((item) => new Date(item));
+    const dateTermProperty = Maybe.fromNullable($json["dateTermProperty"]).map(
+      (item) => new Date(item),
+    );
     const dateTimeTermProperty = Maybe.fromNullable(
-      $jsonObject["dateTimeTermProperty"],
+      $json["dateTimeTermProperty"],
     ).map((item) => new Date(item));
-    const iriTermProperty = Maybe.fromNullable(
-      $jsonObject["iriTermProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const iriTermProperty = Maybe.fromNullable($json["iriTermProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
     const literalTermProperty = Maybe.fromNullable(
-      $jsonObject["literalTermProperty"],
+      $json["literalTermProperty"],
     ).map((item) =>
       dataFactory.literal(
         item["@value"],
@@ -11105,13 +11115,9 @@ export namespace TermPropertiesClass {
             : undefined,
       ),
     );
-    const numberTermProperty = Maybe.fromNullable(
-      $jsonObject["numberTermProperty"],
-    );
-    const stringTermProperty = Maybe.fromNullable(
-      $jsonObject["stringTermProperty"],
-    );
-    const termProperty = Maybe.fromNullable($jsonObject["termProperty"]).map(
+    const numberTermProperty = Maybe.fromNullable($json["numberTermProperty"]);
+    const stringTermProperty = Maybe.fromNullable($json["stringTermProperty"]);
+    const termProperty = Maybe.fromNullable($json["termProperty"]).map(
       (item) =>
         item.termType === "Literal"
           ? dataFactory.literal(
@@ -11126,7 +11132,7 @@ export namespace TermPropertiesClass {
             ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    return Right({
+    return {
       $identifier,
       blankNodeTermProperty,
       booleanTermProperty,
@@ -11137,7 +11143,7 @@ export namespace TermPropertiesClass {
       numberTermProperty,
       stringTermProperty,
       termProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -11834,11 +11840,9 @@ export namespace Sha256IriIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, Sha256IriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new Sha256IriIdentifierClass(properties),
-    );
+    json: Sha256IriIdentifierClass.$Json,
+  ): Sha256IriIdentifierClass {
+    return new Sha256IriIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -11929,17 +11933,23 @@ export namespace Sha256IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: NamedNode; sha256IriProperty: string }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, Sha256IriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const sha256IriProperty = $jsonObject["sha256IriProperty"];
-    return Right({ $identifier, sha256IriProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: Sha256IriIdentifierClass.$Json): {
+    $identifier: NamedNode;
+    sha256IriProperty: string;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    const sha256IriProperty = $json["sha256IriProperty"];
+    return { $identifier, sha256IriProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -12370,11 +12380,9 @@ export namespace RecursiveClassUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnionMember2> {
-    return $propertiesFromJson(json).map(
-      (properties) => new RecursiveClassUnionMember2(properties),
-    );
+    json: RecursiveClassUnionMember2.$Json,
+  ): RecursiveClassUnionMember2 {
+    return new RecursiveClassUnionMember2($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -12474,25 +12482,29 @@ export namespace RecursiveClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      recursiveClassUnionMember2Property: Maybe<RecursiveClassUnion>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, RecursiveClassUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: RecursiveClassUnionMember2.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    recursiveClassUnionMember2Property: Maybe<RecursiveClassUnion>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const recursiveClassUnionMember2Property = Maybe.fromNullable(
-      $jsonObject["recursiveClassUnionMember2Property"],
+      $json["recursiveClassUnionMember2Property"],
     ).map((item) => RecursiveClassUnion.$fromJson(item));
-    return Right({ $identifier, recursiveClassUnionMember2Property });
+    return { $identifier, recursiveClassUnionMember2Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -12974,11 +12986,9 @@ export namespace RecursiveClassUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, RecursiveClassUnionMember1> {
-    return $propertiesFromJson(json).map(
-      (properties) => new RecursiveClassUnionMember1(properties),
-    );
+    json: RecursiveClassUnionMember1.$Json,
+  ): RecursiveClassUnionMember1 {
+    return new RecursiveClassUnionMember1($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -13078,25 +13088,29 @@ export namespace RecursiveClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      recursiveClassUnionMember1Property: Maybe<RecursiveClassUnion>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, RecursiveClassUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: RecursiveClassUnionMember1.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    recursiveClassUnionMember1Property: Maybe<RecursiveClassUnion>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const recursiveClassUnionMember1Property = Maybe.fromNullable(
-      $jsonObject["recursiveClassUnionMember1Property"],
+      $json["recursiveClassUnionMember1Property"],
     ).map((item) => RecursiveClassUnion.$fromJson(item));
-    return Right({ $identifier, recursiveClassUnionMember1Property });
+    return { $identifier, recursiveClassUnionMember1Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -13594,11 +13608,9 @@ export namespace PropertyVisibilitiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PropertyVisibilitiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyVisibilitiesClass(properties),
-    );
+    json: PropertyVisibilitiesClass.$Json,
+  ): PropertyVisibilitiesClass {
+    return new PropertyVisibilitiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -13693,32 +13705,29 @@ export namespace PropertyVisibilitiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      privateProperty: string;
-      protectedProperty: string;
-      publicProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PropertyVisibilitiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const privateProperty = $jsonObject["privateProperty"];
-    const protectedProperty = $jsonObject["protectedProperty"];
-    const publicProperty = $jsonObject["publicProperty"];
-    return Right({
-      $identifier,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
-    });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PropertyVisibilitiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    privateProperty: string;
+    protectedProperty: string;
+    publicProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const privateProperty = $json["privateProperty"];
+    const protectedProperty = $json["protectedProperty"];
+    const publicProperty = $json["publicProperty"];
+    return { $identifier, privateProperty, protectedProperty, publicProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -14289,10 +14298,10 @@ export namespace PropertyPathsClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, PropertyPathsClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyPathsClass(properties),
-    );
+  export function $fromJson(
+    json: PropertyPathsClass.$Json,
+  ): PropertyPathsClass {
+    return new PropertyPathsClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -14392,29 +14401,29 @@ export namespace PropertyPathsClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      inversePathProperty: Maybe<NamedNode>;
-      predicatePathProperty: Maybe<string>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, PropertyPathsClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PropertyPathsClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    inversePathProperty: Maybe<NamedNode>;
+    predicatePathProperty: Maybe<string>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const inversePathProperty = Maybe.fromNullable(
-      $jsonObject["inversePathProperty"],
+      $json["inversePathProperty"],
     ).map((item) => dataFactory.namedNode(item["@id"]));
     const predicatePathProperty = Maybe.fromNullable(
-      $jsonObject["predicatePathProperty"],
+      $json["predicatePathProperty"],
     );
-    return Right({ $identifier, inversePathProperty, predicatePathProperty });
+    return { $identifier, inversePathProperty, predicatePathProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -15137,10 +15146,10 @@ export namespace PropertyNamesClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, PropertyNamesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyNamesClass(properties),
-    );
+  export function $fromJson(
+    json: PropertyNamesClass.$Json,
+  ): PropertyNamesClass {
+    return new PropertyNamesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -15267,38 +15276,38 @@ export namespace PropertyNamesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      actualPropertyName1: string;
-      actualPropertyName2: string;
-      actualPropertyName3: string;
-      actualPropertyName4: string;
-      actualPropertyName5: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, PropertyNamesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const actualPropertyName1 = $jsonObject["actualPropertyName1"];
-    const actualPropertyName2 = $jsonObject["actualPropertyName2"];
-    const actualPropertyName3 = $jsonObject["actualPropertyName3"];
-    const actualPropertyName4 = $jsonObject["actualPropertyName4"];
-    const actualPropertyName5 = $jsonObject["actualPropertyName5"];
-    return Right({
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PropertyNamesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    actualPropertyName1: string;
+    actualPropertyName2: string;
+    actualPropertyName3: string;
+    actualPropertyName4: string;
+    actualPropertyName5: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const actualPropertyName1 = $json["actualPropertyName1"];
+    const actualPropertyName2 = $json["actualPropertyName2"];
+    const actualPropertyName3 = $json["actualPropertyName3"];
+    const actualPropertyName4 = $json["actualPropertyName4"];
+    const actualPropertyName5 = $json["actualPropertyName5"];
+    return {
       $identifier,
       actualPropertyName1,
       actualPropertyName2,
       actualPropertyName3,
       actualPropertyName4,
       actualPropertyName5,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -16015,11 +16024,9 @@ export namespace PropertyCardinalitiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PropertyCardinalitiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PropertyCardinalitiesClass(properties),
-    );
+    json: PropertyCardinalitiesClass.$Json,
+  ): PropertyCardinalitiesClass {
+    return new PropertyCardinalitiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -16139,39 +16146,43 @@ export namespace PropertyCardinalitiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      emptyStringSetProperty: readonly string[];
-      nonEmptyStringSetProperty: NonEmptyList<string>;
-      optionalStringProperty: Maybe<string>;
-      requiredStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PropertyCardinalitiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const emptyStringSetProperty = $jsonObject["emptyStringSetProperty"];
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: PropertyCardinalitiesClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    emptyStringSetProperty: readonly string[];
+    nonEmptyStringSetProperty: NonEmptyList<string>;
+    optionalStringProperty: Maybe<string>;
+    requiredStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const emptyStringSetProperty = $json["emptyStringSetProperty"];
     const nonEmptyStringSetProperty = NonEmptyList.fromArray(
-      $jsonObject["nonEmptyStringSetProperty"],
+      $json["nonEmptyStringSetProperty"],
     ).unsafeCoerce();
     const optionalStringProperty = Maybe.fromNullable(
-      $jsonObject["optionalStringProperty"],
+      $json["optionalStringProperty"],
     );
-    const requiredStringProperty = $jsonObject["requiredStringProperty"];
-    return Right({
+    const requiredStringProperty = $json["requiredStringProperty"];
+    return {
       $identifier,
       emptyStringSetProperty,
       nonEmptyStringSetProperty,
       optionalStringProperty,
       requiredStringProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -16680,8 +16691,8 @@ export namespace PartialInterfaceUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnionMember2> {
+    json: PartialInterfaceUnionMember2.$Json,
+  ): PartialInterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
@@ -16777,26 +16788,29 @@ export namespace PartialInterfaceUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "PartialInterfaceUnionMember2";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialInterfaceUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: PartialInterfaceUnionMember2.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "PartialInterfaceUnionMember2";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "PartialInterfaceUnionMember2" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -17270,8 +17284,8 @@ export namespace PartialInterfaceUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PartialInterfaceUnionMember1> {
+    json: PartialInterfaceUnionMember1.$Json,
+  ): PartialInterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
@@ -17367,26 +17381,29 @@ export namespace PartialInterfaceUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "PartialInterfaceUnionMember1";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialInterfaceUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: PartialInterfaceUnionMember1.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "PartialInterfaceUnionMember1";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "PartialInterfaceUnionMember1" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -17894,11 +17911,9 @@ export namespace PartialClassUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PartialClassUnionMember2> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PartialClassUnionMember2(properties),
-    );
+    json: PartialClassUnionMember2.$Json,
+  ): PartialClassUnionMember2 {
+    return new PartialClassUnionMember2($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -17993,23 +18008,25 @@ export namespace PartialClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialClassUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PartialClassUnionMember2.$Json): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -18463,11 +18480,9 @@ export namespace PartialClassUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, PartialClassUnionMember1> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PartialClassUnionMember1(properties),
-    );
+    json: PartialClassUnionMember1.$Json,
+  ): PartialClassUnionMember1 {
+    return new PartialClassUnionMember1($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -18562,23 +18577,25 @@ export namespace PartialClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, PartialClassUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PartialClassUnionMember1.$Json): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -18973,10 +18990,8 @@ export namespace NewName2Class {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, NewName2Class> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NewName2Class(properties),
-    );
+  export function $fromJson(json: NewName2Class.$Json): NewName2Class {
+    return new NewName2Class($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NewName2Class> = (
@@ -19065,18 +19080,21 @@ export namespace NewName2Class {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, NewName2Class> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NewName2Class.$Json): {
+    $identifier: BlankNode | NamedNode;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -19439,10 +19457,8 @@ export namespace NewName1Class {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, NewName1Class> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NewName1Class(properties),
-    );
+  export function $fromJson(json: NewName1Class.$Json): NewName1Class {
+    return new NewName1Class($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NewName1Class> = (
@@ -19531,18 +19547,21 @@ export namespace NewName1Class {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, NewName1Class> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NewName1Class.$Json): {
+    $identifier: BlankNode | NamedNode;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -20004,11 +20023,9 @@ export namespace OrderedPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, OrderedPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new OrderedPropertiesClass(properties),
-    );
+    json: OrderedPropertiesClass.$Json,
+  ): OrderedPropertiesClass {
+    return new OrderedPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -20109,32 +20126,34 @@ export namespace OrderedPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      orderedPropertyC: string;
-      orderedPropertyB: string;
-      orderedPropertyA: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, OrderedPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const orderedPropertyC = $jsonObject["orderedPropertyC"];
-    const orderedPropertyB = $jsonObject["orderedPropertyB"];
-    const orderedPropertyA = $jsonObject["orderedPropertyA"];
-    return Right({
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: OrderedPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    orderedPropertyC: string;
+    orderedPropertyB: string;
+    orderedPropertyA: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const orderedPropertyC = $json["orderedPropertyC"];
+    const orderedPropertyB = $json["orderedPropertyB"];
+    const orderedPropertyA = $json["orderedPropertyA"];
+    return {
       $identifier,
       orderedPropertyC,
       orderedPropertyB,
       orderedPropertyA,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -21878,11 +21897,9 @@ export namespace NumericPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, NumericPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NumericPropertiesClass(properties),
-    );
+    json: NumericPropertiesClass.$Json,
+  ): NumericPropertiesClass {
+    return new NumericPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -22052,85 +22069,85 @@ export namespace NumericPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      byteNumericProperty: Maybe<number>;
-      decimalNumericProperty: Maybe<BigDecimal>;
-      doubleNumericProperty: Maybe<number>;
-      floatNumericProperty: Maybe<number>;
-      integerNumericProperty: Maybe<bigint>;
-      intNumericProperty: Maybe<number>;
-      longNumericProperty: Maybe<bigint>;
-      negativeIntegerNumericProperty: Maybe<bigint>;
-      nonNegativeIntegerNumericProperty: Maybe<bigint>;
-      nonPositiveIntegerNumericProperty: Maybe<bigint>;
-      positiveIntegerNumericProperty: Maybe<bigint>;
-      shortNumericProperty: Maybe<number>;
-      unsignedByteNumericProperty: Maybe<number>;
-      unsignedIntNumericProperty: Maybe<number>;
-      unsignedLongNumericProperty: Maybe<bigint>;
-      unsignedShortNumericProperty: Maybe<number>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NumericPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NumericPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    byteNumericProperty: Maybe<number>;
+    decimalNumericProperty: Maybe<BigDecimal>;
+    doubleNumericProperty: Maybe<number>;
+    floatNumericProperty: Maybe<number>;
+    integerNumericProperty: Maybe<bigint>;
+    intNumericProperty: Maybe<number>;
+    longNumericProperty: Maybe<bigint>;
+    negativeIntegerNumericProperty: Maybe<bigint>;
+    nonNegativeIntegerNumericProperty: Maybe<bigint>;
+    nonPositiveIntegerNumericProperty: Maybe<bigint>;
+    positiveIntegerNumericProperty: Maybe<bigint>;
+    shortNumericProperty: Maybe<number>;
+    unsignedByteNumericProperty: Maybe<number>;
+    unsignedIntNumericProperty: Maybe<number>;
+    unsignedLongNumericProperty: Maybe<bigint>;
+    unsignedShortNumericProperty: Maybe<number>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const byteNumericProperty = Maybe.fromNullable(
-      $jsonObject["byteNumericProperty"],
+      $json["byteNumericProperty"],
     );
     const decimalNumericProperty = Maybe.fromNullable(
-      $jsonObject["decimalNumericProperty"],
+      $json["decimalNumericProperty"],
     ).map((item) => new BigDecimal(item));
     const doubleNumericProperty = Maybe.fromNullable(
-      $jsonObject["doubleNumericProperty"],
+      $json["doubleNumericProperty"],
     );
     const floatNumericProperty = Maybe.fromNullable(
-      $jsonObject["floatNumericProperty"],
+      $json["floatNumericProperty"],
     );
     const integerNumericProperty = Maybe.fromNullable(
-      $jsonObject["integerNumericProperty"],
+      $json["integerNumericProperty"],
     ).map((item) => BigInt(item));
-    const intNumericProperty = Maybe.fromNullable(
-      $jsonObject["intNumericProperty"],
-    );
+    const intNumericProperty = Maybe.fromNullable($json["intNumericProperty"]);
     const longNumericProperty = Maybe.fromNullable(
-      $jsonObject["longNumericProperty"],
+      $json["longNumericProperty"],
     ).map((item) => BigInt(item));
     const negativeIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["negativeIntegerNumericProperty"],
+      $json["negativeIntegerNumericProperty"],
     ).map((item) => BigInt(item));
     const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["nonNegativeIntegerNumericProperty"],
+      $json["nonNegativeIntegerNumericProperty"],
     ).map((item) => BigInt(item));
     const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["nonPositiveIntegerNumericProperty"],
+      $json["nonPositiveIntegerNumericProperty"],
     ).map((item) => BigInt(item));
     const positiveIntegerNumericProperty = Maybe.fromNullable(
-      $jsonObject["positiveIntegerNumericProperty"],
+      $json["positiveIntegerNumericProperty"],
     ).map((item) => BigInt(item));
     const shortNumericProperty = Maybe.fromNullable(
-      $jsonObject["shortNumericProperty"],
+      $json["shortNumericProperty"],
     );
     const unsignedByteNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedByteNumericProperty"],
+      $json["unsignedByteNumericProperty"],
     );
     const unsignedIntNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedIntNumericProperty"],
+      $json["unsignedIntNumericProperty"],
     );
     const unsignedLongNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedLongNumericProperty"],
+      $json["unsignedLongNumericProperty"],
     ).map((item) => BigInt(item));
     const unsignedShortNumericProperty = Maybe.fromNullable(
-      $jsonObject["unsignedShortNumericProperty"],
+      $json["unsignedShortNumericProperty"],
     );
-    return Right({
+    return {
       $identifier,
       byteNumericProperty,
       decimalNumericProperty,
@@ -22148,7 +22165,7 @@ export namespace NumericPropertiesClass {
       unsignedIntNumericProperty,
       unsignedLongNumericProperty,
       unsignedShortNumericProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -23680,10 +23697,8 @@ export namespace NodeKindsClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, NodeKindsClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NodeKindsClass(properties),
-    );
+  export function $fromJson(json: NodeKindsClass.$Json): NodeKindsClass {
+    return new NodeKindsClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NodeKindsClass> = (
@@ -23828,88 +23843,78 @@ export namespace NodeKindsClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      blankNodeKindProperty: BlankNode;
-      blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
-      blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
-      iriNodeKindProperty: NamedNode;
-      iriOrLiteralNodeKindProperty: NamedNode | Literal;
-      literalNodeKindProperty: Literal;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, NodeKindsClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NodeKindsClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    blankNodeKindProperty: BlankNode;
+    blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
+    blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+    iriNodeKindProperty: NamedNode;
+    iriOrLiteralNodeKindProperty: NamedNode | Literal;
+    literalNodeKindProperty: Literal;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const blankNodeKindProperty = dataFactory.blankNode(
-      $jsonObject["blankNodeKindProperty"]["@id"].substring(2),
+      $json["blankNodeKindProperty"]["@id"].substring(2),
     );
-    const blankNodeOrIriNodeKindProperty = $jsonObject[
+    const blankNodeOrIriNodeKindProperty = $json[
       "blankNodeOrIriNodeKindProperty"
     ]["@id"].startsWith("_:")
       ? dataFactory.blankNode(
-          $jsonObject["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
+          $json["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
         )
-      : dataFactory.namedNode(
-          $jsonObject["blankNodeOrIriNodeKindProperty"]["@id"],
-        );
+      : dataFactory.namedNode($json["blankNodeOrIriNodeKindProperty"]["@id"]);
     const blankNodeOrLiteralNodeKindProperty =
-      $jsonObject["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
+      $json["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
         ? dataFactory.literal(
-            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@value"],
-            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@language"] !==
+            $json["blankNodeOrLiteralNodeKindProperty"]["@value"],
+            $json["blankNodeOrLiteralNodeKindProperty"]["@language"] !==
               undefined
-              ? $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@language"]
-              : $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
+              ? $json["blankNodeOrLiteralNodeKindProperty"]["@language"]
+              : $json["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
                   undefined
                 ? dataFactory.namedNode(
-                    $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@type"],
+                    $json["blankNodeOrLiteralNodeKindProperty"]["@type"],
                   )
                 : undefined,
           )
         : dataFactory.blankNode(
-            $jsonObject["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(
-              2,
-            ),
+            $json["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(2),
           );
     const iriNodeKindProperty = dataFactory.namedNode(
-      $jsonObject["iriNodeKindProperty"]["@id"],
+      $json["iriNodeKindProperty"]["@id"],
     );
     const iriOrLiteralNodeKindProperty =
-      $jsonObject["iriOrLiteralNodeKindProperty"].termType === "Literal"
+      $json["iriOrLiteralNodeKindProperty"].termType === "Literal"
         ? dataFactory.literal(
-            $jsonObject["iriOrLiteralNodeKindProperty"]["@value"],
-            $jsonObject["iriOrLiteralNodeKindProperty"]["@language"] !==
-              undefined
-              ? $jsonObject["iriOrLiteralNodeKindProperty"]["@language"]
-              : $jsonObject["iriOrLiteralNodeKindProperty"]["@type"] !==
-                  undefined
+            $json["iriOrLiteralNodeKindProperty"]["@value"],
+            $json["iriOrLiteralNodeKindProperty"]["@language"] !== undefined
+              ? $json["iriOrLiteralNodeKindProperty"]["@language"]
+              : $json["iriOrLiteralNodeKindProperty"]["@type"] !== undefined
                 ? dataFactory.namedNode(
-                    $jsonObject["iriOrLiteralNodeKindProperty"]["@type"],
+                    $json["iriOrLiteralNodeKindProperty"]["@type"],
                   )
                 : undefined,
           )
-        : dataFactory.namedNode(
-            $jsonObject["iriOrLiteralNodeKindProperty"]["@id"],
-          );
+        : dataFactory.namedNode($json["iriOrLiteralNodeKindProperty"]["@id"]);
     const literalNodeKindProperty = dataFactory.literal(
-      $jsonObject["literalNodeKindProperty"]["@value"],
-      $jsonObject["literalNodeKindProperty"]["@language"] !== undefined
-        ? $jsonObject["literalNodeKindProperty"]["@language"]
-        : $jsonObject["literalNodeKindProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode(
-              $jsonObject["literalNodeKindProperty"]["@type"],
-            )
+      $json["literalNodeKindProperty"]["@value"],
+      $json["literalNodeKindProperty"]["@language"] !== undefined
+        ? $json["literalNodeKindProperty"]["@language"]
+        : $json["literalNodeKindProperty"]["@type"] !== undefined
+          ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"])
           : undefined,
     );
-    return Right({
+    return {
       $identifier,
       blankNodeKindProperty,
       blankNodeOrIriNodeKindProperty,
@@ -23917,7 +23922,7 @@ export namespace NodeKindsClass {
       iriNodeKindProperty,
       iriOrLiteralNodeKindProperty,
       literalNodeKindProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -24442,11 +24447,9 @@ export namespace NoRdfTypeClassUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnionMember2> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NoRdfTypeClassUnionMember2(properties),
-    );
+    json: NoRdfTypeClassUnionMember2.$Json,
+  ): NoRdfTypeClassUnionMember2 {
+    return new NoRdfTypeClassUnionMember2($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -24537,24 +24540,28 @@ export namespace NoRdfTypeClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      noRdfTypeClassUnionMember2Property: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NoRdfTypeClassUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: NoRdfTypeClassUnionMember2.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    noRdfTypeClassUnionMember2Property: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const noRdfTypeClassUnionMember2Property =
-      $jsonObject["noRdfTypeClassUnionMember2Property"];
-    return Right({ $identifier, noRdfTypeClassUnionMember2Property });
+      $json["noRdfTypeClassUnionMember2Property"];
+    return { $identifier, noRdfTypeClassUnionMember2Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -24915,11 +24922,9 @@ export namespace NoRdfTypeClassUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, NoRdfTypeClassUnionMember1> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NoRdfTypeClassUnionMember1(properties),
-    );
+    json: NoRdfTypeClassUnionMember1.$Json,
+  ): NoRdfTypeClassUnionMember1 {
+    return new NoRdfTypeClassUnionMember1($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -25010,24 +25015,28 @@ export namespace NoRdfTypeClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      noRdfTypeClassUnionMember1Property: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NoRdfTypeClassUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: NoRdfTypeClassUnionMember1.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    noRdfTypeClassUnionMember1Property: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const noRdfTypeClassUnionMember1Property =
-      $jsonObject["noRdfTypeClassUnionMember1Property"];
-    return Right({ $identifier, noRdfTypeClassUnionMember1Property });
+      $json["noRdfTypeClassUnionMember1Property"];
+    return { $identifier, noRdfTypeClassUnionMember1Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -25524,11 +25533,9 @@ export namespace NamedUnionPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, NamedUnionPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NamedUnionPropertiesClass(properties),
-    );
+    json: NamedUnionPropertiesClass.$Json,
+  ): NamedUnionPropertiesClass {
+    return new NamedUnionPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -25628,29 +25635,31 @@ export namespace NamedUnionPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      namedUnion1Property: NamedUnion1;
-      namedUnion2Property: NamedUnion2;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, NamedUnionPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NamedUnionPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    namedUnion1Property: NamedUnion1;
+    namedUnion2Property: NamedUnion2;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const namedUnion1Property = NamedUnion1.$fromJson(
-      $jsonObject["namedUnion1Property"],
+      $json["namedUnion1Property"],
     );
     const namedUnion2Property = NamedUnion2.$fromJson(
-      $jsonObject["namedUnion2Property"],
+      $json["namedUnion2Property"],
     );
-    return Right({ $identifier, namedUnion1Property, namedUnion2Property });
+    return { $identifier, namedUnion1Property, namedUnion2Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -26416,11 +26425,9 @@ export namespace MutablePropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, MutablePropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new MutablePropertiesClass(properties),
-    );
+    json: MutablePropertiesClass.$Json,
+  ): MutablePropertiesClass {
+    return new MutablePropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -26541,36 +26548,38 @@ export namespace MutablePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      mutableListProperty: Maybe<string[]>;
-      mutableSetProperty: string[];
-      mutableStringProperty: Maybe<string>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, MutablePropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: MutablePropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    mutableListProperty: Maybe<string[]>;
+    mutableSetProperty: string[];
+    mutableStringProperty: Maybe<string>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const mutableListProperty = Maybe.fromNullable(
-      $jsonObject["mutableListProperty"],
+      $json["mutableListProperty"],
     );
-    const mutableSetProperty = $jsonObject["mutableSetProperty"];
+    const mutableSetProperty = $json["mutableSetProperty"];
     const mutableStringProperty = Maybe.fromNullable(
-      $jsonObject["mutableStringProperty"],
+      $json["mutableStringProperty"],
     );
-    return Right({
+    return {
       $identifier,
       mutableListProperty,
       mutableSetProperty,
       mutableStringProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -27504,10 +27513,10 @@ export namespace ListPropertiesClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, ListPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ListPropertiesClass(properties),
-    );
+  export function $fromJson(
+    json: ListPropertiesClass.$Json,
+  ): ListPropertiesClass {
+    return new ListPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -27619,40 +27628,38 @@ export namespace ListPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      iriListProperty: Maybe<readonly NamedNode[]>;
-      objectListProperty: Maybe<readonly NonClass[]>;
-      stringListProperty: Maybe<readonly string[]>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ListPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const iriListProperty = Maybe.fromNullable(
-      $jsonObject["iriListProperty"],
-    ).map((item) => item.map((item) => dataFactory.namedNode(item["@id"])));
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ListPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    iriListProperty: Maybe<readonly NamedNode[]>;
+    objectListProperty: Maybe<readonly NonClass[]>;
+    stringListProperty: Maybe<readonly string[]>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
+      (item) => item.map((item) => dataFactory.namedNode(item["@id"])),
+    );
     const objectListProperty = Maybe.fromNullable(
-      $jsonObject["objectListProperty"],
-    ).map((item) =>
-      item.map((item) => NonClass.$fromJson(item).unsafeCoerce()),
-    );
-    const stringListProperty = Maybe.fromNullable(
-      $jsonObject["stringListProperty"],
-    );
-    return Right({
+      $json["objectListProperty"],
+    ).map((item) => item.map((item) => NonClass.$fromJson(item)));
+    const stringListProperty = Maybe.fromNullable($json["stringListProperty"]);
+    return {
       $identifier,
       iriListProperty,
       objectListProperty,
       stringListProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -28166,7 +28173,7 @@ export namespace PartialInterface {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, PartialInterface> {
+  export function $fromJson(json: PartialInterface.$Json): PartialInterface {
     return $propertiesFromJson(json);
   }
 
@@ -28259,26 +28266,25 @@ export namespace PartialInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "PartialInterface";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, PartialInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PartialInterface.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "PartialInterface";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "PartialInterface" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -30163,8 +30169,8 @@ export namespace LazyPropertiesInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazyPropertiesInterface> {
+    json: LazyPropertiesInterface.$Json,
+  ): LazyPropertiesInterface {
     return $propertiesFromJson(json);
   }
 
@@ -30308,71 +30314,73 @@ export namespace LazyPropertiesInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "LazyPropertiesInterface";
-      optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-      optionalLazyToResolvedInterfaceUnionProperty: $LazyObjectOption<
-        LazilyResolvedInterfaceUnion.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedInterfaceUnion
-      >;
-      optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyObjectOption<
-        LazilyResolvedIriIdentifierInterface.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifierInterface
-      >;
-      optionalPartialInterfaceToResolvedInterfaceProperty: $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        PartialInterface,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-      optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyObjectOption<
-        LazilyResolvedInterfaceUnion.$Identifier,
-        PartialInterface,
-        LazilyResolvedInterfaceUnion
-      >;
-      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyObjectOption<
-        LazilyResolvedInterfaceUnion.$Identifier,
-        PartialInterfaceUnion,
-        LazilyResolvedInterfaceUnion
-      >;
-      requiredLazyToResolvedInterfaceProperty: $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-      requiredPartialInterfaceToResolvedInterfaceProperty: $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        PartialInterface,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-      setLazyToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-      setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-        PartialInterface,
-        LazilyResolvedBlankNodeOrIriIdentifierInterface
-      >;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazyPropertiesInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: LazyPropertiesInterface.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "LazyPropertiesInterface";
+    optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+    optionalLazyToResolvedInterfaceUnionProperty: $LazyObjectOption<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedInterfaceUnion
+    >;
+    optionalLazyToResolvedIriIdentifierInterfaceProperty: $LazyObjectOption<
+      LazilyResolvedIriIdentifierInterface.$Identifier,
+      $NamedDefaultPartial,
+      LazilyResolvedIriIdentifierInterface
+    >;
+    optionalPartialInterfaceToResolvedInterfaceProperty: $LazyObjectOption<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+    optionalPartialInterfaceToResolvedInterfaceUnionProperty: $LazyObjectOption<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      PartialInterface,
+      LazilyResolvedInterfaceUnion
+    >;
+    optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: $LazyObjectOption<
+      LazilyResolvedInterfaceUnion.$Identifier,
+      PartialInterfaceUnion,
+      LazilyResolvedInterfaceUnion
+    >;
+    requiredLazyToResolvedInterfaceProperty: $LazyObject<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+    requiredPartialInterfaceToResolvedInterfaceProperty: $LazyObject<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+    setLazyToResolvedInterfaceProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+    setPartialInterfaceToResolvedInterfaceProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+      PartialInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface
+    >;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "LazyPropertiesInterface" as const;
     const optionalLazyToResolvedInterfaceProperty = new $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
@@ -30380,8 +30388,8 @@ export namespace LazyPropertiesInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partial: Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedInterfaceProperty"],
-      ).map((item) => $DefaultPartial.$fromJson(item).unsafeCoerce()),
+        $json["optionalLazyToResolvedInterfaceProperty"],
+      ).map((item) => $DefaultPartial.$fromJson(item)),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -30397,8 +30405,8 @@ export namespace LazyPropertiesInterface {
       LazilyResolvedInterfaceUnion
     >({
       partial: Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedInterfaceUnionProperty"],
-      ).map((item) => $DefaultPartial.$fromJson(item).unsafeCoerce()),
+        $json["optionalLazyToResolvedInterfaceUnionProperty"],
+      ).map((item) => $DefaultPartial.$fromJson(item)),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -30415,8 +30423,8 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedIriIdentifierInterface
       >({
         partial: Maybe.fromNullable(
-          $jsonObject["optionalLazyToResolvedIriIdentifierInterfaceProperty"],
-        ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
+          $json["optionalLazyToResolvedIriIdentifierInterfaceProperty"],
+        ).map((item) => $NamedDefaultPartial.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
             Left(
@@ -30433,8 +30441,8 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedBlankNodeOrIriIdentifierInterface
       >({
         partial: Maybe.fromNullable(
-          $jsonObject["optionalPartialInterfaceToResolvedInterfaceProperty"],
-        ).map((item) => PartialInterface.$fromJson(item).unsafeCoerce()),
+          $json["optionalPartialInterfaceToResolvedInterfaceProperty"],
+        ).map((item) => PartialInterface.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
             Left(
@@ -30451,10 +30459,8 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion
       >({
         partial: Maybe.fromNullable(
-          $jsonObject[
-            "optionalPartialInterfaceToResolvedInterfaceUnionProperty"
-          ],
-        ).map((item) => PartialInterface.$fromJson(item).unsafeCoerce()),
+          $json["optionalPartialInterfaceToResolvedInterfaceUnionProperty"],
+        ).map((item) => PartialInterface.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
             Left(
@@ -30471,7 +30477,7 @@ export namespace LazyPropertiesInterface {
         LazilyResolvedInterfaceUnion
       >({
         partial: Maybe.fromNullable(
-          $jsonObject[
+          $json[
             "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty"
           ],
         ).map((item) => PartialInterfaceUnion.$fromJson(item)),
@@ -30489,9 +30495,9 @@ export namespace LazyPropertiesInterface {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
-      partial: $DefaultPartial
-        .$fromJson($jsonObject["requiredLazyToResolvedInterfaceProperty"])
-        .unsafeCoerce(),
+      partial: $DefaultPartial.$fromJson(
+        $json["requiredLazyToResolvedInterfaceProperty"],
+      ),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -30507,8 +30513,8 @@ export namespace LazyPropertiesInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
       partial: PartialInterface.$fromJson(
-        $jsonObject["requiredPartialInterfaceToResolvedInterfaceProperty"],
-      ).unsafeCoerce(),
+        $json["requiredPartialInterfaceToResolvedInterfaceProperty"],
+      ),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -30523,8 +30529,8 @@ export namespace LazyPropertiesInterface {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
-      partials: $jsonObject["setLazyToResolvedInterfaceProperty"].map((item) =>
-        $DefaultPartial.$fromJson(item).unsafeCoerce(),
+      partials: $json["setLazyToResolvedInterfaceProperty"].map((item) =>
+        $DefaultPartial.$fromJson(item),
       ),
       resolver: () =>
         Promise.resolve(
@@ -30538,9 +30544,9 @@ export namespace LazyPropertiesInterface {
       PartialInterface,
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >({
-      partials: $jsonObject[
-        "setPartialInterfaceToResolvedInterfaceProperty"
-      ].map((item) => PartialInterface.$fromJson(item).unsafeCoerce()),
+      partials: $json["setPartialInterfaceToResolvedInterfaceProperty"].map(
+        (item) => PartialInterface.$fromJson(item),
+      ),
       resolver: () =>
         Promise.resolve(
           Left(
@@ -30548,7 +30554,7 @@ export namespace LazyPropertiesInterface {
           ),
         ),
     });
-    return Right({
+    return {
       $identifier,
       $type,
       optionalLazyToResolvedInterfaceProperty,
@@ -30561,7 +30567,7 @@ export namespace LazyPropertiesInterface {
       requiredPartialInterfaceToResolvedInterfaceProperty,
       setLazyToResolvedInterfaceProperty,
       setPartialInterfaceToResolvedInterfaceProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -33380,10 +33386,10 @@ export namespace LazyPropertiesClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, LazyPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazyPropertiesClass(properties),
-    );
+  export function $fromJson(
+    json: LazyPropertiesClass.$Json,
+  ): LazyPropertiesClass {
+    return new LazyPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -33525,78 +33531,80 @@ export namespace LazyPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      optionalLazyToResolvedClassProperty: $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-      optionalLazyToResolvedClassUnionProperty: $LazyObjectOption<
-        LazilyResolvedClassUnion.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedClassUnion
-      >;
-      optionalLazyToResolvedIriIdentifierClassProperty: $LazyObjectOption<
-        LazilyResolvedIriIdentifierClass.$Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifierClass
-      >;
-      optionalPartialClassToResolvedClassProperty: $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        PartialClass,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-      optionalPartialClassToResolvedClassUnionProperty: $LazyObjectOption<
-        LazilyResolvedClassUnion.$Identifier,
-        PartialClass,
-        LazilyResolvedClassUnion
-      >;
-      optionalPartialClassUnionToResolvedClassUnionProperty: $LazyObjectOption<
-        LazilyResolvedClassUnion.$Identifier,
-        PartialClassUnion,
-        LazilyResolvedClassUnion
-      >;
-      requiredLazyToResolvedClassProperty: $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-      requiredPartialClassToResolvedClassProperty: $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        PartialClass,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-      setLazyToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-      setPartialClassToResolvedClassProperty: $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-        PartialClass,
-        LazilyResolvedBlankNodeOrIriIdentifierClass
-      >;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazyPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: LazyPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    optionalLazyToResolvedClassProperty: $LazyObjectOption<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+    optionalLazyToResolvedClassUnionProperty: $LazyObjectOption<
+      LazilyResolvedClassUnion.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedClassUnion
+    >;
+    optionalLazyToResolvedIriIdentifierClassProperty: $LazyObjectOption<
+      LazilyResolvedIriIdentifierClass.$Identifier,
+      $NamedDefaultPartial,
+      LazilyResolvedIriIdentifierClass
+    >;
+    optionalPartialClassToResolvedClassProperty: $LazyObjectOption<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+    optionalPartialClassToResolvedClassUnionProperty: $LazyObjectOption<
+      LazilyResolvedClassUnion.$Identifier,
+      PartialClass,
+      LazilyResolvedClassUnion
+    >;
+    optionalPartialClassUnionToResolvedClassUnionProperty: $LazyObjectOption<
+      LazilyResolvedClassUnion.$Identifier,
+      PartialClassUnion,
+      LazilyResolvedClassUnion
+    >;
+    requiredLazyToResolvedClassProperty: $LazyObject<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+    requiredPartialClassToResolvedClassProperty: $LazyObject<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+    setLazyToResolvedClassProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      $DefaultPartial,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+    setPartialClassToResolvedClassProperty: $LazyObjectSet<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+      PartialClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass
+    >;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const optionalLazyToResolvedClassProperty = new $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedClassProperty"],
-      ).map((item) => $DefaultPartial.$fromJson(item).unsafeCoerce()),
+        $json["optionalLazyToResolvedClassProperty"],
+      ).map((item) => $DefaultPartial.$fromJson(item)),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -33612,8 +33620,8 @@ export namespace LazyPropertiesClass {
       LazilyResolvedClassUnion
     >({
       partial: Maybe.fromNullable(
-        $jsonObject["optionalLazyToResolvedClassUnionProperty"],
-      ).map((item) => $DefaultPartial.$fromJson(item).unsafeCoerce()),
+        $json["optionalLazyToResolvedClassUnionProperty"],
+      ).map((item) => $DefaultPartial.$fromJson(item)),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -33630,8 +33638,8 @@ export namespace LazyPropertiesClass {
         LazilyResolvedIriIdentifierClass
       >({
         partial: Maybe.fromNullable(
-          $jsonObject["optionalLazyToResolvedIriIdentifierClassProperty"],
-        ).map((item) => $NamedDefaultPartial.$fromJson(item).unsafeCoerce()),
+          $json["optionalLazyToResolvedIriIdentifierClassProperty"],
+        ).map((item) => $NamedDefaultPartial.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
             Left(
@@ -33647,8 +33655,8 @@ export namespace LazyPropertiesClass {
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: Maybe.fromNullable(
-        $jsonObject["optionalPartialClassToResolvedClassProperty"],
-      ).map((item) => PartialClass.$fromJson(item).unsafeCoerce()),
+        $json["optionalPartialClassToResolvedClassProperty"],
+      ).map((item) => PartialClass.$fromJson(item)),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -33665,8 +33673,8 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion
       >({
         partial: Maybe.fromNullable(
-          $jsonObject["optionalPartialClassToResolvedClassUnionProperty"],
-        ).map((item) => PartialClass.$fromJson(item).unsafeCoerce()),
+          $json["optionalPartialClassToResolvedClassUnionProperty"],
+        ).map((item) => PartialClass.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
             Left(
@@ -33683,7 +33691,7 @@ export namespace LazyPropertiesClass {
         LazilyResolvedClassUnion
       >({
         partial: Maybe.fromNullable(
-          $jsonObject["optionalPartialClassUnionToResolvedClassUnionProperty"],
+          $json["optionalPartialClassUnionToResolvedClassUnionProperty"],
         ).map((item) => PartialClassUnion.$fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
@@ -33699,9 +33707,9 @@ export namespace LazyPropertiesClass {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
-      partial: $DefaultPartial
-        .$fromJson($jsonObject["requiredLazyToResolvedClassProperty"])
-        .unsafeCoerce(),
+      partial: $DefaultPartial.$fromJson(
+        $json["requiredLazyToResolvedClassProperty"],
+      ),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -33717,8 +33725,8 @@ export namespace LazyPropertiesClass {
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
       partial: PartialClass.$fromJson(
-        $jsonObject["requiredPartialClassToResolvedClassProperty"],
-      ).unsafeCoerce(),
+        $json["requiredPartialClassToResolvedClassProperty"],
+      ),
       resolver: (identifier) =>
         Promise.resolve(
           Left(
@@ -33733,8 +33741,8 @@ export namespace LazyPropertiesClass {
       $DefaultPartial,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
-      partials: $jsonObject["setLazyToResolvedClassProperty"].map((item) =>
-        $DefaultPartial.$fromJson(item).unsafeCoerce(),
+      partials: $json["setLazyToResolvedClassProperty"].map((item) =>
+        $DefaultPartial.$fromJson(item),
       ),
       resolver: () =>
         Promise.resolve(
@@ -33748,8 +33756,8 @@ export namespace LazyPropertiesClass {
       PartialClass,
       LazilyResolvedBlankNodeOrIriIdentifierClass
     >({
-      partials: $jsonObject["setPartialClassToResolvedClassProperty"].map(
-        (item) => PartialClass.$fromJson(item).unsafeCoerce(),
+      partials: $json["setPartialClassToResolvedClassProperty"].map((item) =>
+        PartialClass.$fromJson(item),
       ),
       resolver: () =>
         Promise.resolve(
@@ -33758,7 +33766,7 @@ export namespace LazyPropertiesClass {
           ),
         ),
     });
-    return Right({
+    return {
       $identifier,
       optionalLazyToResolvedClassProperty,
       optionalLazyToResolvedClassUnionProperty,
@@ -33770,7 +33778,7 @@ export namespace LazyPropertiesClass {
       requiredPartialClassToResolvedClassProperty,
       setLazyToResolvedClassProperty,
       setPartialClassToResolvedClassProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -34755,8 +34763,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedIriIdentifierInterface> {
+    json: LazilyResolvedIriIdentifierInterface.$Json,
+  ): LazilyResolvedIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -34856,24 +34864,27 @@ export namespace LazilyResolvedIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: NamedNode;
-      $type: "LazilyResolvedIriIdentifierInterface";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedIriIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedIriIdentifierInterface.$Json,
+  ): {
+    $identifier: NamedNode;
+    $type: "LazilyResolvedIriIdentifierInterface";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
     const $type = "LazilyResolvedIriIdentifierInterface" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -35277,11 +35288,9 @@ export namespace LazilyResolvedIriIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedIriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedIriIdentifierClass(properties),
-    );
+    json: LazilyResolvedIriIdentifierClass.$Json,
+  ): LazilyResolvedIriIdentifierClass {
+    return new LazilyResolvedIriIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -35378,21 +35387,22 @@ export namespace LazilyResolvedIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedIriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedIriIdentifierClass.$Json,
+  ): { $identifier: NamedNode; lazilyResolvedStringProperty: string } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -35780,8 +35790,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
+    json: LazilyResolvedInterfaceUnionMember2.$Json,
+  ): LazilyResolvedInterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
@@ -35883,26 +35893,29 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "LazilyResolvedInterfaceUnionMember2";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedInterfaceUnionMember2.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "LazilyResolvedInterfaceUnionMember2";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "LazilyResolvedInterfaceUnionMember2" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -36381,8 +36394,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
+    json: LazilyResolvedInterfaceUnionMember1.$Json,
+  ): LazilyResolvedInterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
@@ -36484,26 +36497,29 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "LazilyResolvedInterfaceUnionMember1";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedInterfaceUnionMember1.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "LazilyResolvedInterfaceUnionMember1";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "LazilyResolvedInterfaceUnionMember1" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -37018,11 +37034,9 @@ export namespace LazilyResolvedClassUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnionMember2> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedClassUnionMember2(properties),
-    );
+    json: LazilyResolvedClassUnionMember2.$Json,
+  ): LazilyResolvedClassUnionMember2 {
+    return new LazilyResolvedClassUnionMember2($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -37120,23 +37134,27 @@ export namespace LazilyResolvedClassUnionMember2 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedClassUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedClassUnionMember2.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -37595,11 +37613,9 @@ export namespace LazilyResolvedClassUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedClassUnionMember1> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LazilyResolvedClassUnionMember1(properties),
-    );
+    json: LazilyResolvedClassUnionMember1.$Json,
+  ): LazilyResolvedClassUnionMember1 {
+    return new LazilyResolvedClassUnionMember1($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -37697,23 +37713,27 @@ export namespace LazilyResolvedClassUnionMember1 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedClassUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedClassUnionMember1.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -38141,8 +38161,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
+    json: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json,
+  ): LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -38247,26 +38267,29 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
-      lazilyResolvedStringProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, $type, lazilyResolvedStringProperty });
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -38797,11 +38820,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) =>
-        new LazilyResolvedBlankNodeOrIriIdentifierClass(properties),
+    json: LazilyResolvedBlankNodeOrIriIdentifierClass.$Json,
+  ): LazilyResolvedBlankNodeOrIriIdentifierClass {
+    return new LazilyResolvedBlankNodeOrIriIdentifierClass(
+      $propertiesFromJson(json),
     );
   }
 
@@ -38908,23 +38930,27 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: LazilyResolvedBlankNodeOrIriIdentifierClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -39352,11 +39378,9 @@ export namespace LanguageInPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, LanguageInPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new LanguageInPropertiesClass(properties),
-    );
+    json: LanguageInPropertiesClass.$Json,
+  ): LanguageInPropertiesClass {
+    return new LanguageInPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -39456,23 +39480,25 @@ export namespace LanguageInPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      languageInLiteralProperty: NonEmptyList<Literal>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, LanguageInPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: LanguageInPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    languageInLiteralProperty: NonEmptyList<Literal>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const languageInLiteralProperty = NonEmptyList.fromArray(
-      $jsonObject["languageInLiteralProperty"],
+      $json["languageInLiteralProperty"],
     )
       .unsafeCoerce()
       .map((item) =>
@@ -39485,7 +39511,7 @@ export namespace LanguageInPropertiesClass {
               : undefined,
         ),
       );
-    return Right({ $identifier, languageInLiteralProperty });
+    return { $identifier, languageInLiteralProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -40232,11 +40258,9 @@ export namespace JsPrimitiveUnionPropertyClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, JsPrimitiveUnionPropertyClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new JsPrimitiveUnionPropertyClass(properties),
-    );
+    json: JsPrimitiveUnionPropertyClass.$Json,
+  ): JsPrimitiveUnionPropertyClass {
+    return new JsPrimitiveUnionPropertyClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -40334,39 +40358,42 @@ export namespace JsPrimitiveUnionPropertyClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, JsPrimitiveUnionPropertyClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const jsPrimitiveUnionProperty = $jsonObject[
-      "jsPrimitiveUnionProperty"
-    ].map((item) =>
-      ((value: boolean | number | string): boolean | number | string => {
-        if (typeof value === "boolean") {
-          return value;
-        }
-        if (typeof value === "number") {
-          return value;
-        }
-        if (typeof value === "string") {
-          return value;
-        }
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
 
-        throw new Error("unable to deserialize JSON");
-      })(item),
+  export function $propertiesFromJson(
+    $json: JsPrimitiveUnionPropertyClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const jsPrimitiveUnionProperty = $json["jsPrimitiveUnionProperty"].map(
+      (item) =>
+        ((value: boolean | number | string): boolean | number | string => {
+          if (typeof value === "boolean") {
+            return value;
+          }
+          if (typeof value === "number") {
+            return value;
+          }
+          if (typeof value === "string") {
+            return value;
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
     );
-    return Right({ $identifier, jsPrimitiveUnionProperty });
+    return { $identifier, jsPrimitiveUnionProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -40815,8 +40842,8 @@ export namespace IriIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IriIdentifierInterface> {
+    json: IriIdentifierInterface.$Json,
+  ): IriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -40907,20 +40934,23 @@ export namespace IriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode; $type: "IriIdentifierInterface" }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IriIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: IriIdentifierInterface.$Json): {
+    $identifier: NamedNode;
+    $type: "IriIdentifierInterface";
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
     const $type = "IriIdentifierInterface" as const;
-    return Right({ $identifier, $type });
+    return { $identifier, $type };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -41319,10 +41349,10 @@ export namespace IriIdentifierClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, IriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IriIdentifierClass(properties),
-    );
+  export function $fromJson(
+    json: IriIdentifierClass.$Json,
+  ): IriIdentifierClass {
+    return new IriIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -41412,16 +41442,19 @@ export namespace IriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, IriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: IriIdentifierClass.$Json): {
+    $identifier: NamedNode;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -41809,24 +41842,18 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      interfaceUnionMemberCommonParentProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+  export function $propertiesFromJson(
+    $json: InterfaceUnionMemberCommonParentStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    interfaceUnionMemberCommonParentProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const interfaceUnionMemberCommonParentProperty =
-      $jsonObject["interfaceUnionMemberCommonParentProperty"];
-    return Right({ $identifier, interfaceUnionMemberCommonParentProperty });
+      $json["interfaceUnionMemberCommonParentProperty"];
+    return { $identifier, interfaceUnionMemberCommonParentProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -42242,8 +42269,8 @@ export namespace InterfaceUnionMember2 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, InterfaceUnionMember2> {
+    json: InterfaceUnionMember2.$Json,
+  ): InterfaceUnionMember2 {
     return $propertiesFromJson(json);
   }
 
@@ -42326,31 +42353,31 @@ export namespace InterfaceUnionMember2 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "InterfaceUnionMember2";
-      interfaceUnionMember2Property: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
-      >
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, InterfaceUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: InterfaceUnionMember2.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "InterfaceUnionMember2";
+    interfaceUnionMember2Property: string;
+  } & ReturnType<
+    typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
-      $jsonObject["interfaceUnionMember2Property"];
+      $json["interfaceUnionMember2Property"];
     return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
-      $jsonObject,
+      $json,
     ).map(($super0) => ({
       ...$super0,
       $identifier,
@@ -42820,8 +42847,8 @@ export namespace InterfaceUnionMember1 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, InterfaceUnionMember1> {
+    json: InterfaceUnionMember1.$Json,
+  ): InterfaceUnionMember1 {
     return $propertiesFromJson(json);
   }
 
@@ -42904,31 +42931,31 @@ export namespace InterfaceUnionMember1 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "InterfaceUnionMember1";
-      interfaceUnionMember1Property: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
-      >
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, InterfaceUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: InterfaceUnionMember1.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "InterfaceUnionMember1";
+    interfaceUnionMember1Property: string;
+  } & ReturnType<
+    typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
-      $jsonObject["interfaceUnionMember1Property"];
+      $json["interfaceUnionMember1Property"];
     return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
-      $jsonObject,
+      $json,
     ).map(($super0) => ({
       ...$super0,
       $identifier,
@@ -43345,7 +43372,7 @@ export namespace Interface {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, Interface> {
+  export function $fromJson(json: Interface.$Json): Interface {
     return $propertiesFromJson(json);
   }
 
@@ -43434,25 +43461,25 @@ export namespace Interface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "Interface";
-      interfaceProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, Interface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: Interface.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "Interface";
+    interfaceProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "Interface" as const;
-    const interfaceProperty = $jsonObject["interfaceProperty"];
-    return Right({ $identifier, $type, interfaceProperty });
+    const interfaceProperty = $json["interfaceProperty"];
+    return { $identifier, $type, interfaceProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -43907,11 +43934,9 @@ export namespace IndirectRecursiveHelperClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IndirectRecursiveHelperClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IndirectRecursiveHelperClass(properties),
-    );
+    json: IndirectRecursiveHelperClass.$Json,
+  ): IndirectRecursiveHelperClass {
+    return new IndirectRecursiveHelperClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -44010,25 +44035,29 @@ export namespace IndirectRecursiveHelperClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      indirectRecursiveProperty: Maybe<IndirectRecursiveClass>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IndirectRecursiveHelperClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: IndirectRecursiveHelperClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    indirectRecursiveProperty: Maybe<IndirectRecursiveClass>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const indirectRecursiveProperty = Maybe.fromNullable(
-      $jsonObject["indirectRecursiveProperty"],
-    ).map((item) => IndirectRecursiveClass.$fromJson(item).unsafeCoerce());
-    return Right({ $identifier, indirectRecursiveProperty });
+      $json["indirectRecursiveProperty"],
+    ).map((item) => IndirectRecursiveClass.$fromJson(item));
+    return { $identifier, indirectRecursiveProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -44505,11 +44534,9 @@ export namespace IndirectRecursiveClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IndirectRecursiveClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IndirectRecursiveClass(properties),
-    );
+    json: IndirectRecursiveClass.$Json,
+  ): IndirectRecursiveClass {
+    return new IndirectRecursiveClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -44608,27 +44635,27 @@ export namespace IndirectRecursiveClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelperClass>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IndirectRecursiveClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: IndirectRecursiveClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelperClass>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const indirectRecursiveHelperProperty = Maybe.fromNullable(
-      $jsonObject["indirectRecursiveHelperProperty"],
-    ).map((item) =>
-      IndirectRecursiveHelperClass.$fromJson(item).unsafeCoerce(),
-    );
-    return Right({ $identifier, indirectRecursiveHelperProperty });
+      $json["indirectRecursiveHelperProperty"],
+    ).map((item) => IndirectRecursiveHelperClass.$fromJson(item));
+    return { $identifier, indirectRecursiveHelperProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -45541,10 +45568,8 @@ export namespace InPropertiesClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, InPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new InPropertiesClass(properties),
-    );
+  export function $fromJson(json: InPropertiesClass.$Json): InPropertiesClass {
+    return new InPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<InPropertiesClass> = (
@@ -45669,50 +45694,44 @@ export namespace InPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      inBooleansProperty: Maybe<true>;
-      inDateTimesProperty: Maybe<Date>;
-      inDoublesProperty: Maybe<1 | 2>;
-      inIntegersProperty: Maybe<1n | 2n>;
-      inIrisProperty: Maybe<
-        NamedNode<
-          | "http://example.com/InPropertiesIri1"
-          | "http://example.com/InPropertiesIri2"
-        >
-      >;
-      inStringsProperty: Maybe<"text" | "html">;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, InPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const inBooleansProperty = Maybe.fromNullable(
-      $jsonObject["inBooleansProperty"],
-    );
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: InPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    inBooleansProperty: Maybe<true>;
+    inDateTimesProperty: Maybe<Date>;
+    inDoublesProperty: Maybe<1 | 2>;
+    inIntegersProperty: Maybe<1n | 2n>;
+    inIrisProperty: Maybe<
+      NamedNode<
+        | "http://example.com/InPropertiesIri1"
+        | "http://example.com/InPropertiesIri2"
+      >
+    >;
+    inStringsProperty: Maybe<"text" | "html">;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const inBooleansProperty = Maybe.fromNullable($json["inBooleansProperty"]);
     const inDateTimesProperty = Maybe.fromNullable(
-      $jsonObject["inDateTimesProperty"],
+      $json["inDateTimesProperty"],
     ).map((item) => new Date(item));
-    const inDoublesProperty = Maybe.fromNullable(
-      $jsonObject["inDoublesProperty"],
-    );
+    const inDoublesProperty = Maybe.fromNullable($json["inDoublesProperty"]);
     const inIntegersProperty = Maybe.fromNullable(
-      $jsonObject["inIntegersProperty"],
+      $json["inIntegersProperty"],
     ).map((item) => BigInt(item) as 1n | 2n);
-    const inIrisProperty = Maybe.fromNullable(
-      $jsonObject["inIrisProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const inStringsProperty = Maybe.fromNullable(
-      $jsonObject["inStringsProperty"],
+    const inIrisProperty = Maybe.fromNullable($json["inIrisProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
     );
-    return Right({
+    const inStringsProperty = Maybe.fromNullable($json["inStringsProperty"]);
+    return {
       $identifier,
       inBooleansProperty,
       inDateTimesProperty,
@@ -45720,7 +45739,7 @@ export namespace InPropertiesClass {
       inIntegersProperty,
       inIrisProperty,
       inStringsProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -46442,10 +46461,8 @@ export namespace InIdentifierClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, InIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new InIdentifierClass(properties),
-    );
+  export function $fromJson(json: InIdentifierClass.$Json): InIdentifierClass {
+    return new InIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<InIdentifierClass> = (
@@ -46544,26 +46561,26 @@ export namespace InIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: NamedNode<
-        | "http://example.com/InIdentifierInstance1"
-        | "http://example.com/InIdentifierInstance2"
-      >;
-      inIdentifierProperty: Maybe<string>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, InIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: InIdentifierClass.$Json): {
+    $identifier: NamedNode<
+      | "http://example.com/InIdentifierInstance1"
+      | "http://example.com/InIdentifierInstance2"
+    >;
+    inIdentifierProperty: Maybe<string>;
+  } {
+    const $identifier = dataFactory.namedNode($json["@id"]);
     const inIdentifierProperty = Maybe.fromNullable(
-      $jsonObject["inIdentifierProperty"],
+      $json["inIdentifierProperty"],
     );
-    return Right({ $identifier, inIdentifierProperty });
+    return { $identifier, inIdentifierProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -47043,22 +47060,16 @@ export namespace IdentifierOverride1ClassStatic {
   }
 
   export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; identifierOverrideProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const identifierOverrideProperty =
-      $jsonObject["identifierOverrideProperty"];
-    return Right({ $identifier, identifierOverrideProperty });
+    $json: IdentifierOverride1ClassStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    identifierOverrideProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const identifierOverrideProperty = $json["identifierOverrideProperty"];
+    return { $identifier, identifierOverrideProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -47363,24 +47374,13 @@ export namespace IdentifierOverride2ClassStatic {
   }
 
   export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<typeof IdentifierOverride1ClassStatic.$propertiesFromJson>
-    >
+    $json: IdentifierOverride2ClassStatic.$Json,
+  ): { $identifier: NamedNode } & ReturnType<
+    typeof IdentifierOverride1ClassStatic.$propertiesFromJson
   > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return IdentifierOverride1ClassStatic.$propertiesFromJson($json).map(
+      ($super0) => ({ ...$super0, $identifier }),
     );
   }
 
@@ -47684,11 +47684,9 @@ export namespace IdentifierOverride3ClassStatic {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride3Class> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IdentifierOverride3Class(properties),
-    );
+    json: IdentifierOverride3ClassStatic.$Json,
+  ): IdentifierOverride3Class {
+    return new IdentifierOverride3Class($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -47769,25 +47767,24 @@ export namespace IdentifierOverride3ClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<typeof IdentifierOverride2ClassStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IdentifierOverride3Class> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return IdentifierOverride2ClassStatic.$propertiesFromJson($jsonObject).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: IdentifierOverride3ClassStatic.$Json,
+  ): { $identifier: NamedNode } & ReturnType<
+    typeof IdentifierOverride2ClassStatic.$propertiesFromJson
+  > {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return IdentifierOverride2ClassStatic.$propertiesFromJson($json).map(
+      ($super0) => ({ ...$super0, $identifier }),
     );
   }
 
@@ -48146,11 +48143,9 @@ export namespace IdentifierOverride4ClassStatic {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride4Class> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IdentifierOverride4Class(properties),
-    );
+    json: IdentifierOverride4ClassStatic.$Json,
+  ): IdentifierOverride4Class {
+    return new IdentifierOverride4Class($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -48226,25 +48221,24 @@ export namespace IdentifierOverride4ClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<typeof IdentifierOverride3ClassStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IdentifierOverride4Class> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return IdentifierOverride3ClassStatic.$propertiesFromJson($jsonObject).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: IdentifierOverride4ClassStatic.$Json,
+  ): { $identifier: NamedNode } & ReturnType<
+    typeof IdentifierOverride3ClassStatic.$propertiesFromJson
+  > {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return IdentifierOverride3ClassStatic.$propertiesFromJson($json).map(
+      ($super0) => ({ ...$super0, $identifier }),
     );
   }
 
@@ -48585,11 +48579,9 @@ export namespace IdentifierOverride5Class {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, IdentifierOverride5Class> {
-    return $propertiesFromJson(json).map(
-      (properties) => new IdentifierOverride5Class(properties),
-    );
+    json: IdentifierOverride5Class.$Json,
+  ): IdentifierOverride5Class {
+    return new IdentifierOverride5Class($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -48664,25 +48656,24 @@ export namespace IdentifierOverride5Class {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<typeof IdentifierOverride4ClassStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, IdentifierOverride5Class> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return IdentifierOverride4ClassStatic.$propertiesFromJson($jsonObject).map(
-      ($super0) => ({
-        ...$super0,
-        $identifier,
-      }),
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: IdentifierOverride5Class.$Json,
+  ): { $identifier: NamedNode } & ReturnType<
+    typeof IdentifierOverride4ClassStatic.$propertiesFromJson
+  > {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return IdentifierOverride4ClassStatic.$propertiesFromJson($json).map(
+      ($super0) => ({ ...$super0, $identifier }),
     );
   }
 
@@ -49107,11 +49098,9 @@ export namespace HasValuePropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, HasValuePropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new HasValuePropertiesClass(properties),
-    );
+    json: HasValuePropertiesClass.$Json,
+  ): HasValuePropertiesClass {
+    return new HasValuePropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -49207,27 +49196,29 @@ export namespace HasValuePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      hasIriValueProperty: NamedNode;
-      hasLiteralValueProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, HasValuePropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: HasValuePropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    hasIriValueProperty: NamedNode;
+    hasLiteralValueProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const hasIriValueProperty = dataFactory.namedNode(
-      $jsonObject["hasIriValueProperty"]["@id"],
+      $json["hasIriValueProperty"]["@id"],
     );
-    const hasLiteralValueProperty = $jsonObject["hasLiteralValueProperty"];
-    return Right({ $identifier, hasIriValueProperty, hasLiteralValueProperty });
+    const hasLiteralValueProperty = $json["hasLiteralValueProperty"];
+    return { $identifier, hasIriValueProperty, hasLiteralValueProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -49686,11 +49677,9 @@ export namespace FlattenClassUnionMember3 {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, FlattenClassUnionMember3> {
-    return $propertiesFromJson(json).map(
-      (properties) => new FlattenClassUnionMember3(properties),
-    );
+    json: FlattenClassUnionMember3.$Json,
+  ): FlattenClassUnionMember3 {
+    return new FlattenClassUnionMember3($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -49785,24 +49774,26 @@ export namespace FlattenClassUnionMember3 {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      flattenClassUnionMember3Property: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, FlattenClassUnionMember3> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: FlattenClassUnionMember3.$Json): {
+    $identifier: BlankNode | NamedNode;
+    flattenClassUnionMember3Property: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const flattenClassUnionMember3Property =
-      $jsonObject["flattenClassUnionMember3Property"];
-    return Right({ $identifier, flattenClassUnionMember3Property });
+      $json["flattenClassUnionMember3Property"];
+    return { $identifier, flattenClassUnionMember3Property };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -50287,11 +50278,9 @@ export namespace ExternClassPropertyClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ExternClassPropertyClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ExternClassPropertyClass(properties),
-    );
+    json: ExternClassPropertyClass.$Json,
+  ): ExternClassPropertyClass {
+    return new ExternClassPropertyClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -50385,25 +50374,27 @@ export namespace ExternClassPropertyClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      externClassProperty: Maybe<ExternClass>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ExternClassPropertyClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ExternClassPropertyClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    externClassProperty: Maybe<ExternClass>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const externClassProperty = Maybe.fromNullable(
-      $jsonObject["externClassProperty"],
-    ).map((item) => ExternClass.$fromJson(item).unsafeCoerce());
-    return Right({ $identifier, externClassProperty });
+      $json["externClassProperty"],
+    ).map((item) => ExternClass.$fromJson(item));
+    return { $identifier, externClassProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -50868,24 +50859,18 @@ export namespace AbstractBaseClassForExternClassStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      abstractBaseClassForExternClassProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+  export function $propertiesFromJson(
+    $json: AbstractBaseClassForExternClassStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    abstractBaseClassForExternClassProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const abstractBaseClassForExternClassProperty =
-      $jsonObject["abstractBaseClassForExternClassProperty"];
-    return Right({ $identifier, abstractBaseClassForExternClassProperty });
+      $json["abstractBaseClassForExternClassProperty"];
+    return { $identifier, abstractBaseClassForExternClassProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -51311,11 +51296,9 @@ export namespace ExplicitRdfTypeClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ExplicitRdfTypeClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ExplicitRdfTypeClass(properties),
-    );
+    json: ExplicitRdfTypeClass.$Json,
+  ): ExplicitRdfTypeClass {
+    return new ExplicitRdfTypeClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -51410,22 +51393,25 @@ export namespace ExplicitRdfTypeClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; explicitRdfTypeProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ExplicitRdfTypeClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const explicitRdfTypeProperty = $jsonObject["explicitRdfTypeProperty"];
-    return Right({ $identifier, explicitRdfTypeProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ExplicitRdfTypeClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    explicitRdfTypeProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const explicitRdfTypeProperty = $json["explicitRdfTypeProperty"];
+    return { $identifier, explicitRdfTypeProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -51893,11 +51879,9 @@ export namespace ExplicitFromToRdfTypesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ExplicitFromToRdfTypesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ExplicitFromToRdfTypesClass(properties),
-    );
+    json: ExplicitFromToRdfTypesClass.$Json,
+  ): ExplicitFromToRdfTypesClass {
+    return new ExplicitFromToRdfTypesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -51992,24 +51976,28 @@ export namespace ExplicitFromToRdfTypesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      explicitFromToRdfTypesProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ExplicitFromToRdfTypesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: ExplicitFromToRdfTypesClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    explicitFromToRdfTypesProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const explicitFromToRdfTypesProperty =
-      $jsonObject["explicitFromToRdfTypesProperty"];
-    return Right({ $identifier, explicitFromToRdfTypesProperty });
+      $json["explicitFromToRdfTypesProperty"];
+    return { $identifier, explicitFromToRdfTypesProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -52464,11 +52452,9 @@ export namespace DirectRecursiveClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, DirectRecursiveClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new DirectRecursiveClass(properties),
-    );
+    json: DirectRecursiveClass.$Json,
+  ): DirectRecursiveClass {
+    return new DirectRecursiveClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -52567,25 +52553,27 @@ export namespace DirectRecursiveClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      directRecursiveProperty: Maybe<DirectRecursiveClass>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, DirectRecursiveClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: DirectRecursiveClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    directRecursiveProperty: Maybe<DirectRecursiveClass>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const directRecursiveProperty = Maybe.fromNullable(
-      $jsonObject["directRecursiveProperty"],
-    ).map((item) => DirectRecursiveClass.$fromJson(item).unsafeCoerce());
-    return Right({ $identifier, directRecursiveProperty });
+      $json["directRecursiveProperty"],
+    ).map((item) => DirectRecursiveClass.$fromJson(item));
+    return { $identifier, directRecursiveProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -53483,11 +53471,9 @@ export namespace DefaultValuePropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, DefaultValuePropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new DefaultValuePropertiesClass(properties),
-    );
+    json: DefaultValuePropertiesClass.$Json,
+  ): DefaultValuePropertiesClass {
+    return new DefaultValuePropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -53607,41 +53593,43 @@ export namespace DefaultValuePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      dateDefaultValueProperty: Date;
-      dateTimeDefaultValueProperty: Date;
-      falseBooleanDefaultValueProperty: boolean;
-      numberDefaultValueProperty: number;
-      stringDefaultValueProperty: string;
-      trueBooleanDefaultValueProperty: boolean;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, DefaultValuePropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: DefaultValuePropertiesClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    dateDefaultValueProperty: Date;
+    dateTimeDefaultValueProperty: Date;
+    falseBooleanDefaultValueProperty: boolean;
+    numberDefaultValueProperty: number;
+    stringDefaultValueProperty: string;
+    trueBooleanDefaultValueProperty: boolean;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const dateDefaultValueProperty = new Date(
-      $jsonObject["dateDefaultValueProperty"],
+      $json["dateDefaultValueProperty"],
     );
     const dateTimeDefaultValueProperty = new Date(
-      $jsonObject["dateTimeDefaultValueProperty"],
+      $json["dateTimeDefaultValueProperty"],
     );
     const falseBooleanDefaultValueProperty =
-      $jsonObject["falseBooleanDefaultValueProperty"];
-    const numberDefaultValueProperty =
-      $jsonObject["numberDefaultValueProperty"];
-    const stringDefaultValueProperty =
-      $jsonObject["stringDefaultValueProperty"];
+      $json["falseBooleanDefaultValueProperty"];
+    const numberDefaultValueProperty = $json["numberDefaultValueProperty"];
+    const stringDefaultValueProperty = $json["stringDefaultValueProperty"];
     const trueBooleanDefaultValueProperty =
-      $jsonObject["trueBooleanDefaultValueProperty"];
-    return Right({
+      $json["trueBooleanDefaultValueProperty"];
+    return {
       $identifier,
       dateDefaultValueProperty,
       dateTimeDefaultValueProperty,
@@ -53649,7 +53637,7 @@ export namespace DefaultValuePropertiesClass {
       numberDefaultValueProperty,
       stringDefaultValueProperty,
       trueBooleanDefaultValueProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -55570,11 +55558,9 @@ export namespace DateUnionPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, DateUnionPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new DateUnionPropertiesClass(properties),
-    );
+    json: DateUnionPropertiesClass.$Json,
+  ): DateUnionPropertiesClass {
+    return new DateUnionPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -55704,34 +55690,36 @@ export namespace DateUnionPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      dateOrDateTimeProperty: Maybe<
-        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-      >;
-      dateOrStringProperty: Maybe<
-        { type: "date"; value: Date } | { type: "string"; value: string }
-      >;
-      dateTimeOrDateProperty: Maybe<
-        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-      >;
-      stringOrDateProperty: Maybe<
-        { type: "string"; value: string } | { type: "date"; value: Date }
-      >;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, DateUnionPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: DateUnionPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    dateOrDateTimeProperty: Maybe<
+      { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+    >;
+    dateOrStringProperty: Maybe<
+      { type: "date"; value: Date } | { type: "string"; value: string }
+    >;
+    dateTimeOrDateProperty: Maybe<
+      { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+    >;
+    stringOrDateProperty: Maybe<
+      { type: "string"; value: string } | { type: "date"; value: Date }
+    >;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const dateOrDateTimeProperty = Maybe.fromNullable(
-      $jsonObject["dateOrDateTimeProperty"],
+      $json["dateOrDateTimeProperty"],
     ).map((item) =>
       ((
         value:
@@ -55749,7 +55737,7 @@ export namespace DateUnionPropertiesClass {
       })(item),
     );
     const dateOrStringProperty = Maybe.fromNullable(
-      $jsonObject["dateOrStringProperty"],
+      $json["dateOrStringProperty"],
     ).map((item) =>
       ((
         value:
@@ -55767,7 +55755,7 @@ export namespace DateUnionPropertiesClass {
       })(item),
     );
     const dateTimeOrDateProperty = Maybe.fromNullable(
-      $jsonObject["dateTimeOrDateProperty"],
+      $json["dateTimeOrDateProperty"],
     ).map((item) =>
       ((
         value:
@@ -55785,7 +55773,7 @@ export namespace DateUnionPropertiesClass {
       })(item),
     );
     const stringOrDateProperty = Maybe.fromNullable(
-      $jsonObject["stringOrDateProperty"],
+      $json["stringOrDateProperty"],
     ).map((item) =>
       ((
         value:
@@ -55802,13 +55790,13 @@ export namespace DateUnionPropertiesClass {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
-    return Right({
+    return {
       $identifier,
       dateOrDateTimeProperty,
       dateOrStringProperty,
       dateTimeOrDateProperty,
       stringOrDateProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -57905,11 +57893,9 @@ export namespace ConvertibleTypePropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ConvertibleTypePropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ConvertibleTypePropertiesClass(properties),
-    );
+    json: ConvertibleTypePropertiesClass.$Json,
+  ): ConvertibleTypePropertiesClass {
+    return new ConvertibleTypePropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -58162,50 +58148,54 @@ export namespace ConvertibleTypePropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
-      convertibleIriOptionProperty: Maybe<NamedNode>;
-      convertibleIriProperty: NamedNode;
-      convertibleIriSetProperty: readonly NamedNode[];
-      convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
-      convertibleLiteralOptionProperty: Maybe<Literal>;
-      convertibleLiteralProperty: Literal;
-      convertibleLiteralSetProperty: readonly Literal[];
-      convertibleTermNonEmptySetProperty: NonEmptyList<
-        BlankNode | NamedNode | Literal
-      >;
-      convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
-      convertibleTermProperty: BlankNode | NamedNode | Literal;
-      convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ConvertibleTypePropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: ConvertibleTypePropertiesClass.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
+    convertibleIriOptionProperty: Maybe<NamedNode>;
+    convertibleIriProperty: NamedNode;
+    convertibleIriSetProperty: readonly NamedNode[];
+    convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
+    convertibleLiteralOptionProperty: Maybe<Literal>;
+    convertibleLiteralProperty: Literal;
+    convertibleLiteralSetProperty: readonly Literal[];
+    convertibleTermNonEmptySetProperty: NonEmptyList<
+      BlankNode | NamedNode | Literal
+    >;
+    convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
+    convertibleTermProperty: BlankNode | NamedNode | Literal;
+    convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const convertibleIriNonEmptySetProperty = NonEmptyList.fromArray(
-      $jsonObject["convertibleIriNonEmptySetProperty"],
+      $json["convertibleIriNonEmptySetProperty"],
     )
       .unsafeCoerce()
       .map((item) => dataFactory.namedNode(item["@id"]));
     const convertibleIriOptionProperty = Maybe.fromNullable(
-      $jsonObject["convertibleIriOptionProperty"],
+      $json["convertibleIriOptionProperty"],
     ).map((item) => dataFactory.namedNode(item["@id"]));
     const convertibleIriProperty = dataFactory.namedNode(
-      $jsonObject["convertibleIriProperty"]["@id"],
+      $json["convertibleIriProperty"]["@id"],
     );
-    const convertibleIriSetProperty = $jsonObject[
-      "convertibleIriSetProperty"
-    ].map((item) => dataFactory.namedNode(item["@id"]));
+    const convertibleIriSetProperty = $json["convertibleIriSetProperty"].map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
     const convertibleLiteralNonEmptySetProperty = NonEmptyList.fromArray(
-      $jsonObject["convertibleLiteralNonEmptySetProperty"],
+      $json["convertibleLiteralNonEmptySetProperty"],
     )
       .unsafeCoerce()
       .map((item) =>
@@ -58219,7 +58209,7 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       );
     const convertibleLiteralOptionProperty = Maybe.fromNullable(
-      $jsonObject["convertibleLiteralOptionProperty"],
+      $json["convertibleLiteralOptionProperty"],
     ).map((item) =>
       dataFactory.literal(
         item["@value"],
@@ -58231,16 +58221,14 @@ export namespace ConvertibleTypePropertiesClass {
       ),
     );
     const convertibleLiteralProperty = dataFactory.literal(
-      $jsonObject["convertibleLiteralProperty"]["@value"],
-      $jsonObject["convertibleLiteralProperty"]["@language"] !== undefined
-        ? $jsonObject["convertibleLiteralProperty"]["@language"]
-        : $jsonObject["convertibleLiteralProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode(
-              $jsonObject["convertibleLiteralProperty"]["@type"],
-            )
+      $json["convertibleLiteralProperty"]["@value"],
+      $json["convertibleLiteralProperty"]["@language"] !== undefined
+        ? $json["convertibleLiteralProperty"]["@language"]
+        : $json["convertibleLiteralProperty"]["@type"] !== undefined
+          ? dataFactory.namedNode($json["convertibleLiteralProperty"]["@type"])
           : undefined,
     );
-    const convertibleLiteralSetProperty = $jsonObject[
+    const convertibleLiteralSetProperty = $json[
       "convertibleLiteralSetProperty"
     ].map((item) =>
       dataFactory.literal(
@@ -58253,7 +58241,7 @@ export namespace ConvertibleTypePropertiesClass {
       ),
     );
     const convertibleTermNonEmptySetProperty = NonEmptyList.fromArray(
-      $jsonObject["convertibleTermNonEmptySetProperty"],
+      $json["convertibleTermNonEmptySetProperty"],
     )
       .unsafeCoerce()
       .map((item) =>
@@ -58271,7 +58259,7 @@ export namespace ConvertibleTypePropertiesClass {
             : dataFactory.blankNode(item["@id"].substring(2)),
       );
     const convertibleTermOptionProperty = Maybe.fromNullable(
-      $jsonObject["convertibleTermOptionProperty"],
+      $json["convertibleTermOptionProperty"],
     ).map((item) =>
       item.termType === "Literal"
         ? dataFactory.literal(
@@ -58287,39 +58275,38 @@ export namespace ConvertibleTypePropertiesClass {
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     const convertibleTermProperty =
-      $jsonObject["convertibleTermProperty"].termType === "Literal"
+      $json["convertibleTermProperty"].termType === "Literal"
         ? dataFactory.literal(
-            $jsonObject["convertibleTermProperty"]["@value"],
-            $jsonObject["convertibleTermProperty"]["@language"] !== undefined
-              ? $jsonObject["convertibleTermProperty"]["@language"]
-              : $jsonObject["convertibleTermProperty"]["@type"] !== undefined
+            $json["convertibleTermProperty"]["@value"],
+            $json["convertibleTermProperty"]["@language"] !== undefined
+              ? $json["convertibleTermProperty"]["@language"]
+              : $json["convertibleTermProperty"]["@type"] !== undefined
                 ? dataFactory.namedNode(
-                    $jsonObject["convertibleTermProperty"]["@type"],
+                    $json["convertibleTermProperty"]["@type"],
                   )
                 : undefined,
           )
-        : $jsonObject["convertibleTermProperty"].termType === "NamedNode"
-          ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
+        : $json["convertibleTermProperty"].termType === "NamedNode"
+          ? dataFactory.namedNode($json["convertibleTermProperty"]["@id"])
           : dataFactory.blankNode(
-              $jsonObject["convertibleTermProperty"]["@id"].substring(2),
+              $json["convertibleTermProperty"]["@id"].substring(2),
             );
-    const convertibleTermSetProperty = $jsonObject[
-      "convertibleTermSetProperty"
-    ].map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"])
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : dataFactory.blankNode(item["@id"].substring(2)),
+    const convertibleTermSetProperty = $json["convertibleTermSetProperty"].map(
+      (item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    return Right({
+    return {
       $identifier,
       convertibleIriNonEmptySetProperty,
       convertibleIriOptionProperty,
@@ -58333,7 +58320,7 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleTermOptionProperty,
       convertibleTermProperty,
       convertibleTermSetProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -59183,8 +59170,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BaseInterfaceWithProperties> {
+    json: BaseInterfaceWithPropertiesStatic.$Json,
+  ): BaseInterfaceWithProperties {
     return $propertiesFromJson(json);
   }
 
@@ -59294,30 +59281,34 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type:
-        | "BaseInterfaceWithProperties"
-        | "BaseInterfaceWithoutProperties"
-        | "ConcreteChildInterface"
-        | "ConcreteParentInterface";
-      baseInterfaceWithPropertiesProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BaseInterfaceWithProperties> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: BaseInterfaceWithPropertiesStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type:
+      | "BaseInterfaceWithProperties"
+      | "BaseInterfaceWithoutProperties"
+      | "ConcreteChildInterface"
+      | "ConcreteParentInterface";
+    baseInterfaceWithPropertiesProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
-      $jsonObject["baseInterfaceWithPropertiesProperty"];
-    return Right({ $identifier, $type, baseInterfaceWithPropertiesProperty });
+      $json["baseInterfaceWithPropertiesProperty"];
+    return { $identifier, $type, baseInterfaceWithPropertiesProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -59764,8 +59755,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BaseInterfaceWithoutProperties> {
+    json: BaseInterfaceWithoutPropertiesStatic.$Json,
+  ): BaseInterfaceWithoutProperties {
     return $propertiesFromJson(json);
   }
 
@@ -59855,34 +59846,36 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type:
-        | "BaseInterfaceWithoutProperties"
-        | "ConcreteChildInterface"
-        | "ConcreteParentInterface";
-    } & $UnwrapR<
-      ReturnType<typeof BaseInterfaceWithPropertiesStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BaseInterfaceWithoutProperties> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: BaseInterfaceWithoutPropertiesStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type:
+      | "BaseInterfaceWithoutProperties"
+      | "ConcreteChildInterface"
+      | "ConcreteParentInterface";
+  } & ReturnType<typeof BaseInterfaceWithPropertiesStatic.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "BaseInterfaceWithoutProperties" as const;
-    return BaseInterfaceWithPropertiesStatic.$propertiesFromJson(
-      $jsonObject,
-    ).map(($super0) => ({
-      ...$super0,
-      $identifier,
-      $type,
-    }));
+    return BaseInterfaceWithPropertiesStatic.$propertiesFromJson($json).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+        $type,
+      }),
+    );
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -60337,8 +60330,8 @@ export namespace ConcreteParentInterfaceStatic {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ConcreteParentInterface> {
+    json: ConcreteParentInterfaceStatic.$Json,
+  ): ConcreteParentInterface {
     return $propertiesFromJson(json);
   }
 
@@ -60422,37 +60415,39 @@ export namespace ConcreteParentInterfaceStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "ConcreteParentInterface" | "ConcreteChildInterface";
-      concreteParentInterfaceProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson
-      >
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ConcreteParentInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: ConcreteParentInterfaceStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "ConcreteParentInterface" | "ConcreteChildInterface";
+    concreteParentInterfaceProperty: string;
+  } & ReturnType<
+    typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
-      $jsonObject["concreteParentInterfaceProperty"];
-    return BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson(
-      $jsonObject,
-    ).map(($super0) => ({
-      ...$super0,
-      $identifier,
-      $type,
-      concreteParentInterfaceProperty,
-    }));
+      $json["concreteParentInterfaceProperty"];
+    return BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson($json).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+        $type,
+        concreteParentInterfaceProperty,
+      }),
+    );
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -60926,8 +60921,8 @@ export namespace ConcreteChildInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ConcreteChildInterface> {
+    json: ConcreteChildInterface.$Json,
+  ): ConcreteChildInterface {
     return $propertiesFromJson(json);
   }
 
@@ -61010,28 +61005,28 @@ export namespace ConcreteChildInterface {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "ConcreteChildInterface";
-      concreteChildInterfaceProperty: string;
-    } & $UnwrapR<
-      ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ConcreteChildInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ConcreteChildInterface.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "ConcreteChildInterface";
+    concreteChildInterfaceProperty: string;
+  } & ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
-      $jsonObject["concreteChildInterfaceProperty"];
-    return ConcreteParentInterfaceStatic.$propertiesFromJson($jsonObject).map(
+      $json["concreteChildInterfaceProperty"];
+    return ConcreteParentInterfaceStatic.$propertiesFromJson($json).map(
       ($super0) => ({
         ...$super0,
         $identifier,
@@ -61575,24 +61570,18 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      abstractBaseClassWithPropertiesProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+  export function $propertiesFromJson(
+    $json: AbstractBaseClassWithPropertiesStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    abstractBaseClassWithPropertiesProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const abstractBaseClassWithPropertiesProperty =
-      $jsonObject["abstractBaseClassWithPropertiesProperty"];
-    return Right({ $identifier, abstractBaseClassWithPropertiesProperty });
+      $json["abstractBaseClassWithPropertiesProperty"];
+    return { $identifier, abstractBaseClassWithPropertiesProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -61895,29 +61884,19 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   }
 
   export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof AbstractBaseClassWithPropertiesStatic.$propertiesFromJson
-      >
-    >
+    $json: AbstractBaseClassWithoutPropertiesStatic.$Json,
+  ): { $identifier: BlankNode | NamedNode } & ReturnType<
+    typeof AbstractBaseClassWithPropertiesStatic.$propertiesFromJson
   > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    return AbstractBaseClassWithPropertiesStatic.$propertiesFromJson(
-      $jsonObject,
-    ).map(($super0) => ({
-      ...$super0,
-      $identifier,
-    }));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return AbstractBaseClassWithPropertiesStatic.$propertiesFromJson($json).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+      }),
+    );
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -62309,10 +62288,10 @@ export namespace ConcreteParentClassStatic {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, ConcreteParentClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ConcreteParentClass(properties),
-    );
+  export function $fromJson(
+    json: ConcreteParentClassStatic.$Json,
+  ): ConcreteParentClass {
+    return new ConcreteParentClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -62395,29 +62374,28 @@ export namespace ConcreteParentClassStatic {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      concreteParentClassProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson
-      >
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ConcreteParentClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const concreteParentClassProperty =
-      $jsonObject["concreteParentClassProperty"];
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ConcreteParentClassStatic.$Json): {
+    $identifier: BlankNode | NamedNode;
+    concreteParentClassProperty: string;
+  } & ReturnType<
+    typeof AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const concreteParentClassProperty = $json["concreteParentClassProperty"];
     return AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson(
-      $jsonObject,
+      $json,
     ).map(($super0) => ({
       ...$super0,
       $identifier,
@@ -62860,10 +62838,10 @@ export namespace ConcreteChildClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, ConcreteChildClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ConcreteChildClass(properties),
-    );
+  export function $fromJson(
+    json: ConcreteChildClass.$Json,
+  ): ConcreteChildClass {
+    return new ConcreteChildClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -62945,26 +62923,23 @@ export namespace ConcreteChildClass {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      concreteChildClassProperty: string;
-    } & $UnwrapR<
-      ReturnType<typeof ConcreteParentClassStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, ConcreteChildClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const concreteChildClassProperty =
-      $jsonObject["concreteChildClassProperty"];
-    return ConcreteParentClassStatic.$propertiesFromJson($jsonObject).map(
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ConcreteChildClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    concreteChildClassProperty: string;
+  } & ReturnType<typeof ConcreteParentClassStatic.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const concreteChildClassProperty = $json["concreteChildClassProperty"];
+    return ConcreteParentClassStatic.$propertiesFromJson($json).map(
       ($super0) => ({
         ...$super0,
         $identifier,
@@ -63414,24 +63389,18 @@ export namespace ClassUnionMemberCommonParentStatic {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      classUnionMemberCommonParentProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return Left($jsonSafeParseResult.error);
-    }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+  export function $propertiesFromJson(
+    $json: ClassUnionMemberCommonParentStatic.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    classUnionMemberCommonParentProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const classUnionMemberCommonParentProperty =
-      $jsonObject["classUnionMemberCommonParentProperty"];
-    return Right({ $identifier, classUnionMemberCommonParentProperty });
+      $json["classUnionMemberCommonParentProperty"];
+    return { $identifier, classUnionMemberCommonParentProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -63821,10 +63790,8 @@ export namespace ClassUnionMember2 {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, ClassUnionMember2> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ClassUnionMember2(properties),
-    );
+  export function $fromJson(json: ClassUnionMember2.$Json): ClassUnionMember2 {
+    return new ClassUnionMember2($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ClassUnionMember2> = (
@@ -63907,31 +63874,31 @@ export namespace ClassUnionMember2 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      classUnionMember2Property: string;
-    } & $UnwrapR<
-      ReturnType<typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, ClassUnionMember2> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const classUnionMember2Property = $jsonObject["classUnionMember2Property"];
-    return ClassUnionMemberCommonParentStatic.$propertiesFromJson(
-      $jsonObject,
-    ).map(($super0) => ({
-      ...$super0,
-      $identifier,
-      classUnionMember2Property,
-    }));
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ClassUnionMember2.$Json): {
+    $identifier: BlankNode | NamedNode;
+    classUnionMember2Property: string;
+  } & ReturnType<
+    typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classUnionMember2Property = $json["classUnionMember2Property"];
+    return ClassUnionMemberCommonParentStatic.$propertiesFromJson($json).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+        classUnionMember2Property,
+      }),
+    );
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -64354,10 +64321,8 @@ export namespace ClassUnionMember1 {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, ClassUnionMember1> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ClassUnionMember1(properties),
-    );
+  export function $fromJson(json: ClassUnionMember1.$Json): ClassUnionMember1 {
+    return new ClassUnionMember1($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ClassUnionMember1> = (
@@ -64440,31 +64405,31 @@ export namespace ClassUnionMember1 {
     ) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      classUnionMember1Property: string;
-    } & $UnwrapR<
-      ReturnType<typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson>
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, ClassUnionMember1> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const classUnionMember1Property = $jsonObject["classUnionMember1Property"];
-    return ClassUnionMemberCommonParentStatic.$propertiesFromJson(
-      $jsonObject,
-    ).map(($super0) => ({
-      ...$super0,
-      $identifier,
-      classUnionMember1Property,
-    }));
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ClassUnionMember1.$Json): {
+    $identifier: BlankNode | NamedNode;
+    classUnionMember1Property: string;
+  } & ReturnType<
+    typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson
+  > {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classUnionMember1Property = $json["classUnionMember1Property"];
+    return ClassUnionMemberCommonParentStatic.$propertiesFromJson($json).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+        classUnionMember1Property,
+      }),
+    );
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -64848,10 +64813,8 @@ export namespace NonClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, NonClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new NonClass(properties),
-    );
+  export function $fromJson(json: NonClass.$Json): NonClass {
+    return new NonClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NonClass> = (
@@ -64939,22 +64902,23 @@ export namespace NonClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; nonClassProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, NonClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const nonClassProperty = $jsonObject["nonClassProperty"];
-    return Right({ $identifier, nonClassProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: NonClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    nonClassProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const nonClassProperty = $json["nonClassProperty"];
+    return { $identifier, nonClassProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -65302,10 +65266,8 @@ export namespace PartialClass {
     return patterns;
   };
 
-  export function $fromJson(json: unknown): Either<Error, PartialClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new PartialClass(properties),
-    );
+  export function $fromJson(json: PartialClass.$Json): PartialClass {
+    return new PartialClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<PartialClass> = (
@@ -65395,23 +65357,23 @@ export namespace PartialClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode | NamedNode; lazilyResolvedStringProperty: string }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(json: unknown): Either<Error, PartialClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const lazilyResolvedStringProperty =
-      $jsonObject["lazilyResolvedStringProperty"];
-    return Right({ $identifier, lazilyResolvedStringProperty });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: PartialClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    lazilyResolvedStringProperty: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return { $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -66207,11 +66169,9 @@ export namespace ClassPropertiesClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, ClassPropertiesClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new ClassPropertiesClass(properties),
-    );
+    json: ClassPropertiesClass.$Json,
+  ): ClassPropertiesClass {
+    return new ClassPropertiesClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -66347,56 +66307,58 @@ export namespace ClassPropertiesClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      iriClassProperty: Maybe<NamedNode>;
-      multiClassProperty: Maybe<BlankNode | NamedNode>;
-      nodeClassProperty1: Maybe<NonClass>;
-      nodeClassProperty2: Maybe<PartialClass>;
-      singleClassProperty: Maybe<BlankNode | NamedNode>;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, ClassPropertiesClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const iriClassProperty = Maybe.fromNullable(
-      $jsonObject["iriClassProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: ClassPropertiesClass.$Json): {
+    $identifier: BlankNode | NamedNode;
+    iriClassProperty: Maybe<NamedNode>;
+    multiClassProperty: Maybe<BlankNode | NamedNode>;
+    nodeClassProperty1: Maybe<NonClass>;
+    nodeClassProperty2: Maybe<PartialClass>;
+    singleClassProperty: Maybe<BlankNode | NamedNode>;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const iriClassProperty = Maybe.fromNullable($json["iriClassProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
     const multiClassProperty = Maybe.fromNullable(
-      $jsonObject["multiClassProperty"],
+      $json["multiClassProperty"],
     ).map((item) =>
       item["@id"].startsWith("_:")
         ? dataFactory.blankNode(item["@id"].substring(2))
         : dataFactory.namedNode(item["@id"]),
     );
     const nodeClassProperty1 = Maybe.fromNullable(
-      $jsonObject["nodeClassProperty1"],
-    ).map((item) => NonClass.$fromJson(item).unsafeCoerce());
+      $json["nodeClassProperty1"],
+    ).map((item) => NonClass.$fromJson(item));
     const nodeClassProperty2 = Maybe.fromNullable(
-      $jsonObject["nodeClassProperty2"],
-    ).map((item) => PartialClass.$fromJson(item).unsafeCoerce());
+      $json["nodeClassProperty2"],
+    ).map((item) => PartialClass.$fromJson(item));
     const singleClassProperty = Maybe.fromNullable(
-      $jsonObject["singleClassProperty"],
+      $json["singleClassProperty"],
     ).map((item) =>
       item["@id"].startsWith("_:")
         ? dataFactory.blankNode(item["@id"].substring(2))
         : dataFactory.namedNode(item["@id"]),
     );
-    return Right({
+    return {
       $identifier,
       iriClassProperty,
       multiClassProperty,
       nodeClassProperty1,
       nodeClassProperty2,
       singleClassProperty,
-    });
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -66909,8 +66871,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BlankNodeOrIriIdentifierInterface> {
+    json: BlankNodeOrIriIdentifierInterface.$Json,
+  ): BlankNodeOrIriIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -67007,23 +66969,27 @@ export namespace BlankNodeOrIriIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(_json: unknown): Either<
-    Error,
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "BlankNodeOrIriIdentifierInterface";
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BlankNodeOrIriIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: BlankNodeOrIriIdentifierInterface.$Json,
+  ): {
+    $identifier: BlankNode | NamedNode;
+    $type: "BlankNodeOrIriIdentifierInterface";
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
     const $type = "BlankNodeOrIriIdentifierInterface" as const;
-    return Right({ $identifier, $type });
+    return { $identifier, $type };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -67445,11 +67411,9 @@ export namespace BlankNodeOrIriIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BlankNodeOrIriIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new BlankNodeOrIriIdentifierClass(properties),
-    );
+    json: BlankNodeOrIriIdentifierClass.$Json,
+  ): BlankNodeOrIriIdentifierClass {
+    return new BlankNodeOrIriIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -67539,18 +67503,23 @@ export namespace BlankNodeOrIriIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: BlankNode | NamedNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BlankNodeOrIriIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: BlankNodeOrIriIdentifierClass.$Json,
+  ): { $identifier: BlankNode | NamedNode } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -67891,8 +67860,8 @@ export namespace BlankNodeIdentifierInterface {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BlankNodeIdentifierInterface> {
+    json: BlankNodeIdentifierInterface.$Json,
+  ): BlankNodeIdentifierInterface {
     return $propertiesFromJson(json);
   }
 
@@ -67983,20 +67952,22 @@ export namespace BlankNodeIdentifierInterface {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<
-    Error,
-    { $identifier: BlankNode; $type: "BlankNodeIdentifierInterface" }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BlankNodeIdentifierInterface> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson(
+    $json: BlankNodeIdentifierInterface.$Json,
+  ): { $identifier: BlankNode; $type: "BlankNodeIdentifierInterface" } {
+    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
     const $type = "BlankNodeIdentifierInterface" as const;
-    return Right({ $identifier, $type });
+    return { $identifier, $type };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -68408,11 +68379,9 @@ export namespace BlankNodeIdentifierClass {
   };
 
   export function $fromJson(
-    json: unknown,
-  ): Either<Error, BlankNodeIdentifierClass> {
-    return $propertiesFromJson(json).map(
-      (properties) => new BlankNodeIdentifierClass(properties),
-    );
+    json: BlankNodeIdentifierClass.$Json,
+  ): BlankNodeIdentifierClass {
+    return new BlankNodeIdentifierClass($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -68502,16 +68471,21 @@ export namespace BlankNodeIdentifierClass {
     }) satisfies z.ZodType<$Json>;
   }
 
-  export function $propertiesFromJson(
-    _json: unknown,
-  ): Either<Error, { $identifier: BlankNode }> {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+  export function $parseJson(
+    json: unknown,
+  ): Either<Error, BlankNodeIdentifierClass> {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(json);
     if (!$jsonSafeParseResult.success) {
       return Left($jsonSafeParseResult.error);
     }
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
-    return Right({ $identifier });
+    return Right($fromJson($jsonSafeParseResult.data));
+  }
+
+  export function $propertiesFromJson($json: BlankNodeIdentifierClass.$Json): {
+    $identifier: BlankNode;
+  } {
+    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
+    return { $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -68751,10 +68725,10 @@ export namespace ClassUnion {
 
   export const $fromJson = (value: ClassUnion.$Json): ClassUnion => {
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -69215,13 +69189,13 @@ export namespace FlattenClassUnion {
     value: FlattenClassUnion.$Json,
   ): FlattenClassUnion => {
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "FlattenClassUnionMember3") {
-      return FlattenClassUnionMember3.$fromJson(value).unsafeCoerce();
+      return FlattenClassUnionMember3.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -69724,10 +69698,10 @@ export namespace InterfaceUnion {
 
   export const $fromJson = (value: InterfaceUnion.$Json): InterfaceUnion => {
     if (value.$type === "InterfaceUnionMember1") {
-      return InterfaceUnionMember1.$fromJson(value).unsafeCoerce();
+      return InterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "InterfaceUnionMember2") {
-      return InterfaceUnionMember2.$fromJson(value).unsafeCoerce();
+      return InterfaceUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -70174,10 +70148,10 @@ export namespace LazilyResolvedClassUnion {
     value: LazilyResolvedClassUnion.$Json,
   ): LazilyResolvedClassUnion => {
     if (value.$type === "LazilyResolvedClassUnionMember1") {
-      return LazilyResolvedClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return LazilyResolvedClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedClassUnionMember2") {
-      return LazilyResolvedClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return LazilyResolvedClassUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -70666,14 +70640,10 @@ export namespace LazilyResolvedInterfaceUnion {
     value: LazilyResolvedInterfaceUnion.$Json,
   ): LazilyResolvedInterfaceUnion => {
     if (value.$type === "LazilyResolvedInterfaceUnionMember1") {
-      return LazilyResolvedInterfaceUnionMember1.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedInterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember2") {
-      return LazilyResolvedInterfaceUnionMember2.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedInterfaceUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -71161,10 +71131,10 @@ export namespace PartialClassUnion {
     value: PartialClassUnion.$Json,
   ): PartialClassUnion => {
     if (value.$type === "PartialClassUnionMember1") {
-      return PartialClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return PartialClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "PartialClassUnionMember2") {
-      return PartialClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return PartialClassUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -71611,10 +71581,10 @@ export namespace PartialInterfaceUnion {
     value: PartialInterfaceUnion.$Json,
   ): PartialInterfaceUnion => {
     if (value.$type === "PartialInterfaceUnionMember1") {
-      return PartialInterfaceUnionMember1.$fromJson(value).unsafeCoerce();
+      return PartialInterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "PartialInterfaceUnionMember2") {
-      return PartialInterfaceUnionMember2.$fromJson(value).unsafeCoerce();
+      return PartialInterfaceUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -72065,10 +72035,10 @@ export namespace NoRdfTypeClassUnion {
     value: NoRdfTypeClassUnion.$Json,
   ): NoRdfTypeClassUnion => {
     if (value.$type === "NoRdfTypeClassUnionMember1") {
-      return NoRdfTypeClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return NoRdfTypeClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "NoRdfTypeClassUnionMember2") {
-      return NoRdfTypeClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return NoRdfTypeClassUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -72511,10 +72481,10 @@ export namespace RecursiveClassUnion {
     value: RecursiveClassUnion.$Json,
   ): RecursiveClassUnion => {
     if (value.$type === "RecursiveClassUnionMember1") {
-      return RecursiveClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return RecursiveClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "RecursiveClassUnionMember2") {
-      return RecursiveClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return RecursiveClassUnionMember2.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -75015,244 +74985,232 @@ export namespace $Object {
 
   export const $fromJson = (value: $Object.$Json): $Object => {
     if (value.$type === "BlankNodeIdentifierClass") {
-      return BlankNodeIdentifierClass.$fromJson(value).unsafeCoerce();
+      return BlankNodeIdentifierClass.$fromJson(value);
     }
     if (value.$type === "BlankNodeIdentifierInterface") {
-      return BlankNodeIdentifierInterface.$fromJson(value).unsafeCoerce();
+      return BlankNodeIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "BlankNodeOrIriIdentifierClass") {
-      return BlankNodeOrIriIdentifierClass.$fromJson(value).unsafeCoerce();
+      return BlankNodeOrIriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "BlankNodeOrIriIdentifierInterface") {
-      return BlankNodeOrIriIdentifierInterface.$fromJson(value).unsafeCoerce();
+      return BlankNodeOrIriIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "ClassPropertiesClass") {
-      return ClassPropertiesClass.$fromJson(value).unsafeCoerce();
+      return ClassPropertiesClass.$fromJson(value);
     }
     if (value.$type === "PartialClass") {
-      return PartialClass.$fromJson(value).unsafeCoerce();
+      return PartialClass.$fromJson(value);
     }
     if (value.$type === "NonClass") {
-      return NonClass.$fromJson(value).unsafeCoerce();
+      return NonClass.$fromJson(value);
     }
     if (value.$type === "ClassUnionMember1") {
-      return ClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "ClassUnionMember2") {
-      return ClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return ClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "ConcreteChildClass") {
-      return ConcreteChildClass.$fromJson(value).unsafeCoerce();
+      return ConcreteChildClass.$fromJson(value);
     }
     if (value.$type === "ConcreteParentClass") {
-      return ConcreteParentClassStatic.$fromJson(value).unsafeCoerce();
+      return ConcreteParentClassStatic.$fromJson(value);
     }
     if (value.$type === "ConcreteChildInterface") {
-      return ConcreteChildInterface.$fromJson(value).unsafeCoerce();
+      return ConcreteChildInterface.$fromJson(value);
     }
     if (value.$type === "ConcreteParentInterface") {
-      return ConcreteParentInterfaceStatic.$fromJson(value).unsafeCoerce();
+      return ConcreteParentInterfaceStatic.$fromJson(value);
     }
     if (value.$type === "BaseInterfaceWithoutProperties") {
-      return BaseInterfaceWithoutPropertiesStatic.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return BaseInterfaceWithoutPropertiesStatic.$fromJson(value);
     }
     if (value.$type === "BaseInterfaceWithProperties") {
-      return BaseInterfaceWithPropertiesStatic.$fromJson(value).unsafeCoerce();
+      return BaseInterfaceWithPropertiesStatic.$fromJson(value);
     }
     if (value.$type === "ConvertibleTypePropertiesClass") {
-      return ConvertibleTypePropertiesClass.$fromJson(value).unsafeCoerce();
+      return ConvertibleTypePropertiesClass.$fromJson(value);
     }
     if (value.$type === "DateUnionPropertiesClass") {
-      return DateUnionPropertiesClass.$fromJson(value).unsafeCoerce();
+      return DateUnionPropertiesClass.$fromJson(value);
     }
     if (value.$type === "DefaultValuePropertiesClass") {
-      return DefaultValuePropertiesClass.$fromJson(value).unsafeCoerce();
+      return DefaultValuePropertiesClass.$fromJson(value);
     }
     if (value.$type === "DirectRecursiveClass") {
-      return DirectRecursiveClass.$fromJson(value).unsafeCoerce();
+      return DirectRecursiveClass.$fromJson(value);
     }
     if (value.$type === "ExplicitFromToRdfTypesClass") {
-      return ExplicitFromToRdfTypesClass.$fromJson(value).unsafeCoerce();
+      return ExplicitFromToRdfTypesClass.$fromJson(value);
     }
     if (value.$type === "ExplicitRdfTypeClass") {
-      return ExplicitRdfTypeClass.$fromJson(value).unsafeCoerce();
+      return ExplicitRdfTypeClass.$fromJson(value);
     }
     if (value.$type === "ExternClassPropertyClass") {
-      return ExternClassPropertyClass.$fromJson(value).unsafeCoerce();
+      return ExternClassPropertyClass.$fromJson(value);
     }
     if (value.$type === "FlattenClassUnionMember3") {
-      return FlattenClassUnionMember3.$fromJson(value).unsafeCoerce();
+      return FlattenClassUnionMember3.$fromJson(value);
     }
     if (value.$type === "HasValuePropertiesClass") {
-      return HasValuePropertiesClass.$fromJson(value).unsafeCoerce();
+      return HasValuePropertiesClass.$fromJson(value);
     }
     if (value.$type === "IdentifierOverride5Class") {
-      return IdentifierOverride5Class.$fromJson(value).unsafeCoerce();
+      return IdentifierOverride5Class.$fromJson(value);
     }
     if (value.$type === "IdentifierOverride4Class") {
-      return IdentifierOverride4ClassStatic.$fromJson(value).unsafeCoerce();
+      return IdentifierOverride4ClassStatic.$fromJson(value);
     }
     if (value.$type === "IdentifierOverride3Class") {
-      return IdentifierOverride3ClassStatic.$fromJson(value).unsafeCoerce();
+      return IdentifierOverride3ClassStatic.$fromJson(value);
     }
     if (value.$type === "InIdentifierClass") {
-      return InIdentifierClass.$fromJson(value).unsafeCoerce();
+      return InIdentifierClass.$fromJson(value);
     }
     if (value.$type === "InPropertiesClass") {
-      return InPropertiesClass.$fromJson(value).unsafeCoerce();
+      return InPropertiesClass.$fromJson(value);
     }
     if (value.$type === "IndirectRecursiveClass") {
-      return IndirectRecursiveClass.$fromJson(value).unsafeCoerce();
+      return IndirectRecursiveClass.$fromJson(value);
     }
     if (value.$type === "IndirectRecursiveHelperClass") {
-      return IndirectRecursiveHelperClass.$fromJson(value).unsafeCoerce();
+      return IndirectRecursiveHelperClass.$fromJson(value);
     }
     if (value.$type === "Interface") {
-      return Interface.$fromJson(value).unsafeCoerce();
+      return Interface.$fromJson(value);
     }
     if (value.$type === "InterfaceUnionMember1") {
-      return InterfaceUnionMember1.$fromJson(value).unsafeCoerce();
+      return InterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "InterfaceUnionMember2") {
-      return InterfaceUnionMember2.$fromJson(value).unsafeCoerce();
+      return InterfaceUnionMember2.$fromJson(value);
     }
     if (value.$type === "IriIdentifierClass") {
-      return IriIdentifierClass.$fromJson(value).unsafeCoerce();
+      return IriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "IriIdentifierInterface") {
-      return IriIdentifierInterface.$fromJson(value).unsafeCoerce();
+      return IriIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "JsPrimitiveUnionPropertyClass") {
-      return JsPrimitiveUnionPropertyClass.$fromJson(value).unsafeCoerce();
+      return JsPrimitiveUnionPropertyClass.$fromJson(value);
     }
     if (value.$type === "LanguageInPropertiesClass") {
-      return LanguageInPropertiesClass.$fromJson(value).unsafeCoerce();
+      return LanguageInPropertiesClass.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedBlankNodeOrIriIdentifierClass") {
-      return LazilyResolvedBlankNodeOrIriIdentifierClass.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedBlankNodeOrIriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedBlankNodeOrIriIdentifierInterface") {
-      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedClassUnionMember1") {
-      return LazilyResolvedClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return LazilyResolvedClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedClassUnionMember2") {
-      return LazilyResolvedClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return LazilyResolvedClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember1") {
-      return LazilyResolvedInterfaceUnionMember1.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedInterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedInterfaceUnionMember2") {
-      return LazilyResolvedInterfaceUnionMember2.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedInterfaceUnionMember2.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedIriIdentifierClass") {
-      return LazilyResolvedIriIdentifierClass.$fromJson(value).unsafeCoerce();
+      return LazilyResolvedIriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "LazilyResolvedIriIdentifierInterface") {
-      return LazilyResolvedIriIdentifierInterface.$fromJson(
-        value,
-      ).unsafeCoerce();
+      return LazilyResolvedIriIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "LazyPropertiesClass") {
-      return LazyPropertiesClass.$fromJson(value).unsafeCoerce();
+      return LazyPropertiesClass.$fromJson(value);
     }
     if (value.$type === "LazyPropertiesInterface") {
-      return LazyPropertiesInterface.$fromJson(value).unsafeCoerce();
+      return LazyPropertiesInterface.$fromJson(value);
     }
     if (value.$type === "PartialInterface") {
-      return PartialInterface.$fromJson(value).unsafeCoerce();
+      return PartialInterface.$fromJson(value);
     }
     if (value.$type === "ListPropertiesClass") {
-      return ListPropertiesClass.$fromJson(value).unsafeCoerce();
+      return ListPropertiesClass.$fromJson(value);
     }
     if (value.$type === "MutablePropertiesClass") {
-      return MutablePropertiesClass.$fromJson(value).unsafeCoerce();
+      return MutablePropertiesClass.$fromJson(value);
     }
     if (value.$type === "NamedUnionPropertiesClass") {
-      return NamedUnionPropertiesClass.$fromJson(value).unsafeCoerce();
+      return NamedUnionPropertiesClass.$fromJson(value);
     }
     if (value.$type === "NoRdfTypeClassUnionMember1") {
-      return NoRdfTypeClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return NoRdfTypeClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "NoRdfTypeClassUnionMember2") {
-      return NoRdfTypeClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return NoRdfTypeClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "NodeKindsClass") {
-      return NodeKindsClass.$fromJson(value).unsafeCoerce();
+      return NodeKindsClass.$fromJson(value);
     }
     if (value.$type === "NumericPropertiesClass") {
-      return NumericPropertiesClass.$fromJson(value).unsafeCoerce();
+      return NumericPropertiesClass.$fromJson(value);
     }
     if (value.$type === "OrderedPropertiesClass") {
-      return OrderedPropertiesClass.$fromJson(value).unsafeCoerce();
+      return OrderedPropertiesClass.$fromJson(value);
     }
     if (value.$type === "NewName1Class") {
-      return NewName1Class.$fromJson(value).unsafeCoerce();
+      return NewName1Class.$fromJson(value);
     }
     if (value.$type === "NewName2Class") {
-      return NewName2Class.$fromJson(value).unsafeCoerce();
+      return NewName2Class.$fromJson(value);
     }
     if (value.$type === "PartialClassUnionMember1") {
-      return PartialClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return PartialClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "PartialClassUnionMember2") {
-      return PartialClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return PartialClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "PartialInterfaceUnionMember1") {
-      return PartialInterfaceUnionMember1.$fromJson(value).unsafeCoerce();
+      return PartialInterfaceUnionMember1.$fromJson(value);
     }
     if (value.$type === "PartialInterfaceUnionMember2") {
-      return PartialInterfaceUnionMember2.$fromJson(value).unsafeCoerce();
+      return PartialInterfaceUnionMember2.$fromJson(value);
     }
     if (value.$type === "PropertyCardinalitiesClass") {
-      return PropertyCardinalitiesClass.$fromJson(value).unsafeCoerce();
+      return PropertyCardinalitiesClass.$fromJson(value);
     }
     if (value.$type === "PropertyNamesClass") {
-      return PropertyNamesClass.$fromJson(value).unsafeCoerce();
+      return PropertyNamesClass.$fromJson(value);
     }
     if (value.$type === "PropertyPathsClass") {
-      return PropertyPathsClass.$fromJson(value).unsafeCoerce();
+      return PropertyPathsClass.$fromJson(value);
     }
     if (value.$type === "PropertyVisibilitiesClass") {
-      return PropertyVisibilitiesClass.$fromJson(value).unsafeCoerce();
+      return PropertyVisibilitiesClass.$fromJson(value);
     }
     if (value.$type === "RecursiveClassUnionMember1") {
-      return RecursiveClassUnionMember1.$fromJson(value).unsafeCoerce();
+      return RecursiveClassUnionMember1.$fromJson(value);
     }
     if (value.$type === "RecursiveClassUnionMember2") {
-      return RecursiveClassUnionMember2.$fromJson(value).unsafeCoerce();
+      return RecursiveClassUnionMember2.$fromJson(value);
     }
     if (value.$type === "Sha256IriIdentifierClass") {
-      return Sha256IriIdentifierClass.$fromJson(value).unsafeCoerce();
+      return Sha256IriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "TermPropertiesClass") {
-      return TermPropertiesClass.$fromJson(value).unsafeCoerce();
+      return TermPropertiesClass.$fromJson(value);
     }
     if (value.$type === "UnionDiscriminantsClass") {
-      return UnionDiscriminantsClass.$fromJson(value).unsafeCoerce();
+      return UnionDiscriminantsClass.$fromJson(value);
     }
     if (value.$type === "UuidV4IriIdentifierClass") {
-      return UuidV4IriIdentifierClass.$fromJson(value).unsafeCoerce();
+      return UuidV4IriIdentifierClass.$fromJson(value);
     }
     if (value.$type === "UuidV4IriIdentifierInterface") {
-      return UuidV4IriIdentifierInterface.$fromJson(value).unsafeCoerce();
+      return UuidV4IriIdentifierInterface.$fromJson(value);
     }
     if (value.$type === "$DefaultPartial") {
-      return $DefaultPartial.$fromJson(value).unsafeCoerce();
+      return $DefaultPartial.$fromJson(value);
     }
     if (value.$type === "$NamedDefaultPartial") {
-      return $NamedDefaultPartial.$fromJson(value).unsafeCoerce();
+      return $NamedDefaultPartial.$fromJson(value);
     }
 
     throw new Error("unable to deserialize JSON");

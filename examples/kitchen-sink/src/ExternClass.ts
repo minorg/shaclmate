@@ -75,9 +75,10 @@ export namespace ExternClass {
     return left.$equals(right);
   }
 
-  export function $fromJson(json: unknown) {
-    return AbstractBaseClassForExternClassStatic.$propertiesFromJson(json).map(
-      (properties) => new ExternClass(properties.$identifier),
+  export function $fromJson(json: $Json) {
+    return new ExternClass(
+      AbstractBaseClassForExternClassStatic.$propertiesFromJson(json)
+        .$identifier,
     );
   }
 

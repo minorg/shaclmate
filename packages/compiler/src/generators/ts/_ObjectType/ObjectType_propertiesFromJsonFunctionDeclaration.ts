@@ -6,7 +6,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
-  jsonObject: code`${syntheticNamePrefix}jsonObject`,
+  jsonObject: code`${syntheticNamePrefix}json`,
 };
 
 export function ObjectType_propertiesFromJsonFunctionDeclaration(
@@ -21,12 +21,6 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
   const statements: Code[] = [];
   const returnTypeSignatures: Code[] = [];
 
-  statements.push(
-    code`const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(_json);`,
-    code`if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }`,
-    code`const ${variables.jsonObject} = ${syntheticNamePrefix}jsonSafeParseResult.data;`,
-  );
-
   const chains: { expression: Code; variable: string }[] = [];
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
@@ -36,7 +30,7 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
     });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
+      code`ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>`,
     );
   });
 
@@ -53,7 +47,7 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
 
   const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
-    statements.push(code`return ${imports.Right}(${resultExpression})`);
+    statements.push(code`return ${resultExpression}`);
   } else {
     statements.push(
       code`return ${chains
@@ -75,7 +69,7 @@ export function ObjectType_propertiesFromJsonFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
+export function ${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject}: ${this.jsonType().name}): ${joinCode(returnType, { on: " & " })} {
 ${joinCode(statements)}
 }`);
 }
