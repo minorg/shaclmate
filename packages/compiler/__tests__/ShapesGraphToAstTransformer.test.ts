@@ -96,7 +96,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
   }
 });
 
-describe("ShapesGraphToAstTransformer: illFormed", () => {
+describe("ShapesGraphToAstTransformer: ill-formed", () => {
   it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
       shapesGraph:
@@ -134,6 +134,17 @@ describe("ShapesGraphToAstTransformer: illFormed", () => {
     expect((error as Error).message).includes(
       "default value conflicts with in value",
     );
+  });
+
+  it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer({
+      shapesGraph:
+        testData.shapesGraphs.illFormed.inversePathNodeKindConflict.unsafeCoerce(),
+    })
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("inverse paths can only");
   });
 
   it("incompatible node shape identifiers", ({ expect }) => {

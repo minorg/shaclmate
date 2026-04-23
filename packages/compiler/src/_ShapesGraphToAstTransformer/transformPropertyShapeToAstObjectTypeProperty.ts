@@ -1,5 +1,5 @@
 import dataFactory from "@rdfjs/data-model";
-import { Curie } from "@shaclmate/shacl-ast";
+import { Curie, type NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
@@ -350,6 +350,17 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         default:
           invariant(false, `unexpected lazy AST type ${astType.kind}`);
       }
+    }
+
+    if (
+      propertyShape.path.termType === "InversePath" &&
+      (astType.nodeKinds as ReadonlySet<NodeKind>).has("Literal")
+    ) {
+      return Left(
+        new Error(
+          `${propertyShape}: property shapes with inverse paths can only have blank node or IRI node kinds`,
+        ),
+      );
     }
 
     return Either.of(
