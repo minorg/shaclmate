@@ -1,3 +1,5 @@
+import type { NodeKind } from "@shaclmate/shacl-ast";
+
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -51,6 +53,17 @@ export abstract class AbstractCompoundType<
 
   get members(): readonly MemberT[] {
     return this.#members;
+  }
+
+  @Memoize()
+  override get nodeKinds(): ReadonlySet<NodeKind> {
+    const nodeKinds = new Set<NodeKind>();
+    for (const member of this.members) {
+      for (const nodeKind of member.type.nodeKinds) {
+        nodeKinds.add(nodeKind);
+      }
+    }
+    return nodeKinds;
   }
 
   override get recursive(): boolean {

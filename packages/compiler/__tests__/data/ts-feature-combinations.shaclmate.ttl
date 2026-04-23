@@ -108,8 +108,8 @@
     ] .
 
 :ParentInterface
-    a owl:Class, sh:NodeShape ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:IRI ;
     sh:property [
         sh:datatype xsd:string ;

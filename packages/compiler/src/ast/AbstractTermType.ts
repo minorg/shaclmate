@@ -1,5 +1,4 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import type { NodeKind } from "@shaclmate/shacl-ast";
 
 import { AbstractType } from "./AbstractType.js";
 import { arrayEquals, setEquals, strictEquals, termEquals } from "./equals.js";
@@ -27,7 +26,6 @@ export abstract class AbstractTermType<
     | "IriType"
     | "LiteralType"
     | "TermType";
-  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
 
   constructor({

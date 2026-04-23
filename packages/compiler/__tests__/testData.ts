@@ -95,6 +95,16 @@ export const testData = {
         );
       },
 
+      get inversePathNodeKindConflict() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "inverse-path-node-kind-conflict.shaclmate.ttl",
+          ),
+        );
+      },
+
       get noRequiredProperty() {
         return parseShapesGraph(
           path.join(

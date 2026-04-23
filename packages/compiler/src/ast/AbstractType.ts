@@ -1,4 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
 
@@ -20,6 +21,13 @@ export abstract class AbstractType {
    * Name of this type, from shaclmate:name or sh:name.
    */
   readonly name: Maybe<string>;
+
+  /**
+   * The range of node kinds of this type.
+   *
+   * For example, an object type has blank and IRI node kinds, while a string type has a Literal node kind.
+   */
+  abstract readonly nodeKinds: ReadonlySet<NodeKind>;
 
   /**
    * Does this type directly or indirectly reference itself?
