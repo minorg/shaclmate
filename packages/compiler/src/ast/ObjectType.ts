@@ -1,4 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { NodeKind } from "@shaclmate/shacl-ast";
 
 import type { Maybe } from "purify-ts";
 import { PropertyPath, Resource } from "rdfjs-resource";
@@ -89,6 +90,7 @@ export class ObjectType extends AbstractType {
    * Type discriminant.
    */
   readonly kind = "ObjectType";
+  override readonly nodeKinds = nodeKinds;
 
   /**
    * Was this type synthesized or did it come from SHACL?
@@ -230,6 +232,8 @@ export class ObjectType extends AbstractType {
     return `${this.kind}(shapeIdentifier=${Resource.Identifier.toString(this.shapeIdentifier)})`;
   }
 }
+
+const nodeKinds: ReadonlySet<NodeKind> = new Set(["BlankNode", "IRI"]);
 
 export namespace ObjectType {
   export class Property {

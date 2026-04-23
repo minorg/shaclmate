@@ -1,3 +1,5 @@
+import type { NodeKind } from "@shaclmate/shacl-ast";
+
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -38,6 +40,10 @@ export abstract class AbstractContainerType<
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.itemType = itemType;
+  }
+
+  override get nodeKinds(): ReadonlySet<NodeKind> {
+    return this.itemType.nodeKinds;
   }
 
   override get recursive(): boolean {

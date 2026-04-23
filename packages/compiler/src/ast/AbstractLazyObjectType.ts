@@ -1,3 +1,5 @@
+import type { NodeKind } from "@shaclmate/shacl-ast";
+
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -30,6 +32,10 @@ export abstract class AbstractLazyObjectType<
     super(superParameters);
     this.partialType = partialType;
     this.resolveType = resolveType;
+  }
+
+  override get nodeKinds(): ReadonlySet<NodeKind> {
+    return this.partialType.nodeKinds;
   }
 
   override get recursive(): boolean {

@@ -1,12 +1,7 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left } from "purify-ts";
 import type * as input from "../input/index.js";
-
-const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
-  "BlankNode",
-  "IRI",
-  "Literal",
-]);
+import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 
 const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
@@ -224,8 +219,11 @@ export function shapeNodeKinds(
       );
     }
 
-    return Either.of(
-      options?.defaultPropertyShapeNodeKinds ?? defaultPropertyShapeNodeKinds,
-    );
+    if (shape.path.termType === "InversePath") {
+      // Inverse paths can only have blank nodes and IRIs as values, because the value is the subject of a triple.
+      return Either.of(new Set(["BlankNode", "IRI"]));
+    }
+
+    return Either.of(defaultPropertyShapeNodeKinds);
   });
 }
