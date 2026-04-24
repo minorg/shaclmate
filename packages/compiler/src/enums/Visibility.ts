@@ -18,6 +18,7 @@ export namespace Visibility {
       case "http://purl.org/shaclmate/ontology#_Visibility_Public":
         return "public";
       default:
+        iri.value satisfies never;
         throw new RangeError(iri.value);
     }
   }

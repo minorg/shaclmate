@@ -4,7 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, List, type Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
+import { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as generated from "./generated.js";
 import type {
@@ -129,19 +129,9 @@ export class NodeShape extends ShaclAstNodeShape<
 
   @Memoize()
   get identifierMintingStrategy(): Maybe<IdentifierMintingStrategy> {
-    return this.generatedNodeShape.identifierMintingStrategy.map((iri) => {
-      switch (iri.value) {
-        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
-          return "blankNode";
-        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
-          return "sha256";
-        case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
-          return "uuidv4";
-        default:
-          iri.value satisfies never;
-          throw new RangeError(iri.value);
-      }
-    });
+    return this.generatedNodeShape.identifierMintingStrategy.map(
+      IdentifierMintingStrategy.fromIri,
+    );
   }
 
   @Memoize()
