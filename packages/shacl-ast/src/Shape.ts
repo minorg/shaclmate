@@ -1,6 +1,6 @@
 import type * as rdfjs from "@rdfjs/types";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { Either, Maybe } from "purify-ts";
+import { Either, type Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { NodeKind } from "./NodeKind.js";
@@ -42,35 +42,8 @@ export abstract class Shape<
   }
 
   @Memoize()
-  get isDefinedBy(): Either<Error, Maybe<OntologyT>> {
-    if (this.generatedShape.isDefinedBy.isJust()) {
-      // If there's an rdfs:isDefinedBy statement on the shape then don't fall back to anything else
-      return this.shapesGraph
-        .ontology(this.generatedShape.isDefinedBy.unsafeCoerce())
-        .map(Maybe.of);
-    }
-
-    // No rdfs:isDefinedBy statement on the shape
-
-    const ontologies = this.shapesGraph.ontologies;
-    if (ontologies.length === 1) {
-      // If there's a single ontology in the shapes graph, consider the shape a part of the ontology
-      return Either.of(Maybe.of(ontologies[0]));
-    }
-
-    if (this.identifier.termType === "NamedNode") {
-      const prefixOntologies = ontologies.filter(
-        (ontology) =>
-          ontology.identifier.termType === "NamedNode" &&
-          this.identifier.value.startsWith(ontology.identifier.value),
-      );
-      if (prefixOntologies.length === 1) {
-        // If there's a single ontology whose IRI is a prefix of this shape's IRI, consider the shape a part of the ontology
-        return Either.of(Maybe.of(prefixOntologies[0]));
-      }
-    }
-
-    return Either.of(Maybe.empty());
+  get isDefinedBy(): Maybe<BlankNode | NamedNode> {
+    return this.generatedShape.isDefinedBy;
   }
 
   get labels(): readonly string[] {
@@ -183,7 +156,7 @@ export namespace Shape {
     get nodes(): Either<Error, readonly NodeShapeT[]> {
       return Either.sequence(
         this.generatedShape.nodes.map((identifier) =>
-          this.shapesGraph.nodeShapes(identifier),
+          this.shapesGraph.nodeShape(identifier),
         ),
       );
     }

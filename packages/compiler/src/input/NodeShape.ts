@@ -81,7 +81,7 @@ export class NodeShape extends ShaclAstNodeShape<
     return Either.sequence(
       this.ancestorClassIris
         .filter((classIri) => !classIri.equals(rdf.List))
-        .map((classIri) => this.shapesGraph.nodeShapes(classIri)),
+        .map((classIri) => this.shapesGraph.nodeShape(classIri)),
     );
   }
 
@@ -89,7 +89,7 @@ export class NodeShape extends ShaclAstNodeShape<
   get childNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
       this.childClassIris.flatMap((classIri) =>
-        this.shapesGraph.nodeShapes(classIri),
+        this.shapesGraph.nodeShape(classIri),
       ),
     );
   }
@@ -103,7 +103,7 @@ export class NodeShape extends ShaclAstNodeShape<
   get descendantNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
       this.descendantClassIris.flatMap((classIri) =>
-        this.shapesGraph.nodeShapes(classIri),
+        this.shapesGraph.nodeShape(classIri),
       ),
     );
   }
@@ -158,7 +158,7 @@ export class NodeShape extends ShaclAstNodeShape<
     return Either.sequence(
       this.parentClassIris
         .filter((classIri) => !classIri.equals(rdf.List))
-        .map((classIri) => this.shapesGraph.nodeShapes(classIri)),
+        .map((classIri) => this.shapesGraph.nodeShape(classIri)),
     );
   }
 

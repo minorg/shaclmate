@@ -11,6 +11,7 @@ import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
+import { shapeOntology } from "./shapeOntology.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
@@ -84,9 +85,11 @@ export function transformShapeToAstObjectType(
         nodeShapeTsFeatures.call(this, nodeShape),
         nodeShape.tsObjectDeclarationType.isJust()
           ? Either.of(nodeShape.tsObjectDeclarationType)
-          : nodeShape.isDefinedBy.map((ontology) =>
-              ontology.chain((ontology) => ontology.tsObjectDeclarationType),
-            ),
+          : shapeOntology
+              .call(this, nodeShape)
+              .map((ontology) =>
+                ontology.chain((ontology) => ontology.tsObjectDeclarationType),
+              ),
       ).chain<Error, Maybe<ast.ObjectType>>(
         ([
           ancestorNodeShapes,

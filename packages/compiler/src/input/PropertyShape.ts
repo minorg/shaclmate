@@ -59,7 +59,7 @@ export class PropertyShape extends ShaclAstPropertyShape<
   get resolve(): Either<Error, Maybe<NodeShape>> {
     const identifier = this._generatedPropertyShape.resolve.extract();
     return identifier
-      ? this.shapesGraph.nodeShapes(identifier).map((_) => Maybe.of(_))
+      ? this.shapesGraph.nodeShape(identifier).map((_) => Maybe.of(_))
       : Either.of(Maybe.empty());
   }
 

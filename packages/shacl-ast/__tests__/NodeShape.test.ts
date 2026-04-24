@@ -8,7 +8,7 @@ describe("NodeShape", () => {
   it("constraints: should get closed true", ({ expect }) => {
     expect(
       shapesGraph
-        .nodeShapeByIdentifier(schema.DatedMoneySpecification)
+        .nodeShape(schema.DatedMoneySpecification)
         .unsafeCoerce()
         .constraints.closed.unsafeCoerce(),
     ).toStrictEqual(true);
@@ -17,7 +17,7 @@ describe("NodeShape", () => {
   it("constraints: should have properties", ({ expect }) => {
     expect(
       shapesGraph
-        .nodeShapeByIdentifier(schema.Person)
+        .nodeShape(schema.Person)
         .unsafeCoerce()
         .constraints.properties.unsafeCoerce(),
     ).toHaveLength(9);
@@ -25,10 +25,7 @@ describe("NodeShape", () => {
 
   it("should convert to a string", ({ expect }) => {
     expect(
-      shapesGraph
-        .nodeShapeByIdentifier(schema.Person)
-        .unsafeCoerce()
-        .toString(),
+      shapesGraph.nodeShape(schema.Person).unsafeCoerce().toString(),
     ).not.toHaveLength(0);
   });
 });
