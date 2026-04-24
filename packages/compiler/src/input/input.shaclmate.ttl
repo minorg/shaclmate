@@ -6,7 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-name, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:NodeShape-abstract
     a sh:PropertyShape ;
@@ -49,7 +49,6 @@ shaclmate:NodeShape-rdfType
 
 shaclmate:NodeShape-toRdfTypes
     a sh:PropertyShape ;
-    sh:name "toRdfTypes" ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
 
@@ -57,7 +56,7 @@ shaclmate:Ontology
     sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-name .
+    sh:property shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:PropertyShape-resolve
     a sh:PropertyShape ;
@@ -81,11 +80,10 @@ shaclmate:Shape-mutable
     sh:maxCount 1 ;
     sh:path shaclmate:mutable .
 
-shaclmate:Shape-name
+shaclmate:Shape-shaclmateName
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
-    sh:name "name" ;
     sh:path shaclmate:name .
 
 shaclmate:tsFeatureExcludes
