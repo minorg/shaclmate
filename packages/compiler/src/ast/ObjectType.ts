@@ -8,9 +8,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
+import type { Visibility } from "../enums/Visibility.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
@@ -291,7 +291,7 @@ export namespace ObjectType {
     /**
      * Visibility: private, protected, public.
      */
-    readonly visibility: PropertyVisibility;
+    readonly visibility: Visibility;
 
     constructor({
       comment,
@@ -316,7 +316,7 @@ export namespace ObjectType {
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
-      visibility: PropertyVisibility;
+      visibility: Visibility;
     }) {
       this.comment = comment;
       this.description = description;

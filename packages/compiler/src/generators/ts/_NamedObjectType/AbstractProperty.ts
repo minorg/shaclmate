@@ -1,7 +1,7 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { PropertyVisibility } from "../../../enums/PropertyVisibility.js";
+import type { Visibility } from "../../../enums/Visibility.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";
@@ -99,7 +99,7 @@ export abstract class AbstractProperty<
   /**
    * Property visibility: private, protected, public.
    */
-  readonly visibility: PropertyVisibility;
+  readonly visibility: Visibility;
 
   constructor({
     name,
@@ -110,7 +110,7 @@ export abstract class AbstractProperty<
     name: string;
     namedObjectType: NamedObjectType;
     type: TypeT;
-    visibility: PropertyVisibility;
+    visibility: Visibility;
   }) {
     this.name = name;
     this.namedObjectType = namedObjectType;

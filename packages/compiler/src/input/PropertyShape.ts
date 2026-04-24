@@ -2,7 +2,7 @@ import { PropertyShape as ShaclAstPropertyShape } from "@shaclmate/shacl-ast";
 
 import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import type { PropertyVisibility } from "../enums/PropertyVisibility.js";
+import { Visibility } from "../enums/Visibility.js";
 import type * as generated from "./generated.js";
 import type {
   NodeShape,
@@ -68,20 +68,9 @@ export class PropertyShape extends ShaclAstPropertyShape<
   }
 
   @Memoize()
-  get visibility(): PropertyVisibility {
+  get visibility(): Visibility {
     return this._generatedPropertyShape.visibility
-      .map((iri) => {
-        switch (iri.value) {
-          case "http://purl.org/shaclmate/ontology#_Visibility_Private":
-            return "private";
-          case "http://purl.org/shaclmate/ontology#_Visibility_Protected":
-            return "protected";
-          case "http://purl.org/shaclmate/ontology#_Visibility_Public":
-            return "public";
-          default:
-            throw new RangeError(iri.value);
-        }
-      })
+      .map(Visibility.fromIri)
       .orDefault("public" as const);
   }
 }
