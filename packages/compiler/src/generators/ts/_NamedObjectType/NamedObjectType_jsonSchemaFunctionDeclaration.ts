@@ -25,6 +25,7 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
     );
   }
 
+  // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
   return ${imports.z}.object({${joinCode(properties, { on: "," })}}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
