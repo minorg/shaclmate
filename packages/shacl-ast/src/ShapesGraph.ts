@@ -16,19 +16,13 @@ import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { CurieFactory } from "./CurieFactory.js";
 import * as generated from "./generated.js";
-import { NodeShape } from "./NodeShape.js";
-import { Ontology } from "./Ontology.js";
-import type { OntologyLike } from "./OntologyLike.js";
-import { PropertyGroup } from "./PropertyGroup.js";
-import { PropertyShape } from "./PropertyShape.js";
-import type { Shape } from "./Shape.js";
 
 export class ShapesGraph<
   NodeShapeT extends ShapeT,
-  OntologyT extends OntologyLike,
-  PropertyGroupT,
+  OntologyT extends generated.Ontology,
+  PropertyGroupT extends generated.PropertyGroup,
   PropertyShapeT extends ShapeT,
-  ShapeT,
+  ShapeT extends generated.Shape,
 > {
   private readonly nodeShapesByIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -136,11 +130,11 @@ export class ShapesGraph<
 
 export namespace ShapesGraph {
   export abstract class Factory<
-    NodeShapeT extends ShapeT,
-    OntologyT extends OntologyLike,
-    PropertyGroupT,
-    PropertyShapeT extends ShapeT,
-    ShapeT,
+    NodeShapeT extends generated.NodeShape & ShapeT,
+    OntologyT extends generated.Ontology,
+    PropertyGroupT extends generated.PropertyGroup,
+    PropertyShapeT extends generated.PropertyShape & ShapeT,
+    ShapeT extends generated.Shape,
   > {
     protected preferredLanguages: readonly string[];
 
@@ -493,109 +487,67 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyShapeT>;
   }
 
-  type DefaultNodeShape = NodeShape<
-    any,
-    Ontology,
-    PropertyGroup,
-    DefaultPropertyShape,
-    DefaultShape
-  >;
-
-  type DefaultPropertyShape = PropertyShape<
-    DefaultNodeShape,
-    Ontology,
-    PropertyGroup,
-    any,
-    DefaultShape
-  >;
-
-  type DefaultShape = Shape<
-    DefaultNodeShape,
-    Ontology,
-    PropertyGroup,
-    DefaultPropertyShape,
-    any
-  >;
-
   type DefaultShapesGraph = ShapesGraph<
-    DefaultNodeShape,
-    Ontology,
-    PropertyGroup,
-    DefaultPropertyShape,
-    DefaultShape
+    generated.NodeShape,
+    generated.Ontology,
+    generated.PropertyGroup,
+    generated.PropertyShape,
+    generated.Shape
   >;
 
   class DefaultFactory extends Factory<
-    DefaultNodeShape,
-    Ontology,
-    PropertyGroup,
-    DefaultPropertyShape,
-    DefaultShape
+    generated.NodeShape,
+    generated.Ontology,
+    generated.PropertyGroup,
+    generated.PropertyShape,
+    generated.Shape
   > {
-    protected override createNodeShape({
-      resource,
-      shapesGraph,
-    }: {
-      resource: Resource;
-      shapesGraph: DefaultShapesGraph;
-    }) {
+    protected override createNodeShape({ resource }: { resource: Resource }) {
       return generated.NodeShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
+      });
     }
 
     protected override createOntology({
       resource,
     }: {
-      curieFactory: CurieFactory;
       resource: Resource;
-      shapesGraph: DefaultShapesGraph;
-    }): Either<Error, Ontology> {
+    }): Either<Error, generated.Ontology> {
       return generated.Ontology.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map((generatedOntology) => new Ontology(generatedOntology));
+      });
     }
 
     protected override createPropertyGroup({
       resource,
     }: {
-      curieFactory: CurieFactory;
       resource: Resource;
-      shapesGraph: DefaultShapesGraph;
-    }): Either<Error, PropertyGroup> {
+    }): Either<Error, generated.PropertyGroup> {
       return generated.PropertyGroup.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map((propertyGroup) => new PropertyGroup(propertyGroup));
+      });
     }
 
     protected override createPropertyShape({
       curieFactory,
       resource,
-      shapesGraph,
     }: {
       curieFactory: CurieFactory;
       resource: Resource;
-      shapesGraph: DefaultShapesGraph;
-    }): Either<Error, DefaultPropertyShape> {
+    }): Either<Error, generated.PropertyShape> {
       return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map(
-        (generatedShape) =>
-          new PropertyShape(
-            {
-              ...generatedShape,
-              path:
-                (generatedShape.path.termType === "NamedNode"
-                  ? curieFactory.create(generatedShape.path).extract()
-                  : undefined) ?? generatedShape.path,
-            },
-            shapesGraph,
-          ),
-      );
+      }).map((generatedShape) => ({
+        ...generatedShape,
+        path:
+          (generatedShape.path.termType === "NamedNode"
+            ? curieFactory.create(generatedShape.path).extract()
+            : undefined) ?? generatedShape.path,
+      }));
     }
   }
 

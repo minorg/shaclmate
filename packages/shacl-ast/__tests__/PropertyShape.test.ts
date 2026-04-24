@@ -18,8 +18,8 @@ describe("PropertyShape", () => {
     path: NamedNode,
   ) => {
     const nodeShape = shapesGraph.nodeShape(nodeShapeIdentifier).unsafeCoerce();
-    const propertyShape = nodeShape.constraints.properties
-      .unsafeCoerce()
+    const propertyShape = nodeShape.properties
+      .map((_) => shapesGraph.propertyShape(_).unsafeCoerce())
       .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
@@ -37,10 +37,10 @@ describe("PropertyShape", () => {
     const groups = findPropertyShape(
       dash.ScriptAPIShape,
       dash.generateClass,
-    ).groups.unsafeCoerce();
+    ).groups.map((_) => shapesGraph.propertyGroup(_).unsafeCoerce());
     expect(groups).toHaveLength(1);
     expect(
-      groups[0].identifier.equals(dash.ScriptAPIGenerationRules),
+      groups[0].$identifier.equals(dash.ScriptAPIGenerationRules),
     ).toStrictEqual(true);
   });
 
@@ -66,7 +66,9 @@ describe("PropertyShape", () => {
 
   it("should parse an inverse property path", ({ expect }) => {
     const nodeShape = shapesGraph.nodeShape(schema.Person).unsafeCoerce();
-    for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
+    for (const propertyShape of nodeShape.properties.map((_) =>
+      shapesGraph.propertyShape(_).unsafeCoerce(),
+    )) {
       if (propertyShape.path.termType !== "InversePath") {
         continue;
       }
@@ -81,7 +83,9 @@ describe("PropertyShape", () => {
 
   it("should parse a zero or more property path", ({ expect }) => {
     const nodeShape = shapesGraph.nodeShape(dash.ListShape).unsafeCoerce();
-    for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
+    for (const propertyShape of nodeShape.properties.map((_) =>
+      shapesGraph.propertyShape(_).unsafeCoerce(),
+    )) {
       if (propertyShape.path.termType !== "ZeroOrMorePath") {
         continue;
       }

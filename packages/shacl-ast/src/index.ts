@@ -1,11 +1,12 @@
 export * from "./Curie.js";
 export * from "./CurieFactory.js";
+export {
+  NodeShape,
+  Ontology,
+  PropertyGroup,
+  PropertyShape,
+  Shape,
+} from "./generated.js";
 export * from "./IdentifierNodeKind.js";
 export * from "./NodeKind.js";
-export * from "./NodeShape.js";
-export * from "./Ontology.js";
-export * from "./OntologyLike.js";
-export * from "./PropertyGroup.js";
-export * from "./PropertyShape.js";
-export * from "./Shape.js";
 export * from "./ShapesGraph.js";
