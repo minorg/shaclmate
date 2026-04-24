@@ -143,6 +143,7 @@ shaclmate:PropertyShape-defaultValue
 shaclmate:PropertyShape-description
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
+    sh:maxCount 1 ;
     sh:path sh:description .
 
 shaclmate:PropertyShape-groups

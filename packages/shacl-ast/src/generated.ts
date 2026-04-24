@@ -507,7 +507,7 @@ export interface PropertyShape {
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly defaultValue: Maybe<NamedNode | Literal>;
-  readonly descriptions: readonly string[];
+  readonly description: Maybe<string>;
   readonly flags: readonly string[];
   readonly groups: readonly (BlankNode | NamedNode)[];
   readonly hasValues: readonly (NamedNode | Literal)[];
@@ -523,7 +523,7 @@ export interface PropertyShape {
   readonly minExclusive: Maybe<Literal>;
   readonly minInclusive: Maybe<Literal>;
   readonly minLength: Maybe<number>;
-  readonly names: readonly string[];
+  readonly name: Maybe<string>;
   readonly nodeKind: Maybe<
     NamedNode<
       | "http://www.w3.org/ns/shacl#BlankNode"
@@ -621,10 +621,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.descriptions !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.descriptions,
-        value.descriptions,
+      filter.description !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.description,
+        value.description,
       )
     ) {
       return false;
@@ -765,10 +765,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.names !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.names,
-        value.names,
+      filter.name !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.name,
+        value.name,
       )
     ) {
       return false;
@@ -875,7 +875,7 @@ export namespace PropertyShape {
     readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly defaultValue?: $MaybeFilter<$TermFilter>;
-    readonly descriptions?: $CollectionFilter<$StringFilter>;
+    readonly description?: $MaybeFilter<$StringFilter>;
     readonly flags?: $CollectionFilter<$StringFilter>;
     readonly groups?: $CollectionFilter<$IdentifierFilter>;
     readonly hasValues?: $CollectionFilter<$TermFilter>;
@@ -891,7 +891,7 @@ export namespace PropertyShape {
     readonly minExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
-    readonly names?: $CollectionFilter<$StringFilter>;
+    readonly name?: $MaybeFilter<$StringFilter>;
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
@@ -961,7 +961,7 @@ export namespace PropertyShape {
     datatype: Maybe<NamedNode>;
     deactivated: Maybe<boolean>;
     defaultValue: Maybe<NamedNode | Literal>;
-    descriptions: readonly string[];
+    description: Maybe<string>;
     flags: readonly string[];
     groups: readonly (BlankNode | NamedNode)[];
     hasValues: readonly (NamedNode | Literal)[];
@@ -977,7 +977,7 @@ export namespace PropertyShape {
     minExclusive: Maybe<Literal>;
     minInclusive: Maybe<Literal>;
     minLength: Maybe<number>;
-    names: readonly string[];
+    name: Maybe<string>;
     nodeKind: Maybe<
       NamedNode<
         | "http://www.w3.org/ns/shacl#BlankNode"
@@ -1212,7 +1212,7 @@ export namespace PropertyShape {
                         $shaclPropertyFromRdf({
                           graph: _$options.graph,
                           resource: $resource,
-                          propertySchema: $schema.properties.descriptions,
+                          propertySchema: $schema.properties.description,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -1224,17 +1224,18 @@ export namespace PropertyShape {
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
                               )
-                              .map((values) => values.toArray())
-                              .map((valuesArray) =>
-                                Resource.Values.fromValue({
-                                  focusResource: $resource,
-                                  propertyPath:
-                                    PropertyShape.$schema.properties
-                                      .descriptions.path,
-                                  value: valuesArray,
-                                }),
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<Maybe<string>>({
+                                      focusResource: $resource,
+                                      propertyPath:
+                                        PropertyShape.$schema.properties
+                                          .description.path,
+                                      value: Maybe.empty(),
+                                    }),
                               ),
-                        }).chain((descriptions) =>
+                        }).chain((description) =>
                           $shaclPropertyFromRdf({
                             graph: _$options.graph,
                             resource: $resource,
@@ -1842,7 +1843,7 @@ export namespace PropertyShape {
                                                           resource: $resource,
                                                           propertySchema:
                                                             $schema.properties
-                                                              .names,
+                                                              .name,
                                                           typeFromRdf: (
                                                             resourceValues,
                                                           ) =>
@@ -1860,26 +1861,30 @@ export namespace PropertyShape {
                                                                 ),
                                                               )
                                                               .map((values) =>
-                                                                values.toArray(),
-                                                              )
-                                                              .map(
-                                                                (valuesArray) =>
-                                                                  Resource.Values.fromValue(
-                                                                    {
+                                                                values.length >
+                                                                0
+                                                                  ? values.map(
+                                                                      (value) =>
+                                                                        Maybe.of(
+                                                                          value,
+                                                                        ),
+                                                                    )
+                                                                  : Resource.Values.fromValue<
+                                                                      Maybe<string>
+                                                                    >({
                                                                       focusResource:
                                                                         $resource,
                                                                       propertyPath:
                                                                         PropertyShape
                                                                           .$schema
                                                                           .properties
-                                                                          .names
+                                                                          .name
                                                                           .path,
                                                                       value:
-                                                                        valuesArray,
-                                                                    },
-                                                                  ),
+                                                                        Maybe.empty(),
+                                                                    }),
                                                               ),
-                                                        }).chain((names) =>
+                                                        }).chain((name) =>
                                                           $shaclPropertyFromRdf(
                                                             {
                                                               graph:
@@ -2515,7 +2520,7 @@ export namespace PropertyShape {
                                                                                       datatype,
                                                                                       deactivated,
                                                                                       defaultValue,
-                                                                                      descriptions,
+                                                                                      description,
                                                                                       flags,
                                                                                       groups,
                                                                                       hasValues,
@@ -2531,7 +2536,7 @@ export namespace PropertyShape {
                                                                                       minExclusive,
                                                                                       minInclusive,
                                                                                       minLength,
-                                                                                      names,
+                                                                                      name,
                                                                                       nodeKind,
                                                                                       nodes,
                                                                                       not,
@@ -2645,10 +2650,10 @@ export namespace PropertyShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
       },
-      descriptions: {
+      description: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
@@ -2783,10 +2788,10 @@ export namespace PropertyShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
-      names: {
+      name: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
@@ -2982,9 +2987,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
-      _propertyShape.descriptions.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
+      _propertyShape.description
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3176,7 +3181,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
-      _propertyShape.names.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyShape.name
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
