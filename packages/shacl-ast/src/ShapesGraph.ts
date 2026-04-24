@@ -10,6 +10,7 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
+
 import { Either, Left } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
@@ -63,9 +64,22 @@ export class ShapesGraph<
     return [...this.nodeShapesByIdentifier.values()];
   }
 
-  nodeShapeByIdentifier(
-    identifier: BlankNode | NamedNode,
-  ): Either<Error, NodeShapeT> {
+  @Memoize()
+  get ontologies(): readonly OntologyT[] {
+    return [...this.ontologiesByIdentifier.values()];
+  }
+
+  @Memoize()
+  get propertyGroups(): readonly PropertyGroupT[] {
+    return [...this.propertyGroupsByIdentifier.values()];
+  }
+
+  @Memoize()
+  get propertyShapes(): readonly PropertyShapeT[] {
+    return [...this.propertyShapesByIdentifier.values()];
+  }
+
+  nodeShape(identifier: BlankNode | NamedNode): Either<Error, NodeShapeT> {
     const nodeShape = this.nodeShapesByIdentifier.get(identifier);
     return nodeShape
       ? Either.of(nodeShape)
@@ -76,14 +90,7 @@ export class ShapesGraph<
         );
   }
 
-  @Memoize()
-  get ontologies(): readonly OntologyT[] {
-    return [...this.ontologiesByIdentifier.values()];
-  }
-
-  ontologyByIdentifier(
-    identifier: BlankNode | NamedNode,
-  ): Either<Error, OntologyT> {
+  ontology(identifier: BlankNode | NamedNode): Either<Error, OntologyT> {
     const ontology = this.ontologiesByIdentifier.get(identifier);
     return ontology
       ? Either.of(ontology)
@@ -94,7 +101,7 @@ export class ShapesGraph<
         );
   }
 
-  propertyGroupByIdentifier(
+  propertyGroup(
     identifier: BlankNode | NamedNode,
   ): Either<Error, PropertyGroupT> {
     const propertyGroup = this.propertyGroupsByIdentifier.get(identifier);
@@ -107,12 +114,7 @@ export class ShapesGraph<
         );
   }
 
-  @Memoize()
-  get propertyGroups(): readonly PropertyGroupT[] {
-    return [...this.propertyGroupsByIdentifier.values()];
-  }
-
-  propertyShapeByIdentifier(
+  propertyShape(
     identifier: BlankNode | NamedNode,
   ): Either<Error, PropertyShapeT> {
     const propertyShape = this.propertyShapesByIdentifier.get(identifier);
@@ -125,15 +127,10 @@ export class ShapesGraph<
         );
   }
 
-  @Memoize()
-  get propertyShapes(): readonly PropertyShapeT[] {
-    return [...this.propertyShapesByIdentifier.values()];
-  }
-
-  shapeByIdentifier(identifier: BlankNode | NamedNode): Either<Error, ShapeT> {
-    return (
-      this.nodeShapeByIdentifier(identifier) as Either<Error, ShapeT>
-    ).alt(this.propertyShapeByIdentifier(identifier));
+  shape(identifier: BlankNode | NamedNode): Either<Error, ShapeT> {
+    return (this.nodeShape(identifier) as Either<Error, ShapeT>).alt(
+      this.propertyShape(identifier),
+    );
   }
 }
 

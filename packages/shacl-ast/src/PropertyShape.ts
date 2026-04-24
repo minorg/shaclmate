@@ -54,7 +54,7 @@ export class PropertyShape<
   get groups(): Either<Error, readonly PropertyGroupT[]> {
     return Either.sequence(
       this.generatedPropertyShape.groups.map((identifier) =>
-        this.shapesGraph.propertyGroupByIdentifier(identifier),
+        this.shapesGraph.propertyGroup(identifier),
       ),
     );
   }

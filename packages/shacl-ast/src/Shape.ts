@@ -46,7 +46,7 @@ export abstract class Shape<
     if (this.generatedShape.isDefinedBy.isJust()) {
       // If there's an rdfs:isDefinedBy statement on the shape then don't fall back to anything else
       return this.shapesGraph
-        .ontologyByIdentifier(this.generatedShape.isDefinedBy.unsafeCoerce())
+        .ontology(this.generatedShape.isDefinedBy.unsafeCoerce())
         .map(Maybe.of);
     }
 
@@ -183,7 +183,7 @@ export namespace Shape {
     get nodes(): Either<Error, readonly NodeShapeT[]> {
       return Either.sequence(
         this.generatedShape.nodes.map((identifier) =>
-          this.shapesGraph.nodeShapeByIdentifier(identifier),
+          this.shapesGraph.nodeShapes(identifier),
         ),
       );
     }
@@ -192,7 +192,7 @@ export namespace Shape {
     get not(): Either<Error, readonly ShapeT[]> {
       return Either.sequence(
         this.generatedShape.not.map((identifier) =>
-          this.shapesGraph.shapeByIdentifier(identifier),
+          this.shapesGraph.shape(identifier),
         ),
       );
     }
@@ -212,9 +212,7 @@ export namespace Shape {
     ): Either<Error, readonly ShapeT[]> {
       return Either.sequence(
         identifiers.flatMap((identifiers) =>
-          identifiers.map((identifier) =>
-            this.shapesGraph.shapeByIdentifier(identifier),
-          ),
+          identifiers.map((identifier) => this.shapesGraph.shape(identifier)),
         ),
       );
     }

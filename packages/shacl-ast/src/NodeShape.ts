@@ -79,7 +79,7 @@ export namespace NodeShape {
     get properties(): Either<Error, readonly PropertyShapeT[]> {
       return Either.sequence(
         this.generatedNodeShape.properties.map((identifier) =>
-          this.shapesGraph.propertyShapeByIdentifier(identifier),
+          this.shapesGraph.propertyShape(identifier),
         ),
       );
     }
