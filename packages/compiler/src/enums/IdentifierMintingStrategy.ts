@@ -12,7 +12,7 @@ export namespace IdentifierMintingStrategy {
       | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256"
       | "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4"
     >,
-  ) {
+  ): IdentifierMintingStrategy {
     switch (iri.value) {
       case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
         return "blankNode";

@@ -5,7 +5,7 @@ import { Either, List, type Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
+import { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as generated from "./generated.js";
 import type {
   Ontology,
@@ -179,15 +179,8 @@ export class NodeShape extends ShaclAstNodeShape<
 
   @Memoize()
   get tsObjectDeclarationType(): Maybe<TsObjectDeclarationType> {
-    return this.generatedNodeShape.tsObjectDeclarationType.map((iri) => {
-      switch (iri.value) {
-        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
-          return "class";
-        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
-          return "interface";
-        default:
-          throw new RangeError(iri.value);
-      }
-    });
+    return this.generatedNodeShape.tsObjectDeclarationType.map(
+      TsObjectDeclarationType.fromIri,
+    );
   }
 }
