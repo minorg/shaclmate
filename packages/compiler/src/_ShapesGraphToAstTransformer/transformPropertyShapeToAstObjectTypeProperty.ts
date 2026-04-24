@@ -70,18 +70,18 @@ function propertyName(
   // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
   // like ex:NodeShape-property
   if (
-    propertyShape.identifier.termType === "NamedNode" &&
+    propertyShape.$identifier.termType === "NamedNode" &&
     objectType.shapeIdentifier.termType === "NamedNode"
   ) {
     const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
     if (
-      propertyShape.identifier.value.startsWith(
+      propertyShape.$identifier.value.startsWith(
         propertyShapeIdentifierPrefix,
       ) &&
-      propertyShape.identifier.value.length >
+      propertyShape.$identifier.value.length >
         propertyShapeIdentifierPrefix.length
     ) {
-      return propertyShape.identifier.value.substring(
+      return propertyShape.$identifier.value.substring(
         propertyShapeIdentifierPrefix.length,
       );
     }
@@ -93,13 +93,13 @@ function propertyName(
   }
 
   // Shape identifier CURIE reference
-  if (propertyShape.identifier instanceof Curie) {
-    return propertyShape.identifier.reference;
+  if (propertyShape.$identifier instanceof Curie) {
+    return propertyShape.$identifier.reference;
   }
 
   // Shape identifier IRI
-  if (propertyShape.identifier.termType === "NamedNode") {
-    return propertyShape.identifier.value;
+  if (propertyShape.$identifier.termType === "NamedNode") {
+    return propertyShape.$identifier.value;
   }
 
   // sh:path IRI
@@ -124,15 +124,13 @@ function transformPropertyShapeToAstType(
   return transformShapeToAstType
     .call(this, propertyShape, shapeStack)
     .chain((propertyShapeAstType) => {
-      let maxCount = propertyShape.constraints.maxCount.orDefault(
-        Number.MAX_SAFE_INTEGER,
-      );
-      let minCount = propertyShape.constraints.minCount.orDefault(0);
+      let maxCount = propertyShape.maxCount.orDefault(Number.MAX_SAFE_INTEGER);
+      let minCount = propertyShape.minCount.orDefault(0);
       if (minCount < 0) {
         minCount = 0;
       }
-      if (propertyShape.constraints.hasValues.length > minCount) {
-        minCount = propertyShape.constraints.hasValues.length;
+      if (propertyShape.hasValues.length > minCount) {
+        minCount = propertyShape.hasValues.length;
       }
       if (maxCount < minCount) {
         maxCount = minCount;
@@ -306,7 +304,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         comment: Maybe.empty(),
         label: Maybe.empty(),
         name: Maybe.empty(),
-        shapeIdentifier: propertyShape.identifier,
+        shapeIdentifier: propertyShape.$identifier,
       };
 
       switch (astType.kind) {
@@ -373,7 +371,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         objectType,
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
-        shapeIdentifier: propertyShape.identifier,
+        shapeIdentifier: propertyShape.$identifier,
         type: astType,
         visibility: propertyShape.visibility,
       }),

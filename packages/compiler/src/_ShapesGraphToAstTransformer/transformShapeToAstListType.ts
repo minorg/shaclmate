@@ -64,7 +64,7 @@ export function transformShapeToAstListType(
     return Eithers.chain3(
       nodeShapeIdentifierMintingStrategy(nodeShape),
       shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
-      nodeShape.constraints.xone,
+      nodeShape.xone,
     ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
@@ -76,24 +76,24 @@ export function transformShapeToAstListType(
         mutable: nodeShape.mutable.orDefault(false),
         name: shapeAstTypeName(nodeShape),
         identifierMintingStrategy,
-        shapeIdentifier: nodeShape.identifier,
+        shapeIdentifier: nodeShape.$identifier,
         toRdfTypes: nodeShape.toRdfTypes,
       });
 
-      this.cachedAstTypesByShapeIdentifier.set(nodeShape.identifier, listType);
+      this.cachedAstTypesByShapeIdentifier.set(nodeShape.$identifier, listType);
 
       return (() => {
         let emptyListShape: input.Shape | undefined;
         let nonEmptyListShape: input.NodeShape | undefined;
         for (const shape of xone) {
           if (
-            shape.constraints.hasValues.length === 1 &&
-            shape.constraints.hasValues[0].equals(rdf.nil)
+            shape.hasValues.length === 1 &&
+            shape.hasValues[0].equals(rdf.nil)
           ) {
             emptyListShape = shape;
           } else if (
             shape.kind === "NodeShape" &&
-            shape.constraints.properties.orDefault([]).length >= 2
+            shape.properties.orDefault([]).length >= 2
           ) {
             nonEmptyListShape = shape;
           }
@@ -107,7 +107,7 @@ export function transformShapeToAstListType(
           );
         }
 
-        return nonEmptyListShape.constraints.properties.chain(
+        return nonEmptyListShape.properties.chain(
           (nonEmptyListShapeProperties) => {
             let firstPropertyShape: input.PropertyShape | undefined;
             let restPropertyShape: input.PropertyShape | undefined;
@@ -130,8 +130,8 @@ export function transformShapeToAstListType(
               );
             }
             if (
-              firstPropertyShape.constraints.maxCount.extract() !== 1 ||
-              firstPropertyShape.constraints.minCount.extract() !== 1
+              firstPropertyShape.maxCount.extract() !== 1 ||
+              firstPropertyShape.minCount.extract() !== 1
             ) {
               return Left(
                 new Error(
@@ -148,8 +148,8 @@ export function transformShapeToAstListType(
               );
             }
             if (
-              restPropertyShape.constraints.maxCount.extract() !== 1 ||
-              restPropertyShape.constraints.minCount.extract() !== 1
+              restPropertyShape.maxCount.extract() !== 1 ||
+              restPropertyShape.minCount.extract() !== 1
             ) {
               return Left(
                 new Error(
@@ -185,7 +185,7 @@ export function transformShapeToAstListType(
                     if (
                       restProperty.type.kind !== "ListType" ||
                       !restProperty.type.shapeIdentifier.equals(
-                        nodeShape.identifier,
+                        nodeShape.$identifier,
                       )
                     ) {
                       return Left(
@@ -203,7 +203,7 @@ export function transformShapeToAstListType(
           },
         );
       })().ifLeft(() => {
-        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.identifier);
+        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier);
       });
     });
   } finally {

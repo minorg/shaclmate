@@ -12,12 +12,12 @@ const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
 function nodeShapeNodeKinds(
   nodeShape: input.NodeShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  const thisNodeKinds = nodeShape.constraints.nodeKinds;
+  const thisNodeKinds = nodeShape.nodeKinds;
 
   return nodeShape.parentNodeShapes.chain((parentNodeShapes) => {
     const parentNodeKinds = new Set<NodeKind>();
     for (const parentNodeShape of parentNodeShapes) {
-      for (const parentNodeKind of parentNodeShape.constraints.nodeKinds) {
+      for (const parentNodeKind of parentNodeShape.nodeKinds) {
         parentNodeKinds.add(parentNodeKind);
       }
     }
@@ -46,7 +46,7 @@ function nodeShapeNodeKinds(
 function propertyShapeNodeKinds(
   propertyShape: input.PropertyShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  return Either.of(propertyShape.constraints.nodeKinds);
+  return Either.of(propertyShape.nodeKinds);
 }
 
 export function shapeNodeKinds(
@@ -67,14 +67,14 @@ export function shapeNodeKinds(
     for (const [constraint, { excludeNodeKinds, includeNodeKinds }] of [
       [
         "sh:class",
-        shape.constraints.classes.length > 0
+        shape.classes.length > 0
           ? { excludeNodeKinds: ["Literal" as const] }
           : {},
       ],
       [
         "sh:datatype",
         {
-          includeNodeKinds: shape.constraints.datatype
+          includeNodeKinds: shape.datatype
             .map(() => ["Literal" as const])
             .orDefault([]) as readonly NodeKind[],
         },
@@ -93,7 +93,7 @@ export function shapeNodeKinds(
       [
         "sh:hasValue",
         {
-          includeNodeKinds: shape.constraints.hasValues.map((value) =>
+          includeNodeKinds: shape.hasValues.map((value) =>
             NodeKind.fromTermType(value.termType),
           ),
         },
@@ -101,21 +101,21 @@ export function shapeNodeKinds(
       [
         "sh:in",
         {
-          includeNodeKinds: shape.constraints.in_.map((in_) =>
+          includeNodeKinds: shape.in_.map((in_) =>
             NodeKind.fromTermType(in_.termType),
           ),
         },
       ],
       [
         "sh:languageIn",
-        shape.constraints.languageIn.length > 0
+        shape.languageIn.length > 0
           ? { includeNodeKinds: ["Literal" as const] }
           : {},
       ],
       [
         "sh:maxExclusive",
         {
-          includeNodeKinds: shape.constraints.maxExclusive
+          includeNodeKinds: shape.maxExclusive
             .map(() => ["Literal" as const])
             .orDefault([]) as readonly NodeKind[],
         },
@@ -123,7 +123,7 @@ export function shapeNodeKinds(
       [
         "sh:maxInclusive",
         {
-          includeNodeKinds: shape.constraints.maxInclusive
+          includeNodeKinds: shape.maxInclusive
             .map(() => ["Literal" as const])
             .orDefault([]) as readonly NodeKind[],
         },
@@ -131,7 +131,7 @@ export function shapeNodeKinds(
       [
         "sh:minExclusive",
         {
-          includeNodeKinds: shape.constraints.minExclusive
+          includeNodeKinds: shape.minExclusive
             .map(() => ["Literal"])
             .orDefault([]) as readonly NodeKind[],
         },
@@ -139,7 +139,7 @@ export function shapeNodeKinds(
       [
         "sh:minInclusive",
         {
-          includeNodeKinds: shape.constraints.minInclusive
+          includeNodeKinds: shape.minInclusive
             .map(() => ["Literal"])
             .orDefault([]) as readonly NodeKind[],
         },

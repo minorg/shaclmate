@@ -12,8 +12,8 @@ const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
 export function nodeShapeIdentifierMintingStrategy(
   nodeShape: input.NodeShape,
 ): Either<Error, Maybe<IdentifierMintingStrategy>> {
-  if (nodeShape.identifierMintingStrategy.isJust()) {
-    if (nodeShape.identifierIn.length > 0) {
+  if (nodeShape.$identifierMintingStrategy.isJust()) {
+    if (nodeShape.$identifierIn.length > 0) {
       return Left(
         new Error(
           `${nodeShape} cannot have an identifier minting strategy and sh:in`,
@@ -21,14 +21,14 @@ export function nodeShapeIdentifierMintingStrategy(
       );
     }
 
-    return Either.of(nodeShape.identifierMintingStrategy);
+    return Either.of(nodeShape.$identifierMintingStrategy);
   }
 
   return nodeShape.ancestorNodeShapes.chain((ancestorNodeShapes) => {
     for (const ancestorNodeShape of ancestorNodeShapes) {
-      if (ancestorNodeShape.identifierMintingStrategy.isJust()) {
+      if (ancestorNodeShape.$identifierMintingStrategy.isJust()) {
         return Either.of(
-          ancestorNodeShape.identifierMintingStrategy as Maybe<IdentifierMintingStrategy>,
+          ancestorNodeShape.$identifierMintingStrategy as Maybe<IdentifierMintingStrategy>,
         );
       }
     }

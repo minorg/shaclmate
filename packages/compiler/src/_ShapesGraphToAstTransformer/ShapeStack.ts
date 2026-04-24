@@ -11,16 +11,16 @@ export class ShapeStack {
     this.constraints = {
       get hasValues(): readonly (Literal | NamedNode)[] {
         for (const shape of stack.toReversed()) {
-          if (shape.constraints.hasValues.length > 0) {
-            return shape.constraints.hasValues;
+          if (shape.hasValues.length > 0) {
+            return shape.hasValues;
           }
         }
         return [];
       },
       get in_(): readonly (Literal | NamedNode)[] {
         for (const shape of stack.toReversed()) {
-          if (shape.constraints.in_.length > 0) {
-            return shape.constraints.in_;
+          if (shape.in_.length > 0) {
+            return shape.in_;
           }
         }
         return [];

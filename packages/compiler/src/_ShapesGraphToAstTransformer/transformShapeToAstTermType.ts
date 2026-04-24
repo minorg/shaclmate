@@ -34,7 +34,7 @@ export function transformShapeToAstTermType(
         comment: Maybe.empty(),
         name: Maybe.empty(),
         label: Maybe.empty(),
-        shapeIdentifier: shape.identifier,
+        shapeIdentifier: shape.$identifier,
       };
 
       let termType:
@@ -61,14 +61,14 @@ export function transformShapeToAstTermType(
           case "Literal":
             termType = new ast.LiteralType({
               ...astAbstractTypeProperties,
-              datatype: shape.constraints.datatype,
+              datatype: shape.datatype,
               hasValues: hasValues.filter((_) => _.termType === "Literal"),
               in_: in_.filter((_) => _.termType === "Literal"),
-              languageIn: [...new Set(shape.constraints.languageIn)],
-              maxExclusive: shape.constraints.maxExclusive,
-              maxInclusive: shape.constraints.maxInclusive,
-              minExclusive: shape.constraints.minExclusive,
-              minInclusive: shape.constraints.minInclusive,
+              languageIn: [...new Set(shape.languageIn)],
+              maxExclusive: shape.maxExclusive,
+              maxInclusive: shape.maxInclusive,
+              minExclusive: shape.minExclusive,
+              minInclusive: shape.minInclusive,
             });
             break;
         }
