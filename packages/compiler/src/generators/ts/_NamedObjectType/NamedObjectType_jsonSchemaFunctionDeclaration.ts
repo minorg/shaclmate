@@ -11,37 +11,23 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const mergeZodObjectSchemas: Code[] = [];
+  let properties: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
-    mergeZodObjectSchemas.push(
-      parentObjectType.jsonSchema({ context: "type" }),
+    properties.push(
+      code`...${parentObjectType.jsonSchema({ context: "type" })}.shape`,
     );
   }
   if (this.properties.length > 0) {
-    mergeZodObjectSchemas.push(
-      code`${imports.z}.object({ ${joinCode(
-        this.properties
-          .flatMap((property) => property.jsonZchema.toList())
-          .map(({ key, schema }) => code`"${key}": ${schema}`),
-        { on: "," },
-      )} })`,
+    properties = properties.concat(
+      this.properties
+        .flatMap((property) => property.jsonZchema.toList())
+        .map(({ key, schema }) => code`"${key}": ${schema}`),
     );
   }
 
+  // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
-  return ${
-    mergeZodObjectSchemas.length > 0
-      ? mergeZodObjectSchemas.reduce(
-          (merged, zodObjectSchema) => {
-            if (merged === null) {
-              return zodObjectSchema;
-            }
-            return code`${merged}.merge(${zodObjectSchema})`;
-          },
-          null as Code | null,
-        )
-      : `${imports.z}.object()`
-  } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
+  return ${imports.z}.object({${joinCode(properties, { on: "," })}}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
 }`);
 }

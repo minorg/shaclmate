@@ -3,7 +3,7 @@
     "shaclmate": "dist/cli.js"
   },
   "dependencies": {
-    "@shaclmate/compiler": "4.0.12",
+    "@shaclmate/compiler": "4.0.13",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/types": "~2.0.1",
     "@types/n3": "~1.26.0",
@@ -51,5 +51,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.12"
+  "version": "4.0.13"
 }

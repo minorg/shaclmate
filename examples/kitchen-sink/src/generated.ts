@@ -2797,7 +2797,7 @@ export namespace NamedUnion1 {
 
   export namespace $Json {
     export const schema = () =>
-      z.union([z.object({ "@id": z.string().min(1) }), z.string()]);
+      z.union([z.object({ "@id": z.string().min(1) }), z.string()]).readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -6317,12 +6317,14 @@ export namespace UnionDiscriminantsClass {
               "@value": z.string(),
             }),
           ])
+          .readonly()
           .optional()
           .describe(
             "Union that can be discriminated by an inline discriminant property (termType).",
           ),
         optionalIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .readonly()
           .optional()
           .describe("Union that can be discriminated by typeof."),
         requiredClassOrClassOrStringProperty: z
@@ -6353,11 +6355,13 @@ export namespace UnionDiscriminantsClass {
               "@value": z.string(),
             }),
           ])
+          .readonly()
           .describe(
             "Union that can be discriminated by an inline discriminant property (termType).",
           ),
         requiredIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .readonly()
           .describe("Union that can be discriminated by typeof."),
         setClassOrClassOrStringProperty: z
           .discriminatedUnion("type", [
@@ -6372,7 +6376,8 @@ export namespace UnionDiscriminantsClass {
             z.object({ type: z.literal("string"), value: z.string() }),
           ])
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .describe(
             "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           ),
@@ -6389,15 +6394,19 @@ export namespace UnionDiscriminantsClass {
               "@value": z.string(),
             }),
           ])
+          .readonly()
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .describe(
             "Union that can be discriminated by an inline discriminant property (termType).",
           ),
         setIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
+          .readonly()
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .describe("Union that can be discriminated by typeof."),
       }) satisfies z.ZodType<$Json>;
     }
@@ -15993,13 +16002,15 @@ export namespace PropertyCardinalitiesClass {
         emptyStringSetProperty: z
           .string()
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .describe("Set: minCount implicitly=0, no maxCount"),
         nonEmptyStringSetProperty: z
           .string()
           .array()
           .nonempty()
           .min(1)
+          .readonly()
           .describe("Set: minCount=1, no maxCount"),
         optionalStringProperty: z
           .string()
@@ -26297,8 +26308,8 @@ export namespace MutablePropertiesClass {
     readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
     readonly mutableListProperty?: string[];
-    readonly mutableSetProperty?: string[];
-    readonly mutableStringProperty?: string;
+    mutableSetProperty?: string[];
+    mutableStringProperty?: string;
   };
 
   export namespace $Json {
@@ -26317,7 +26328,7 @@ export namespace MutablePropertiesClass {
         mutableListProperty: z
           .string()
           .array()
-          .default(() => [])
+          .optional()
           .optional()
           .describe(
             "List-valued property that can't be reassigned but whose value can be mutated",
@@ -26325,7 +26336,7 @@ export namespace MutablePropertiesClass {
         mutableSetProperty: z
           .string()
           .array()
-          .default(() => [])
+          .optional()
           .describe(
             "Set-valued property that can't be reassigned but whose value can be mutated",
           ),
@@ -27385,18 +27396,16 @@ export namespace ListPropertiesClass {
         iriListProperty: z
           .object({ "@id": z.string().min(1) })
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .optional(),
         objectListProperty: NonClass.$Json
           .schema()
           .array()
-          .default(() => [])
+          .optional()
+          .readonly()
           .optional(),
-        stringListProperty: z
-          .string()
-          .array()
-          .default(() => [])
-          .optional(),
+        stringListProperty: z.string().array().optional().readonly().optional(),
       }) satisfies z.ZodType<$Json>;
     }
 
@@ -29645,11 +29654,13 @@ export namespace LazyPropertiesInterface {
         setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
           .schema()
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
         setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
           .schema()
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
       }) satisfies z.ZodType<$Json>;
     }
 
@@ -32891,11 +32902,13 @@ export namespace LazyPropertiesClass {
         setLazyToResolvedClassProperty: $DefaultPartial.$Json
           .schema()
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
         setPartialClassToResolvedClassProperty: PartialClass.$Json
           .schema()
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
       }) satisfies z.ZodType<$Json>;
     }
 
@@ -39379,6 +39392,7 @@ export namespace LanguageInPropertiesClass {
           .array()
           .nonempty()
           .min(1)
+          .readonly()
           .describe("literal property for testing languageIn"),
       }) satisfies z.ZodType<$Json>;
     }
@@ -39987,8 +40001,10 @@ export namespace JsPrimitiveUnionPropertyClass {
         $type: z.literal("JsPrimitiveUnionPropertyClass"),
         jsPrimitiveUnionProperty: z
           .union([z.boolean(), z.number(), z.string()])
+          .readonly()
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
       }) satisfies z.ZodType<$Json>;
     }
 
@@ -42193,13 +42209,12 @@ export namespace InterfaceUnionMember2 {
     }
 
     export function schema() {
-      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember2"),
-          interfaceUnionMember2Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("InterfaceUnionMember2"),
+        interfaceUnionMember2Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -42767,13 +42782,12 @@ export namespace InterfaceUnionMember1 {
     }
 
     export function schema() {
-      return InterfaceUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember1"),
-          interfaceUnionMember1Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("InterfaceUnionMember1"),
+        interfaceUnionMember1Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -47321,16 +47335,15 @@ export namespace IdentifierOverride2ClassStatic {
 
   export namespace $Json {
     export function schema() {
-      return IdentifierOverride1ClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...IdentifierOverride1ClassStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -47608,16 +47621,15 @@ export namespace IdentifierOverride3ClassStatic {
     }
 
     export function schema() {
-      return IdentifierOverride2ClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...IdentifierOverride2ClassStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "IdentifierOverride3Class",
+          "IdentifierOverride4Class",
+          "IdentifierOverride5Class",
+        ]),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -48067,15 +48079,11 @@ export namespace IdentifierOverride4ClassStatic {
     }
 
     export function schema() {
-      return IdentifierOverride3ClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...IdentifierOverride3ClassStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum(["IdentifierOverride4Class", "IdentifierOverride5Class"]),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -48519,12 +48527,11 @@ export namespace IdentifierOverride5Class {
     }
 
     export function schema() {
-      return IdentifierOverride4ClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride5Class"),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...IdentifierOverride4ClassStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("IdentifierOverride5Class"),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -57374,7 +57381,8 @@ export namespace ConvertibleTypePropertiesClass {
           .object({ "@id": z.string().min(1) })
           .array()
           .nonempty()
-          .min(1),
+          .min(1)
+          .readonly(),
         convertibleIriOptionProperty: z
           .object({ "@id": z.string().min(1) })
           .optional(),
@@ -57382,7 +57390,8 @@ export namespace ConvertibleTypePropertiesClass {
         convertibleIriSetProperty: z
           .object({ "@id": z.string().min(1) })
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
         convertibleLiteralNonEmptySetProperty: z
           .object({
             "@language": z.string().optional(),
@@ -57391,7 +57400,8 @@ export namespace ConvertibleTypePropertiesClass {
           })
           .array()
           .nonempty()
-          .min(1),
+          .min(1)
+          .readonly(),
         convertibleLiteralOptionProperty: z
           .object({
             "@language": z.string().optional(),
@@ -57411,7 +57421,8 @@ export namespace ConvertibleTypePropertiesClass {
             "@value": z.string(),
           })
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
         convertibleTermNonEmptySetProperty: z
           .discriminatedUnion("termType", [
             z.object({
@@ -57431,7 +57442,8 @@ export namespace ConvertibleTypePropertiesClass {
           ])
           .array()
           .nonempty()
-          .min(1),
+          .min(1)
+          .readonly(),
         convertibleTermOptionProperty: z
           .discriminatedUnion("termType", [
             z.object({
@@ -57484,7 +57496,8 @@ export namespace ConvertibleTypePropertiesClass {
             }),
           ])
           .array()
-          .default(() => []),
+          .optional()
+          .readonly(),
       }) satisfies z.ZodType<$Json>;
     }
 
@@ -59656,16 +59669,15 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     export function schema() {
-      return BaseInterfaceWithPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "BaseInterfaceWithoutProperties",
-            "ConcreteChildInterface",
-            "ConcreteParentInterface",
-          ]),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...BaseInterfaceWithPropertiesStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum([
+          "BaseInterfaceWithoutProperties",
+          "ConcreteChildInterface",
+          "ConcreteParentInterface",
+        ]),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -60193,13 +60205,12 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     export function schema() {
-      return BaseInterfaceWithoutPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
-          concreteParentInterfaceProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...BaseInterfaceWithoutPropertiesStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+        concreteParentInterfaceProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -60792,13 +60803,12 @@ export namespace ConcreteChildInterface {
     }
 
     export function schema() {
-      return ConcreteParentInterfaceStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildInterface"),
-          concreteChildInterfaceProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...ConcreteParentInterfaceStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("ConcreteChildInterface"),
+        concreteChildInterfaceProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -61792,12 +61802,11 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export namespace $Json {
     export function schema() {
-      return AbstractBaseClassWithPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...AbstractBaseClassWithPropertiesStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -62134,13 +62143,12 @@ export namespace ConcreteParentClassStatic {
     }
 
     export function schema() {
-      return AbstractBaseClassWithoutPropertiesStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
-          concreteParentClassProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...AbstractBaseClassWithoutPropertiesStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
+        concreteParentClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -62694,13 +62702,12 @@ export namespace ConcreteChildClass {
     }
 
     export function schema() {
-      return ConcreteParentClassStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildClass"),
-          concreteChildClassProperty: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...ConcreteParentClassStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("ConcreteChildClass"),
+        concreteChildClassProperty: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -63640,13 +63647,12 @@ export namespace ClassUnionMember2 {
     }
 
     export function schema() {
-      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember2"),
-          classUnionMember2Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("ClassUnionMember2"),
+        classUnionMember2Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -64167,13 +64173,12 @@ export namespace ClassUnionMember1 {
     }
 
     export function schema() {
-      return ClassUnionMemberCommonParentStatic.$Json.schema().merge(
-        z.object({
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember1"),
-          classUnionMember1Property: z.string(),
-        }),
-      ) satisfies z.ZodType<$Json>;
+      return z.object({
+        ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
+        "@id": z.string().min(1),
+        $type: z.literal("ClassUnionMember1"),
+        classUnionMember1Property: z.string(),
+      }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -68822,10 +68827,12 @@ export namespace ClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        ClassUnionMember1.$Json.schema(),
-        ClassUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          ClassUnionMember1.$Json.schema(),
+          ClassUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -69343,11 +69350,13 @@ export namespace FlattenClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        ClassUnionMember1.$Json.schema(),
-        ClassUnionMember2.$Json.schema(),
-        FlattenClassUnionMember3.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          ClassUnionMember1.$Json.schema(),
+          ClassUnionMember2.$Json.schema(),
+          FlattenClassUnionMember3.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -69833,10 +69842,12 @@ export namespace InterfaceUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        InterfaceUnionMember1.$Json.schema(),
-        InterfaceUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          InterfaceUnionMember1.$Json.schema(),
+          InterfaceUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -70308,10 +70319,12 @@ export namespace LazilyResolvedClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        LazilyResolvedClassUnionMember1.$Json.schema(),
-        LazilyResolvedClassUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          LazilyResolvedClassUnionMember1.$Json.schema(),
+          LazilyResolvedClassUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -70825,10 +70838,12 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        LazilyResolvedInterfaceUnionMember1.$Json.schema(),
-        LazilyResolvedInterfaceUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+          LazilyResolvedInterfaceUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -71326,10 +71341,12 @@ export namespace PartialClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        PartialClassUnionMember1.$Json.schema(),
-        PartialClassUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          PartialClassUnionMember1.$Json.schema(),
+          PartialClassUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -71798,10 +71815,12 @@ export namespace PartialInterfaceUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        PartialInterfaceUnionMember1.$Json.schema(),
-        PartialInterfaceUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          PartialInterfaceUnionMember1.$Json.schema(),
+          PartialInterfaceUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -72272,10 +72291,12 @@ export namespace NoRdfTypeClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        NoRdfTypeClassUnionMember1.$Json.schema(),
-        NoRdfTypeClassUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          NoRdfTypeClassUnionMember1.$Json.schema(),
+          NoRdfTypeClassUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -72738,10 +72759,12 @@ export namespace RecursiveClassUnion {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        RecursiveClassUnionMember1.$Json.schema(),
-        RecursiveClassUnionMember2.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          RecursiveClassUnionMember1.$Json.schema(),
+          RecursiveClassUnionMember2.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -78299,84 +78322,86 @@ export namespace $Object {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        BlankNodeIdentifierClass.$Json.schema(),
-        BlankNodeIdentifierInterface.$Json.schema(),
-        BlankNodeOrIriIdentifierClass.$Json.schema(),
-        BlankNodeOrIriIdentifierInterface.$Json.schema(),
-        ClassPropertiesClass.$Json.schema(),
-        PartialClass.$Json.schema(),
-        NonClass.$Json.schema(),
-        ClassUnionMember1.$Json.schema(),
-        ClassUnionMember2.$Json.schema(),
-        ConcreteChildClass.$Json.schema(),
-        ConcreteParentClassStatic.$Json.schema(),
-        ConcreteChildInterface.$Json.schema(),
-        ConcreteParentInterfaceStatic.$Json.schema(),
-        BaseInterfaceWithoutPropertiesStatic.$Json.schema(),
-        BaseInterfaceWithPropertiesStatic.$Json.schema(),
-        ConvertibleTypePropertiesClass.$Json.schema(),
-        DateUnionPropertiesClass.$Json.schema(),
-        DefaultValuePropertiesClass.$Json.schema(),
-        DirectRecursiveClass.$Json.schema(),
-        ExplicitFromToRdfTypesClass.$Json.schema(),
-        ExplicitRdfTypeClass.$Json.schema(),
-        ExternClassPropertyClass.$Json.schema(),
-        FlattenClassUnionMember3.$Json.schema(),
-        HasValuePropertiesClass.$Json.schema(),
-        IdentifierOverride5Class.$Json.schema(),
-        IdentifierOverride4ClassStatic.$Json.schema(),
-        IdentifierOverride3ClassStatic.$Json.schema(),
-        InIdentifierClass.$Json.schema(),
-        InPropertiesClass.$Json.schema(),
-        IndirectRecursiveClass.$Json.schema(),
-        IndirectRecursiveHelperClass.$Json.schema(),
-        Interface.$Json.schema(),
-        InterfaceUnionMember1.$Json.schema(),
-        InterfaceUnionMember2.$Json.schema(),
-        IriIdentifierClass.$Json.schema(),
-        IriIdentifierInterface.$Json.schema(),
-        JsPrimitiveUnionPropertyClass.$Json.schema(),
-        LanguageInPropertiesClass.$Json.schema(),
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$Json.schema(),
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json.schema(),
-        LazilyResolvedClassUnionMember1.$Json.schema(),
-        LazilyResolvedClassUnionMember2.$Json.schema(),
-        LazilyResolvedInterfaceUnionMember1.$Json.schema(),
-        LazilyResolvedInterfaceUnionMember2.$Json.schema(),
-        LazilyResolvedIriIdentifierClass.$Json.schema(),
-        LazilyResolvedIriIdentifierInterface.$Json.schema(),
-        LazyPropertiesClass.$Json.schema(),
-        LazyPropertiesInterface.$Json.schema(),
-        PartialInterface.$Json.schema(),
-        ListPropertiesClass.$Json.schema(),
-        MutablePropertiesClass.$Json.schema(),
-        NamedUnionPropertiesClass.$Json.schema(),
-        NoRdfTypeClassUnionMember1.$Json.schema(),
-        NoRdfTypeClassUnionMember2.$Json.schema(),
-        NodeKindsClass.$Json.schema(),
-        NumericPropertiesClass.$Json.schema(),
-        OrderedPropertiesClass.$Json.schema(),
-        NewName1Class.$Json.schema(),
-        NewName2Class.$Json.schema(),
-        PartialClassUnionMember1.$Json.schema(),
-        PartialClassUnionMember2.$Json.schema(),
-        PartialInterfaceUnionMember1.$Json.schema(),
-        PartialInterfaceUnionMember2.$Json.schema(),
-        PropertyCardinalitiesClass.$Json.schema(),
-        PropertyNamesClass.$Json.schema(),
-        PropertyPathsClass.$Json.schema(),
-        PropertyVisibilitiesClass.$Json.schema(),
-        RecursiveClassUnionMember1.$Json.schema(),
-        RecursiveClassUnionMember2.$Json.schema(),
-        Sha256IriIdentifierClass.$Json.schema(),
-        TermPropertiesClass.$Json.schema(),
-        UnionDiscriminantsClass.$Json.schema(),
-        UuidV4IriIdentifierClass.$Json.schema(),
-        UuidV4IriIdentifierInterface.$Json.schema(),
-        $DefaultPartial.$Json.schema(),
-        $NamedDefaultPartial.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          BlankNodeIdentifierClass.$Json.schema(),
+          BlankNodeIdentifierInterface.$Json.schema(),
+          BlankNodeOrIriIdentifierClass.$Json.schema(),
+          BlankNodeOrIriIdentifierInterface.$Json.schema(),
+          ClassPropertiesClass.$Json.schema(),
+          PartialClass.$Json.schema(),
+          NonClass.$Json.schema(),
+          ClassUnionMember1.$Json.schema(),
+          ClassUnionMember2.$Json.schema(),
+          ConcreteChildClass.$Json.schema(),
+          ConcreteParentClassStatic.$Json.schema(),
+          ConcreteChildInterface.$Json.schema(),
+          ConcreteParentInterfaceStatic.$Json.schema(),
+          BaseInterfaceWithoutPropertiesStatic.$Json.schema(),
+          BaseInterfaceWithPropertiesStatic.$Json.schema(),
+          ConvertibleTypePropertiesClass.$Json.schema(),
+          DateUnionPropertiesClass.$Json.schema(),
+          DefaultValuePropertiesClass.$Json.schema(),
+          DirectRecursiveClass.$Json.schema(),
+          ExplicitFromToRdfTypesClass.$Json.schema(),
+          ExplicitRdfTypeClass.$Json.schema(),
+          ExternClassPropertyClass.$Json.schema(),
+          FlattenClassUnionMember3.$Json.schema(),
+          HasValuePropertiesClass.$Json.schema(),
+          IdentifierOverride5Class.$Json.schema(),
+          IdentifierOverride4ClassStatic.$Json.schema(),
+          IdentifierOverride3ClassStatic.$Json.schema(),
+          InIdentifierClass.$Json.schema(),
+          InPropertiesClass.$Json.schema(),
+          IndirectRecursiveClass.$Json.schema(),
+          IndirectRecursiveHelperClass.$Json.schema(),
+          Interface.$Json.schema(),
+          InterfaceUnionMember1.$Json.schema(),
+          InterfaceUnionMember2.$Json.schema(),
+          IriIdentifierClass.$Json.schema(),
+          IriIdentifierInterface.$Json.schema(),
+          JsPrimitiveUnionPropertyClass.$Json.schema(),
+          LanguageInPropertiesClass.$Json.schema(),
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$Json.schema(),
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json.schema(),
+          LazilyResolvedClassUnionMember1.$Json.schema(),
+          LazilyResolvedClassUnionMember2.$Json.schema(),
+          LazilyResolvedInterfaceUnionMember1.$Json.schema(),
+          LazilyResolvedInterfaceUnionMember2.$Json.schema(),
+          LazilyResolvedIriIdentifierClass.$Json.schema(),
+          LazilyResolvedIriIdentifierInterface.$Json.schema(),
+          LazyPropertiesClass.$Json.schema(),
+          LazyPropertiesInterface.$Json.schema(),
+          PartialInterface.$Json.schema(),
+          ListPropertiesClass.$Json.schema(),
+          MutablePropertiesClass.$Json.schema(),
+          NamedUnionPropertiesClass.$Json.schema(),
+          NoRdfTypeClassUnionMember1.$Json.schema(),
+          NoRdfTypeClassUnionMember2.$Json.schema(),
+          NodeKindsClass.$Json.schema(),
+          NumericPropertiesClass.$Json.schema(),
+          OrderedPropertiesClass.$Json.schema(),
+          NewName1Class.$Json.schema(),
+          NewName2Class.$Json.schema(),
+          PartialClassUnionMember1.$Json.schema(),
+          PartialClassUnionMember2.$Json.schema(),
+          PartialInterfaceUnionMember1.$Json.schema(),
+          PartialInterfaceUnionMember2.$Json.schema(),
+          PropertyCardinalitiesClass.$Json.schema(),
+          PropertyNamesClass.$Json.schema(),
+          PropertyPathsClass.$Json.schema(),
+          PropertyVisibilitiesClass.$Json.schema(),
+          RecursiveClassUnionMember1.$Json.schema(),
+          RecursiveClassUnionMember2.$Json.schema(),
+          Sha256IriIdentifierClass.$Json.schema(),
+          TermPropertiesClass.$Json.schema(),
+          UnionDiscriminantsClass.$Json.schema(),
+          UuidV4IriIdentifierClass.$Json.schema(),
+          UuidV4IriIdentifierInterface.$Json.schema(),
+          $DefaultPartial.$Json.schema(),
+          $NamedDefaultPartial.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);

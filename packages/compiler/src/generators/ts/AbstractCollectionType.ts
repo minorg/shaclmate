@@ -263,7 +263,10 @@ export abstract class AbstractCollectionType<
     if (this.minCount > 0) {
       schema = code`${schema}.nonempty().min(${this.minCount})`;
     } else {
-      schema = code`${schema}.default(() => [])`;
+      schema = code`${schema}.optional()`;
+    }
+    if (!this._mutable) {
+      schema = code`${schema}.readonly()`;
     }
     return schema;
   }

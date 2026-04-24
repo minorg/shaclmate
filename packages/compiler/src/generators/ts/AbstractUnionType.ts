@@ -453,14 +453,14 @@ ${joinCode(
             }),
           ),
           { on: "," },
-        )}])`;
+        )}]).readonly()`;
       case "typeof":
         return code`${imports.z}.union([${joinCode(
           this.concreteMembers.map(({ type }) =>
             type.jsonSchema({ context: "type" }),
           ),
           { on: "," },
-        )}])`;
+        )}]).readonly()`;
       default:
         throw this.discriminant satisfies never;
     }
