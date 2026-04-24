@@ -1,6 +1,6 @@
 import dataFactory from "@rdfjs/data-model";
 import { Curie, type NodeKind } from "@shaclmate/shacl-ast";
-import { Either, Left, List, Maybe } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
@@ -59,7 +59,7 @@ function propertyName(
   propertyShape: input.PropertyShape,
 ): string {
   // Explicit shaclmate:name or sh:name
-  const name = propertyShape.name.alt(List.head(propertyShape.names)).extract();
+  const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
   if (name) {
     return name;
   }
@@ -371,7 +371,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     return Either.of(
       new ast.ObjectType.Property({
         comment: shapeComment(propertyShape),
-        description: List.head(propertyShape.descriptions),
+        description: propertyShape.description,
         label: shapeLabel(propertyShape),
         mutable: propertyShape.mutable.orDefault(false),
         name: propertyName.call(this, objectType, propertyShape),

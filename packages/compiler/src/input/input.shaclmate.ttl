@@ -84,6 +84,7 @@ shaclmate:Shape-shaclmateName
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
+    sh:name "shaclmateName" ;
     sh:path shaclmate:name .
 
 shaclmate:tsFeatureExcludes

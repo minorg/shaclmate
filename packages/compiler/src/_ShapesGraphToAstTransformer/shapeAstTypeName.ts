@@ -13,8 +13,8 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   }
 
   // Explicit shaclmate:name
-  if (shape.name.isJust()) {
-    return shape.name;
+  if (shape.shaclmateName.isJust()) {
+    return shape.shaclmateName;
   }
 
   // Explicit rdfs:label
