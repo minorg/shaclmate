@@ -59,7 +59,7 @@ function propertyName(
   propertyShape: input.PropertyShape,
 ): string {
   // Explicit shaclmate:name or sh:name
-  const name = List.head(propertyShape.names).alt(propertyShape.name).extract();
+  const name = propertyShape.name.alt(List.head(propertyShape.names)).extract();
   if (name) {
     return name;
   }
