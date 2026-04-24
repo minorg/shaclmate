@@ -1,7 +1,7 @@
 import { Ontology as ShaclAstOntology } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
+import { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as generated from "./generated.js";
 
 export class Ontology extends ShaclAstOntology {
@@ -23,15 +23,8 @@ export class Ontology extends ShaclAstOntology {
 
   @Memoize()
   get tsObjectDeclarationType(): Maybe<TsObjectDeclarationType> {
-    return this._generatedOntology.tsObjectDeclarationType.map((iri) => {
-      switch (iri.value) {
-        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
-          return "class";
-        case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface":
-          return "interface";
-        default:
-          throw new RangeError(iri.value);
-      }
-    });
+    return this._generatedOntology.tsObjectDeclarationType.map(
+      TsObjectDeclarationType.fromIri,
+    );
   }
 }
