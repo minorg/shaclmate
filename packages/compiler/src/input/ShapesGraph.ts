@@ -47,7 +47,7 @@ export namespace ShapesGraph {
         const ancestorClassIris_ = ancestorClassIris(
           resource,
           Number.MAX_SAFE_INTEGER,
-        );
+        ).filter((ancestorClassIri) => !ancestorClassIri.equals(rdf.List));
         if (ancestorClassIris_.length > 0) {
           isClass = true; // RDFS entailment: if A rdfs:subClassOf B then both A and B are rdfs:Class's
         }
@@ -67,7 +67,9 @@ export namespace ShapesGraph {
           descendantClassIris: descendantClassIris_,
           isClass,
           isList,
-          parentClassIris: ancestorClassIris(resource, 1),
+          parentClassIris: ancestorClassIris(resource, 1).filter(
+            (ancestorClassIri) => !ancestorClassIri.equals(rdf.List),
+          ),
         };
       });
     }

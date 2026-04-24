@@ -19,8 +19,9 @@ export class ShapeStack {
       },
       get in_(): readonly (Literal | NamedNode)[] {
         for (const shape of stack.toReversed()) {
-          if (shape.in_.length > 0) {
-            return shape.in_;
+          const shapeIn = shape.in_.orDefault([]);
+          if (shapeIn.length > 0) {
+            return shapeIn;
           }
         }
         return [];
@@ -35,7 +36,7 @@ export class ShapeStack {
 
   get defaultValue(): Maybe<Literal | NamedNode> {
     for (const shape of this.stack.toReversed()) {
-      if (shape.kind !== "PropertyShape") {
+      if (shape.$type !== "PropertyShape") {
         continue;
       }
       if (shape.defaultValue.isJust()) {

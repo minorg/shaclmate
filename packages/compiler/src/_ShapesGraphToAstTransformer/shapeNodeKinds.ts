@@ -1,6 +1,7 @@
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left } from "purify-ts";
 import type * as input from "../input/index.js";
+import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 
 const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
@@ -10,14 +11,23 @@ const defaultPropertyShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
 ]);
 
 function nodeShapeNodeKinds(
+  this: ShapesGraphToAstTransformer,
   nodeShape: input.NodeShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  const thisNodeKinds = nodeShape.nodeKinds;
+  const thisNodeKinds = nodeShape.nodeKind
+    .map(NodeKind.fromIri)
+    .orDefault(new Set());
 
-  return nodeShape.parentNodeShapes.chain((parentNodeShapes) => {
+  return Either.sequence(
+    nodeShape.parentClassIris.map((nodeShapeIdentifier) =>
+      this.shapesGraph.nodeShape(nodeShapeIdentifier),
+    ),
+  ).chain((parentNodeShapes) => {
     const parentNodeKinds = new Set<NodeKind>();
     for (const parentNodeShape of parentNodeShapes) {
-      for (const parentNodeKind of parentNodeShape.nodeKinds) {
+      for (const parentNodeKind of parentNodeShape.nodeKind
+        .map(NodeKind.fromIri)
+        .orDefault(new Set())) {
         parentNodeKinds.add(parentNodeKind);
       }
     }
@@ -46,10 +56,13 @@ function nodeShapeNodeKinds(
 function propertyShapeNodeKinds(
   propertyShape: input.PropertyShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  return Either.of(propertyShape.nodeKinds);
+  return Either.of(
+    propertyShape.nodeKind.map(NodeKind.fromIri).orDefault(new Set()),
+  );
 }
 
 export function shapeNodeKinds(
+  this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   options?: {
     defaultNodeShapeNodeKinds: ReadonlySet<NodeKind>;
@@ -57,8 +70,8 @@ export function shapeNodeKinds(
   },
 ): Either<Error, ReadonlySet<NodeKind>> {
   return (
-    shape.kind === "NodeShape"
-      ? nodeShapeNodeKinds(shape)
+    shape.$type === "NodeShape"
+      ? nodeShapeNodeKinds.call(this, shape)
       : propertyShapeNodeKinds(shape)
   ).chain((explicitNodeKinds) => {
     // Consider constraints that dictate certain node kinds, like sh:datatype dictates a Literal nodeKind.
@@ -83,7 +96,7 @@ export function shapeNodeKinds(
         "sh:defaultValue",
         {
           includeNodeKinds:
-            shape.kind === "PropertyShape"
+            shape.$type === "PropertyShape"
               ? shape.defaultValue
                   .map((value) => NodeKind.fromTermType(value.termType))
                   .toList()
@@ -101,14 +114,14 @@ export function shapeNodeKinds(
       [
         "sh:in",
         {
-          includeNodeKinds: shape.in_.map((in_) =>
-            NodeKind.fromTermType(in_.termType),
-          ),
+          includeNodeKinds: shape.in_
+            .orDefault([])
+            .map((in_) => NodeKind.fromTermType(in_.termType)),
         },
       ],
       [
         "sh:languageIn",
-        shape.languageIn.length > 0
+        shape.languageIn.orDefault([]).length > 0
           ? { includeNodeKinds: ["Literal" as const] }
           : {},
       ],
@@ -213,7 +226,7 @@ export function shapeNodeKinds(
       return Either.of(constraintNodeKinds);
     }
 
-    if (shape.kind === "NodeShape") {
+    if (shape.$type === "NodeShape") {
       return Either.of(
         options?.defaultNodeShapeNodeKinds ?? defaultNodeShapeNodeKinds,
       );

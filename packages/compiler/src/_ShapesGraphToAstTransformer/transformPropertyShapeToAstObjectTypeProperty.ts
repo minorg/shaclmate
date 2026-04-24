@@ -1,14 +1,17 @@
 import dataFactory from "@rdfjs/data-model";
 import { Curie, type NodeKind } from "@shaclmate/shacl-ast";
-import { Either, Left, Maybe } from "purify-ts";
+import { Either, Left, List, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
+import { Visibility } from "../enums/Visibility.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
+import { shapeComment } from "./shapeComment.js";
+import { shapeLabel } from "./shapeLabel.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -56,13 +59,13 @@ function propertyName(
   propertyShape: input.PropertyShape,
 ): string {
   // Explicit shaclmate:name or sh:name
-  const name = propertyShape.shaclmateName.alt(propertyShape.name).extract();
+  const name = propertyShape.name.alt(propertyShape.name).extract();
   if (name) {
     return name;
   }
 
   // Explicit rdfs:label
-  const label = propertyShape.label.extract();
+  const label = shapeLabel(propertyShape).extract();
   if (label) {
     return label;
   }
@@ -205,7 +208,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 ): Either<Error, ast.ObjectType.Property> {
   const shapeStack = new ShapeStack(); // Start a new ShapeStack per property shape
   return Eithers.chain2(
-    propertyShape.resolve,
+    propertyShape.resolve.isJust()
+      ? this.shapesGraph
+          .nodeShape(propertyShape.resolve.extract()!)
+          .map(Maybe.of)
+      : Either.of(Maybe.empty()),
     transformPropertyShapeToAstType.call(this, propertyShape, shapeStack),
   ).chain(([propertyShapeResolve, astType]) => {
     let astResolveItemType: ast.ObjectType | ast.ObjectUnionType | undefined;
@@ -363,9 +370,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 
     return Either.of(
       new ast.ObjectType.Property({
-        comment: propertyShape.comment,
-        description: propertyShape.description,
-        label: propertyShape.label,
+        comment: shapeComment(propertyShape),
+        description: List.head(propertyShape.descriptions),
+        label: shapeLabel(propertyShape),
         mutable: propertyShape.mutable.orDefault(false),
         name: propertyName.call(this, objectType, propertyShape),
         objectType,
@@ -373,7 +380,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier,
         type: astType,
-        visibility: propertyShape.visibility,
+        visibility: propertyShape.visibility
+          .map(Visibility.fromIri)
+          .orDefault("public"),
       }),
     );
   });

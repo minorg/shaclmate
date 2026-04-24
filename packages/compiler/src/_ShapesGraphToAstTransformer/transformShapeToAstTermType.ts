@@ -26,7 +26,7 @@ export function transformShapeToAstTermType(
 ): Either<Error, AstTermType> {
   shapeStack.push(shape);
   try {
-    return shapeNodeKinds(shape).chain((nodeKinds) => {
+    return shapeNodeKinds.call(this, shape).chain((nodeKinds) => {
       const hasValues = shapeStack.constraints.hasValues;
       const in_ = shapeStack.constraints.in_;
 
@@ -64,7 +64,9 @@ export function transformShapeToAstTermType(
               datatype: shape.datatype,
               hasValues: hasValues.filter((_) => _.termType === "Literal"),
               in_: in_.filter((_) => _.termType === "Literal"),
-              languageIn: [...new Set(shape.languageIn)],
+              languageIn: shape.languageIn
+                .map((languageIn) => [...new Set(languageIn)])
+                .orDefault([]),
               maxExclusive: shape.maxExclusive,
               maxInclusive: shape.maxInclusive,
               minExclusive: shape.minExclusive,

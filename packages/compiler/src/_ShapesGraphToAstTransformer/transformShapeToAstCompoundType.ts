@@ -8,6 +8,8 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
+import { shapeComment } from "./shapeComment.js";
+import { shapeLabel } from "./shapeLabel.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -21,12 +23,26 @@ export function transformShapeToAstCompoundType(
   shapeStack.push(shape);
   try {
     return Eithers.chain4(
-      shape.and,
-      shape.nodes,
-      shape.kind === "NodeShape"
+      Either.sequence(
+        shape.and.flatMap((and) =>
+          and.map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
+        ),
+      ),
+      Either.sequence(
+        shape.nodes.map((nodeShapeIdentifier) =>
+          this.shapesGraph.nodeShape(nodeShapeIdentifier),
+        ),
+      ),
+      shape.$type === "NodeShape"
         ? nodeShapeTsFeatures.call(this, shape)
         : Either.of(new Set<TsFeature>()),
-      shape.xone,
+      Either.sequence(
+        shape.xone.flatMap((xone) =>
+          xone.map((shapeIdentifier) =>
+            this.shapesGraph.shape(shapeIdentifier),
+          ),
+        ),
+      ),
     ).chain(
       ([
         andConstraintShapes,
@@ -60,8 +76,8 @@ export function transformShapeToAstCompoundType(
             ? ast.IntersectionType
             : ast.UnionType
         )({
-          comment: shape.comment,
-          label: shape.label,
+          comment: shapeComment(shape),
+          label: shapeLabel(shape),
           name: shapeAstTypeName(shape),
           shapeIdentifier: shape.$identifier,
           tsFeatures,
@@ -115,7 +131,7 @@ export function transformShapeToAstCompoundType(
 
                 let memberDiscriminantValue: number | string | undefined;
                 if (compoundTypeKind === "UnionType") {
-                  if (memberShape.kind === "NodeShape") {
+                  if (memberShape.$type === "NodeShape") {
                     memberDiscriminantValue =
                       memberShape.discriminantValue.extract();
                   }
