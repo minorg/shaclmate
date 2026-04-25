@@ -27,12 +27,12 @@ describe("Shape", () => {
   };
 
   it("should have a description", ({ expect }) => {
-    const descriptions = findPropertyShape(
-      dash.ScriptAPIShape,
-      dash.generateClass,
-    ).descriptions;
-    expect(descriptions).toHaveLength(1);
-    expect(descriptions[0]).toMatch(/^The API generator/);
+    expect(
+      findPropertyShape(
+        dash.ScriptAPIShape,
+        dash.generateClass,
+      ).description.unsafeCoerce(),
+    ).toMatch(/^The API generator/);
   });
 
   // it("should be defined by an ontology", ({ expect }) => {
@@ -62,9 +62,9 @@ describe("Shape", () => {
   // });
 
   it("should have a name", ({ expect }) => {
-    const names = findPropertyShape(schema.Person, schema.givenName).names;
-    expect(names).toHaveLength(1);
-    expect(names[0]).toStrictEqual("given name");
+    expect(
+      findPropertyShape(schema.Person, schema.givenName).name.unsafeCoerce(),
+    ).toStrictEqual("given name");
   });
 
   // No shape in the test data with a clean sh:and
