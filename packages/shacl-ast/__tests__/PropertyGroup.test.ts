@@ -7,10 +7,10 @@ describe("PropertyGroup", () => {
 
   it("should have a label", ({ expect }) => {
     const propertyGroup = shapesGraph
-      .propertyGroupByIdentifier(dash.ScriptAPIGenerationRules)
+      .propertyGroup(dash.ScriptAPIGenerationRules)
       .unsafeCoerce();
-    const labels = propertyGroup.labels;
-    expect(labels).toHaveLength(1);
-    expect(labels[0]).toStrictEqual("Script API Generation Rules");
+    expect(propertyGroup.label.unsafeCoerce()).toStrictEqual(
+      "Script API Generation Rules",
+    );
   });
 });

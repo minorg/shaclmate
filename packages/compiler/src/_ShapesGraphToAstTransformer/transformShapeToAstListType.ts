@@ -53,7 +53,7 @@ export function transformShapeToAstListType(
 ): Either<Error, Maybe<ast.ListType>> {
   shapeStack.push(shape);
   try {
-    if (shape.kind !== "NodeShape") {
+    if (shape.$type !== "NodeShape") {
       return Either.of(Maybe.empty());
     }
     const nodeShape = shape;
@@ -62,9 +62,15 @@ export function transformShapeToAstListType(
     }
 
     return Eithers.chain3(
-      nodeShapeIdentifierMintingStrategy(nodeShape),
-      shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
-      nodeShape.constraints.xone,
+      nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
+      shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
+      Either.sequence(
+        nodeShape.xone.flatMap((xone) =>
+          xone.map((shapeIdentifier) =>
+            this.shapesGraph.shape(shapeIdentifier),
+          ),
+        ),
+      ),
     ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
@@ -76,24 +82,24 @@ export function transformShapeToAstListType(
         mutable: nodeShape.mutable.orDefault(false),
         name: shapeAstTypeName(nodeShape),
         identifierMintingStrategy,
-        shapeIdentifier: nodeShape.identifier,
+        shapeIdentifier: nodeShape.$identifier,
         toRdfTypes: nodeShape.toRdfTypes,
       });
 
-      this.cachedAstTypesByShapeIdentifier.set(nodeShape.identifier, listType);
+      this.cachedAstTypesByShapeIdentifier.set(nodeShape.$identifier, listType);
 
       return (() => {
         let emptyListShape: input.Shape | undefined;
         let nonEmptyListShape: input.NodeShape | undefined;
         for (const shape of xone) {
           if (
-            shape.constraints.hasValues.length === 1 &&
-            shape.constraints.hasValues[0].equals(rdf.nil)
+            shape.hasValues.length === 1 &&
+            shape.hasValues[0].equals(rdf.nil)
           ) {
             emptyListShape = shape;
           } else if (
-            shape.kind === "NodeShape" &&
-            shape.constraints.properties.orDefault([]).length >= 2
+            shape.$type === "NodeShape" &&
+            shape.properties.length >= 2
           ) {
             nonEmptyListShape = shape;
           }
@@ -107,103 +113,105 @@ export function transformShapeToAstListType(
           );
         }
 
-        return nonEmptyListShape.constraints.properties.chain(
-          (nonEmptyListShapeProperties) => {
-            let firstPropertyShape: input.PropertyShape | undefined;
-            let restPropertyShape: input.PropertyShape | undefined;
-            for (const propertyShape of nonEmptyListShapeProperties) {
-              if (propertyShape.path.termType !== "NamedNode") {
-                continue;
+        return Either.sequence(
+          nonEmptyListShape.properties.map((propertyShapeIdentifier) =>
+            this.shapesGraph.propertyShape(propertyShapeIdentifier),
+          ),
+        ).chain((nonEmptyListShapeProperties) => {
+          let firstPropertyShape: input.PropertyShape | undefined;
+          let restPropertyShape: input.PropertyShape | undefined;
+          for (const propertyShape of nonEmptyListShapeProperties) {
+            if (propertyShape.path.termType !== "NamedNode") {
+              continue;
+            }
+            if (propertyShape.path.equals(rdf.first)) {
+              firstPropertyShape = propertyShape;
+            } else if (propertyShape.path.equals(rdf.rest)) {
+              restPropertyShape = propertyShape;
+            }
+          }
+
+          if (!firstPropertyShape) {
+            return Left(
+              new Error(
+                `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:first`,
+              ),
+            );
+          }
+          if (
+            firstPropertyShape.maxCount.extract() !== 1 ||
+            firstPropertyShape.minCount.extract() !== 1
+          ) {
+            return Left(
+              new Error(
+                `${nodeShape} non-empty list shape rdf:first property shape does not have sh:maxCount=1 and/or sh:minCount=1`,
+              ),
+            );
+          }
+
+          if (!restPropertyShape) {
+            return Left(
+              new Error(
+                `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:rest`,
+              ),
+            );
+          }
+          if (
+            restPropertyShape.maxCount.extract() !== 1 ||
+            restPropertyShape.minCount.extract() !== 1
+          ) {
+            return Left(
+              new Error(
+                `${nodeShape} non-empty list shape rdf:rest property shape does not have sh:maxCount=1 and/or sh:minCount=1`,
+              ),
+            );
+          }
+
+          return transformPropertyShapeToAstObjectTypeProperty
+            .call(this, {
+              // Just need a dummy ast.ObjectType here to get the properties transformed.
+              objectType: listPropertiesObjectType,
+              propertyShape: firstPropertyShape,
+            })
+            .chain((firstProperty) => {
+              if (!ast.ListType.isItemType(firstProperty.type)) {
+                return Left(
+                  new Error(
+                    `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
+                  ),
+                );
               }
-              if (propertyShape.path.equals(rdf.first)) {
-                firstPropertyShape = propertyShape;
-              } else if (propertyShape.path.equals(rdf.rest)) {
-                restPropertyShape = propertyShape;
-              }
-            }
 
-            if (!firstPropertyShape) {
-              return Left(
-                new Error(
-                  `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:first`,
-                ),
-              );
-            }
-            if (
-              firstPropertyShape.constraints.maxCount.extract() !== 1 ||
-              firstPropertyShape.constraints.minCount.extract() !== 1
-            ) {
-              return Left(
-                new Error(
-                  `${nodeShape} non-empty list shape rdf:first property shape does not have sh:maxCount=1 and/or sh:minCount=1`,
-                ),
-              );
-            }
+              listType.itemType = firstProperty.type;
 
-            if (!restPropertyShape) {
-              return Left(
-                new Error(
-                  `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:rest`,
-                ),
-              );
-            }
-            if (
-              restPropertyShape.constraints.maxCount.extract() !== 1 ||
-              restPropertyShape.constraints.minCount.extract() !== 1
-            ) {
-              return Left(
-                new Error(
-                  `${nodeShape} non-empty list shape rdf:rest property shape does not have sh:maxCount=1 and/or sh:minCount=1`,
-                ),
-              );
-            }
-
-            return transformPropertyShapeToAstObjectTypeProperty
-              .call(this, {
-                // Just need a dummy ast.ObjectType here to get the properties transformed.
-                objectType: listPropertiesObjectType,
-                propertyShape: firstPropertyShape,
-              })
-              .chain((firstProperty) => {
-                if (!ast.ListType.isItemType(firstProperty.type)) {
-                  return Left(
-                    new Error(
-                      `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
-                    ),
-                  );
-                }
-
-                listType.itemType = firstProperty.type;
-
-                return transformPropertyShapeToAstObjectTypeProperty
-                  .call(this, {
-                    // Just need a dummy ast.ObjectType here to get the properties transformed.
-                    objectType: listPropertiesObjectType,
-                    propertyShape: restPropertyShape,
-                  })
-                  .chain((restProperty) => {
-                    if (
-                      restProperty.type.kind !== "ListType" ||
-                      !restProperty.type.shapeIdentifier.equals(
-                        nodeShape.identifier,
-                      )
-                    ) {
-                      return Left(
-                        new Error(
-                          `${nodeShape} rdf:rest property is not recursive into the node shape`,
-                        ),
-                      );
-                    }
-
-                    return Either.of<Error, Maybe<ast.ListType>>(
-                      Maybe.of(listType),
+              return transformPropertyShapeToAstObjectTypeProperty
+                .call(this, {
+                  // Just need a dummy ast.ObjectType here to get the properties transformed.
+                  objectType: listPropertiesObjectType,
+                  propertyShape: restPropertyShape,
+                })
+                .chain((restProperty) => {
+                  if (
+                    restProperty.type.kind !== "ListType" ||
+                    !restProperty.type.shapeIdentifier.equals(
+                      nodeShape.$identifier,
+                    )
+                  ) {
+                    return Left(
+                      new Error(
+                        `${nodeShape} rdf:rest property is not recursive into the node shape`,
+                      ),
                     );
-                  });
-              });
-          },
-        );
+                  }
+
+                  return Either.of<Error, Maybe<ast.ListType>>(
+                    Maybe.of(listType),
+                  );
+                });
+            });
+        });
       })().ifLeft(() => {
-        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.identifier);
+        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier);
       });
     });
   } finally {

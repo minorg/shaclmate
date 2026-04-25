@@ -1,6 +1,8 @@
-export { PropertyGroup } from "@shaclmate/shacl-ast";
+export {
+  Ontology,
+  PropertyGroup,
+  PropertyShape,
+} from "./generated.js";
 export * from "./NodeShape.js";
-export * from "./Ontology.js";
-export * from "./PropertyShape.js";
 export * from "./Shape.js";
 export * from "./ShapesGraph.js";

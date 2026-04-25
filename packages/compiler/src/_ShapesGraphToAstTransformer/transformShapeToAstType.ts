@@ -23,7 +23,7 @@ export function transformShapeToAstType(
   shape: input.Shape,
   shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
-  const astType = this.cachedAstTypesByShapeIdentifier.get(shape.identifier);
+  const astType = this.cachedAstTypesByShapeIdentifier.get(shape.$identifier);
   if (astType) {
     return Either.of(astType);
   }
@@ -44,7 +44,7 @@ export function transformShapeToAstType(
     }
     const astType = either.unsafeCoerce().extract();
     if (astType) {
-      this.cachedAstTypesByShapeIdentifier.set(shape.identifier, astType);
+      this.cachedAstTypesByShapeIdentifier.set(shape.$identifier, astType);
       return Either.of(astType);
     }
   }
@@ -52,6 +52,6 @@ export function transformShapeToAstType(
   return transformShapeToAstTermType
     .call(this, shape, shapeStack)
     .ifRight((astType) => {
-      this.cachedAstTypesByShapeIdentifier.set(shape.identifier, astType);
+      this.cachedAstTypesByShapeIdentifier.set(shape.$identifier, astType);
     });
 }

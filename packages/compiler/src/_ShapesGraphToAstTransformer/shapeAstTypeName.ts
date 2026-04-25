@@ -3,11 +3,11 @@ import { Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
 
 export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
-  if (shape.kind !== "NodeShape") {
+  if (shape.$type !== "NodeShape") {
     return Maybe.empty();
   }
 
-  if (shape.identifier.termType !== "NamedNode") {
+  if (shape.$identifier.termType !== "NamedNode") {
     return Maybe.empty();
   }
 
@@ -22,12 +22,14 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   }
 
   // CURIE shape identifier
-  if (shape.identifier instanceof Curie) {
-    if (shape.identifier.hasUniqueReference) {
-      return Maybe.of(shape.identifier.reference);
+  if (shape.$identifier instanceof Curie) {
+    if (shape.$identifier.hasUniqueReference) {
+      return Maybe.of(shape.$identifier.reference);
     }
 
-    return Maybe.of(`${shape.identifier.prefix}_${shape.identifier.reference}`);
+    return Maybe.of(
+      `${shape.$identifier.prefix}_${shape.$identifier.reference}`,
+    );
   }
 
   return Maybe.empty();

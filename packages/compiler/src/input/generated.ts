@@ -503,17 +503,17 @@ export interface PropertyShape {
   readonly $type: "PropertyShape";
   readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
   readonly classes: readonly NamedNode[];
-  readonly comments: readonly string[];
+  readonly comment: Maybe<string>;
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly defaultValue: Maybe<NamedNode | Literal>;
-  readonly descriptions: readonly string[];
+  readonly description: Maybe<string>;
   readonly flags: readonly string[];
   readonly groups: readonly (BlankNode | NamedNode)[];
   readonly hasValues: readonly (NamedNode | Literal)[];
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
-  readonly labels: readonly string[];
+  readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
   readonly maxCount: Maybe<number>;
   readonly maxExclusive: Maybe<Literal>;
@@ -525,7 +525,6 @@ export interface PropertyShape {
   readonly minLength: Maybe<number>;
   readonly mutable: Maybe<boolean>;
   readonly name: Maybe<string>;
-  readonly names: readonly string[];
   readonly nodeKind: Maybe<
     NamedNode<
       | "http://www.w3.org/ns/shacl#BlankNode"
@@ -543,6 +542,7 @@ export interface PropertyShape {
   readonly path: $PropertyPath;
   readonly patterns: readonly string[];
   readonly resolve: Maybe<BlankNode | NamedNode>;
+  readonly shaclmateName: Maybe<string>;
   readonly uniqueLang: Maybe<boolean>;
   readonly visibility: Maybe<
     NamedNode<
@@ -595,10 +595,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
@@ -631,10 +631,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.descriptions !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.descriptions,
-        value.descriptions,
+      filter.description !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.description,
+        value.description,
       )
     ) {
       return false;
@@ -686,10 +686,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -793,15 +793,6 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.names !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.names,
-        value.names,
-      )
-    ) {
-      return false;
-    }
-    if (
       filter.nodeKind !== undefined &&
       !$filterMaybe<
         NamedNode<
@@ -879,6 +870,15 @@ export namespace PropertyShape {
       return false;
     }
     if (
+      filter.shaclmateName !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.shaclmateName,
+        value.shaclmateName,
+      )
+    ) {
+      return false;
+    }
+    if (
       filter.uniqueLang !== undefined &&
       !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
         filter.uniqueLang,
@@ -920,17 +920,17 @@ export namespace PropertyShape {
     readonly $identifier?: $IdentifierFilter;
     readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
-    readonly comments?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
     readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly defaultValue?: $MaybeFilter<$TermFilter>;
-    readonly descriptions?: $CollectionFilter<$StringFilter>;
+    readonly description?: $MaybeFilter<$StringFilter>;
     readonly flags?: $CollectionFilter<$StringFilter>;
     readonly groups?: $CollectionFilter<$IdentifierFilter>;
     readonly hasValues?: $CollectionFilter<$TermFilter>;
     readonly in_?: $MaybeFilter<$CollectionFilter<$TermFilter>>;
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
@@ -942,7 +942,6 @@ export namespace PropertyShape {
     readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
     readonly mutable?: $MaybeFilter<$BooleanFilter>;
     readonly name?: $MaybeFilter<$StringFilter>;
-    readonly names?: $CollectionFilter<$StringFilter>;
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
@@ -951,6 +950,7 @@ export namespace PropertyShape {
     readonly path?: $PropertyPath.$Filter;
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly resolve?: $MaybeFilter<$IdentifierFilter>;
+    readonly shaclmateName?: $MaybeFilter<$StringFilter>;
     readonly uniqueLang?: $MaybeFilter<$BooleanFilter>;
     readonly visibility?: $MaybeFilter<$IriFilter>;
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
@@ -1010,17 +1010,17 @@ export namespace PropertyShape {
     $type: "PropertyShape";
     and: readonly (readonly (BlankNode | NamedNode)[])[];
     classes: readonly NamedNode[];
-    comments: readonly string[];
+    comment: Maybe<string>;
     datatype: Maybe<NamedNode>;
     deactivated: Maybe<boolean>;
     defaultValue: Maybe<NamedNode | Literal>;
-    descriptions: readonly string[];
+    description: Maybe<string>;
     flags: readonly string[];
     groups: readonly (BlankNode | NamedNode)[];
     hasValues: readonly (NamedNode | Literal)[];
     in_: Maybe<readonly (NamedNode | Literal)[]>;
     isDefinedBy: Maybe<BlankNode | NamedNode>;
-    labels: readonly string[];
+    label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
     maxCount: Maybe<number>;
     maxExclusive: Maybe<Literal>;
@@ -1032,7 +1032,6 @@ export namespace PropertyShape {
     minLength: Maybe<number>;
     mutable: Maybe<boolean>;
     name: Maybe<string>;
-    names: readonly string[];
     nodeKind: Maybe<
       NamedNode<
         | "http://www.w3.org/ns/shacl#BlankNode"
@@ -1050,6 +1049,7 @@ export namespace PropertyShape {
     path: $PropertyPath;
     patterns: readonly string[];
     resolve: Maybe<BlankNode | NamedNode>;
+    shaclmateName: Maybe<string>;
     uniqueLang: Maybe<boolean>;
     visibility: Maybe<
       NamedNode<
@@ -1162,7 +1162,7 @@ export namespace PropertyShape {
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.comments,
+                  propertySchema: $schema.properties.comment,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -1174,16 +1174,17 @@ export namespace PropertyShape {
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
                       )
-                      .map((values) => values.toArray())
-                      .map((valuesArray) =>
-                        Resource.Values.fromValue({
-                          focusResource: $resource,
-                          propertyPath:
-                            PropertyShape.$schema.properties.comments.path,
-                          value: valuesArray,
-                        }),
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<string>>({
+                              focusResource: $resource,
+                              propertyPath:
+                                PropertyShape.$schema.properties.comment.path,
+                              value: Maybe.empty(),
+                            }),
                       ),
-                }).chain((comments) =>
+                }).chain((comment) =>
                   $shaclPropertyFromRdf({
                     graph: _$options.graph,
                     resource: $resource,
@@ -1275,7 +1276,7 @@ export namespace PropertyShape {
                         $shaclPropertyFromRdf({
                           graph: _$options.graph,
                           resource: $resource,
-                          propertySchema: $schema.properties.descriptions,
+                          propertySchema: $schema.properties.description,
                           typeFromRdf: (resourceValues) =>
                             resourceValues
                               .chain((values) =>
@@ -1287,17 +1288,18 @@ export namespace PropertyShape {
                               .chain((values) =>
                                 values.chainMap((value) => value.toString()),
                               )
-                              .map((values) => values.toArray())
-                              .map((valuesArray) =>
-                                Resource.Values.fromValue({
-                                  focusResource: $resource,
-                                  propertyPath:
-                                    PropertyShape.$schema.properties
-                                      .descriptions.path,
-                                  value: valuesArray,
-                                }),
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) => Maybe.of(value))
+                                  : Resource.Values.fromValue<Maybe<string>>({
+                                      focusResource: $resource,
+                                      propertyPath:
+                                        PropertyShape.$schema.properties
+                                          .description.path,
+                                      value: Maybe.empty(),
+                                    }),
                               ),
-                        }).chain((descriptions) =>
+                        }).chain((description) =>
                           $shaclPropertyFromRdf({
                             graph: _$options.graph,
                             resource: $resource,
@@ -1509,7 +1511,7 @@ export namespace PropertyShape {
                                     $shaclPropertyFromRdf({
                                       graph: _$options.graph,
                                       resource: $resource,
-                                      propertySchema: $schema.properties.labels,
+                                      propertySchema: $schema.properties.label,
                                       typeFromRdf: (resourceValues) =>
                                         resourceValues
                                           .chain((values) =>
@@ -1523,17 +1525,22 @@ export namespace PropertyShape {
                                               value.toString(),
                                             ),
                                           )
-                                          .map((values) => values.toArray())
-                                          .map((valuesArray) =>
-                                            Resource.Values.fromValue({
-                                              focusResource: $resource,
-                                              propertyPath:
-                                                PropertyShape.$schema.properties
-                                                  .labels.path,
-                                              value: valuesArray,
-                                            }),
+                                          .map((values) =>
+                                            values.length > 0
+                                              ? values.map((value) =>
+                                                  Maybe.of(value),
+                                                )
+                                              : Resource.Values.fromValue<
+                                                  Maybe<string>
+                                                >({
+                                                  focusResource: $resource,
+                                                  propertyPath:
+                                                    PropertyShape.$schema
+                                                      .properties.label.path,
+                                                  value: Maybe.empty(),
+                                                }),
                                           ),
-                                    }).chain((labels) =>
+                                    }).chain((label) =>
                                       $shaclPropertyFromRdf({
                                         graph: _$options.graph,
                                         resource: $resource,
@@ -2009,7 +2016,7 @@ export namespace PropertyShape {
                                                                 propertySchema:
                                                                   $schema
                                                                     .properties
-                                                                    .names,
+                                                                    .nodeKind,
                                                                 typeFromRdf: (
                                                                   resourceValues,
                                                                 ) =>
@@ -2018,121 +2025,112 @@ export namespace PropertyShape {
                                                                       (
                                                                         values,
                                                                       ) =>
-                                                                        $fromRdfPreferredLanguages(
-                                                                          values,
-                                                                          _$options.preferredLanguages,
-                                                                        ),
-                                                                    )
-                                                                    .chain(
-                                                                      (
-                                                                        values,
-                                                                      ) =>
                                                                         values.chainMap(
                                                                           (
                                                                             value,
                                                                           ) =>
-                                                                            value.toString(),
+                                                                            value.toIri(
+                                                                              [
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#BlankNode",
+                                                                                ),
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
+                                                                                ),
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
+                                                                                ),
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#IRI",
+                                                                                ),
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#IRIOrLiteral",
+                                                                                ),
+                                                                                dataFactory.namedNode(
+                                                                                  "http://www.w3.org/ns/shacl#Literal",
+                                                                                ),
+                                                                              ],
+                                                                            ),
                                                                         ),
                                                                     )
                                                                     .map(
                                                                       (
                                                                         values,
                                                                       ) =>
-                                                                        values.toArray(),
-                                                                    )
-                                                                    .map(
-                                                                      (
-                                                                        valuesArray,
-                                                                      ) =>
-                                                                        Resource.Values.fromValue(
-                                                                          {
-                                                                            focusResource:
-                                                                              $resource,
-                                                                            propertyPath:
-                                                                              PropertyShape
-                                                                                .$schema
-                                                                                .properties
-                                                                                .names
-                                                                                .path,
-                                                                            value:
-                                                                              valuesArray,
-                                                                          },
-                                                                        ),
+                                                                        values.length >
+                                                                        0
+                                                                          ? values.map(
+                                                                              (
+                                                                                value,
+                                                                              ) =>
+                                                                                Maybe.of(
+                                                                                  value,
+                                                                                ),
+                                                                            )
+                                                                          : Resource.Values.fromValue<
+                                                                              Maybe<
+                                                                                NamedNode<
+                                                                                  | "http://www.w3.org/ns/shacl#BlankNode"
+                                                                                  | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+                                                                                  | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+                                                                                  | "http://www.w3.org/ns/shacl#IRI"
+                                                                                  | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+                                                                                  | "http://www.w3.org/ns/shacl#Literal"
+                                                                                >
+                                                                              >
+                                                                            >({
+                                                                              focusResource:
+                                                                                $resource,
+                                                                              propertyPath:
+                                                                                PropertyShape
+                                                                                  .$schema
+                                                                                  .properties
+                                                                                  .nodeKind
+                                                                                  .path,
+                                                                              value:
+                                                                                Maybe.empty(),
+                                                                            }),
                                                                     ),
                                                               },
-                                                            ).chain((names) =>
-                                                              $shaclPropertyFromRdf(
-                                                                {
-                                                                  graph:
-                                                                    _$options.graph,
-                                                                  resource:
-                                                                    $resource,
-                                                                  propertySchema:
-                                                                    $schema
-                                                                      .properties
-                                                                      .nodeKind,
-                                                                  typeFromRdf: (
-                                                                    resourceValues,
-                                                                  ) =>
-                                                                    resourceValues
-                                                                      .chain(
-                                                                        (
-                                                                          values,
-                                                                        ) =>
-                                                                          values.chainMap(
+                                                            ).chain(
+                                                              (nodeKind) =>
+                                                                $shaclPropertyFromRdf(
+                                                                  {
+                                                                    graph:
+                                                                      _$options.graph,
+                                                                    resource:
+                                                                      $resource,
+                                                                    propertySchema:
+                                                                      $schema
+                                                                        .properties
+                                                                        .nodes,
+                                                                    typeFromRdf:
+                                                                      (
+                                                                        resourceValues,
+                                                                      ) =>
+                                                                        resourceValues
+                                                                          .chain(
                                                                             (
-                                                                              value,
+                                                                              values,
                                                                             ) =>
-                                                                              value.toIri(
-                                                                                [
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#BlankNode",
-                                                                                  ),
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
-                                                                                  ),
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
-                                                                                  ),
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#IRI",
-                                                                                  ),
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#IRIOrLiteral",
-                                                                                  ),
-                                                                                  dataFactory.namedNode(
-                                                                                    "http://www.w3.org/ns/shacl#Literal",
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                          ),
-                                                                      )
-                                                                      .map(
-                                                                        (
-                                                                          values,
-                                                                        ) =>
-                                                                          values.length >
-                                                                          0
-                                                                            ? values.map(
+                                                                              values.chainMap(
                                                                                 (
                                                                                   value,
                                                                                 ) =>
-                                                                                  Maybe.of(
-                                                                                    value,
-                                                                                  ),
-                                                                              )
-                                                                            : Resource.Values.fromValue<
-                                                                                Maybe<
-                                                                                  NamedNode<
-                                                                                    | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                    | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                    | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                    | "http://www.w3.org/ns/shacl#IRI"
-                                                                                    | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                    | "http://www.w3.org/ns/shacl#Literal"
-                                                                                  >
-                                                                                >
-                                                                              >(
+                                                                                  value.toIdentifier(),
+                                                                              ),
+                                                                          )
+                                                                          .map(
+                                                                            (
+                                                                              values,
+                                                                            ) =>
+                                                                              values.toArray(),
+                                                                          )
+                                                                          .map(
+                                                                            (
+                                                                              valuesArray,
+                                                                            ) =>
+                                                                              Resource.Values.fromValue(
                                                                                 {
                                                                                   focusResource:
                                                                                     $resource,
@@ -2140,165 +2138,221 @@ export namespace PropertyShape {
                                                                                     PropertyShape
                                                                                       .$schema
                                                                                       .properties
-                                                                                      .nodeKind
+                                                                                      .nodes
                                                                                       .path,
                                                                                   value:
-                                                                                    Maybe.empty(),
+                                                                                    valuesArray,
                                                                                 },
                                                                               ),
-                                                                      ),
-                                                                },
-                                                              ).chain(
-                                                                (nodeKind) =>
-                                                                  $shaclPropertyFromRdf(
-                                                                    {
-                                                                      graph:
-                                                                        _$options.graph,
-                                                                      resource:
-                                                                        $resource,
-                                                                      propertySchema:
-                                                                        $schema
-                                                                          .properties
-                                                                          .nodes,
-                                                                      typeFromRdf:
-                                                                        (
-                                                                          resourceValues,
-                                                                        ) =>
-                                                                          resourceValues
-                                                                            .chain(
-                                                                              (
-                                                                                values,
-                                                                              ) =>
-                                                                                values.chainMap(
-                                                                                  (
-                                                                                    value,
-                                                                                  ) =>
-                                                                                    value.toIdentifier(),
-                                                                                ),
-                                                                            )
-                                                                            .map(
-                                                                              (
-                                                                                values,
-                                                                              ) =>
-                                                                                values.toArray(),
-                                                                            )
-                                                                            .map(
-                                                                              (
-                                                                                valuesArray,
-                                                                              ) =>
-                                                                                Resource.Values.fromValue(
-                                                                                  {
-                                                                                    focusResource:
-                                                                                      $resource,
-                                                                                    propertyPath:
-                                                                                      PropertyShape
-                                                                                        .$schema
-                                                                                        .properties
-                                                                                        .nodes
-                                                                                        .path,
-                                                                                    value:
-                                                                                      valuesArray,
-                                                                                  },
-                                                                                ),
-                                                                            ),
-                                                                    },
-                                                                  ).chain(
-                                                                    (nodes) =>
-                                                                      $shaclPropertyFromRdf(
-                                                                        {
-                                                                          graph:
-                                                                            _$options.graph,
-                                                                          resource:
-                                                                            $resource,
-                                                                          propertySchema:
-                                                                            $schema
-                                                                              .properties
-                                                                              .not,
-                                                                          typeFromRdf:
-                                                                            (
-                                                                              resourceValues,
-                                                                            ) =>
-                                                                              resourceValues
-                                                                                .chain(
-                                                                                  (
-                                                                                    values,
-                                                                                  ) =>
-                                                                                    values.chainMap(
-                                                                                      (
-                                                                                        value,
-                                                                                      ) =>
-                                                                                        value.toIdentifier(),
-                                                                                    ),
-                                                                                )
-                                                                                .map(
-                                                                                  (
-                                                                                    values,
-                                                                                  ) =>
-                                                                                    values.toArray(),
-                                                                                )
-                                                                                .map(
-                                                                                  (
-                                                                                    valuesArray,
-                                                                                  ) =>
-                                                                                    Resource.Values.fromValue(
-                                                                                      {
-                                                                                        focusResource:
-                                                                                          $resource,
-                                                                                        propertyPath:
-                                                                                          PropertyShape
-                                                                                            .$schema
-                                                                                            .properties
-                                                                                            .not
-                                                                                            .path,
-                                                                                        value:
-                                                                                          valuesArray,
-                                                                                      },
-                                                                                    ),
-                                                                                ),
-                                                                        },
-                                                                      ).chain(
-                                                                        (not) =>
-                                                                          $shaclPropertyFromRdf(
-                                                                            {
-                                                                              graph:
-                                                                                _$options.graph,
-                                                                              resource:
-                                                                                $resource,
-                                                                              propertySchema:
-                                                                                $schema
-                                                                                  .properties
-                                                                                  .or,
-                                                                              typeFromRdf:
+                                                                          ),
+                                                                  },
+                                                                ).chain(
+                                                                  (nodes) =>
+                                                                    $shaclPropertyFromRdf(
+                                                                      {
+                                                                        graph:
+                                                                          _$options.graph,
+                                                                        resource:
+                                                                          $resource,
+                                                                        propertySchema:
+                                                                          $schema
+                                                                            .properties
+                                                                            .not,
+                                                                        typeFromRdf:
+                                                                          (
+                                                                            resourceValues,
+                                                                          ) =>
+                                                                            resourceValues
+                                                                              .chain(
                                                                                 (
-                                                                                  resourceValues,
+                                                                                  values,
                                                                                 ) =>
-                                                                                  resourceValues
-                                                                                    .chain(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        values.chainMap(
-                                                                                          (
-                                                                                            value,
-                                                                                          ) =>
-                                                                                            value.toList(
+                                                                                  values.chainMap(
+                                                                                    (
+                                                                                      value,
+                                                                                    ) =>
+                                                                                      value.toIdentifier(),
+                                                                                  ),
+                                                                              )
+                                                                              .map(
+                                                                                (
+                                                                                  values,
+                                                                                ) =>
+                                                                                  values.toArray(),
+                                                                              )
+                                                                              .map(
+                                                                                (
+                                                                                  valuesArray,
+                                                                                ) =>
+                                                                                  Resource.Values.fromValue(
+                                                                                    {
+                                                                                      focusResource:
+                                                                                        $resource,
+                                                                                      propertyPath:
+                                                                                        PropertyShape
+                                                                                          .$schema
+                                                                                          .properties
+                                                                                          .not
+                                                                                          .path,
+                                                                                      value:
+                                                                                        valuesArray,
+                                                                                    },
+                                                                                  ),
+                                                                              ),
+                                                                      },
+                                                                    ).chain(
+                                                                      (not) =>
+                                                                        $shaclPropertyFromRdf(
+                                                                          {
+                                                                            graph:
+                                                                              _$options.graph,
+                                                                            resource:
+                                                                              $resource,
+                                                                            propertySchema:
+                                                                              $schema
+                                                                                .properties
+                                                                                .or,
+                                                                            typeFromRdf:
+                                                                              (
+                                                                                resourceValues,
+                                                                              ) =>
+                                                                                resourceValues
+                                                                                  .chain(
+                                                                                    (
+                                                                                      values,
+                                                                                    ) =>
+                                                                                      values.chainMap(
+                                                                                        (
+                                                                                          value,
+                                                                                        ) =>
+                                                                                          value.toList(
+                                                                                            {
+                                                                                              graph:
+                                                                                                _$options.graph,
+                                                                                            },
+                                                                                          ),
+                                                                                      ),
+                                                                                  )
+                                                                                  .chain(
+                                                                                    (
+                                                                                      valueLists,
+                                                                                    ) =>
+                                                                                      valueLists.chainMap(
+                                                                                        (
+                                                                                          valueList,
+                                                                                        ) =>
+                                                                                          Right(
+                                                                                            Resource.Values.fromArray(
                                                                                               {
-                                                                                                graph:
-                                                                                                  _$options.graph,
+                                                                                                focusResource:
+                                                                                                  $resource,
+                                                                                                propertyPath:
+                                                                                                  PropertyShape
+                                                                                                    .$schema
+                                                                                                    .properties
+                                                                                                    .or
+                                                                                                    .path,
+                                                                                                values:
+                                                                                                  valueList.toArray(),
                                                                                               },
                                                                                             ),
-                                                                                        ),
-                                                                                    )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        valueLists,
-                                                                                      ) =>
-                                                                                        valueLists.chainMap(
-                                                                                          (
-                                                                                            valueList,
-                                                                                          ) =>
-                                                                                            Right(
-                                                                                              Resource.Values.fromArray(
+                                                                                          ).chain(
+                                                                                            (
+                                                                                              values,
+                                                                                            ) =>
+                                                                                              values.chainMap(
+                                                                                                (
+                                                                                                  value,
+                                                                                                ) =>
+                                                                                                  value.toIdentifier(),
+                                                                                              ),
+                                                                                          ),
+                                                                                      ),
+                                                                                  )
+                                                                                  .map(
+                                                                                    (
+                                                                                      valueLists,
+                                                                                    ) =>
+                                                                                      valueLists.map(
+                                                                                        (
+                                                                                          valueList,
+                                                                                        ) =>
+                                                                                          valueList.toArray(),
+                                                                                      ),
+                                                                                  )
+                                                                                  .map(
+                                                                                    (
+                                                                                      values,
+                                                                                    ) =>
+                                                                                      values.toArray(),
+                                                                                  )
+                                                                                  .map(
+                                                                                    (
+                                                                                      valuesArray,
+                                                                                    ) =>
+                                                                                      Resource.Values.fromValue(
+                                                                                        {
+                                                                                          focusResource:
+                                                                                            $resource,
+                                                                                          propertyPath:
+                                                                                            PropertyShape
+                                                                                              .$schema
+                                                                                              .properties
+                                                                                              .or
+                                                                                              .path,
+                                                                                          value:
+                                                                                            valuesArray,
+                                                                                        },
+                                                                                      ),
+                                                                                  ),
+                                                                          },
+                                                                        ).chain(
+                                                                          (
+                                                                            or,
+                                                                          ) =>
+                                                                            $shaclPropertyFromRdf(
+                                                                              {
+                                                                                graph:
+                                                                                  _$options.graph,
+                                                                                resource:
+                                                                                  $resource,
+                                                                                propertySchema:
+                                                                                  $schema
+                                                                                    .properties
+                                                                                    .order,
+                                                                                typeFromRdf:
+                                                                                  (
+                                                                                    resourceValues,
+                                                                                  ) =>
+                                                                                    resourceValues
+                                                                                      .chain(
+                                                                                        (
+                                                                                          values,
+                                                                                        ) =>
+                                                                                          values.chainMap(
+                                                                                            (
+                                                                                              value,
+                                                                                            ) =>
+                                                                                              value.toFloat(),
+                                                                                          ),
+                                                                                      )
+                                                                                      .map(
+                                                                                        (
+                                                                                          values,
+                                                                                        ) =>
+                                                                                          values.length >
+                                                                                          0
+                                                                                            ? values.map(
+                                                                                                (
+                                                                                                  value,
+                                                                                                ) =>
+                                                                                                  Maybe.of(
+                                                                                                    value,
+                                                                                                  ),
+                                                                                              )
+                                                                                            : Resource.Values.fromValue<
+                                                                                                Maybe<number>
+                                                                                              >(
                                                                                                 {
                                                                                                   focusResource:
                                                                                                     $resource,
@@ -2306,599 +2360,560 @@ export namespace PropertyShape {
                                                                                                     PropertyShape
                                                                                                       .$schema
                                                                                                       .properties
-                                                                                                      .or
+                                                                                                      .order
                                                                                                       .path,
-                                                                                                  values:
-                                                                                                    valueList.toArray(),
+                                                                                                  value:
+                                                                                                    Maybe.empty(),
                                                                                                 },
                                                                                               ),
-                                                                                            ).chain(
-                                                                                              (
-                                                                                                values,
-                                                                                              ) =>
-                                                                                                values.chainMap(
-                                                                                                  (
-                                                                                                    value,
-                                                                                                  ) =>
-                                                                                                    value.toIdentifier(),
-                                                                                                ),
-                                                                                            ),
-                                                                                        ),
-                                                                                    )
-                                                                                    .map(
+                                                                                      ),
+                                                                              },
+                                                                            ).chain(
+                                                                              (
+                                                                                order,
+                                                                              ) =>
+                                                                                $shaclPropertyFromRdf(
+                                                                                  {
+                                                                                    graph:
+                                                                                      _$options.graph,
+                                                                                    resource:
+                                                                                      $resource,
+                                                                                    propertySchema:
+                                                                                      $schema
+                                                                                        .properties
+                                                                                        .path,
+                                                                                    typeFromRdf:
                                                                                       (
-                                                                                        valueLists,
+                                                                                        resourceValues,
                                                                                       ) =>
-                                                                                        valueLists.map(
-                                                                                          (
-                                                                                            valueList,
-                                                                                          ) =>
-                                                                                            valueList.toArray(),
-                                                                                        ),
-                                                                                    )
-                                                                                    .map(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
-                                                                                        values.toArray(),
-                                                                                    )
-                                                                                    .map(
-                                                                                      (
-                                                                                        valuesArray,
-                                                                                      ) =>
-                                                                                        Resource.Values.fromValue(
+                                                                                        $PropertyPath.$fromRdfResourceValues(
+                                                                                          resourceValues,
                                                                                           {
-                                                                                            focusResource:
+                                                                                            context:
+                                                                                              _$options.context,
+                                                                                            graph:
+                                                                                              _$options.graph,
+                                                                                            preferredLanguages:
+                                                                                              _$options.preferredLanguages,
+                                                                                            objectSet:
+                                                                                              _$options.objectSet,
+                                                                                            resource:
                                                                                               $resource,
+                                                                                            ignoreRdfType: true,
                                                                                             propertyPath:
                                                                                               PropertyShape
                                                                                                 .$schema
                                                                                                 .properties
-                                                                                                .or
+                                                                                                .path
                                                                                                 .path,
-                                                                                            value:
-                                                                                              valuesArray,
                                                                                           },
                                                                                         ),
-                                                                                    ),
-                                                                            },
-                                                                          ).chain(
-                                                                            (
-                                                                              or,
-                                                                            ) =>
-                                                                              $shaclPropertyFromRdf(
-                                                                                {
-                                                                                  graph:
-                                                                                    _$options.graph,
-                                                                                  resource:
-                                                                                    $resource,
-                                                                                  propertySchema:
-                                                                                    $schema
-                                                                                      .properties
-                                                                                      .order,
-                                                                                  typeFromRdf:
-                                                                                    (
-                                                                                      resourceValues,
-                                                                                    ) =>
-                                                                                      resourceValues
-                                                                                        .chain(
+                                                                                  },
+                                                                                ).chain(
+                                                                                  (
+                                                                                    path,
+                                                                                  ) =>
+                                                                                    $shaclPropertyFromRdf(
+                                                                                      {
+                                                                                        graph:
+                                                                                          _$options.graph,
+                                                                                        resource:
+                                                                                          $resource,
+                                                                                        propertySchema:
+                                                                                          $schema
+                                                                                            .properties
+                                                                                            .patterns,
+                                                                                        typeFromRdf:
                                                                                           (
-                                                                                            values,
-                                                                                          ) =>
-                                                                                            values.chainMap(
-                                                                                              (
-                                                                                                value,
-                                                                                              ) =>
-                                                                                                value.toFloat(),
-                                                                                            ),
-                                                                                        )
-                                                                                        .map(
-                                                                                          (
-                                                                                            values,
-                                                                                          ) =>
-                                                                                            values.length >
-                                                                                            0
-                                                                                              ? values.map(
-                                                                                                  (
-                                                                                                    value,
-                                                                                                  ) =>
-                                                                                                    Maybe.of(
-                                                                                                      value,
-                                                                                                    ),
-                                                                                                )
-                                                                                              : Resource.Values.fromValue<
-                                                                                                  Maybe<number>
-                                                                                                >(
-                                                                                                  {
-                                                                                                    focusResource:
-                                                                                                      $resource,
-                                                                                                    propertyPath:
-                                                                                                      PropertyShape
-                                                                                                        .$schema
-                                                                                                        .properties
-                                                                                                        .order
-                                                                                                        .path,
-                                                                                                    value:
-                                                                                                      Maybe.empty(),
-                                                                                                  },
-                                                                                                ),
-                                                                                        ),
-                                                                                },
-                                                                              ).chain(
-                                                                                (
-                                                                                  order,
-                                                                                ) =>
-                                                                                  $shaclPropertyFromRdf(
-                                                                                    {
-                                                                                      graph:
-                                                                                        _$options.graph,
-                                                                                      resource:
-                                                                                        $resource,
-                                                                                      propertySchema:
-                                                                                        $schema
-                                                                                          .properties
-                                                                                          .path,
-                                                                                      typeFromRdf:
-                                                                                        (
-                                                                                          resourceValues,
-                                                                                        ) =>
-                                                                                          $PropertyPath.$fromRdfResourceValues(
                                                                                             resourceValues,
-                                                                                            {
-                                                                                              context:
-                                                                                                _$options.context,
-                                                                                              graph:
-                                                                                                _$options.graph,
-                                                                                              preferredLanguages:
-                                                                                                _$options.preferredLanguages,
-                                                                                              objectSet:
-                                                                                                _$options.objectSet,
-                                                                                              resource:
-                                                                                                $resource,
-                                                                                              ignoreRdfType: true,
-                                                                                              propertyPath:
-                                                                                                PropertyShape
-                                                                                                  .$schema
-                                                                                                  .properties
-                                                                                                  .path
-                                                                                                  .path,
-                                                                                            },
-                                                                                          ),
-                                                                                    },
-                                                                                  ).chain(
-                                                                                    (
-                                                                                      path,
-                                                                                    ) =>
-                                                                                      $shaclPropertyFromRdf(
-                                                                                        {
-                                                                                          graph:
-                                                                                            _$options.graph,
-                                                                                          resource:
-                                                                                            $resource,
-                                                                                          propertySchema:
-                                                                                            $schema
-                                                                                              .properties
-                                                                                              .patterns,
-                                                                                          typeFromRdf:
-                                                                                            (
-                                                                                              resourceValues,
-                                                                                            ) =>
-                                                                                              resourceValues
-                                                                                                .chain(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    $fromRdfPreferredLanguages(
-                                                                                                      values,
-                                                                                                      _$options.preferredLanguages,
-                                                                                                    ),
-                                                                                                )
-                                                                                                .chain(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    values.chainMap(
-                                                                                                      (
-                                                                                                        value,
-                                                                                                      ) =>
-                                                                                                        value.toString(),
-                                                                                                    ),
-                                                                                                )
-                                                                                                .map(
-                                                                                                  (
-                                                                                                    values,
-                                                                                                  ) =>
-                                                                                                    values.toArray(),
-                                                                                                )
-                                                                                                .map(
-                                                                                                  (
-                                                                                                    valuesArray,
-                                                                                                  ) =>
-                                                                                                    Resource.Values.fromValue(
-                                                                                                      {
-                                                                                                        focusResource:
-                                                                                                          $resource,
-                                                                                                        propertyPath:
-                                                                                                          PropertyShape
-                                                                                                            .$schema
-                                                                                                            .properties
-                                                                                                            .patterns
-                                                                                                            .path,
-                                                                                                        value:
-                                                                                                          valuesArray,
-                                                                                                      },
-                                                                                                    ),
-                                                                                                ),
-                                                                                        },
-                                                                                      ).chain(
-                                                                                        (
-                                                                                          patterns,
-                                                                                        ) =>
-                                                                                          $shaclPropertyFromRdf(
-                                                                                            {
-                                                                                              graph:
-                                                                                                _$options.graph,
-                                                                                              resource:
-                                                                                                $resource,
-                                                                                              propertySchema:
-                                                                                                $schema
-                                                                                                  .properties
-                                                                                                  .resolve,
-                                                                                              typeFromRdf:
+                                                                                          ) =>
+                                                                                            resourceValues
+                                                                                              .chain(
                                                                                                 (
-                                                                                                  resourceValues,
+                                                                                                  values,
                                                                                                 ) =>
-                                                                                                  resourceValues
-                                                                                                    .chain(
-                                                                                                      (
-                                                                                                        values,
-                                                                                                      ) =>
-                                                                                                        values.chainMap(
-                                                                                                          (
-                                                                                                            value,
-                                                                                                          ) =>
-                                                                                                            value.toIdentifier(),
-                                                                                                        ),
-                                                                                                    )
-                                                                                                    .map(
-                                                                                                      (
-                                                                                                        values,
-                                                                                                      ) =>
-                                                                                                        values.length >
-                                                                                                        0
-                                                                                                          ? values.map(
-                                                                                                              (
-                                                                                                                value,
-                                                                                                              ) =>
-                                                                                                                Maybe.of(
-                                                                                                                  value,
-                                                                                                                ),
-                                                                                                            )
-                                                                                                          : Resource.Values.fromValue<
-                                                                                                              Maybe<
-                                                                                                                | BlankNode
-                                                                                                                | NamedNode
-                                                                                                              >
-                                                                                                            >(
-                                                                                                              {
-                                                                                                                focusResource:
-                                                                                                                  $resource,
-                                                                                                                propertyPath:
-                                                                                                                  PropertyShape
-                                                                                                                    .$schema
-                                                                                                                    .properties
-                                                                                                                    .resolve
-                                                                                                                    .path,
-                                                                                                                value:
-                                                                                                                  Maybe.empty(),
-                                                                                                              },
-                                                                                                            ),
-                                                                                                    ),
-                                                                                            },
-                                                                                          ).chain(
-                                                                                            (
-                                                                                              resolve,
-                                                                                            ) =>
-                                                                                              $shaclPropertyFromRdf(
-                                                                                                {
-                                                                                                  graph:
-                                                                                                    _$options.graph,
-                                                                                                  resource:
-                                                                                                    $resource,
-                                                                                                  propertySchema:
-                                                                                                    $schema
-                                                                                                      .properties
-                                                                                                      .uniqueLang,
-                                                                                                  typeFromRdf:
+                                                                                                  $fromRdfPreferredLanguages(
+                                                                                                    values,
+                                                                                                    _$options.preferredLanguages,
+                                                                                                  ),
+                                                                                              )
+                                                                                              .chain(
+                                                                                                (
+                                                                                                  values,
+                                                                                                ) =>
+                                                                                                  values.chainMap(
                                                                                                     (
-                                                                                                      resourceValues,
+                                                                                                      value,
                                                                                                     ) =>
-                                                                                                      resourceValues
-                                                                                                        .chain(
-                                                                                                          (
-                                                                                                            values,
-                                                                                                          ) =>
-                                                                                                            values.chainMap(
-                                                                                                              (
-                                                                                                                value,
-                                                                                                              ) =>
-                                                                                                                value.toBoolean(),
-                                                                                                            ),
-                                                                                                        )
-                                                                                                        .map(
-                                                                                                          (
-                                                                                                            values,
-                                                                                                          ) =>
-                                                                                                            values.length >
-                                                                                                            0
-                                                                                                              ? values.map(
-                                                                                                                  (
-                                                                                                                    value,
-                                                                                                                  ) =>
-                                                                                                                    Maybe.of(
-                                                                                                                      value,
-                                                                                                                    ),
-                                                                                                                )
-                                                                                                              : Resource.Values.fromValue<
-                                                                                                                  Maybe<boolean>
-                                                                                                                >(
-                                                                                                                  {
-                                                                                                                    focusResource:
-                                                                                                                      $resource,
-                                                                                                                    propertyPath:
-                                                                                                                      PropertyShape
-                                                                                                                        .$schema
-                                                                                                                        .properties
-                                                                                                                        .uniqueLang
-                                                                                                                        .path,
-                                                                                                                    value:
-                                                                                                                      Maybe.empty(),
-                                                                                                                  },
-                                                                                                                ),
-                                                                                                        ),
-                                                                                                },
-                                                                                              ).chain(
+                                                                                                      value.toString(),
+                                                                                                  ),
+                                                                                              )
+                                                                                              .map(
                                                                                                 (
-                                                                                                  uniqueLang,
+                                                                                                  values,
                                                                                                 ) =>
-                                                                                                  $shaclPropertyFromRdf(
+                                                                                                  values.toArray(),
+                                                                                              )
+                                                                                              .map(
+                                                                                                (
+                                                                                                  valuesArray,
+                                                                                                ) =>
+                                                                                                  Resource.Values.fromValue(
                                                                                                     {
-                                                                                                      graph:
-                                                                                                        _$options.graph,
-                                                                                                      resource:
+                                                                                                      focusResource:
                                                                                                         $resource,
-                                                                                                      propertySchema:
-                                                                                                        $schema
+                                                                                                      propertyPath:
+                                                                                                        PropertyShape
+                                                                                                          .$schema
                                                                                                           .properties
-                                                                                                          .visibility,
-                                                                                                      typeFromRdf:
-                                                                                                        (
-                                                                                                          resourceValues,
-                                                                                                        ) =>
-                                                                                                          resourceValues
-                                                                                                            .chain(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.chainMap(
-                                                                                                                  (
-                                                                                                                    value,
-                                                                                                                  ) =>
-                                                                                                                    value.toIri(
-                                                                                                                      [
-                                                                                                                        dataFactory.namedNode(
-                                                                                                                          "http://purl.org/shaclmate/ontology#_Visibility_Private",
-                                                                                                                        ),
-                                                                                                                        dataFactory.namedNode(
-                                                                                                                          "http://purl.org/shaclmate/ontology#_Visibility_Protected",
-                                                                                                                        ),
-                                                                                                                        dataFactory.namedNode(
-                                                                                                                          "http://purl.org/shaclmate/ontology#_Visibility_Public",
-                                                                                                                        ),
-                                                                                                                      ],
-                                                                                                                    ),
-                                                                                                                ),
-                                                                                                            )
-                                                                                                            .map(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.length >
-                                                                                                                0
-                                                                                                                  ? values.map(
-                                                                                                                      (
-                                                                                                                        value,
-                                                                                                                      ) =>
-                                                                                                                        Maybe.of(
-                                                                                                                          value,
-                                                                                                                        ),
-                                                                                                                    )
-                                                                                                                  : Resource.Values.fromValue<
-                                                                                                                      Maybe<
-                                                                                                                        NamedNode<
-                                                                                                                          | "http://purl.org/shaclmate/ontology#_Visibility_Private"
-                                                                                                                          | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
-                                                                                                                          | "http://purl.org/shaclmate/ontology#_Visibility_Public"
-                                                                                                                        >
-                                                                                                                      >
-                                                                                                                    >(
-                                                                                                                      {
-                                                                                                                        focusResource:
-                                                                                                                          $resource,
-                                                                                                                        propertyPath:
-                                                                                                                          PropertyShape
-                                                                                                                            .$schema
-                                                                                                                            .properties
-                                                                                                                            .visibility
-                                                                                                                            .path,
-                                                                                                                        value:
-                                                                                                                          Maybe.empty(),
-                                                                                                                      },
-                                                                                                                    ),
-                                                                                                            ),
+                                                                                                          .patterns
+                                                                                                          .path,
+                                                                                                      value:
+                                                                                                        valuesArray,
                                                                                                     },
-                                                                                                  ).chain(
-                                                                                                    (
-                                                                                                      visibility,
-                                                                                                    ) =>
-                                                                                                      $shaclPropertyFromRdf(
-                                                                                                        {
-                                                                                                          graph:
-                                                                                                            _$options.graph,
-                                                                                                          resource:
-                                                                                                            $resource,
-                                                                                                          propertySchema:
-                                                                                                            $schema
-                                                                                                              .properties
-                                                                                                              .xone,
-                                                                                                          typeFromRdf:
-                                                                                                            (
-                                                                                                              resourceValues,
-                                                                                                            ) =>
-                                                                                                              resourceValues
-                                                                                                                .chain(
-                                                                                                                  (
-                                                                                                                    values,
-                                                                                                                  ) =>
-                                                                                                                    values.chainMap(
-                                                                                                                      (
-                                                                                                                        value,
-                                                                                                                      ) =>
-                                                                                                                        value.toList(
-                                                                                                                          {
-                                                                                                                            graph:
-                                                                                                                              _$options.graph,
-                                                                                                                          },
-                                                                                                                        ),
-                                                                                                                    ),
-                                                                                                                )
-                                                                                                                .chain(
-                                                                                                                  (
-                                                                                                                    valueLists,
-                                                                                                                  ) =>
-                                                                                                                    valueLists.chainMap(
-                                                                                                                      (
-                                                                                                                        valueList,
-                                                                                                                      ) =>
-                                                                                                                        Right(
-                                                                                                                          Resource.Values.fromArray(
-                                                                                                                            {
-                                                                                                                              focusResource:
-                                                                                                                                $resource,
-                                                                                                                              propertyPath:
-                                                                                                                                PropertyShape
-                                                                                                                                  .$schema
-                                                                                                                                  .properties
-                                                                                                                                  .xone
-                                                                                                                                  .path,
-                                                                                                                              values:
-                                                                                                                                valueList.toArray(),
-                                                                                                                            },
-                                                                                                                          ),
-                                                                                                                        ).chain(
-                                                                                                                          (
-                                                                                                                            values,
-                                                                                                                          ) =>
-                                                                                                                            values.chainMap(
-                                                                                                                              (
-                                                                                                                                value,
-                                                                                                                              ) =>
-                                                                                                                                value.toIdentifier(),
-                                                                                                                            ),
-                                                                                                                        ),
-                                                                                                                    ),
-                                                                                                                )
-                                                                                                                .map(
-                                                                                                                  (
-                                                                                                                    valueLists,
-                                                                                                                  ) =>
-                                                                                                                    valueLists.map(
-                                                                                                                      (
-                                                                                                                        valueList,
-                                                                                                                      ) =>
-                                                                                                                        valueList.toArray(),
-                                                                                                                    ),
-                                                                                                                )
-                                                                                                                .map(
-                                                                                                                  (
-                                                                                                                    values,
-                                                                                                                  ) =>
-                                                                                                                    values.toArray(),
-                                                                                                                )
-                                                                                                                .map(
-                                                                                                                  (
-                                                                                                                    valuesArray,
-                                                                                                                  ) =>
-                                                                                                                    Resource.Values.fromValue(
-                                                                                                                      {
-                                                                                                                        focusResource:
-                                                                                                                          $resource,
-                                                                                                                        propertyPath:
-                                                                                                                          PropertyShape
-                                                                                                                            .$schema
-                                                                                                                            .properties
-                                                                                                                            .xone
-                                                                                                                            .path,
-                                                                                                                        value:
-                                                                                                                          valuesArray,
-                                                                                                                      },
-                                                                                                                    ),
-                                                                                                                ),
-                                                                                                        },
-                                                                                                      ).map(
-                                                                                                        (
-                                                                                                          xone,
-                                                                                                        ) => ({
-                                                                                                          $identifier,
-                                                                                                          $type,
-                                                                                                          and,
-                                                                                                          classes,
-                                                                                                          comments,
-                                                                                                          datatype,
-                                                                                                          deactivated,
-                                                                                                          defaultValue,
-                                                                                                          descriptions,
-                                                                                                          flags,
-                                                                                                          groups,
-                                                                                                          hasValues,
-                                                                                                          in_,
-                                                                                                          isDefinedBy,
-                                                                                                          labels,
-                                                                                                          languageIn,
-                                                                                                          maxCount,
-                                                                                                          maxExclusive,
-                                                                                                          maxInclusive,
-                                                                                                          maxLength,
-                                                                                                          minCount,
-                                                                                                          minExclusive,
-                                                                                                          minInclusive,
-                                                                                                          minLength,
-                                                                                                          mutable,
-                                                                                                          name,
-                                                                                                          names,
-                                                                                                          nodeKind,
-                                                                                                          nodes,
-                                                                                                          not,
-                                                                                                          or,
-                                                                                                          order,
-                                                                                                          path,
-                                                                                                          patterns,
-                                                                                                          resolve,
-                                                                                                          uniqueLang,
-                                                                                                          visibility,
-                                                                                                          xone,
-                                                                                                        }),
-                                                                                                      ),
                                                                                                   ),
                                                                                               ),
-                                                                                          ),
-                                                                                      ),
-                                                                                  ),
-                                                                              ),
-                                                                          ),
-                                                                      ),
-                                                                  ),
-                                                              ),
+                                                                                      },
+                                                                                    ).chain(
+                                                                                      (
+                                                                                        patterns,
+                                                                                      ) =>
+                                                                                        $shaclPropertyFromRdf(
+                                                                                          {
+                                                                                            graph:
+                                                                                              _$options.graph,
+                                                                                            resource:
+                                                                                              $resource,
+                                                                                            propertySchema:
+                                                                                              $schema
+                                                                                                .properties
+                                                                                                .resolve,
+                                                                                            typeFromRdf:
+                                                                                              (
+                                                                                                resourceValues,
+                                                                                              ) =>
+                                                                                                resourceValues
+                                                                                                  .chain(
+                                                                                                    (
+                                                                                                      values,
+                                                                                                    ) =>
+                                                                                                      values.chainMap(
+                                                                                                        (
+                                                                                                          value,
+                                                                                                        ) =>
+                                                                                                          value.toIdentifier(),
+                                                                                                      ),
+                                                                                                  )
+                                                                                                  .map(
+                                                                                                    (
+                                                                                                      values,
+                                                                                                    ) =>
+                                                                                                      values.length >
+                                                                                                      0
+                                                                                                        ? values.map(
+                                                                                                            (
+                                                                                                              value,
+                                                                                                            ) =>
+                                                                                                              Maybe.of(
+                                                                                                                value,
+                                                                                                              ),
+                                                                                                          )
+                                                                                                        : Resource.Values.fromValue<
+                                                                                                            Maybe<
+                                                                                                              | BlankNode
+                                                                                                              | NamedNode
+                                                                                                            >
+                                                                                                          >(
+                                                                                                            {
+                                                                                                              focusResource:
+                                                                                                                $resource,
+                                                                                                              propertyPath:
+                                                                                                                PropertyShape
+                                                                                                                  .$schema
+                                                                                                                  .properties
+                                                                                                                  .resolve
+                                                                                                                  .path,
+                                                                                                              value:
+                                                                                                                Maybe.empty(),
+                                                                                                            },
+                                                                                                          ),
+                                                                                                  ),
+                                                                                          },
+                                                                                        ).chain(
+                                                                                          (
+                                                                                            resolve,
+                                                                                          ) =>
+                                                                                            $shaclPropertyFromRdf(
+                                                                                              {
+                                                                                                graph:
+                                                                                                  _$options.graph,
+                                                                                                resource:
+                                                                                                  $resource,
+                                                                                                propertySchema:
+                                                                                                  $schema
+                                                                                                    .properties
+                                                                                                    .shaclmateName,
+                                                                                                typeFromRdf:
+                                                                                                  (
+                                                                                                    resourceValues,
+                                                                                                  ) =>
+                                                                                                    resourceValues
+                                                                                                      .chain(
+                                                                                                        (
+                                                                                                          values,
+                                                                                                        ) =>
+                                                                                                          $fromRdfPreferredLanguages(
+                                                                                                            values,
+                                                                                                            _$options.preferredLanguages,
+                                                                                                          ),
+                                                                                                      )
+                                                                                                      .chain(
+                                                                                                        (
+                                                                                                          values,
+                                                                                                        ) =>
+                                                                                                          values.chainMap(
+                                                                                                            (
+                                                                                                              value,
+                                                                                                            ) =>
+                                                                                                              value.toString(),
+                                                                                                          ),
+                                                                                                      )
+                                                                                                      .map(
+                                                                                                        (
+                                                                                                          values,
+                                                                                                        ) =>
+                                                                                                          values.length >
+                                                                                                          0
+                                                                                                            ? values.map(
+                                                                                                                (
+                                                                                                                  value,
+                                                                                                                ) =>
+                                                                                                                  Maybe.of(
+                                                                                                                    value,
+                                                                                                                  ),
+                                                                                                              )
+                                                                                                            : Resource.Values.fromValue<
+                                                                                                                Maybe<string>
+                                                                                                              >(
+                                                                                                                {
+                                                                                                                  focusResource:
+                                                                                                                    $resource,
+                                                                                                                  propertyPath:
+                                                                                                                    PropertyShape
+                                                                                                                      .$schema
+                                                                                                                      .properties
+                                                                                                                      .shaclmateName
+                                                                                                                      .path,
+                                                                                                                  value:
+                                                                                                                    Maybe.empty(),
+                                                                                                                },
+                                                                                                              ),
+                                                                                                      ),
+                                                                                              },
+                                                                                            ).chain(
+                                                                                              (
+                                                                                                shaclmateName,
+                                                                                              ) =>
+                                                                                                $shaclPropertyFromRdf(
+                                                                                                  {
+                                                                                                    graph:
+                                                                                                      _$options.graph,
+                                                                                                    resource:
+                                                                                                      $resource,
+                                                                                                    propertySchema:
+                                                                                                      $schema
+                                                                                                        .properties
+                                                                                                        .uniqueLang,
+                                                                                                    typeFromRdf:
+                                                                                                      (
+                                                                                                        resourceValues,
+                                                                                                      ) =>
+                                                                                                        resourceValues
+                                                                                                          .chain(
+                                                                                                            (
+                                                                                                              values,
+                                                                                                            ) =>
+                                                                                                              values.chainMap(
+                                                                                                                (
+                                                                                                                  value,
+                                                                                                                ) =>
+                                                                                                                  value.toBoolean(),
+                                                                                                              ),
+                                                                                                          )
+                                                                                                          .map(
+                                                                                                            (
+                                                                                                              values,
+                                                                                                            ) =>
+                                                                                                              values.length >
+                                                                                                              0
+                                                                                                                ? values.map(
+                                                                                                                    (
+                                                                                                                      value,
+                                                                                                                    ) =>
+                                                                                                                      Maybe.of(
+                                                                                                                        value,
+                                                                                                                      ),
+                                                                                                                  )
+                                                                                                                : Resource.Values.fromValue<
+                                                                                                                    Maybe<boolean>
+                                                                                                                  >(
+                                                                                                                    {
+                                                                                                                      focusResource:
+                                                                                                                        $resource,
+                                                                                                                      propertyPath:
+                                                                                                                        PropertyShape
+                                                                                                                          .$schema
+                                                                                                                          .properties
+                                                                                                                          .uniqueLang
+                                                                                                                          .path,
+                                                                                                                      value:
+                                                                                                                        Maybe.empty(),
+                                                                                                                    },
+                                                                                                                  ),
+                                                                                                          ),
+                                                                                                  },
+                                                                                                ).chain(
+                                                                                                  (
+                                                                                                    uniqueLang,
+                                                                                                  ) =>
+                                                                                                    $shaclPropertyFromRdf(
+                                                                                                      {
+                                                                                                        graph:
+                                                                                                          _$options.graph,
+                                                                                                        resource:
+                                                                                                          $resource,
+                                                                                                        propertySchema:
+                                                                                                          $schema
+                                                                                                            .properties
+                                                                                                            .visibility,
+                                                                                                        typeFromRdf:
+                                                                                                          (
+                                                                                                            resourceValues,
+                                                                                                          ) =>
+                                                                                                            resourceValues
+                                                                                                              .chain(
+                                                                                                                (
+                                                                                                                  values,
+                                                                                                                ) =>
+                                                                                                                  values.chainMap(
+                                                                                                                    (
+                                                                                                                      value,
+                                                                                                                    ) =>
+                                                                                                                      value.toIri(
+                                                                                                                        [
+                                                                                                                          dataFactory.namedNode(
+                                                                                                                            "http://purl.org/shaclmate/ontology#_Visibility_Private",
+                                                                                                                          ),
+                                                                                                                          dataFactory.namedNode(
+                                                                                                                            "http://purl.org/shaclmate/ontology#_Visibility_Protected",
+                                                                                                                          ),
+                                                                                                                          dataFactory.namedNode(
+                                                                                                                            "http://purl.org/shaclmate/ontology#_Visibility_Public",
+                                                                                                                          ),
+                                                                                                                        ],
+                                                                                                                      ),
+                                                                                                                  ),
+                                                                                                              )
+                                                                                                              .map(
+                                                                                                                (
+                                                                                                                  values,
+                                                                                                                ) =>
+                                                                                                                  values.length >
+                                                                                                                  0
+                                                                                                                    ? values.map(
+                                                                                                                        (
+                                                                                                                          value,
+                                                                                                                        ) =>
+                                                                                                                          Maybe.of(
+                                                                                                                            value,
+                                                                                                                          ),
+                                                                                                                      )
+                                                                                                                    : Resource.Values.fromValue<
+                                                                                                                        Maybe<
+                                                                                                                          NamedNode<
+                                                                                                                            | "http://purl.org/shaclmate/ontology#_Visibility_Private"
+                                                                                                                            | "http://purl.org/shaclmate/ontology#_Visibility_Protected"
+                                                                                                                            | "http://purl.org/shaclmate/ontology#_Visibility_Public"
+                                                                                                                          >
+                                                                                                                        >
+                                                                                                                      >(
+                                                                                                                        {
+                                                                                                                          focusResource:
+                                                                                                                            $resource,
+                                                                                                                          propertyPath:
+                                                                                                                            PropertyShape
+                                                                                                                              .$schema
+                                                                                                                              .properties
+                                                                                                                              .visibility
+                                                                                                                              .path,
+                                                                                                                          value:
+                                                                                                                            Maybe.empty(),
+                                                                                                                        },
+                                                                                                                      ),
+                                                                                                              ),
+                                                                                                      },
+                                                                                                    ).chain(
+                                                                                                      (
+                                                                                                        visibility,
+                                                                                                      ) =>
+                                                                                                        $shaclPropertyFromRdf(
+                                                                                                          {
+                                                                                                            graph:
+                                                                                                              _$options.graph,
+                                                                                                            resource:
+                                                                                                              $resource,
+                                                                                                            propertySchema:
+                                                                                                              $schema
+                                                                                                                .properties
+                                                                                                                .xone,
+                                                                                                            typeFromRdf:
+                                                                                                              (
+                                                                                                                resourceValues,
+                                                                                                              ) =>
+                                                                                                                resourceValues
+                                                                                                                  .chain(
+                                                                                                                    (
+                                                                                                                      values,
+                                                                                                                    ) =>
+                                                                                                                      values.chainMap(
+                                                                                                                        (
+                                                                                                                          value,
+                                                                                                                        ) =>
+                                                                                                                          value.toList(
+                                                                                                                            {
+                                                                                                                              graph:
+                                                                                                                                _$options.graph,
+                                                                                                                            },
+                                                                                                                          ),
+                                                                                                                      ),
+                                                                                                                  )
+                                                                                                                  .chain(
+                                                                                                                    (
+                                                                                                                      valueLists,
+                                                                                                                    ) =>
+                                                                                                                      valueLists.chainMap(
+                                                                                                                        (
+                                                                                                                          valueList,
+                                                                                                                        ) =>
+                                                                                                                          Right(
+                                                                                                                            Resource.Values.fromArray(
+                                                                                                                              {
+                                                                                                                                focusResource:
+                                                                                                                                  $resource,
+                                                                                                                                propertyPath:
+                                                                                                                                  PropertyShape
+                                                                                                                                    .$schema
+                                                                                                                                    .properties
+                                                                                                                                    .xone
+                                                                                                                                    .path,
+                                                                                                                                values:
+                                                                                                                                  valueList.toArray(),
+                                                                                                                              },
+                                                                                                                            ),
+                                                                                                                          ).chain(
+                                                                                                                            (
+                                                                                                                              values,
+                                                                                                                            ) =>
+                                                                                                                              values.chainMap(
+                                                                                                                                (
+                                                                                                                                  value,
+                                                                                                                                ) =>
+                                                                                                                                  value.toIdentifier(),
+                                                                                                                              ),
+                                                                                                                          ),
+                                                                                                                      ),
+                                                                                                                  )
+                                                                                                                  .map(
+                                                                                                                    (
+                                                                                                                      valueLists,
+                                                                                                                    ) =>
+                                                                                                                      valueLists.map(
+                                                                                                                        (
+                                                                                                                          valueList,
+                                                                                                                        ) =>
+                                                                                                                          valueList.toArray(),
+                                                                                                                      ),
+                                                                                                                  )
+                                                                                                                  .map(
+                                                                                                                    (
+                                                                                                                      values,
+                                                                                                                    ) =>
+                                                                                                                      values.toArray(),
+                                                                                                                  )
+                                                                                                                  .map(
+                                                                                                                    (
+                                                                                                                      valuesArray,
+                                                                                                                    ) =>
+                                                                                                                      Resource.Values.fromValue(
+                                                                                                                        {
+                                                                                                                          focusResource:
+                                                                                                                            $resource,
+                                                                                                                          propertyPath:
+                                                                                                                            PropertyShape
+                                                                                                                              .$schema
+                                                                                                                              .properties
+                                                                                                                              .xone
+                                                                                                                              .path,
+                                                                                                                          value:
+                                                                                                                            valuesArray,
+                                                                                                                        },
+                                                                                                                      ),
+                                                                                                                  ),
+                                                                                                          },
+                                                                                                        ).map(
+                                                                                                          (
+                                                                                                            xone,
+                                                                                                          ) => ({
+                                                                                                            $identifier,
+                                                                                                            $type,
+                                                                                                            and,
+                                                                                                            classes,
+                                                                                                            comment,
+                                                                                                            datatype,
+                                                                                                            deactivated,
+                                                                                                            defaultValue,
+                                                                                                            description,
+                                                                                                            flags,
+                                                                                                            groups,
+                                                                                                            hasValues,
+                                                                                                            in_,
+                                                                                                            isDefinedBy,
+                                                                                                            label,
+                                                                                                            languageIn,
+                                                                                                            maxCount,
+                                                                                                            maxExclusive,
+                                                                                                            maxInclusive,
+                                                                                                            maxLength,
+                                                                                                            minCount,
+                                                                                                            minExclusive,
+                                                                                                            minInclusive,
+                                                                                                            minLength,
+                                                                                                            mutable,
+                                                                                                            name,
+                                                                                                            nodeKind,
+                                                                                                            nodes,
+                                                                                                            not,
+                                                                                                            or,
+                                                                                                            order,
+                                                                                                            path,
+                                                                                                            patterns,
+                                                                                                            resolve,
+                                                                                                            shaclmateName,
+                                                                                                            uniqueLang,
+                                                                                                            visibility,
+                                                                                                            xone,
+                                                                                                          }),
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ),
+                                                                                        ),
+                                                                                    ),
+                                                                                ),
+                                                                            ),
+                                                                        ),
+                                                                    ),
+                                                                ),
                                                             ),
                                                           ),
                                                         ),
@@ -2961,10 +2976,10 @@ export namespace PropertyShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -2995,10 +3010,10 @@ export namespace PropertyShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
       },
-      descriptions: {
+      description: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
@@ -3048,10 +3063,10 @@ export namespace PropertyShape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -3149,14 +3164,6 @@ export namespace PropertyShape {
           kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
-        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
-      },
-      names: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
       },
       nodeKind: {
@@ -3238,6 +3245,14 @@ export namespace PropertyShape {
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#resolve",
         ),
+      },
+      shaclmateName: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
       uniqueLang: {
         kind: "Shacl" as const,
@@ -3359,7 +3374,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _propertyShape.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyShape.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3383,9 +3400,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
-      _propertyShape.descriptions.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
+      _propertyShape.description
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3463,7 +3480,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _propertyShape.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyShape.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3585,15 +3604,10 @@ export namespace PropertyShape {
       options?.graph,
     );
     resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
       _propertyShape.name
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
-      _propertyShape.names.flatMap((item) => [$literalFactory.string(item)]),
       options?.graph,
     );
     resource.add(
@@ -3694,6 +3708,13 @@ export namespace PropertyShape {
       options?.graph,
     );
     resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      _propertyShape.shaclmateName
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
       _propertyShape.uniqueLang
         .toList()
@@ -3766,8 +3787,8 @@ export namespace PropertyShape {
 export interface PropertyGroup {
   readonly $identifier: PropertyGroup.$Identifier;
   readonly $type: "PropertyGroup";
-  readonly comments: readonly string[];
-  readonly labels: readonly string[];
+  readonly comment: Maybe<string>;
+  readonly label: Maybe<string>;
 }
 
 export namespace PropertyGroup {
@@ -3789,19 +3810,19 @@ export namespace PropertyGroup {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -3811,8 +3832,8 @@ export namespace PropertyGroup {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly comments?: $CollectionFilter<$StringFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
   };
 
   export const $fromRdfResource: $FromRdfResourceFunction<PropertyGroup> = (
@@ -3867,8 +3888,8 @@ export namespace PropertyGroup {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "PropertyGroup";
-    comments: readonly string[];
-    labels: readonly string[];
+    comment: Maybe<string>;
+    label: Maybe<string>;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -3916,7 +3937,7 @@ export namespace PropertyGroup {
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.comments,
+              propertySchema: $schema.properties.comment,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -3928,20 +3949,21 @@ export namespace PropertyGroup {
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyGroup.$schema.properties.comments.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.comment.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
-            }).chain((comments) =>
+            }).chain((comment) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.labels,
+                propertySchema: $schema.properties.label,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -3953,16 +3975,17 @@ export namespace PropertyGroup {
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
                     )
-                    .map((values) => values.toArray())
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $resource,
-                        propertyPath:
-                          PropertyGroup.$schema.properties.labels.path,
-                        value: valuesArray,
-                      }),
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.$schema.properties.label.path,
+                            value: Maybe.empty(),
+                          }),
                     ),
-              }).map((labels) => ({ $identifier, $type, comments, labels })),
+              }).map((label) => ({ $identifier, $type, comment, label })),
             ),
           ),
         ),
@@ -3982,20 +4005,20 @@ export namespace PropertyGroup {
           ownValues: ["PropertyGroup"],
         }),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -4022,12 +4045,16 @@ export namespace PropertyGroup {
     }
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _propertyGroup.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyGroup.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _propertyGroup.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyGroup.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     return resource;
@@ -4036,7 +4063,8 @@ export namespace PropertyGroup {
 export interface Ontology {
   readonly $identifier: Ontology.$Identifier;
   readonly $type: "Ontology";
-  readonly labels: readonly string[];
+  readonly comment: Maybe<string>;
+  readonly label: Maybe<string>;
   readonly tsFeatureExcludes: readonly NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
@@ -4086,10 +4114,19 @@ export namespace Ontology {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -4163,7 +4200,8 @@ export namespace Ontology {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
@@ -4220,7 +4258,8 @@ export namespace Ontology {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "Ontology";
-    labels: readonly string[];
+    comment: Maybe<string>;
+    label: Maybe<string>;
     tsFeatureExcludes: readonly NamedNode<
       | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
       | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
@@ -4299,7 +4338,7 @@ export namespace Ontology {
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.labels,
+              propertySchema: $schema.properties.comment,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -4311,71 +4350,47 @@ export namespace Ontology {
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath: Ontology.$schema.properties.labels.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.comment.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
-            }).chain((labels) =>
+            }).chain((comment) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.tsFeatureExcludes,
+                propertySchema: $schema.properties.label,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toIri([
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                          ),
-                        ]),
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
                       ),
                     )
-                    .map((values) => values.toArray())
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $resource,
-                        propertyPath:
-                          Ontology.$schema.properties.tsFeatureExcludes.path,
-                        value: valuesArray,
-                      }),
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.$schema.properties.label.path,
+                            value: Maybe.empty(),
+                          }),
                     ),
-              }).chain((tsFeatureExcludes) =>
+              }).chain((label) =>
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.tsFeatureIncludes,
+                  propertySchema: $schema.properties.tsFeatureExcludes,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -4419,82 +4434,137 @@ export namespace Ontology {
                         Resource.Values.fromValue({
                           focusResource: $resource,
                           propertyPath:
-                            Ontology.$schema.properties.tsFeatureIncludes.path,
+                            Ontology.$schema.properties.tsFeatureExcludes.path,
                           value: valuesArray,
                         }),
                       ),
-                }).chain((tsFeatureIncludes) =>
+                }).chain((tsFeatureExcludes) =>
                   $shaclPropertyFromRdf({
                     graph: _$options.graph,
                     resource: $resource,
-                    propertySchema: $schema.properties.tsImports,
+                    propertySchema: $schema.properties.tsFeatureIncludes,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages(
-                            values,
-                            _$options.preferredLanguages,
+                          values.chainMap((value) =>
+                            value.toIri([
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                              ),
+                            ]),
                           ),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
                         )
                         .map((values) => values.toArray())
                         .map((valuesArray) =>
                           Resource.Values.fromValue({
                             focusResource: $resource,
                             propertyPath:
-                              Ontology.$schema.properties.tsImports.path,
+                              Ontology.$schema.properties.tsFeatureIncludes
+                                .path,
                             value: valuesArray,
                           }),
                         ),
-                  }).chain((tsImports) =>
+                  }).chain((tsFeatureIncludes) =>
                     $shaclPropertyFromRdf({
                       graph: _$options.graph,
                       resource: $resource,
-                      propertySchema:
-                        $schema.properties.tsObjectDeclarationType,
+                      propertySchema: $schema.properties.tsImports,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) =>
-                              value.toIri([
-                                dataFactory.namedNode(
-                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
-                                ),
-                                dataFactory.namedNode(
-                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
-                                ),
-                              ]),
+                            $fromRdfPreferredLanguages(
+                              values,
+                              _$options.preferredLanguages,
                             ),
                           )
-                          .map((values) =>
-                            values.length > 0
-                              ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<
-                                  Maybe<
-                                    NamedNode<
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                    >
-                                  >
-                                >({
-                                  focusResource: $resource,
-                                  propertyPath:
-                                    Ontology.$schema.properties
-                                      .tsObjectDeclarationType.path,
-                                  value: Maybe.empty(),
-                                }),
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          )
+                          .map((values) => values.toArray())
+                          .map((valuesArray) =>
+                            Resource.Values.fromValue({
+                              focusResource: $resource,
+                              propertyPath:
+                                Ontology.$schema.properties.tsImports.path,
+                              value: valuesArray,
+                            }),
                           ),
-                    }).map((tsObjectDeclarationType) => ({
-                      $identifier,
-                      $type,
-                      labels,
-                      tsFeatureExcludes,
-                      tsFeatureIncludes,
-                      tsImports,
-                      tsObjectDeclarationType,
-                    })),
+                    }).chain((tsImports) =>
+                      $shaclPropertyFromRdf({
+                        graph: _$options.graph,
+                        resource: $resource,
+                        propertySchema:
+                          $schema.properties.tsObjectDeclarationType,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) =>
+                                value.toIri([
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
+                                  ),
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
+                                  ),
+                                ]),
+                              ),
+                            )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<
+                                    Maybe<
+                                      NamedNode<
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                                      >
+                                    >
+                                  >({
+                                    focusResource: $resource,
+                                    propertyPath:
+                                      Ontology.$schema.properties
+                                        .tsObjectDeclarationType.path,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).map((tsObjectDeclarationType) => ({
+                        $identifier,
+                        $type,
+                        comment,
+                        label,
+                        tsFeatureExcludes,
+                        tsFeatureIncludes,
+                        tsImports,
+                        tsObjectDeclarationType,
+                      })),
+                    ),
                   ),
                 ),
               ),
@@ -4517,10 +4587,20 @@ export namespace Ontology {
           ownValues: ["Ontology"],
         }),
       },
-      labels: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+      },
+      label: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -4664,8 +4744,17 @@ export namespace Ontology {
       );
     }
     resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      _ontology.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _ontology.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _ontology.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -4704,7 +4793,7 @@ export interface NodeShape {
   readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
   readonly classes: readonly NamedNode[];
   readonly closed: Maybe<boolean>;
-  readonly comments: readonly string[];
+  readonly comment: Maybe<string>;
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly discriminantValue: Maybe<string>;
@@ -4722,7 +4811,7 @@ export interface NodeShape {
   readonly ignoredProperties: Maybe<readonly NamedNode[]>;
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
-  readonly labels: readonly string[];
+  readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
   readonly maxCount: Maybe<number>;
   readonly maxExclusive: Maybe<Literal>;
@@ -4733,7 +4822,6 @@ export interface NodeShape {
   readonly minInclusive: Maybe<Literal>;
   readonly minLength: Maybe<number>;
   readonly mutable: Maybe<boolean>;
-  readonly name: Maybe<string>;
   readonly nodeKind: Maybe<
     NamedNode<
       | "http://www.w3.org/ns/shacl#BlankNode"
@@ -4750,6 +4838,7 @@ export interface NodeShape {
   readonly patterns: readonly string[];
   readonly properties: readonly (BlankNode | NamedNode)[];
   readonly rdfType: Maybe<NamedNode>;
+  readonly shaclmateName: Maybe<string>;
   readonly toRdfTypes: readonly NamedNode[];
   readonly tsFeatureExcludes: readonly NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -4844,10 +4933,10 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
@@ -4960,10 +5049,10 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -5058,15 +5147,6 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.name !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.name,
-        value.name,
-      )
-    ) {
-      return false;
-    }
-    if (
       filter.nodeKind !== undefined &&
       !$filterMaybe<
         NamedNode<
@@ -5133,6 +5213,15 @@ export namespace NodeShape {
       !$filterMaybe<NamedNode, $IriFilter>($filterIri)(
         filter.rdfType,
         value.rdfType,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.shaclmateName !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.shaclmateName,
+        value.shaclmateName,
       )
     ) {
       return false;
@@ -5232,7 +5321,7 @@ export namespace NodeShape {
     readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
     readonly closed?: $MaybeFilter<$BooleanFilter>;
-    readonly comments?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
     readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly discriminantValue?: $MaybeFilter<$StringFilter>;
@@ -5244,7 +5333,7 @@ export namespace NodeShape {
     readonly ignoredProperties?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly in_?: $MaybeFilter<$CollectionFilter<$TermFilter>>;
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
@@ -5255,7 +5344,6 @@ export namespace NodeShape {
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
     readonly mutable?: $MaybeFilter<$BooleanFilter>;
-    readonly name?: $MaybeFilter<$StringFilter>;
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
@@ -5263,6 +5351,7 @@ export namespace NodeShape {
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly properties?: $CollectionFilter<$IdentifierFilter>;
     readonly rdfType?: $MaybeFilter<$IriFilter>;
+    readonly shaclmateName?: $MaybeFilter<$StringFilter>;
     readonly toRdfTypes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
@@ -5325,7 +5414,7 @@ export namespace NodeShape {
     and: readonly (readonly (BlankNode | NamedNode)[])[];
     classes: readonly NamedNode[];
     closed: Maybe<boolean>;
-    comments: readonly string[];
+    comment: Maybe<string>;
     datatype: Maybe<NamedNode>;
     deactivated: Maybe<boolean>;
     discriminantValue: Maybe<string>;
@@ -5343,7 +5432,7 @@ export namespace NodeShape {
     ignoredProperties: Maybe<readonly NamedNode[]>;
     in_: Maybe<readonly (NamedNode | Literal)[]>;
     isDefinedBy: Maybe<BlankNode | NamedNode>;
-    labels: readonly string[];
+    label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
     maxCount: Maybe<number>;
     maxExclusive: Maybe<Literal>;
@@ -5354,7 +5443,6 @@ export namespace NodeShape {
     minInclusive: Maybe<Literal>;
     minLength: Maybe<number>;
     mutable: Maybe<boolean>;
-    name: Maybe<string>;
     nodeKind: Maybe<
       NamedNode<
         | "http://www.w3.org/ns/shacl#BlankNode"
@@ -5371,6 +5459,7 @@ export namespace NodeShape {
     patterns: readonly string[];
     properties: readonly (BlankNode | NamedNode)[];
     rdfType: Maybe<NamedNode>;
+    shaclmateName: Maybe<string>;
     toRdfTypes: readonly NamedNode[];
     tsFeatureExcludes: readonly NamedNode<
       | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -5547,7 +5636,7 @@ export namespace NodeShape {
                     $shaclPropertyFromRdf({
                       graph: _$options.graph,
                       resource: $resource,
-                      propertySchema: $schema.properties.comments,
+                      propertySchema: $schema.properties.comment,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -5559,16 +5648,18 @@ export namespace NodeShape {
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
                           )
-                          .map((values) => values.toArray())
-                          .map((valuesArray) =>
-                            Resource.Values.fromValue({
-                              focusResource: $resource,
-                              propertyPath:
-                                PropertyShape.$schema.properties.comments.path,
-                              value: valuesArray,
-                            }),
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => Maybe.of(value))
+                              : Resource.Values.fromValue<Maybe<string>>({
+                                  focusResource: $resource,
+                                  propertyPath:
+                                    PropertyShape.$schema.properties.comment
+                                      .path,
+                                  value: Maybe.empty(),
+                                }),
                           ),
-                    }).chain((comments) =>
+                    }).chain((comment) =>
                       $shaclPropertyFromRdf({
                         graph: _$options.graph,
                         resource: $resource,
@@ -6008,7 +6099,7 @@ export namespace NodeShape {
                                               graph: _$options.graph,
                                               resource: $resource,
                                               propertySchema:
-                                                $schema.properties.labels,
+                                                $schema.properties.label,
                                               typeFromRdf: (resourceValues) =>
                                                 resourceValues
                                                   .chain((values) =>
@@ -6023,19 +6114,24 @@ export namespace NodeShape {
                                                     ),
                                                   )
                                                   .map((values) =>
-                                                    values.toArray(),
-                                                  )
-                                                  .map((valuesArray) =>
-                                                    Resource.Values.fromValue({
-                                                      focusResource: $resource,
-                                                      propertyPath:
-                                                        PropertyShape.$schema
-                                                          .properties.labels
-                                                          .path,
-                                                      value: valuesArray,
-                                                    }),
+                                                    values.length > 0
+                                                      ? values.map((value) =>
+                                                          Maybe.of(value),
+                                                        )
+                                                      : Resource.Values.fromValue<
+                                                          Maybe<string>
+                                                        >({
+                                                          focusResource:
+                                                            $resource,
+                                                          propertyPath:
+                                                            PropertyShape
+                                                              .$schema
+                                                              .properties.label
+                                                              .path,
+                                                          value: Maybe.empty(),
+                                                        }),
                                                   ),
-                                            }).chain((labels) =>
+                                            }).chain((label) =>
                                               $shaclPropertyFromRdf({
                                                 graph: _$options.graph,
                                                 resource: $resource,
@@ -6587,7 +6683,7 @@ export namespace NodeShape {
                                                                               propertySchema:
                                                                                 $schema
                                                                                   .properties
-                                                                                  .name,
+                                                                                  .nodeKind,
                                                                               typeFromRdf:
                                                                                 (
                                                                                   resourceValues,
@@ -6597,20 +6693,32 @@ export namespace NodeShape {
                                                                                       (
                                                                                         values,
                                                                                       ) =>
-                                                                                        $fromRdfPreferredLanguages(
-                                                                                          values,
-                                                                                          _$options.preferredLanguages,
-                                                                                        ),
-                                                                                    )
-                                                                                    .chain(
-                                                                                      (
-                                                                                        values,
-                                                                                      ) =>
                                                                                         values.chainMap(
                                                                                           (
                                                                                             value,
                                                                                           ) =>
-                                                                                            value.toString(),
+                                                                                            value.toIri(
+                                                                                              [
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#BlankNode",
+                                                                                                ),
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
+                                                                                                ),
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
+                                                                                                ),
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#IRI",
+                                                                                                ),
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#IRIOrLiteral",
+                                                                                                ),
+                                                                                                dataFactory.namedNode(
+                                                                                                  "http://www.w3.org/ns/shacl#Literal",
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
                                                                                         ),
                                                                                     )
                                                                                     .map(
@@ -6628,7 +6736,16 @@ export namespace NodeShape {
                                                                                                 ),
                                                                                             )
                                                                                           : Resource.Values.fromValue<
-                                                                                              Maybe<string>
+                                                                                              Maybe<
+                                                                                                NamedNode<
+                                                                                                  | "http://www.w3.org/ns/shacl#BlankNode"
+                                                                                                  | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+                                                                                                  | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+                                                                                                  | "http://www.w3.org/ns/shacl#IRI"
+                                                                                                  | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+                                                                                                  | "http://www.w3.org/ns/shacl#Literal"
+                                                                                                >
+                                                                                              >
                                                                                             >(
                                                                                               {
                                                                                                 focusResource:
@@ -6637,7 +6754,7 @@ export namespace NodeShape {
                                                                                                   PropertyShape
                                                                                                     .$schema
                                                                                                     .properties
-                                                                                                    .name
+                                                                                                    .nodeKind
                                                                                                     .path,
                                                                                                 value:
                                                                                                   Maybe.empty(),
@@ -6647,7 +6764,7 @@ export namespace NodeShape {
                                                                             },
                                                                           ).chain(
                                                                             (
-                                                                              name,
+                                                                              nodeKind,
                                                                             ) =>
                                                                               $shaclPropertyFromRdf(
                                                                                 {
@@ -6658,7 +6775,7 @@ export namespace NodeShape {
                                                                                   propertySchema:
                                                                                     $schema
                                                                                       .properties
-                                                                                      .nodeKind,
+                                                                                      .nodes,
                                                                                   typeFromRdf:
                                                                                     (
                                                                                       resourceValues,
@@ -6672,74 +6789,38 @@ export namespace NodeShape {
                                                                                               (
                                                                                                 value,
                                                                                               ) =>
-                                                                                                value.toIri(
-                                                                                                  [
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#BlankNode",
-                                                                                                    ),
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#BlankNodeOrIRI",
-                                                                                                    ),
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#BlankNodeOrLiteral",
-                                                                                                    ),
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#IRI",
-                                                                                                    ),
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#IRIOrLiteral",
-                                                                                                    ),
-                                                                                                    dataFactory.namedNode(
-                                                                                                      "http://www.w3.org/ns/shacl#Literal",
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
+                                                                                                value.toIdentifier(),
                                                                                             ),
                                                                                         )
                                                                                         .map(
                                                                                           (
                                                                                             values,
                                                                                           ) =>
-                                                                                            values.length >
-                                                                                            0
-                                                                                              ? values.map(
-                                                                                                  (
-                                                                                                    value,
-                                                                                                  ) =>
-                                                                                                    Maybe.of(
-                                                                                                      value,
-                                                                                                    ),
-                                                                                                )
-                                                                                              : Resource.Values.fromValue<
-                                                                                                  Maybe<
-                                                                                                    NamedNode<
-                                                                                                      | "http://www.w3.org/ns/shacl#BlankNode"
-                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-                                                                                                      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-                                                                                                      | "http://www.w3.org/ns/shacl#IRI"
-                                                                                                      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-                                                                                                      | "http://www.w3.org/ns/shacl#Literal"
-                                                                                                    >
-                                                                                                  >
-                                                                                                >(
-                                                                                                  {
-                                                                                                    focusResource:
-                                                                                                      $resource,
-                                                                                                    propertyPath:
-                                                                                                      PropertyShape
-                                                                                                        .$schema
-                                                                                                        .properties
-                                                                                                        .nodeKind
-                                                                                                        .path,
-                                                                                                    value:
-                                                                                                      Maybe.empty(),
-                                                                                                  },
-                                                                                                ),
+                                                                                            values.toArray(),
+                                                                                        )
+                                                                                        .map(
+                                                                                          (
+                                                                                            valuesArray,
+                                                                                          ) =>
+                                                                                            Resource.Values.fromValue(
+                                                                                              {
+                                                                                                focusResource:
+                                                                                                  $resource,
+                                                                                                propertyPath:
+                                                                                                  PropertyShape
+                                                                                                    .$schema
+                                                                                                    .properties
+                                                                                                    .nodes
+                                                                                                    .path,
+                                                                                                value:
+                                                                                                  valuesArray,
+                                                                                              },
+                                                                                            ),
                                                                                         ),
                                                                                 },
                                                                               ).chain(
                                                                                 (
-                                                                                  nodeKind,
+                                                                                  nodes,
                                                                                 ) =>
                                                                                   $shaclPropertyFromRdf(
                                                                                     {
@@ -6750,7 +6831,7 @@ export namespace NodeShape {
                                                                                       propertySchema:
                                                                                         $schema
                                                                                           .properties
-                                                                                          .nodes,
+                                                                                          .not,
                                                                                       typeFromRdf:
                                                                                         (
                                                                                           resourceValues,
@@ -6785,7 +6866,7 @@ export namespace NodeShape {
                                                                                                       PropertyShape
                                                                                                         .$schema
                                                                                                         .properties
-                                                                                                        .nodes
+                                                                                                        .not
                                                                                                         .path,
                                                                                                     value:
                                                                                                       valuesArray,
@@ -6795,7 +6876,7 @@ export namespace NodeShape {
                                                                                     },
                                                                                   ).chain(
                                                                                     (
-                                                                                      nodes,
+                                                                                      not,
                                                                                     ) =>
                                                                                       $shaclPropertyFromRdf(
                                                                                         {
@@ -6806,7 +6887,7 @@ export namespace NodeShape {
                                                                                           propertySchema:
                                                                                             $schema
                                                                                               .properties
-                                                                                              .not,
+                                                                                              .or,
                                                                                           typeFromRdf:
                                                                                             (
                                                                                               resourceValues,
@@ -6820,7 +6901,59 @@ export namespace NodeShape {
                                                                                                       (
                                                                                                         value,
                                                                                                       ) =>
-                                                                                                        value.toIdentifier(),
+                                                                                                        value.toList(
+                                                                                                          {
+                                                                                                            graph:
+                                                                                                              _$options.graph,
+                                                                                                          },
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                )
+                                                                                                .chain(
+                                                                                                  (
+                                                                                                    valueLists,
+                                                                                                  ) =>
+                                                                                                    valueLists.chainMap(
+                                                                                                      (
+                                                                                                        valueList,
+                                                                                                      ) =>
+                                                                                                        Right(
+                                                                                                          Resource.Values.fromArray(
+                                                                                                            {
+                                                                                                              focusResource:
+                                                                                                                $resource,
+                                                                                                              propertyPath:
+                                                                                                                PropertyShape
+                                                                                                                  .$schema
+                                                                                                                  .properties
+                                                                                                                  .or
+                                                                                                                  .path,
+                                                                                                              values:
+                                                                                                                valueList.toArray(),
+                                                                                                            },
+                                                                                                          ),
+                                                                                                        ).chain(
+                                                                                                          (
+                                                                                                            values,
+                                                                                                          ) =>
+                                                                                                            values.chainMap(
+                                                                                                              (
+                                                                                                                value,
+                                                                                                              ) =>
+                                                                                                                value.toIdentifier(),
+                                                                                                            ),
+                                                                                                        ),
+                                                                                                    ),
+                                                                                                )
+                                                                                                .map(
+                                                                                                  (
+                                                                                                    valueLists,
+                                                                                                  ) =>
+                                                                                                    valueLists.map(
+                                                                                                      (
+                                                                                                        valueList,
+                                                                                                      ) =>
+                                                                                                        valueList.toArray(),
                                                                                                     ),
                                                                                                 )
                                                                                                 .map(
@@ -6841,7 +6974,7 @@ export namespace NodeShape {
                                                                                                           PropertyShape
                                                                                                             .$schema
                                                                                                             .properties
-                                                                                                            .not
+                                                                                                            .or
                                                                                                             .path,
                                                                                                         value:
                                                                                                           valuesArray,
@@ -6851,7 +6984,7 @@ export namespace NodeShape {
                                                                                         },
                                                                                       ).chain(
                                                                                         (
-                                                                                          not,
+                                                                                          or,
                                                                                         ) =>
                                                                                           $shaclPropertyFromRdf(
                                                                                             {
@@ -6862,7 +6995,7 @@ export namespace NodeShape {
                                                                                               propertySchema:
                                                                                                 $schema
                                                                                                   .properties
-                                                                                                  .or,
+                                                                                                  .patterns,
                                                                                               typeFromRdf:
                                                                                                 (
                                                                                                   resourceValues,
@@ -6872,63 +7005,20 @@ export namespace NodeShape {
                                                                                                       (
                                                                                                         values,
                                                                                                       ) =>
-                                                                                                        values.chainMap(
-                                                                                                          (
-                                                                                                            value,
-                                                                                                          ) =>
-                                                                                                            value.toList(
-                                                                                                              {
-                                                                                                                graph:
-                                                                                                                  _$options.graph,
-                                                                                                              },
-                                                                                                            ),
+                                                                                                        $fromRdfPreferredLanguages(
+                                                                                                          values,
+                                                                                                          _$options.preferredLanguages,
                                                                                                         ),
                                                                                                     )
                                                                                                     .chain(
                                                                                                       (
-                                                                                                        valueLists,
+                                                                                                        values,
                                                                                                       ) =>
-                                                                                                        valueLists.chainMap(
+                                                                                                        values.chainMap(
                                                                                                           (
-                                                                                                            valueList,
+                                                                                                            value,
                                                                                                           ) =>
-                                                                                                            Right(
-                                                                                                              Resource.Values.fromArray(
-                                                                                                                {
-                                                                                                                  focusResource:
-                                                                                                                    $resource,
-                                                                                                                  propertyPath:
-                                                                                                                    PropertyShape
-                                                                                                                      .$schema
-                                                                                                                      .properties
-                                                                                                                      .or
-                                                                                                                      .path,
-                                                                                                                  values:
-                                                                                                                    valueList.toArray(),
-                                                                                                                },
-                                                                                                              ),
-                                                                                                            ).chain(
-                                                                                                              (
-                                                                                                                values,
-                                                                                                              ) =>
-                                                                                                                values.chainMap(
-                                                                                                                  (
-                                                                                                                    value,
-                                                                                                                  ) =>
-                                                                                                                    value.toIdentifier(),
-                                                                                                                ),
-                                                                                                            ),
-                                                                                                        ),
-                                                                                                    )
-                                                                                                    .map(
-                                                                                                      (
-                                                                                                        valueLists,
-                                                                                                      ) =>
-                                                                                                        valueLists.map(
-                                                                                                          (
-                                                                                                            valueList,
-                                                                                                          ) =>
-                                                                                                            valueList.toArray(),
+                                                                                                            value.toString(),
                                                                                                         ),
                                                                                                     )
                                                                                                     .map(
@@ -6949,7 +7039,7 @@ export namespace NodeShape {
                                                                                                               PropertyShape
                                                                                                                 .$schema
                                                                                                                 .properties
-                                                                                                                .or
+                                                                                                                .patterns
                                                                                                                 .path,
                                                                                                             value:
                                                                                                               valuesArray,
@@ -6959,7 +7049,7 @@ export namespace NodeShape {
                                                                                             },
                                                                                           ).chain(
                                                                                             (
-                                                                                              or,
+                                                                                              patterns,
                                                                                             ) =>
                                                                                               $shaclPropertyFromRdf(
                                                                                                 {
@@ -6970,7 +7060,7 @@ export namespace NodeShape {
                                                                                                   propertySchema:
                                                                                                     $schema
                                                                                                       .properties
-                                                                                                      .patterns,
+                                                                                                      .properties,
                                                                                                   typeFromRdf:
                                                                                                     (
                                                                                                       resourceValues,
@@ -6980,20 +7070,11 @@ export namespace NodeShape {
                                                                                                           (
                                                                                                             values,
                                                                                                           ) =>
-                                                                                                            $fromRdfPreferredLanguages(
-                                                                                                              values,
-                                                                                                              _$options.preferredLanguages,
-                                                                                                            ),
-                                                                                                        )
-                                                                                                        .chain(
-                                                                                                          (
-                                                                                                            values,
-                                                                                                          ) =>
                                                                                                             values.chainMap(
                                                                                                               (
                                                                                                                 value,
                                                                                                               ) =>
-                                                                                                                value.toString(),
+                                                                                                                value.toIdentifier(),
                                                                                                             ),
                                                                                                         )
                                                                                                         .map(
@@ -7011,10 +7092,10 @@ export namespace NodeShape {
                                                                                                                 focusResource:
                                                                                                                   $resource,
                                                                                                                 propertyPath:
-                                                                                                                  PropertyShape
+                                                                                                                  NodeShape
                                                                                                                     .$schema
                                                                                                                     .properties
-                                                                                                                    .patterns
+                                                                                                                    .properties
                                                                                                                     .path,
                                                                                                                 value:
                                                                                                                   valuesArray,
@@ -7024,7 +7105,7 @@ export namespace NodeShape {
                                                                                                 },
                                                                                               ).chain(
                                                                                                 (
-                                                                                                  patterns,
+                                                                                                  properties,
                                                                                                 ) =>
                                                                                                   $shaclPropertyFromRdf(
                                                                                                     {
@@ -7035,7 +7116,7 @@ export namespace NodeShape {
                                                                                                       propertySchema:
                                                                                                         $schema
                                                                                                           .properties
-                                                                                                          .properties,
+                                                                                                          .rdfType,
                                                                                                       typeFromRdf:
                                                                                                         (
                                                                                                           resourceValues,
@@ -7049,38 +7130,44 @@ export namespace NodeShape {
                                                                                                                   (
                                                                                                                     value,
                                                                                                                   ) =>
-                                                                                                                    value.toIdentifier(),
+                                                                                                                    value.toIri(),
                                                                                                                 ),
                                                                                                             )
                                                                                                             .map(
                                                                                                               (
                                                                                                                 values,
                                                                                                               ) =>
-                                                                                                                values.toArray(),
-                                                                                                            )
-                                                                                                            .map(
-                                                                                                              (
-                                                                                                                valuesArray,
-                                                                                                              ) =>
-                                                                                                                Resource.Values.fromValue(
-                                                                                                                  {
-                                                                                                                    focusResource:
-                                                                                                                      $resource,
-                                                                                                                    propertyPath:
-                                                                                                                      NodeShape
-                                                                                                                        .$schema
-                                                                                                                        .properties
-                                                                                                                        .properties
-                                                                                                                        .path,
-                                                                                                                    value:
-                                                                                                                      valuesArray,
-                                                                                                                  },
-                                                                                                                ),
+                                                                                                                values.length >
+                                                                                                                0
+                                                                                                                  ? values.map(
+                                                                                                                      (
+                                                                                                                        value,
+                                                                                                                      ) =>
+                                                                                                                        Maybe.of(
+                                                                                                                          value,
+                                                                                                                        ),
+                                                                                                                    )
+                                                                                                                  : Resource.Values.fromValue<
+                                                                                                                      Maybe<NamedNode>
+                                                                                                                    >(
+                                                                                                                      {
+                                                                                                                        focusResource:
+                                                                                                                          $resource,
+                                                                                                                        propertyPath:
+                                                                                                                          NodeShape
+                                                                                                                            .$schema
+                                                                                                                            .properties
+                                                                                                                            .rdfType
+                                                                                                                            .path,
+                                                                                                                        value:
+                                                                                                                          Maybe.empty(),
+                                                                                                                      },
+                                                                                                                    ),
                                                                                                             ),
                                                                                                     },
                                                                                                   ).chain(
                                                                                                     (
-                                                                                                      properties,
+                                                                                                      rdfType,
                                                                                                     ) =>
                                                                                                       $shaclPropertyFromRdf(
                                                                                                         {
@@ -7091,7 +7178,7 @@ export namespace NodeShape {
                                                                                                           propertySchema:
                                                                                                             $schema
                                                                                                               .properties
-                                                                                                              .rdfType,
+                                                                                                              .shaclmateName,
                                                                                                           typeFromRdf:
                                                                                                             (
                                                                                                               resourceValues,
@@ -7101,11 +7188,20 @@ export namespace NodeShape {
                                                                                                                   (
                                                                                                                     values,
                                                                                                                   ) =>
+                                                                                                                    $fromRdfPreferredLanguages(
+                                                                                                                      values,
+                                                                                                                      _$options.preferredLanguages,
+                                                                                                                    ),
+                                                                                                                )
+                                                                                                                .chain(
+                                                                                                                  (
+                                                                                                                    values,
+                                                                                                                  ) =>
                                                                                                                     values.chainMap(
                                                                                                                       (
                                                                                                                         value,
                                                                                                                       ) =>
-                                                                                                                        value.toIri(),
+                                                                                                                        value.toString(),
                                                                                                                     ),
                                                                                                                 )
                                                                                                                 .map(
@@ -7123,16 +7219,16 @@ export namespace NodeShape {
                                                                                                                             ),
                                                                                                                         )
                                                                                                                       : Resource.Values.fromValue<
-                                                                                                                          Maybe<NamedNode>
+                                                                                                                          Maybe<string>
                                                                                                                         >(
                                                                                                                           {
                                                                                                                             focusResource:
                                                                                                                               $resource,
                                                                                                                             propertyPath:
-                                                                                                                              NodeShape
+                                                                                                                              PropertyShape
                                                                                                                                 .$schema
                                                                                                                                 .properties
-                                                                                                                                .rdfType
+                                                                                                                                .shaclmateName
                                                                                                                                 .path,
                                                                                                                             value:
                                                                                                                               Maybe.empty(),
@@ -7142,7 +7238,7 @@ export namespace NodeShape {
                                                                                                         },
                                                                                                       ).chain(
                                                                                                         (
-                                                                                                          rdfType,
+                                                                                                          shaclmateName,
                                                                                                         ) =>
                                                                                                           $shaclPropertyFromRdf(
                                                                                                             {
@@ -7633,7 +7729,7 @@ export namespace NodeShape {
                                                                                                                                   and,
                                                                                                                                   classes,
                                                                                                                                   closed,
-                                                                                                                                  comments,
+                                                                                                                                  comment,
                                                                                                                                   datatype,
                                                                                                                                   deactivated,
                                                                                                                                   discriminantValue,
@@ -7645,7 +7741,7 @@ export namespace NodeShape {
                                                                                                                                   ignoredProperties,
                                                                                                                                   in_,
                                                                                                                                   isDefinedBy,
-                                                                                                                                  labels,
+                                                                                                                                  label,
                                                                                                                                   languageIn,
                                                                                                                                   maxCount,
                                                                                                                                   maxExclusive,
@@ -7656,7 +7752,6 @@ export namespace NodeShape {
                                                                                                                                   minInclusive,
                                                                                                                                   minLength,
                                                                                                                                   mutable,
-                                                                                                                                  name,
                                                                                                                                   nodeKind,
                                                                                                                                   nodes,
                                                                                                                                   not,
@@ -7664,6 +7759,7 @@ export namespace NodeShape {
                                                                                                                                   patterns,
                                                                                                                                   properties,
                                                                                                                                   rdfType,
+                                                                                                                                  shaclmateName,
                                                                                                                                   toRdfTypes,
                                                                                                                                   tsFeatureExcludes,
                                                                                                                                   tsFeatureIncludes,
@@ -7767,10 +7863,10 @@ export namespace NodeShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -7896,10 +7992,10 @@ export namespace NodeShape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -7991,14 +8087,6 @@ export namespace NodeShape {
           "http://purl.org/shaclmate/ontology#mutable",
         ),
       },
-      name: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
-      },
       nodeKind: {
         kind: "Shacl" as const,
         type: () => ({
@@ -8073,6 +8161,14 @@ export namespace NodeShape {
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#rdfType",
         ),
+      },
+      shaclmateName: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
       toRdfTypes: {
         kind: "Shacl" as const,
@@ -8309,7 +8405,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _nodeShape.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _nodeShape.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -8479,7 +8577,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _nodeShape.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _nodeShape.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -8601,13 +8701,6 @@ export namespace NodeShape {
       options?.graph,
     );
     resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
-      _nodeShape.name
-        .toList()
-        .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
-    );
-    resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
       _nodeShape.nodeKind.toList(),
       options?.graph,
@@ -8688,6 +8781,13 @@ export namespace NodeShape {
     resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
       _nodeShape.rdfType.toList(),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      _nodeShape.shaclmateName
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -8780,19 +8880,6 @@ export namespace NodeShape {
 export type Shape = NodeShape | PropertyShape;
 
 export namespace Shape {
-  export const $toRdfResource: $ToRdfResourceFunction<Shape> = (
-    value,
-    options,
-  ) => {
-    if (NodeShape.isNodeShape(value)) {
-      return NodeShape.$toRdfResource(value, options);
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return PropertyShape.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $filter = (filter: Shape.$Filter, value: Shape) => {
     if (
       filter.$identifier !== undefined &&
@@ -8912,10 +8999,10 @@ export namespace Shape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -8975,10 +9062,10 @@ export namespace Shape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -9070,14 +9157,6 @@ export namespace Shape {
           "http://purl.org/shaclmate/ontology#mutable",
         ),
       },
-      name: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
-      },
       nodeKind: {
         kind: "Shacl" as const,
         type: () => ({
@@ -9135,6 +9214,14 @@ export namespace Shape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
       },
+      shaclmateName: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      },
       xone: {
         kind: "Shacl" as const,
         type: () => ({
@@ -9148,6 +9235,19 @@ export namespace Shape {
       },
     },
   } as const;
+
+  export const $toRdfResource: $ToRdfResourceFunction<Shape> = (
+    value,
+    options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toRdfResource(value, options);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Shape> = ((
     value,
@@ -9182,25 +9282,6 @@ export namespace Shape {
 export type $Object = NodeShape | Ontology | PropertyGroup | PropertyShape;
 
 export namespace $Object {
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
-    options,
-  ) => {
-    if (NodeShape.isNodeShape(value)) {
-      return NodeShape.$toRdfResource(value, options);
-    }
-    if (Ontology.isOntology(value)) {
-      return Ontology.$toRdfResource(value, options);
-    }
-    if (PropertyGroup.isPropertyGroup(value)) {
-      return PropertyGroup.$toRdfResource(value, options);
-    }
-    if (PropertyShape.isPropertyShape(value)) {
-      return PropertyShape.$toRdfResource(value, options);
-    }
-    throw new Error("unrecognized type");
-  };
-
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
@@ -9360,10 +9441,20 @@ export namespace $Object {
       },
     },
     properties: {
-      labels: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+      },
+      label: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -9372,6 +9463,25 @@ export namespace $Object {
       },
     },
   } as const;
+
+  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+    value,
+    options,
+  ) => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toRdfResource(value, options);
+    }
+    if (Ontology.isOntology(value)) {
+      return Ontology.$toRdfResource(value, options);
+    }
+    if (PropertyGroup.isPropertyGroup(value)) {
+      return PropertyGroup.$toRdfResource(value, options);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toRdfResource(value, options);
+    }
+    throw new Error("unrecognized type");
+  };
 
   export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
     value,
@@ -10015,7 +10125,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
-    objectType: {
+    namedObjectType: {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
@@ -10050,11 +10160,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
-    } else if (objectType.$fromRdfTypes.length > 0) {
+    } else if (namedObjectType.$fromRdfTypes.length > 0) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const fromRdfType of namedObjectType.$fromRdfTypes) {
         for (const resource of resourceSet.instancesOf(fromRdfType, {
           graph,
         })) {
@@ -10087,7 +10197,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
-        objectType
+        namedObjectType
           .$fromRdfResource(resource, fromRdfResourceOptions)
           .ifRight((object) => {
             resources.push({ object, resource });
@@ -10108,7 +10218,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = objectType.$fromRdfResource(
+        const objectEither = namedObjectType.$fromRdfResource(
           resource,
           fromRdfResourceOptions,
         );
@@ -10118,7 +10228,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         object = objectEither.unsafeCoerce();
       }
 
-      if (query?.filter && !objectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
         continue;
       }
 
@@ -10137,7 +10247,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
-    objectTypes: readonly {
+    namedObjectTypes: readonly {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
       $fromRdfTypes: readonly NamedNode[];
@@ -10166,7 +10276,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let resources: {
       object?: ObjectT;
-      objectType?: {
+      namedObjectType?: {
         $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
         $fromRdfTypes: readonly NamedNode[];
@@ -10181,19 +10291,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       }));
       sortResources = false;
     } else if (
-      objectTypes.every((objectType) => objectType.$fromRdfTypes.length > 0)
+      namedObjectTypes.every(
+        (namedObjectType) => namedObjectType.$fromRdfTypes.length > 0,
+      )
     ) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const objectType of objectTypes) {
-        for (const fromRdfType of objectType.$fromRdfTypes) {
+      for (const namedObjectType of namedObjectTypes) {
+        for (const fromRdfType of namedObjectType.$fromRdfTypes) {
           for (const resource of resourceSet.instancesOf(fromRdfType, {
             graph,
           })) {
             if (!identifierSet.has(resource.identifier)) {
               identifierSet.add(resource.identifier);
-              resources.push({ objectType, resource });
+              resources.push({ namedObjectType, resource });
             }
           }
         }
@@ -10221,12 +10333,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         identifierSet.add(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object types
         const resource = resourceSet.resource(quad.subject);
-        for (const objectType of objectTypes) {
+        for (const namedObjectType of namedObjectTypes) {
           if (
-            objectType
+            namedObjectType
               .$fromRdfResource(resource, fromRdfResourceOptions)
               .ifRight((object) => {
-                resources.push({ object, objectType, resource });
+                resources.push({ object, namedObjectType, resource });
               })
               .isRight()
           ) {
@@ -10247,23 +10359,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (let { object, objectType, resource } of resources) {
+    for (let { object, namedObjectType, resource } of resources) {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
-        if (objectType) {
-          objectEither = objectType.$fromRdfResource(
+        if (namedObjectType) {
+          objectEither = namedObjectType.$fromRdfResource(
             resource,
             fromRdfResourceOptions,
           );
         } else {
           objectEither = Left(new Error("no object types"));
-          for (const tryObjectType of objectTypes) {
+          for (const tryObjectType of namedObjectTypes) {
             objectEither = tryObjectType.$fromRdfResource(
               resource,
               fromRdfResourceOptions,
             );
             if (objectEither.isRight()) {
-              objectType = tryObjectType;
+              namedObjectType = tryObjectType;
               break;
             }
           }
@@ -10273,11 +10385,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         object = objectEither.unsafeCoerce();
       }
-      if (!objectType) {
-        throw new Error("objectType should be set here");
+      if (!namedObjectType) {
+        throw new Error("namedObjectType should be set here");
       }
 
-      if (query?.filter && !objectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
         continue;
       }
 

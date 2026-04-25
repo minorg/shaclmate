@@ -38,11 +38,11 @@ export class ShapesGraphToAstTransformer {
     const astNamedUnionTypes: ast.UnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
-      if (nodeShape.identifier.termType !== "NamedNode") {
+      if (nodeShape.$identifier.termType !== "NamedNode") {
         continue;
       }
 
-      if (nodeShape.identifier.value.startsWith(dash[""].value)) {
+      if (nodeShape.$identifier.value.startsWith(dash[""].value)) {
         continue;
       }
 

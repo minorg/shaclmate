@@ -11,16 +11,17 @@ export class ShapeStack {
     this.constraints = {
       get hasValues(): readonly (Literal | NamedNode)[] {
         for (const shape of stack.toReversed()) {
-          if (shape.constraints.hasValues.length > 0) {
-            return shape.constraints.hasValues;
+          if (shape.hasValues.length > 0) {
+            return shape.hasValues;
           }
         }
         return [];
       },
       get in_(): readonly (Literal | NamedNode)[] {
         for (const shape of stack.toReversed()) {
-          if (shape.constraints.in_.length > 0) {
-            return shape.constraints.in_;
+          const shapeIn = shape.in_.orDefault([]);
+          if (shapeIn.length > 0) {
+            return shapeIn;
           }
         }
         return [];
@@ -35,7 +36,7 @@ export class ShapeStack {
 
   get defaultValue(): Maybe<Literal | NamedNode> {
     for (const shape of this.stack.toReversed()) {
-      if (shape.kind !== "PropertyShape") {
+      if (shape.$type !== "PropertyShape") {
         continue;
       }
       if (shape.defaultValue.isJust()) {

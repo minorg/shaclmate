@@ -3,6 +3,7 @@ import { Either } from "purify-ts";
 import { TS_FEATURES, type TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { shapeOntology } from "./shapeOntology.js";
 
 type TsFeatureIri = NamedNode<
   | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -47,7 +48,7 @@ export function nodeShapeTsFeatures(
     }
   }
 
-  return nodeShape.isDefinedBy.chain((ontologyMaybe) => {
+  return shapeOntology.call(this, nodeShape).chain((ontologyMaybe) => {
     let tsFeatureExcludes =
       nodeShape.tsFeatureExcludes.flatMap(iriToTsFeatures);
     let tsFeatureIncludes =

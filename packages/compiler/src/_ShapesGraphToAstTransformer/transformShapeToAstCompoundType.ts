@@ -21,12 +21,26 @@ export function transformShapeToAstCompoundType(
   shapeStack.push(shape);
   try {
     return Eithers.chain4(
-      shape.constraints.and,
-      shape.constraints.nodes,
-      shape.kind === "NodeShape"
+      Either.sequence(
+        shape.and.flatMap((and) =>
+          and.map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
+        ),
+      ),
+      Either.sequence(
+        shape.nodes.map((nodeShapeIdentifier) =>
+          this.shapesGraph.nodeShape(nodeShapeIdentifier),
+        ),
+      ),
+      shape.$type === "NodeShape"
         ? nodeShapeTsFeatures.call(this, shape)
         : Either.of(new Set<TsFeature>()),
-      shape.constraints.xone,
+      Either.sequence(
+        shape.xone.flatMap((xone) =>
+          xone.map((shapeIdentifier) =>
+            this.shapesGraph.shape(shapeIdentifier),
+          ),
+        ),
+      ),
     ).chain(
       ([
         andConstraintShapes,
@@ -63,7 +77,7 @@ export function transformShapeToAstCompoundType(
           comment: shape.comment,
           label: shape.label,
           name: shapeAstTypeName(shape),
-          shapeIdentifier: shape.identifier,
+          shapeIdentifier: shape.$identifier,
           tsFeatures,
         });
 
@@ -75,7 +89,7 @@ export function transformShapeToAstCompoundType(
 
         // Put a placeholder in the cache to deal with cyclic references
         this.cachedAstTypesByShapeIdentifier.set(
-          shape.identifier,
+          shape.$identifier,
           compoundType,
         );
 
@@ -115,7 +129,7 @@ export function transformShapeToAstCompoundType(
 
                 let memberDiscriminantValue: number | string | undefined;
                 if (compoundTypeKind === "UnionType") {
-                  if (memberShape.kind === "NodeShape") {
+                  if (memberShape.$type === "NodeShape") {
                     memberDiscriminantValue =
                       memberShape.discriminantValue.extract();
                   }
@@ -143,7 +157,7 @@ export function transformShapeToAstCompoundType(
             },
           )
           .ifLeft(() => {
-            this.cachedAstTypesByShapeIdentifier.delete(shape.identifier);
+            this.cachedAstTypesByShapeIdentifier.delete(shape.$identifier);
           });
       },
     );
