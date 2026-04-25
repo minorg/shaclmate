@@ -8,8 +8,6 @@ import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
-import { shapeComment } from "./shapeComment.js";
-import { shapeLabel } from "./shapeLabel.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 /**
@@ -76,8 +74,8 @@ export function transformShapeToAstCompoundType(
             ? ast.IntersectionType
             : ast.UnionType
         )({
-          comment: shapeComment(shape),
-          label: shapeLabel(shape),
+          comment: shape.comment,
+          label: shape.label,
           name: shapeAstTypeName(shape),
           shapeIdentifier: shape.$identifier,
           tsFeatures,

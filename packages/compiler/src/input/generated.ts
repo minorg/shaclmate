@@ -503,7 +503,7 @@ export interface PropertyShape {
   readonly $type: "PropertyShape";
   readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
   readonly classes: readonly NamedNode[];
-  readonly comments: readonly string[];
+  readonly comment: Maybe<string>;
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly defaultValue: Maybe<NamedNode | Literal>;
@@ -513,7 +513,7 @@ export interface PropertyShape {
   readonly hasValues: readonly (NamedNode | Literal)[];
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
-  readonly labels: readonly string[];
+  readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
   readonly maxCount: Maybe<number>;
   readonly maxExclusive: Maybe<Literal>;
@@ -595,10 +595,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
@@ -686,10 +686,10 @@ export namespace PropertyShape {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -920,7 +920,7 @@ export namespace PropertyShape {
     readonly $identifier?: $IdentifierFilter;
     readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
-    readonly comments?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
     readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly defaultValue?: $MaybeFilter<$TermFilter>;
@@ -930,7 +930,7 @@ export namespace PropertyShape {
     readonly hasValues?: $CollectionFilter<$TermFilter>;
     readonly in_?: $MaybeFilter<$CollectionFilter<$TermFilter>>;
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
@@ -1010,7 +1010,7 @@ export namespace PropertyShape {
     $type: "PropertyShape";
     and: readonly (readonly (BlankNode | NamedNode)[])[];
     classes: readonly NamedNode[];
-    comments: readonly string[];
+    comment: Maybe<string>;
     datatype: Maybe<NamedNode>;
     deactivated: Maybe<boolean>;
     defaultValue: Maybe<NamedNode | Literal>;
@@ -1020,7 +1020,7 @@ export namespace PropertyShape {
     hasValues: readonly (NamedNode | Literal)[];
     in_: Maybe<readonly (NamedNode | Literal)[]>;
     isDefinedBy: Maybe<BlankNode | NamedNode>;
-    labels: readonly string[];
+    label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
     maxCount: Maybe<number>;
     maxExclusive: Maybe<Literal>;
@@ -1162,7 +1162,7 @@ export namespace PropertyShape {
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.comments,
+                  propertySchema: $schema.properties.comment,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -1174,16 +1174,17 @@ export namespace PropertyShape {
                       .chain((values) =>
                         values.chainMap((value) => value.toString()),
                       )
-                      .map((values) => values.toArray())
-                      .map((valuesArray) =>
-                        Resource.Values.fromValue({
-                          focusResource: $resource,
-                          propertyPath:
-                            PropertyShape.$schema.properties.comments.path,
-                          value: valuesArray,
-                        }),
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => Maybe.of(value))
+                          : Resource.Values.fromValue<Maybe<string>>({
+                              focusResource: $resource,
+                              propertyPath:
+                                PropertyShape.$schema.properties.comment.path,
+                              value: Maybe.empty(),
+                            }),
                       ),
-                }).chain((comments) =>
+                }).chain((comment) =>
                   $shaclPropertyFromRdf({
                     graph: _$options.graph,
                     resource: $resource,
@@ -1510,7 +1511,7 @@ export namespace PropertyShape {
                                     $shaclPropertyFromRdf({
                                       graph: _$options.graph,
                                       resource: $resource,
-                                      propertySchema: $schema.properties.labels,
+                                      propertySchema: $schema.properties.label,
                                       typeFromRdf: (resourceValues) =>
                                         resourceValues
                                           .chain((values) =>
@@ -1524,17 +1525,22 @@ export namespace PropertyShape {
                                               value.toString(),
                                             ),
                                           )
-                                          .map((values) => values.toArray())
-                                          .map((valuesArray) =>
-                                            Resource.Values.fromValue({
-                                              focusResource: $resource,
-                                              propertyPath:
-                                                PropertyShape.$schema.properties
-                                                  .labels.path,
-                                              value: valuesArray,
-                                            }),
+                                          .map((values) =>
+                                            values.length > 0
+                                              ? values.map((value) =>
+                                                  Maybe.of(value),
+                                                )
+                                              : Resource.Values.fromValue<
+                                                  Maybe<string>
+                                                >({
+                                                  focusResource: $resource,
+                                                  propertyPath:
+                                                    PropertyShape.$schema
+                                                      .properties.label.path,
+                                                  value: Maybe.empty(),
+                                                }),
                                           ),
-                                    }).chain((labels) =>
+                                    }).chain((label) =>
                                       $shaclPropertyFromRdf({
                                         graph: _$options.graph,
                                         resource: $resource,
@@ -2862,7 +2868,7 @@ export namespace PropertyShape {
                                                                                                             $type,
                                                                                                             and,
                                                                                                             classes,
-                                                                                                            comments,
+                                                                                                            comment,
                                                                                                             datatype,
                                                                                                             deactivated,
                                                                                                             defaultValue,
@@ -2872,7 +2878,7 @@ export namespace PropertyShape {
                                                                                                             hasValues,
                                                                                                             in_,
                                                                                                             isDefinedBy,
-                                                                                                            labels,
+                                                                                                            label,
                                                                                                             languageIn,
                                                                                                             maxCount,
                                                                                                             maxExclusive,
@@ -2970,10 +2976,10 @@ export namespace PropertyShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -3057,10 +3063,10 @@ export namespace PropertyShape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -3368,7 +3374,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _propertyShape.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyShape.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3472,7 +3480,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _propertyShape.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyShape.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -3777,8 +3787,8 @@ export namespace PropertyShape {
 export interface PropertyGroup {
   readonly $identifier: PropertyGroup.$Identifier;
   readonly $type: "PropertyGroup";
-  readonly comments: readonly string[];
-  readonly labels: readonly string[];
+  readonly comment: Maybe<string>;
+  readonly label: Maybe<string>;
 }
 
 export namespace PropertyGroup {
@@ -3800,19 +3810,19 @@ export namespace PropertyGroup {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -3822,8 +3832,8 @@ export namespace PropertyGroup {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly comments?: $CollectionFilter<$StringFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
   };
 
   export const $fromRdfResource: $FromRdfResourceFunction<PropertyGroup> = (
@@ -3878,8 +3888,8 @@ export namespace PropertyGroup {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "PropertyGroup";
-    comments: readonly string[];
-    labels: readonly string[];
+    comment: Maybe<string>;
+    label: Maybe<string>;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -3927,7 +3937,7 @@ export namespace PropertyGroup {
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.comments,
+              propertySchema: $schema.properties.comment,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -3939,20 +3949,21 @@ export namespace PropertyGroup {
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath:
-                        PropertyGroup.$schema.properties.comments.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.comment.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
-            }).chain((comments) =>
+            }).chain((comment) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.labels,
+                propertySchema: $schema.properties.label,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -3964,16 +3975,17 @@ export namespace PropertyGroup {
                     .chain((values) =>
                       values.chainMap((value) => value.toString()),
                     )
-                    .map((values) => values.toArray())
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $resource,
-                        propertyPath:
-                          PropertyGroup.$schema.properties.labels.path,
-                        value: valuesArray,
-                      }),
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.$schema.properties.label.path,
+                            value: Maybe.empty(),
+                          }),
                     ),
-              }).map((labels) => ({ $identifier, $type, comments, labels })),
+              }).map((label) => ({ $identifier, $type, comment, label })),
             ),
           ),
         ),
@@ -3993,20 +4005,20 @@ export namespace PropertyGroup {
           ownValues: ["PropertyGroup"],
         }),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -4033,12 +4045,16 @@ export namespace PropertyGroup {
     }
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _propertyGroup.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyGroup.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _propertyGroup.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _propertyGroup.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     return resource;
@@ -4047,7 +4063,8 @@ export namespace PropertyGroup {
 export interface Ontology {
   readonly $identifier: Ontology.$Identifier;
   readonly $type: "Ontology";
-  readonly labels: readonly string[];
+  readonly comment: Maybe<string>;
+  readonly label: Maybe<string>;
   readonly tsFeatureExcludes: readonly NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
     | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
@@ -4097,10 +4114,19 @@ export namespace Ontology {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -4174,7 +4200,8 @@ export namespace Ontology {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
@@ -4231,7 +4258,8 @@ export namespace Ontology {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "Ontology";
-    labels: readonly string[];
+    comment: Maybe<string>;
+    label: Maybe<string>;
     tsFeatureExcludes: readonly NamedNode<
       | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
       | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
@@ -4310,7 +4338,7 @@ export namespace Ontology {
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.labels,
+              propertySchema: $schema.properties.comment,
               typeFromRdf: (resourceValues) =>
                 resourceValues
                   .chain((values) =>
@@ -4322,71 +4350,47 @@ export namespace Ontology {
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath: Ontology.$schema.properties.labels.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<string>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.comment.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
-            }).chain((labels) =>
+            }).chain((comment) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.tsFeatureExcludes,
+                propertySchema: $schema.properties.label,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toIri([
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                          ),
-                          dataFactory.namedNode(
-                            "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                          ),
-                        ]),
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
                       ),
                     )
-                    .map((values) => values.toArray())
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $resource,
-                        propertyPath:
-                          Ontology.$schema.properties.tsFeatureExcludes.path,
-                        value: valuesArray,
-                      }),
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $resource,
+                            propertyPath:
+                              PropertyShape.$schema.properties.label.path,
+                            value: Maybe.empty(),
+                          }),
                     ),
-              }).chain((tsFeatureExcludes) =>
+              }).chain((label) =>
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.tsFeatureIncludes,
+                  propertySchema: $schema.properties.tsFeatureExcludes,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -4430,82 +4434,137 @@ export namespace Ontology {
                         Resource.Values.fromValue({
                           focusResource: $resource,
                           propertyPath:
-                            Ontology.$schema.properties.tsFeatureIncludes.path,
+                            Ontology.$schema.properties.tsFeatureExcludes.path,
                           value: valuesArray,
                         }),
                       ),
-                }).chain((tsFeatureIncludes) =>
+                }).chain((tsFeatureExcludes) =>
                   $shaclPropertyFromRdf({
                     graph: _$options.graph,
                     resource: $resource,
-                    propertySchema: $schema.properties.tsImports,
+                    propertySchema: $schema.properties.tsFeatureIncludes,
                     typeFromRdf: (resourceValues) =>
                       resourceValues
                         .chain((values) =>
-                          $fromRdfPreferredLanguages(
-                            values,
-                            _$options.preferredLanguages,
+                          values.chainMap((value) =>
+                            value.toIri([
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                              ),
+                              dataFactory.namedNode(
+                                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                              ),
+                            ]),
                           ),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
                         )
                         .map((values) => values.toArray())
                         .map((valuesArray) =>
                           Resource.Values.fromValue({
                             focusResource: $resource,
                             propertyPath:
-                              Ontology.$schema.properties.tsImports.path,
+                              Ontology.$schema.properties.tsFeatureIncludes
+                                .path,
                             value: valuesArray,
                           }),
                         ),
-                  }).chain((tsImports) =>
+                  }).chain((tsFeatureIncludes) =>
                     $shaclPropertyFromRdf({
                       graph: _$options.graph,
                       resource: $resource,
-                      propertySchema:
-                        $schema.properties.tsObjectDeclarationType,
+                      propertySchema: $schema.properties.tsImports,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
-                            values.chainMap((value) =>
-                              value.toIri([
-                                dataFactory.namedNode(
-                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
-                                ),
-                                dataFactory.namedNode(
-                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
-                                ),
-                              ]),
+                            $fromRdfPreferredLanguages(
+                              values,
+                              _$options.preferredLanguages,
                             ),
                           )
-                          .map((values) =>
-                            values.length > 0
-                              ? values.map((value) => Maybe.of(value))
-                              : Resource.Values.fromValue<
-                                  Maybe<
-                                    NamedNode<
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                    >
-                                  >
-                                >({
-                                  focusResource: $resource,
-                                  propertyPath:
-                                    Ontology.$schema.properties
-                                      .tsObjectDeclarationType.path,
-                                  value: Maybe.empty(),
-                                }),
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          )
+                          .map((values) => values.toArray())
+                          .map((valuesArray) =>
+                            Resource.Values.fromValue({
+                              focusResource: $resource,
+                              propertyPath:
+                                Ontology.$schema.properties.tsImports.path,
+                              value: valuesArray,
+                            }),
                           ),
-                    }).map((tsObjectDeclarationType) => ({
-                      $identifier,
-                      $type,
-                      labels,
-                      tsFeatureExcludes,
-                      tsFeatureIncludes,
-                      tsImports,
-                      tsObjectDeclarationType,
-                    })),
+                    }).chain((tsImports) =>
+                      $shaclPropertyFromRdf({
+                        graph: _$options.graph,
+                        resource: $resource,
+                        propertySchema:
+                          $schema.properties.tsObjectDeclarationType,
+                        typeFromRdf: (resourceValues) =>
+                          resourceValues
+                            .chain((values) =>
+                              values.chainMap((value) =>
+                                value.toIri([
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
+                                  ),
+                                  dataFactory.namedNode(
+                                    "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
+                                  ),
+                                ]),
+                              ),
+                            )
+                            .map((values) =>
+                              values.length > 0
+                                ? values.map((value) => Maybe.of(value))
+                                : Resource.Values.fromValue<
+                                    Maybe<
+                                      NamedNode<
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                                        | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                                      >
+                                    >
+                                  >({
+                                    focusResource: $resource,
+                                    propertyPath:
+                                      Ontology.$schema.properties
+                                        .tsObjectDeclarationType.path,
+                                    value: Maybe.empty(),
+                                  }),
+                            ),
+                      }).map((tsObjectDeclarationType) => ({
+                        $identifier,
+                        $type,
+                        comment,
+                        label,
+                        tsFeatureExcludes,
+                        tsFeatureIncludes,
+                        tsImports,
+                        tsObjectDeclarationType,
+                      })),
+                    ),
                   ),
                 ),
               ),
@@ -4528,10 +4587,20 @@ export namespace Ontology {
           ownValues: ["Ontology"],
         }),
       },
-      labels: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+      },
+      label: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -4675,8 +4744,17 @@ export namespace Ontology {
       );
     }
     resource.add(
+      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      _ontology.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _ontology.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _ontology.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -4715,7 +4793,7 @@ export interface NodeShape {
   readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
   readonly classes: readonly NamedNode[];
   readonly closed: Maybe<boolean>;
-  readonly comments: readonly string[];
+  readonly comment: Maybe<string>;
   readonly datatype: Maybe<NamedNode>;
   readonly deactivated: Maybe<boolean>;
   readonly discriminantValue: Maybe<string>;
@@ -4733,7 +4811,7 @@ export interface NodeShape {
   readonly ignoredProperties: Maybe<readonly NamedNode[]>;
   readonly in_: Maybe<readonly (NamedNode | Literal)[]>;
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
-  readonly labels: readonly string[];
+  readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
   readonly maxCount: Maybe<number>;
   readonly maxExclusive: Maybe<Literal>;
@@ -4855,10 +4933,10 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.comments !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.comments,
-        value.comments,
+      filter.comment !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.comment,
+        value.comment,
       )
     ) {
       return false;
@@ -4971,10 +5049,10 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.labels !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.labels,
-        value.labels,
+      filter.label !== undefined &&
+      !$filterMaybe<string, $StringFilter>($filterString)(
+        filter.label,
+        value.label,
       )
     ) {
       return false;
@@ -5243,7 +5321,7 @@ export namespace NodeShape {
     readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
     readonly closed?: $MaybeFilter<$BooleanFilter>;
-    readonly comments?: $CollectionFilter<$StringFilter>;
+    readonly comment?: $MaybeFilter<$StringFilter>;
     readonly datatype?: $MaybeFilter<$IriFilter>;
     readonly deactivated?: $MaybeFilter<$BooleanFilter>;
     readonly discriminantValue?: $MaybeFilter<$StringFilter>;
@@ -5255,7 +5333,7 @@ export namespace NodeShape {
     readonly ignoredProperties?: $MaybeFilter<$CollectionFilter<$IriFilter>>;
     readonly in_?: $MaybeFilter<$CollectionFilter<$TermFilter>>;
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
-    readonly labels?: $CollectionFilter<$StringFilter>;
+    readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
     readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
@@ -5336,7 +5414,7 @@ export namespace NodeShape {
     and: readonly (readonly (BlankNode | NamedNode)[])[];
     classes: readonly NamedNode[];
     closed: Maybe<boolean>;
-    comments: readonly string[];
+    comment: Maybe<string>;
     datatype: Maybe<NamedNode>;
     deactivated: Maybe<boolean>;
     discriminantValue: Maybe<string>;
@@ -5354,7 +5432,7 @@ export namespace NodeShape {
     ignoredProperties: Maybe<readonly NamedNode[]>;
     in_: Maybe<readonly (NamedNode | Literal)[]>;
     isDefinedBy: Maybe<BlankNode | NamedNode>;
-    labels: readonly string[];
+    label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
     maxCount: Maybe<number>;
     maxExclusive: Maybe<Literal>;
@@ -5558,7 +5636,7 @@ export namespace NodeShape {
                     $shaclPropertyFromRdf({
                       graph: _$options.graph,
                       resource: $resource,
-                      propertySchema: $schema.properties.comments,
+                      propertySchema: $schema.properties.comment,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -5570,16 +5648,18 @@ export namespace NodeShape {
                           .chain((values) =>
                             values.chainMap((value) => value.toString()),
                           )
-                          .map((values) => values.toArray())
-                          .map((valuesArray) =>
-                            Resource.Values.fromValue({
-                              focusResource: $resource,
-                              propertyPath:
-                                PropertyShape.$schema.properties.comments.path,
-                              value: valuesArray,
-                            }),
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => Maybe.of(value))
+                              : Resource.Values.fromValue<Maybe<string>>({
+                                  focusResource: $resource,
+                                  propertyPath:
+                                    PropertyShape.$schema.properties.comment
+                                      .path,
+                                  value: Maybe.empty(),
+                                }),
                           ),
-                    }).chain((comments) =>
+                    }).chain((comment) =>
                       $shaclPropertyFromRdf({
                         graph: _$options.graph,
                         resource: $resource,
@@ -6019,7 +6099,7 @@ export namespace NodeShape {
                                               graph: _$options.graph,
                                               resource: $resource,
                                               propertySchema:
-                                                $schema.properties.labels,
+                                                $schema.properties.label,
                                               typeFromRdf: (resourceValues) =>
                                                 resourceValues
                                                   .chain((values) =>
@@ -6034,19 +6114,24 @@ export namespace NodeShape {
                                                     ),
                                                   )
                                                   .map((values) =>
-                                                    values.toArray(),
-                                                  )
-                                                  .map((valuesArray) =>
-                                                    Resource.Values.fromValue({
-                                                      focusResource: $resource,
-                                                      propertyPath:
-                                                        PropertyShape.$schema
-                                                          .properties.labels
-                                                          .path,
-                                                      value: valuesArray,
-                                                    }),
+                                                    values.length > 0
+                                                      ? values.map((value) =>
+                                                          Maybe.of(value),
+                                                        )
+                                                      : Resource.Values.fromValue<
+                                                          Maybe<string>
+                                                        >({
+                                                          focusResource:
+                                                            $resource,
+                                                          propertyPath:
+                                                            PropertyShape
+                                                              .$schema
+                                                              .properties.label
+                                                              .path,
+                                                          value: Maybe.empty(),
+                                                        }),
                                                   ),
-                                            }).chain((labels) =>
+                                            }).chain((label) =>
                                               $shaclPropertyFromRdf({
                                                 graph: _$options.graph,
                                                 resource: $resource,
@@ -7644,7 +7729,7 @@ export namespace NodeShape {
                                                                                                                                   and,
                                                                                                                                   classes,
                                                                                                                                   closed,
-                                                                                                                                  comments,
+                                                                                                                                  comment,
                                                                                                                                   datatype,
                                                                                                                                   deactivated,
                                                                                                                                   discriminantValue,
@@ -7656,7 +7741,7 @@ export namespace NodeShape {
                                                                                                                                   ignoredProperties,
                                                                                                                                   in_,
                                                                                                                                   isDefinedBy,
-                                                                                                                                  labels,
+                                                                                                                                  label,
                                                                                                                                   languageIn,
                                                                                                                                   maxCount,
                                                                                                                                   maxExclusive,
@@ -7778,10 +7863,10 @@ export namespace NodeShape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -7907,10 +7992,10 @@ export namespace NodeShape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -8320,7 +8405,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
-      _nodeShape.comments.flatMap((item) => [$literalFactory.string(item)]),
+      _nodeShape.comment
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -8490,7 +8577,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
-      _nodeShape.labels.flatMap((item) => [$literalFactory.string(item)]),
+      _nodeShape.label
+        .toList()
+        .flatMap((value) => [$literalFactory.string(value)]),
       options?.graph,
     );
     resource.add(
@@ -8910,10 +8999,10 @@ export namespace Shape {
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
       },
-      comments: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -8973,10 +9062,10 @@ export namespace Shape {
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
       },
-      labels: {
+      label: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(
@@ -9352,10 +9441,20 @@ export namespace $Object {
       },
     },
     properties: {
-      labels: {
+      comment: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
+          item: () => ({ kind: "String" as const }),
+        }),
+        path: dataFactory.namedNode(
+          "http://www.w3.org/2000/01/rdf-schema#comment",
+        ),
+      },
+      label: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
           item: () => ({ kind: "String" as const }),
         }),
         path: dataFactory.namedNode(

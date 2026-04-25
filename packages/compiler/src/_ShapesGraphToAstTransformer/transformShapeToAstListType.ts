@@ -10,8 +10,6 @@ import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
-import { shapeComment } from "./shapeComment.js";
-import { shapeLabel } from "./shapeLabel.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 
@@ -77,10 +75,10 @@ export function transformShapeToAstListType(
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       const listType = new ast.ListType<ast.ListType.ItemType>({
-        comment: shapeComment(nodeShape),
+        comment: nodeShape.comment,
         identifierNodeKind: nodeKinds.has("BlankNode") ? "BlankNode" : "IRI",
         itemType: astListTypePlaceholderItemType,
-        label: shapeLabel(nodeShape),
+        label: nodeShape.label,
         mutable: nodeShape.mutable.orDefault(false),
         name: shapeAstTypeName(nodeShape),
         identifierMintingStrategy,

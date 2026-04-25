@@ -11,8 +11,6 @@ import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMinting
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
-import { shapeComment } from "./shapeComment.js";
-import { shapeLabel } from "./shapeLabel.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { shapeOntology } from "./shapeOntology.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
@@ -204,10 +202,10 @@ export function transformShapeToAstObjectType(
         // we'll return this placeholder.
         const objectType = new ast.ObjectType({
           abstract,
-          comment: shapeComment(nodeShape),
+          comment: nodeShape.comment,
           extern: nodeShape.extern.orDefault(false),
           fromRdfType,
-          label: shapeLabel(nodeShape),
+          label: nodeShape.label,
           identifierType,
           identifierMintingStrategy,
           name: shapeAstTypeName(nodeShape),

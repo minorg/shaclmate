@@ -1,7 +1,6 @@
 import { Curie } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import type * as input from "../input/index.js";
-import { shapeLabel } from "./shapeLabel.js";
 
 export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   if (shape.$type !== "NodeShape") {
@@ -18,9 +17,8 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   }
 
   // Explicit rdfs:label
-  const shapeLabel_ = shapeLabel(shape);
-  if (shapeLabel_.isJust()) {
-    return shapeLabel_;
+  if (shape.label.isJust()) {
+    return shape.label;
   }
 
   // CURIE shape identifier

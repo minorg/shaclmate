@@ -10,8 +10,6 @@ import { Visibility } from "../enums/Visibility.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
-import { shapeComment } from "./shapeComment.js";
-import { shapeLabel } from "./shapeLabel.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
@@ -65,7 +63,7 @@ function propertyName(
   }
 
   // Explicit rdfs:label
-  const label = shapeLabel(propertyShape).extract();
+  const label = propertyShape.label.extract();
   if (label) {
     return label;
   }
@@ -370,9 +368,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 
     return Either.of(
       new ast.ObjectType.Property({
-        comment: shapeComment(propertyShape),
+        comment: propertyShape.comment,
         description: propertyShape.description,
-        label: shapeLabel(propertyShape),
+        label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
         name: propertyName.call(this, objectType, propertyShape),
         objectType,
