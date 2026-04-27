@@ -31,43 +31,6 @@ export namespace ShapesGraph {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
       });
-      // .map((generatedShape) => {
-      //   let isClass =
-      //     resource.isInstanceOf(owl.Class) || resource.isInstanceOf(rdfs.Class);
-
-      //   const isList = resource.isSubClassOf(rdf.List);
-      //   if (isList) {
-      //     isClass = true; // RDFS entailment: if A rdfs:subClassOf rdf:List then A is an rdfs:Class
-      //   }
-
-      //   const ancestorClassIris_ = ancestorClassIris(
-      //     resource,
-      //     Number.MAX_SAFE_INTEGER,
-      //   ).filter((ancestorClassIri) => !ancestorClassIri.equals(rdf.List));
-      //   if (ancestorClassIris_.length > 0) {
-      //     isClass = true; // RDFS entailment: if A rdfs:subClassOf B then both A and B are rdfs:Class's
-      //   }
-
-      //   const descendantClassIris_ = descendantClassIris(
-      //     resource,
-      //     Number.MAX_SAFE_INTEGER,
-      //   );
-      //   if (descendantClassIris_.length > 0) {
-      //     isClass = true; // RDFS entailment, see above
-      //   }
-
-      //   return {
-      //     ...generatedShape,
-      //     ancestorClassIris: ancestorClassIris_,
-      //     childClassIris: descendantClassIris(resource, 1),
-      //     descendantClassIris: descendantClassIris_,
-      //     isClass,
-      //     isList,
-      //     parentClassIris: ancestorClassIris(resource, 1).filter(
-      //       (ancestorClassIri) => !ancestorClassIri.equals(rdf.List),
-      //     ),
-      //   };
-      // });
     }
 
     protected override createOntology({
