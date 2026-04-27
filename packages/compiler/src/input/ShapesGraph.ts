@@ -1,7 +1,4 @@
-import {
-  ShapesGraph as _ShapesGraph,
-  type CurieFactory,
-} from "@shaclmate/shacl-ast";
+import { ShapesGraph as _ShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
 import type { Resource } from "rdfjs-resource";
 import * as generated from "./generated.js";
@@ -56,22 +53,14 @@ export namespace ShapesGraph {
     }
 
     protected override createPropertyShape({
-      curieFactory,
       resource,
     }: {
-      curieFactory: CurieFactory;
       resource: Resource;
     }): Either<Error, generated.PropertyShape> {
       return generated.PropertyShape.$fromRdfResource(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map((generatedShape) => ({
-        ...generatedShape,
-        path:
-          (generatedShape.path.termType === "NamedNode"
-            ? curieFactory.create(generatedShape.path).extract()
-            : undefined) ?? generatedShape.path,
-      }));
+      });
     }
   }
 
