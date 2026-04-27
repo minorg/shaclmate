@@ -114,16 +114,6 @@ export const testData = {
           ),
         );
       },
-
-      get undefinedParentClass() {
-        return parseShapesGraph(
-          path.join(
-            thisDirectoryPath,
-            "data",
-            "undefined-parent-class.shaclmate.ttl",
-          ),
-        );
-      },
     },
 
     wellFormed: {

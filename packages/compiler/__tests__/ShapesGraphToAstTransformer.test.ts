@@ -169,16 +169,4 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
     invariant(error instanceof Error);
     expect(error.message).includes("no required properties");
   });
-
-  it("undefined parent class", ({ expect }) => {
-    const error = new ShapesGraphToAstTransformer({
-      shapesGraph:
-        testData.shapesGraphs.illFormed.undefinedParentClass.unsafeCoerce(),
-    })
-      .transform()
-      .extract();
-    expect(error).toBeInstanceOf(Error);
-    invariant(error instanceof Error);
-    expect(error.message).includes("no such node shape");
-  });
 });

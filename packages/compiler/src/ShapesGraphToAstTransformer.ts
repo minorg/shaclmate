@@ -2,12 +2,14 @@ import TermMap from "@rdfjs/term-map";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
+import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
+import { logger } from "./logger.js";
 
 interface RelatedNodeShapes {
   readonly ancestors: input.NodeShape[];
@@ -45,6 +47,14 @@ function relatedNodeShapes(
     for (const parentClassIdentifier of childNodeShape.subClassOf) {
       shapesGraph
         .nodeShape(parentClassIdentifier)
+        .ifLeft((error) => {
+          logger.error(
+            "%s is rdfs:subClassOf %s which is either missing or not a node shape: %s",
+            childNodeShape,
+            Resource.Identifier.toString(parentClassIdentifier),
+            error.message,
+          );
+        })
         .ifRight((parentNodeShape) => {
           childRelatedNodeShapes.parents.set(
             parentNodeShape.$identifier,
