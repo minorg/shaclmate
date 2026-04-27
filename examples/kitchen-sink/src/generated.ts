@@ -47287,13 +47287,15 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
   }
 
   override get $identifier(): IdentifierOverride2ClassStatic.$Identifier {
-    const identifier = super.$identifier;
-    if (identifier.termType !== "NamedNode") {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    if (this._$identifier.termType !== "NamedNode") {
       throw new Error(
-        `expected identifier to be IRI, not ${identifier.termType}`,
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
       );
     }
-    return identifier;
+    return this._$identifier;
   }
 
   override $toRdfResource(
@@ -47565,6 +47567,18 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
   ) {
     super(parameters);
+  }
+
+  override get $identifier(): IdentifierOverride3ClassStatic.$Identifier {
+    if (this._$identifier === undefined) {
+      this._$identifier = dataFactory.blankNode();
+    }
+    if (this._$identifier.termType !== "NamedNode") {
+      throw new Error(
+        `expected identifier to be IRI, not ${this._$identifier.termType}`,
+      );
+    }
+    return this._$identifier;
   }
 
   override $toRdfResource(
