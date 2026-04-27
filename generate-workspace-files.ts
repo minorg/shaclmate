@@ -114,6 +114,11 @@ const workspaces = {
     },
   } satisfies Record<string, Workspace>,
   examples: {
+    api: {
+      devDependencies: {
+        internal: ["compiler"],
+      },
+    },
     forms: {
       dependencies: {
         external: [

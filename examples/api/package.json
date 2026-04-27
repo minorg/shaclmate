@@ -1,0 +1,30 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "@shaclmate/compiler": "4.0.14",
+    "@tsconfig/node18": "~18.2.4",
+    "@tsconfig/strictest": "~2.0.8",
+    "@types/node": "~18",
+    "depcheck": "~1.4.7",
+    "rimraf": "~6.0.1",
+    "typescript": "5.9.3"
+  },
+  "license": "Apache-2.0",
+  "name": "@shaclmate/api-example",
+  "packageManager": "npm@11.11.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minorg/shaclmate.git"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist",
+    "depcheck": "depcheck .",
+    "dev": "tsc -w --preserveWatchOutput",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
+  },
+  "type": "module",
+  "version": "4.0.14"
+}
