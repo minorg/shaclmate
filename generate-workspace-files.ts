@@ -17,6 +17,7 @@ const externalDependencies = {
   "@mui/x-date-pickers": "~7.17.0",
   "@rdfjs/data-model": "~2.1.1",
   "@rdfjs/dataset": "~2.0.2",
+  "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/prefix-map": "~0.1.2",
   "@rdfjs/serializer-turtle": "~1.1.5",
   "@rdfjs/term-map": "~2.0.2",
@@ -30,6 +31,7 @@ const externalDependencies = {
   "@types/n3": "~1.26.0",
   "@types/rdfjs__data-model": "~2.0.9",
   "@types/rdfjs__dataset": "~2.0.7",
+  "@types/rdfjs__namespace": "~2.0.10",
   "@types/rdfjs__prefix-map": "~0.1.5",
   "@types/rdfjs__serializer-turtle": "~1.1.0",
   "@types/rdfjs__term-map": "~2.0.10",
@@ -116,6 +118,11 @@ const workspaces = {
   examples: {
     api: {
       devDependencies: {
+        external: [
+          "@rdfjs/namespace",
+          "@tpluscode/rdf-ns-builders",
+          "@types/rdfjs__namespace",
+        ],
         internal: ["compiler"],
       },
     },
