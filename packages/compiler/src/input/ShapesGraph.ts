@@ -10,23 +10,45 @@ export class ShapesGraph extends AbstractShapesGraph<
   generated.PropertyGroup,
   generated.PropertyShape
 > {
-  override addDataset(
-    dataset: DatasetCore,
-    options?: {
-      ignoreUndefinedShapes?: boolean;
-      prefixMap?: PrefixMap;
-    },
-  ): Either<Error, this> {
-    return super
-      .addDataset(dataset, {
-        ...options,
-        fromRdfResourceFunctions: {
-          NodeShape: generated.NodeShape.$fromRdfResource,
-          Ontology: generated.Ontology.$fromRdfResource,
-          PropertyGroup: generated.PropertyGroup.$fromRdfResource,
-          PropertyShape: generated.PropertyShape.$fromRdfResource,
-        },
-      })
-      .map(() => this);
+  static builder(): ShapesGraph.Builder {
+    return new ShapesGraph.Builder();
+  }
+}
+
+export namespace ShapesGraph {
+  export class Builder extends AbstractShapesGraph.AbstractBuilder<
+    generated.NodeShape,
+    generated.Ontology,
+    generated.PropertyGroup,
+    generated.PropertyShape
+  > {
+    override addDataset(
+      dataset: DatasetCore,
+      options?: {
+        ignoreUndefinedShapes?: boolean;
+        prefixMap?: PrefixMap;
+      },
+    ): Either<Error, this> {
+      return super
+        .addDataset(dataset, {
+          ...options,
+          fromRdfResourceFunctions: {
+            NodeShape: generated.NodeShape.$fromRdfResource,
+            Ontology: generated.Ontology.$fromRdfResource,
+            PropertyGroup: generated.PropertyGroup.$fromRdfResource,
+            PropertyShape: generated.PropertyShape.$fromRdfResource,
+          },
+        })
+        .map(() => this);
+    }
+
+    build(): ShapesGraph {
+      return new ShapesGraph({
+        nodeShapesByIdentifier: this.nodeShapesByIdentifier,
+        ontologiesByIdentifier: this.ontologiesByIdentifier,
+        propertyGroupsByIdentifier: this.propertyGroupsByIdentifier,
+        propertyShapesByIdentifier: this.propertyShapesByIdentifier,
+      });
+    }
   }
 }
