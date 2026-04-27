@@ -28,6 +28,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -64,6 +66,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -115,6 +119,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -375,6 +381,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -411,6 +419,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -446,41 +456,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IdentifierType",
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "name": "ClassUnionMember2",
-      "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
-      "properties": [
-        {
-          "mutable": false,
-          "name": "classUnionMember2Property",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "classUnionMember2Property",
-            "termType": "NamedNode",
-            "value": "http://example.com/classUnionMember2Property"
-          },
-          "shapeIdentifier": "_:n3-140",
-          "type": {
-            "kind": "LiteralType",
-            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -516,6 +493,45 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "identifierMintingStrategy": "blankNode",
+      "identifierType": {
+        "kind": "IdentifierType",
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "name": "ClassUnionMember2",
+      "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+      "properties": [
+        {
+          "mutable": false,
+          "name": "classUnionMember2Property",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "classUnionMember2Property",
+            "termType": "NamedNode",
+            "value": "http://example.com/classUnionMember2Property"
+          },
+          "shapeIdentifier": "_:n3-140",
+          "type": {
+            "kind": "LiteralType",
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -552,6 +568,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -588,6 +606,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -624,6 +644,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -660,6 +682,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -950,6 +974,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "date",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#date"
                     }
@@ -960,6 +986,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "dateTime",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#dateTime"
                     }
@@ -992,6 +1020,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "dateTime",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#dateTime"
                     }
@@ -1002,6 +1032,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "date",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#date"
                     }
@@ -1034,6 +1066,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "date",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#date"
                     }
@@ -1044,6 +1078,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -1076,6 +1112,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -1086,6 +1124,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "date",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#date"
                     }
@@ -1312,6 +1352,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -1348,6 +1390,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -1458,6 +1502,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -1559,6 +1605,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -1651,6 +1699,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -1676,82 +1726,6 @@
       "properties": [
         {
           "mutable": false,
-          "name": "inStringsProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inStringsProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inStringsProperty"
-          },
-          "shapeIdentifier": "_:n3-197",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inBooleansProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inBooleansProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inBooleansProperty"
-          },
-          "shapeIdentifier": "_:n3-200",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inDateTimesProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inDateTimesProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inDateTimesProperty"
-          },
-          "shapeIdentifier": "_:n3-202",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inIntegersProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inIntegersProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inIntegersProperty"
-          },
-          "shapeIdentifier": "_:n3-204",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
           "name": "inIrisProperty",
           "order": 0,
           "path": {
@@ -1760,7 +1734,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-207",
+          "shapeIdentifier": "_:n3-197",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1781,6 +1755,82 @@
             "reference": "inDoublesProperty",
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
+          },
+          "shapeIdentifier": "_:n3-200",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inStringsProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inStringsProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inStringsProperty"
+          },
+          "shapeIdentifier": "_:n3-203",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inBooleansProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inBooleansProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inBooleansProperty"
+          },
+          "shapeIdentifier": "_:n3-206",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inDateTimesProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inDateTimesProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inDateTimesProperty"
+          },
+          "shapeIdentifier": "_:n3-208",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inIntegersProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inIntegersProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inIntegersProperty"
           },
           "shapeIdentifier": "_:n3-210",
           "type": {
@@ -1931,6 +1981,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -1966,41 +2018,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IdentifierType",
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "name": "InterfaceUnionMember2",
-      "shapeIdentifier": "<http://example.com/InterfaceUnionMember2>",
-      "properties": [
-        {
-          "mutable": false,
-          "name": "interfaceUnionMember2Property",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "interfaceUnionMember2Property",
-            "termType": "NamedNode",
-            "value": "http://example.com/interfaceUnionMember2Property"
-          },
-          "shapeIdentifier": "_:n3-219",
-          "type": {
-            "kind": "LiteralType",
-            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2036,6 +2055,45 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "identifierMintingStrategy": "blankNode",
+      "identifierType": {
+        "kind": "IdentifierType",
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "name": "InterfaceUnionMember2",
+      "shapeIdentifier": "<http://example.com/InterfaceUnionMember2>",
+      "properties": [
+        {
+          "mutable": false,
+          "name": "interfaceUnionMember2Property",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "interfaceUnionMember2Property",
+            "termType": "NamedNode",
+            "value": "http://example.com/interfaceUnionMember2Property"
+          },
+          "shapeIdentifier": "_:n3-219",
+          "type": {
+            "kind": "LiteralType",
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2104,6 +2162,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "boolean",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#boolean"
                     }
@@ -2113,6 +2173,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "double",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#double"
                     }
@@ -2122,6 +2184,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -2199,6 +2263,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2235,6 +2301,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2270,6 +2338,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2305,6 +2375,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2340,6 +2412,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2375,6 +2449,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2409,6 +2485,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -2443,6 +2521,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -3967,6 +4047,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4073,6 +4155,8 @@
               "itemType": {
                 "kind": "LiteralType",
                 "datatype": {
+                  "prefix": "xsd",
+                  "reference": "string",
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 }
@@ -4115,6 +4199,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -4143,6 +4229,8 @@
               "itemType": {
                 "kind": "LiteralType",
                 "datatype": {
+                  "prefix": "xsd",
+                  "reference": "string",
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 }
@@ -4169,6 +4257,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -4218,6 +4308,8 @@
                 "type": {
                   "kind": "LiteralType",
                   "datatype": {
+                    "prefix": "xsd",
+                    "reference": "string",
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   }
@@ -4249,6 +4341,8 @@
                 "type": {
                   "kind": "LiteralType",
                   "datatype": {
+                    "prefix": "xsd",
+                    "reference": "date",
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
                   }
@@ -4259,6 +4353,8 @@
                 "type": {
                   "kind": "LiteralType",
                   "datatype": {
+                    "prefix": "xsd",
+                    "reference": "dateTime",
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#dateTime"
                   }
@@ -4299,6 +4395,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4334,6 +4432,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4494,6 +4594,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "byte",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#byte"
               }
@@ -4517,6 +4619,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "decimal",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#decimal"
               }
@@ -4540,6 +4644,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "double",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#double"
               }
@@ -4563,6 +4669,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "float",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#float"
               }
@@ -4586,6 +4694,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "int",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#int"
               }
@@ -4609,6 +4719,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "integer",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#integer"
               }
@@ -4632,6 +4744,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "long",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#long"
               }
@@ -4655,6 +4769,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "negativeInteger",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#negativeInteger"
               }
@@ -4678,6 +4794,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "nonNegativeInteger",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
               }
@@ -4701,6 +4819,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "nonPositiveInteger",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#nonPositiveInteger"
               }
@@ -4724,6 +4844,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "positiveInteger",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#positiveInteger"
               }
@@ -4747,6 +4869,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "short",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#short"
               }
@@ -4770,6 +4894,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedByte",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#unsignedByte"
               }
@@ -4793,6 +4919,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedInt",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#unsignedInt"
               }
@@ -4816,6 +4944,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedLong",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#unsignedLong"
               }
@@ -4839,6 +4969,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "unsignedShort",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#unsignedShort"
               }
@@ -4876,6 +5008,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4896,6 +5030,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4916,6 +5052,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -4982,6 +5120,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5017,6 +5157,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5052,6 +5194,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5087,6 +5231,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5124,6 +5270,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5147,6 +5295,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -5171,6 +5321,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -5195,6 +5347,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -5233,6 +5387,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5254,6 +5410,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5276,6 +5434,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5297,6 +5457,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5319,6 +5481,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5348,6 +5512,8 @@
           "path": {
             "termType": "InversePath",
             "path": {
+              "prefix": "",
+              "reference": "inversePathProperty",
               "termType": "NamedNode",
               "value": "http://example.com/inversePathProperty"
             }
@@ -5380,6 +5546,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -5417,6 +5585,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5437,6 +5607,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5457,6 +5629,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5674,6 +5848,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -5734,6 +5910,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "boolean",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#boolean"
               }
@@ -5757,6 +5935,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "date",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#date"
               }
@@ -5780,6 +5960,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "dateTime",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#dateTime"
               }
@@ -5803,6 +5985,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "double",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#double"
               }
@@ -5867,6 +6051,8 @@
             "itemType": {
               "kind": "LiteralType",
               "datatype": {
+                "prefix": "xsd",
+                "reference": "string",
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               }
@@ -5988,6 +6174,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -6068,6 +6256,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -6155,6 +6345,8 @@
                 "type": {
                   "kind": "LiteralType",
                   "datatype": {
+                    "prefix": "xsd",
+                    "reference": "string",
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   }
@@ -6227,6 +6419,8 @@
                 "type": {
                   "kind": "LiteralType",
                   "datatype": {
+                    "prefix": "xsd",
+                    "reference": "string",
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   }
@@ -6316,6 +6510,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -6396,6 +6592,8 @@
                   "type": {
                     "kind": "LiteralType",
                     "datatype": {
+                      "prefix": "xsd",
+                      "reference": "string",
                       "termType": "NamedNode",
                       "value": "http://www.w3.org/2001/XMLSchema#string"
                     }
@@ -6436,6 +6634,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
@@ -6471,6 +6671,8 @@
           "type": {
             "kind": "LiteralType",
             "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             }
