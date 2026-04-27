@@ -1,3 +1,4 @@
+export * from "./AbstractShapesGraph.js";
 export * from "./Curie.js";
 export * from "./CurieFactory.js";
 export {

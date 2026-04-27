@@ -45,8 +45,7 @@ function parseShapesGraph(
     }
     return { dataset, iriPrefixes };
   }).chain(({ dataset, iriPrefixes }) =>
-    ShapesGraph.create({
-      dataset,
+    new ShapesGraph().addDataset(dataset, {
       prefixMap: new PrefixMap(iriPrefixes, { factory: dataFactory }),
     }),
   );

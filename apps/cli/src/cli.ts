@@ -120,7 +120,8 @@ function generate({
     }
   }
 
-  ShapesGraph.create({ dataset, prefixMap })
+  new ShapesGraph()
+    .addDataset(dataset, { prefixMap })
     .chain((shapesGraph) => new Compiler({ generator }).compile(shapesGraph))
     .ifLeft((error) => {
       throw error;
