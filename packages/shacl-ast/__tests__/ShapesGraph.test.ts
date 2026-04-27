@@ -58,7 +58,7 @@ testData.skos.ifJust((shapesGraph) => {
 describe("RdfsjsShapesGraph: error cases", () => {
   it("should produce an error on an undefined shape", ({ expect }) => {
     const error = ShapesGraph.builder()
-      .addDataset(testData.undefinedShape.dataset)
+      .parseDataset(testData.undefinedShape.dataset)
       .extract();
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).includes("undefined shape");

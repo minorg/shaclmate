@@ -251,29 +251,56 @@ export namespace AbstractShapesGraph {
       PropertyShape: TypeFunctions<PropertyShapeT>;
     };
 
-    addNodeShape<TypelessNodeShapeT extends Omit<NodeShapeT, "$type">>(
+    add(
+      ...objects: readonly (
+        | NodeShapeT
+        | OntologyT
+        | PropertyGroupT
+        | PropertyShapeT
+      )[]
+    ): this {
+      for (const object of objects) {
+        switch (object.$type) {
+          case "NodeShape":
+            this.nodeShape(object);
+            break;
+          case "Ontology":
+            this.ontology(object);
+            break;
+          case "PropertyGroup":
+            this.propertyGroup(object);
+            break;
+          case "PropertyShape":
+            this.propertyShape(object);
+            break;
+        }
+      }
+      return this;
+    }
+
+    nodeShape<TypelessNodeShapeT extends Omit<NodeShapeT, "$type">>(
       typelessNodeShape: TypelessNodeShapeT,
-    ): TypelessNodeShapeT {
+    ): NodeShapeT {
       const nodeShape: NodeShapeT = {
         ...typelessNodeShape,
         $type: "NodeShape",
       } as unknown as NodeShapeT;
       this.nodeShapesByIdentifier.set(nodeShape.$identifier, nodeShape);
-      return typelessNodeShape;
+      return nodeShape;
     }
 
-    addOntology<TypelessOntologyT extends Omit<OntologyT, "$type">>(
+    ontology<TypelessOntologyT extends Omit<OntologyT, "$type">>(
       typelessOntology: TypelessOntologyT,
-    ): TypelessOntologyT {
+    ): OntologyT {
       const ontology: OntologyT = {
         ...typelessOntology,
         $type: "Ontology",
       } as unknown as OntologyT;
       this.ontologiesByIdentifier.set(ontology.$identifier, ontology);
-      return typelessOntology;
+      return ontology;
     }
 
-    addDataset(
+    parseDataset(
       dataset: DatasetCore,
       options?: {
         ignoreUndefinedShapes?: boolean;
@@ -375,7 +402,7 @@ export namespace AbstractShapesGraph {
           }
           this.typeFunctions.Ontology.$fromRdfResource(ontologyResource, {
             ignoreRdfType: true,
-          }).ifRight((ontology) => this.addOntology(ontology));
+          }).ifRight((ontology) => this.add(ontology));
         }
 
         // Read property groups
@@ -398,7 +425,7 @@ export namespace AbstractShapesGraph {
           this.typeFunctions.PropertyGroup.$fromRdfResource(
             curieResourceSet.resource(propertyGroupResource.identifier),
             { ignoreRdfType: true },
-          ).ifRight((propertyGroup) => this.addPropertyGroup(propertyGroup));
+          ).ifRight((propertyGroup) => this.add(propertyGroup));
         }
 
         // Read shapes
@@ -539,7 +566,7 @@ export namespace AbstractShapesGraph {
         for (const shapeNode of shapeNodeSet) {
           if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
             // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
-            this.addPropertyShape(
+            this.add(
               this.typeFunctions.PropertyShape.$fromRdfResource(
                 curieResourceSet.resource(shapeNode),
                 {
@@ -549,7 +576,7 @@ export namespace AbstractShapesGraph {
             );
           } else {
             // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
-            this.addNodeShape(
+            this.add(
               this.typeFunctions.NodeShape.$fromRdfResource(
                 curieResourceSet.resource(shapeNode),
                 {
@@ -564,9 +591,9 @@ export namespace AbstractShapesGraph {
       });
     }
 
-    addPropertyGroup<
-      TypelessPropertyGroupT extends Omit<PropertyGroupT, "$type">,
-    >(typelessPropertyGroup: TypelessPropertyGroupT): TypelessPropertyGroupT {
+    propertyGroup<TypelessPropertyGroupT extends Omit<PropertyGroupT, "$type">>(
+      typelessPropertyGroup: TypelessPropertyGroupT,
+    ): PropertyGroupT {
       const propertyGroup: PropertyGroupT = {
         ...typelessPropertyGroup,
         $type: "PropertyGroup",
@@ -575,12 +602,12 @@ export namespace AbstractShapesGraph {
         propertyGroup.$identifier,
         propertyGroup,
       );
-      return typelessPropertyGroup;
+      return propertyGroup;
     }
 
-    addPropertyShape<
-      TypelessPropertyShapeT extends Omit<PropertyShapeT, "$type">,
-    >(typelessPropertyShape: TypelessPropertyShapeT): TypelessPropertyShapeT {
+    propertyShape<TypelessPropertyShapeT extends Omit<PropertyShapeT, "$type">>(
+      typelessPropertyShape: TypelessPropertyShapeT,
+    ): PropertyShapeT {
       const propertyShape: PropertyShapeT = {
         ...typelessPropertyShape,
         $type: "PropertyShape",
@@ -589,16 +616,7 @@ export namespace AbstractShapesGraph {
         propertyShape.$identifier,
         propertyShape,
       );
-      return typelessPropertyShape;
-    }
-
-    addShape(shape: NodeShapeT | PropertyShapeT): NodeShapeT | PropertyShapeT {
-      switch (shape.$type) {
-        case "NodeShape":
-          return this.addNodeShape(shape);
-        case "PropertyShape":
-          return this.addPropertyShape(shape);
-      }
+      return propertyShape;
     }
   }
 }
