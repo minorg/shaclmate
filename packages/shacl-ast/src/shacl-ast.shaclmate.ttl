@@ -79,7 +79,7 @@ shaclmate:IriList
 shaclmate:NodeShape
     shaclmate:fromRdfType sh:NodeShape ;
     a owl:Class, sh:NodeShape ;
-    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
+    sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-type, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
 shaclmate:NodeShape-closed
     a sh:PropertyShape ;
@@ -97,6 +97,16 @@ shaclmate:NodeShape-properties
     a sh:PropertyShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path sh:property .
+
+shaclmate:NodeShape-subClassOf
+    a sh:PropertyShape ;
+    sh:nodeKind sh:IRI ;
+    sh:path rdfs:subClassOf .
+
+shaclmate:NodeShape-type
+    a sh:PropertyShape ;
+    sh:nodeKind sh:IRI ;
+    sh:path rdf:type .
 
 shaclmate:Ontology
     shaclmate:fromRdfType owl:Ontology ;
