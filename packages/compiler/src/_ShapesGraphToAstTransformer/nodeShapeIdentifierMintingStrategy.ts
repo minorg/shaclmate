@@ -30,28 +30,26 @@ export function nodeShapeIdentifierMintingStrategy(
     );
   }
 
-  return Either.sequence(
-    nodeShape.ancestorClassIris.map((nodeShapeIdentifier) =>
-      this.shapesGraph.nodeShape(nodeShapeIdentifier),
-    ),
-  ).chain((ancestorNodeShapes) => {
-    for (const ancestorNodeShape of ancestorNodeShapes) {
-      if (ancestorNodeShape.identifierMintingStrategy.isJust()) {
-        return Either.of(
-          ancestorNodeShape.identifierMintingStrategy.map(
-            IdentifierMintingStrategy.fromIri,
-          ) as Maybe<IdentifierMintingStrategy>,
-        );
-      }
+  // Recurse into parents
+  for (const parentNodeShape of this.relatedNodeShapesByIdentifier.get(
+    nodeShape.$identifier,
+  )!.parents) {
+    const parentNodeShapeIdentifierMintingStrategy =
+      nodeShapeIdentifierMintingStrategy.call(this, parentNodeShape);
+    if (
+      parentNodeShapeIdentifierMintingStrategy.isRight() &&
+      parentNodeShapeIdentifierMintingStrategy.extract().isJust()
+    ) {
+      return parentNodeShapeIdentifierMintingStrategy;
     }
+  }
 
-    return shapeNodeKinds
-      .call(this, nodeShape, { defaultNodeShapeNodeKinds })
-      .map((nodeKinds) => {
-        if (nodeKinds.has("BlankNode")) {
-          return Maybe.of("blankNode");
-        }
-        return Maybe.empty();
-      });
-  });
+  return shapeNodeKinds
+    .call(this, nodeShape, { defaultNodeShapeNodeKinds })
+    .map((nodeKinds) => {
+      if (nodeKinds.has("BlankNode")) {
+        return Maybe.of("blankNode");
+      }
+      return Maybe.empty();
+    });
 }

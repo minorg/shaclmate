@@ -4839,6 +4839,7 @@ export interface NodeShape {
   readonly properties: readonly (BlankNode | NamedNode)[];
   readonly rdfType: Maybe<NamedNode>;
   readonly shaclmateName: Maybe<string>;
+  readonly subClassOf: readonly NamedNode[];
   readonly toRdfTypes: readonly NamedNode[];
   readonly tsFeatureExcludes: readonly NamedNode<
     | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -4871,6 +4872,7 @@ export interface NodeShape {
       | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
     >
   >;
+  readonly types: readonly NamedNode[];
   readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
 }
 
@@ -5227,6 +5229,15 @@ export namespace NodeShape {
       return false;
     }
     if (
+      filter.subClassOf !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.subClassOf,
+        value.subClassOf,
+      )
+    ) {
+      return false;
+    }
+    if (
       filter.toRdfTypes !== undefined &&
       !$filterArray<NamedNode, $IriFilter>($filterIri)(
         filter.toRdfTypes,
@@ -5300,6 +5311,15 @@ export namespace NodeShape {
       return false;
     }
     if (
+      filter.types !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.types,
+        value.types,
+      )
+    ) {
+      return false;
+    }
+    if (
       filter.xone !== undefined &&
       !$filterArray<
         readonly (BlankNode | NamedNode)[],
@@ -5352,11 +5372,13 @@ export namespace NodeShape {
     readonly properties?: $CollectionFilter<$IdentifierFilter>;
     readonly rdfType?: $MaybeFilter<$IriFilter>;
     readonly shaclmateName?: $MaybeFilter<$StringFilter>;
+    readonly subClassOf?: $CollectionFilter<$IriFilter>;
     readonly toRdfTypes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
     readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
     readonly tsObjectDeclarationType?: $MaybeFilter<$IriFilter>;
+    readonly types?: $CollectionFilter<$IriFilter>;
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
@@ -5460,6 +5482,7 @@ export namespace NodeShape {
     properties: readonly (BlankNode | NamedNode)[];
     rdfType: Maybe<NamedNode>;
     shaclmateName: Maybe<string>;
+    subClassOf: readonly NamedNode[];
     toRdfTypes: readonly NamedNode[];
     tsFeatureExcludes: readonly NamedNode<
       | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
@@ -5492,6 +5515,7 @@ export namespace NodeShape {
         | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
       >
     >;
+    types: readonly NamedNode[];
     xone: readonly (readonly (BlankNode | NamedNode)[])[];
   }> = ($resource, _$options) => {
     return (
@@ -7249,7 +7273,7 @@ export namespace NodeShape {
                                                                                                               propertySchema:
                                                                                                                 $schema
                                                                                                                   .properties
-                                                                                                                  .toRdfTypes,
+                                                                                                                  .subClassOf,
                                                                                                               typeFromRdf:
                                                                                                                 (
                                                                                                                   resourceValues,
@@ -7284,7 +7308,7 @@ export namespace NodeShape {
                                                                                                                               NodeShape
                                                                                                                                 .$schema
                                                                                                                                 .properties
-                                                                                                                                .toRdfTypes
+                                                                                                                                .subClassOf
                                                                                                                                 .path,
                                                                                                                             value:
                                                                                                                               valuesArray,
@@ -7294,7 +7318,7 @@ export namespace NodeShape {
                                                                                                             },
                                                                                                           ).chain(
                                                                                                             (
-                                                                                                              toRdfTypes,
+                                                                                                              subClassOf,
                                                                                                             ) =>
                                                                                                               $shaclPropertyFromRdf(
                                                                                                                 {
@@ -7305,7 +7329,7 @@ export namespace NodeShape {
                                                                                                                   propertySchema:
                                                                                                                     $schema
                                                                                                                       .properties
-                                                                                                                      .tsFeatureExcludes,
+                                                                                                                      .toRdfTypes,
                                                                                                                   typeFromRdf:
                                                                                                                     (
                                                                                                                       resourceValues,
@@ -7319,40 +7343,7 @@ export namespace NodeShape {
                                                                                                                               (
                                                                                                                                 value,
                                                                                                                               ) =>
-                                                                                                                                value.toIri(
-                                                                                                                                  [
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                                                                                                                                    ),
-                                                                                                                                    dataFactory.namedNode(
-                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                                                                                                                                    ),
-                                                                                                                                  ],
-                                                                                                                                ),
+                                                                                                                                value.toIri(),
                                                                                                                             ),
                                                                                                                         )
                                                                                                                         .map(
@@ -7370,10 +7361,10 @@ export namespace NodeShape {
                                                                                                                                 focusResource:
                                                                                                                                   $resource,
                                                                                                                                 propertyPath:
-                                                                                                                                  Ontology
+                                                                                                                                  NodeShape
                                                                                                                                     .$schema
                                                                                                                                     .properties
-                                                                                                                                    .tsFeatureExcludes
+                                                                                                                                    .toRdfTypes
                                                                                                                                     .path,
                                                                                                                                 value:
                                                                                                                                   valuesArray,
@@ -7383,7 +7374,7 @@ export namespace NodeShape {
                                                                                                                 },
                                                                                                               ).chain(
                                                                                                                 (
-                                                                                                                  tsFeatureExcludes,
+                                                                                                                  toRdfTypes,
                                                                                                                 ) =>
                                                                                                                   $shaclPropertyFromRdf(
                                                                                                                     {
@@ -7394,7 +7385,7 @@ export namespace NodeShape {
                                                                                                                       propertySchema:
                                                                                                                         $schema
                                                                                                                           .properties
-                                                                                                                          .tsFeatureIncludes,
+                                                                                                                          .tsFeatureExcludes,
                                                                                                                       typeFromRdf:
                                                                                                                         (
                                                                                                                           resourceValues,
@@ -7462,7 +7453,7 @@ export namespace NodeShape {
                                                                                                                                       Ontology
                                                                                                                                         .$schema
                                                                                                                                         .properties
-                                                                                                                                        .tsFeatureIncludes
+                                                                                                                                        .tsFeatureExcludes
                                                                                                                                         .path,
                                                                                                                                     value:
                                                                                                                                       valuesArray,
@@ -7472,7 +7463,7 @@ export namespace NodeShape {
                                                                                                                     },
                                                                                                                   ).chain(
                                                                                                                     (
-                                                                                                                      tsFeatureIncludes,
+                                                                                                                      tsFeatureExcludes,
                                                                                                                     ) =>
                                                                                                                       $shaclPropertyFromRdf(
                                                                                                                         {
@@ -7483,7 +7474,7 @@ export namespace NodeShape {
                                                                                                                           propertySchema:
                                                                                                                             $schema
                                                                                                                               .properties
-                                                                                                                              .tsImports,
+                                                                                                                              .tsFeatureIncludes,
                                                                                                                           typeFromRdf:
                                                                                                                             (
                                                                                                                               resourceValues,
@@ -7493,20 +7484,44 @@ export namespace NodeShape {
                                                                                                                                   (
                                                                                                                                     values,
                                                                                                                                   ) =>
-                                                                                                                                    $fromRdfPreferredLanguages(
-                                                                                                                                      values,
-                                                                                                                                      _$options.preferredLanguages,
-                                                                                                                                    ),
-                                                                                                                                )
-                                                                                                                                .chain(
-                                                                                                                                  (
-                                                                                                                                    values,
-                                                                                                                                  ) =>
                                                                                                                                     values.chainMap(
                                                                                                                                       (
                                                                                                                                         value,
                                                                                                                                       ) =>
-                                                                                                                                        value.toString(),
+                                                                                                                                        value.toIri(
+                                                                                                                                          [
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeatures_All",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Create",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Json",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeatures_None",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
+                                                                                                                                            ),
+                                                                                                                                            dataFactory.namedNode(
+                                                                                                                                              "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
+                                                                                                                                            ),
+                                                                                                                                          ],
+                                                                                                                                        ),
                                                                                                                                     ),
                                                                                                                                 )
                                                                                                                                 .map(
@@ -7527,7 +7542,7 @@ export namespace NodeShape {
                                                                                                                                           Ontology
                                                                                                                                             .$schema
                                                                                                                                             .properties
-                                                                                                                                            .tsImports
+                                                                                                                                            .tsFeatureIncludes
                                                                                                                                             .path,
                                                                                                                                         value:
                                                                                                                                           valuesArray,
@@ -7537,7 +7552,7 @@ export namespace NodeShape {
                                                                                                                         },
                                                                                                                       ).chain(
                                                                                                                         (
-                                                                                                                          tsImports,
+                                                                                                                          tsFeatureIncludes,
                                                                                                                         ) =>
                                                                                                                           $shaclPropertyFromRdf(
                                                                                                                             {
@@ -7548,7 +7563,7 @@ export namespace NodeShape {
                                                                                                                               propertySchema:
                                                                                                                                 $schema
                                                                                                                                   .properties
-                                                                                                                                  .tsObjectDeclarationType,
+                                                                                                                                  .tsImports,
                                                                                                                               typeFromRdf:
                                                                                                                                 (
                                                                                                                                   resourceValues,
@@ -7558,62 +7573,51 @@ export namespace NodeShape {
                                                                                                                                       (
                                                                                                                                         values,
                                                                                                                                       ) =>
+                                                                                                                                        $fromRdfPreferredLanguages(
+                                                                                                                                          values,
+                                                                                                                                          _$options.preferredLanguages,
+                                                                                                                                        ),
+                                                                                                                                    )
+                                                                                                                                    .chain(
+                                                                                                                                      (
+                                                                                                                                        values,
+                                                                                                                                      ) =>
                                                                                                                                         values.chainMap(
                                                                                                                                           (
                                                                                                                                             value,
                                                                                                                                           ) =>
-                                                                                                                                            value.toIri(
-                                                                                                                                              [
-                                                                                                                                                dataFactory.namedNode(
-                                                                                                                                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
-                                                                                                                                                ),
-                                                                                                                                                dataFactory.namedNode(
-                                                                                                                                                  "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
-                                                                                                                                                ),
-                                                                                                                                              ],
-                                                                                                                                            ),
+                                                                                                                                            value.toString(),
                                                                                                                                         ),
                                                                                                                                     )
                                                                                                                                     .map(
                                                                                                                                       (
                                                                                                                                         values,
                                                                                                                                       ) =>
-                                                                                                                                        values.length >
-                                                                                                                                        0
-                                                                                                                                          ? values.map(
-                                                                                                                                              (
-                                                                                                                                                value,
-                                                                                                                                              ) =>
-                                                                                                                                                Maybe.of(
-                                                                                                                                                  value,
-                                                                                                                                                ),
-                                                                                                                                            )
-                                                                                                                                          : Resource.Values.fromValue<
-                                                                                                                                              Maybe<
-                                                                                                                                                NamedNode<
-                                                                                                                                                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
-                                                                                                                                                  | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
-                                                                                                                                                >
-                                                                                                                                              >
-                                                                                                                                            >(
-                                                                                                                                              {
-                                                                                                                                                focusResource:
-                                                                                                                                                  $resource,
-                                                                                                                                                propertyPath:
-                                                                                                                                                  Ontology
-                                                                                                                                                    .$schema
-                                                                                                                                                    .properties
-                                                                                                                                                    .tsObjectDeclarationType
-                                                                                                                                                    .path,
-                                                                                                                                                value:
-                                                                                                                                                  Maybe.empty(),
-                                                                                                                                              },
-                                                                                                                                            ),
+                                                                                                                                        values.toArray(),
+                                                                                                                                    )
+                                                                                                                                    .map(
+                                                                                                                                      (
+                                                                                                                                        valuesArray,
+                                                                                                                                      ) =>
+                                                                                                                                        Resource.Values.fromValue(
+                                                                                                                                          {
+                                                                                                                                            focusResource:
+                                                                                                                                              $resource,
+                                                                                                                                            propertyPath:
+                                                                                                                                              Ontology
+                                                                                                                                                .$schema
+                                                                                                                                                .properties
+                                                                                                                                                .tsImports
+                                                                                                                                                .path,
+                                                                                                                                            value:
+                                                                                                                                              valuesArray,
+                                                                                                                                          },
+                                                                                                                                        ),
                                                                                                                                     ),
                                                                                                                             },
                                                                                                                           ).chain(
                                                                                                                             (
-                                                                                                                              tsObjectDeclarationType,
+                                                                                                                              tsImports,
                                                                                                                             ) =>
                                                                                                                               $shaclPropertyFromRdf(
                                                                                                                                 {
@@ -7624,7 +7628,7 @@ export namespace NodeShape {
                                                                                                                                   propertySchema:
                                                                                                                                     $schema
                                                                                                                                       .properties
-                                                                                                                                      .xone,
+                                                                                                                                      .tsObjectDeclarationType,
                                                                                                                                   typeFromRdf:
                                                                                                                                     (
                                                                                                                                       resourceValues,
@@ -7638,38 +7642,131 @@ export namespace NodeShape {
                                                                                                                                               (
                                                                                                                                                 value,
                                                                                                                                               ) =>
-                                                                                                                                                value.toList(
-                                                                                                                                                  {
-                                                                                                                                                    graph:
-                                                                                                                                                      _$options.graph,
-                                                                                                                                                  },
+                                                                                                                                                value.toIri(
+                                                                                                                                                  [
+                                                                                                                                                    dataFactory.namedNode(
+                                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class",
+                                                                                                                                                    ),
+                                                                                                                                                    dataFactory.namedNode(
+                                                                                                                                                      "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface",
+                                                                                                                                                    ),
+                                                                                                                                                  ],
                                                                                                                                                 ),
                                                                                                                                             ),
                                                                                                                                         )
-                                                                                                                                        .chain(
+                                                                                                                                        .map(
                                                                                                                                           (
-                                                                                                                                            valueLists,
+                                                                                                                                            values,
                                                                                                                                           ) =>
-                                                                                                                                            valueLists.chainMap(
+                                                                                                                                            values.length >
+                                                                                                                                            0
+                                                                                                                                              ? values.map(
+                                                                                                                                                  (
+                                                                                                                                                    value,
+                                                                                                                                                  ) =>
+                                                                                                                                                    Maybe.of(
+                                                                                                                                                      value,
+                                                                                                                                                    ),
+                                                                                                                                                )
+                                                                                                                                              : Resource.Values.fromValue<
+                                                                                                                                                  Maybe<
+                                                                                                                                                    NamedNode<
+                                                                                                                                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
+                                                                                                                                                      | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
+                                                                                                                                                    >
+                                                                                                                                                  >
+                                                                                                                                                >(
+                                                                                                                                                  {
+                                                                                                                                                    focusResource:
+                                                                                                                                                      $resource,
+                                                                                                                                                    propertyPath:
+                                                                                                                                                      Ontology
+                                                                                                                                                        .$schema
+                                                                                                                                                        .properties
+                                                                                                                                                        .tsObjectDeclarationType
+                                                                                                                                                        .path,
+                                                                                                                                                    value:
+                                                                                                                                                      Maybe.empty(),
+                                                                                                                                                  },
+                                                                                                                                                ),
+                                                                                                                                        ),
+                                                                                                                                },
+                                                                                                                              ).chain(
+                                                                                                                                (
+                                                                                                                                  tsObjectDeclarationType,
+                                                                                                                                ) =>
+                                                                                                                                  $shaclPropertyFromRdf(
+                                                                                                                                    {
+                                                                                                                                      graph:
+                                                                                                                                        _$options.graph,
+                                                                                                                                      resource:
+                                                                                                                                        $resource,
+                                                                                                                                      propertySchema:
+                                                                                                                                        $schema
+                                                                                                                                          .properties
+                                                                                                                                          .types,
+                                                                                                                                      typeFromRdf:
+                                                                                                                                        (
+                                                                                                                                          resourceValues,
+                                                                                                                                        ) =>
+                                                                                                                                          resourceValues
+                                                                                                                                            .chain(
                                                                                                                                               (
-                                                                                                                                                valueList,
+                                                                                                                                                values,
                                                                                                                                               ) =>
-                                                                                                                                                Right(
-                                                                                                                                                  Resource.Values.fromArray(
-                                                                                                                                                    {
-                                                                                                                                                      focusResource:
-                                                                                                                                                        $resource,
-                                                                                                                                                      propertyPath:
-                                                                                                                                                        PropertyShape
-                                                                                                                                                          .$schema
-                                                                                                                                                          .properties
-                                                                                                                                                          .xone
-                                                                                                                                                          .path,
-                                                                                                                                                      values:
-                                                                                                                                                        valueList.toArray(),
-                                                                                                                                                    },
-                                                                                                                                                  ),
-                                                                                                                                                ).chain(
+                                                                                                                                                values.chainMap(
+                                                                                                                                                  (
+                                                                                                                                                    value,
+                                                                                                                                                  ) =>
+                                                                                                                                                    value.toIri(),
+                                                                                                                                                ),
+                                                                                                                                            )
+                                                                                                                                            .map(
+                                                                                                                                              (
+                                                                                                                                                values,
+                                                                                                                                              ) =>
+                                                                                                                                                values.toArray(),
+                                                                                                                                            )
+                                                                                                                                            .map(
+                                                                                                                                              (
+                                                                                                                                                valuesArray,
+                                                                                                                                              ) =>
+                                                                                                                                                Resource.Values.fromValue(
+                                                                                                                                                  {
+                                                                                                                                                    focusResource:
+                                                                                                                                                      $resource,
+                                                                                                                                                    propertyPath:
+                                                                                                                                                      NodeShape
+                                                                                                                                                        .$schema
+                                                                                                                                                        .properties
+                                                                                                                                                        .types
+                                                                                                                                                        .path,
+                                                                                                                                                    value:
+                                                                                                                                                      valuesArray,
+                                                                                                                                                  },
+                                                                                                                                                ),
+                                                                                                                                            ),
+                                                                                                                                    },
+                                                                                                                                  ).chain(
+                                                                                                                                    (
+                                                                                                                                      types,
+                                                                                                                                    ) =>
+                                                                                                                                      $shaclPropertyFromRdf(
+                                                                                                                                        {
+                                                                                                                                          graph:
+                                                                                                                                            _$options.graph,
+                                                                                                                                          resource:
+                                                                                                                                            $resource,
+                                                                                                                                          propertySchema:
+                                                                                                                                            $schema
+                                                                                                                                              .properties
+                                                                                                                                              .xone,
+                                                                                                                                          typeFromRdf:
+                                                                                                                                            (
+                                                                                                                                              resourceValues,
+                                                                                                                                            ) =>
+                                                                                                                                              resourceValues
+                                                                                                                                                .chain(
                                                                                                                                                   (
                                                                                                                                                     values,
                                                                                                                                                   ) =>
@@ -7677,96 +7774,139 @@ export namespace NodeShape {
                                                                                                                                                       (
                                                                                                                                                         value,
                                                                                                                                                       ) =>
-                                                                                                                                                        value.toIdentifier(),
+                                                                                                                                                        value.toList(
+                                                                                                                                                          {
+                                                                                                                                                            graph:
+                                                                                                                                                              _$options.graph,
+                                                                                                                                                          },
+                                                                                                                                                        ),
+                                                                                                                                                    ),
+                                                                                                                                                )
+                                                                                                                                                .chain(
+                                                                                                                                                  (
+                                                                                                                                                    valueLists,
+                                                                                                                                                  ) =>
+                                                                                                                                                    valueLists.chainMap(
+                                                                                                                                                      (
+                                                                                                                                                        valueList,
+                                                                                                                                                      ) =>
+                                                                                                                                                        Right(
+                                                                                                                                                          Resource.Values.fromArray(
+                                                                                                                                                            {
+                                                                                                                                                              focusResource:
+                                                                                                                                                                $resource,
+                                                                                                                                                              propertyPath:
+                                                                                                                                                                PropertyShape
+                                                                                                                                                                  .$schema
+                                                                                                                                                                  .properties
+                                                                                                                                                                  .xone
+                                                                                                                                                                  .path,
+                                                                                                                                                              values:
+                                                                                                                                                                valueList.toArray(),
+                                                                                                                                                            },
+                                                                                                                                                          ),
+                                                                                                                                                        ).chain(
+                                                                                                                                                          (
+                                                                                                                                                            values,
+                                                                                                                                                          ) =>
+                                                                                                                                                            values.chainMap(
+                                                                                                                                                              (
+                                                                                                                                                                value,
+                                                                                                                                                              ) =>
+                                                                                                                                                                value.toIdentifier(),
+                                                                                                                                                            ),
+                                                                                                                                                        ),
+                                                                                                                                                    ),
+                                                                                                                                                )
+                                                                                                                                                .map(
+                                                                                                                                                  (
+                                                                                                                                                    valueLists,
+                                                                                                                                                  ) =>
+                                                                                                                                                    valueLists.map(
+                                                                                                                                                      (
+                                                                                                                                                        valueList,
+                                                                                                                                                      ) =>
+                                                                                                                                                        valueList.toArray(),
+                                                                                                                                                    ),
+                                                                                                                                                )
+                                                                                                                                                .map(
+                                                                                                                                                  (
+                                                                                                                                                    values,
+                                                                                                                                                  ) =>
+                                                                                                                                                    values.toArray(),
+                                                                                                                                                )
+                                                                                                                                                .map(
+                                                                                                                                                  (
+                                                                                                                                                    valuesArray,
+                                                                                                                                                  ) =>
+                                                                                                                                                    Resource.Values.fromValue(
+                                                                                                                                                      {
+                                                                                                                                                        focusResource:
+                                                                                                                                                          $resource,
+                                                                                                                                                        propertyPath:
+                                                                                                                                                          PropertyShape
+                                                                                                                                                            .$schema
+                                                                                                                                                            .properties
+                                                                                                                                                            .xone
+                                                                                                                                                            .path,
+                                                                                                                                                        value:
+                                                                                                                                                          valuesArray,
+                                                                                                                                                      },
                                                                                                                                                     ),
                                                                                                                                                 ),
-                                                                                                                                            ),
-                                                                                                                                        )
-                                                                                                                                        .map(
-                                                                                                                                          (
-                                                                                                                                            valueLists,
-                                                                                                                                          ) =>
-                                                                                                                                            valueLists.map(
-                                                                                                                                              (
-                                                                                                                                                valueList,
-                                                                                                                                              ) =>
-                                                                                                                                                valueList.toArray(),
-                                                                                                                                            ),
-                                                                                                                                        )
-                                                                                                                                        .map(
-                                                                                                                                          (
-                                                                                                                                            values,
-                                                                                                                                          ) =>
-                                                                                                                                            values.toArray(),
-                                                                                                                                        )
-                                                                                                                                        .map(
-                                                                                                                                          (
-                                                                                                                                            valuesArray,
-                                                                                                                                          ) =>
-                                                                                                                                            Resource.Values.fromValue(
-                                                                                                                                              {
-                                                                                                                                                focusResource:
-                                                                                                                                                  $resource,
-                                                                                                                                                propertyPath:
-                                                                                                                                                  PropertyShape
-                                                                                                                                                    .$schema
-                                                                                                                                                    .properties
-                                                                                                                                                    .xone
-                                                                                                                                                    .path,
-                                                                                                                                                value:
-                                                                                                                                                  valuesArray,
-                                                                                                                                              },
-                                                                                                                                            ),
-                                                                                                                                        ),
-                                                                                                                                },
-                                                                                                                              ).map(
-                                                                                                                                (
-                                                                                                                                  xone,
-                                                                                                                                ) => ({
-                                                                                                                                  $identifier,
-                                                                                                                                  $type,
-                                                                                                                                  abstract,
-                                                                                                                                  and,
-                                                                                                                                  classes,
-                                                                                                                                  closed,
-                                                                                                                                  comment,
-                                                                                                                                  datatype,
-                                                                                                                                  deactivated,
-                                                                                                                                  discriminantValue,
-                                                                                                                                  extern,
-                                                                                                                                  flags,
-                                                                                                                                  fromRdfType,
-                                                                                                                                  hasValues,
-                                                                                                                                  identifierMintingStrategy,
-                                                                                                                                  ignoredProperties,
-                                                                                                                                  in_,
-                                                                                                                                  isDefinedBy,
-                                                                                                                                  label,
-                                                                                                                                  languageIn,
-                                                                                                                                  maxCount,
-                                                                                                                                  maxExclusive,
-                                                                                                                                  maxInclusive,
-                                                                                                                                  maxLength,
-                                                                                                                                  minCount,
-                                                                                                                                  minExclusive,
-                                                                                                                                  minInclusive,
-                                                                                                                                  minLength,
-                                                                                                                                  mutable,
-                                                                                                                                  nodeKind,
-                                                                                                                                  nodes,
-                                                                                                                                  not,
-                                                                                                                                  or,
-                                                                                                                                  patterns,
-                                                                                                                                  properties,
-                                                                                                                                  rdfType,
-                                                                                                                                  shaclmateName,
-                                                                                                                                  toRdfTypes,
-                                                                                                                                  tsFeatureExcludes,
-                                                                                                                                  tsFeatureIncludes,
-                                                                                                                                  tsImports,
-                                                                                                                                  tsObjectDeclarationType,
-                                                                                                                                  xone,
-                                                                                                                                }),
+                                                                                                                                        },
+                                                                                                                                      ).map(
+                                                                                                                                        (
+                                                                                                                                          xone,
+                                                                                                                                        ) => ({
+                                                                                                                                          $identifier,
+                                                                                                                                          $type,
+                                                                                                                                          abstract,
+                                                                                                                                          and,
+                                                                                                                                          classes,
+                                                                                                                                          closed,
+                                                                                                                                          comment,
+                                                                                                                                          datatype,
+                                                                                                                                          deactivated,
+                                                                                                                                          discriminantValue,
+                                                                                                                                          extern,
+                                                                                                                                          flags,
+                                                                                                                                          fromRdfType,
+                                                                                                                                          hasValues,
+                                                                                                                                          identifierMintingStrategy,
+                                                                                                                                          ignoredProperties,
+                                                                                                                                          in_,
+                                                                                                                                          isDefinedBy,
+                                                                                                                                          label,
+                                                                                                                                          languageIn,
+                                                                                                                                          maxCount,
+                                                                                                                                          maxExclusive,
+                                                                                                                                          maxInclusive,
+                                                                                                                                          maxLength,
+                                                                                                                                          minCount,
+                                                                                                                                          minExclusive,
+                                                                                                                                          minInclusive,
+                                                                                                                                          minLength,
+                                                                                                                                          mutable,
+                                                                                                                                          nodeKind,
+                                                                                                                                          nodes,
+                                                                                                                                          not,
+                                                                                                                                          or,
+                                                                                                                                          patterns,
+                                                                                                                                          properties,
+                                                                                                                                          rdfType,
+                                                                                                                                          shaclmateName,
+                                                                                                                                          subClassOf,
+                                                                                                                                          toRdfTypes,
+                                                                                                                                          tsFeatureExcludes,
+                                                                                                                                          tsFeatureIncludes,
+                                                                                                                                          tsImports,
+                                                                                                                                          tsObjectDeclarationType,
+                                                                                                                                          types,
+                                                                                                                                          xone,
+                                                                                                                                        }),
+                                                                                                                                      ),
+                                                                                                                                  ),
                                                                                                                               ),
                                                                                                                           ),
                                                                                                                       ),
@@ -8170,6 +8310,14 @@ export namespace NodeShape {
         }),
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
       },
+      subClassOf: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: $RdfVocabularies.rdfs.subClassOf,
+      },
       toRdfTypes: {
         kind: "Shacl" as const,
         type: () => ({
@@ -8297,6 +8445,14 @@ export namespace NodeShape {
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
         ),
+      },
+      types: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({ kind: "Iri" as const }),
+        }),
+        path: $RdfVocabularies.rdf.type,
       },
       xone: {
         kind: "Shacl" as const,
@@ -8791,6 +8947,11 @@ export namespace NodeShape {
       options?.graph,
     );
     resource.add(
+      $RdfVocabularies.rdfs.subClassOf,
+      _nodeShape.subClassOf.flatMap((item) => [item]),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
       _nodeShape.toRdfTypes.flatMap((item) => [item]),
       options?.graph,
@@ -8819,6 +8980,11 @@ export namespace NodeShape {
         "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
       ),
       _nodeShape.tsObjectDeclarationType.toList(),
+      options?.graph,
+    );
+    resource.add(
+      $RdfVocabularies.rdf.type,
+      _nodeShape.types.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(

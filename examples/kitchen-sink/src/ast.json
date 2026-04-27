@@ -1570,6 +1570,7 @@
     {
       "kind": "ObjectType",
       "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
+      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IriType",
         "nodeKinds": [
@@ -1583,6 +1584,7 @@
     {
       "kind": "ObjectType",
       "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete",
+      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IriType",
         "nodeKinds": [
@@ -1674,6 +1676,25 @@
       "properties": [
         {
           "mutable": false,
+          "name": "inStringsProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inStringsProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inStringsProperty"
+          },
+          "shapeIdentifier": "_:n3-197",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
           "name": "inBooleansProperty",
           "order": 0,
           "path": {
@@ -1682,7 +1703,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inBooleansProperty"
           },
-          "shapeIdentifier": "_:n3-197",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1701,7 +1722,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDateTimesProperty"
           },
-          "shapeIdentifier": "_:n3-199",
+          "shapeIdentifier": "_:n3-202",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1720,7 +1741,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-201",
+          "shapeIdentifier": "_:n3-204",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1739,7 +1760,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-204",
+          "shapeIdentifier": "_:n3-207",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1760,25 +1781,6 @@
             "reference": "inDoublesProperty",
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
-          },
-          "shapeIdentifier": "_:n3-207",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inStringsProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inStringsProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inStringsProperty"
           },
           "shapeIdentifier": "_:n3-210",
           "type": {

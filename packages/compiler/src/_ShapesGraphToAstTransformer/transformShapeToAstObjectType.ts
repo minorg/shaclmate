@@ -1,4 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
+import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
@@ -71,27 +72,7 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    return Eithers.chain9(
-      Either.sequence(
-        nodeShape.ancestorClassIris.map((nodeShapeIdentifier) =>
-          this.shapesGraph.nodeShape(nodeShapeIdentifier),
-        ),
-      ),
-      Either.sequence(
-        nodeShape.childClassIris.map((nodeShapeIdentifier) =>
-          this.shapesGraph.nodeShape(nodeShapeIdentifier),
-        ),
-      ),
-      Either.sequence(
-        nodeShape.descendantClassIris.map((nodeShapeIdentifier) =>
-          this.shapesGraph.nodeShape(nodeShapeIdentifier),
-        ),
-      ),
-      Either.sequence(
-        nodeShape.parentClassIris.map((nodeShapeIdentifier) =>
-          this.shapesGraph.nodeShape(nodeShapeIdentifier),
-        ),
-      ),
+    return Eithers.chain5(
       nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
@@ -117,10 +98,6 @@ export function transformShapeToAstObjectType(
             ),
     ).chain<Error, Maybe<ast.ObjectType>>(
       ([
-        ancestorNodeShapes,
-        childNodeShapes,
-        descendantNodeShapes,
-        parentNodeShapes,
         identifierMintingStrategy,
         nodeKinds,
         propertyShapes,
@@ -129,14 +106,25 @@ export function transformShapeToAstObjectType(
       ]) => {
         const abstract = nodeShape.abstract.orDefault(false);
 
+        const {
+          ancestors: ancestorNodeShapes,
+          descendants: descendantNodeShapes,
+          children: childNodeShapes,
+          parents: parentNodeShapes,
+        } = this.relatedNodeShapesByIdentifier.get(nodeShape.$identifier)!;
+
+        const isClass =
+          nodeShape.subClassOf.length > 0 ||
+          descendantNodeShapes.length > 0 || // A node shape that is the object of an rdfs:subClassOf is itself an rdfs:Class
+          nodeShape.types.some(
+            (type) => type.equals(owl.Class) || type.equals(rdfs.Class),
+          );
+
         let fromRdfType: Maybe<NamedNode>;
         let toRdfTypes: NamedNode[];
         if (!abstract) {
           fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-          if (
-            nodeShape.isClass &&
-            nodeShape.$identifier.termType === "NamedNode"
-          ) {
+          if (isClass && nodeShape.$identifier.termType === "NamedNode") {
             fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.$identifier));
           }
           toRdfTypes = nodeShape.toRdfTypes.concat();
