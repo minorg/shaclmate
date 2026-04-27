@@ -22,10 +22,10 @@ function parseShapesGraph(
   filePath: string,
   options?: { ignoreUndefinedShapes?: boolean },
 ) {
-  return ShapesGraph.create({
-    dataset: parseDataset(filePath),
-    ...options,
-  }).unsafeCoerce();
+  return ShapesGraph.builder()
+    .addDataset(parseDataset(filePath), options)
+    .unsafeCoerce()
+    .build();
 }
 
 class TestData {

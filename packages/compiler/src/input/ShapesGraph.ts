@@ -1,74 +1,75 @@
-import { ShapesGraph as _ShapesGraph } from "@shaclmate/shacl-ast";
+import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import type { DatasetCore } from "@rdfjs/types";
+import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
-import type { Resource } from "rdfjs-resource";
+import type { Ast } from "../ast/Ast.js";
+import { Compiler } from "../Compiler.js";
+import type { TsFeature } from "../enums/TsFeature.js";
+import type { Generator } from "../generators/Generator.js";
+import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as generated from "./generated.js";
 
-export type ShapesGraph = _ShapesGraph<
+export class ShapesGraph extends AbstractShapesGraph<
   generated.NodeShape,
   generated.Ontology,
   generated.PropertyGroup,
-  generated.PropertyShape,
-  generated.Shape
->;
+  generated.PropertyShape
+> {
+  compile(parameters: {
+    generator: Generator;
+    tsFeaturesDefault?: ReadonlySet<TsFeature>;
+  }): Either<Error, string> {
+    return new Compiler(parameters).compile(this);
+  }
+
+  static builder(): ShapesGraph.Builder {
+    return new ShapesGraph.Builder();
+  }
+
+  toAst(options?: {
+    tsFeaturesDefault?: ReadonlySet<TsFeature>;
+  }): Either<Error, Ast> {
+    return new ShapesGraphToAstTransformer({
+      ...options,
+      shapesGraph: this,
+    }).transform();
+  }
+}
 
 export namespace ShapesGraph {
-  class Factory extends _ShapesGraph.Factory<
+  export class Builder extends AbstractShapesGraph.AbstractBuilder<
     generated.NodeShape,
     generated.Ontology,
     generated.PropertyGroup,
-    generated.PropertyShape,
-    generated.Shape
+    generated.PropertyShape
   > {
-    protected override createNodeShape({
-      resource,
-    }: {
-      resource: Resource;
-    }): Either<Error, generated.NodeShape> {
-      return generated.NodeShape.$fromRdfResource(resource, {
-        ignoreRdfType: true,
-        preferredLanguages: this.preferredLanguages,
-      });
+    override addDataset(
+      dataset: DatasetCore,
+      options?: {
+        ignoreUndefinedShapes?: boolean;
+        prefixMap?: PrefixMap;
+      },
+    ): Either<Error, this> {
+      return super
+        .addDataset(dataset, {
+          ...options,
+          fromRdfResourceFunctions: {
+            NodeShape: generated.NodeShape.$fromRdfResource,
+            Ontology: generated.Ontology.$fromRdfResource,
+            PropertyGroup: generated.PropertyGroup.$fromRdfResource,
+            PropertyShape: generated.PropertyShape.$fromRdfResource,
+          },
+        })
+        .map(() => this);
     }
 
-    protected override createOntology({
-      resource,
-    }: {
-      resource: Resource;
-    }): Either<Error, generated.Ontology> {
-      return generated.Ontology.$fromRdfResource(resource, {
-        ignoreRdfType: true,
-        preferredLanguages: this.preferredLanguages,
+    build(): ShapesGraph {
+      return new ShapesGraph({
+        nodeShapesByIdentifier: this.nodeShapesByIdentifier,
+        ontologiesByIdentifier: this.ontologiesByIdentifier,
+        propertyGroupsByIdentifier: this.propertyGroupsByIdentifier,
+        propertyShapesByIdentifier: this.propertyShapesByIdentifier,
       });
     }
-
-    protected override createPropertyGroup({
-      resource,
-    }: {
-      resource: Resource;
-    }): Either<Error, generated.PropertyGroup> {
-      return generated.PropertyGroup.$fromRdfResource(resource, {
-        ignoreRdfType: true,
-        preferredLanguages: this.preferredLanguages,
-      });
-    }
-
-    protected override createPropertyShape({
-      resource,
-    }: {
-      resource: Resource;
-    }): Either<Error, generated.PropertyShape> {
-      return generated.PropertyShape.$fromRdfResource(resource, {
-        ignoreRdfType: true,
-        preferredLanguages: this.preferredLanguages,
-      });
-    }
-  }
-
-  const factory = new Factory();
-
-  export function create(
-    parameters: Parameters<Factory["createShapesGraph"]>[0],
-  ): Either<Error, ShapesGraph> {
-    return factory.createShapesGraph(parameters);
   }
 }
