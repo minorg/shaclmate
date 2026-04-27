@@ -4872,7 +4872,7 @@ export interface NodeShape {
       | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
     >
   >;
-  readonly type: readonly NamedNode[];
+  readonly types: readonly NamedNode[];
   readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
 }
 
@@ -5311,8 +5311,11 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.type !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(filter.type, value.type)
+      filter.types !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.types,
+        value.types,
+      )
     ) {
       return false;
     }
@@ -5375,7 +5378,7 @@ export namespace NodeShape {
     readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
     readonly tsObjectDeclarationType?: $MaybeFilter<$IriFilter>;
-    readonly type?: $CollectionFilter<$IriFilter>;
+    readonly types?: $CollectionFilter<$IriFilter>;
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
@@ -5512,7 +5515,7 @@ export namespace NodeShape {
         | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface"
       >
     >;
-    type: readonly NamedNode[];
+    types: readonly NamedNode[];
     xone: readonly (readonly (BlankNode | NamedNode)[])[];
   }> = ($resource, _$options) => {
     return (
@@ -7701,7 +7704,7 @@ export namespace NodeShape {
                                                                                                                                       propertySchema:
                                                                                                                                         $schema
                                                                                                                                           .properties
-                                                                                                                                          .type,
+                                                                                                                                          .types,
                                                                                                                                       typeFromRdf:
                                                                                                                                         (
                                                                                                                                           resourceValues,
@@ -7736,7 +7739,7 @@ export namespace NodeShape {
                                                                                                                                                       NodeShape
                                                                                                                                                         .$schema
                                                                                                                                                         .properties
-                                                                                                                                                        .type
+                                                                                                                                                        .types
                                                                                                                                                         .path,
                                                                                                                                                     value:
                                                                                                                                                       valuesArray,
@@ -7746,7 +7749,7 @@ export namespace NodeShape {
                                                                                                                                     },
                                                                                                                                   ).chain(
                                                                                                                                     (
-                                                                                                                                      type,
+                                                                                                                                      types,
                                                                                                                                     ) =>
                                                                                                                                       $shaclPropertyFromRdf(
                                                                                                                                         {
@@ -7899,7 +7902,7 @@ export namespace NodeShape {
                                                                                                                                           tsFeatureIncludes,
                                                                                                                                           tsImports,
                                                                                                                                           tsObjectDeclarationType,
-                                                                                                                                          type,
+                                                                                                                                          types,
                                                                                                                                           xone,
                                                                                                                                         }),
                                                                                                                                       ),
@@ -8443,7 +8446,7 @@ export namespace NodeShape {
           "http://purl.org/shaclmate/ontology#tsObjectDeclarationType",
         ),
       },
-      type: {
+      types: {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
@@ -8981,7 +8984,7 @@ export namespace NodeShape {
     );
     resource.add(
       $RdfVocabularies.rdf.type,
-      _nodeShape.type.flatMap((item) => [item]),
+      _nodeShape.types.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(

@@ -3940,7 +3940,7 @@ export interface NodeShape {
   readonly patterns: readonly string[];
   readonly properties: readonly (BlankNode | NamedNode)[];
   readonly subClassOf: readonly NamedNode[];
-  readonly type: readonly NamedNode[];
+  readonly types: readonly NamedNode[];
   readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
 }
 
@@ -4227,8 +4227,11 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.type !== undefined &&
-      !$filterArray<NamedNode, $IriFilter>($filterIri)(filter.type, value.type)
+      filter.types !== undefined &&
+      !$filterArray<NamedNode, $IriFilter>($filterIri)(
+        filter.types,
+        value.types,
+      )
     ) {
       return false;
     }
@@ -4278,7 +4281,7 @@ export namespace NodeShape {
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly properties?: $CollectionFilter<$IdentifierFilter>;
     readonly subClassOf?: $CollectionFilter<$IriFilter>;
-    readonly type?: $CollectionFilter<$IriFilter>;
+    readonly types?: $CollectionFilter<$IriFilter>;
     readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
@@ -4369,7 +4372,7 @@ export namespace NodeShape {
     patterns: readonly string[];
     properties: readonly (BlankNode | NamedNode)[];
     subClassOf: readonly NamedNode[];
-    type: readonly NamedNode[];
+    types: readonly NamedNode[];
     xone: readonly (readonly (BlankNode | NamedNode)[])[];
   }> = ($resource, _$options) => {
     return (
@@ -5615,7 +5618,7 @@ export namespace NodeShape {
                                                                               propertySchema:
                                                                                 $schema
                                                                                   .properties
-                                                                                  .type,
+                                                                                  .types,
                                                                               typeFromRdf:
                                                                                 (
                                                                                   resourceValues,
@@ -5650,7 +5653,7 @@ export namespace NodeShape {
                                                                                               NodeShape
                                                                                                 .$schema
                                                                                                 .properties
-                                                                                                .type
+                                                                                                .types
                                                                                                 .path,
                                                                                             value:
                                                                                               valuesArray,
@@ -5660,7 +5663,7 @@ export namespace NodeShape {
                                                                             },
                                                                           ).chain(
                                                                             (
-                                                                              type,
+                                                                              types,
                                                                             ) =>
                                                                               $shaclPropertyFromRdf(
                                                                                 {
@@ -5800,7 +5803,7 @@ export namespace NodeShape {
                                                                                   patterns,
                                                                                   properties,
                                                                                   subClassOf,
-                                                                                  type,
+                                                                                  types,
                                                                                   xone,
                                                                                 }),
                                                                               ),
@@ -6112,7 +6115,7 @@ export namespace NodeShape {
         }),
         path: $RdfVocabularies.rdfs.subClassOf,
       },
-      type: {
+      types: {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Set" as const,
@@ -6559,7 +6562,7 @@ export namespace NodeShape {
     );
     resource.add(
       $RdfVocabularies.rdf.type,
-      _nodeShape.type.flatMap((item) => [item]),
+      _nodeShape.types.flatMap((item) => [item]),
       options?.graph,
     );
     resource.add(
