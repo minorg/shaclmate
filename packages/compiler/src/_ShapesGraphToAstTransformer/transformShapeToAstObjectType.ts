@@ -116,7 +116,7 @@ export function transformShapeToAstObjectType(
         const isClass =
           nodeShape.subClassOf.length > 0 ||
           descendantNodeShapes.length > 0 || // A node shape that is the object of an rdfs:subClassOf is itself an rdfs:Class
-          nodeShape.type.some(
+          nodeShape.types.some(
             (type) => type.equals(owl.Class) || type.equals(rdfs.Class),
           );
 
