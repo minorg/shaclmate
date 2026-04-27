@@ -1,8 +1,8 @@
 export {
+  NodeShape,
   Ontology,
   PropertyGroup,
   PropertyShape,
+  Shape,
 } from "./generated.js";
-export * from "./NodeShape.js";
-export * from "./Shape.js";
 export * from "./ShapesGraph.js";
