@@ -18,8 +18,6 @@ import type { Curie } from "./Curie.js";
 import { CurieFactory } from "./CurieFactory.js";
 import type * as generated from "./generated.js";
 
-type IdentifierMap<T> = TermMap<BlankNode | NamedNode, T>;
-
 export abstract class AbstractShapesGraph<
   NodeShapeT extends generated.NodeShape,
   OntologyT extends generated.Ontology,
@@ -30,6 +28,13 @@ export abstract class AbstractShapesGraph<
   private readonly ontologiesByIdentifier: IdentifierMap<OntologyT>;
   private readonly propertyGroupsByIdentifier: IdentifierMap<PropertyGroupT>;
   private readonly propertyShapesByIdentifier: IdentifierMap<PropertyShapeT>;
+
+  protected abstract readonly typeFunctions: {
+    NodeShape: TypeFunctions<NodeShapeT>;
+    Ontology: TypeFunctions<OntologyT>;
+    PropertyGroup: TypeFunctions<PropertyGroupT>;
+    PropertyShape: TypeFunctions<PropertyShapeT>;
+  };
 
   constructor(parameters: {
     nodeShapesByIdentifier: IdentifierMap<NodeShapeT>;
@@ -123,7 +128,105 @@ export abstract class AbstractShapesGraph<
       this.nodeShape(identifier) as Either<Error, NodeShapeT | PropertyShapeT>
     ).alt(this.propertyShape(identifier));
   }
+
+  /**
+   * Convert the shapes graph to a dataset.
+   */
+  toDataset(): DatasetCore {
+    const dataset = DatasetFactory.dataset();
+    const resourceSet = new ResourceSet(dataset);
+    for (const nodeShape of this.nodeShapes) {
+      this.typeFunctions.NodeShape.$toRdfResource(nodeShape, { resourceSet });
+    }
+    for (const ontology of this.ontologies) {
+      this.typeFunctions.Ontology.$toRdfResource(ontology, { resourceSet });
+    }
+    for (const propertyGroup of this.propertyGroups) {
+      this.typeFunctions.PropertyGroup.$toRdfResource(propertyGroup, {
+        resourceSet,
+      });
+    }
+    for (const propertyShape of this.propertyShapes) {
+      this.typeFunctions.PropertyShape.$toRdfResource(propertyShape, {
+        resourceSet,
+      });
+    }
+    return dataset;
+  }
+
+  /**
+   * Convert the shapes graph to an RDF string.
+   *
+   * If the format isn't specified, defaults to N-Triples.
+   */
+  toString(options?: {
+    format?: "application/n-triples" | "application/n-quads";
+  }): string {
+    const format = options?.format ?? ("application/n-triples" as const);
+
+    function termToString(term: Term) {
+      switch (term.termType) {
+        case "NamedNode":
+          return `<${term.value}>`;
+        case "BlankNode":
+          return `_:${term.value}`;
+        case "Literal": {
+          const escaped = term.value
+            .replace(/\\/g, "\\\\")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, "\\n")
+            .replace(/\r/g, "\\r");
+          if (term.language) return `"${escaped}"@${term.language}`;
+          if (term.datatype.value !== "http://www.w3.org/2001/XMLSchema#string")
+            return `"${escaped}"^^<${term.datatype.value}>`;
+          return `"${escaped}"`;
+        }
+        default:
+          throw new Error(`unexpected term type: ${term.termType}`);
+      }
+    }
+
+    const lines: string[] = [];
+    switch (format) {
+      case "application/n-quads": {
+        for (const quad of this.toDataset()) {
+          const graphString =
+            quad.graph.termType === "DefaultGraph"
+              ? ""
+              : ` ${termToString(quad.graph)}`;
+          lines.push(
+            `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)}${graphString} .\n`,
+          );
+        }
+        break;
+      }
+      case "application/n-triples":
+        {
+          for (const quad of this.toDataset()) {
+            lines.push(
+              `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)} .\n`,
+            );
+          }
+        }
+        break;
+    }
+
+    return lines.join("");
+  }
 }
+
+type IdentifierMap<T> = TermMap<BlankNode | NamedNode, T>;
+
+type TypeFunctions<T> = {
+  $fromRdfResource: (
+    resource: Resource,
+    options?: { ignoreRdfType?: boolean },
+  ) => Either<Error, T>;
+  $toRdfResource: (
+    value: T,
+    options?: { resourceSet?: ResourceSet },
+  ) => Resource;
+};
 
 export namespace AbstractShapesGraph {
   export abstract class AbstractBuilder<
@@ -140,6 +243,13 @@ export namespace AbstractShapesGraph {
       new TermMap();
     protected readonly propertyShapesByIdentifier: IdentifierMap<PropertyShapeT> =
       new TermMap();
+
+    protected abstract readonly typeFunctions: {
+      NodeShape: TypeFunctions<NodeShapeT>;
+      Ontology: TypeFunctions<OntologyT>;
+      PropertyGroup: TypeFunctions<PropertyGroupT>;
+      PropertyShape: TypeFunctions<PropertyShapeT>;
+    };
 
     addNodeShape<TypelessNodeShapeT extends Omit<NodeShapeT, "$type">>(
       typelessNodeShape: TypelessNodeShapeT,
@@ -163,19 +273,9 @@ export namespace AbstractShapesGraph {
       return typelessOntology;
     }
 
-    protected addDataset(
+    addDataset(
       dataset: DatasetCore,
-      {
-        fromRdfResourceFunctions,
-        ignoreUndefinedShapes,
-        prefixMap,
-      }: {
-        fromRdfResourceFunctions: {
-          NodeShape: FromRdfResourceFunction<NodeShapeT>;
-          Ontology: FromRdfResourceFunction<OntologyT>;
-          PropertyGroup: FromRdfResourceFunction<PropertyGroupT>;
-          PropertyShape: FromRdfResourceFunction<PropertyShapeT>;
-        };
+      options?: {
         ignoreUndefinedShapes?: boolean;
         prefixMap?: PrefixMap;
       },
@@ -193,11 +293,11 @@ export namespace AbstractShapesGraph {
       }
 
       let curieDataset: DatasetCore;
-      if (prefixMap) {
+      if (options?.prefixMap) {
         const curieCache = new Map<string, Curie | NamedNode>();
         curieDataset = DatasetFactory.dataset();
         const curieFactory = new CurieFactory({
-          prefixMap,
+          prefixMap: options.prefixMap!,
         });
 
         const termToCurie = <TermT extends Term>(term: TermT): TermT => {
@@ -273,9 +373,9 @@ export namespace AbstractShapesGraph {
           if (this.ontologiesByIdentifier.has(ontologyResource.identifier)) {
             continue;
           }
-          fromRdfResourceFunctions
-            .Ontology(ontologyResource, { ignoreRdfType: true })
-            .ifRight((ontology) => this.addOntology(ontology));
+          this.typeFunctions.Ontology.$fromRdfResource(ontologyResource, {
+            ignoreRdfType: true,
+          }).ifRight((ontology) => this.addOntology(ontology));
         }
 
         // Read property groups
@@ -295,12 +395,10 @@ export namespace AbstractShapesGraph {
             continue;
           }
 
-          fromRdfResourceFunctions
-            .PropertyGroup(
-              curieResourceSet.resource(propertyGroupResource.identifier),
-              { ignoreRdfType: true },
-            )
-            .ifRight((propertyGroup) => this.addPropertyGroup(propertyGroup));
+          this.typeFunctions.PropertyGroup.$fromRdfResource(
+            curieResourceSet.resource(propertyGroupResource.identifier),
+            { ignoreRdfType: true },
+          ).ifRight((propertyGroup) => this.addPropertyGroup(propertyGroup));
         }
 
         // Read shapes
@@ -393,7 +491,10 @@ export namespace AbstractShapesGraph {
           for (const quad of dataset.match(null, predicate, null, graph)) {
             addShapeNode(quad.object);
 
-            if (!ignoreUndefinedShapes && !datasetHasMatch(quad.object)) {
+            if (
+              !options?.ignoreUndefinedShapes &&
+              !datasetHasMatch(quad.object)
+            ) {
               throw new Error(
                 `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
               );
@@ -422,7 +523,10 @@ export namespace AbstractShapesGraph {
 
               addShapeNode(identifier);
 
-              if (!ignoreUndefinedShapes && !datasetHasMatch(identifier)) {
+              if (
+                !options?.ignoreUndefinedShapes &&
+                !datasetHasMatch(identifier)
+              ) {
                 throw new Error(
                   `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
                 );
@@ -436,20 +540,22 @@ export namespace AbstractShapesGraph {
           if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
             // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
             this.addPropertyShape(
-              fromRdfResourceFunctions
-                .PropertyShape(curieResourceSet.resource(shapeNode), {
+              this.typeFunctions.PropertyShape.$fromRdfResource(
+                curieResourceSet.resource(shapeNode),
+                {
                   ignoreRdfType: true,
-                })
-                .unsafeCoerce(),
+                },
+              ).unsafeCoerce(),
             );
           } else {
             // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
             this.addNodeShape(
-              fromRdfResourceFunctions
-                .NodeShape(curieResourceSet.resource(shapeNode), {
+              this.typeFunctions.NodeShape.$fromRdfResource(
+                curieResourceSet.resource(shapeNode),
+                {
                   ignoreRdfType: true,
-                })
-                .unsafeCoerce(),
+                },
+              ).unsafeCoerce(),
             );
           }
         }
@@ -496,8 +602,3 @@ export namespace AbstractShapesGraph {
     }
   }
 }
-
-type FromRdfResourceFunction<T> = (
-  resource: Resource,
-  options?: { ignoreRdfType?: boolean },
-) => Either<Error, T>;

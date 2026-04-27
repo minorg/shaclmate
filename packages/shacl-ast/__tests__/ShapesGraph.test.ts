@@ -15,6 +15,16 @@ describe("ShapesGraph: kitchen sink", () => {
   it("should parse property shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
   });
+
+  it("toDataset", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.toDataset().size).toBeGreaterThan(
+      0,
+    );
+  });
+
+  it("toString", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.toString()).not.to.be.empty;
+  });
 });
 
 describe("ShapesGraph: schema", () => {
