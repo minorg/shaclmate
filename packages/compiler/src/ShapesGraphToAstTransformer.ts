@@ -1,5 +1,5 @@
 import TermMap from "@rdfjs/term-map";
-import type * as rdfjs from "@rdfjs/types";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -9,13 +9,131 @@ import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
 
+interface RelatedNodeShapes {
+  readonly ancestors: input.NodeShape[];
+  readonly children: input.NodeShape[];
+  readonly parents: input.NodeShape[];
+  readonly descendants: input.NodeShape[];
+}
+
+function relatedNodeShapes(
+  shapesGraph: input.ShapesGraph,
+): TermMap<input.NodeShape.$Identifier, RelatedNodeShapes> {
+  const immediateRelatedNodeShapes = new TermMap<
+    input.NodeShape.$Identifier,
+    {
+      children: TermMap<input.NodeShape.$Identifier, input.NodeShape>;
+      parents: TermMap<input.NodeShape.$Identifier, input.NodeShape>;
+    }
+  >();
+
+  for (const childNodeShape of shapesGraph.nodeShapes) {
+    let childRelatedNodeShapes = immediateRelatedNodeShapes.get(
+      childNodeShape.$identifier,
+    );
+    if (!childRelatedNodeShapes) {
+      childRelatedNodeShapes = {
+        children: new TermMap(),
+        parents: new TermMap(),
+      };
+      immediateRelatedNodeShapes.set(
+        childNodeShape.$identifier,
+        childRelatedNodeShapes,
+      );
+    }
+
+    for (const parentClassIdentifier of childNodeShape.subClassOf) {
+      shapesGraph
+        .nodeShape(parentClassIdentifier)
+        .ifRight((parentNodeShape) => {
+          childRelatedNodeShapes.parents.set(
+            parentNodeShape.$identifier,
+            parentNodeShape,
+          );
+
+          let parentRelatedNodeShapes = immediateRelatedNodeShapes.get(
+            parentNodeShape.$identifier,
+          );
+          if (!parentRelatedNodeShapes) {
+            parentRelatedNodeShapes = {
+              children: new TermMap(),
+              parents: new TermMap(),
+            };
+            immediateRelatedNodeShapes.set(
+              parentNodeShape.$identifier,
+              parentRelatedNodeShapes,
+            );
+          }
+
+          parentRelatedNodeShapes.children.set(
+            childNodeShape.$identifier,
+            childNodeShape,
+          );
+        });
+    }
+  }
+
+  const result = new TermMap<input.NodeShape.$Identifier, RelatedNodeShapes>();
+
+  for (const nodeShape of shapesGraph.nodeShapes) {
+    const { children: childNodeShapes, parents: parentNodeShapes } =
+      immediateRelatedNodeShapes.get(nodeShape.$identifier)!;
+
+    const ancestorNodeShapes = new TermMap<
+      input.NodeShape.$Identifier,
+      input.NodeShape
+    >();
+
+    function recurseAncestorNodeShapes(nodeShape: input.NodeShape) {
+      for (const parentNodeShape of immediateRelatedNodeShapes
+        .get(nodeShape.$identifier)!
+        .parents.values()) {
+        if (!ancestorNodeShapes.has(parentNodeShape.$identifier)) {
+          ancestorNodeShapes.set(parentNodeShape.$identifier, parentNodeShape);
+          recurseAncestorNodeShapes(parentNodeShape);
+        }
+      }
+    }
+    recurseAncestorNodeShapes(nodeShape);
+
+    const descendantNodeShapes = new TermMap<
+      input.NodeShape.$Identifier,
+      input.NodeShape
+    >();
+    function recurseDescendantNodeShapes(nodeShape: input.NodeShape) {
+      for (const childNodeShape of immediateRelatedNodeShapes
+        .get(nodeShape.$identifier)!
+        .children.values()) {
+        if (!descendantNodeShapes.has(childNodeShape.$identifier)) {
+          descendantNodeShapes.set(childNodeShape.$identifier, childNodeShape);
+          recurseDescendantNodeShapes(childNodeShape);
+        }
+      }
+    }
+    recurseDescendantNodeShapes(nodeShape);
+
+    result.set(nodeShape.$identifier, {
+      ancestors: [...ancestorNodeShapes.values()],
+      children: [...childNodeShapes.values()],
+      descendants: [...descendantNodeShapes.values()],
+      parents: [...parentNodeShapes.values()],
+    });
+  }
+
+  return result;
+}
+
 export class ShapesGraphToAstTransformer {
   // Members are protected so they're accessible to functions in other files
   protected readonly cachedAstTypesByShapeIdentifier: TermMap<
-    rdfjs.BlankNode | rdfjs.NamedNode,
+    BlankNode | NamedNode,
     ast.Type
   > = new TermMap();
   protected readonly shapesGraph: input.ShapesGraph;
+  protected readonly relatedNodeShapesByIdentifier: TermMap<
+    BlankNode | NamedNode,
+    RelatedNodeShapes
+  > = new TermMap();
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
@@ -25,6 +143,7 @@ export class ShapesGraphToAstTransformer {
     shapesGraph: input.ShapesGraph;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
+    this.relatedNodeShapesByIdentifier = relatedNodeShapes(shapesGraph);
     this.shapesGraph = shapesGraph;
     this.tsFeaturesDefault =
       tsFeaturesDefault ??
