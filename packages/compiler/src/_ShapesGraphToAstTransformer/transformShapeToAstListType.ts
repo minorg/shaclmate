@@ -57,7 +57,9 @@ export function transformShapeToAstListType(
       return Either.of(Maybe.empty());
     }
     const nodeShape = shape;
-    if (!nodeShape.isList) {
+    if (
+      !nodeShape.subClassOf.some((subClassOf) => subClassOf.equals(rdf.List))
+    ) {
       return Either.of(Maybe.empty());
     }
 

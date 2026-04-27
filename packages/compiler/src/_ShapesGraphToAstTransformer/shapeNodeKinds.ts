@@ -18,39 +18,38 @@ function nodeShapeNodeKinds(
     .map(NodeKind.fromIri)
     .orDefault(new Set());
 
-  return Either.sequence(
-    nodeShape.parentClassIris.map((nodeShapeIdentifier) =>
-      this.shapesGraph.nodeShape(nodeShapeIdentifier),
-    ),
-  ).chain((parentNodeShapes) => {
-    const parentNodeKinds = new Set<NodeKind>();
-    for (const parentNodeShape of parentNodeShapes) {
-      for (const parentNodeKind of parentNodeShape.nodeKind
-        .map(NodeKind.fromIri)
-        .orDefault(new Set())) {
-        parentNodeKinds.add(parentNodeKind);
-      }
-    }
-
-    if (parentNodeKinds.size > 0) {
-      if (thisNodeKinds.size === 0) {
-        return Either.of(parentNodeKinds);
-      }
-
-      // Check that thisNodeKinds doesn't conflict with parent node kinds
-      for (const thisNodeKind of thisNodeKinds) {
-        if (!parentNodeKinds.has(thisNodeKind)) {
-          return Left(
-            new Error(
-              `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
-            ),
-          );
+  // Recurse into parents
+  const parentNodeKinds = new Set<NodeKind>();
+  for (const parentNodeShape of this.relatedNodeShapesByIdentifier.get(
+    nodeShape.$identifier,
+  )!.parents) {
+    nodeShapeNodeKinds
+      .call(this, parentNodeShape)
+      .ifRight((parentNodeKinds_) => {
+        for (const parentNodeKind of parentNodeKinds_) {
+          parentNodeKinds.add(parentNodeKind);
         }
-      }
+      });
+  }
+
+  if (parentNodeKinds.size > 0) {
+    if (thisNodeKinds.size === 0) {
+      return Either.of(parentNodeKinds);
     }
 
-    return Either.of(thisNodeKinds);
-  });
+    // Check that thisNodeKinds doesn't conflict with parent node kinds
+    for (const thisNodeKind of thisNodeKinds) {
+      if (!parentNodeKinds.has(thisNodeKind)) {
+        return Left(
+          new Error(
+            `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
+          ),
+        );
+      }
+    }
+  }
+
+  return Either.of(thisNodeKinds);
 }
 
 function propertyShapeNodeKinds(
