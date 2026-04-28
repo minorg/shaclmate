@@ -806,7 +806,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                   "http://example.com/test0",
               }),
             },
-            requiredClassOrIriProperty: {
+            requiredClassOrLiteralProperty: {
               termType: "ClassUnionMember1",
               value: new kitchenSink.ClassUnionMember1({
                 $identifier: dataFactory.namedNode(
@@ -830,7 +830,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               type: "string",
               value: "http://example.com/test1",
             },
-            requiredClassOrIriProperty: dataFactory.namedNode(
+            requiredClassOrLiteralProperty: dataFactory.literal(
               "http://example.com/test1",
             ),
             requiredIriOrLiteralProperty: dataFactory.literal(
@@ -884,15 +884,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
         hybridPositive: [
           {
-            requiredClassOrIriProperty: {
+            requiredClassOrLiteralProperty: {
               on: {
                 ClassUnionMember1: {
                   classUnionMember1Property: {
                     in: ["http://example.com/test0"],
                   },
                 },
-                NamedNode: {
-                  in: [dataFactory.namedNode("http://example.com/test0")],
+                Literal: {
+                  in: [dataFactory.literal("http://example.com/test0")],
                 },
               },
             },
@@ -901,15 +901,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
         hybridNegative: [
           {
-            requiredClassOrIriProperty: {
+            requiredClassOrLiteralProperty: {
               on: {
                 ClassUnionMember1: {
                   classUnionMember1Property: {
                     in: ["http://example.com/testx"],
                   },
                 },
-                NamedNode: {
-                  in: [dataFactory.namedNode("http://example.com/testx")],
+                Literal: {
+                  in: [dataFactory.literal("http://example.com/testx")],
                 },
               },
             },

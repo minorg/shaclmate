@@ -805,11 +805,11 @@ export const harnesses = {
           classUnionMemberCommonParentProperty: "test",
         }),
       },
-      requiredClassOrIriProperty: {
+      requiredClassOrLiteralProperty: {
         termType: "ClassUnionMember1",
         value: new kitchenSink.ClassUnionMember1({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1b",
+            "http://example.com/classUnionMember1c",
           ),
           classUnionMember1Property: "test",
           classUnionMemberCommonParentProperty: "test",
@@ -834,14 +834,14 @@ export const harnesses = {
           classUnionMemberCommonParentProperty: "test",
         }),
       },
-      optionalClassOrIriProperty: dataFactory.namedNode("http://example.com"),
+      optionalClassOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrStringProperty: "test",
       requiredClassOrClassOrStringProperty: {
         type: "string",
         value: "test",
       },
-      requiredClassOrIriProperty: dataFactory.namedNode("http://example.com"),
+      requiredClassOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrStringProperty: "test",
       setClassOrClassOrStringProperty: [
@@ -871,9 +871,9 @@ export const harnesses = {
           }),
         },
       ],
-      setClassOrIriProperty: [
+      setClassOrLiteralProperty: [
         // Opposite order
-        dataFactory.namedNode("http://example.com"),
+        dataFactory.literal("test"),
         {
           termType: "ClassUnionMember1",
           value: new kitchenSink.ClassUnionMember1({

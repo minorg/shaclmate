@@ -1726,63 +1726,6 @@
       "properties": [
         {
           "mutable": false,
-          "name": "inStringsProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inStringsProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inStringsProperty"
-          },
-          "shapeIdentifier": "_:n3-197",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inBooleansProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inBooleansProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inBooleansProperty"
-          },
-          "shapeIdentifier": "_:n3-200",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inDateTimesProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inDateTimesProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inDateTimesProperty"
-          },
-          "shapeIdentifier": "_:n3-202",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
           "name": "inIntegersProperty",
           "order": 0,
           "path": {
@@ -1791,7 +1734,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-204",
+          "shapeIdentifier": "_:n3-197",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1810,7 +1753,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-207",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1832,7 +1775,64 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
           },
-          "shapeIdentifier": "_:n3-210",
+          "shapeIdentifier": "_:n3-203",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inStringsProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inStringsProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inStringsProperty"
+          },
+          "shapeIdentifier": "_:n3-206",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inBooleansProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inBooleansProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inBooleansProperty"
+          },
+          "shapeIdentifier": "_:n3-209",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "name": "inDateTimesProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inDateTimesProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inDateTimesProperty"
+          },
+          "shapeIdentifier": "_:n3-211",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -6226,23 +6226,23 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
-          "name": "optionalClassOrIriProperty",
+          "name": "optionalClassOrLiteralProperty",
           "order": 0,
           "path": {
             "prefix": "",
-            "reference": "optionalClassOrIriProperty",
+            "reference": "optionalClassOrLiteralProperty",
             "termType": "NamedNode",
-            "value": "http://example.com/optionalClassOrIriProperty"
+            "value": "http://example.com/optionalClassOrLiteralProperty"
           },
           "shapeIdentifier": "_:n3-389",
           "type": {
             "kind": "OptionType",
-            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+              "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "members": [
                 {
                   "type": {
@@ -6274,10 +6274,7 @@
                 },
                 {
                   "type": {
-                    "kind": "IriType",
-                    "nodeKinds": [
-                      "IRI"
-                    ]
+                    "kind": "LiteralType"
                   }
                 }
               ],
@@ -6331,20 +6328,20 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
-          "name": "requiredClassOrIriProperty",
+          "name": "requiredClassOrLiteralProperty",
           "order": 0,
           "path": {
             "prefix": "",
-            "reference": "requiredClassOrIriProperty",
+            "reference": "requiredClassOrLiteralProperty",
             "termType": "NamedNode",
-            "value": "http://example.com/requiredClassOrIriProperty"
+            "value": "http://example.com/requiredClassOrLiteralProperty"
           },
           "shapeIdentifier": "_:n3-399",
           "type": {
             "kind": "UnionType",
-            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "members": [
               {
                 "type": {
@@ -6376,10 +6373,7 @@
               },
               {
                 "type": {
-                  "kind": "IriType",
-                  "nodeKinds": [
-                    "IRI"
-                  ]
+                  "kind": "LiteralType"
                 }
               }
             ],
@@ -6476,23 +6470,23 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
-          "name": "setClassOrIriProperty",
+          "name": "setClassOrLiteralProperty",
           "order": 0,
           "path": {
             "prefix": "",
-            "reference": "setClassOrIriProperty",
+            "reference": "setClassOrLiteralProperty",
             "termType": "NamedNode",
-            "value": "http://example.com/setClassOrIriProperty"
+            "value": "http://example.com/setClassOrLiteralProperty"
           },
           "shapeIdentifier": "_:n3-411",
           "type": {
             "kind": "SetType",
-            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
+              "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "members": [
                 {
                   "type": {
@@ -6524,10 +6518,7 @@
                 },
                 {
                   "type": {
-                    "kind": "IriType",
-                    "nodeKinds": [
-                      "IRI"
-                    ]
+                    "kind": "LiteralType"
                   }
                 }
               ],
