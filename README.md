@@ -74,9 +74,16 @@ Modules and command line scripts demonstrating how to use the SHACLmate compiler
 
 * `src/`
     * `shapesGraph.ts`: SHACL shapes graph defined programmatically in TypeScript
-    * `compile.sh`: compile the shapes graph to TypeScript and print it to the consel
-    * `dump.ts`: dump the shapes graph to the console as N-Triples
 
+#### Command lines
+
+Compile the shapes graph to TypeScript and print it to the console:
+
+    npm run compile
+
+Dump the shapes graph to an N-Triples string and print it to the console:
+
+    npm run dump
 
 ### HTML forms ([examples/forms](examples/forms))
 
