@@ -222,6 +222,7 @@ type TypeFunctions<T> = {
     resource: Resource,
     options?: { ignoreRdfType?: boolean },
   ) => Either<Error, T>;
+
   $toRdfResource: (
     value: T,
     options?: { resourceSet?: ResourceSet },
@@ -262,42 +263,20 @@ export namespace AbstractShapesGraph {
       for (const object of objects) {
         switch (object.$type) {
           case "NodeShape":
-            this.nodeShape(object);
+            this.nodeShapesByIdentifier.set(object.$identifier, object);
             break;
           case "Ontology":
-            this.ontology(object);
+            this.ontologiesByIdentifier.set(object.$identifier, object);
             break;
           case "PropertyGroup":
-            this.propertyGroup(object);
+            this.propertyGroupsByIdentifier.set(object.$identifier, object);
             break;
           case "PropertyShape":
-            this.propertyShape(object);
+            this.propertyShapesByIdentifier.set(object.$identifier, object);
             break;
         }
       }
       return this;
-    }
-
-    nodeShape<TypelessNodeShapeT extends Omit<NodeShapeT, "$type">>(
-      typelessNodeShape: TypelessNodeShapeT,
-    ): NodeShapeT {
-      const nodeShape: NodeShapeT = {
-        ...typelessNodeShape,
-        $type: "NodeShape",
-      } as unknown as NodeShapeT;
-      this.nodeShapesByIdentifier.set(nodeShape.$identifier, nodeShape);
-      return nodeShape;
-    }
-
-    ontology<TypelessOntologyT extends Omit<OntologyT, "$type">>(
-      typelessOntology: TypelessOntologyT,
-    ): OntologyT {
-      const ontology: OntologyT = {
-        ...typelessOntology,
-        $type: "Ontology",
-      } as unknown as OntologyT;
-      this.ontologiesByIdentifier.set(ontology.$identifier, ontology);
-      return ontology;
     }
 
     parseDataset(
@@ -589,34 +568,6 @@ export namespace AbstractShapesGraph {
 
         return this;
       });
-    }
-
-    propertyGroup<TypelessPropertyGroupT extends Omit<PropertyGroupT, "$type">>(
-      typelessPropertyGroup: TypelessPropertyGroupT,
-    ): PropertyGroupT {
-      const propertyGroup: PropertyGroupT = {
-        ...typelessPropertyGroup,
-        $type: "PropertyGroup",
-      } as unknown as PropertyGroupT;
-      this.propertyGroupsByIdentifier.set(
-        propertyGroup.$identifier,
-        propertyGroup,
-      );
-      return propertyGroup;
-    }
-
-    propertyShape<TypelessPropertyShapeT extends Omit<PropertyShapeT, "$type">>(
-      typelessPropertyShape: TypelessPropertyShapeT,
-    ): PropertyShapeT {
-      const propertyShape: PropertyShapeT = {
-        ...typelessPropertyShape,
-        $type: "PropertyShape",
-      } as unknown as PropertyShapeT;
-      this.propertyShapesByIdentifier.set(
-        propertyShape.$identifier,
-        propertyShape,
-      );
-      return propertyShape;
     }
   }
 }

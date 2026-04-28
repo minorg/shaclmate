@@ -38,5 +38,7 @@ export namespace ShapesGraph {
         propertyShapesByIdentifier: this.propertyShapesByIdentifier,
       });
     }
+
+    // nodeShape(parameters: Parameters<generated.NodeShape.create>)
   }
 }

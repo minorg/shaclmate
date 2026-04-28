@@ -78,6 +78,7 @@ shaclmate:IriList
 
 shaclmate:NodeShape
     shaclmate:fromRdfType sh:NodeShape ;
+    shaclmate:name "NodeShape" ;
     a owl:Class, sh:NodeShape ;
     sh:property shaclmate:NodeShape-closed, shaclmate:NodeShape-ignoredProperties, shaclmate:NodeShape-properties, shaclmate:NodeShape-subClassOf, shaclmate:NodeShape-types, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
@@ -110,11 +111,13 @@ shaclmate:NodeShape-types
 
 shaclmate:Ontology
     shaclmate:fromRdfType owl:Ontology ;
+    shaclmate:name "Ontology" ;
     a owl:Class, sh:NodeShape ;
     sh:property shaclmate:comment, shaclmate:label .
 
 shaclmate:PropertyGroup
     shaclmate:fromRdfType sh:PropertyGroup ;
+    shaclmate:name "PropertyGroup" ;
     a sh:NodeShape ;
     sh:property shaclmate:comment, shaclmate:label .
 
@@ -126,6 +129,7 @@ shaclmate:PropertyPath
 
 shaclmate:PropertyShape
     shaclmate:fromRdfType sh:PropertyShape ;
+    shaclmate:name "PropertyShape" ;
     a owl:Class, sh:NodeShape ;
     sh:property shaclmate:PropertyShape-defaultValue, shaclmate:PropertyShape-description, shaclmate:PropertyShape-groups, shaclmate:PropertyShape-name, shaclmate:PropertyShape-order, shaclmate:PropertyShape-path, shaclmate:PropertyShape-uniqueLang, shaclmate:Shape-and, shaclmate:Shape-classes, shaclmate:Shape-datatype, shaclmate:Shape-deactivated, shaclmate:Shape-flags, shaclmate:Shape-hasValues, shaclmate:Shape-in, shaclmate:Shape-isDefinedBy, shaclmate:Shape-languageIn, shaclmate:Shape-maxCount, shaclmate:Shape-maxExclusive, shaclmate:Shape-maxInclusive, shaclmate:Shape-maxLength, shaclmate:Shape-minCount, shaclmate:Shape-minExclusive, shaclmate:Shape-minInclusive, shaclmate:Shape-minLength, shaclmate:Shape-nodeKind, shaclmate:Shape-nodes, shaclmate:Shape-not, shaclmate:Shape-or, shaclmate:Shape-patterns, shaclmate:Shape-xone, shaclmate:comment, shaclmate:label .
 
@@ -179,6 +183,7 @@ shaclmate:Shape
 
 shaclmate:Shape-and
     a sh:PropertyShape ;
+    sh:maxCount 1 ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:and .
 
@@ -303,6 +308,7 @@ shaclmate:Shape-not
 
 shaclmate:Shape-or
     a sh:PropertyShape ;
+    sh:maxCount 1 ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:or .
 
@@ -314,6 +320,7 @@ shaclmate:Shape-patterns
 
 shaclmate:Shape-xone
     a sh:PropertyShape ;
+    sh:maxCount 1 ;
     sh:node shaclmate:IdentifierList ;
     sh:path sh:xone .
 
