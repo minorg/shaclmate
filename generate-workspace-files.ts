@@ -278,6 +278,7 @@ const workspaces = {
       },
       scripts: {
         compile: "NODE_ENV=development tsx src/compile.ts",
+        dump: "NODE_ENV=development tsx src/dump.ts",
       },
       tsconfig: {
         compilerOptions: {

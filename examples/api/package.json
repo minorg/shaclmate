@@ -32,7 +32,8 @@
     "dev": "tsc -w --preserveWatchOutput",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
-    "compile": "NODE_ENV=development tsx src/compile.ts"
+    "compile": "NODE_ENV=development tsx src/compile.ts",
+    "dump": "NODE_ENV=development tsx src/dump.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",

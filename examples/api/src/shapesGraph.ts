@@ -3,7 +3,7 @@ import { ShapesGraph } from "@shaclmate/compiler";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 const builder = ShapesGraph.builder();
-const ex = namespace("http://example.com");
+const ex = namespace("http://example.com/");
 
 const ExampleNodeShape1 = builder.nodeShape({
   $identifier: ex("ExampleNodeShape1"),
