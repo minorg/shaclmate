@@ -276,6 +276,9 @@ const workspaces = {
         ],
         internal: ["compiler"],
       },
+      scripts: {
+        compile: "NODE_ENV=development tsx src/compile.ts",
+      },
       tsconfig: {
         compilerOptions: {
           baseUrl: "src",

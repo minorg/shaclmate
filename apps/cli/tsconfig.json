@@ -6,7 +6,6 @@
     "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "noUncheckedIndexedAccess": false,
     "outDir": "dist",
     "sourceMap": true
