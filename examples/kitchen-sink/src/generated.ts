@@ -5952,7 +5952,10 @@ export class UnionDiscriminantsClass {
                   readonly termType: "NamedNode";
                 } => {
               if (value.termType === "ClassUnionMember1") {
-                return value.value.$toJson().value;
+                return {
+                  termType: "ClassUnionMember1" as const,
+                  value: value.value.$toJson(),
+                };
               }
               if (value.termType === "NamedNode") {
                 return { "@id": value.value, termType: value.termType };
@@ -6055,7 +6058,10 @@ export class UnionDiscriminantsClass {
               readonly termType: "NamedNode";
             } => {
           if (value.termType === "ClassUnionMember1") {
-            return value.value.$toJson().value;
+            return {
+              termType: "ClassUnionMember1" as const,
+              value: value.value.$toJson(),
+            };
           }
           if (value.termType === "NamedNode") {
             return { "@id": value.value, termType: value.termType };
@@ -6152,7 +6158,10 @@ export class UnionDiscriminantsClass {
                 readonly termType: "NamedNode";
               } => {
             if (value.termType === "ClassUnionMember1") {
-              return value.value.$toJson().value;
+              return {
+                termType: "ClassUnionMember1" as const,
+                value: value.value.$toJson(),
+              };
             }
             if (value.termType === "NamedNode") {
               return { "@id": value.value, termType: value.termType };
@@ -9527,9 +9536,12 @@ export namespace UnionDiscriminantsClass {
         | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
         | NamedNode => {
         if (value.termType === "ClassUnionMember1") {
-          return ClassUnionMember1.$fromJson(
-            value.value as ClassUnionMember1.$Json,
-          ).value;
+          return {
+            termType: "ClassUnionMember1" as const,
+            value: ClassUnionMember1.$fromJson(
+              value.value as ClassUnionMember1.$Json,
+            ),
+          };
         }
         if (value.termType === "NamedNode") {
           return dataFactory.namedNode(
@@ -9683,9 +9695,12 @@ export namespace UnionDiscriminantsClass {
       | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
       | NamedNode => {
       if (value.termType === "ClassUnionMember1") {
-        return ClassUnionMember1.$fromJson(
-          value.value as ClassUnionMember1.$Json,
-        ).value;
+        return {
+          termType: "ClassUnionMember1" as const,
+          value: ClassUnionMember1.$fromJson(
+            value.value as ClassUnionMember1.$Json,
+          ),
+        };
       }
       if (value.termType === "NamedNode") {
         return dataFactory.namedNode(
@@ -9832,9 +9847,12 @@ export namespace UnionDiscriminantsClass {
           | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
           | NamedNode => {
           if (value.termType === "ClassUnionMember1") {
-            return ClassUnionMember1.$fromJson(
-              value.value as ClassUnionMember1.$Json,
-            ).value;
+            return {
+              termType: "ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(
+                value.value as ClassUnionMember1.$Json,
+              ),
+            };
           }
           if (value.termType === "NamedNode") {
             return dataFactory.namedNode(
@@ -10213,6 +10231,19 @@ export namespace UnionDiscriminantsClass {
                             propertyPath: _options.propertyPath,
                             resource: _options.resource,
                           },
+                        ).map((values) =>
+                          values.map(
+                            (value) =>
+                              ({
+                                termType: "ClassUnionMember1" as const,
+                                value,
+                              }) as
+                                | {
+                                    termType: "ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | NamedNode,
+                          ),
                         ) as Either<
                           Error,
                           Resource.Values<
@@ -10596,6 +10627,19 @@ export namespace UnionDiscriminantsClass {
                                     propertyPath: _options.propertyPath,
                                     resource: _options.resource,
                                   },
+                                ).map((values) =>
+                                  values.map(
+                                    (value) =>
+                                      ({
+                                        termType: "ClassUnionMember1" as const,
+                                        value,
+                                      }) as
+                                        | {
+                                            termType: "ClassUnionMember1";
+                                            value: ClassUnionMember1;
+                                          }
+                                        | NamedNode,
+                                  ),
                                 ) as Either<
                                   Error,
                                   Resource.Values<
@@ -10978,6 +11022,20 @@ export namespace UnionDiscriminantsClass {
                                             propertyPath: _options.propertyPath,
                                             resource: _options.resource,
                                           },
+                                        ).map((values) =>
+                                          values.map(
+                                            (value) =>
+                                              ({
+                                                termType:
+                                                  "ClassUnionMember1" as const,
+                                                value,
+                                              }) as
+                                                | {
+                                                    termType: "ClassUnionMember1";
+                                                    value: ClassUnionMember1;
+                                                  }
+                                                | NamedNode,
+                                          ),
                                         ) as Either<
                                           Error,
                                           Resource.Values<

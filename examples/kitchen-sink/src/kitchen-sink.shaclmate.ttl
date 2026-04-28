@@ -471,6 +471,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (true
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inBooleansProperty
+    ], [
+        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDateTimesProperty
+    ], [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
+    ], [
         sh:in (:InPropertiesIri1
             :InPropertiesIri2
         ) ;
@@ -488,22 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inStringsProperty
-    ], [
-        sh:in (true
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inBooleansProperty
-    ], [
-        sh:in ("2018-04-09T10:00:00.000Z"^^xsd:dateTime
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDateTimesProperty
-    ], [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegersProperty
     ] .
 
 :IndirectRecursiveClass

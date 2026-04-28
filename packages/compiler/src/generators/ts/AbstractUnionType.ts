@@ -161,7 +161,7 @@ export abstract class AbstractUnionType<
             includeDiscriminantProperty:
               this.discriminant.kind === "intrinsic" ||
               (this.discriminant.kind === "hybrid" &&
-                this.discriminant.memberValues[memberI].intrinsic),
+                this.discriminant.memberValues[memberI].kind === "intrinsic"),
           }).name,
           jsonTypeCheck: typeCheck(true),
           primaryDiscriminantValue: discriminantValues[0],
@@ -172,7 +172,7 @@ export abstract class AbstractUnionType<
               includeDiscriminantProperty:
                 this.discriminant.kind === "intrinsic" ||
                 (this.discriminant.kind === "hybrid" &&
-                  this.discriminant.memberValues[memberI].intrinsic),
+                  this.discriminant.memberValues[memberI].kind === "intrinsic"),
               variables: { value: valueVariable },
             }),
           unwrap: (instance: Code): Code => {
@@ -180,7 +180,8 @@ export abstract class AbstractUnionType<
               case "extrinsic":
                 return code`${instance}.value`;
               case "hybrid":
-                return this.discriminant.memberValues[memberI].intrinsic
+                return this.discriminant.memberValues[memberI].kind ===
+                  "intrinsic"
                   ? instance
                   : code`${instance}.value`;
               case "intrinsic":
@@ -193,9 +194,10 @@ export abstract class AbstractUnionType<
               case "extrinsic":
                 return code`{ ${this.discriminant.name}: ${literalOf(discriminantValues[0])} as const, value: ${instance} }`;
               case "hybrid":
-                return this.discriminant.memberValues[memberI].intrinsic
+                return this.discriminant.memberValues[memberI].kind ===
+                  "intrinsic"
                   ? instance
-                  : code`${instance}.value`;
+                  : code`{ ${this.discriminant.name}: ${literalOf(discriminantValues[0])} as const, value: ${instance} }`;
               case "intrinsic":
               case "typeof":
                 return instance;
@@ -412,7 +414,7 @@ ${joinCode(
     values.chain(values => values.chainMap(value => {
       const valueAsValues = ${imports.Right}(value.toValues());
       return ${this.concreteMembers.reduce(
-        (expression, { type, primaryDiscriminantValue }) => {
+        (expression, { type, primaryDiscriminantValue }, memberI) => {
           let typeExpression: Code = type.fromRdfResourceValuesExpression({
             variables: {
               context: variables.context,
@@ -425,7 +427,11 @@ ${joinCode(
               resourceValues: code`valueAsValues`,
             },
           });
-          if (this.discriminant.kind === "extrinsic") {
+          if (
+            this.discriminant.kind === "extrinsic" ||
+            (this.discriminant.kind === "hybrid" &&
+              this.discriminant.memberValues[memberI].kind === "extrinsic")
+          ) {
             typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.name})))`;
           }
           typeExpression = code`(${typeExpression} as ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>>)`;
@@ -459,11 +465,14 @@ ${joinCode(
           code`(${joinCode(
             this.concreteMembers.map(
               ({ jsonType, primaryDiscriminantValue }, memberI) => {
-                if (discriminant.memberValues[memberI].intrinsic) {
-                  return code`${jsonType}`;
+                switch (discriminant.memberValues[memberI].kind) {
+                  case "extrinsic":
+                    return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`;
+                  case "intrinsic":
+                    return code`${jsonType}`;
+                  default:
+                    throw new Error();
                 }
-
-                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`;
               },
             ),
             { on: "|" },
@@ -499,14 +508,17 @@ ${joinCode(
         return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.concreteMembers.map(
             ({ primaryDiscriminantValue, type }, memberI) => {
-              if (discriminant.memberValues[memberI].intrinsic) {
-                return type.jsonSchema({
-                  includeDiscriminantProperty: true,
-                  context: "type",
-                });
+              switch (discriminant.memberValues[memberI].kind) {
+                case "extrinsic":
+                  return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
+                case "intrinsic":
+                  return type.jsonSchema({
+                    includeDiscriminantProperty: true,
+                    context: "type",
+                  });
+                default:
+                  throw new Error();
               }
-
-              return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
             },
           ),
           { on: "," },
@@ -552,10 +564,14 @@ ${joinCode(
         return code`(${joinCode(
           this.concreteMembers.map(
             ({ primaryDiscriminantValue, type }, memberI) => {
-              if (discriminant.memberValues[memberI].intrinsic) {
-                return code`${type.name}`;
+              switch (discriminant.memberValues[memberI].kind) {
+                case "extrinsic":
+                  return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`;
+                case "intrinsic":
+                  return code`${type.name}`;
+                default:
+                  throw new Error();
               }
-              return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`;
             },
           ),
           { on: "|" },
@@ -713,7 +729,7 @@ type ExtrinsicDiscriminant = {
 type HybridDiscriminant = {
   readonly kind: "hybrid";
   readonly memberValues: readonly {
-    readonly intrinsic: boolean;
+    readonly kind: "extrinsic" | "intrinsic";
     readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
   }[];
   readonly name: string;
@@ -829,13 +845,13 @@ export namespace Discriminant {
           const memberTermTypes = termTypes(memberType);
           if (memberTermTypes.size > 0) {
             return {
-              intrinsic: true,
+              kind: "intrinsic",
               ownValues: [...memberTermTypes],
             };
           }
 
           return {
-            intrinsic: false,
+            kind: "extrinsic",
             ownValues:
               extrinsicMemberTypeNamesSet.size === extrinsicMemberTypeCount
                 ? [memberType.name as string]
