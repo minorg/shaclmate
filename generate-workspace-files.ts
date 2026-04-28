@@ -163,7 +163,7 @@ interface Tsconfig {
     //   resolveJsonModule?: boolean;
     //   resolvePackageJsonExports?: boolean;
     //   resolvePackageJsonImports?: boolean;
-    //   rootDir?: string;
+    rootDir?: string;
     //   rootDirs?: string[];
     //   skipDefaultLibCheck?: boolean;
     skipLibCheck?: boolean;
@@ -207,7 +207,6 @@ interface Tsconfig {
 
 const tsconfigDefault: Tsconfig = {
   compilerOptions: {
-    baseUrl: "src",
     declaration: true,
     declarationMap: true,
     exactOptionalPropertyTypes: false,
@@ -215,6 +214,7 @@ const tsconfigDefault: Tsconfig = {
     forceConsistentCasingInFileNames: true,
     noUncheckedIndexedAccess: false,
     outDir: "dist",
+    rootDir: "src",
     sourceMap: true,
   },
   extends: [
@@ -282,7 +282,6 @@ const workspaces = {
       },
       tsconfig: {
         compilerOptions: {
-          baseUrl: "src",
           exactOptionalPropertyTypes: false,
           experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
@@ -376,7 +375,6 @@ const workspaces = {
       },
       tsconfig: {
         compilerOptions: {
-          baseUrl: "src",
           exactOptionalPropertyTypes: false,
           experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
@@ -663,7 +661,6 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
         JSON.stringify(
           {
             compilerOptions: {
-              baseUrl: ".",
               exactOptionalPropertyTypes: false,
               experimentalDecorators: true,
               forceConsistentCasingInFileNames: true,
