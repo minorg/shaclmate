@@ -213,7 +213,6 @@ const tsconfigDefault: Tsconfig = {
     exactOptionalPropertyTypes: false,
     experimentalDecorators: true,
     forceConsistentCasingInFileNames: true,
-    incremental: true,
     noUncheckedIndexedAccess: false,
     outDir: "dist",
     sourceMap: true,
@@ -276,6 +275,21 @@ const workspaces = {
           "@types/rdfjs__namespace",
         ],
         internal: ["compiler"],
+      },
+      tsconfig: {
+        compilerOptions: {
+          baseUrl: "src",
+          exactOptionalPropertyTypes: false,
+          experimentalDecorators: true,
+          forceConsistentCasingInFileNames: true,
+          noEmit: true,
+          noUncheckedIndexedAccess: false,
+        },
+        extends: [
+          "@tsconfig/strictest/tsconfig.json",
+          "@tsconfig/node18/tsconfig.json",
+        ],
+        include: ["src/**/*.ts"],
       },
     },
     forms: {
@@ -362,7 +376,6 @@ const workspaces = {
           exactOptionalPropertyTypes: false,
           experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
-          incremental: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
         },
