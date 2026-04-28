@@ -471,6 +471,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoublesProperty
+    ], [
         sh:in ("text"
             "html"
         ) ;
@@ -498,12 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
-    ], [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoublesProperty
     ] .
 
 :IndirectRecursiveClass
@@ -586,9 +586,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:nodeKind sh:IRI .
 
 :IriList
-    a owl:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.", "A node shape that models an RDF list of strings. The generated list code should be mutable." ;
-    rdfs:subClassOf rdf:List ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -907,9 +906,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :MutableStringList
     shaclmate:mutable true ;
-    a owl:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of strings. Should be transformed into a mutable list data structure when used as a property." ;
-    rdfs:subClassOf rdf:List ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -1106,9 +1104,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :ObjectList
-    a owl:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property." ;
-    rdfs:subClassOf rdf:List ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -1380,9 +1377,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :StringList
-    a owl:Class, sh:NodeShape ;
+    a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property." ;
-    rdfs:subClassOf rdf:List ;
     sh:xone ([
             sh:hasValue ( )
         ]
