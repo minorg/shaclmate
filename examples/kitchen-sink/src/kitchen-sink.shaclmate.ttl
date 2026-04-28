@@ -471,6 +471,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (1
+            2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIntegersProperty
+    ], [
+        sh:in (:InPropertiesIri1
+            :InPropertiesIri2
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inIrisProperty
+    ], [
         sh:in (1e0
             2e0
         ) ;
@@ -492,18 +504,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inDateTimesProperty
-    ], [
-        sh:in (1
-            2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIntegersProperty
-    ], [
-        sh:in (:InPropertiesIri1
-            :InPropertiesIri2
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inIrisProperty
     ] .
 
 :IndirectRecursiveClass
@@ -1466,6 +1466,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
+        rdfs:comment "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members." ;
+        sh:maxCount 1 ;
+        sh:path :optionalClassOrIriProperty ;
+        sh:xone ([
+                sh:node :ClassUnionMember1
+            ]
+            [
+                sh:nodeKind sh:IRI
+            ]
+        )
+    ], [
         rdfs:comment "Union that can be discriminated by typeof." ;
         sh:maxCount 1 ;
         sh:path :optionalIriOrStringProperty ;
@@ -1474,6 +1485,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredClassOrIriProperty ;
+        sh:xone ([
+                sh:node :ClassUnionMember1
+            ]
+            [
+                sh:nodeKind sh:IRI
             ]
         )
     ], [
@@ -1489,6 +1512,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members." ;
+        sh:path :setClassOrIriProperty ;
+        sh:xone ([
+                sh:node :ClassUnionMember1
+            ]
+            [
+                sh:nodeKind sh:IRI
             ]
         )
     ], [
