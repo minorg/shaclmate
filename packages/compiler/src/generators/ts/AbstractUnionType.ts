@@ -68,10 +68,14 @@ export abstract class AbstractUnionType<
         let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
         invariant(this.discriminant.memberValues.length === members.length);
         switch (this.discriminant.kind) {
-          case "envelope":
+          case "extrinsic":
             discriminantValues = [this.discriminant.memberValues[memberI]];
             break;
-          case "inline": {
+          case "hybrid":
+            discriminantValues =
+              this.discriminant.memberValues[memberI].ownValues;
+            break;
+          case "intrinsic": {
             // A member type's combined discriminant property values are its "own" values plus any descendant values that are
             // not the "own" values of some other member type.
             // So if you have type A, type B, and B inherits A, then
@@ -104,9 +108,6 @@ export abstract class AbstractUnionType<
               );
             break;
           }
-          case "termType":
-            discriminantValues = this.discriminant.memberValues[memberI];
-            break;
           case "typeof":
             discriminantValues = [this.discriminant.memberValues[memberI]];
             break;
@@ -121,43 +122,34 @@ export abstract class AbstractUnionType<
         const typeCheck =
           (json: boolean) =>
           (instance: Code): Code => {
-            switch (this.discriminant.kind) {
-              case "envelope":
-                return code`(${joinCode(
-                  discriminantValues.map(
-                    (discriminantValue) =>
-                      code`${instance}.${(this.discriminant as EnvelopeDiscriminant).name} === ${literalOf(discriminantValue)}`,
-                  ),
-                  { on: " || " },
-                )})`;
+            const discriminant = this.discriminant; // To get type narrowing to work
 
-              case "inline": {
-                if (!json) {
-                  switch (member.type.kind) {
-                    case "NamedObjectUnionType":
-                    case "NamedUnionType":
-                    case "NamedObjectType":
-                      return code`${member.type.staticModuleName}.is${member.type.name}(${instance})`;
-                  }
-                }
-
-                return code`(${joinCode(
-                  discriminantValues.map(
-                    (discriminantValue) =>
-                      code`${instance}.${(this.discriminant as InlineDiscriminant).name} === ${literalOf(discriminantValue)}`,
-                  ),
-                  { on: " || " },
-                )})`;
-              }
-              case "typeof":
-                return code`(${joinCode(
-                  discriminantValues.map(
-                    (discriminantValue) =>
-                      code`typeof ${instance} === ${literalOf(discriminantValue)}`,
-                  ),
-                  { on: " || " },
-                )})`;
+            if (discriminant.kind === "typeof") {
+              return code`(${joinCode(
+                discriminantValues.map(
+                  (discriminantValue) =>
+                    code`typeof ${instance} === ${literalOf(discriminantValue)}`,
+                ),
+                { on: " || " },
+              )})`;
             }
+
+            if (discriminant.kind === "intrinsic" && !json) {
+              switch (member.type.kind) {
+                case "NamedObjectUnionType":
+                case "NamedUnionType":
+                case "NamedObjectType":
+                  return code`${member.type.staticModuleName}.is${member.type.name}(${instance})`;
+              }
+            }
+
+            return code`(${joinCode(
+              discriminantValues.map(
+                (discriminantValue) =>
+                  code`${instance}.${discriminant.name} === ${literalOf(discriminantValue)}`,
+              ),
+              { on: " || " },
+            )})`;
           };
 
         return {
@@ -169,18 +161,26 @@ export abstract class AbstractUnionType<
           typeCheck: typeCheck(false),
           unwrap: (instance: Code): Code => {
             switch (this.discriminant.kind) {
-              case "envelope":
+              case "extrinsic":
                 return code`${instance}.value`;
-              case "inline":
+              case "hybrid":
+                return this.discriminant.memberValues[memberI].intrinsic
+                  ? instance
+                  : code`${instance}.value`;
+              case "intrinsic":
               case "typeof":
                 return instance;
             }
           },
           wrap: (instance: Code): Code => {
             switch (this.discriminant.kind) {
-              case "envelope":
+              case "extrinsic":
                 return code`{ ${this.discriminant.name}: ${literalOf(discriminantValues[0])} as const, value: ${instance} }`;
-              case "inline":
+              case "hybrid":
+                return this.discriminant.memberValues[memberI].intrinsic
+                  ? instance
+                  : code`${instance}.value`;
+              case "intrinsic":
               case "typeof":
                 return instance;
             }
@@ -192,8 +192,9 @@ export abstract class AbstractUnionType<
   @Memoize()
   override get conversions(): readonly AbstractType.Conversion[] {
     switch (this.discriminant.kind) {
-      case "envelope":
-      case "inline":
+      case "extrinsic":
+      case "hybrid":
+      case "intrinsic":
         return [
           {
             conversionExpression: (value) => value,
@@ -220,25 +221,25 @@ export abstract class AbstractUnionType<
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     switch (this.discriminant.kind) {
-      case "envelope":
+      case "extrinsic":
         return Maybe.of({
           descendantValues: [],
           ownValues: this.discriminant.memberValues,
           name: this.discriminant.name,
         });
-      case "inline":
+      case "hybrid":
+        return Maybe.of({
+          descendantValues: [],
+          ownValues: this.discriminant.memberValues.flatMap((_) => _.ownValues),
+          name: "termType",
+        });
+      case "intrinsic":
         return Maybe.of({
           descendantValues: this.discriminant.memberValues.flatMap(
             (_) => _.descendantValues,
           ),
           name: this.discriminant.name,
           ownValues: this.discriminant.memberValues.flatMap((_) => _.ownValues),
-        });
-      case "termType":
-        return Maybe.of({
-          descendantValues: [],
-          ownValues: this.discriminant.memberValues.flat(),
-          name: "termType",
         });
       case "typeof":
         return Maybe.empty();
@@ -267,7 +268,7 @@ export abstract class AbstractUnionType<
 
     return code`${{
       // discriminant: {
-      //   kind: '"envelope" | "inline" | "typeof"',
+      //   kind: '"extrinsic" | "intrinsic" | "typeof"',
       // },
       kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))}`,
       members: code`{ ${joinCode(
@@ -408,7 +409,7 @@ ${joinCode(
               resourceValues: code`valueAsValues`,
             },
           });
-          if (this.discriminant.kind === "envelope") {
+          if (this.discriminant.kind === "extrinsic") {
             typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.name})))`;
           }
           typeExpression = code`(${typeExpression} as ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>>)`;
@@ -424,18 +425,40 @@ ${joinCode(
 
   @Memoize()
   protected get inlineJsonType(): AbstractType.JsonType {
-    switch (this.discriminant.kind) {
-      case "envelope":
+    const discriminant = this.discriminant; // To get type narrowing to work
+    switch (discriminant.kind) {
+      case "extrinsic":
         return new AbstractType.JsonType(
           code`(${joinCode(
             this.concreteMembers.map(
               ({ type, primaryDiscriminantValue }) =>
-                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.jsonType().name} }`,
+                code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.jsonType().name} }`,
             ),
             { on: "|" },
           )})`,
         );
-      case "inline":
+
+      case "hybrid":
+        return new AbstractType.JsonType(
+          code`(${joinCode(
+            this.concreteMembers.map(
+              ({ type, primaryDiscriminantValue }, memberI) => {
+                if (discriminant.memberValues[memberI].intrinsic) {
+                  return code`${
+                    type.jsonType({
+                      includeDiscriminantProperty: true,
+                    }).name
+                  }`;
+                }
+
+                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.jsonType().name} }`;
+              },
+            ),
+            { on: "|" },
+          )})`,
+        );
+
+      case "intrinsic":
       case "typeof":
         return new AbstractType.JsonType(
           joinCode(
@@ -444,7 +467,7 @@ ${joinCode(
                 code`${
                   type.jsonType({
                     includeDiscriminantProperty:
-                      this.discriminant.kind === "inline",
+                      this.discriminant.kind === "intrinsic",
                   }).name
                 }`,
             ),
@@ -452,22 +475,41 @@ ${joinCode(
           ),
         );
       default:
-        throw this.discriminant satisfies never;
+        throw discriminant satisfies never;
     }
   }
 
   protected get inlineJsonSchema(): Code {
-    switch (this.discriminant.kind) {
-      case "envelope":
-        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+    const discriminant = this.discriminant; // To get type narrowing to work
+    switch (discriminant.kind) {
+      case "extrinsic":
+        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.concreteMembers.map(
             ({ type, primaryDiscriminantValue }) =>
-              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
+              code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
           ),
           { on: "," },
-        )}])`;
-      case "inline":
-        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+        )}]).readonly()`;
+
+      case "hybrid":
+        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
+          this.concreteMembers.map(
+            ({ primaryDiscriminantValue, type }, memberI) => {
+              if (discriminant.memberValues[memberI].intrinsic) {
+                return type.jsonSchema({
+                  includeDiscriminantProperty: true,
+                  context: "type",
+                });
+              }
+
+              return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
+            },
+          ),
+          { on: "," },
+        )}]).readonly()`;
+
+      case "intrinsic":
+        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.concreteMembers.map(({ type }) =>
             type.jsonSchema({
               includeDiscriminantProperty: true,
@@ -476,6 +518,7 @@ ${joinCode(
           ),
           { on: "," },
         )}]).readonly()`;
+
       case "typeof":
         return code`${imports.z}.union([${joinCode(
           this.concreteMembers.map(({ type }) =>
@@ -483,23 +526,37 @@ ${joinCode(
           ),
           { on: "," },
         )}]).readonly()`;
+
       default:
-        throw this.discriminant satisfies never;
+        throw discriminant satisfies never;
     }
   }
 
   @Memoize()
   protected get inlineName(): Code {
-    switch (this.discriminant.kind) {
-      case "envelope":
+    const discriminant = this.discriminant; // To get type narrowing to work
+    switch (discriminant.kind) {
+      case "extrinsic":
         return code`(${joinCode(
           this.concreteMembers.map(
             ({ type, primaryDiscriminantValue }) =>
-              code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`,
+              code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`,
           ),
           { on: "|" },
         )})`;
-      case "inline":
+      case "hybrid":
+        return code`(${joinCode(
+          this.concreteMembers.map(
+            ({ primaryDiscriminantValue, type }, memberI) => {
+              if (discriminant.memberValues[memberI].intrinsic) {
+                return code`${type.name}`;
+              }
+              return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`;
+            },
+          ),
+          { on: "|" },
+        )})`;
+      case "intrinsic":
         // If every type shares a discriminant (e.g., RDF/JS "termType" or generated NamedObjectType "type"),
         // just join their names with "|"
         return code`(${joinCode(
@@ -514,7 +571,7 @@ ${joinCode(
           { on: "|" },
         )})`;
       default:
-        this.discriminant satisfies never;
+        discriminant satisfies never;
         throw new Error("should never reach this point");
     }
   }
@@ -561,7 +618,7 @@ ${joinCode(
     ({ type, typeCheck, unwrap, wrap }) =>
       code`if (${typeCheck(code`value`)}) { return ${wrap(
         type.toJsonExpression({
-          includeDiscriminantProperty: this.discriminant.kind === "inline",
+          includeDiscriminantProperty: this.discriminant.kind === "intrinsic",
           variables: { value: unwrap(code`value`) },
         }),
       )}; }`,
@@ -641,29 +698,33 @@ ${joinCode(
 }
 
 type Discriminant =
-  | EnvelopeDiscriminant
-  | InlineDiscriminant
-  | TermTypeDiscriminant
+  | ExtrinsicDiscriminant
+  | HybridDiscriminant
+  | IntrinsicDiscriminant
   | TypeofDiscriminant;
 
-type EnvelopeDiscriminant = {
-  readonly kind: "envelope";
+type ExtrinsicDiscriminant = {
+  readonly kind: "extrinsic";
   readonly memberValues: readonly AbstractType.DiscriminantProperty.Value[];
   readonly name: string;
 };
 
-type InlineDiscriminant = {
-  readonly kind: "inline";
-  readonly memberValues: {
+type HybridDiscriminant = {
+  readonly kind: "hybrid";
+  readonly memberValues: readonly {
+    readonly intrinsic: boolean;
+    readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
+  }[];
+  readonly name: "string";
+};
+
+type IntrinsicDiscriminant = {
+  readonly kind: "intrinsic";
+  readonly memberValues: readonly {
     readonly descendantValues: readonly AbstractType.DiscriminantProperty.Value[];
     readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
   }[];
   readonly name: string;
-};
-
-type TermTypeDiscriminant = {
-  readonly kind: "termType";
-  readonly memberValues: readonly (readonly string[])[];
 };
 
 type TypeofDiscriminant = {
@@ -678,9 +739,10 @@ export namespace Discriminant {
       readonly type: Type;
     }[],
   ): Discriminant {
+    // extrinsic with user-specified values
     if (members.some((member) => member.discriminantValue.isJust())) {
       return {
-        kind: "envelope",
+        kind: "extrinsic",
         memberValues: members.map((member, memberI) =>
           member.discriminantValue.orDefault(memberI),
         ),
@@ -690,10 +752,13 @@ export namespace Discriminant {
 
     const memberTypes = members.map((member) => member.type);
 
-    // inline
+    // intrinsic
     {
       let inlineDiscriminantPropertyName: string | undefined;
-      const memberValues: InlineDiscriminant["memberValues"] = [];
+      const memberValues: {
+        readonly descendantValues: readonly AbstractType.DiscriminantProperty.Value[];
+        readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
+      }[] = [];
       for (const memberType of memberTypes) {
         const memberTypeDiscriminantProperty =
           memberType.discriminantProperty.extract();
@@ -717,7 +782,7 @@ export namespace Discriminant {
 
       if (inlineDiscriminantPropertyName) {
         return {
-          kind: "inline",
+          kind: "intrinsic",
           memberValues,
           name: inlineDiscriminantPropertyName,
         };
@@ -768,7 +833,7 @@ export namespace Discriminant {
     }
     invariant(uniqueMemberTypeNames.length === memberTypes.length);
 
-    // termType
+    // hybrid
     // If some member type is an RDF/JS term then reuse "termType" as the discriminant.
     if (memberTypes.some((memberType) => termTypes(memberType).length > 0)) {
       return {
@@ -782,12 +847,12 @@ export namespace Discriminant {
             return [uniqueMemberTypeNames[memberTypeIndex].toString()];
           },
         ),
-      } satisfies TermTypeDiscriminant;
+      };
     }
 
-    // envelope
+    // extrinsic with inferred values
     return {
-      kind: "envelope",
+      kind: "extrinsic",
       name: "type",
       memberValues: uniqueMemberTypeNames,
     };
