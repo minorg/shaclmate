@@ -100,6 +100,10 @@ export abstract class AbstractCollectionType<
         for (const [itemTypeof, itemTypeofConversion] of Object.entries(
           itemTypeConversionsByTypeof,
         )) {
+          if (itemTypeof === "undefined") {
+            continue;
+          }
+
           const itemVariable = code`item`;
 
           conversions.push({
@@ -126,7 +130,9 @@ export abstract class AbstractCollectionType<
                 case "function":
                 case "symbol":
                 case "undefined":
-                  throw new Error("not implemented");
+                  throw new Error(
+                    `source type check on ${itemTypeof} not implemented`,
+                  );
               }
             },
             sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
