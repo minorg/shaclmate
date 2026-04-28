@@ -4,7 +4,10 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "types": [
+      "node"
+    ]
   },
   "extends": [
     "@tsconfig/strictest/tsconfig.json",

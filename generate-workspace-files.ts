@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-const VERSION = "4.0.14";
+const VERSION = "4.0.15";
 
 const externalDependencies = {
   "@jsonforms/core": "3.5.1",
@@ -193,7 +193,7 @@ interface Tsconfig {
       | "esnext";
     tsBuildInfoFile?: string;
     //   typeRoots?: string[];
-    //   types?: string[];
+    types?: string[];
     useDefineForClassFields?: boolean;
     //   useUnknownInCatchVariables?: boolean;
     //   verbatimModuleSyntax?: boolean;
@@ -216,6 +216,7 @@ const tsconfigDefault: Tsconfig = {
     outDir: "dist",
     rootDir: "src",
     sourceMap: true,
+    types: ["node"],
   },
   extends: [
     "@tsconfig/strictest/tsconfig.json",
@@ -287,6 +288,7 @@ const workspaces = {
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
+          types: ["node"],
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",
@@ -342,7 +344,6 @@ const workspaces = {
           module: "esnext",
           skipLibCheck: true,
 
-          /* Bundler mode */
           moduleResolution: "bundler",
           allowImportingTsExtensions: true,
           isolatedModules: true,
@@ -380,6 +381,7 @@ const workspaces = {
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
+          types: ["node"],
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",

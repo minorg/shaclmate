@@ -8,7 +8,10 @@
     "noUncheckedIndexedAccess": false,
     "outDir": "dist",
     "rootDir": "src",
-    "sourceMap": true
+    "sourceMap": true,
+    "types": [
+      "node"
+    ]
   },
   "extends": [
     "@tsconfig/strictest/tsconfig.json",
