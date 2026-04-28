@@ -1726,6 +1726,25 @@
       "properties": [
         {
           "mutable": false,
+          "name": "inStringsProperty",
+          "order": 0,
+          "path": {
+            "prefix": "",
+            "reference": "inStringsProperty",
+            "termType": "NamedNode",
+            "value": "http://example.com/inStringsProperty"
+          },
+          "shapeIdentifier": "_:n3-197",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "LiteralType"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
           "name": "inBooleansProperty",
           "order": 0,
           "path": {
@@ -1734,7 +1753,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inBooleansProperty"
           },
-          "shapeIdentifier": "_:n3-197",
+          "shapeIdentifier": "_:n3-200",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1753,7 +1772,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inDateTimesProperty"
           },
-          "shapeIdentifier": "_:n3-199",
+          "shapeIdentifier": "_:n3-202",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1772,7 +1791,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIntegersProperty"
           },
-          "shapeIdentifier": "_:n3-201",
+          "shapeIdentifier": "_:n3-204",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1791,7 +1810,7 @@
             "termType": "NamedNode",
             "value": "http://example.com/inIrisProperty"
           },
-          "shapeIdentifier": "_:n3-204",
+          "shapeIdentifier": "_:n3-207",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -1812,25 +1831,6 @@
             "reference": "inDoublesProperty",
             "termType": "NamedNode",
             "value": "http://example.com/inDoublesProperty"
-          },
-          "shapeIdentifier": "_:n3-207",
-          "type": {
-            "kind": "OptionType",
-            "itemType": {
-              "kind": "LiteralType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "name": "inStringsProperty",
-          "order": 0,
-          "path": {
-            "prefix": "",
-            "reference": "inStringsProperty",
-            "termType": "NamedNode",
-            "value": "http://example.com/inStringsProperty"
           },
           "shapeIdentifier": "_:n3-210",
           "type": {
@@ -6083,7 +6083,7 @@
     },
     {
       "kind": "ObjectType",
-      "comment": "Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.",
+      "comment": "Shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
       "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
@@ -6096,7 +6096,7 @@
       "shapeIdentifier": "<http://example.com/UnionDiscriminantsClass>",
       "properties": [
         {
-          "comment": "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+          "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
           "mutable": false,
           "name": "optionalClassOrClassOrStringProperty",
           "order": 0,
@@ -6109,10 +6109,10 @@
           "shapeIdentifier": "_:n3-377",
           "type": {
             "kind": "OptionType",
-            "comment": "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+            "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+              "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
               "members": [
                 {
                   "type": {
@@ -6188,7 +6188,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
           "mutable": false,
           "name": "optionalIriOrLiteralProperty",
           "order": 0,
@@ -6201,10 +6201,10 @@
           "shapeIdentifier": "_:n3-384",
           "type": {
             "kind": "OptionType",
-            "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+              "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "members": [
                 {
                   "type": {
@@ -6226,7 +6226,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
           "name": "optionalClassOrIriProperty",
           "order": 0,
@@ -6239,10 +6239,10 @@
           "shapeIdentifier": "_:n3-389",
           "type": {
             "kind": "OptionType",
-            "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+              "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "members": [
                 {
                   "type": {
@@ -6331,7 +6331,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
           "name": "requiredClassOrIriProperty",
           "order": 0,
@@ -6344,7 +6344,7 @@
           "shapeIdentifier": "_:n3-399",
           "type": {
             "kind": "UnionType",
-            "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "members": [
               {
                 "type": {
@@ -6388,7 +6388,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           "mutable": false,
           "name": "requiredClassOrClassOrStringProperty",
           "order": 0,
@@ -6401,7 +6401,7 @@
           "shapeIdentifier": "_:n3-404",
           "type": {
             "kind": "UnionType",
-            "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "members": [
               {
                 "type": {
@@ -6476,7 +6476,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+          "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           "mutable": false,
           "name": "setClassOrIriProperty",
           "order": 0,
@@ -6489,10 +6489,10 @@
           "shapeIdentifier": "_:n3-411",
           "type": {
             "kind": "SetType",
-            "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+              "comment": "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "members": [
                 {
                   "type": {
@@ -6537,7 +6537,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
           "mutable": false,
           "name": "requiredIriOrLiteralProperty",
           "order": 0,
@@ -6550,7 +6550,7 @@
           "shapeIdentifier": "_:n3-416",
           "type": {
             "kind": "UnionType",
-            "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "members": [
               {
                 "type": {
@@ -6611,7 +6611,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           "mutable": false,
           "name": "setClassOrClassOrStringProperty",
           "order": 0,
@@ -6624,10 +6624,10 @@
           "shapeIdentifier": "_:n3-426",
           "type": {
             "kind": "SetType",
-            "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+              "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
               "members": [
                 {
                   "type": {
@@ -6703,7 +6703,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+          "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
           "mutable": false,
           "name": "setIriOrLiteralProperty",
           "order": 0,
@@ -6716,10 +6716,10 @@
           "shapeIdentifier": "_:n3-433",
           "type": {
             "kind": "SetType",
-            "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+            "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "itemType": {
               "kind": "UnionType",
-              "comment": "Union that can be discriminated by an inline discriminant property (termType).",
+              "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "members": [
                 {
                   "type": {

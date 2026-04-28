@@ -4906,7 +4906,7 @@ export namespace UuidV4IriIdentifierClass {
       }),
     );
 } /**
- * Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.
+ * Shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
 
 export class UnionDiscriminantsClass {
@@ -4916,7 +4916,7 @@ export class UnionDiscriminantsClass {
     "UnionDiscriminantsClass" as const;
 
   /**
-   * Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).
    */
   readonly optionalClassOrClassOrStringProperty: Maybe<
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4925,14 +4925,14 @@ export class UnionDiscriminantsClass {
   >;
 
   /**
-   * Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.
+   * Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
    */
   readonly optionalClassOrIriProperty: Maybe<
     { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | NamedNode
   >;
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
 
@@ -4942,7 +4942,7 @@ export class UnionDiscriminantsClass {
   readonly optionalIriOrStringProperty: Maybe<NamedNode | string>;
 
   /**
-   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).
    */
   readonly requiredClassOrClassOrStringProperty:
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4953,14 +4953,14 @@ export class UnionDiscriminantsClass {
     | { type: "string"; value: string };
 
   /**
-   * Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.
+   * Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
    */
   readonly requiredClassOrIriProperty:
     | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
     | NamedNode;
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly requiredIriOrLiteralProperty: NamedNode | Literal;
 
@@ -4970,7 +4970,7 @@ export class UnionDiscriminantsClass {
   readonly requiredIriOrStringProperty: NamedNode | string;
 
   /**
-   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).
    */
   readonly setClassOrClassOrStringProperty: readonly (
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4982,7 +4982,7 @@ export class UnionDiscriminantsClass {
   )[];
 
   /**
-   * Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.
+   * Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
    */
   readonly setClassOrIriProperty: readonly (
     | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4990,7 +4990,7 @@ export class UnionDiscriminantsClass {
   )[];
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
 
@@ -6727,7 +6727,7 @@ export namespace UnionDiscriminantsClass {
           .readonly()
           .optional()
           .describe(
-            "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
           ),
         optionalClassOrIriProperty: z
           .discriminatedUnion("termType", [
@@ -6743,7 +6743,7 @@ export namespace UnionDiscriminantsClass {
           .readonly()
           .optional()
           .describe(
-            "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         optionalIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6761,7 +6761,7 @@ export namespace UnionDiscriminantsClass {
           .readonly()
           .optional()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         optionalIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
@@ -6782,7 +6782,7 @@ export namespace UnionDiscriminantsClass {
           ])
           .readonly()
           .describe(
-            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           ),
         requiredClassOrIriProperty: z
           .discriminatedUnion("termType", [
@@ -6797,7 +6797,7 @@ export namespace UnionDiscriminantsClass {
           ])
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         requiredIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6814,7 +6814,7 @@ export namespace UnionDiscriminantsClass {
           ])
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         requiredIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
@@ -6837,7 +6837,7 @@ export namespace UnionDiscriminantsClass {
           .optional()
           .readonly()
           .describe(
-            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
           ),
         setClassOrIriProperty: z
           .discriminatedUnion("termType", [
@@ -6855,7 +6855,7 @@ export namespace UnionDiscriminantsClass {
           .optional()
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline dicsriminant property (termType) for RDF/JS term members and an envelope on termType for other members.",
+            "Union that can be discriminated by an intrinsic dicsriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         setIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6875,7 +6875,7 @@ export namespace UnionDiscriminantsClass {
           .optional()
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         setIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
