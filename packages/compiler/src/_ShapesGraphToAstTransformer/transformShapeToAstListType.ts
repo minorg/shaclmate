@@ -42,6 +42,8 @@ const astListTypePlaceholderItemType = new ast.BlankNodeType({
   shapeIdentifier: dataFactory.blankNode(),
 });
 
+const empty = Either.of<Error, Maybe<ast.ListType>>(Maybe.empty());
+
 /**
  * Is an ast.ObjectType actually the shape of an RDF list?
  * If so, return the type of its rdf:first.
@@ -54,14 +56,9 @@ export function transformShapeToAstListType(
   shapeStack.push(shape);
   try {
     if (shape.$type !== "NodeShape") {
-      return Either.of(Maybe.empty());
+      return empty;
     }
     const nodeShape = shape;
-    if (
-      !nodeShape.subClassOf.some((subClassOf) => subClassOf.equals(rdf.List))
-    ) {
-      return Either.of(Maybe.empty());
-    }
 
     return Eithers.chain3(
       nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
@@ -106,11 +103,7 @@ export function transformShapeToAstListType(
         }
 
         if (!emptyListShape || !nonEmptyListShape) {
-          return Left(
-            new Error(
-              `${nodeShape} does not have an sh:xone with exactly two shapes, one for the empty list and one for the non-empty list`,
-            ),
-          );
+          return empty;
         }
 
         return Either.sequence(
@@ -132,11 +125,7 @@ export function transformShapeToAstListType(
           }
 
           if (!firstPropertyShape) {
-            return Left(
-              new Error(
-                `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:first`,
-              ),
-            );
+            return empty;
           }
           if (
             firstPropertyShape.maxCount.extract() !== 1 ||
@@ -150,11 +139,7 @@ export function transformShapeToAstListType(
           }
 
           if (!restPropertyShape) {
-            return Left(
-              new Error(
-                `${nodeShape} has a non-empty list shape without an sh:property shape whose sh:path is rdf:rest`,
-              ),
-            );
+            return empty;
           }
           if (
             restPropertyShape.maxCount.extract() !== 1 ||

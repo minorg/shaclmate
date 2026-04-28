@@ -14,8 +14,7 @@
     rdfs:seeAlso <https://www.w3.org/TR/shacl/#shacl-shacl> .
 
 shaclmate:IdentifierList
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf rdf:List ;
+    a sh:NodeShape ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -35,8 +34,7 @@ shaclmate:IdentifierList
     ) .
 
 shaclmate:InList
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf rdf:List ;
+    a sh:NodeShape ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -56,8 +54,7 @@ shaclmate:InList
     ) .
 
 shaclmate:IriList
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf rdf:List ;
+    a sh:NodeShape ;
     sh:xone ([
             sh:hasValue ( )
         ]
@@ -325,8 +322,7 @@ shaclmate:Shape-xone
     sh:path sh:xone .
 
 shaclmate:StringList
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf rdf:List ;
+    a sh:NodeShape ;
     sh:xone ([
             sh:hasValue ( )
         ]

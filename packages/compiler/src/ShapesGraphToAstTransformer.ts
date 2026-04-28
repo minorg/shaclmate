@@ -1,6 +1,6 @@
 import TermMap from "@rdfjs/term-map";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { dash, rdf } from "@tpluscode/rdf-ns-builders";
+import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
@@ -45,10 +45,6 @@ function relatedNodeShapes(
     }
 
     for (const parentClassIdentifier of childNodeShape.subClassOf) {
-      if (parentClassIdentifier.equals(rdf.List)) {
-        continue;
-      }
-
       shapesGraph
         .nodeShape(parentClassIdentifier)
         .ifLeft((error) => {
