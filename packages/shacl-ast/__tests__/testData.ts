@@ -23,7 +23,7 @@ function parseShapesGraph(
   options?: { ignoreUndefinedShapes?: boolean },
 ) {
   return ShapesGraph.builder()
-    .addDataset(parseDataset(filePath), options)
+    .parseDataset(parseDataset(filePath), options)
     .unsafeCoerce()
     .build();
 }

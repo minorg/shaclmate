@@ -1,5 +1,3 @@
-import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import type { DatasetCore } from "@rdfjs/types";
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
 import type { Ast } from "../ast/Ast.js";
@@ -9,12 +7,24 @@ import type { Generator } from "../generators/Generator.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as generated from "./generated.js";
 
+const typeFunctions = {
+  NodeShape: generated.NodeShape,
+  Ontology: generated.Ontology,
+  PropertyGroup: generated.PropertyGroup,
+  PropertyShape: generated.PropertyShape,
+} as const;
+
 export class ShapesGraph extends AbstractShapesGraph<
   generated.NodeShape,
   generated.Ontology,
   generated.PropertyGroup,
   generated.PropertyShape
 > {
+  protected readonly typeFunctions = typeFunctions;
+
+  /**
+   * Compile the shapes graph using the given generator and return the generator's output.
+   */
   compile(parameters: {
     generator: Generator;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
@@ -26,6 +36,9 @@ export class ShapesGraph extends AbstractShapesGraph<
     return new ShapesGraph.Builder();
   }
 
+  /**
+   * Transform the shapes graph to an AST.
+   */
   toAst(options?: {
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }): Either<Error, Ast> {
@@ -43,25 +56,7 @@ export namespace ShapesGraph {
     generated.PropertyGroup,
     generated.PropertyShape
   > {
-    override addDataset(
-      dataset: DatasetCore,
-      options?: {
-        ignoreUndefinedShapes?: boolean;
-        prefixMap?: PrefixMap;
-      },
-    ): Either<Error, this> {
-      return super
-        .addDataset(dataset, {
-          ...options,
-          fromRdfResourceFunctions: {
-            NodeShape: generated.NodeShape.$fromRdfResource,
-            Ontology: generated.Ontology.$fromRdfResource,
-            PropertyGroup: generated.PropertyGroup.$fromRdfResource,
-            PropertyShape: generated.PropertyShape.$fromRdfResource,
-          },
-        })
-        .map(() => this);
-    }
+    protected readonly typeFunctions = typeFunctions;
 
     build(): ShapesGraph {
       return new ShapesGraph({
@@ -70,6 +65,38 @@ export namespace ShapesGraph {
         propertyGroupsByIdentifier: this.propertyGroupsByIdentifier,
         propertyShapesByIdentifier: this.propertyShapesByIdentifier,
       });
+    }
+
+    nodeShape(
+      parameters?: Parameters<typeof generated.NodeShape.$create>[0],
+    ): generated.NodeShape {
+      const nodeShape = generated.NodeShape.$create(parameters);
+      this.add(nodeShape);
+      return nodeShape;
+    }
+
+    ontology(
+      parameters?: Parameters<typeof generated.Ontology.$create>[0],
+    ): generated.Ontology {
+      const ontology = generated.Ontology.$create(parameters);
+      this.add(ontology);
+      return ontology;
+    }
+
+    propertyGroup(
+      parameters?: Parameters<typeof generated.PropertyGroup.$create>[0],
+    ): generated.PropertyGroup {
+      const propertyGroup = generated.PropertyGroup.$create(parameters);
+      this.add(propertyGroup);
+      return propertyGroup;
+    }
+
+    propertyShape(
+      parameters: Parameters<typeof generated.PropertyShape.$create>[0],
+    ): generated.PropertyShape {
+      const propertyShape = generated.PropertyShape.$create(parameters);
+      this.add(propertyShape);
+      return propertyShape;
     }
   }
 }

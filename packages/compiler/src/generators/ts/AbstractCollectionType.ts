@@ -75,13 +75,6 @@ export abstract class AbstractCollectionType<
     }
 
     if (this.minCount === 0) {
-      conversions.push({
-        conversionExpression: () => code`[]`,
-        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-        sourceTypeName: code`undefined`,
-        sourceTypeof: "undefined",
-      });
-
       if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
         // There were no additional conversions with different item typeof's, so we don't need to check .every or do .map
         // Just check that the original value is an array with typeof "object". Array.isArray() doesn't narrow types for some reason.
@@ -126,7 +119,9 @@ export abstract class AbstractCollectionType<
                 case "function":
                 case "symbol":
                 case "undefined":
-                  throw new Error("not implemented");
+                  throw new Error(
+                    `source type check on ${itemTypeof} not implemented`,
+                  );
               }
             },
             sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,

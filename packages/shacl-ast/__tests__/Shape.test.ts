@@ -195,9 +195,9 @@ describe("Shape", () => {
       schema.DatedMoneySpecification,
       schema.endDate,
     );
-    const or = propertyShape.or.flatMap((_) =>
-      _.map((_) => shapesGraph.shape(_).unsafeCoerce()),
-    );
+    const or = propertyShape.or
+      .orDefault([])
+      .map((_) => shapesGraph.shape(_).unsafeCoerce());
     expect(or).toHaveLength(2);
     expect(
       or.some((propertyShape) =>

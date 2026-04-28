@@ -297,6 +297,26 @@ interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
 
+function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "bigint");
+}
+
+function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
+}
+
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
+}
+
+function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "object");
+}
+
+function $isReadonlyStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "string");
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
@@ -501,7 +521,7 @@ export type $ToRdfResourceValuesFunction<T> = (
 export interface PropertyShape {
   readonly $identifier: PropertyShape.$Identifier;
   readonly $type: "PropertyShape";
-  readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
   readonly classes: readonly NamedNode[];
   readonly comment: Maybe<string>;
   readonly datatype: Maybe<NamedNode>;
@@ -536,15 +556,606 @@ export interface PropertyShape {
   >;
   readonly nodes: readonly (BlankNode | NamedNode)[];
   readonly not: readonly (BlankNode | NamedNode)[];
-  readonly or: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly or: Maybe<readonly (BlankNode | NamedNode)[]>;
   readonly order: Maybe<number>;
   readonly path: $PropertyPath;
   readonly patterns: readonly string[];
   readonly uniqueLang: Maybe<boolean>;
-  readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
 }
 
 export namespace PropertyShape {
+  export function $create(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly and?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+    readonly classes?: readonly NamedNode[] | readonly string[];
+    readonly comment?: Maybe<string> | string;
+    readonly datatype?: Maybe<NamedNode> | NamedNode | string;
+    readonly deactivated?: Maybe<boolean> | boolean;
+    readonly defaultValue?:
+      | Maybe<NamedNode | Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | (NamedNode | Literal);
+    readonly description?: Maybe<string> | string;
+    readonly flags?: readonly string[];
+    readonly groups?: readonly (BlankNode | NamedNode)[] | readonly string[];
+    readonly hasValues?:
+      | readonly (NamedNode | Literal)[]
+      | readonly bigint[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+    readonly in_?:
+      | Maybe<readonly (NamedNode | Literal)[]>
+      | readonly (NamedNode | Literal)[]
+      | readonly bigint[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+    readonly isDefinedBy?:
+      | Maybe<BlankNode | NamedNode>
+      | (BlankNode | NamedNode)
+      | string;
+    readonly label?: Maybe<string> | string;
+    readonly languageIn?: Maybe<readonly string[]> | readonly string[];
+    readonly maxCount?: Maybe<number> | number;
+    readonly maxExclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly maxInclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly maxLength?: Maybe<number> | number;
+    readonly minCount?: Maybe<number> | number;
+    readonly minExclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly minInclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly minLength?: Maybe<number> | number;
+    readonly name?: Maybe<string> | string;
+    readonly nodeKind?:
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal";
+    readonly nodes?: readonly (BlankNode | NamedNode)[] | readonly string[];
+    readonly not?: readonly (BlankNode | NamedNode)[] | readonly string[];
+    readonly or?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+    readonly order?: Maybe<number> | number;
+    readonly path: $PropertyPath;
+    readonly patterns?: readonly string[];
+    readonly uniqueLang?: Maybe<boolean> | boolean;
+    readonly xone?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+  }): PropertyShape {
+    let $identifier: PropertyShape.$Identifier;
+    if (typeof parameters.$identifier === "object") {
+      $identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (parameters.$identifier === undefined) {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters.$identifier satisfies never;
+    }
+    const $type = "PropertyShape" as const;
+    let and: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters.and)) {
+      and = parameters.and;
+    } else if ($isReadonlyObjectArray(parameters.and)) {
+      and = Maybe.of(parameters.and);
+    } else if ($isReadonlyStringArray(parameters.and)) {
+      and = Maybe.of(parameters.and.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters.and === undefined) {
+      and = Maybe.empty();
+    } else {
+      and = parameters.and satisfies never;
+    }
+    let classes: readonly NamedNode[];
+    if (parameters.classes === undefined) {
+      classes = [];
+    } else if ($isReadonlyObjectArray(parameters.classes)) {
+      classes = parameters.classes;
+    } else if ($isReadonlyStringArray(parameters.classes)) {
+      classes = parameters.classes.map((item) => dataFactory.namedNode(item));
+    } else {
+      classes = parameters.classes satisfies never;
+    }
+    let comment: Maybe<string>;
+    if (Maybe.isMaybe(parameters.comment)) {
+      comment = parameters.comment;
+    } else if (typeof parameters.comment === "string") {
+      comment = Maybe.of(parameters.comment);
+    } else if (parameters.comment === undefined) {
+      comment = Maybe.empty();
+    } else {
+      comment = parameters.comment satisfies never;
+    }
+    let datatype: Maybe<NamedNode>;
+    if (Maybe.isMaybe(parameters.datatype)) {
+      datatype = parameters.datatype;
+    } else if (typeof parameters.datatype === "object") {
+      datatype = Maybe.of(parameters.datatype);
+    } else if (typeof parameters.datatype === "string") {
+      datatype = Maybe.of(dataFactory.namedNode(parameters.datatype));
+    } else if (parameters.datatype === undefined) {
+      datatype = Maybe.empty();
+    } else {
+      datatype = parameters.datatype satisfies never;
+    }
+    let deactivated: Maybe<boolean>;
+    if (Maybe.isMaybe(parameters.deactivated)) {
+      deactivated = parameters.deactivated;
+    } else if (typeof parameters.deactivated === "boolean") {
+      deactivated = Maybe.of(parameters.deactivated);
+    } else if (parameters.deactivated === undefined) {
+      deactivated = Maybe.empty();
+    } else {
+      deactivated = parameters.deactivated satisfies never;
+    }
+    let defaultValue: Maybe<NamedNode | Literal>;
+    if (Maybe.isMaybe(parameters.defaultValue)) {
+      defaultValue = parameters.defaultValue;
+    } else if (typeof parameters.defaultValue === "bigint") {
+      defaultValue = Maybe.of($literalFactory.bigint(parameters.defaultValue));
+    } else if (typeof parameters.defaultValue === "boolean") {
+      defaultValue = Maybe.of($literalFactory.boolean(parameters.defaultValue));
+    } else if (
+      typeof parameters.defaultValue === "object" &&
+      parameters.defaultValue instanceof Date
+    ) {
+      defaultValue = Maybe.of($literalFactory.date(parameters.defaultValue));
+    } else if (typeof parameters.defaultValue === "number") {
+      defaultValue = Maybe.of($literalFactory.number(parameters.defaultValue));
+    } else if (typeof parameters.defaultValue === "string") {
+      defaultValue = Maybe.of($literalFactory.string(parameters.defaultValue));
+    } else if (typeof parameters.defaultValue === "object") {
+      defaultValue = Maybe.of(parameters.defaultValue);
+    } else if (parameters.defaultValue === undefined) {
+      defaultValue = Maybe.empty();
+    } else {
+      defaultValue = parameters.defaultValue satisfies never;
+    }
+    let description: Maybe<string>;
+    if (Maybe.isMaybe(parameters.description)) {
+      description = parameters.description;
+    } else if (typeof parameters.description === "string") {
+      description = Maybe.of(parameters.description);
+    } else if (parameters.description === undefined) {
+      description = Maybe.empty();
+    } else {
+      description = parameters.description satisfies never;
+    }
+    let flags: readonly string[];
+    if (parameters.flags === undefined) {
+      flags = [];
+    } else if (typeof parameters.flags === "object") {
+      flags = parameters.flags;
+    } else {
+      flags = parameters.flags satisfies never;
+    }
+    let groups: readonly (BlankNode | NamedNode)[];
+    if (parameters.groups === undefined) {
+      groups = [];
+    } else if ($isReadonlyObjectArray(parameters.groups)) {
+      groups = parameters.groups;
+    } else if ($isReadonlyStringArray(parameters.groups)) {
+      groups = parameters.groups.map((item) => dataFactory.namedNode(item));
+    } else {
+      groups = parameters.groups satisfies never;
+    }
+    let hasValues: readonly (NamedNode | Literal)[];
+    if (parameters.hasValues === undefined) {
+      hasValues = [];
+    } else if ($isReadonlyObjectArray(parameters.hasValues)) {
+      hasValues = parameters.hasValues;
+    } else if ($isReadonlyBigIntArray(parameters.hasValues)) {
+      hasValues = parameters.hasValues.map((item) =>
+        $literalFactory.bigint(item),
+      );
+    } else if ($isReadonlyBooleanArray(parameters.hasValues)) {
+      hasValues = parameters.hasValues.map((item) =>
+        $literalFactory.boolean(item),
+      );
+    } else if ($isReadonlyNumberArray(parameters.hasValues)) {
+      hasValues = parameters.hasValues.map((item) =>
+        $literalFactory.number(item),
+      );
+    } else if ($isReadonlyStringArray(parameters.hasValues)) {
+      hasValues = parameters.hasValues.map((item) =>
+        $literalFactory.string(item),
+      );
+    } else {
+      hasValues = parameters.hasValues satisfies never;
+    }
+    let in_: Maybe<readonly (NamedNode | Literal)[]>;
+    if (Maybe.isMaybe(parameters.in_)) {
+      in_ = parameters.in_;
+    } else if ($isReadonlyObjectArray(parameters.in_)) {
+      in_ = Maybe.of(parameters.in_);
+    } else if ($isReadonlyBigIntArray(parameters.in_)) {
+      in_ = Maybe.of(
+        parameters.in_.map((item) => $literalFactory.bigint(item)),
+      );
+    } else if ($isReadonlyBooleanArray(parameters.in_)) {
+      in_ = Maybe.of(
+        parameters.in_.map((item) => $literalFactory.boolean(item)),
+      );
+    } else if ($isReadonlyNumberArray(parameters.in_)) {
+      in_ = Maybe.of(
+        parameters.in_.map((item) => $literalFactory.number(item)),
+      );
+    } else if ($isReadonlyStringArray(parameters.in_)) {
+      in_ = Maybe.of(
+        parameters.in_.map((item) => $literalFactory.string(item)),
+      );
+    } else if (parameters.in_ === undefined) {
+      in_ = Maybe.empty();
+    } else {
+      in_ = parameters.in_ satisfies never;
+    }
+    let isDefinedBy: Maybe<BlankNode | NamedNode>;
+    if (Maybe.isMaybe(parameters.isDefinedBy)) {
+      isDefinedBy = parameters.isDefinedBy;
+    } else if (typeof parameters.isDefinedBy === "object") {
+      isDefinedBy = Maybe.of(parameters.isDefinedBy);
+    } else if (typeof parameters.isDefinedBy === "string") {
+      isDefinedBy = Maybe.of(dataFactory.namedNode(parameters.isDefinedBy));
+    } else if (parameters.isDefinedBy === undefined) {
+      isDefinedBy = Maybe.empty();
+    } else {
+      isDefinedBy = parameters.isDefinedBy satisfies never;
+    }
+    let label: Maybe<string>;
+    if (Maybe.isMaybe(parameters.label)) {
+      label = parameters.label;
+    } else if (typeof parameters.label === "string") {
+      label = Maybe.of(parameters.label);
+    } else if (parameters.label === undefined) {
+      label = Maybe.empty();
+    } else {
+      label = parameters.label satisfies never;
+    }
+    let languageIn: Maybe<readonly string[]>;
+    if (Maybe.isMaybe(parameters.languageIn)) {
+      languageIn = parameters.languageIn;
+    } else if (typeof parameters.languageIn === "object") {
+      languageIn = Maybe.of(parameters.languageIn);
+    } else if (parameters.languageIn === undefined) {
+      languageIn = Maybe.empty();
+    } else {
+      languageIn = parameters.languageIn satisfies never;
+    }
+    let maxCount: Maybe<number>;
+    if (Maybe.isMaybe(parameters.maxCount)) {
+      maxCount = parameters.maxCount;
+    } else if (typeof parameters.maxCount === "number") {
+      maxCount = Maybe.of(parameters.maxCount);
+    } else if (parameters.maxCount === undefined) {
+      maxCount = Maybe.empty();
+    } else {
+      maxCount = parameters.maxCount satisfies never;
+    }
+    let maxExclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters.maxExclusive)) {
+      maxExclusive = parameters.maxExclusive;
+    } else if (typeof parameters.maxExclusive === "bigint") {
+      maxExclusive = Maybe.of($literalFactory.bigint(parameters.maxExclusive));
+    } else if (typeof parameters.maxExclusive === "boolean") {
+      maxExclusive = Maybe.of($literalFactory.boolean(parameters.maxExclusive));
+    } else if (
+      typeof parameters.maxExclusive === "object" &&
+      parameters.maxExclusive instanceof Date
+    ) {
+      maxExclusive = Maybe.of($literalFactory.date(parameters.maxExclusive));
+    } else if (typeof parameters.maxExclusive === "number") {
+      maxExclusive = Maybe.of($literalFactory.number(parameters.maxExclusive));
+    } else if (typeof parameters.maxExclusive === "string") {
+      maxExclusive = Maybe.of($literalFactory.string(parameters.maxExclusive));
+    } else if (typeof parameters.maxExclusive === "object") {
+      maxExclusive = Maybe.of(parameters.maxExclusive);
+    } else if (parameters.maxExclusive === undefined) {
+      maxExclusive = Maybe.empty();
+    } else {
+      maxExclusive = parameters.maxExclusive satisfies never;
+    }
+    let maxInclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters.maxInclusive)) {
+      maxInclusive = parameters.maxInclusive;
+    } else if (typeof parameters.maxInclusive === "bigint") {
+      maxInclusive = Maybe.of($literalFactory.bigint(parameters.maxInclusive));
+    } else if (typeof parameters.maxInclusive === "boolean") {
+      maxInclusive = Maybe.of($literalFactory.boolean(parameters.maxInclusive));
+    } else if (
+      typeof parameters.maxInclusive === "object" &&
+      parameters.maxInclusive instanceof Date
+    ) {
+      maxInclusive = Maybe.of($literalFactory.date(parameters.maxInclusive));
+    } else if (typeof parameters.maxInclusive === "number") {
+      maxInclusive = Maybe.of($literalFactory.number(parameters.maxInclusive));
+    } else if (typeof parameters.maxInclusive === "string") {
+      maxInclusive = Maybe.of($literalFactory.string(parameters.maxInclusive));
+    } else if (typeof parameters.maxInclusive === "object") {
+      maxInclusive = Maybe.of(parameters.maxInclusive);
+    } else if (parameters.maxInclusive === undefined) {
+      maxInclusive = Maybe.empty();
+    } else {
+      maxInclusive = parameters.maxInclusive satisfies never;
+    }
+    let maxLength: Maybe<number>;
+    if (Maybe.isMaybe(parameters.maxLength)) {
+      maxLength = parameters.maxLength;
+    } else if (typeof parameters.maxLength === "number") {
+      maxLength = Maybe.of(parameters.maxLength);
+    } else if (parameters.maxLength === undefined) {
+      maxLength = Maybe.empty();
+    } else {
+      maxLength = parameters.maxLength satisfies never;
+    }
+    let minCount: Maybe<number>;
+    if (Maybe.isMaybe(parameters.minCount)) {
+      minCount = parameters.minCount;
+    } else if (typeof parameters.minCount === "number") {
+      minCount = Maybe.of(parameters.minCount);
+    } else if (parameters.minCount === undefined) {
+      minCount = Maybe.empty();
+    } else {
+      minCount = parameters.minCount satisfies never;
+    }
+    let minExclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters.minExclusive)) {
+      minExclusive = parameters.minExclusive;
+    } else if (typeof parameters.minExclusive === "bigint") {
+      minExclusive = Maybe.of($literalFactory.bigint(parameters.minExclusive));
+    } else if (typeof parameters.minExclusive === "boolean") {
+      minExclusive = Maybe.of($literalFactory.boolean(parameters.minExclusive));
+    } else if (
+      typeof parameters.minExclusive === "object" &&
+      parameters.minExclusive instanceof Date
+    ) {
+      minExclusive = Maybe.of($literalFactory.date(parameters.minExclusive));
+    } else if (typeof parameters.minExclusive === "number") {
+      minExclusive = Maybe.of($literalFactory.number(parameters.minExclusive));
+    } else if (typeof parameters.minExclusive === "string") {
+      minExclusive = Maybe.of($literalFactory.string(parameters.minExclusive));
+    } else if (typeof parameters.minExclusive === "object") {
+      minExclusive = Maybe.of(parameters.minExclusive);
+    } else if (parameters.minExclusive === undefined) {
+      minExclusive = Maybe.empty();
+    } else {
+      minExclusive = parameters.minExclusive satisfies never;
+    }
+    let minInclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters.minInclusive)) {
+      minInclusive = parameters.minInclusive;
+    } else if (typeof parameters.minInclusive === "bigint") {
+      minInclusive = Maybe.of($literalFactory.bigint(parameters.minInclusive));
+    } else if (typeof parameters.minInclusive === "boolean") {
+      minInclusive = Maybe.of($literalFactory.boolean(parameters.minInclusive));
+    } else if (
+      typeof parameters.minInclusive === "object" &&
+      parameters.minInclusive instanceof Date
+    ) {
+      minInclusive = Maybe.of($literalFactory.date(parameters.minInclusive));
+    } else if (typeof parameters.minInclusive === "number") {
+      minInclusive = Maybe.of($literalFactory.number(parameters.minInclusive));
+    } else if (typeof parameters.minInclusive === "string") {
+      minInclusive = Maybe.of($literalFactory.string(parameters.minInclusive));
+    } else if (typeof parameters.minInclusive === "object") {
+      minInclusive = Maybe.of(parameters.minInclusive);
+    } else if (parameters.minInclusive === undefined) {
+      minInclusive = Maybe.empty();
+    } else {
+      minInclusive = parameters.minInclusive satisfies never;
+    }
+    let minLength: Maybe<number>;
+    if (Maybe.isMaybe(parameters.minLength)) {
+      minLength = parameters.minLength;
+    } else if (typeof parameters.minLength === "number") {
+      minLength = Maybe.of(parameters.minLength);
+    } else if (parameters.minLength === undefined) {
+      minLength = Maybe.empty();
+    } else {
+      minLength = parameters.minLength satisfies never;
+    }
+    let name: Maybe<string>;
+    if (Maybe.isMaybe(parameters.name)) {
+      name = parameters.name;
+    } else if (typeof parameters.name === "string") {
+      name = Maybe.of(parameters.name);
+    } else if (parameters.name === undefined) {
+      name = Maybe.empty();
+    } else {
+      name = parameters.name satisfies never;
+    }
+    let nodeKind: Maybe<
+      NamedNode<
+        | "http://www.w3.org/ns/shacl#BlankNode"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+        | "http://www.w3.org/ns/shacl#IRI"
+        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+        | "http://www.w3.org/ns/shacl#Literal"
+      >
+    >;
+    if (Maybe.isMaybe(parameters.nodeKind)) {
+      nodeKind = parameters.nodeKind;
+    } else if (typeof parameters.nodeKind === "object") {
+      nodeKind = Maybe.of(parameters.nodeKind);
+    } else if (typeof parameters.nodeKind === "string") {
+      nodeKind = Maybe.of(dataFactory.namedNode(parameters.nodeKind));
+    } else if (parameters.nodeKind === undefined) {
+      nodeKind = Maybe.empty();
+    } else {
+      nodeKind = parameters.nodeKind satisfies never;
+    }
+    let nodes: readonly (BlankNode | NamedNode)[];
+    if (parameters.nodes === undefined) {
+      nodes = [];
+    } else if ($isReadonlyObjectArray(parameters.nodes)) {
+      nodes = parameters.nodes;
+    } else if ($isReadonlyStringArray(parameters.nodes)) {
+      nodes = parameters.nodes.map((item) => dataFactory.namedNode(item));
+    } else {
+      nodes = parameters.nodes satisfies never;
+    }
+    let not: readonly (BlankNode | NamedNode)[];
+    if (parameters.not === undefined) {
+      not = [];
+    } else if ($isReadonlyObjectArray(parameters.not)) {
+      not = parameters.not;
+    } else if ($isReadonlyStringArray(parameters.not)) {
+      not = parameters.not.map((item) => dataFactory.namedNode(item));
+    } else {
+      not = parameters.not satisfies never;
+    }
+    let or: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters.or)) {
+      or = parameters.or;
+    } else if ($isReadonlyObjectArray(parameters.or)) {
+      or = Maybe.of(parameters.or);
+    } else if ($isReadonlyStringArray(parameters.or)) {
+      or = Maybe.of(parameters.or.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters.or === undefined) {
+      or = Maybe.empty();
+    } else {
+      or = parameters.or satisfies never;
+    }
+    let order: Maybe<number>;
+    if (Maybe.isMaybe(parameters.order)) {
+      order = parameters.order;
+    } else if (typeof parameters.order === "number") {
+      order = Maybe.of(parameters.order);
+    } else if (parameters.order === undefined) {
+      order = Maybe.empty();
+    } else {
+      order = parameters.order satisfies never;
+    }
+    const path = parameters.path;
+    let patterns: readonly string[];
+    if (parameters.patterns === undefined) {
+      patterns = [];
+    } else if (typeof parameters.patterns === "object") {
+      patterns = parameters.patterns;
+    } else {
+      patterns = parameters.patterns satisfies never;
+    }
+    let uniqueLang: Maybe<boolean>;
+    if (Maybe.isMaybe(parameters.uniqueLang)) {
+      uniqueLang = parameters.uniqueLang;
+    } else if (typeof parameters.uniqueLang === "boolean") {
+      uniqueLang = Maybe.of(parameters.uniqueLang);
+    } else if (parameters.uniqueLang === undefined) {
+      uniqueLang = Maybe.empty();
+    } else {
+      uniqueLang = parameters.uniqueLang satisfies never;
+    }
+    let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters.xone)) {
+      xone = parameters.xone;
+    } else if ($isReadonlyObjectArray(parameters.xone)) {
+      xone = Maybe.of(parameters.xone);
+    } else if ($isReadonlyStringArray(parameters.xone)) {
+      xone = Maybe.of(
+        parameters.xone.map((item) => dataFactory.namedNode(item)),
+      );
+    } else if (parameters.xone === undefined) {
+      xone = Maybe.empty();
+    } else {
+      xone = parameters.xone satisfies never;
+    }
+    return {
+      $identifier,
+      $type,
+      and,
+      classes,
+      comment,
+      datatype,
+      deactivated,
+      defaultValue,
+      description,
+      flags,
+      groups,
+      hasValues,
+      in_,
+      isDefinedBy,
+      label,
+      languageIn,
+      maxCount,
+      maxExclusive,
+      maxInclusive,
+      maxLength,
+      minCount,
+      minExclusive,
+      minInclusive,
+      minLength,
+      name,
+      nodeKind,
+      nodes,
+      not,
+      or,
+      order,
+      path,
+      patterns,
+      uniqueLang,
+      xone,
+    };
+  }
+
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
@@ -564,7 +1175,7 @@ export namespace PropertyShape {
     }
     if (
       filter.and !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -807,7 +1418,7 @@ export namespace PropertyShape {
     }
     if (
       filter.or !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -853,7 +1464,7 @@ export namespace PropertyShape {
     }
     if (
       filter.xone !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -869,7 +1480,7 @@ export namespace PropertyShape {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly and?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
     readonly comment?: $MaybeFilter<$StringFilter>;
     readonly datatype?: $MaybeFilter<$IriFilter>;
@@ -895,12 +1506,12 @@ export namespace PropertyShape {
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
-    readonly or?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly or?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly order?: $MaybeFilter<$NumericFilter<number>>;
     readonly path?: $PropertyPath.$Filter;
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly uniqueLang?: $MaybeFilter<$BooleanFilter>;
-    readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly xone?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
   export const $fromRdfResource: $FromRdfResourceFunction<PropertyShape> = (
@@ -955,7 +1566,7 @@ export namespace PropertyShape {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "PropertyShape";
-    and: readonly (readonly (BlankNode | NamedNode)[])[];
+    and: Maybe<readonly (BlankNode | NamedNode)[]>;
     classes: readonly NamedNode[];
     comment: Maybe<string>;
     datatype: Maybe<NamedNode>;
@@ -990,12 +1601,12 @@ export namespace PropertyShape {
     >;
     nodes: readonly (BlankNode | NamedNode)[];
     not: readonly (BlankNode | NamedNode)[];
-    or: readonly (readonly (BlankNode | NamedNode)[])[];
+    or: Maybe<readonly (BlankNode | NamedNode)[]>;
     order: Maybe<number>;
     path: $PropertyPath;
     patterns: readonly string[];
     uniqueLang: Maybe<boolean>;
-    xone: readonly (readonly (BlankNode | NamedNode)[])[];
+    xone: Maybe<readonly (BlankNode | NamedNode)[]>;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -1068,13 +1679,17 @@ export namespace PropertyShape {
                   .map((valueLists) =>
                     valueLists.map((valueList) => valueList.toArray()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath: PropertyShape.$schema.properties.and.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<
+                          Maybe<readonly (BlankNode | NamedNode)[]>
+                        >({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.and.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
             }).chain((and) =>
               $shaclPropertyFromRdf({
@@ -2159,26 +2774,37 @@ export namespace PropertyShape {
                                                                             (
                                                                               values,
                                                                             ) =>
-                                                                              values.toArray(),
-                                                                          )
-                                                                          .map(
-                                                                            (
-                                                                              valuesArray,
-                                                                            ) =>
-                                                                              Resource.Values.fromValue(
-                                                                                {
-                                                                                  focusResource:
-                                                                                    $resource,
-                                                                                  propertyPath:
-                                                                                    PropertyShape
-                                                                                      .$schema
-                                                                                      .properties
-                                                                                      .or
-                                                                                      .path,
-                                                                                  value:
-                                                                                    valuesArray,
-                                                                                },
-                                                                              ),
+                                                                              values.length >
+                                                                              0
+                                                                                ? values.map(
+                                                                                    (
+                                                                                      value,
+                                                                                    ) =>
+                                                                                      Maybe.of(
+                                                                                        value,
+                                                                                      ),
+                                                                                  )
+                                                                                : Resource.Values.fromValue<
+                                                                                    Maybe<
+                                                                                      readonly (
+                                                                                        | BlankNode
+                                                                                        | NamedNode
+                                                                                      )[]
+                                                                                    >
+                                                                                  >(
+                                                                                    {
+                                                                                      focusResource:
+                                                                                        $resource,
+                                                                                      propertyPath:
+                                                                                        PropertyShape
+                                                                                          .$schema
+                                                                                          .properties
+                                                                                          .or
+                                                                                          .path,
+                                                                                      value:
+                                                                                        Maybe.empty(),
+                                                                                    },
+                                                                                  ),
                                                                           ),
                                                                   },
                                                                 ).chain((or) =>
@@ -2492,26 +3118,37 @@ export namespace PropertyShape {
                                                                                               (
                                                                                                 values,
                                                                                               ) =>
-                                                                                                values.toArray(),
-                                                                                            )
-                                                                                            .map(
-                                                                                              (
-                                                                                                valuesArray,
-                                                                                              ) =>
-                                                                                                Resource.Values.fromValue(
-                                                                                                  {
-                                                                                                    focusResource:
-                                                                                                      $resource,
-                                                                                                    propertyPath:
-                                                                                                      PropertyShape
-                                                                                                        .$schema
-                                                                                                        .properties
-                                                                                                        .xone
-                                                                                                        .path,
-                                                                                                    value:
-                                                                                                      valuesArray,
-                                                                                                  },
-                                                                                                ),
+                                                                                                values.length >
+                                                                                                0
+                                                                                                  ? values.map(
+                                                                                                      (
+                                                                                                        value,
+                                                                                                      ) =>
+                                                                                                        Maybe.of(
+                                                                                                          value,
+                                                                                                        ),
+                                                                                                    )
+                                                                                                  : Resource.Values.fromValue<
+                                                                                                      Maybe<
+                                                                                                        readonly (
+                                                                                                          | BlankNode
+                                                                                                          | NamedNode
+                                                                                                        )[]
+                                                                                                      >
+                                                                                                    >(
+                                                                                                      {
+                                                                                                        focusResource:
+                                                                                                          $resource,
+                                                                                                        propertyPath:
+                                                                                                          PropertyShape
+                                                                                                            .$schema
+                                                                                                            .properties
+                                                                                                            .xone
+                                                                                                            .path,
+                                                                                                        value:
+                                                                                                          Maybe.empty(),
+                                                                                                      },
+                                                                                                    ),
                                                                                             ),
                                                                                     },
                                                                                   ).map(
@@ -2606,7 +3243,7 @@ export namespace PropertyShape {
       and: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -2843,7 +3480,7 @@ export namespace PropertyShape {
       or: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -2883,7 +3520,7 @@ export namespace PropertyShape {
       xone: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -2911,9 +3548,9 @@ export namespace PropertyShape {
     }
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
-      _propertyShape.and.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _propertyShape.and.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -3213,9 +3850,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
-      _propertyShape.or.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _propertyShape.or.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -3299,9 +3936,9 @@ export namespace PropertyShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
-      _propertyShape.xone.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _propertyShape.xone.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -3361,6 +3998,45 @@ export interface PropertyGroup {
 }
 
 export namespace PropertyGroup {
+  export function $create(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly comment?: Maybe<string> | string;
+    readonly label?: Maybe<string> | string;
+  }): PropertyGroup {
+    let $identifier: PropertyGroup.$Identifier;
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters?.$identifier satisfies never;
+    }
+    const $type = "PropertyGroup" as const;
+    let comment: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.comment)) {
+      comment = parameters?.comment;
+    } else if (typeof parameters?.comment === "string") {
+      comment = Maybe.of(parameters?.comment);
+    } else if (parameters?.comment === undefined) {
+      comment = Maybe.empty();
+    } else {
+      comment = parameters?.comment satisfies never;
+    }
+    let label: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.label)) {
+      label = parameters?.label;
+    } else if (typeof parameters?.label === "string") {
+      label = Maybe.of(parameters?.label);
+    } else if (parameters?.label === undefined) {
+      label = Maybe.empty();
+    } else {
+      label = parameters?.label satisfies never;
+    }
+    return { $identifier, $type, comment, label };
+  }
+
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
@@ -3637,6 +4313,45 @@ export interface Ontology {
 }
 
 export namespace Ontology {
+  export function $create(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly comment?: Maybe<string> | string;
+    readonly label?: Maybe<string> | string;
+  }): Ontology {
+    let $identifier: Ontology.$Identifier;
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters?.$identifier satisfies never;
+    }
+    const $type = "Ontology" as const;
+    let comment: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.comment)) {
+      comment = parameters?.comment;
+    } else if (typeof parameters?.comment === "string") {
+      comment = Maybe.of(parameters?.comment);
+    } else if (parameters?.comment === undefined) {
+      comment = Maybe.empty();
+    } else {
+      comment = parameters?.comment satisfies never;
+    }
+    let label: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.label)) {
+      label = parameters?.label;
+    } else if (typeof parameters?.label === "string") {
+      label = Maybe.of(parameters?.label);
+    } else if (parameters?.label === undefined) {
+      label = Maybe.empty();
+    } else {
+      label = parameters?.label satisfies never;
+    }
+    return { $identifier, $type, comment, label };
+  }
+
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
@@ -3903,7 +4618,7 @@ export namespace Ontology {
 export interface NodeShape {
   readonly $identifier: NodeShape.$Identifier;
   readonly $type: "NodeShape";
-  readonly and: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
   readonly classes: readonly NamedNode[];
   readonly closed: Maybe<boolean>;
   readonly comment: Maybe<string>;
@@ -3936,15 +4651,596 @@ export interface NodeShape {
   >;
   readonly nodes: readonly (BlankNode | NamedNode)[];
   readonly not: readonly (BlankNode | NamedNode)[];
-  readonly or: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly or: Maybe<readonly (BlankNode | NamedNode)[]>;
   readonly patterns: readonly string[];
   readonly properties: readonly (BlankNode | NamedNode)[];
   readonly subClassOf: readonly NamedNode[];
   readonly types: readonly NamedNode[];
-  readonly xone: readonly (readonly (BlankNode | NamedNode)[])[];
+  readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
 }
 
 export namespace NodeShape {
+  export function $create(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly and?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+    readonly classes?: readonly NamedNode[] | readonly string[];
+    readonly closed?: Maybe<boolean> | boolean;
+    readonly comment?: Maybe<string> | string;
+    readonly datatype?: Maybe<NamedNode> | NamedNode | string;
+    readonly deactivated?: Maybe<boolean> | boolean;
+    readonly flags?: readonly string[];
+    readonly hasValues?:
+      | readonly (NamedNode | Literal)[]
+      | readonly bigint[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+    readonly ignoredProperties?:
+      | Maybe<readonly NamedNode[]>
+      | readonly NamedNode[]
+      | readonly string[];
+    readonly in_?:
+      | Maybe<readonly (NamedNode | Literal)[]>
+      | readonly (NamedNode | Literal)[]
+      | readonly bigint[]
+      | readonly boolean[]
+      | readonly number[]
+      | readonly string[];
+    readonly isDefinedBy?:
+      | Maybe<BlankNode | NamedNode>
+      | (BlankNode | NamedNode)
+      | string;
+    readonly label?: Maybe<string> | string;
+    readonly languageIn?: Maybe<readonly string[]> | readonly string[];
+    readonly maxCount?: Maybe<number> | number;
+    readonly maxExclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly maxInclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly maxLength?: Maybe<number> | number;
+    readonly minCount?: Maybe<number> | number;
+    readonly minExclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly minInclusive?:
+      | Maybe<Literal>
+      | bigint
+      | boolean
+      | Date
+      | number
+      | string
+      | Literal;
+    readonly minLength?: Maybe<number> | number;
+    readonly nodeKind?:
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal";
+    readonly nodes?: readonly (BlankNode | NamedNode)[] | readonly string[];
+    readonly not?: readonly (BlankNode | NamedNode)[] | readonly string[];
+    readonly or?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+    readonly patterns?: readonly string[];
+    readonly properties?:
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+    readonly subClassOf?: readonly NamedNode[] | readonly string[];
+    readonly types?: readonly NamedNode[] | readonly string[];
+    readonly xone?:
+      | Maybe<readonly (BlankNode | NamedNode)[]>
+      | readonly (BlankNode | NamedNode)[]
+      | readonly string[];
+  }): NodeShape {
+    let $identifier: NodeShape.$Identifier;
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (parameters?.$identifier === undefined) {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters?.$identifier satisfies never;
+    }
+    const $type = "NodeShape" as const;
+    let and: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters?.and)) {
+      and = parameters?.and;
+    } else if ($isReadonlyObjectArray(parameters?.and)) {
+      and = Maybe.of(parameters?.and);
+    } else if ($isReadonlyStringArray(parameters?.and)) {
+      and = Maybe.of(
+        parameters?.and.map((item) => dataFactory.namedNode(item)),
+      );
+    } else if (parameters?.and === undefined) {
+      and = Maybe.empty();
+    } else {
+      and = parameters?.and satisfies never;
+    }
+    let classes: readonly NamedNode[];
+    if (parameters?.classes === undefined) {
+      classes = [];
+    } else if ($isReadonlyObjectArray(parameters?.classes)) {
+      classes = parameters?.classes;
+    } else if ($isReadonlyStringArray(parameters?.classes)) {
+      classes = parameters?.classes.map((item) => dataFactory.namedNode(item));
+    } else {
+      classes = parameters?.classes satisfies never;
+    }
+    let closed: Maybe<boolean>;
+    if (Maybe.isMaybe(parameters?.closed)) {
+      closed = parameters?.closed;
+    } else if (typeof parameters?.closed === "boolean") {
+      closed = Maybe.of(parameters?.closed);
+    } else if (parameters?.closed === undefined) {
+      closed = Maybe.empty();
+    } else {
+      closed = parameters?.closed satisfies never;
+    }
+    let comment: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.comment)) {
+      comment = parameters?.comment;
+    } else if (typeof parameters?.comment === "string") {
+      comment = Maybe.of(parameters?.comment);
+    } else if (parameters?.comment === undefined) {
+      comment = Maybe.empty();
+    } else {
+      comment = parameters?.comment satisfies never;
+    }
+    let datatype: Maybe<NamedNode>;
+    if (Maybe.isMaybe(parameters?.datatype)) {
+      datatype = parameters?.datatype;
+    } else if (typeof parameters?.datatype === "object") {
+      datatype = Maybe.of(parameters?.datatype);
+    } else if (typeof parameters?.datatype === "string") {
+      datatype = Maybe.of(dataFactory.namedNode(parameters?.datatype));
+    } else if (parameters?.datatype === undefined) {
+      datatype = Maybe.empty();
+    } else {
+      datatype = parameters?.datatype satisfies never;
+    }
+    let deactivated: Maybe<boolean>;
+    if (Maybe.isMaybe(parameters?.deactivated)) {
+      deactivated = parameters?.deactivated;
+    } else if (typeof parameters?.deactivated === "boolean") {
+      deactivated = Maybe.of(parameters?.deactivated);
+    } else if (parameters?.deactivated === undefined) {
+      deactivated = Maybe.empty();
+    } else {
+      deactivated = parameters?.deactivated satisfies never;
+    }
+    let flags: readonly string[];
+    if (parameters?.flags === undefined) {
+      flags = [];
+    } else if (typeof parameters?.flags === "object") {
+      flags = parameters?.flags;
+    } else {
+      flags = parameters?.flags satisfies never;
+    }
+    let hasValues: readonly (NamedNode | Literal)[];
+    if (parameters?.hasValues === undefined) {
+      hasValues = [];
+    } else if ($isReadonlyObjectArray(parameters?.hasValues)) {
+      hasValues = parameters?.hasValues;
+    } else if ($isReadonlyBigIntArray(parameters?.hasValues)) {
+      hasValues = parameters?.hasValues.map((item) =>
+        $literalFactory.bigint(item),
+      );
+    } else if ($isReadonlyBooleanArray(parameters?.hasValues)) {
+      hasValues = parameters?.hasValues.map((item) =>
+        $literalFactory.boolean(item),
+      );
+    } else if ($isReadonlyNumberArray(parameters?.hasValues)) {
+      hasValues = parameters?.hasValues.map((item) =>
+        $literalFactory.number(item),
+      );
+    } else if ($isReadonlyStringArray(parameters?.hasValues)) {
+      hasValues = parameters?.hasValues.map((item) =>
+        $literalFactory.string(item),
+      );
+    } else {
+      hasValues = parameters?.hasValues satisfies never;
+    }
+    let ignoredProperties: Maybe<readonly NamedNode[]>;
+    if (Maybe.isMaybe(parameters?.ignoredProperties)) {
+      ignoredProperties = parameters?.ignoredProperties;
+    } else if ($isReadonlyObjectArray(parameters?.ignoredProperties)) {
+      ignoredProperties = Maybe.of(parameters?.ignoredProperties);
+    } else if ($isReadonlyStringArray(parameters?.ignoredProperties)) {
+      ignoredProperties = Maybe.of(
+        parameters?.ignoredProperties.map((item) =>
+          dataFactory.namedNode(item),
+        ),
+      );
+    } else if (parameters?.ignoredProperties === undefined) {
+      ignoredProperties = Maybe.empty();
+    } else {
+      ignoredProperties = parameters?.ignoredProperties satisfies never;
+    }
+    let in_: Maybe<readonly (NamedNode | Literal)[]>;
+    if (Maybe.isMaybe(parameters?.in_)) {
+      in_ = parameters?.in_;
+    } else if ($isReadonlyObjectArray(parameters?.in_)) {
+      in_ = Maybe.of(parameters?.in_);
+    } else if ($isReadonlyBigIntArray(parameters?.in_)) {
+      in_ = Maybe.of(
+        parameters?.in_.map((item) => $literalFactory.bigint(item)),
+      );
+    } else if ($isReadonlyBooleanArray(parameters?.in_)) {
+      in_ = Maybe.of(
+        parameters?.in_.map((item) => $literalFactory.boolean(item)),
+      );
+    } else if ($isReadonlyNumberArray(parameters?.in_)) {
+      in_ = Maybe.of(
+        parameters?.in_.map((item) => $literalFactory.number(item)),
+      );
+    } else if ($isReadonlyStringArray(parameters?.in_)) {
+      in_ = Maybe.of(
+        parameters?.in_.map((item) => $literalFactory.string(item)),
+      );
+    } else if (parameters?.in_ === undefined) {
+      in_ = Maybe.empty();
+    } else {
+      in_ = parameters?.in_ satisfies never;
+    }
+    let isDefinedBy: Maybe<BlankNode | NamedNode>;
+    if (Maybe.isMaybe(parameters?.isDefinedBy)) {
+      isDefinedBy = parameters?.isDefinedBy;
+    } else if (typeof parameters?.isDefinedBy === "object") {
+      isDefinedBy = Maybe.of(parameters?.isDefinedBy);
+    } else if (typeof parameters?.isDefinedBy === "string") {
+      isDefinedBy = Maybe.of(dataFactory.namedNode(parameters?.isDefinedBy));
+    } else if (parameters?.isDefinedBy === undefined) {
+      isDefinedBy = Maybe.empty();
+    } else {
+      isDefinedBy = parameters?.isDefinedBy satisfies never;
+    }
+    let label: Maybe<string>;
+    if (Maybe.isMaybe(parameters?.label)) {
+      label = parameters?.label;
+    } else if (typeof parameters?.label === "string") {
+      label = Maybe.of(parameters?.label);
+    } else if (parameters?.label === undefined) {
+      label = Maybe.empty();
+    } else {
+      label = parameters?.label satisfies never;
+    }
+    let languageIn: Maybe<readonly string[]>;
+    if (Maybe.isMaybe(parameters?.languageIn)) {
+      languageIn = parameters?.languageIn;
+    } else if (typeof parameters?.languageIn === "object") {
+      languageIn = Maybe.of(parameters?.languageIn);
+    } else if (parameters?.languageIn === undefined) {
+      languageIn = Maybe.empty();
+    } else {
+      languageIn = parameters?.languageIn satisfies never;
+    }
+    let maxCount: Maybe<number>;
+    if (Maybe.isMaybe(parameters?.maxCount)) {
+      maxCount = parameters?.maxCount;
+    } else if (typeof parameters?.maxCount === "number") {
+      maxCount = Maybe.of(parameters?.maxCount);
+    } else if (parameters?.maxCount === undefined) {
+      maxCount = Maybe.empty();
+    } else {
+      maxCount = parameters?.maxCount satisfies never;
+    }
+    let maxExclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters?.maxExclusive)) {
+      maxExclusive = parameters?.maxExclusive;
+    } else if (typeof parameters?.maxExclusive === "bigint") {
+      maxExclusive = Maybe.of($literalFactory.bigint(parameters?.maxExclusive));
+    } else if (typeof parameters?.maxExclusive === "boolean") {
+      maxExclusive = Maybe.of(
+        $literalFactory.boolean(parameters?.maxExclusive),
+      );
+    } else if (
+      typeof parameters?.maxExclusive === "object" &&
+      parameters?.maxExclusive instanceof Date
+    ) {
+      maxExclusive = Maybe.of($literalFactory.date(parameters?.maxExclusive));
+    } else if (typeof parameters?.maxExclusive === "number") {
+      maxExclusive = Maybe.of($literalFactory.number(parameters?.maxExclusive));
+    } else if (typeof parameters?.maxExclusive === "string") {
+      maxExclusive = Maybe.of($literalFactory.string(parameters?.maxExclusive));
+    } else if (typeof parameters?.maxExclusive === "object") {
+      maxExclusive = Maybe.of(parameters?.maxExclusive);
+    } else if (parameters?.maxExclusive === undefined) {
+      maxExclusive = Maybe.empty();
+    } else {
+      maxExclusive = parameters?.maxExclusive satisfies never;
+    }
+    let maxInclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters?.maxInclusive)) {
+      maxInclusive = parameters?.maxInclusive;
+    } else if (typeof parameters?.maxInclusive === "bigint") {
+      maxInclusive = Maybe.of($literalFactory.bigint(parameters?.maxInclusive));
+    } else if (typeof parameters?.maxInclusive === "boolean") {
+      maxInclusive = Maybe.of(
+        $literalFactory.boolean(parameters?.maxInclusive),
+      );
+    } else if (
+      typeof parameters?.maxInclusive === "object" &&
+      parameters?.maxInclusive instanceof Date
+    ) {
+      maxInclusive = Maybe.of($literalFactory.date(parameters?.maxInclusive));
+    } else if (typeof parameters?.maxInclusive === "number") {
+      maxInclusive = Maybe.of($literalFactory.number(parameters?.maxInclusive));
+    } else if (typeof parameters?.maxInclusive === "string") {
+      maxInclusive = Maybe.of($literalFactory.string(parameters?.maxInclusive));
+    } else if (typeof parameters?.maxInclusive === "object") {
+      maxInclusive = Maybe.of(parameters?.maxInclusive);
+    } else if (parameters?.maxInclusive === undefined) {
+      maxInclusive = Maybe.empty();
+    } else {
+      maxInclusive = parameters?.maxInclusive satisfies never;
+    }
+    let maxLength: Maybe<number>;
+    if (Maybe.isMaybe(parameters?.maxLength)) {
+      maxLength = parameters?.maxLength;
+    } else if (typeof parameters?.maxLength === "number") {
+      maxLength = Maybe.of(parameters?.maxLength);
+    } else if (parameters?.maxLength === undefined) {
+      maxLength = Maybe.empty();
+    } else {
+      maxLength = parameters?.maxLength satisfies never;
+    }
+    let minCount: Maybe<number>;
+    if (Maybe.isMaybe(parameters?.minCount)) {
+      minCount = parameters?.minCount;
+    } else if (typeof parameters?.minCount === "number") {
+      minCount = Maybe.of(parameters?.minCount);
+    } else if (parameters?.minCount === undefined) {
+      minCount = Maybe.empty();
+    } else {
+      minCount = parameters?.minCount satisfies never;
+    }
+    let minExclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters?.minExclusive)) {
+      minExclusive = parameters?.minExclusive;
+    } else if (typeof parameters?.minExclusive === "bigint") {
+      minExclusive = Maybe.of($literalFactory.bigint(parameters?.minExclusive));
+    } else if (typeof parameters?.minExclusive === "boolean") {
+      minExclusive = Maybe.of(
+        $literalFactory.boolean(parameters?.minExclusive),
+      );
+    } else if (
+      typeof parameters?.minExclusive === "object" &&
+      parameters?.minExclusive instanceof Date
+    ) {
+      minExclusive = Maybe.of($literalFactory.date(parameters?.minExclusive));
+    } else if (typeof parameters?.minExclusive === "number") {
+      minExclusive = Maybe.of($literalFactory.number(parameters?.minExclusive));
+    } else if (typeof parameters?.minExclusive === "string") {
+      minExclusive = Maybe.of($literalFactory.string(parameters?.minExclusive));
+    } else if (typeof parameters?.minExclusive === "object") {
+      minExclusive = Maybe.of(parameters?.minExclusive);
+    } else if (parameters?.minExclusive === undefined) {
+      minExclusive = Maybe.empty();
+    } else {
+      minExclusive = parameters?.minExclusive satisfies never;
+    }
+    let minInclusive: Maybe<Literal>;
+    if (Maybe.isMaybe(parameters?.minInclusive)) {
+      minInclusive = parameters?.minInclusive;
+    } else if (typeof parameters?.minInclusive === "bigint") {
+      minInclusive = Maybe.of($literalFactory.bigint(parameters?.minInclusive));
+    } else if (typeof parameters?.minInclusive === "boolean") {
+      minInclusive = Maybe.of(
+        $literalFactory.boolean(parameters?.minInclusive),
+      );
+    } else if (
+      typeof parameters?.minInclusive === "object" &&
+      parameters?.minInclusive instanceof Date
+    ) {
+      minInclusive = Maybe.of($literalFactory.date(parameters?.minInclusive));
+    } else if (typeof parameters?.minInclusive === "number") {
+      minInclusive = Maybe.of($literalFactory.number(parameters?.minInclusive));
+    } else if (typeof parameters?.minInclusive === "string") {
+      minInclusive = Maybe.of($literalFactory.string(parameters?.minInclusive));
+    } else if (typeof parameters?.minInclusive === "object") {
+      minInclusive = Maybe.of(parameters?.minInclusive);
+    } else if (parameters?.minInclusive === undefined) {
+      minInclusive = Maybe.empty();
+    } else {
+      minInclusive = parameters?.minInclusive satisfies never;
+    }
+    let minLength: Maybe<number>;
+    if (Maybe.isMaybe(parameters?.minLength)) {
+      minLength = parameters?.minLength;
+    } else if (typeof parameters?.minLength === "number") {
+      minLength = Maybe.of(parameters?.minLength);
+    } else if (parameters?.minLength === undefined) {
+      minLength = Maybe.empty();
+    } else {
+      minLength = parameters?.minLength satisfies never;
+    }
+    let nodeKind: Maybe<
+      NamedNode<
+        | "http://www.w3.org/ns/shacl#BlankNode"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+        | "http://www.w3.org/ns/shacl#IRI"
+        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+        | "http://www.w3.org/ns/shacl#Literal"
+      >
+    >;
+    if (Maybe.isMaybe(parameters?.nodeKind)) {
+      nodeKind = parameters?.nodeKind;
+    } else if (typeof parameters?.nodeKind === "object") {
+      nodeKind = Maybe.of(parameters?.nodeKind);
+    } else if (typeof parameters?.nodeKind === "string") {
+      nodeKind = Maybe.of(dataFactory.namedNode(parameters?.nodeKind));
+    } else if (parameters?.nodeKind === undefined) {
+      nodeKind = Maybe.empty();
+    } else {
+      nodeKind = parameters?.nodeKind satisfies never;
+    }
+    let nodes: readonly (BlankNode | NamedNode)[];
+    if (parameters?.nodes === undefined) {
+      nodes = [];
+    } else if ($isReadonlyObjectArray(parameters?.nodes)) {
+      nodes = parameters?.nodes;
+    } else if ($isReadonlyStringArray(parameters?.nodes)) {
+      nodes = parameters?.nodes.map((item) => dataFactory.namedNode(item));
+    } else {
+      nodes = parameters?.nodes satisfies never;
+    }
+    let not: readonly (BlankNode | NamedNode)[];
+    if (parameters?.not === undefined) {
+      not = [];
+    } else if ($isReadonlyObjectArray(parameters?.not)) {
+      not = parameters?.not;
+    } else if ($isReadonlyStringArray(parameters?.not)) {
+      not = parameters?.not.map((item) => dataFactory.namedNode(item));
+    } else {
+      not = parameters?.not satisfies never;
+    }
+    let or: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters?.or)) {
+      or = parameters?.or;
+    } else if ($isReadonlyObjectArray(parameters?.or)) {
+      or = Maybe.of(parameters?.or);
+    } else if ($isReadonlyStringArray(parameters?.or)) {
+      or = Maybe.of(parameters?.or.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters?.or === undefined) {
+      or = Maybe.empty();
+    } else {
+      or = parameters?.or satisfies never;
+    }
+    let patterns: readonly string[];
+    if (parameters?.patterns === undefined) {
+      patterns = [];
+    } else if (typeof parameters?.patterns === "object") {
+      patterns = parameters?.patterns;
+    } else {
+      patterns = parameters?.patterns satisfies never;
+    }
+    let properties: readonly (BlankNode | NamedNode)[];
+    if (parameters?.properties === undefined) {
+      properties = [];
+    } else if ($isReadonlyObjectArray(parameters?.properties)) {
+      properties = parameters?.properties;
+    } else if ($isReadonlyStringArray(parameters?.properties)) {
+      properties = parameters?.properties.map((item) =>
+        dataFactory.namedNode(item),
+      );
+    } else {
+      properties = parameters?.properties satisfies never;
+    }
+    let subClassOf: readonly NamedNode[];
+    if (parameters?.subClassOf === undefined) {
+      subClassOf = [];
+    } else if ($isReadonlyObjectArray(parameters?.subClassOf)) {
+      subClassOf = parameters?.subClassOf;
+    } else if ($isReadonlyStringArray(parameters?.subClassOf)) {
+      subClassOf = parameters?.subClassOf.map((item) =>
+        dataFactory.namedNode(item),
+      );
+    } else {
+      subClassOf = parameters?.subClassOf satisfies never;
+    }
+    let types: readonly NamedNode[];
+    if (parameters?.types === undefined) {
+      types = [];
+    } else if ($isReadonlyObjectArray(parameters?.types)) {
+      types = parameters?.types;
+    } else if ($isReadonlyStringArray(parameters?.types)) {
+      types = parameters?.types.map((item) => dataFactory.namedNode(item));
+    } else {
+      types = parameters?.types satisfies never;
+    }
+    let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
+    if (Maybe.isMaybe(parameters?.xone)) {
+      xone = parameters?.xone;
+    } else if ($isReadonlyObjectArray(parameters?.xone)) {
+      xone = Maybe.of(parameters?.xone);
+    } else if ($isReadonlyStringArray(parameters?.xone)) {
+      xone = Maybe.of(
+        parameters?.xone.map((item) => dataFactory.namedNode(item)),
+      );
+    } else if (parameters?.xone === undefined) {
+      xone = Maybe.empty();
+    } else {
+      xone = parameters?.xone satisfies never;
+    }
+    return {
+      $identifier,
+      $type,
+      and,
+      classes,
+      closed,
+      comment,
+      datatype,
+      deactivated,
+      flags,
+      hasValues,
+      ignoredProperties,
+      in_,
+      isDefinedBy,
+      label,
+      languageIn,
+      maxCount,
+      maxExclusive,
+      maxInclusive,
+      maxLength,
+      minCount,
+      minExclusive,
+      minInclusive,
+      minLength,
+      nodeKind,
+      nodes,
+      not,
+      or,
+      patterns,
+      properties,
+      subClassOf,
+      types,
+      xone,
+    };
+  }
+
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
@@ -3964,7 +5260,7 @@ export namespace NodeShape {
     }
     if (
       filter.and !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -4189,7 +5485,7 @@ export namespace NodeShape {
     }
     if (
       filter.or !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -4237,7 +5533,7 @@ export namespace NodeShape {
     }
     if (
       filter.xone !== undefined &&
-      !$filterArray<
+      !$filterMaybe<
         readonly (BlankNode | NamedNode)[],
         $CollectionFilter<$IdentifierFilter>
       >(
@@ -4253,7 +5549,7 @@ export namespace NodeShape {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly and?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly and?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly classes?: $CollectionFilter<$IriFilter>;
     readonly closed?: $MaybeFilter<$BooleanFilter>;
     readonly comment?: $MaybeFilter<$StringFilter>;
@@ -4277,12 +5573,12 @@ export namespace NodeShape {
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly nodes?: $CollectionFilter<$IdentifierFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
-    readonly or?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly or?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
     readonly patterns?: $CollectionFilter<$StringFilter>;
     readonly properties?: $CollectionFilter<$IdentifierFilter>;
     readonly subClassOf?: $CollectionFilter<$IriFilter>;
     readonly types?: $CollectionFilter<$IriFilter>;
-    readonly xone?: $CollectionFilter<$CollectionFilter<$IdentifierFilter>>;
+    readonly xone?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
   };
 
   export const $fromRdfResource: $FromRdfResourceFunction<NodeShape> = (
@@ -4335,7 +5631,7 @@ export namespace NodeShape {
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "NodeShape";
-    and: readonly (readonly (BlankNode | NamedNode)[])[];
+    and: Maybe<readonly (BlankNode | NamedNode)[]>;
     classes: readonly NamedNode[];
     closed: Maybe<boolean>;
     comment: Maybe<string>;
@@ -4368,12 +5664,12 @@ export namespace NodeShape {
     >;
     nodes: readonly (BlankNode | NamedNode)[];
     not: readonly (BlankNode | NamedNode)[];
-    or: readonly (readonly (BlankNode | NamedNode)[])[];
+    or: Maybe<readonly (BlankNode | NamedNode)[]>;
     patterns: readonly string[];
     properties: readonly (BlankNode | NamedNode)[];
     subClassOf: readonly NamedNode[];
     types: readonly NamedNode[];
-    xone: readonly (readonly (BlankNode | NamedNode)[])[];
+    xone: Maybe<readonly (BlankNode | NamedNode)[]>;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -4446,13 +5742,17 @@ export namespace NodeShape {
                   .map((valueLists) =>
                     valueLists.map((valueList) => valueList.toArray()),
                   )
-                  .map((values) => values.toArray())
-                  .map((valuesArray) =>
-                    Resource.Values.fromValue({
-                      focusResource: $resource,
-                      propertyPath: PropertyShape.$schema.properties.and.path,
-                      value: valuesArray,
-                    }),
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<
+                          Maybe<readonly (BlankNode | NamedNode)[]>
+                        >({
+                          focusResource: $resource,
+                          propertyPath:
+                            PropertyShape.$schema.properties.and.path,
+                          value: Maybe.empty(),
+                        }),
                   ),
             }).chain((and) =>
               $shaclPropertyFromRdf({
@@ -5412,26 +6712,35 @@ export namespace NodeShape {
                                                                       (
                                                                         values,
                                                                       ) =>
-                                                                        values.toArray(),
-                                                                    )
-                                                                    .map(
-                                                                      (
-                                                                        valuesArray,
-                                                                      ) =>
-                                                                        Resource.Values.fromValue(
-                                                                          {
-                                                                            focusResource:
-                                                                              $resource,
-                                                                            propertyPath:
-                                                                              PropertyShape
-                                                                                .$schema
-                                                                                .properties
-                                                                                .or
-                                                                                .path,
-                                                                            value:
-                                                                              valuesArray,
-                                                                          },
-                                                                        ),
+                                                                        values.length >
+                                                                        0
+                                                                          ? values.map(
+                                                                              (
+                                                                                value,
+                                                                              ) =>
+                                                                                Maybe.of(
+                                                                                  value,
+                                                                                ),
+                                                                            )
+                                                                          : Resource.Values.fromValue<
+                                                                              Maybe<
+                                                                                readonly (
+                                                                                  | BlankNode
+                                                                                  | NamedNode
+                                                                                )[]
+                                                                              >
+                                                                            >({
+                                                                              focusResource:
+                                                                                $resource,
+                                                                              propertyPath:
+                                                                                PropertyShape
+                                                                                  .$schema
+                                                                                  .properties
+                                                                                  .or
+                                                                                  .path,
+                                                                              value:
+                                                                                Maybe.empty(),
+                                                                            }),
                                                                     ),
                                                               },
                                                             ).chain((or) =>
@@ -5747,26 +7056,37 @@ export namespace NodeShape {
                                                                                           (
                                                                                             values,
                                                                                           ) =>
-                                                                                            values.toArray(),
-                                                                                        )
-                                                                                        .map(
-                                                                                          (
-                                                                                            valuesArray,
-                                                                                          ) =>
-                                                                                            Resource.Values.fromValue(
-                                                                                              {
-                                                                                                focusResource:
-                                                                                                  $resource,
-                                                                                                propertyPath:
-                                                                                                  PropertyShape
-                                                                                                    .$schema
-                                                                                                    .properties
-                                                                                                    .xone
-                                                                                                    .path,
-                                                                                                value:
-                                                                                                  valuesArray,
-                                                                                              },
-                                                                                            ),
+                                                                                            values.length >
+                                                                                            0
+                                                                                              ? values.map(
+                                                                                                  (
+                                                                                                    value,
+                                                                                                  ) =>
+                                                                                                    Maybe.of(
+                                                                                                      value,
+                                                                                                    ),
+                                                                                                )
+                                                                                              : Resource.Values.fromValue<
+                                                                                                  Maybe<
+                                                                                                    readonly (
+                                                                                                      | BlankNode
+                                                                                                      | NamedNode
+                                                                                                    )[]
+                                                                                                  >
+                                                                                                >(
+                                                                                                  {
+                                                                                                    focusResource:
+                                                                                                      $resource,
+                                                                                                    propertyPath:
+                                                                                                      PropertyShape
+                                                                                                        .$schema
+                                                                                                        .properties
+                                                                                                        .xone
+                                                                                                        .path,
+                                                                                                    value:
+                                                                                                      Maybe.empty(),
+                                                                                                  },
+                                                                                                ),
                                                                                         ),
                                                                                 },
                                                                               ).map(
@@ -5857,7 +7177,7 @@ export namespace NodeShape {
       and: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -6083,7 +7403,7 @@ export namespace NodeShape {
       or: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -6126,7 +7446,7 @@ export namespace NodeShape {
       xone: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -6154,9 +7474,9 @@ export namespace NodeShape {
     }
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
-      _nodeShape.and.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _nodeShape.and.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -6494,9 +7814,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
-      _nodeShape.or.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _nodeShape.or.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -6567,9 +7887,9 @@ export namespace NodeShape {
     );
     resource.add(
       dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
-      _nodeShape.xone.flatMap((item) => [
-        item.length > 0
-          ? item.reduce(
+      _nodeShape.xone.toList().flatMap((value) => [
+        value.length > 0
+          ? value.reduce(
               (
                 { currentSubListResource, listResource },
                 item,
@@ -6727,7 +8047,7 @@ export namespace Shape {
       and: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -6932,7 +8252,7 @@ export namespace Shape {
       or: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),
@@ -6951,7 +8271,7 @@ export namespace Shape {
       xone: {
         kind: "Shacl" as const,
         type: () => ({
-          kind: "Set" as const,
+          kind: "Maybe" as const,
           item: () => ({
             kind: "List" as const,
             item: () => ({ kind: "Identifier" as const }),

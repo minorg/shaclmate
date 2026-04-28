@@ -22,9 +22,9 @@ export function transformShapeToAstCompoundType(
   try {
     return Eithers.chain4(
       Either.sequence(
-        shape.and.flatMap((and) =>
-          and.map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
-        ),
+        shape.and
+          .orDefault([])
+          .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
       Either.sequence(
         shape.nodes.map((nodeShapeIdentifier) =>
@@ -35,11 +35,9 @@ export function transformShapeToAstCompoundType(
         ? nodeShapeTsFeatures.call(this, shape)
         : Either.of(new Set<TsFeature>()),
       Either.sequence(
-        shape.xone.flatMap((xone) =>
-          xone.map((shapeIdentifier) =>
-            this.shapesGraph.shape(shapeIdentifier),
-          ),
-        ),
+        shape.xone
+          .orDefault([])
+          .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
     ).chain(
       ([

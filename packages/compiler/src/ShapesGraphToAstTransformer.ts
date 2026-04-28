@@ -196,7 +196,10 @@ export class ShapesGraphToAstTransformer {
           }
           break;
         case "ObjectType": {
-          invariant(nodeShapeAstType.name.isJust());
+          invariant(
+            nodeShapeAstType.name.isJust(),
+            `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
+          );
           astObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {

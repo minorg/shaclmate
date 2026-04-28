@@ -121,7 +121,7 @@ function generate({
   }
 
   ShapesGraph.builder()
-    .addDataset(dataset, { prefixMap })
+    .parseDataset(dataset, { prefixMap })
     .map((_) => _.build())
     .chain((shapesGraph) => new Compiler({ generator }).compile(shapesGraph))
     .ifLeft((error) => {

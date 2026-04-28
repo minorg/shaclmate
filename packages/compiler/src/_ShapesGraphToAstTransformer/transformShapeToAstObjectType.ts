@@ -64,7 +64,10 @@ export function transformShapeToAstObjectType(
     }
     const nodeShape = shape;
 
-    if (nodeShape.and.length > 0 || nodeShape.xone.length > 0) {
+    if (
+      nodeShape.and.orDefault([]).length > 0 ||
+      nodeShape.xone.orDefault([]).length > 0
+    ) {
       return Either.of(Maybe.empty());
     }
 

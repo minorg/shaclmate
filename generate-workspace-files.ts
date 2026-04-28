@@ -17,6 +17,7 @@ const externalDependencies = {
   "@mui/x-date-pickers": "~7.17.0",
   "@rdfjs/data-model": "~2.1.1",
   "@rdfjs/dataset": "~2.0.2",
+  "@rdfjs/namespace": "~2.0.1",
   "@rdfjs/prefix-map": "~0.1.2",
   "@rdfjs/serializer-turtle": "~1.1.5",
   "@rdfjs/term-map": "~2.0.2",
@@ -30,6 +31,7 @@ const externalDependencies = {
   "@types/n3": "~1.26.0",
   "@types/rdfjs__data-model": "~2.0.9",
   "@types/rdfjs__dataset": "~2.0.7",
+  "@types/rdfjs__namespace": "~2.0.10",
   "@types/rdfjs__prefix-map": "~0.1.5",
   "@types/rdfjs__serializer-turtle": "~1.1.0",
   "@types/rdfjs__term-map": "~2.0.10",
@@ -72,6 +74,156 @@ const externalDependencies = {
 
 type PackageName = "compiler" | "shacl-ast";
 
+interface Tsconfig {
+  compilerOptions?: {
+    //   allowArbitraryExtensions?: boolean;
+    allowImportingTsExtensions?: boolean;
+    //   allowJs?: boolean;
+    //   allowSyntheticDefaultImports?: boolean;
+    //   allowUmdGlobalAccess?: boolean;
+    //   allowUnreachableCode?: boolean;
+    //   allowUnusedLabels?: boolean;
+    //   alwaysStrict?: boolean;
+    //   assumeChangesOnlyAffectDirectDependencies?: boolean;
+    baseUrl?: string;
+    //   charset?: string;
+    //   checkJs?: boolean;
+    //   composite?: boolean;
+    //   customConditions?: string[];
+    declaration?: boolean;
+    //   declarationDir?: string;
+    declarationMap?: boolean;
+    //   disableReferencedProjectLoad?: boolean;
+    //   disableSourceOfProjectReferenceRedirect?: boolean;
+    //   disableSolutionSearching?: boolean;
+    //   downlevelIteration?: boolean;
+    //   emitBOM?: boolean;
+    //   emitDeclarationOnly?: boolean;
+    //   emitDecoratorMetadata?: boolean;
+    //   esModuleInterop?: boolean;
+    exactOptionalPropertyTypes?: boolean;
+    experimentalDecorators?: boolean;
+    forceConsistentCasingInFileNames?: boolean;
+    //   importHelpers?: boolean;
+    //   importsNotUsedAsValues?: "error" | "preserve" | "remove";
+    incremental?: boolean;
+    //   inlineSourceMap?: boolean;
+    //   inlineSources?: boolean;
+    //   isolatedDeclarations?: boolean;
+    isolatedModules?: boolean;
+    jsx?: "preserve" | "react" | "react-jsx" | "react-jsxdev" | "react-native";
+    //   jsxFactory?: string;
+    //   jsxFragmentFactory?: string;
+    //   jsxImportSource?: string;
+    //   keyofStringsOnly?: boolean;
+    lib?: string[];
+    //   mapRoot?: string;
+    //   maxNodeModuleJsDepth?: number;
+    module?:
+      | "amd"
+      | "commonjs"
+      | "es2015"
+      | "es2020"
+      | "es2022"
+      | "esnext"
+      | "es6"
+      | "node16"
+      | "nodenext"
+      | "none"
+      | "preserve"
+      | "system"
+      | "umd";
+    moduleDetection?: "auto" | "force" | "legacy";
+    moduleResolution?: "bundler" | "classic" | "node" | "node16" | "nodenext";
+    //   moduleSuffixes?: string[];
+    //   newLine?: "crlf" | "lf";
+    noEmit?: boolean;
+    //   noEmitHelpers?: boolean;
+    //   noEmitOnError?: boolean;
+    //   noErrorTruncation?: boolean;
+    //   noFallthroughCasesInSwitch?: boolean;
+    //   noImplicitAny?: boolean;
+    //   noImplicitOverride?: boolean;
+    //   noImplicitReturns?: boolean;
+    //   noImplicitThis?: boolean;
+    //   noImplicitUseStrict?: boolean;
+    //   noPropertyAccessFromIndexSignature?: boolean;
+    //   noResolve?: boolean;
+    noUncheckedIndexedAccess?: boolean;
+    //   noUnusedLocals?: boolean;
+    //   noUnusedParameters?: boolean;
+    outDir?: string;
+    //   outFile?: string;
+    //   paths?: Record<string, string[]>;
+    //   plugins?: { name: string; [key: string]: unknown }[];
+    //   preserveConstEnums?: boolean;
+    //   preserveSymlinks?: boolean;
+    //   pretty?: boolean;
+    //   removeComments?: boolean;
+    //   resolveJsonModule?: boolean;
+    //   resolvePackageJsonExports?: boolean;
+    //   resolvePackageJsonImports?: boolean;
+    //   rootDir?: string;
+    //   rootDirs?: string[];
+    //   skipDefaultLibCheck?: boolean;
+    skipLibCheck?: boolean;
+    sourceMap?: boolean;
+    //   sourceRoot?: string;
+    //   strict?: boolean;
+    //   strictBindCallApply?: boolean;
+    //   strictFunctionTypes?: boolean;
+    //   strictNullChecks?: boolean;
+    //   strictPropertyInitialization?: boolean;
+    //   stripInternal?: boolean;
+    //   suppressExcessPropertyErrors?: boolean;
+    //   suppressImplicitAnyIndexErrors?: boolean;
+    target?:
+      | "es2015"
+      | "es2016"
+      | "es2017"
+      | "es2018"
+      | "es2019"
+      | "es2020"
+      | "es2021"
+      | "es2022"
+      | "es2023"
+      | "es3"
+      | "es5"
+      | "es6"
+      | "esnext";
+    tsBuildInfoFile?: string;
+    //   typeRoots?: string[];
+    //   types?: string[];
+    useDefineForClassFields?: boolean;
+    //   useUnknownInCatchVariables?: boolean;
+    //   verbatimModuleSyntax?: boolean;
+  };
+  // exclude?: string[];
+  extends?: string | string[];
+  // files?: string[];
+  include?: string[];
+  // references?: { path: string; prepend?: boolean }[];
+}
+
+const tsconfigDefault: Tsconfig = {
+  compilerOptions: {
+    baseUrl: "src",
+    declaration: true,
+    declarationMap: true,
+    exactOptionalPropertyTypes: false,
+    experimentalDecorators: true,
+    forceConsistentCasingInFileNames: true,
+    noUncheckedIndexedAccess: false,
+    outDir: "dist",
+    sourceMap: true,
+  },
+  extends: [
+    "@tsconfig/strictest/tsconfig.json",
+    "@tsconfig/node18/tsconfig.json",
+  ],
+  include: ["src/**/*.ts"],
+};
+
 interface Workspace {
   bin?: Record<string, string>;
   dependencies?: {
@@ -86,6 +238,7 @@ interface Workspace {
   keywords?: readonly string[];
   homepage?: string;
   scripts?: Record<string, string>;
+  tsconfig?: Tsconfig;
 }
 
 const workspaces = {
@@ -114,6 +267,35 @@ const workspaces = {
     },
   } satisfies Record<string, Workspace>,
   examples: {
+    api: {
+      devDependencies: {
+        external: [
+          "@rdfjs/namespace",
+          "@tpluscode/rdf-ns-builders",
+          "@types/rdfjs__namespace",
+        ],
+        internal: ["compiler"],
+      },
+      scripts: {
+        compile: "NODE_ENV=development tsx src/compile.ts",
+        dump: "NODE_ENV=development tsx src/dump.ts",
+      },
+      tsconfig: {
+        compilerOptions: {
+          baseUrl: "src",
+          exactOptionalPropertyTypes: false,
+          experimentalDecorators: true,
+          forceConsistentCasingInFileNames: true,
+          noEmit: true,
+          noUncheckedIndexedAccess: false,
+        },
+        extends: [
+          "@tsconfig/strictest/tsconfig.json",
+          "@tsconfig/node18/tsconfig.json",
+        ],
+        include: ["src/**/*.ts"],
+      },
+    },
     forms: {
       dependencies: {
         external: [
@@ -150,6 +332,28 @@ const workspaces = {
         build: "tsc && vite build",
         start: "vite dev --port 3000",
       },
+      tsconfig: {
+        compilerOptions: {
+          tsBuildInfoFile: "./node_modules/.tmp/tsconfig.tsbuildinfo",
+          target: "es2020",
+          exactOptionalPropertyTypes: false,
+          useDefineForClassFields: true,
+          noUncheckedIndexedAccess: false,
+          lib: ["ES2020", "DOM", "DOM.Iterable"],
+          module: "esnext",
+          skipLibCheck: true,
+
+          /* Bundler mode */
+          moduleResolution: "bundler",
+          allowImportingTsExtensions: true,
+          isolatedModules: true,
+          moduleDetection: "force",
+          noEmit: true,
+          jsx: "react-jsx",
+        },
+        extends: ["@tsconfig/strictest/tsconfig.json"],
+        include: ["src"],
+      },
     },
 
     graphql: {
@@ -169,6 +373,21 @@ const workspaces = {
       },
       scripts: {
         start: "NODE_ENV=development tsx src/server.ts",
+      },
+      tsconfig: {
+        compilerOptions: {
+          baseUrl: "src",
+          exactOptionalPropertyTypes: false,
+          experimentalDecorators: true,
+          forceConsistentCasingInFileNames: true,
+          noEmit: true,
+          noUncheckedIndexedAccess: false,
+        },
+        extends: [
+          "@tsconfig/strictest/tsconfig.json",
+          "@tsconfig/node18/tsconfig.json",
+        ],
+        include: ["src/**/*.ts"],
       },
     },
 
@@ -433,34 +652,10 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
       fs.symlinkSync(`../../${fileName}`, packageFilePath);
     }
 
-    if (workspaceName !== "forms") {
-      fs.writeFileSync(
-        path.resolve(packageDirectoryPath, "tsconfig.json"),
-        JSON.stringify(
-          {
-            compilerOptions: {
-              baseUrl: "src",
-              declaration: true,
-              declarationMap: true,
-              exactOptionalPropertyTypes: false,
-              experimentalDecorators: true,
-              forceConsistentCasingInFileNames: true,
-              incremental: true,
-              noUncheckedIndexedAccess: false,
-              outDir: "dist",
-              sourceMap: true,
-            },
-            extends: [
-              "@tsconfig/strictest/tsconfig.json",
-              "@tsconfig/node18/tsconfig.json",
-            ],
-            include: ["src/**/*.ts"],
-          },
-          undefined,
-          2,
-        ),
-      );
-    }
+    fs.writeFileSync(
+      path.resolve(packageDirectoryPath, "tsconfig.json"),
+      JSON.stringify(workspace.tsconfig ?? tsconfigDefault, undefined, 2),
+    );
 
     if (testsDirectoryPath !== null) {
       fs.writeFileSync(

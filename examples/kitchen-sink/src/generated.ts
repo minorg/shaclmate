@@ -26051,12 +26051,12 @@ export class MutablePropertiesClass {
     this._$identifierPrefix = parameters?.$identifierPrefix;
     if (Maybe.isMaybe(parameters?.mutableListProperty)) {
       this.mutableListProperty = parameters?.mutableListProperty;
-    } else if (parameters?.mutableListProperty === undefined) {
-      this.mutableListProperty = Maybe.of([]);
     } else if (typeof parameters?.mutableListProperty === "object") {
       this.mutableListProperty = Maybe.of(
         parameters?.mutableListProperty.concat(),
       );
+    } else if (parameters?.mutableListProperty === undefined) {
+      this.mutableListProperty = Maybe.empty();
     } else {
       this.mutableListProperty =
         parameters?.mutableListProperty satisfies never;
@@ -27026,32 +27026,32 @@ export class ListPropertiesClass {
     }
     if (Maybe.isMaybe(parameters?.iriListProperty)) {
       this.iriListProperty = parameters?.iriListProperty;
-    } else if (parameters?.iriListProperty === undefined) {
-      this.iriListProperty = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.iriListProperty)) {
       this.iriListProperty = Maybe.of(parameters?.iriListProperty);
     } else if ($isReadonlyStringArray(parameters?.iriListProperty)) {
       this.iriListProperty = Maybe.of(
         parameters?.iriListProperty.map((item) => dataFactory.namedNode(item)),
       );
+    } else if (parameters?.iriListProperty === undefined) {
+      this.iriListProperty = Maybe.empty();
     } else {
       this.iriListProperty = parameters?.iriListProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.objectListProperty)) {
       this.objectListProperty = parameters?.objectListProperty;
-    } else if (parameters?.objectListProperty === undefined) {
-      this.objectListProperty = Maybe.of([]);
     } else if (typeof parameters?.objectListProperty === "object") {
       this.objectListProperty = Maybe.of(parameters?.objectListProperty);
+    } else if (parameters?.objectListProperty === undefined) {
+      this.objectListProperty = Maybe.empty();
     } else {
       this.objectListProperty = parameters?.objectListProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters?.stringListProperty)) {
       this.stringListProperty = parameters?.stringListProperty;
-    } else if (parameters?.stringListProperty === undefined) {
-      this.stringListProperty = Maybe.of([]);
     } else if (typeof parameters?.stringListProperty === "object") {
       this.stringListProperty = Maybe.of(parameters?.stringListProperty);
+    } else if (parameters?.stringListProperty === undefined) {
+      this.stringListProperty = Maybe.empty();
     } else {
       this.stringListProperty = parameters?.stringListProperty satisfies never;
     }

@@ -67,11 +67,9 @@ export function transformShapeToAstListType(
       nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
-        nodeShape.xone.flatMap((xone) =>
-          xone.map((shapeIdentifier) =>
-            this.shapesGraph.shape(shapeIdentifier),
-          ),
-        ),
+        nodeShape.xone
+          .orDefault([])
+          .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
     ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
       // Put a placeholder in the cache to deal with cyclic references

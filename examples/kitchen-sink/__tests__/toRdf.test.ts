@@ -125,6 +125,16 @@ describe("toRdf", async () => {
     ).toStrictEqual(true);
   });
 
+  it("should not serialize empty lists", ({ expect }) => {
+    const instance = new kitchenSink.ListPropertiesClass();
+    expect(instance.iriListProperty.extract()).toBeUndefined();
+    expect(instance.objectListProperty.extract()).toBeUndefined();
+    expect(instance.stringListProperty.extract()).toBeUndefined();
+
+    const resource = instance.$toRdfResource();
+    expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
+  });
+
   for (const [id, harness] of Object.entries(harnesses)) {
     if (id.startsWith("lazy")) {
       continue;

@@ -15,6 +15,16 @@ describe("ShapesGraph: kitchen sink", () => {
   it("should parse property shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
   });
+
+  it("toDataset", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.toDataset().size).toBeGreaterThan(
+      0,
+    );
+  });
+
+  it("toString", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.toString()).not.to.be.empty;
+  });
 });
 
 describe("ShapesGraph: schema", () => {
@@ -48,7 +58,7 @@ testData.skos.ifJust((shapesGraph) => {
 describe("RdfsjsShapesGraph: error cases", () => {
   it("should produce an error on an undefined shape", ({ expect }) => {
     const error = ShapesGraph.builder()
-      .addDataset(testData.undefinedShape.dataset)
+      .parseDataset(testData.undefinedShape.dataset)
       .extract();
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).includes("undefined shape");
