@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
@@ -11,6 +12,20 @@ export class SetType<
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
   override readonly kind = "SetType";
+
+  override get conversions(): readonly AbstractCollectionType.Conversion[] {
+    const conversions: AbstractCollectionType.Conversion[] = [];
+    if (this.minCount === 0) {
+      conversions.push({
+        conversionExpression: () => code`[]`,
+        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
+        sourceTypeName: code`undefined`,
+        sourceTypeof: "undefined",
+      });
+    }
+
+    return conversions.concat(super.conversions);
+  }
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
