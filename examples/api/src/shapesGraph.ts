@@ -5,8 +5,8 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 const builder = ShapesGraph.builder();
 const ex = namespace("http://example.com");
 
-const _ExampleNodeShape = builder.nodeShape({
-  $identifier: ex("ExampleNodeShape"),
+const ExampleNodeShape1 = builder.nodeShape({
+  $identifier: ex("ExampleNodeShape1"),
   properties: [
     builder.propertyShape({
       $identifier: ex("ExampleNodeShape-stringProperty"),
@@ -14,6 +14,19 @@ const _ExampleNodeShape = builder.nodeShape({
       maxCount: 1,
       minCount: 1,
       path: ex("stringProperty"),
+    }).$identifier,
+  ],
+});
+
+builder.nodeShape({
+  $identifier: ex("ExampleNodeShape2"),
+  properties: [
+    builder.propertyShape({
+      $identifier: ex("ExampleNodeShape-nodeProperty"),
+      nodes: [ExampleNodeShape1.$identifier],
+      maxCount: 1,
+      minCount: 1,
+      path: ex("nodeProperty"),
     }).$identifier,
   ],
 });
