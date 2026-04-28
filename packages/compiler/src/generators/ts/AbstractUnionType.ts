@@ -174,7 +174,7 @@ export abstract class AbstractUnionType<
           wrap: (instance: Code): Code => {
             switch (this.discriminant.kind) {
               case "envelope":
-                return code`{ ${this.discriminant.name}: "${discriminantValues[0]}" as const, value: ${instance} }`;
+                return code`{ ${this.discriminant.name}: ${literalOf(discriminantValues[0])} as const, value: ${instance} }`;
               case "inline":
               case "typeof":
                 return instance;
