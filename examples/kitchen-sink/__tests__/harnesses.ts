@@ -805,6 +805,16 @@ export const harnesses = {
           classUnionMemberCommonParentProperty: "test",
         }),
       },
+      requiredClassOrIriProperty: {
+        termType: "ClassUnionMember1",
+        value: new kitchenSink.ClassUnionMember1({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/classUnionMember1b",
+          ),
+          classUnionMember1Property: "test",
+          classUnionMemberCommonParentProperty: "test",
+        }),
+      },
       requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
       requiredIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       // Don't specify the set properties to test undefined
@@ -824,12 +834,14 @@ export const harnesses = {
           classUnionMemberCommonParentProperty: "test",
         }),
       },
+      optionalClassOrIriProperty: dataFactory.namedNode("http://example.com"),
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrStringProperty: "test",
       requiredClassOrClassOrStringProperty: {
         type: "string",
         value: "test",
       },
+      requiredClassOrIriProperty: dataFactory.namedNode("http://example.com"),
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrStringProperty: "test",
       setClassOrClassOrStringProperty: [
@@ -853,6 +865,20 @@ export const harnesses = {
           value: new kitchenSink.ClassUnionMember1({
             $identifier: dataFactory.namedNode(
               "http://example.com/classUnionMember1b",
+            ),
+            classUnionMember1Property: "test",
+            classUnionMemberCommonParentProperty: "test",
+          }),
+        },
+      ],
+      setClassOrIriProperty: [
+        // Opposite order
+        dataFactory.namedNode("http://example.com"),
+        {
+          termType: "ClassUnionMember1",
+          value: new kitchenSink.ClassUnionMember1({
+            $identifier: dataFactory.namedNode(
+              "http://example.com/classUnionMember1c",
             ),
             classUnionMember1Property: "test",
             classUnionMemberCommonParentProperty: "test",

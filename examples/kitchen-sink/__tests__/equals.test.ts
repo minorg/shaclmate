@@ -43,6 +43,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -55,6 +58,9 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -71,6 +77,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -83,6 +92,9 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrStringProperty: "test",
           }),
@@ -100,6 +112,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -112,6 +127,9 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -128,6 +146,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -146,6 +167,9 @@ describe("equals", () => {
                 classUnionMemberCommonParentProperty: "test",
               }),
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -165,6 +189,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -177,6 +204,9 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -193,6 +223,9 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrIriProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -212,6 +245,9 @@ describe("equals", () => {
                 classUnionMemberCommonParentProperty: "test",
               }),
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),

@@ -806,6 +806,17 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
                   "http://example.com/test0",
               }),
             },
+            requiredClassOrIriProperty: {
+              termType: "ClassUnionMember1",
+              value: new kitchenSink.ClassUnionMember1({
+                $identifier: dataFactory.namedNode(
+                  "http://example.com/classUnionMember1",
+                ),
+                classUnionMember1Property: "http://example.com/test0",
+                classUnionMemberCommonParentProperty:
+                  "http://example.com/test0",
+              }),
+            },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/test0",
             ),
@@ -819,6 +830,9 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               type: "string",
               value: "http://example.com/test1",
             },
+            requiredClassOrIriProperty: dataFactory.namedNode(
+              "http://example.com/test1",
+            ),
             requiredIriOrLiteralProperty: dataFactory.literal(
               "http://example.com/test1",
             ),
@@ -828,7 +842,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       );
 
       for (const [id, [filter, expected]] of Object.entries({
-        envelopePositive: [
+        extrinsicPositive: [
           {
             requiredClassOrClassOrStringProperty: {
               on: {
@@ -848,7 +862,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           },
           [identifiers[0]],
         ],
-        envelopeNegative: [
+        extrinsicNegative: [
           {
             requiredClassOrClassOrStringProperty: {
               on: {
@@ -868,7 +882,41 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           },
           [],
         ],
-        inlinePositive: [
+        hybridPositive: [
+          {
+            requiredClassOrIriProperty: {
+              on: {
+                ClassUnionMember1: {
+                  classUnionMember1Property: {
+                    in: ["http://example.com/test0"],
+                  },
+                },
+                NamedNode: {
+                  in: [dataFactory.namedNode("http://example.com/test0")],
+                },
+              },
+            },
+          },
+          [identifiers[0]],
+        ],
+        hybridNegative: [
+          {
+            requiredClassOrIriProperty: {
+              on: {
+                ClassUnionMember1: {
+                  classUnionMember1Property: {
+                    in: ["http://example.com/testx"],
+                  },
+                },
+                NamedNode: {
+                  in: [dataFactory.namedNode("http://example.com/testx")],
+                },
+              },
+            },
+          },
+          [],
+        ],
+        intrinsicPositive: [
           {
             requiredIriOrLiteralProperty: {
               on: {
@@ -883,7 +931,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           },
           [identifiers[0]],
         ],
-        inlineNegative: [
+        intrinsicNegative: [
           {
             requiredIriOrLiteralProperty: {
               on: {
