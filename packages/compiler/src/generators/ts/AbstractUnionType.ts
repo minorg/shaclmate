@@ -53,9 +53,7 @@ export abstract class AbstractUnionType<
         ),
       };
     } else {
-      this.discriminant = Discriminant.infer(
-        members.map((member) => member.type),
-      );
+      this.discriminant = Discriminant.infer(members);
     }
 
     this.lazyMembers = () =>
@@ -689,7 +687,25 @@ export namespace Discriminant {
     return inlineDiscriminantProperty;
   }
 
-  export function infer(memberTypes: readonly Type[]): Discriminant {
+  export function infer(
+    members: readonly {
+      readonly discriminantValue: Maybe<number | string>;
+      readonly type: Type;
+    }[],
+  ): Discriminant {
+    if (members.some((member) => member.discriminantValue.isJust())) {
+      return {
+        descendantValues: [],
+        kind: "envelope",
+        name: "type",
+        ownValues: members.map((member, memberI) =>
+          member.discriminantValue.orDefault(memberI),
+        ),
+      };
+    }
+
+    const memberTypes = members.map((member) => member.type);
+
     // Infer the discriminant kind
     const inlineDiscriminantProperty_ = inlineDiscriminantProperty(memberTypes);
     if (inlineDiscriminantProperty_) {
