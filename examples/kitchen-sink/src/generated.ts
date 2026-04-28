@@ -5934,11 +5934,11 @@ export class UnionDiscriminantsClass {
               | { type: 0; value: ClassUnionMember1.$Json }
               | { type: 1; value: { readonly "@id": string } } => {
               if (value.type === 0) {
-                return { type: "0" as const, value: value.value.$toJson() };
+                return { type: 0 as const, value: value.value.$toJson() };
               }
               if (value.type === 1) {
                 return {
-                  type: "1" as const,
+                  type: 1 as const,
                   value: { "@id": value.value.value },
                 };
               }
@@ -6037,10 +6037,10 @@ export class UnionDiscriminantsClass {
           | { type: 0; value: ClassUnionMember1.$Json }
           | { type: 1; value: { readonly "@id": string } } => {
           if (value.type === 0) {
-            return { type: "0" as const, value: value.value.$toJson() };
+            return { type: 0 as const, value: value.value.$toJson() };
           }
           if (value.type === 1) {
-            return { type: "1" as const, value: { "@id": value.value.value } };
+            return { type: 1 as const, value: { "@id": value.value.value } };
           }
 
           throw new Error("unable to serialize to JSON");
@@ -6131,13 +6131,10 @@ export class UnionDiscriminantsClass {
             | { type: 0; value: ClassUnionMember1.$Json }
             | { type: 1; value: { readonly "@id": string } } => {
             if (value.type === 0) {
-              return { type: "0" as const, value: value.value.$toJson() };
+              return { type: 0 as const, value: value.value.$toJson() };
             }
             if (value.type === 1) {
-              return {
-                type: "1" as const,
-                value: { "@id": value.value.value },
-              };
+              return { type: 1 as const, value: { "@id": value.value.value } };
             }
 
             throw new Error("unable to serialize to JSON");
@@ -9464,7 +9461,7 @@ export namespace UnionDiscriminantsClass {
         | { type: 1; value: NamedNode } => {
         if (value.type === 0) {
           return {
-            type: "0" as const,
+            type: 0 as const,
             value: ClassUnionMember1.$fromJson(
               value.value as ClassUnionMember1.$Json,
             ),
@@ -9472,7 +9469,7 @@ export namespace UnionDiscriminantsClass {
         }
         if (value.type === 1) {
           return {
-            type: "1" as const,
+            type: 1 as const,
             value: dataFactory.namedNode(
               (value.value as { readonly "@id": string })["@id"],
             ),
@@ -9608,7 +9605,7 @@ export namespace UnionDiscriminantsClass {
       | { type: 1; value: NamedNode } => {
       if (value.type === 0) {
         return {
-          type: "0" as const,
+          type: 0 as const,
           value: ClassUnionMember1.$fromJson(
             value.value as ClassUnionMember1.$Json,
           ),
@@ -9616,7 +9613,7 @@ export namespace UnionDiscriminantsClass {
       }
       if (value.type === 1) {
         return {
-          type: "1" as const,
+          type: 1 as const,
           value: dataFactory.namedNode(
             (value.value as { readonly "@id": string })["@id"],
           ),
@@ -9751,7 +9748,7 @@ export namespace UnionDiscriminantsClass {
           | { type: 1; value: NamedNode } => {
           if (value.type === 0) {
             return {
-              type: "0" as const,
+              type: 0 as const,
               value: ClassUnionMember1.$fromJson(
                 value.value as ClassUnionMember1.$Json,
               ),
@@ -9759,7 +9756,7 @@ export namespace UnionDiscriminantsClass {
           }
           if (value.type === 1) {
             return {
-              type: "1" as const,
+              type: 1 as const,
               value: dataFactory.namedNode(
                 (value.value as { readonly "@id": string })["@id"],
               ),
