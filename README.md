@@ -92,10 +92,6 @@ then open [http://localhost:3000](http://localhost:3000).
 
 A web application that serves a [GraphQL](https://graphql.org) endpoint with a [GraphiQL](https://github.com/graphql/graphiql) interface.
 
-Build the application with:
-
-    npm run build
-
 Run the application with:
 
     npm start
