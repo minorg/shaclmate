@@ -1,4 +1,3 @@
-import { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
@@ -14,18 +13,21 @@ import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
+const emptyTermTypesSet: ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> =
+  new Set();
+
 function termTypes(
   type: Type,
-): readonly ("BlankNode" | "Literal" | "NamedNode")[] {
+): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
   switch (type.kind) {
     case "BlankNodeType":
     case "IriType":
     case "IdentifierType":
     case "LiteralType":
     case "TermType":
-      return [...type.nodeKinds].map(NodeKind.toTermType);
+      return type.termTypes;
     default:
-      return [];
+      return emptyTermTypesSet;
   }
 }
 
@@ -155,10 +157,24 @@ export abstract class AbstractUnionType<
         return {
           abstract: false,
           discriminantValues,
+          jsonType: member.type.jsonType({
+            includeDiscriminantProperty:
+              this.discriminant.kind === "intrinsic" ||
+              (this.discriminant.kind === "hybrid" &&
+                this.discriminant.memberValues[memberI].intrinsic),
+          }).name,
           jsonTypeCheck: typeCheck(true),
           primaryDiscriminantValue: discriminantValues[0],
           type: member.type,
           typeCheck: typeCheck(false),
+          typeToJsonExpression: (valueVariable) =>
+            member.type.toJsonExpression({
+              includeDiscriminantProperty:
+                this.discriminant.kind === "intrinsic" ||
+                (this.discriminant.kind === "hybrid" &&
+                  this.discriminant.memberValues[memberI].intrinsic),
+              variables: { value: valueVariable },
+            }),
           unwrap: (instance: Code): Code => {
             switch (this.discriminant.kind) {
               case "extrinsic":
@@ -360,11 +376,11 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 ((value: ${this.jsonType().name}): ${this.name} => {
 ${joinCode(
   this.concreteMembers.map(
-    ({ jsonTypeCheck, type, unwrap, wrap }) =>
+    ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
       code`if (${jsonTypeCheck(code`value`)}) { return ${wrap(
         type.fromJsonExpression({
           variables: {
-            value: code`(${unwrap(code`value`)} as ${type.jsonType().name})`,
+            value: code`(${unwrap(code`value`)} as ${jsonType})`,
           },
         }),
       )}; }`,
@@ -431,8 +447,8 @@ ${joinCode(
         return new AbstractType.JsonType(
           code`(${joinCode(
             this.concreteMembers.map(
-              ({ type, primaryDiscriminantValue }) =>
-                code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.jsonType().name} }`,
+              ({ jsonType, primaryDiscriminantValue }) =>
+                code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`,
             ),
             { on: "|" },
           )})`,
@@ -442,16 +458,12 @@ ${joinCode(
         return new AbstractType.JsonType(
           code`(${joinCode(
             this.concreteMembers.map(
-              ({ type, primaryDiscriminantValue }, memberI) => {
+              ({ jsonType, primaryDiscriminantValue }, memberI) => {
                 if (discriminant.memberValues[memberI].intrinsic) {
-                  return code`${
-                    type.jsonType({
-                      includeDiscriminantProperty: true,
-                    }).name
-                  }`;
+                  return code`${jsonType}`;
                 }
 
-                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.jsonType().name} }`;
+                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`;
               },
             ),
             { on: "|" },
@@ -462,15 +474,7 @@ ${joinCode(
       case "typeof":
         return new AbstractType.JsonType(
           joinCode(
-            this.concreteMembers.map(
-              ({ type }) =>
-                code`${
-                  type.jsonType({
-                    includeDiscriminantProperty:
-                      this.discriminant.kind === "intrinsic",
-                  }).name
-                }`,
-            ),
+            this.concreteMembers.map(({ jsonType }) => code`${jsonType}`),
             { on: "|" },
           ),
         );
@@ -615,12 +619,9 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
 ((value: ${this.name}): ${this.jsonType().name} => {
 ${joinCode(
   this.concreteMembers.map(
-    ({ type, typeCheck, unwrap, wrap }) =>
+    ({ typeCheck, typeToJsonExpression, unwrap, wrap }) =>
       code`if (${typeCheck(code`value`)}) { return ${wrap(
-        type.toJsonExpression({
-          includeDiscriminantProperty: this.discriminant.kind === "intrinsic",
-          variables: { value: unwrap(code`value`) },
-        }),
+        typeToJsonExpression(unwrap(code`value`)),
       )}; }`,
   ),
 )}
@@ -805,49 +806,40 @@ export namespace Discriminant {
       }
     }
 
-    let uniqueMemberTypeNames: readonly AbstractType.DiscriminantProperty.Value[];
-    {
-      const memberTypeNames = memberTypes.map((memberType) => memberType.name);
-      if (
-        memberTypeNames.every(
-          (memberTypeName) => typeof memberTypeName === "string",
-        )
-      ) {
-        const memberTypeNamesSet = new Set(memberTypeNames);
-        if (memberTypeNamesSet.size === memberTypeNames.length) {
-          uniqueMemberTypeNames = memberTypeNames;
-        } else {
-          // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
-          uniqueMemberTypeNames = memberTypeNames.map(
-            (memberTypeName, memberTypeI) => `${memberTypeI}-${memberTypeName}`,
-          );
-        }
-      } else {
-        // At least one member type name is Code
-        // Use member type indices as the discriminant values.
-        uniqueMemberTypeNames = memberTypes.map(
-          (_, memberTypeI) => memberTypeI,
-        );
-      }
-    }
-    invariant(uniqueMemberTypeNames.length === memberTypes.length);
-
     // hybrid
     // If some member type is an RDF/JS term then reuse "termType" as the discriminant.
-    if (memberTypes.some((memberType) => termTypes(memberType).length > 0)) {
+    if (memberTypes.some((memberType) => termTypes(memberType).size > 0)) {
+      const extrinsicMemberTypeNamesSet = new Set<string>();
+      let extrinsicMemberTypeCount = 0;
+      for (const memberType of memberTypes) {
+        if (termTypes(memberType).size > 0) {
+          continue;
+        }
+        extrinsicMemberTypeCount++;
+        if (typeof memberType.name === "string") {
+          extrinsicMemberTypeNamesSet.add(memberType.name);
+        } else {
+          break;
+        }
+      }
+
       return {
         kind: "hybrid",
         memberValues: memberTypes.map((memberType, memberTypeI) => {
           const memberTermTypes = termTypes(memberType);
-          if (memberTermTypes.length > 0) {
+          if (memberTermTypes.size > 0) {
             return {
               intrinsic: true,
-              ownValues: memberTermTypes,
+              ownValues: [...memberTermTypes],
             };
           }
+
           return {
             intrinsic: false,
-            ownValues: [uniqueMemberTypeNames[memberTypeI].toString()],
+            ownValues:
+              extrinsicMemberTypeNamesSet.size === extrinsicMemberTypeCount
+                ? [memberType.name as string]
+                : [memberTypeI.toString()],
           };
         }),
         name: "termType",
@@ -855,11 +847,41 @@ export namespace Discriminant {
     }
 
     // extrinsic with inferred values
-    return {
-      kind: "extrinsic",
-      name: "type",
-      memberValues: uniqueMemberTypeNames,
-    };
+    {
+      let memberValues: readonly AbstractType.DiscriminantProperty.Value[];
+      {
+        const memberTypeNames = memberTypes.map(
+          (memberType) => memberType.name,
+        );
+        if (
+          memberTypeNames.every(
+            (memberTypeName) => typeof memberTypeName === "string",
+          )
+        ) {
+          const memberTypeNamesSet = new Set(memberTypeNames);
+          if (memberTypeNamesSet.size === memberTypeNames.length) {
+            memberValues = memberTypeNames;
+          } else {
+            // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
+            memberValues = memberTypeNames.map(
+              (memberTypeName, memberTypeI) =>
+                `${memberTypeI}-${memberTypeName}`,
+            );
+          }
+        } else {
+          // At least one member type name is Code
+          // Use member type indices as the discriminant values.
+          memberValues = memberTypes.map((_, memberTypeI) => memberTypeI);
+        }
+      }
+      invariant(memberValues.length === memberTypes.length);
+
+      return {
+        kind: "extrinsic",
+        name: "type",
+        memberValues: memberValues,
+      };
+    }
   }
 }
 
@@ -873,10 +895,12 @@ export namespace AbstractUnionType {
   export interface ConcreteMember<TypeT extends Type> {
     readonly abstract: false;
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
+    readonly jsonType: Code | string;
     readonly jsonTypeCheck: (instance: Code) => Code;
     readonly primaryDiscriminantValue: AbstractType.DiscriminantProperty.Value;
     readonly type: TypeT;
     readonly typeCheck: (instance: Code) => Code;
+    readonly typeToJsonExpression: (valueVariable: Code) => Code;
     readonly unwrap: (instance: Code) => Code;
     readonly wrap: (instance: Code) => Code;
   }

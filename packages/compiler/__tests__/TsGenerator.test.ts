@@ -60,7 +60,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "externalProject") {
+      if (id !== "kitchenSink") {
         return;
       }
 
