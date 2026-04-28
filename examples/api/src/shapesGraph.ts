@@ -7,6 +7,7 @@ const ex = namespace("http://example.com/");
 
 const ExampleNodeShape1 = builder.nodeShape({
   $identifier: ex("ExampleNodeShape1"),
+  shaclmateName: "ExampleNodeShape1",
   properties: [
     builder.propertyShape({
       $identifier: ex("ExampleNodeShape-stringProperty"),
@@ -20,6 +21,7 @@ const ExampleNodeShape1 = builder.nodeShape({
 
 builder.nodeShape({
   $identifier: ex("ExampleNodeShape2"),
+  shaclmateName: "ExampleNodeShape2",
   properties: [
     builder.propertyShape({
       $identifier: ex("ExampleNodeShape-nodeProperty"),
