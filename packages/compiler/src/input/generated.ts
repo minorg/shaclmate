@@ -728,12 +728,12 @@ export namespace PropertyShape {
     let and: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters.and)) {
       and = parameters.and;
-    } else if (parameters.and === undefined) {
-      and = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters.and)) {
       and = Maybe.of(parameters.and);
     } else if ($isReadonlyStringArray(parameters.and)) {
       and = Maybe.of(parameters.and.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters.and === undefined) {
+      and = Maybe.empty();
     } else {
       and = parameters.and satisfies never;
     }
@@ -857,8 +857,6 @@ export namespace PropertyShape {
     let in_: Maybe<readonly (NamedNode | Literal)[]>;
     if (Maybe.isMaybe(parameters.in_)) {
       in_ = parameters.in_;
-    } else if (parameters.in_ === undefined) {
-      in_ = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters.in_)) {
       in_ = Maybe.of(parameters.in_);
     } else if ($isReadonlyBigIntArray(parameters.in_)) {
@@ -877,6 +875,8 @@ export namespace PropertyShape {
       in_ = Maybe.of(
         parameters.in_.map((item) => $literalFactory.string(item)),
       );
+    } else if (parameters.in_ === undefined) {
+      in_ = Maybe.empty();
     } else {
       in_ = parameters.in_ satisfies never;
     }
@@ -905,10 +905,10 @@ export namespace PropertyShape {
     let languageIn: Maybe<readonly string[]>;
     if (Maybe.isMaybe(parameters.languageIn)) {
       languageIn = parameters.languageIn;
-    } else if (parameters.languageIn === undefined) {
-      languageIn = Maybe.of([]);
     } else if (typeof parameters.languageIn === "object") {
       languageIn = Maybe.of(parameters.languageIn);
+    } else if (parameters.languageIn === undefined) {
+      languageIn = Maybe.empty();
     } else {
       languageIn = parameters.languageIn satisfies never;
     }
@@ -1108,12 +1108,12 @@ export namespace PropertyShape {
     let or: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters.or)) {
       or = parameters.or;
-    } else if (parameters.or === undefined) {
-      or = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters.or)) {
       or = Maybe.of(parameters.or);
     } else if ($isReadonlyStringArray(parameters.or)) {
       or = Maybe.of(parameters.or.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters.or === undefined) {
+      or = Maybe.empty();
     } else {
       or = parameters.or satisfies never;
     }
@@ -1189,14 +1189,14 @@ export namespace PropertyShape {
     let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters.xone)) {
       xone = parameters.xone;
-    } else if (parameters.xone === undefined) {
-      xone = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters.xone)) {
       xone = Maybe.of(parameters.xone);
     } else if ($isReadonlyStringArray(parameters.xone)) {
       xone = Maybe.of(
         parameters.xone.map((item) => dataFactory.namedNode(item)),
       );
+    } else if (parameters.xone === undefined) {
+      xone = Maybe.empty();
     } else {
       xone = parameters.xone satisfies never;
     }
@@ -6040,14 +6040,14 @@ export namespace NodeShape {
     let and: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters?.and)) {
       and = parameters?.and;
-    } else if (parameters?.and === undefined) {
-      and = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.and)) {
       and = Maybe.of(parameters?.and);
     } else if ($isReadonlyStringArray(parameters?.and)) {
       and = Maybe.of(
         parameters?.and.map((item) => dataFactory.namedNode(item)),
       );
+    } else if (parameters?.and === undefined) {
+      and = Maybe.empty();
     } else {
       and = parameters?.and satisfies never;
     }
@@ -6193,8 +6193,6 @@ export namespace NodeShape {
     let ignoredProperties: Maybe<readonly NamedNode[]>;
     if (Maybe.isMaybe(parameters?.ignoredProperties)) {
       ignoredProperties = parameters?.ignoredProperties;
-    } else if (parameters?.ignoredProperties === undefined) {
-      ignoredProperties = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.ignoredProperties)) {
       ignoredProperties = Maybe.of(parameters?.ignoredProperties);
     } else if ($isReadonlyStringArray(parameters?.ignoredProperties)) {
@@ -6203,14 +6201,14 @@ export namespace NodeShape {
           dataFactory.namedNode(item),
         ),
       );
+    } else if (parameters?.ignoredProperties === undefined) {
+      ignoredProperties = Maybe.empty();
     } else {
       ignoredProperties = parameters?.ignoredProperties satisfies never;
     }
     let in_: Maybe<readonly (NamedNode | Literal)[]>;
     if (Maybe.isMaybe(parameters?.in_)) {
       in_ = parameters?.in_;
-    } else if (parameters?.in_ === undefined) {
-      in_ = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.in_)) {
       in_ = Maybe.of(parameters?.in_);
     } else if ($isReadonlyBigIntArray(parameters?.in_)) {
@@ -6229,6 +6227,8 @@ export namespace NodeShape {
       in_ = Maybe.of(
         parameters?.in_.map((item) => $literalFactory.string(item)),
       );
+    } else if (parameters?.in_ === undefined) {
+      in_ = Maybe.empty();
     } else {
       in_ = parameters?.in_ satisfies never;
     }
@@ -6257,10 +6257,10 @@ export namespace NodeShape {
     let languageIn: Maybe<readonly string[]>;
     if (Maybe.isMaybe(parameters?.languageIn)) {
       languageIn = parameters?.languageIn;
-    } else if (parameters?.languageIn === undefined) {
-      languageIn = Maybe.of([]);
     } else if (typeof parameters?.languageIn === "object") {
       languageIn = Maybe.of(parameters?.languageIn);
+    } else if (parameters?.languageIn === undefined) {
+      languageIn = Maybe.empty();
     } else {
       languageIn = parameters?.languageIn satisfies never;
     }
@@ -6458,12 +6458,12 @@ export namespace NodeShape {
     let or: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters?.or)) {
       or = parameters?.or;
-    } else if (parameters?.or === undefined) {
-      or = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.or)) {
       or = Maybe.of(parameters?.or);
     } else if ($isReadonlyStringArray(parameters?.or)) {
       or = Maybe.of(parameters?.or.map((item) => dataFactory.namedNode(item)));
+    } else if (parameters?.or === undefined) {
+      or = Maybe.empty();
     } else {
       or = parameters?.or satisfies never;
     }
@@ -6620,14 +6620,14 @@ export namespace NodeShape {
     let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
     if (Maybe.isMaybe(parameters?.xone)) {
       xone = parameters?.xone;
-    } else if (parameters?.xone === undefined) {
-      xone = Maybe.of([]);
     } else if ($isReadonlyObjectArray(parameters?.xone)) {
       xone = Maybe.of(parameters?.xone);
     } else if ($isReadonlyStringArray(parameters?.xone)) {
       xone = Maybe.of(
         parameters?.xone.map((item) => dataFactory.namedNode(item)),
       );
+    } else if (parameters?.xone === undefined) {
+      xone = Maybe.empty();
     } else {
       xone = parameters?.xone satisfies never;
     }
