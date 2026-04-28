@@ -715,7 +715,7 @@ type HybridDiscriminant = {
     readonly intrinsic: boolean;
     readonly ownValues: readonly AbstractType.DiscriminantProperty.Value[];
   }[];
-  readonly name: "string";
+  readonly name: string;
 };
 
 type IntrinsicDiscriminant = {
@@ -819,15 +819,14 @@ export namespace Discriminant {
         } else {
           // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
           uniqueMemberTypeNames = memberTypeNames.map(
-            (memberTypeName, memberTypeIndex) =>
-              `${memberTypeIndex}-${memberTypeName}`,
+            (memberTypeName, memberTypeI) => `${memberTypeI}-${memberTypeName}`,
           );
         }
       } else {
         // At least one member type name is Code
         // Use member type indices as the discriminant values.
         uniqueMemberTypeNames = memberTypes.map(
-          (_, memberTypeIndex) => memberTypeIndex,
+          (_, memberTypeI) => memberTypeI,
         );
       }
     }
@@ -837,16 +836,21 @@ export namespace Discriminant {
     // If some member type is an RDF/JS term then reuse "termType" as the discriminant.
     if (memberTypes.some((memberType) => termTypes(memberType).length > 0)) {
       return {
-        kind: "termType",
-        memberValues: memberTypes.map(
-          (memberType, memberTypeIndex): readonly string[] => {
-            const memberTermTypes = termTypes(memberType);
-            if (memberTermTypes.length > 0) {
-              return memberTermTypes;
-            }
-            return [uniqueMemberTypeNames[memberTypeIndex].toString()];
-          },
-        ),
+        kind: "hybrid",
+        memberValues: memberTypes.map((memberType, memberTypeI) => {
+          const memberTermTypes = termTypes(memberType);
+          if (memberTermTypes.length > 0) {
+            return {
+              intrinsic: true,
+              ownValues: memberTermTypes,
+            };
+          }
+          return {
+            intrinsic: false,
+            ownValues: [uniqueMemberTypeNames[memberTypeI].toString()],
+          };
+        }),
+        name: "termType",
       };
     }
 
