@@ -43,6 +43,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -55,6 +56,7 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -71,6 +73,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -83,6 +86,7 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrStringProperty: "test",
           }),
@@ -100,6 +104,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -112,6 +117,7 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -128,6 +134,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -146,6 +153,7 @@ describe("equals", () => {
                 classUnionMemberCommonParentProperty: "test",
               }),
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -165,6 +173,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -177,6 +186,7 @@ describe("equals", () => {
               type: "string",
               value: "test",
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
@@ -193,6 +203,7 @@ describe("equals", () => {
           type: "string",
           value: "test",
         },
+        requiredClassOrLiteralProperty: dataFactory.literal("test"),
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -212,6 +223,7 @@ describe("equals", () => {
                 classUnionMemberCommonParentProperty: "test",
               }),
             },
+            requiredClassOrLiteralProperty: dataFactory.literal("test"),
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),

@@ -132,6 +132,11 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
+  get termTypes(): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
+    return new Set([...this.nodeKinds].map(NodeKind.toTermType));
+  }
+
+  @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`((_: object) => [])`;
   }

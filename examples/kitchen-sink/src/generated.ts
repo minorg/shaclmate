@@ -3051,10 +3051,12 @@ export namespace NamedUnion2 {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("type", [
-        z.object({ type: z.literal("date"), value: z.iso.date() }),
-        z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-      ]);
+      z
+        .discriminatedUnion("type", [
+          z.object({ type: z.literal("date"), value: z.iso.date() }),
+          z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -4904,7 +4906,7 @@ export namespace UuidV4IriIdentifierClass {
       }),
     );
 } /**
- * Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.
+ * Shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
 
 export class UnionDiscriminantsClass {
@@ -4914,7 +4916,7 @@ export class UnionDiscriminantsClass {
     "UnionDiscriminantsClass" as const;
 
   /**
-   * Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).
    */
   readonly optionalClassOrClassOrStringProperty: Maybe<
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4923,7 +4925,14 @@ export class UnionDiscriminantsClass {
   >;
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
+   */
+  readonly optionalClassOrLiteralProperty: Maybe<
+    { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
+  >;
+
+  /**
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
 
@@ -4933,7 +4942,7 @@ export class UnionDiscriminantsClass {
   readonly optionalIriOrStringProperty: Maybe<NamedNode | string>;
 
   /**
-   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).
    */
   readonly requiredClassOrClassOrStringProperty:
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4944,7 +4953,14 @@ export class UnionDiscriminantsClass {
     | { type: "string"; value: string };
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
+   */
+  readonly requiredClassOrLiteralProperty:
+    | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+    | Literal;
+
+  /**
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly requiredIriOrLiteralProperty: NamedNode | Literal;
 
@@ -4954,7 +4970,7 @@ export class UnionDiscriminantsClass {
   readonly requiredIriOrStringProperty: NamedNode | string;
 
   /**
-   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
+   * Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).
    */
   readonly setClassOrClassOrStringProperty: readonly (
     | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4966,7 +4982,15 @@ export class UnionDiscriminantsClass {
   )[];
 
   /**
-   * Union that can be discriminated by an inline discriminant property (termType).
+   * Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.
+   */
+  readonly setClassOrLiteralProperty: readonly (
+    | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+    | Literal
+  )[];
+
+  /**
+   * Union that can be discriminated by an intrinsic discriminant property (termType).
    */
   readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
 
@@ -4994,6 +5018,11 @@ export class UnionDiscriminantsClass {
             }
           | { type: "string"; value: string }
         );
+    readonly optionalClassOrLiteralProperty?:
+      | Maybe<
+          { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
+        >
+      | ({ termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal);
     readonly optionalIriOrLiteralProperty?:
       | Maybe<NamedNode | Literal>
       | (NamedNode | Literal);
@@ -5008,6 +5037,9 @@ export class UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string };
+    readonly requiredClassOrLiteralProperty:
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal;
     readonly requiredIriOrLiteralProperty: NamedNode | Literal;
     readonly requiredIriOrStringProperty: NamedNode | string;
     readonly setClassOrClassOrStringProperty?: readonly (
@@ -5017,6 +5049,10 @@ export class UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string }
+    )[];
+    readonly setClassOrLiteralProperty?: readonly (
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal
     )[];
     readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
     readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
@@ -5043,6 +5079,19 @@ export class UnionDiscriminantsClass {
     } else {
       this.optionalClassOrClassOrStringProperty =
         parameters.optionalClassOrClassOrStringProperty satisfies never;
+    }
+    if (Maybe.isMaybe(parameters.optionalClassOrLiteralProperty)) {
+      this.optionalClassOrLiteralProperty =
+        parameters.optionalClassOrLiteralProperty;
+    } else if (typeof parameters.optionalClassOrLiteralProperty === "object") {
+      this.optionalClassOrLiteralProperty = Maybe.of(
+        parameters.optionalClassOrLiteralProperty,
+      );
+    } else if (parameters.optionalClassOrLiteralProperty === undefined) {
+      this.optionalClassOrLiteralProperty = Maybe.empty();
+    } else {
+      this.optionalClassOrLiteralProperty =
+        parameters.optionalClassOrLiteralProperty satisfies never;
     }
     if (Maybe.isMaybe(parameters.optionalIriOrLiteralProperty)) {
       this.optionalIriOrLiteralProperty =
@@ -5075,6 +5124,8 @@ export class UnionDiscriminantsClass {
     }
     this.requiredClassOrClassOrStringProperty =
       parameters.requiredClassOrClassOrStringProperty;
+    this.requiredClassOrLiteralProperty =
+      parameters.requiredClassOrLiteralProperty;
     this.requiredIriOrLiteralProperty = parameters.requiredIriOrLiteralProperty;
     if (typeof parameters.requiredIriOrStringProperty === "object") {
       this.requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
@@ -5092,6 +5143,14 @@ export class UnionDiscriminantsClass {
     } else {
       this.setClassOrClassOrStringProperty =
         parameters.setClassOrClassOrStringProperty satisfies never;
+    }
+    if (parameters.setClassOrLiteralProperty === undefined) {
+      this.setClassOrLiteralProperty = [];
+    } else if (typeof parameters.setClassOrLiteralProperty === "object") {
+      this.setClassOrLiteralProperty = parameters.setClassOrLiteralProperty;
+    } else {
+      this.setClassOrLiteralProperty =
+        parameters.setClassOrLiteralProperty satisfies never;
     }
     if (parameters.setIriOrLiteralProperty === undefined) {
       this.setIriOrLiteralProperty = [];
@@ -5203,6 +5262,55 @@ export class UnionDiscriminantsClass {
           left: this,
           right: other,
           propertyName: "optionalClassOrClassOrStringProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left:
+                | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | Literal,
+              right:
+                | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | Literal,
+            ) => {
+              if (
+                left.termType === "ClassUnionMember1" &&
+                right.termType === "ClassUnionMember1"
+              ) {
+                return ((left, right) => left.$equals(right))(
+                  left.value as ClassUnionMember1,
+                  right.value as ClassUnionMember1,
+                );
+              }
+              if (left.termType === "Literal" && right.termType === "Literal") {
+                return $booleanEquals(left as Literal, right as Literal);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+          ))(
+          this.optionalClassOrLiteralProperty,
+          other.optionalClassOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalClassOrLiteralProperty",
           propertyValuesUnequal,
           type: "property" as const,
         })),
@@ -5344,6 +5452,50 @@ export class UnionDiscriminantsClass {
         })),
       )
       .chain(() =>
+        ((
+          left:
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal,
+          right:
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal,
+        ) => {
+          if (
+            left.termType === "ClassUnionMember1" &&
+            right.termType === "ClassUnionMember1"
+          ) {
+            return ((left, right) => left.$equals(right))(
+              left.value as ClassUnionMember1,
+              right.value as ClassUnionMember1,
+            );
+          }
+          if (left.termType === "Literal" && right.termType === "Literal") {
+            return $booleanEquals(left as Literal, right as Literal);
+          }
+
+          return Left({
+            left,
+            right,
+            propertyName: "type",
+            propertyValuesUnequal: {
+              left: typeof left,
+              right: typeof right,
+              type: "boolean" as const,
+            },
+            type: "property" as const,
+          });
+        })(
+          this.requiredClassOrLiteralProperty,
+          other.requiredClassOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredClassOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
         ((left: NamedNode | Literal, right: NamedNode | Literal) => {
           if (left.termType === "NamedNode" && right.termType === "NamedNode") {
             return $booleanEquals(left as NamedNode, right as NamedNode);
@@ -5479,6 +5631,55 @@ export class UnionDiscriminantsClass {
           $arrayEquals(
             left,
             right,
+            (
+              left:
+                | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | Literal,
+              right:
+                | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | Literal,
+            ) => {
+              if (
+                left.termType === "ClassUnionMember1" &&
+                right.termType === "ClassUnionMember1"
+              ) {
+                return ((left, right) => left.$equals(right))(
+                  left.value as ClassUnionMember1,
+                  right.value as ClassUnionMember1,
+                );
+              }
+              if (left.termType === "Literal" && right.termType === "Literal") {
+                return $booleanEquals(left as Literal, right as Literal);
+              }
+
+              return Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "boolean" as const,
+                },
+                type: "property" as const,
+              });
+            },
+          ))(
+          this.setClassOrLiteralProperty,
+          other.setClassOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "setClassOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
             (left: NamedNode | Literal, right: NamedNode | Literal) => {
               if (
                 left.termType === "NamedNode" &&
@@ -5571,6 +5772,17 @@ export class UnionDiscriminantsClass {
         _hasher.update(value0.value);
       }
     });
+    this.optionalClassOrLiteralProperty.ifJust((value0) => {
+      if (value0.termType === "ClassUnionMember1") {
+        value0.value.$hash(_hasher);
+      }
+      if (value0.termType === "Literal") {
+        _hasher.update(value0.termType);
+        _hasher.update(value0.value);
+        _hasher.update(value0.datatype.value);
+        _hasher.update(value0.language);
+      }
+    });
     this.optionalIriOrLiteralProperty.ifJust((value0) => {
       if (value0.termType === "NamedNode") {
         _hasher.update(value0.termType);
@@ -5605,6 +5817,15 @@ export class UnionDiscriminantsClass {
     if (this.requiredClassOrClassOrStringProperty.type === "string") {
       _hasher.update(this.requiredClassOrClassOrStringProperty.value);
     }
+    if (this.requiredClassOrLiteralProperty.termType === "ClassUnionMember1") {
+      this.requiredClassOrLiteralProperty.value.$hash(_hasher);
+    }
+    if (this.requiredClassOrLiteralProperty.termType === "Literal") {
+      _hasher.update(this.requiredClassOrLiteralProperty.termType);
+      _hasher.update(this.requiredClassOrLiteralProperty.value);
+      _hasher.update(this.requiredClassOrLiteralProperty.datatype.value);
+      _hasher.update(this.requiredClassOrLiteralProperty.language);
+    }
     if (this.requiredIriOrLiteralProperty.termType === "NamedNode") {
       _hasher.update(this.requiredIriOrLiteralProperty.termType);
       _hasher.update(this.requiredIriOrLiteralProperty.value);
@@ -5631,6 +5852,17 @@ export class UnionDiscriminantsClass {
       }
       if (item0.type === "string") {
         _hasher.update(item0.value);
+      }
+    }
+    for (const item0 of this.setClassOrLiteralProperty) {
+      if (item0.termType === "ClassUnionMember1") {
+        item0.value.$hash(_hasher);
+      }
+      if (item0.termType === "Literal") {
+        _hasher.update(item0.termType);
+        _hasher.update(item0.value);
+        _hasher.update(item0.datatype.value);
+        _hasher.update(item0.language);
       }
     }
     for (const item0 of this.setIriOrLiteralProperty) {
@@ -5703,6 +5935,47 @@ export class UnionDiscriminantsClass {
               })(item),
             )
             .extract(),
+        optionalClassOrLiteralProperty: this.optionalClassOrLiteralProperty
+          .map((item) =>
+            ((
+              value:
+                | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | Literal,
+            ):
+              | {
+                  termType: "ClassUnionMember1";
+                  value: ClassUnionMember1.$Json;
+                }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                } => {
+              if (value.termType === "ClassUnionMember1") {
+                return {
+                  termType: "ClassUnionMember1" as const,
+                  value: value.value.$toJson(),
+                };
+              }
+              if (value.termType === "Literal") {
+                return {
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  termType: "Literal" as const,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
+
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
         optionalIriOrLiteralProperty: this.optionalIriOrLiteralProperty
           .map((item) =>
             ((
@@ -5785,6 +6058,40 @@ export class UnionDiscriminantsClass {
 
           throw new Error("unable to serialize to JSON");
         })(this.requiredClassOrClassOrStringProperty),
+        requiredClassOrLiteralProperty: ((
+          value:
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal,
+        ):
+          | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            } => {
+          if (value.termType === "ClassUnionMember1") {
+            return {
+              termType: "ClassUnionMember1" as const,
+              value: value.value.$toJson(),
+            };
+          }
+          if (value.termType === "Literal") {
+            return {
+              "@language":
+                value.language.length > 0 ? value.language : undefined,
+              termType: "Literal" as const,
+              "@type":
+                value.datatype.value !==
+                "http://www.w3.org/2001/XMLSchema#string"
+                  ? value.datatype.value
+                  : undefined,
+              "@value": value.value,
+            };
+          }
+
+          throw new Error("unable to serialize to JSON");
+        })(this.requiredClassOrLiteralProperty),
         requiredIriOrLiteralProperty: ((
           value: NamedNode | Literal,
         ):
@@ -5862,6 +6169,42 @@ export class UnionDiscriminantsClass {
               throw new Error("unable to serialize to JSON");
             })(item),
           ),
+        setClassOrLiteralProperty: this.setClassOrLiteralProperty.map((item) =>
+          ((
+            value:
+              | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+              | Literal,
+          ):
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+            | {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              } => {
+            if (value.termType === "ClassUnionMember1") {
+              return {
+                termType: "ClassUnionMember1" as const,
+                value: value.value.$toJson(),
+              };
+            }
+            if (value.termType === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
         setIriOrLiteralProperty: this.setIriOrLiteralProperty.map((item) =>
           ((
             value: NamedNode | Literal,
@@ -5964,6 +6307,41 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
+      dataFactory.namedNode(
+        "http://example.com/optionalClassOrLiteralProperty",
+      ),
+      this.optionalClassOrLiteralProperty.toList().flatMap((value) =>
+        (
+          ((value, _options) => {
+            if (value.termType === "ClassUnionMember1") {
+              return [
+                value.value.$toRdfResource({
+                  graph: _options.graph,
+                  resourceSet: _options.resourceSet,
+                }).identifier,
+              ];
+            }
+            if (value.termType === "Literal") {
+              return [value];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) as $ToRdfResourceValuesFunction<
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal
+          >
+        )(value, {
+          graph: options?.graph,
+          resource: resource,
+          resourceSet: resourceSet,
+          propertyPath: dataFactory.namedNode(
+            "http://example.com/optionalClassOrLiteralProperty",
+          ),
+        }),
+      ),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"),
       this.optionalIriOrLiteralProperty.toList().flatMap((value) =>
         (
@@ -6054,6 +6432,38 @@ export class UnionDiscriminantsClass {
         resourceSet: resourceSet,
         propertyPath: dataFactory.namedNode(
           "http://example.com/requiredClassOrClassOrStringProperty",
+        ),
+      }),
+      options?.graph,
+    );
+    resource.add(
+      dataFactory.namedNode(
+        "http://example.com/requiredClassOrLiteralProperty",
+      ),
+      (
+        ((value, _options) => {
+          if (value.termType === "ClassUnionMember1") {
+            return [
+              value.value.$toRdfResource({
+                graph: _options.graph,
+                resourceSet: _options.resourceSet,
+              }).identifier,
+            ];
+          }
+          if (value.termType === "Literal") {
+            return [value];
+          }
+
+          throw new Error("unable to serialize to RDF");
+        }) as $ToRdfResourceValuesFunction<
+          { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
+        >
+      )(this.requiredClassOrLiteralProperty, {
+        graph: options?.graph,
+        resource: resource,
+        resourceSet: resourceSet,
+        propertyPath: dataFactory.namedNode(
+          "http://example.com/requiredClassOrLiteralProperty",
         ),
       }),
       options?.graph,
@@ -6152,6 +6562,39 @@ export class UnionDiscriminantsClass {
       options?.graph,
     );
     resource.add(
+      dataFactory.namedNode("http://example.com/setClassOrLiteralProperty"),
+      this.setClassOrLiteralProperty.flatMap((item) =>
+        (
+          ((value, _options) => {
+            if (value.termType === "ClassUnionMember1") {
+              return [
+                value.value.$toRdfResource({
+                  graph: _options.graph,
+                  resourceSet: _options.resourceSet,
+                }).identifier,
+              ];
+            }
+            if (value.termType === "Literal") {
+              return [value];
+            }
+
+            throw new Error("unable to serialize to RDF");
+          }) as $ToRdfResourceValuesFunction<
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal
+          >
+        )(item, {
+          graph: options?.graph,
+          resource: resource,
+          resourceSet: resourceSet,
+          propertyPath: dataFactory.namedNode(
+            "http://example.com/setClassOrLiteralProperty",
+          ),
+        }),
+      ),
+      options?.graph,
+    );
+    resource.add(
       dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"),
       this.setIriOrLiteralProperty.flatMap((item) =>
         (
@@ -6227,6 +6670,14 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2.$Json;
         }
       | { type: "string"; value: string };
+    readonly optionalClassOrLiteralProperty?:
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
     readonly optionalIriOrLiteralProperty?:
       | { readonly "@id": string; readonly termType: "NamedNode" }
       | {
@@ -6243,6 +6694,14 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2.$Json;
         }
       | { type: "string"; value: string };
+    readonly requiredClassOrLiteralProperty:
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
     readonly requiredIriOrLiteralProperty:
       | { readonly "@id": string; readonly termType: "NamedNode" }
       | {
@@ -6259,6 +6718,15 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2.$Json;
         }
       | { type: "string"; value: string }
+    )[];
+    readonly setClassOrLiteralProperty?: readonly (
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
     )[];
     readonly setIriOrLiteralProperty?: readonly (
       | { readonly "@id": string; readonly termType: "NamedNode" }
@@ -6300,9 +6768,28 @@ export namespace UnionDiscriminantsClass {
             }),
             z.object({ type: z.literal("string"), value: z.string() }),
           ])
+          .readonly()
           .optional()
           .describe(
-            "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
+          ),
+        optionalClassOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              termType: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .readonly()
+          .optional()
+          .describe(
+            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         optionalIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6320,7 +6807,7 @@ export namespace UnionDiscriminantsClass {
           .readonly()
           .optional()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         optionalIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
@@ -6339,8 +6826,26 @@ export namespace UnionDiscriminantsClass {
             }),
             z.object({ type: z.literal("string"), value: z.string() }),
           ])
+          .readonly()
           .describe(
-            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
+          ),
+        requiredClassOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              termType: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .readonly()
+          .describe(
+            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         requiredIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6357,7 +6862,7 @@ export namespace UnionDiscriminantsClass {
           ])
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         requiredIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
@@ -6375,11 +6880,32 @@ export namespace UnionDiscriminantsClass {
             }),
             z.object({ type: z.literal("string"), value: z.string() }),
           ])
+          .readonly()
           .array()
           .optional()
           .readonly()
           .describe(
-            "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
+          ),
+        setClassOrLiteralProperty: z
+          .discriminatedUnion("termType", [
+            z.object({
+              termType: z.literal("ClassUnionMember1"),
+              value: ClassUnionMember1.$Json.schema(),
+            }),
+            z.object({
+              "@language": z.string().optional(),
+              termType: z.literal("Literal"),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            }),
+          ])
+          .readonly()
+          .array()
+          .optional()
+          .readonly()
+          .describe(
+            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
           ),
         setIriOrLiteralProperty: z
           .discriminatedUnion("termType", [
@@ -6399,7 +6925,7 @@ export namespace UnionDiscriminantsClass {
           .optional()
           .readonly()
           .describe(
-            "Union that can be discriminated by an inline discriminant property (termType).",
+            "Union that can be discriminated by an intrinsic discriminant property (termType).",
           ),
         setIriOrStringProperty: z
           .union([z.object({ "@id": z.string().min(1) }), z.string()])
@@ -6436,6 +6962,10 @@ export namespace UnionDiscriminantsClass {
             type: "Control",
           },
           {
+            scope: `${scopePrefix}/properties/optionalClassOrLiteralProperty`,
+            type: "Control",
+          },
+          {
             scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
             type: "Control",
           },
@@ -6448,6 +6978,10 @@ export namespace UnionDiscriminantsClass {
             type: "Control",
           },
           {
+            scope: `${scopePrefix}/properties/requiredClassOrLiteralProperty`,
+            type: "Control",
+          },
+          {
             scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
             type: "Control",
           },
@@ -6457,6 +6991,10 @@ export namespace UnionDiscriminantsClass {
           },
           {
             scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/setClassOrLiteralProperty`,
             type: "Control",
           },
           {
@@ -6554,6 +7092,59 @@ export namespace UnionDiscriminantsClass {
       )(
         filter.optionalClassOrClassOrStringProperty,
         value.optionalClassOrClassOrStringProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter.optionalClassOrLiteralProperty !== undefined &&
+      !$filterMaybe<
+        { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal,
+        {
+          readonly on?: {
+            readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value:
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal,
+        ) => {
+          if (
+            filter.on?.["ClassUnionMember1"] !== undefined &&
+            value.termType === "ClassUnionMember1"
+          ) {
+            if (
+              !ClassUnionMember1.$filter(
+                filter.on["ClassUnionMember1"],
+                value.value,
+              )
+            ) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["Literal"] !== undefined &&
+            value.termType === "Literal"
+          ) {
+            if (!$filterLiteral(filter.on["Literal"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(
+        filter.optionalClassOrLiteralProperty,
+        value.optionalClassOrLiteralProperty,
       )
     ) {
       return false;
@@ -6703,6 +7294,49 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
+      filter.requiredClassOrLiteralProperty !== undefined &&
+      !((
+        filter: {
+          readonly on?: {
+            readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+            readonly Literal?: $LiteralFilter;
+          };
+        },
+        value:
+          | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+          | Literal,
+      ) => {
+        if (
+          filter.on?.["ClassUnionMember1"] !== undefined &&
+          value.termType === "ClassUnionMember1"
+        ) {
+          if (
+            !ClassUnionMember1.$filter(
+              filter.on["ClassUnionMember1"],
+              value.value,
+            )
+          ) {
+            return false;
+          }
+        }
+        if (
+          filter.on?.["Literal"] !== undefined &&
+          value.termType === "Literal"
+        ) {
+          if (!$filterLiteral(filter.on["Literal"], value)) {
+            return false;
+          }
+        }
+
+        return true;
+      })(
+        filter.requiredClassOrLiteralProperty,
+        value.requiredClassOrLiteralProperty,
+      )
+    ) {
+      return false;
+    }
+    if (
       filter.requiredIriOrLiteralProperty !== undefined &&
       !((
         filter: {
@@ -6840,6 +7474,56 @@ export namespace UnionDiscriminantsClass {
       return false;
     }
     if (
+      filter.setClassOrLiteralProperty !== undefined &&
+      !$filterArray<
+        { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal,
+        {
+          readonly on?: {
+            readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+            readonly Literal?: $LiteralFilter;
+          };
+        }
+      >(
+        (
+          filter: {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value:
+            | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+            | Literal,
+        ) => {
+          if (
+            filter.on?.["ClassUnionMember1"] !== undefined &&
+            value.termType === "ClassUnionMember1"
+          ) {
+            if (
+              !ClassUnionMember1.$filter(
+                filter.on["ClassUnionMember1"],
+                value.value,
+              )
+            ) {
+              return false;
+            }
+          }
+          if (
+            filter.on?.["Literal"] !== undefined &&
+            value.termType === "Literal"
+          ) {
+            if (!$filterLiteral(filter.on["Literal"], value)) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+      )(filter.setClassOrLiteralProperty, value.setClassOrLiteralProperty)
+    ) {
+      return false;
+    }
+    if (
       filter.setIriOrLiteralProperty !== undefined &&
       !$filterArray<
         NamedNode | Literal,
@@ -6937,6 +7621,12 @@ export namespace UnionDiscriminantsClass {
         readonly string?: $StringFilter;
       };
     }>;
+    readonly optionalClassOrLiteralProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+        readonly Literal?: $LiteralFilter;
+      };
+    }>;
     readonly optionalIriOrLiteralProperty?: $MaybeFilter<{
       readonly on?: {
         readonly NamedNode?: $IriFilter;
@@ -6956,6 +7646,12 @@ export namespace UnionDiscriminantsClass {
         readonly string?: $StringFilter;
       };
     };
+    readonly requiredClassOrLiteralProperty?: {
+      readonly on?: {
+        readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+        readonly Literal?: $LiteralFilter;
+      };
+    };
     readonly requiredIriOrLiteralProperty?: {
       readonly on?: {
         readonly NamedNode?: $IriFilter;
@@ -6973,6 +7669,12 @@ export namespace UnionDiscriminantsClass {
         readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
         readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
         readonly string?: $StringFilter;
+      };
+    }>;
+    readonly setClassOrLiteralProperty?: $CollectionFilter<{
+      readonly on?: {
+        readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+        readonly Literal?: $LiteralFilter;
       };
     }>;
     readonly setIriOrLiteralProperty?: $CollectionFilter<{
@@ -7076,6 +7778,78 @@ export namespace UnionDiscriminantsClass {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalClassOrLiteralProperty",
+        propertySchema: $schema.properties.optionalClassOrLiteralProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
               };
             };
           }
@@ -7299,6 +8073,63 @@ export namespace UnionDiscriminantsClass {
     );
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredClassOrLiteralProperty",
+        propertySchema: $schema.properties.requiredClassOrLiteralProperty,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.requiredIriOrLiteralProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -7494,6 +8325,78 @@ export namespace UnionDiscriminantsClass {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setClassOrLiteralProperty",
+        propertySchema: $schema.properties.setClassOrLiteralProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ClassUnionMember1.$valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
               };
             };
           }
@@ -7761,6 +8664,81 @@ export namespace UnionDiscriminantsClass {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalClassOrLiteralProperty",
+        propertySchema: $schema.properties.optionalClassOrLiteralProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: ClassUnionMember1.$valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.optionalIriOrLiteralProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -7980,6 +8958,61 @@ export namespace UnionDiscriminantsClass {
     );
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredClassOrLiteralProperty",
+        propertySchema: $schema.properties.requiredClassOrLiteralProperty,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: ClassUnionMember1.$valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.requiredIriOrLiteralProperty,
         focusIdentifier: parameters.focusIdentifier,
         ignoreRdfType: true,
@@ -8175,6 +9208,81 @@ export namespace UnionDiscriminantsClass {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
                 type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setClassOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setClassOrLiteralProperty",
+        propertySchema: $schema.properties.setClassOrLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: ClassUnionMember1.$valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["ClassUnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["ClassUnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly ClassUnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof ClassUnionMember1.$schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
               };
             };
           }
@@ -8394,6 +9502,9 @@ export namespace UnionDiscriminantsClass {
       | { type: "ClassUnionMember2"; value: ClassUnionMember2 }
       | { type: "string"; value: string }
     >;
+    optionalClassOrLiteralProperty: Maybe<
+      { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
+    >;
     optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
     optionalIriOrStringProperty: Maybe<NamedNode | string>;
     requiredClassOrClassOrStringProperty:
@@ -8403,6 +9514,9 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string };
+    requiredClassOrLiteralProperty:
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal;
     requiredIriOrLiteralProperty: NamedNode | Literal;
     requiredIriOrStringProperty: NamedNode | string;
     setClassOrClassOrStringProperty: readonly (
@@ -8412,6 +9526,10 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string }
+    )[];
+    setClassOrLiteralProperty: readonly (
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal
     )[];
     setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
     setIriOrStringProperty: readonly (NamedNode | string)[];
@@ -8460,6 +9578,80 @@ export namespace UnionDiscriminantsClass {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
+    const optionalClassOrLiteralProperty = Maybe.fromNullable(
+      $json["optionalClassOrLiteralProperty"],
+    ).map((item) =>
+      ((
+        value:
+          | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            },
+      ):
+        | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+        | Literal => {
+        if (value.termType === "ClassUnionMember1") {
+          return {
+            termType: "ClassUnionMember1" as const,
+            value: ClassUnionMember1.$fromJson(
+              value.value as ClassUnionMember1.$Json,
+            ),
+          };
+        }
+        if (value.termType === "Literal") {
+          return dataFactory.literal(
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@value"],
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@language"] !== undefined
+              ? (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"]
+              : (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"] !== undefined
+                ? dataFactory.namedNode(
+                    (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"]!,
+                  )
+                : undefined,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })(item),
+    );
     const optionalIriOrLiteralProperty = Maybe.fromNullable(
       $json["optionalIriOrLiteralProperty"],
     ).map((item) =>
@@ -8475,7 +9667,12 @@ export namespace UnionDiscriminantsClass {
       ): NamedNode | Literal => {
         if (value.termType === "NamedNode") {
           return dataFactory.namedNode(
-            (value as { readonly "@id": string })["@id"],
+            (
+              value as {
+                readonly "@id": string;
+                readonly termType: "NamedNode";
+              }
+            )["@id"],
           );
         }
         if (value.termType === "Literal") {
@@ -8483,6 +9680,7 @@ export namespace UnionDiscriminantsClass {
             (
               value as {
                 readonly "@language"?: string;
+                readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
               }
@@ -8490,6 +9688,7 @@ export namespace UnionDiscriminantsClass {
             (
               value as {
                 readonly "@language"?: string;
+                readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
               }
@@ -8497,6 +9696,7 @@ export namespace UnionDiscriminantsClass {
               ? (
                   value as {
                     readonly "@language"?: string;
+                    readonly termType: "Literal";
                     readonly "@type"?: string;
                     readonly "@value": string;
                   }
@@ -8504,6 +9704,7 @@ export namespace UnionDiscriminantsClass {
               : (
                     value as {
                       readonly "@language"?: string;
+                      readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
@@ -8512,6 +9713,7 @@ export namespace UnionDiscriminantsClass {
                     (
                       value as {
                         readonly "@language"?: string;
+                        readonly termType: "Literal";
                         readonly "@type"?: string;
                         readonly "@value": string;
                       }
@@ -8577,6 +9779,76 @@ export namespace UnionDiscriminantsClass {
 
       throw new Error("unable to deserialize JSON");
     })($json["requiredClassOrClassOrStringProperty"]);
+    const requiredClassOrLiteralProperty = ((
+      value:
+        | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+        | {
+            readonly "@language"?: string;
+            readonly termType: "Literal";
+            readonly "@type"?: string;
+            readonly "@value": string;
+          },
+    ):
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal => {
+      if (value.termType === "ClassUnionMember1") {
+        return {
+          termType: "ClassUnionMember1" as const,
+          value: ClassUnionMember1.$fromJson(
+            value.value as ClassUnionMember1.$Json,
+          ),
+        };
+      }
+      if (value.termType === "Literal") {
+        return dataFactory.literal(
+          (
+            value as {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            }
+          )["@value"],
+          (
+            value as {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            }
+          )["@language"] !== undefined
+            ? (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"]
+            : (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@type"] !== undefined
+              ? dataFactory.namedNode(
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"]!,
+                )
+              : undefined,
+        );
+      }
+
+      throw new Error("unable to deserialize JSON");
+    })($json["requiredClassOrLiteralProperty"]);
     const requiredIriOrLiteralProperty = ((
       value:
         | { readonly "@id": string; readonly termType: "NamedNode" }
@@ -8589,7 +9861,9 @@ export namespace UnionDiscriminantsClass {
     ): NamedNode | Literal => {
       if (value.termType === "NamedNode") {
         return dataFactory.namedNode(
-          (value as { readonly "@id": string })["@id"],
+          (value as { readonly "@id": string; readonly termType: "NamedNode" })[
+            "@id"
+          ],
         );
       }
       if (value.termType === "Literal") {
@@ -8597,6 +9871,7 @@ export namespace UnionDiscriminantsClass {
           (
             value as {
               readonly "@language"?: string;
+              readonly termType: "Literal";
               readonly "@type"?: string;
               readonly "@value": string;
             }
@@ -8604,6 +9879,7 @@ export namespace UnionDiscriminantsClass {
           (
             value as {
               readonly "@language"?: string;
+              readonly termType: "Literal";
               readonly "@type"?: string;
               readonly "@value": string;
             }
@@ -8611,6 +9887,7 @@ export namespace UnionDiscriminantsClass {
             ? (
                 value as {
                   readonly "@language"?: string;
+                  readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
                 }
@@ -8618,6 +9895,7 @@ export namespace UnionDiscriminantsClass {
             : (
                   value as {
                     readonly "@language"?: string;
+                    readonly termType: "Literal";
                     readonly "@type"?: string;
                     readonly "@value": string;
                   }
@@ -8626,6 +9904,7 @@ export namespace UnionDiscriminantsClass {
                   (
                     value as {
                       readonly "@language"?: string;
+                      readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
@@ -8692,6 +9971,80 @@ export namespace UnionDiscriminantsClass {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
+    const setClassOrLiteralProperty = (
+      $json["setClassOrLiteralProperty"] ?? []
+    ).map((item) =>
+      ((
+        value:
+          | { termType: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            },
+      ):
+        | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+        | Literal => {
+        if (value.termType === "ClassUnionMember1") {
+          return {
+            termType: "ClassUnionMember1" as const,
+            value: ClassUnionMember1.$fromJson(
+              value.value as ClassUnionMember1.$Json,
+            ),
+          };
+        }
+        if (value.termType === "Literal") {
+          return dataFactory.literal(
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@value"],
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@language"] !== undefined
+              ? (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"]
+              : (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"] !== undefined
+                ? dataFactory.namedNode(
+                    (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"]!,
+                  )
+                : undefined,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })(item),
+    );
     const setIriOrLiteralProperty = (
       $json["setIriOrLiteralProperty"] ?? []
     ).map((item) =>
@@ -8707,7 +10060,12 @@ export namespace UnionDiscriminantsClass {
       ): NamedNode | Literal => {
         if (value.termType === "NamedNode") {
           return dataFactory.namedNode(
-            (value as { readonly "@id": string })["@id"],
+            (
+              value as {
+                readonly "@id": string;
+                readonly termType: "NamedNode";
+              }
+            )["@id"],
           );
         }
         if (value.termType === "Literal") {
@@ -8715,6 +10073,7 @@ export namespace UnionDiscriminantsClass {
             (
               value as {
                 readonly "@language"?: string;
+                readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
               }
@@ -8722,6 +10081,7 @@ export namespace UnionDiscriminantsClass {
             (
               value as {
                 readonly "@language"?: string;
+                readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
               }
@@ -8729,6 +10089,7 @@ export namespace UnionDiscriminantsClass {
               ? (
                   value as {
                     readonly "@language"?: string;
+                    readonly termType: "Literal";
                     readonly "@type"?: string;
                     readonly "@value": string;
                   }
@@ -8736,6 +10097,7 @@ export namespace UnionDiscriminantsClass {
               : (
                     value as {
                       readonly "@language"?: string;
+                      readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
@@ -8744,6 +10106,7 @@ export namespace UnionDiscriminantsClass {
                     (
                       value as {
                         readonly "@language"?: string;
+                        readonly termType: "Literal";
                         readonly "@type"?: string;
                         readonly "@value": string;
                       }
@@ -8774,12 +10137,15 @@ export namespace UnionDiscriminantsClass {
     return {
       $identifier,
       optionalClassOrClassOrStringProperty,
+      optionalClassOrLiteralProperty,
       optionalIriOrLiteralProperty,
       optionalIriOrStringProperty,
       requiredClassOrClassOrStringProperty,
+      requiredClassOrLiteralProperty,
       requiredIriOrLiteralProperty,
       requiredIriOrStringProperty,
       setClassOrClassOrStringProperty,
+      setClassOrLiteralProperty,
       setIriOrLiteralProperty,
       setIriOrStringProperty,
     };
@@ -8795,6 +10161,9 @@ export namespace UnionDiscriminantsClass {
         }
       | { type: "string"; value: string }
     >;
+    optionalClassOrLiteralProperty: Maybe<
+      { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
+    >;
     optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
     optionalIriOrStringProperty: Maybe<NamedNode | string>;
     requiredClassOrClassOrStringProperty:
@@ -8804,6 +10173,9 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string };
+    requiredClassOrLiteralProperty:
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal;
     requiredIriOrLiteralProperty: NamedNode | Literal;
     requiredIriOrStringProperty: NamedNode | string;
     setClassOrClassOrStringProperty: readonly (
@@ -8813,6 +10185,10 @@ export namespace UnionDiscriminantsClass {
           value: ClassUnionMember2;
         }
       | { type: "string"; value: string }
+    )[];
+    setClassOrLiteralProperty: readonly (
+      | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+      | Literal
     )[];
     setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
     setIriOrStringProperty: readonly (NamedNode | string)[];
@@ -9013,7 +10389,7 @@ export namespace UnionDiscriminantsClass {
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
-            propertySchema: $schema.properties.optionalIriOrLiteralProperty,
+            propertySchema: $schema.properties.optionalClassOrLiteralProperty,
             typeFromRdf: (resourceValues) =>
               (
                 ((values, _options) =>
@@ -9021,9 +10397,40 @@ export namespace UnionDiscriminantsClass {
                     values.chainMap((value) => {
                       const valueAsValues = Right(value.toValues());
                       return (
-                        valueAsValues.chain((values) =>
-                          values.chainMap((value) => value.toIri()),
-                        ) as Either<Error, Resource.Values<NamedNode | Literal>>
+                        ClassUnionMember1.$fromRdfResourceValues(
+                          valueAsValues,
+                          {
+                            context: _options.context,
+                            graph: _options.graph,
+                            ignoreRdfType: false,
+                            objectSet: _options.objectSet,
+                            preferredLanguages: _options.preferredLanguages,
+                            propertyPath: _options.propertyPath,
+                            resource: _options.resource,
+                          },
+                        ).map((values) =>
+                          values.map(
+                            (value) =>
+                              ({
+                                termType: "ClassUnionMember1" as const,
+                                value,
+                              }) as
+                                | {
+                                    termType: "ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | Literal,
+                          ),
+                        ) as Either<
+                          Error,
+                          Resource.Values<
+                            | {
+                                termType: "ClassUnionMember1";
+                                value: ClassUnionMember1;
+                              }
+                            | Literal
+                          >
+                        >
                       )
                         .altLazy(
                           () =>
@@ -9038,13 +10445,20 @@ export namespace UnionDiscriminantsClass {
                                 values.chainMap((value) => value.toLiteral()),
                               ) as Either<
                               Error,
-                              Resource.Values<NamedNode | Literal>
+                              Resource.Values<
+                                | {
+                                    termType: "ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | Literal
+                              >
                             >,
                         )
                         .chain((values) => values.head());
                     }),
                   )) satisfies $FromRdfResourceValuesFunction<
-                  NamedNode | Literal
+                  | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                  | Literal
                 >
               )(resourceValues, {
                 context: _$options.context,
@@ -9055,23 +10469,31 @@ export namespace UnionDiscriminantsClass {
                 ignoreRdfType: true,
                 propertyPath:
                   UnionDiscriminantsClass.$schema.properties
-                    .optionalIriOrLiteralProperty.path,
+                    .optionalClassOrLiteralProperty.path,
               }).map((values) =>
                 values.length > 0
                   ? values.map((value) => Maybe.of(value))
-                  : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
+                  : Resource.Values.fromValue<
+                      Maybe<
+                        | {
+                            termType: "ClassUnionMember1";
+                            value: ClassUnionMember1;
+                          }
+                        | Literal
+                      >
+                    >({
                       focusResource: $resource,
                       propertyPath:
                         UnionDiscriminantsClass.$schema.properties
-                          .optionalIriOrLiteralProperty.path,
+                          .optionalClassOrLiteralProperty.path,
                       value: Maybe.empty(),
                     }),
               ),
-          }).chain((optionalIriOrLiteralProperty) =>
+          }).chain((optionalClassOrLiteralProperty) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.optionalIriOrStringProperty,
+              propertySchema: $schema.properties.optionalIriOrLiteralProperty,
               typeFromRdf: (resourceValues) =>
                 (
                   ((values, _options) =>
@@ -9083,7 +10505,7 @@ export namespace UnionDiscriminantsClass {
                             values.chainMap((value) => value.toIri()),
                           ) as Either<
                             Error,
-                            Resource.Values<NamedNode | string>
+                            Resource.Values<NamedNode | Literal>
                           >
                         )
                           .altLazy(
@@ -9096,16 +10518,16 @@ export namespace UnionDiscriminantsClass {
                                   ),
                                 )
                                 .chain((values) =>
-                                  values.chainMap((value) => value.toString()),
+                                  values.chainMap((value) => value.toLiteral()),
                                 ) as Either<
                                 Error,
-                                Resource.Values<NamedNode | string>
+                                Resource.Values<NamedNode | Literal>
                               >,
                           )
                           .chain((values) => values.head());
                       }),
                     )) satisfies $FromRdfResourceValuesFunction<
-                    NamedNode | string
+                    NamedNode | Literal
                   >
                 )(resourceValues, {
                   context: _$options.context,
@@ -9116,24 +10538,23 @@ export namespace UnionDiscriminantsClass {
                   ignoreRdfType: true,
                   propertyPath:
                     UnionDiscriminantsClass.$schema.properties
-                      .optionalIriOrStringProperty.path,
+                      .optionalIriOrLiteralProperty.path,
                 }).map((values) =>
                   values.length > 0
                     ? values.map((value) => Maybe.of(value))
-                    : Resource.Values.fromValue<Maybe<NamedNode | string>>({
+                    : Resource.Values.fromValue<Maybe<NamedNode | Literal>>({
                         focusResource: $resource,
                         propertyPath:
                           UnionDiscriminantsClass.$schema.properties
-                            .optionalIriOrStringProperty.path,
+                            .optionalIriOrLiteralProperty.path,
                         value: Maybe.empty(),
                       }),
                 ),
-            }).chain((optionalIriOrStringProperty) =>
+            }).chain((optionalIriOrLiteralProperty) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema:
-                  $schema.properties.requiredClassOrClassOrStringProperty,
+                propertySchema: $schema.properties.optionalIriOrStringProperty,
                 typeFromRdf: (resourceValues) =>
                   (
                     ((values, _options) =>
@@ -9141,95 +10562,13 @@ export namespace UnionDiscriminantsClass {
                         values.chainMap((value) => {
                           const valueAsValues = Right(value.toValues());
                           return (
-                            ClassUnionMember1.$fromRdfResourceValues(
-                              valueAsValues,
-                              {
-                                context: _options.context,
-                                graph: _options.graph,
-                                ignoreRdfType: false,
-                                objectSet: _options.objectSet,
-                                preferredLanguages: _options.preferredLanguages,
-                                propertyPath: _options.propertyPath,
-                                resource: _options.resource,
-                              },
-                            ).map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({
-                                    type: "ClassUnionMember1" as const,
-                                    value,
-                                  }) as
-                                    | {
-                                        type: "ClassUnionMember1";
-                                        value: ClassUnionMember1;
-                                      }
-                                    | {
-                                        type: "ClassUnionMember2";
-                                        value: ClassUnionMember2;
-                                      }
-                                    | { type: "string"; value: string },
-                              ),
+                            valueAsValues.chain((values) =>
+                              values.chainMap((value) => value.toIri()),
                             ) as Either<
                               Error,
-                              Resource.Values<
-                                | {
-                                    type: "ClassUnionMember1";
-                                    value: ClassUnionMember1;
-                                  }
-                                | {
-                                    type: "ClassUnionMember2";
-                                    value: ClassUnionMember2;
-                                  }
-                                | { type: "string"; value: string }
-                              >
+                              Resource.Values<NamedNode | string>
                             >
                           )
-                            .altLazy(
-                              () =>
-                                ClassUnionMember2.$fromRdfResourceValues(
-                                  valueAsValues,
-                                  {
-                                    context: _options.context,
-                                    graph: _options.graph,
-                                    ignoreRdfType: false,
-                                    objectSet: _options.objectSet,
-                                    preferredLanguages:
-                                      _options.preferredLanguages,
-                                    propertyPath: _options.propertyPath,
-                                    resource: _options.resource,
-                                  },
-                                ).map((values) =>
-                                  values.map(
-                                    (value) =>
-                                      ({
-                                        type: "ClassUnionMember2" as const,
-                                        value,
-                                      }) as
-                                        | {
-                                            type: "ClassUnionMember1";
-                                            value: ClassUnionMember1;
-                                          }
-                                        | {
-                                            type: "ClassUnionMember2";
-                                            value: ClassUnionMember2;
-                                          }
-                                        | { type: "string"; value: string },
-                                  ),
-                                ) as Either<
-                                  Error,
-                                  Resource.Values<
-                                    | {
-                                        type: "ClassUnionMember1";
-                                        value: ClassUnionMember1;
-                                      }
-                                    | {
-                                        type: "ClassUnionMember2";
-                                        value: ClassUnionMember2;
-                                      }
-                                    | { type: "string"; value: string }
-                                  >
-                                >,
-                            )
                             .altLazy(
                               () =>
                                 valueAsValues
@@ -9243,48 +10582,15 @@ export namespace UnionDiscriminantsClass {
                                     values.chainMap((value) =>
                                       value.toString(),
                                     ),
-                                  )
-                                  .map((values) =>
-                                    values.map(
-                                      (value) =>
-                                        ({
-                                          type: "string" as const,
-                                          value,
-                                        }) as
-                                          | {
-                                              type: "ClassUnionMember1";
-                                              value: ClassUnionMember1;
-                                            }
-                                          | {
-                                              type: "ClassUnionMember2";
-                                              value: ClassUnionMember2;
-                                            }
-                                          | { type: "string"; value: string },
-                                    ),
                                   ) as Either<
                                   Error,
-                                  Resource.Values<
-                                    | {
-                                        type: "ClassUnionMember1";
-                                        value: ClassUnionMember1;
-                                      }
-                                    | {
-                                        type: "ClassUnionMember2";
-                                        value: ClassUnionMember2;
-                                      }
-                                    | { type: "string"; value: string }
-                                  >
+                                  Resource.Values<NamedNode | string>
                                 >,
                             )
                             .chain((values) => values.head());
                         }),
                       )) satisfies $FromRdfResourceValuesFunction<
-                      | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
-                      | {
-                          type: "ClassUnionMember2";
-                          value: ClassUnionMember2;
-                        }
-                      | { type: "string"; value: string }
+                      NamedNode | string
                     >
                   )(resourceValues, {
                     context: _$options.context,
@@ -9295,14 +10601,24 @@ export namespace UnionDiscriminantsClass {
                     ignoreRdfType: true,
                     propertyPath:
                       UnionDiscriminantsClass.$schema.properties
-                        .requiredClassOrClassOrStringProperty.path,
-                  }),
-              }).chain((requiredClassOrClassOrStringProperty) =>
+                        .optionalIriOrStringProperty.path,
+                  }).map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<NamedNode | string>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            UnionDiscriminantsClass.$schema.properties
+                              .optionalIriOrStringProperty.path,
+                          value: Maybe.empty(),
+                        }),
+                  ),
+              }).chain((optionalIriOrStringProperty) =>
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
                   propertySchema:
-                    $schema.properties.requiredIriOrLiteralProperty,
+                    $schema.properties.requiredClassOrClassOrStringProperty,
                   typeFromRdf: (resourceValues) =>
                     (
                       ((values, _options) =>
@@ -9310,115 +10626,53 @@ export namespace UnionDiscriminantsClass {
                           values.chainMap((value) => {
                             const valueAsValues = Right(value.toValues());
                             return (
-                              valueAsValues.chain((values) =>
-                                values.chainMap((value) => value.toIri()),
+                              ClassUnionMember1.$fromRdfResourceValues(
+                                valueAsValues,
+                                {
+                                  context: _options.context,
+                                  graph: _options.graph,
+                                  ignoreRdfType: false,
+                                  objectSet: _options.objectSet,
+                                  preferredLanguages:
+                                    _options.preferredLanguages,
+                                  propertyPath: _options.propertyPath,
+                                  resource: _options.resource,
+                                },
+                              ).map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({
+                                      type: "ClassUnionMember1" as const,
+                                      value,
+                                    }) as
+                                      | {
+                                          type: "ClassUnionMember1";
+                                          value: ClassUnionMember1;
+                                        }
+                                      | {
+                                          type: "ClassUnionMember2";
+                                          value: ClassUnionMember2;
+                                        }
+                                      | { type: "string"; value: string },
+                                ),
                               ) as Either<
                                 Error,
-                                Resource.Values<NamedNode | Literal>
+                                Resource.Values<
+                                  | {
+                                      type: "ClassUnionMember1";
+                                      value: ClassUnionMember1;
+                                    }
+                                  | {
+                                      type: "ClassUnionMember2";
+                                      value: ClassUnionMember2;
+                                    }
+                                  | { type: "string"; value: string }
+                                >
                               >
                             )
                               .altLazy(
                                 () =>
-                                  valueAsValues
-                                    .chain((values) =>
-                                      $fromRdfPreferredLanguages(
-                                        values,
-                                        _options.preferredLanguages,
-                                      ),
-                                    )
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toLiteral(),
-                                      ),
-                                    ) as Either<
-                                    Error,
-                                    Resource.Values<NamedNode | Literal>
-                                  >,
-                              )
-                              .chain((values) => values.head());
-                          }),
-                        )) satisfies $FromRdfResourceValuesFunction<
-                        NamedNode | Literal
-                      >
-                    )(resourceValues, {
-                      context: _$options.context,
-                      graph: _$options.graph,
-                      preferredLanguages: _$options.preferredLanguages,
-                      objectSet: _$options.objectSet,
-                      resource: $resource,
-                      ignoreRdfType: true,
-                      propertyPath:
-                        UnionDiscriminantsClass.$schema.properties
-                          .requiredIriOrLiteralProperty.path,
-                    }),
-                }).chain((requiredIriOrLiteralProperty) =>
-                  $shaclPropertyFromRdf({
-                    graph: _$options.graph,
-                    resource: $resource,
-                    propertySchema:
-                      $schema.properties.requiredIriOrStringProperty,
-                    typeFromRdf: (resourceValues) =>
-                      (
-                        ((values, _options) =>
-                          values.chain((values) =>
-                            values.chainMap((value) => {
-                              const valueAsValues = Right(value.toValues());
-                              return (
-                                valueAsValues.chain((values) =>
-                                  values.chainMap((value) => value.toIri()),
-                                ) as Either<
-                                  Error,
-                                  Resource.Values<NamedNode | string>
-                                >
-                              )
-                                .altLazy(
-                                  () =>
-                                    valueAsValues
-                                      .chain((values) =>
-                                        $fromRdfPreferredLanguages(
-                                          values,
-                                          _options.preferredLanguages,
-                                        ),
-                                      )
-                                      .chain((values) =>
-                                        values.chainMap((value) =>
-                                          value.toString(),
-                                        ),
-                                      ) as Either<
-                                      Error,
-                                      Resource.Values<NamedNode | string>
-                                    >,
-                                )
-                                .chain((values) => values.head());
-                            }),
-                          )) satisfies $FromRdfResourceValuesFunction<
-                          NamedNode | string
-                        >
-                      )(resourceValues, {
-                        context: _$options.context,
-                        graph: _$options.graph,
-                        preferredLanguages: _$options.preferredLanguages,
-                        objectSet: _$options.objectSet,
-                        resource: $resource,
-                        ignoreRdfType: true,
-                        propertyPath:
-                          UnionDiscriminantsClass.$schema.properties
-                            .requiredIriOrStringProperty.path,
-                      }),
-                  }).chain((requiredIriOrStringProperty) =>
-                    $shaclPropertyFromRdf({
-                      graph: _$options.graph,
-                      resource: $resource,
-                      propertySchema:
-                        $schema.properties.setClassOrClassOrStringProperty,
-                      typeFromRdf: (resourceValues) =>
-                        (
-                          ((values, _options) =>
-                            values.chain((values) =>
-                              values.chainMap((value) => {
-                                const valueAsValues = Right(value.toValues());
-                                return (
-                                  ClassUnionMember1.$fromRdfResourceValues(
+                                  ClassUnionMember2.$fromRdfResourceValues(
                                     valueAsValues,
                                     {
                                       context: _options.context,
@@ -9434,7 +10688,7 @@ export namespace UnionDiscriminantsClass {
                                     values.map(
                                       (value) =>
                                         ({
-                                          type: "ClassUnionMember1" as const,
+                                          type: "ClassUnionMember2" as const,
                                           value,
                                         }) as
                                           | {
@@ -9460,11 +10714,295 @@ export namespace UnionDiscriminantsClass {
                                         }
                                       | { type: "string"; value: string }
                                     >
+                                  >,
+                              )
+                              .altLazy(
+                                () =>
+                                  valueAsValues
+                                    .chain((values) =>
+                                      $fromRdfPreferredLanguages(
+                                        values,
+                                        _options.preferredLanguages,
+                                      ),
+                                    )
+                                    .chain((values) =>
+                                      values.chainMap((value) =>
+                                        value.toString(),
+                                      ),
+                                    )
+                                    .map((values) =>
+                                      values.map(
+                                        (value) =>
+                                          ({
+                                            type: "string" as const,
+                                            value,
+                                          }) as
+                                            | {
+                                                type: "ClassUnionMember1";
+                                                value: ClassUnionMember1;
+                                              }
+                                            | {
+                                                type: "ClassUnionMember2";
+                                                value: ClassUnionMember2;
+                                              }
+                                            | { type: "string"; value: string },
+                                      ),
+                                    ) as Either<
+                                    Error,
+                                    Resource.Values<
+                                      | {
+                                          type: "ClassUnionMember1";
+                                          value: ClassUnionMember1;
+                                        }
+                                      | {
+                                          type: "ClassUnionMember2";
+                                          value: ClassUnionMember2;
+                                        }
+                                      | { type: "string"; value: string }
+                                    >
+                                  >,
+                              )
+                              .chain((values) => values.head());
+                          }),
+                        )) satisfies $FromRdfResourceValuesFunction<
+                        | {
+                            type: "ClassUnionMember1";
+                            value: ClassUnionMember1;
+                          }
+                        | {
+                            type: "ClassUnionMember2";
+                            value: ClassUnionMember2;
+                          }
+                        | { type: "string"; value: string }
+                      >
+                    )(resourceValues, {
+                      context: _$options.context,
+                      graph: _$options.graph,
+                      preferredLanguages: _$options.preferredLanguages,
+                      objectSet: _$options.objectSet,
+                      resource: $resource,
+                      ignoreRdfType: true,
+                      propertyPath:
+                        UnionDiscriminantsClass.$schema.properties
+                          .requiredClassOrClassOrStringProperty.path,
+                    }),
+                }).chain((requiredClassOrClassOrStringProperty) =>
+                  $shaclPropertyFromRdf({
+                    graph: _$options.graph,
+                    resource: $resource,
+                    propertySchema:
+                      $schema.properties.requiredClassOrLiteralProperty,
+                    typeFromRdf: (resourceValues) =>
+                      (
+                        ((values, _options) =>
+                          values.chain((values) =>
+                            values.chainMap((value) => {
+                              const valueAsValues = Right(value.toValues());
+                              return (
+                                ClassUnionMember1.$fromRdfResourceValues(
+                                  valueAsValues,
+                                  {
+                                    context: _options.context,
+                                    graph: _options.graph,
+                                    ignoreRdfType: false,
+                                    objectSet: _options.objectSet,
+                                    preferredLanguages:
+                                      _options.preferredLanguages,
+                                    propertyPath: _options.propertyPath,
+                                    resource: _options.resource,
+                                  },
+                                ).map((values) =>
+                                  values.map(
+                                    (value) =>
+                                      ({
+                                        termType: "ClassUnionMember1" as const,
+                                        value,
+                                      }) as
+                                        | {
+                                            termType: "ClassUnionMember1";
+                                            value: ClassUnionMember1;
+                                          }
+                                        | Literal,
+                                  ),
+                                ) as Either<
+                                  Error,
+                                  Resource.Values<
+                                    | {
+                                        termType: "ClassUnionMember1";
+                                        value: ClassUnionMember1;
+                                      }
+                                    | Literal
+                                  >
+                                >
+                              )
+                                .altLazy(
+                                  () =>
+                                    valueAsValues
+                                      .chain((values) =>
+                                        $fromRdfPreferredLanguages(
+                                          values,
+                                          _options.preferredLanguages,
+                                        ),
+                                      )
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toLiteral(),
+                                        ),
+                                      ) as Either<
+                                      Error,
+                                      Resource.Values<
+                                        | {
+                                            termType: "ClassUnionMember1";
+                                            value: ClassUnionMember1;
+                                          }
+                                        | Literal
+                                      >
+                                    >,
+                                )
+                                .chain((values) => values.head());
+                            }),
+                          )) satisfies $FromRdfResourceValuesFunction<
+                          | {
+                              termType: "ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | Literal
+                        >
+                      )(resourceValues, {
+                        context: _$options.context,
+                        graph: _$options.graph,
+                        preferredLanguages: _$options.preferredLanguages,
+                        objectSet: _$options.objectSet,
+                        resource: $resource,
+                        ignoreRdfType: true,
+                        propertyPath:
+                          UnionDiscriminantsClass.$schema.properties
+                            .requiredClassOrLiteralProperty.path,
+                      }),
+                  }).chain((requiredClassOrLiteralProperty) =>
+                    $shaclPropertyFromRdf({
+                      graph: _$options.graph,
+                      resource: $resource,
+                      propertySchema:
+                        $schema.properties.requiredIriOrLiteralProperty,
+                      typeFromRdf: (resourceValues) =>
+                        (
+                          ((values, _options) =>
+                            values.chain((values) =>
+                              values.chainMap((value) => {
+                                const valueAsValues = Right(value.toValues());
+                                return (
+                                  valueAsValues.chain((values) =>
+                                    values.chainMap((value) => value.toIri()),
+                                  ) as Either<
+                                    Error,
+                                    Resource.Values<NamedNode | Literal>
                                   >
                                 )
                                   .altLazy(
                                     () =>
-                                      ClassUnionMember2.$fromRdfResourceValues(
+                                      valueAsValues
+                                        .chain((values) =>
+                                          $fromRdfPreferredLanguages(
+                                            values,
+                                            _options.preferredLanguages,
+                                          ),
+                                        )
+                                        .chain((values) =>
+                                          values.chainMap((value) =>
+                                            value.toLiteral(),
+                                          ),
+                                        ) as Either<
+                                        Error,
+                                        Resource.Values<NamedNode | Literal>
+                                      >,
+                                  )
+                                  .chain((values) => values.head());
+                              }),
+                            )) satisfies $FromRdfResourceValuesFunction<
+                            NamedNode | Literal
+                          >
+                        )(resourceValues, {
+                          context: _$options.context,
+                          graph: _$options.graph,
+                          preferredLanguages: _$options.preferredLanguages,
+                          objectSet: _$options.objectSet,
+                          resource: $resource,
+                          ignoreRdfType: true,
+                          propertyPath:
+                            UnionDiscriminantsClass.$schema.properties
+                              .requiredIriOrLiteralProperty.path,
+                        }),
+                    }).chain((requiredIriOrLiteralProperty) =>
+                      $shaclPropertyFromRdf({
+                        graph: _$options.graph,
+                        resource: $resource,
+                        propertySchema:
+                          $schema.properties.requiredIriOrStringProperty,
+                        typeFromRdf: (resourceValues) =>
+                          (
+                            ((values, _options) =>
+                              values.chain((values) =>
+                                values.chainMap((value) => {
+                                  const valueAsValues = Right(value.toValues());
+                                  return (
+                                    valueAsValues.chain((values) =>
+                                      values.chainMap((value) => value.toIri()),
+                                    ) as Either<
+                                      Error,
+                                      Resource.Values<NamedNode | string>
+                                    >
+                                  )
+                                    .altLazy(
+                                      () =>
+                                        valueAsValues
+                                          .chain((values) =>
+                                            $fromRdfPreferredLanguages(
+                                              values,
+                                              _options.preferredLanguages,
+                                            ),
+                                          )
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              value.toString(),
+                                            ),
+                                          ) as Either<
+                                          Error,
+                                          Resource.Values<NamedNode | string>
+                                        >,
+                                    )
+                                    .chain((values) => values.head());
+                                }),
+                              )) satisfies $FromRdfResourceValuesFunction<
+                              NamedNode | string
+                            >
+                          )(resourceValues, {
+                            context: _$options.context,
+                            graph: _$options.graph,
+                            preferredLanguages: _$options.preferredLanguages,
+                            objectSet: _$options.objectSet,
+                            resource: $resource,
+                            ignoreRdfType: true,
+                            propertyPath:
+                              UnionDiscriminantsClass.$schema.properties
+                                .requiredIriOrStringProperty.path,
+                          }),
+                      }).chain((requiredIriOrStringProperty) =>
+                        $shaclPropertyFromRdf({
+                          graph: _$options.graph,
+                          resource: $resource,
+                          propertySchema:
+                            $schema.properties.setClassOrClassOrStringProperty,
+                          typeFromRdf: (resourceValues) =>
+                            (
+                              ((values, _options) =>
+                                values.chain((values) =>
+                                  values.chainMap((value) => {
+                                    const valueAsValues = Right(
+                                      value.toValues(),
+                                    );
+                                    return (
+                                      ClassUnionMember1.$fromRdfResourceValues(
                                         valueAsValues,
                                         {
                                           context: _options.context,
@@ -9480,7 +11018,7 @@ export namespace UnionDiscriminantsClass {
                                         values.map(
                                           (value) =>
                                             ({
-                                              type: "ClassUnionMember2" as const,
+                                              type: "ClassUnionMember1" as const,
                                               value,
                                             }) as
                                               | {
@@ -9509,179 +11047,61 @@ export namespace UnionDiscriminantsClass {
                                             }
                                           | { type: "string"; value: string }
                                         >
-                                      >,
-                                  )
-                                  .altLazy(
-                                    () =>
-                                      valueAsValues
-                                        .chain((values) =>
-                                          $fromRdfPreferredLanguages(
-                                            values,
-                                            _options.preferredLanguages,
-                                          ),
-                                        )
-                                        .chain((values) =>
-                                          values.chainMap((value) =>
-                                            value.toString(),
-                                          ),
-                                        )
-                                        .map((values) =>
-                                          values.map(
-                                            (value) =>
-                                              ({
-                                                type: "string" as const,
-                                                value,
-                                              }) as
-                                                | {
-                                                    type: "ClassUnionMember1";
-                                                    value: ClassUnionMember1;
-                                                  }
-                                                | {
-                                                    type: "ClassUnionMember2";
-                                                    value: ClassUnionMember2;
-                                                  }
-                                                | {
-                                                    type: "string";
-                                                    value: string;
-                                                  },
-                                          ),
-                                        ) as Either<
-                                        Error,
-                                        Resource.Values<
-                                          | {
-                                              type: "ClassUnionMember1";
-                                              value: ClassUnionMember1;
-                                            }
-                                          | {
-                                              type: "ClassUnionMember2";
-                                              value: ClassUnionMember2;
-                                            }
-                                          | { type: "string"; value: string }
-                                        >
-                                      >,
-                                  )
-                                  .chain((values) => values.head());
-                              }),
-                            )) satisfies $FromRdfResourceValuesFunction<
-                            | {
-                                type: "ClassUnionMember1";
-                                value: ClassUnionMember1;
-                              }
-                            | {
-                                type: "ClassUnionMember2";
-                                value: ClassUnionMember2;
-                              }
-                            | { type: "string"; value: string }
-                          >
-                        )(resourceValues, {
-                          context: _$options.context,
-                          graph: _$options.graph,
-                          preferredLanguages: _$options.preferredLanguages,
-                          objectSet: _$options.objectSet,
-                          resource: $resource,
-                          ignoreRdfType: true,
-                          propertyPath:
-                            UnionDiscriminantsClass.$schema.properties
-                              .setClassOrClassOrStringProperty.path,
-                        })
-                          .map((values) => values.toArray())
-                          .map((valuesArray) =>
-                            Resource.Values.fromValue({
-                              focusResource: $resource,
-                              propertyPath:
-                                UnionDiscriminantsClass.$schema.properties
-                                  .setClassOrClassOrStringProperty.path,
-                              value: valuesArray,
-                            }),
-                          ),
-                    }).chain((setClassOrClassOrStringProperty) =>
-                      $shaclPropertyFromRdf({
-                        graph: _$options.graph,
-                        resource: $resource,
-                        propertySchema:
-                          $schema.properties.setIriOrLiteralProperty,
-                        typeFromRdf: (resourceValues) =>
-                          (
-                            ((values, _options) =>
-                              values.chain((values) =>
-                                values.chainMap((value) => {
-                                  const valueAsValues = Right(value.toValues());
-                                  return (
-                                    valueAsValues.chain((values) =>
-                                      values.chainMap((value) => value.toIri()),
-                                    ) as Either<
-                                      Error,
-                                      Resource.Values<NamedNode | Literal>
-                                    >
-                                  )
-                                    .altLazy(
-                                      () =>
-                                        valueAsValues
-                                          .chain((values) =>
-                                            $fromRdfPreferredLanguages(
-                                              values,
-                                              _options.preferredLanguages,
-                                            ),
-                                          )
-                                          .chain((values) =>
-                                            values.chainMap((value) =>
-                                              value.toLiteral(),
-                                            ),
-                                          ) as Either<
-                                          Error,
-                                          Resource.Values<NamedNode | Literal>
-                                        >,
-                                    )
-                                    .chain((values) => values.head());
-                                }),
-                              )) satisfies $FromRdfResourceValuesFunction<
-                              NamedNode | Literal
-                            >
-                          )(resourceValues, {
-                            context: _$options.context,
-                            graph: _$options.graph,
-                            preferredLanguages: _$options.preferredLanguages,
-                            objectSet: _$options.objectSet,
-                            resource: $resource,
-                            ignoreRdfType: true,
-                            propertyPath:
-                              UnionDiscriminantsClass.$schema.properties
-                                .setIriOrLiteralProperty.path,
-                          })
-                            .map((values) => values.toArray())
-                            .map((valuesArray) =>
-                              Resource.Values.fromValue({
-                                focusResource: $resource,
-                                propertyPath:
-                                  UnionDiscriminantsClass.$schema.properties
-                                    .setIriOrLiteralProperty.path,
-                                value: valuesArray,
-                              }),
-                            ),
-                      }).chain((setIriOrLiteralProperty) =>
-                        $shaclPropertyFromRdf({
-                          graph: _$options.graph,
-                          resource: $resource,
-                          propertySchema:
-                            $schema.properties.setIriOrStringProperty,
-                          typeFromRdf: (resourceValues) =>
-                            (
-                              ((values, _options) =>
-                                values.chain((values) =>
-                                  values.chainMap((value) => {
-                                    const valueAsValues = Right(
-                                      value.toValues(),
-                                    );
-                                    return (
-                                      valueAsValues.chain((values) =>
-                                        values.chainMap((value) =>
-                                          value.toIri(),
-                                        ),
-                                      ) as Either<
-                                        Error,
-                                        Resource.Values<NamedNode | string>
                                       >
                                     )
+                                      .altLazy(
+                                        () =>
+                                          ClassUnionMember2.$fromRdfResourceValues(
+                                            valueAsValues,
+                                            {
+                                              context: _options.context,
+                                              graph: _options.graph,
+                                              ignoreRdfType: false,
+                                              objectSet: _options.objectSet,
+                                              preferredLanguages:
+                                                _options.preferredLanguages,
+                                              propertyPath:
+                                                _options.propertyPath,
+                                              resource: _options.resource,
+                                            },
+                                          ).map((values) =>
+                                            values.map(
+                                              (value) =>
+                                                ({
+                                                  type: "ClassUnionMember2" as const,
+                                                  value,
+                                                }) as
+                                                  | {
+                                                      type: "ClassUnionMember1";
+                                                      value: ClassUnionMember1;
+                                                    }
+                                                  | {
+                                                      type: "ClassUnionMember2";
+                                                      value: ClassUnionMember2;
+                                                    }
+                                                  | {
+                                                      type: "string";
+                                                      value: string;
+                                                    },
+                                            ),
+                                          ) as Either<
+                                            Error,
+                                            Resource.Values<
+                                              | {
+                                                  type: "ClassUnionMember1";
+                                                  value: ClassUnionMember1;
+                                                }
+                                              | {
+                                                  type: "ClassUnionMember2";
+                                                  value: ClassUnionMember2;
+                                                }
+                                              | {
+                                                  type: "string";
+                                                  value: string;
+                                                }
+                                            >
+                                          >,
+                                      )
                                       .altLazy(
                                         () =>
                                           valueAsValues
@@ -9695,15 +11115,57 @@ export namespace UnionDiscriminantsClass {
                                               values.chainMap((value) =>
                                                 value.toString(),
                                               ),
+                                            )
+                                            .map((values) =>
+                                              values.map(
+                                                (value) =>
+                                                  ({
+                                                    type: "string" as const,
+                                                    value,
+                                                  }) as
+                                                    | {
+                                                        type: "ClassUnionMember1";
+                                                        value: ClassUnionMember1;
+                                                      }
+                                                    | {
+                                                        type: "ClassUnionMember2";
+                                                        value: ClassUnionMember2;
+                                                      }
+                                                    | {
+                                                        type: "string";
+                                                        value: string;
+                                                      },
+                                              ),
                                             ) as Either<
                                             Error,
-                                            Resource.Values<NamedNode | string>
+                                            Resource.Values<
+                                              | {
+                                                  type: "ClassUnionMember1";
+                                                  value: ClassUnionMember1;
+                                                }
+                                              | {
+                                                  type: "ClassUnionMember2";
+                                                  value: ClassUnionMember2;
+                                                }
+                                              | {
+                                                  type: "string";
+                                                  value: string;
+                                                }
+                                            >
                                           >,
                                       )
                                       .chain((values) => values.head());
                                   }),
                                 )) satisfies $FromRdfResourceValuesFunction<
-                                NamedNode | string
+                                | {
+                                    type: "ClassUnionMember1";
+                                    value: ClassUnionMember1;
+                                  }
+                                | {
+                                    type: "ClassUnionMember2";
+                                    value: ClassUnionMember2;
+                                  }
+                                | { type: "string"; value: string }
                               >
                             )(resourceValues, {
                               context: _$options.context,
@@ -9714,7 +11176,7 @@ export namespace UnionDiscriminantsClass {
                               ignoreRdfType: true,
                               propertyPath:
                                 UnionDiscriminantsClass.$schema.properties
-                                  .setIriOrStringProperty.path,
+                                  .setClassOrClassOrStringProperty.path,
                             })
                               .map((values) => values.toArray())
                               .map((valuesArray) =>
@@ -9722,22 +11184,281 @@ export namespace UnionDiscriminantsClass {
                                   focusResource: $resource,
                                   propertyPath:
                                     UnionDiscriminantsClass.$schema.properties
-                                      .setIriOrStringProperty.path,
+                                      .setClassOrClassOrStringProperty.path,
                                   value: valuesArray,
                                 }),
                               ),
-                        }).map((setIriOrStringProperty) => ({
-                          $identifier,
-                          optionalClassOrClassOrStringProperty,
-                          optionalIriOrLiteralProperty,
-                          optionalIriOrStringProperty,
-                          requiredClassOrClassOrStringProperty,
-                          requiredIriOrLiteralProperty,
-                          requiredIriOrStringProperty,
-                          setClassOrClassOrStringProperty,
-                          setIriOrLiteralProperty,
-                          setIriOrStringProperty,
-                        })),
+                        }).chain((setClassOrClassOrStringProperty) =>
+                          $shaclPropertyFromRdf({
+                            graph: _$options.graph,
+                            resource: $resource,
+                            propertySchema:
+                              $schema.properties.setClassOrLiteralProperty,
+                            typeFromRdf: (resourceValues) =>
+                              (
+                                ((values, _options) =>
+                                  values.chain((values) =>
+                                    values.chainMap((value) => {
+                                      const valueAsValues = Right(
+                                        value.toValues(),
+                                      );
+                                      return (
+                                        ClassUnionMember1.$fromRdfResourceValues(
+                                          valueAsValues,
+                                          {
+                                            context: _options.context,
+                                            graph: _options.graph,
+                                            ignoreRdfType: false,
+                                            objectSet: _options.objectSet,
+                                            preferredLanguages:
+                                              _options.preferredLanguages,
+                                            propertyPath: _options.propertyPath,
+                                            resource: _options.resource,
+                                          },
+                                        ).map((values) =>
+                                          values.map(
+                                            (value) =>
+                                              ({
+                                                termType:
+                                                  "ClassUnionMember1" as const,
+                                                value,
+                                              }) as
+                                                | {
+                                                    termType: "ClassUnionMember1";
+                                                    value: ClassUnionMember1;
+                                                  }
+                                                | Literal,
+                                          ),
+                                        ) as Either<
+                                          Error,
+                                          Resource.Values<
+                                            | {
+                                                termType: "ClassUnionMember1";
+                                                value: ClassUnionMember1;
+                                              }
+                                            | Literal
+                                          >
+                                        >
+                                      )
+                                        .altLazy(
+                                          () =>
+                                            valueAsValues
+                                              .chain((values) =>
+                                                $fromRdfPreferredLanguages(
+                                                  values,
+                                                  _options.preferredLanguages,
+                                                ),
+                                              )
+                                              .chain((values) =>
+                                                values.chainMap((value) =>
+                                                  value.toLiteral(),
+                                                ),
+                                              ) as Either<
+                                              Error,
+                                              Resource.Values<
+                                                | {
+                                                    termType: "ClassUnionMember1";
+                                                    value: ClassUnionMember1;
+                                                  }
+                                                | Literal
+                                              >
+                                            >,
+                                        )
+                                        .chain((values) => values.head());
+                                    }),
+                                  )) satisfies $FromRdfResourceValuesFunction<
+                                  | {
+                                      termType: "ClassUnionMember1";
+                                      value: ClassUnionMember1;
+                                    }
+                                  | Literal
+                                >
+                              )(resourceValues, {
+                                context: _$options.context,
+                                graph: _$options.graph,
+                                preferredLanguages:
+                                  _$options.preferredLanguages,
+                                objectSet: _$options.objectSet,
+                                resource: $resource,
+                                ignoreRdfType: true,
+                                propertyPath:
+                                  UnionDiscriminantsClass.$schema.properties
+                                    .setClassOrLiteralProperty.path,
+                              })
+                                .map((values) => values.toArray())
+                                .map((valuesArray) =>
+                                  Resource.Values.fromValue({
+                                    focusResource: $resource,
+                                    propertyPath:
+                                      UnionDiscriminantsClass.$schema.properties
+                                        .setClassOrLiteralProperty.path,
+                                    value: valuesArray,
+                                  }),
+                                ),
+                          }).chain((setClassOrLiteralProperty) =>
+                            $shaclPropertyFromRdf({
+                              graph: _$options.graph,
+                              resource: $resource,
+                              propertySchema:
+                                $schema.properties.setIriOrLiteralProperty,
+                              typeFromRdf: (resourceValues) =>
+                                (
+                                  ((values, _options) =>
+                                    values.chain((values) =>
+                                      values.chainMap((value) => {
+                                        const valueAsValues = Right(
+                                          value.toValues(),
+                                        );
+                                        return (
+                                          valueAsValues.chain((values) =>
+                                            values.chainMap((value) =>
+                                              value.toIri(),
+                                            ),
+                                          ) as Either<
+                                            Error,
+                                            Resource.Values<NamedNode | Literal>
+                                          >
+                                        )
+                                          .altLazy(
+                                            () =>
+                                              valueAsValues
+                                                .chain((values) =>
+                                                  $fromRdfPreferredLanguages(
+                                                    values,
+                                                    _options.preferredLanguages,
+                                                  ),
+                                                )
+                                                .chain((values) =>
+                                                  values.chainMap((value) =>
+                                                    value.toLiteral(),
+                                                  ),
+                                                ) as Either<
+                                                Error,
+                                                Resource.Values<
+                                                  NamedNode | Literal
+                                                >
+                                              >,
+                                          )
+                                          .chain((values) => values.head());
+                                      }),
+                                    )) satisfies $FromRdfResourceValuesFunction<
+                                    NamedNode | Literal
+                                  >
+                                )(resourceValues, {
+                                  context: _$options.context,
+                                  graph: _$options.graph,
+                                  preferredLanguages:
+                                    _$options.preferredLanguages,
+                                  objectSet: _$options.objectSet,
+                                  resource: $resource,
+                                  ignoreRdfType: true,
+                                  propertyPath:
+                                    UnionDiscriminantsClass.$schema.properties
+                                      .setIriOrLiteralProperty.path,
+                                })
+                                  .map((values) => values.toArray())
+                                  .map((valuesArray) =>
+                                    Resource.Values.fromValue({
+                                      focusResource: $resource,
+                                      propertyPath:
+                                        UnionDiscriminantsClass.$schema
+                                          .properties.setIriOrLiteralProperty
+                                          .path,
+                                      value: valuesArray,
+                                    }),
+                                  ),
+                            }).chain((setIriOrLiteralProperty) =>
+                              $shaclPropertyFromRdf({
+                                graph: _$options.graph,
+                                resource: $resource,
+                                propertySchema:
+                                  $schema.properties.setIriOrStringProperty,
+                                typeFromRdf: (resourceValues) =>
+                                  (
+                                    ((values, _options) =>
+                                      values.chain((values) =>
+                                        values.chainMap((value) => {
+                                          const valueAsValues = Right(
+                                            value.toValues(),
+                                          );
+                                          return (
+                                            valueAsValues.chain((values) =>
+                                              values.chainMap((value) =>
+                                                value.toIri(),
+                                              ),
+                                            ) as Either<
+                                              Error,
+                                              Resource.Values<
+                                                NamedNode | string
+                                              >
+                                            >
+                                          )
+                                            .altLazy(
+                                              () =>
+                                                valueAsValues
+                                                  .chain((values) =>
+                                                    $fromRdfPreferredLanguages(
+                                                      values,
+                                                      _options.preferredLanguages,
+                                                    ),
+                                                  )
+                                                  .chain((values) =>
+                                                    values.chainMap((value) =>
+                                                      value.toString(),
+                                                    ),
+                                                  ) as Either<
+                                                  Error,
+                                                  Resource.Values<
+                                                    NamedNode | string
+                                                  >
+                                                >,
+                                            )
+                                            .chain((values) => values.head());
+                                        }),
+                                      )) satisfies $FromRdfResourceValuesFunction<
+                                      NamedNode | string
+                                    >
+                                  )(resourceValues, {
+                                    context: _$options.context,
+                                    graph: _$options.graph,
+                                    preferredLanguages:
+                                      _$options.preferredLanguages,
+                                    objectSet: _$options.objectSet,
+                                    resource: $resource,
+                                    ignoreRdfType: true,
+                                    propertyPath:
+                                      UnionDiscriminantsClass.$schema.properties
+                                        .setIriOrStringProperty.path,
+                                  })
+                                    .map((values) => values.toArray())
+                                    .map((valuesArray) =>
+                                      Resource.Values.fromValue({
+                                        focusResource: $resource,
+                                        propertyPath:
+                                          UnionDiscriminantsClass.$schema
+                                            .properties.setIriOrStringProperty
+                                            .path,
+                                        value: valuesArray,
+                                      }),
+                                    ),
+                              }).map((setIriOrStringProperty) => ({
+                                $identifier,
+                                optionalClassOrClassOrStringProperty,
+                                optionalClassOrLiteralProperty,
+                                optionalIriOrLiteralProperty,
+                                optionalIriOrStringProperty,
+                                requiredClassOrClassOrStringProperty,
+                                requiredClassOrLiteralProperty,
+                                requiredIriOrLiteralProperty,
+                                requiredIriOrStringProperty,
+                                setClassOrClassOrStringProperty,
+                                setClassOrLiteralProperty,
+                                setIriOrLiteralProperty,
+                                setIriOrStringProperty,
+                              })),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -9786,6 +11507,28 @@ export namespace UnionDiscriminantsClass {
         }),
         path: dataFactory.namedNode(
           "http://example.com/optionalClassOrClassOrStringProperty",
+        ),
+      },
+      optionalClassOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Maybe" as const,
+          item: () => ({
+            kind: "AnonymousUnion" as const,
+            members: {
+              ClassUnionMember1: {
+                discriminantValues: ["ClassUnionMember1"],
+                type: ClassUnionMember1.$schema,
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/optionalClassOrLiteralProperty",
         ),
       },
       optionalIriOrLiteralProperty: {
@@ -9855,6 +11598,25 @@ export namespace UnionDiscriminantsClass {
           "http://example.com/requiredClassOrClassOrStringProperty",
         ),
       },
+      requiredClassOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "AnonymousUnion" as const,
+          members: {
+            ClassUnionMember1: {
+              discriminantValues: ["ClassUnionMember1"],
+              type: ClassUnionMember1.$schema,
+            },
+            Literal: {
+              discriminantValues: ["Literal"],
+              type: { kind: "Literal" as const },
+            },
+          },
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/requiredClassOrLiteralProperty",
+        ),
+      },
       requiredIriOrLiteralProperty: {
         kind: "Shacl" as const,
         type: () => ({
@@ -9917,6 +11679,28 @@ export namespace UnionDiscriminantsClass {
         }),
         path: dataFactory.namedNode(
           "http://example.com/setClassOrClassOrStringProperty",
+        ),
+      },
+      setClassOrLiteralProperty: {
+        kind: "Shacl" as const,
+        type: () => ({
+          kind: "Set" as const,
+          item: () => ({
+            kind: "AnonymousUnion" as const,
+            members: {
+              ClassUnionMember1: {
+                discriminantValues: ["ClassUnionMember1"],
+                type: ClassUnionMember1.$schema,
+              },
+              Literal: {
+                discriminantValues: ["Literal"],
+                type: { kind: "Literal" as const },
+              },
+            },
+          }),
+        }),
+        path: dataFactory.namedNode(
+          "http://example.com/setClassOrLiteralProperty",
         ),
       },
       setIriOrLiteralProperty: {
@@ -54722,24 +56506,28 @@ export namespace DateUnionPropertiesClass {
             z.object({ type: z.literal("date"), value: z.iso.date() }),
             z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
           ])
+          .readonly()
           .optional(),
         dateOrStringProperty: z
           .discriminatedUnion("type", [
             z.object({ type: z.literal("date"), value: z.iso.date() }),
             z.object({ type: z.literal("string"), value: z.string() }),
           ])
+          .readonly()
           .optional(),
         dateTimeOrDateProperty: z
           .discriminatedUnion("type", [
             z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
             z.object({ type: z.literal("date"), value: z.iso.date() }),
           ])
+          .readonly()
           .optional(),
         stringOrDateProperty: z
           .discriminatedUnion("type", [
             z.object({ type: z.literal("string"), value: z.string() }),
             z.object({ type: z.literal("date"), value: z.iso.date() }),
           ])
+          .readonly()
           .optional(),
       }) satisfies z.ZodType<$Json>;
     }
