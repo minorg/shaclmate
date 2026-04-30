@@ -27,14 +27,8 @@
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
     "@types/n3": "~1.26.0",
-    "@types/node": "~18",
-    "depcheck": "~1.4.7",
-    "n3": "~1.26.0",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "n3": "~1.26.0"
   },
   "files": [
     "dist/*.d.ts",

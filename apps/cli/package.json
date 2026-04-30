@@ -14,14 +14,7 @@
     "rdf-validate-shacl": "0.5.8"
   },
   "description": "Command line program to generate TypeScript code from SHACL shapes",
-  "devDependencies": {
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~18",
-    "depcheck": "~1.4.7",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
-  },
+  "devDependencies": {},
   "files": [
     "README.md",
     "dist/*.d.ts",

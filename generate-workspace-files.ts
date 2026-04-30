@@ -26,9 +26,6 @@ const externalDependencies = {
   "@rdfjs/types": "~2.0.1",
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
-  "@tsconfig/node18": "~18.2.4",
-  "@tsconfig/strictest": "~2.0.8",
-  "@types/node": "~18",
   "@types/n3": "~1.26.0",
   "@types/rdfjs__data-model": "~2.0.9",
   "@types/rdfjs__dataset": "~2.0.7",
@@ -46,7 +43,6 @@ const externalDependencies = {
   "change-case": "~5.4.4",
   "cmd-ts": "~0.13.0",
   "decimal.js": "~10.6.0",
-  depcheck: "~1.4.7",
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
@@ -61,12 +57,10 @@ const externalDependencies = {
   "reserved-identifiers": "~1.0.0",
   react: "~18",
   "react-dom": "~18",
-  rimraf: "~6.0.1",
   sparqljs: "3.7.3",
   toposort: "2.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
-  typescript: "5.9.3",
   "typescript-memoize": "~1.1.1",
   uuid: "~9.0.1",
   vite: "6.0.7",
@@ -451,23 +445,13 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               },
               {} as Record<string, string>,
             ),
-            ...(workspace.devDependencies?.external ?? [])
-              .concat(
-                "@tsconfig/node18",
-                "@tsconfig/strictest",
-                "@types/node",
-                "depcheck",
-                "rimraf",
-                "typescript",
-              )
-              .toSorted()
-              .reduce(
-                (map, packageName) => {
-                  map[packageName] = externalDependencies[packageName];
-                  return map;
-                },
-                {} as Record<string, string>,
-              ),
+            ...(workspace.devDependencies?.external ?? []).toSorted().reduce(
+              (map, packageName) => {
+                map[packageName] = externalDependencies[packageName];
+                return map;
+              },
+              {} as Record<string, string>,
+            ),
           },
           // 20251022: switch back to main + types to enable downstream "node" resolution
           // exports:
@@ -550,7 +534,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             },
             extends: [
               "@tsconfig/strictest/tsconfig.json",
-              "@tsconfig/node18/tsconfig.json",
+              "@tsconfig/node20/tsconfig.json",
             ],
             include: ["./**/*.ts", "../src/**/*"],
           },

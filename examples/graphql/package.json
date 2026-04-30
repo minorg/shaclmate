@@ -9,14 +9,8 @@
     "rdfjs-resource": "3.0.7"
   },
   "devDependencies": {
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~18",
     "@types/rdfjs__data-model": "~2.0.9",
-    "@types/rdfjs__dataset": "~2.0.7",
-    "depcheck": "~1.4.7",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "@types/rdfjs__dataset": "~2.0.7"
   },
   "files": [
     "dist/*.d.ts",

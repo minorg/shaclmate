@@ -16,22 +16,16 @@
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
     "@types/n3": "~1.26.0",
-    "@types/node": "~18",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
     "@types/rdfjs__prefix-map": "~0.1.5",
     "@types/rdfjs__serializer-turtle": "~1.1.0",
     "@types/sparqljs": "3.1.12",
     "@types/uuid": "~9.0.1",
-    "depcheck": "~1.4.7",
     "n3": "~1.26.0",
     "oxigraph": "0.4.11",
-    "rdf-validate-shacl": "0.5.8",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "rdf-validate-shacl": "0.5.8"
   },
   "files": [
     "dist/*.d.ts",
