@@ -552,7 +552,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               "@tsconfig/strictest/tsconfig.json",
               "@tsconfig/node18/tsconfig.json",
             ],
-            include: ["./**/*.ts"],
+            include: ["./**/*.ts", "../src/**/*"],
           },
           undefined,
           2,
