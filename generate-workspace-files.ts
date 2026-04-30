@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.15";
 
@@ -75,129 +76,7 @@ const externalDependencies = {
 type PackageName = "compiler" | "shacl-ast";
 
 interface Tsconfig {
-  compilerOptions?: {
-    //   allowArbitraryExtensions?: boolean;
-    allowImportingTsExtensions?: boolean;
-    //   allowJs?: boolean;
-    //   allowSyntheticDefaultImports?: boolean;
-    //   allowUmdGlobalAccess?: boolean;
-    //   allowUnreachableCode?: boolean;
-    //   allowUnusedLabels?: boolean;
-    //   alwaysStrict?: boolean;
-    //   assumeChangesOnlyAffectDirectDependencies?: boolean;
-    baseUrl?: string;
-    //   charset?: string;
-    //   checkJs?: boolean;
-    //   composite?: boolean;
-    //   customConditions?: string[];
-    declaration?: boolean;
-    //   declarationDir?: string;
-    declarationMap?: boolean;
-    //   disableReferencedProjectLoad?: boolean;
-    //   disableSourceOfProjectReferenceRedirect?: boolean;
-    //   disableSolutionSearching?: boolean;
-    //   downlevelIteration?: boolean;
-    //   emitBOM?: boolean;
-    //   emitDeclarationOnly?: boolean;
-    //   emitDecoratorMetadata?: boolean;
-    //   esModuleInterop?: boolean;
-    exactOptionalPropertyTypes?: boolean;
-    experimentalDecorators?: boolean;
-    forceConsistentCasingInFileNames?: boolean;
-    //   importHelpers?: boolean;
-    //   importsNotUsedAsValues?: "error" | "preserve" | "remove";
-    incremental?: boolean;
-    //   inlineSourceMap?: boolean;
-    //   inlineSources?: boolean;
-    //   isolatedDeclarations?: boolean;
-    isolatedModules?: boolean;
-    jsx?: "preserve" | "react" | "react-jsx" | "react-jsxdev" | "react-native";
-    //   jsxFactory?: string;
-    //   jsxFragmentFactory?: string;
-    //   jsxImportSource?: string;
-    //   keyofStringsOnly?: boolean;
-    lib?: string[];
-    //   mapRoot?: string;
-    //   maxNodeModuleJsDepth?: number;
-    module?:
-      | "amd"
-      | "commonjs"
-      | "es2015"
-      | "es2020"
-      | "es2022"
-      | "esnext"
-      | "es6"
-      | "node16"
-      | "nodenext"
-      | "none"
-      | "preserve"
-      | "system"
-      | "umd";
-    moduleDetection?: "auto" | "force" | "legacy";
-    moduleResolution?: "bundler" | "classic" | "node" | "node16" | "nodenext";
-    //   moduleSuffixes?: string[];
-    //   newLine?: "crlf" | "lf";
-    noEmit?: boolean;
-    //   noEmitHelpers?: boolean;
-    //   noEmitOnError?: boolean;
-    //   noErrorTruncation?: boolean;
-    //   noFallthroughCasesInSwitch?: boolean;
-    //   noImplicitAny?: boolean;
-    //   noImplicitOverride?: boolean;
-    //   noImplicitReturns?: boolean;
-    //   noImplicitThis?: boolean;
-    //   noImplicitUseStrict?: boolean;
-    //   noPropertyAccessFromIndexSignature?: boolean;
-    //   noResolve?: boolean;
-    noUncheckedIndexedAccess?: boolean;
-    //   noUnusedLocals?: boolean;
-    //   noUnusedParameters?: boolean;
-    outDir?: string;
-    //   outFile?: string;
-    //   paths?: Record<string, string[]>;
-    //   plugins?: { name: string; [key: string]: unknown }[];
-    //   preserveConstEnums?: boolean;
-    //   preserveSymlinks?: boolean;
-    //   pretty?: boolean;
-    //   removeComments?: boolean;
-    //   resolveJsonModule?: boolean;
-    //   resolvePackageJsonExports?: boolean;
-    //   resolvePackageJsonImports?: boolean;
-    rootDir?: string;
-    //   rootDirs?: string[];
-    //   skipDefaultLibCheck?: boolean;
-    skipLibCheck?: boolean;
-    sourceMap?: boolean;
-    //   sourceRoot?: string;
-    //   strict?: boolean;
-    //   strictBindCallApply?: boolean;
-    //   strictFunctionTypes?: boolean;
-    //   strictNullChecks?: boolean;
-    //   strictPropertyInitialization?: boolean;
-    //   stripInternal?: boolean;
-    //   suppressExcessPropertyErrors?: boolean;
-    //   suppressImplicitAnyIndexErrors?: boolean;
-    target?:
-      | "es2015"
-      | "es2016"
-      | "es2017"
-      | "es2018"
-      | "es2019"
-      | "es2020"
-      | "es2021"
-      | "es2022"
-      | "es2023"
-      | "es3"
-      | "es5"
-      | "es6"
-      | "esnext";
-    tsBuildInfoFile?: string;
-    //   typeRoots?: string[];
-    types?: string[];
-    useDefineForClassFields?: boolean;
-    //   useUnknownInCatchVariables?: boolean;
-    //   verbatimModuleSyntax?: boolean;
-  };
+  compilerOptions?: CompilerOptions;
   // exclude?: string[];
   extends?: string | string[];
   // files?: string[];
