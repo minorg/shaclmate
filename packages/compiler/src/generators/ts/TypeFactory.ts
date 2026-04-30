@@ -1,11 +1,10 @@
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import { LiteralDecoder, literalDatatypeDefinitions } from "@rdfx/literal";
 import base62 from "@sindresorhus/base62";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
-import { LiteralDecoder, literalDatatypeDefinitions } from "rdfjs-resource";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
 

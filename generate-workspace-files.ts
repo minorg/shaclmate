@@ -312,6 +312,7 @@ const workspaces = {
           "@rdfjs/term-map",
           "@rdfjs/term-set",
           "@rdfjs/types",
+          "@rdfx/literal",
           "@rdfx/resource",
           "@sindresorhus/base62",
           "@tpluscode/rdf-ns-builders",

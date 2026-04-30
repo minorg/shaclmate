@@ -1,8 +1,8 @@
 import TermMap from "@rdfjs/term-map";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { Resource } from "@rdfx/resource";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
-import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";

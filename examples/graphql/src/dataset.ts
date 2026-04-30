@@ -1,6 +1,6 @@
 import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
-import { ResourceSet } from "rdfjs-resource";
+import { ResourceSet } from "@rdfx/resource";
 import {
   Child,
   Nested,

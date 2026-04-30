@@ -1,5 +1,5 @@
 import type { Term as RdfjsTerm } from "@rdfjs/types";
-import { Resource } from "rdfjs-resource";
+import { Resource } from "@rdfx/resource";
 import type * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 

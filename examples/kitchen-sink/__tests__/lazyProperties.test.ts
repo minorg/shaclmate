@@ -1,8 +1,8 @@
 import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { ResourceSet } from "@rdfx/resource";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import { ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, expect, it } from "vitest";
 
 async function expectEmptyOptional<

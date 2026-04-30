@@ -23,7 +23,7 @@ export const imports = {
   GraphQLUnionType: imp("GraphQLUnionType@graphql"),
   Left: imp("Left@purify-ts"),
   Literal: imp("Literal@@rdfjs/types"),
-  LiteralFactory: imp("LiteralFactory@rdfjs-resource"),
+  LiteralFactory: imp("LiteralFactory@@rdfx/literal"),
   Maybe: imp("Maybe@purify-ts"),
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),

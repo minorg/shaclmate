@@ -1,5 +1,5 @@
+import type { PropertyPath } from "@rdfx/resource";
 import { Maybe } from "purify-ts";
-import type { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";

@@ -1,7 +1,6 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-
+import { LiteralDecoder } from "@rdfx/literal";
 import { Maybe, NonEmptyList } from "purify-ts";
-import { LiteralDecoder } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
