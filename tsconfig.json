@@ -2,6 +2,6 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "extends": "@tsconfig/node20/tsconfig.json",
+  "extends": ["@tsconfig/node20/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
   "include": ["*.ts"]
 }

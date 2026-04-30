@@ -93,7 +93,7 @@ const tsconfigDefault: Tsconfig = {
   },
   extends: [
     "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node18/tsconfig.json",
+    "@tsconfig/node20/tsconfig.json",
   ],
   include: ["src/**/*.ts"],
 };
@@ -165,7 +165,7 @@ const workspaces = {
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
+          "@tsconfig/node20/tsconfig.json",
         ],
         include: ["src/**/*.ts"],
       },
@@ -258,7 +258,7 @@ const workspaces = {
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
+          "@tsconfig/node20/tsconfig.json",
         ],
         include: ["src/**/*.ts"],
       },
