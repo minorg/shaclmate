@@ -8,13 +8,13 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
+import { LiteralFactory } from "@rdfx/literal";
 import {
-  LiteralFactory,
   PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
-} from "rdfjs-resource";
+} from "@rdfx/resource";
+import { Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
 import { z } from "zod";
 
 /**
@@ -1153,12 +1153,14 @@ export namespace FormNodeShape {
       return z.object({
         "@id": z.string().min(1),
         $type: z.literal("FormNodeShape"),
-        emptyStringSetProperty: z
+        emptyStringSetProperty: z.string().array().optional().readonly(),
+        nestedObjectProperty: NestedNodeShape.$Json.schema(),
+        nonEmptyStringSetProperty: z
           .string()
           .array()
-          .default(() => []),
-        nestedObjectProperty: NestedNodeShape.$Json.schema(),
-        nonEmptyStringSetProperty: z.string().array().nonempty().min(1),
+          .nonempty()
+          .min(1)
+          .readonly(),
         optionalStringProperty: z.string().optional(),
         requiredIntegerProperty: z.number(),
         requiredStringProperty: z.string(),
@@ -1851,10 +1853,12 @@ export namespace $Object {
 
   export namespace $Json {
     export const schema = () =>
-      z.discriminatedUnion("$type", [
-        FormNodeShape.$Json.schema(),
-        NestedNodeShape.$Json.schema(),
-      ]);
+      z
+        .discriminatedUnion("$type", [
+          FormNodeShape.$Json.schema(),
+          NestedNodeShape.$Json.schema(),
+        ])
+        .readonly();
 
     export function $parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);

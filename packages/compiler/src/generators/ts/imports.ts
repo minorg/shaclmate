@@ -30,10 +30,10 @@ export const imports = {
   Quad: imp("Quad@@rdfjs/types"),
   Quad_Graph: imp("Quad_Graph@@rdfjs/types"),
   RdfjsResourcePropertyPath: imp(
-    "PropertyPath:RdfjsResourcePropertyPath@rdfjs-resource",
+    "PropertyPath:RdfjsResourcePropertyPath@@rdfx/resource",
   ),
-  Resource: imp("Resource@rdfjs-resource"),
-  ResourceSet: imp("ResourceSet@rdfjs-resource"),
+  Resource: imp("Resource@@rdfx/resource"),
+  ResourceSet: imp("ResourceSet@@rdfx/resource"),
   Right: imp("Right@purify-ts"),
   sha256: imp("sha256@js-sha256"),
   sparqljs: imp("sparqljs*sparqljs"),
