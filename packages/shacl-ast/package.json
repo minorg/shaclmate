@@ -5,13 +5,13 @@
     "@rdfjs/term-map": "~2.0.2",
     "@rdfjs/term-set": "~2.0.3",
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/resource": "0.0.2",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
     "@types/rdfjs__term-map": "~2.0.10",
     "@types/rdfjs__term-set": "~2.0.9",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.7",
     "typescript-memoize": "~1.1.1"
   },
   "devDependencies": {
