@@ -8,6 +8,12 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import { LiteralFactory } from "@rdfx/literal";
+import {
+  PropertyPath as RdfjsResourcePropertyPath,
+  Resource,
+  ResourceSet,
+} from "@rdfx/resource";
 import {
   GraphQLFloat,
   GraphQLID,
@@ -20,12 +26,6 @@ import {
   GraphQLUnionType,
 } from "graphql";
 import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
-import {
-  LiteralFactory,
-  PropertyPath as RdfjsResourcePropertyPath,
-  Resource,
-  ResourceSet,
-} from "rdfjs-resource";
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;

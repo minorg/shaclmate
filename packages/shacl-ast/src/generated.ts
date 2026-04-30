@@ -8,13 +8,13 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
-import { Either, Left, Maybe, Right } from "purify-ts";
+import { LiteralFactory } from "@rdfx/literal";
 import {
-  LiteralFactory,
   PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
-} from "rdfjs-resource";
+} from "@rdfx/resource";
+import { Either, Left, Maybe, Right } from "purify-ts";
 
 interface $BooleanFilter {
   readonly value?: boolean;

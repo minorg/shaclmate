@@ -15,7 +15,7 @@
   },
   "extends": [
     "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node18/tsconfig.json"
+    "@tsconfig/node20/tsconfig.json"
   ],
   "include": [
     "src/**/*.ts"

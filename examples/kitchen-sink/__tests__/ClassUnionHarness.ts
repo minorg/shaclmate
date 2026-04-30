@@ -1,6 +1,6 @@
 import type { Quad_Graph, Variable } from "@rdfjs/types";
+import type { Resource, ResourceSet } from "@rdfx/resource";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
-import type { Resource, ResourceSet } from "rdfjs-resource";
 import { Harness } from "./Harness.js";
 
 export class ClassUnionHarness<

@@ -10,10 +10,9 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
+import { Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
-
 import { Either, Left } from "purify-ts";
-import { Resource, ResourceSet } from "rdfjs-resource";
 import type { Curie } from "./Curie.js";
 import { CurieFactory } from "./CurieFactory.js";
 import type * as generated from "./generated.js";

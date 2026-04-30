@@ -1,6 +1,6 @@
-import { OxigraphSparqlClient } from "@kos-kit/sparql-client";
 import dataFactory from "@rdfjs/data-model";
 import type { DatasetCore, Quad_Graph, Variable } from "@rdfjs/types";
+import { OxigraphSparqlClient } from "@rdfx/sparql-client";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import * as oxigraph from "oxigraph";
 import { describe } from "vitest";

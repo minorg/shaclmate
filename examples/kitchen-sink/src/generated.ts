@@ -9,6 +9,12 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import { LiteralFactory } from "@rdfx/literal";
+import {
+  PropertyPath as RdfjsResourcePropertyPath,
+  Resource,
+  ResourceSet,
+} from "@rdfx/resource";
 import { Decimal as BigDecimal } from "decimal.js";
 import { sha256 } from "js-sha256";
 import {
@@ -19,12 +25,6 @@ import {
   NonEmptyList,
   Right,
 } from "purify-ts";
-import {
-  LiteralFactory,
-  PropertyPath as RdfjsResourcePropertyPath,
-  Resource,
-  ResourceSet,
-} from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
 import { z } from "zod";

@@ -1,8 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { PropertyPath, Resource } from "@rdfx/resource";
 import type { NodeKind } from "@shaclmate/shacl-ast";
-
 import type { Maybe } from "purify-ts";
-import { PropertyPath, Resource } from "rdfjs-resource";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";

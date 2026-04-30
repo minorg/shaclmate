@@ -3,20 +3,14 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/resource": "0.0.2",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
-    "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.7"
+    "purify-ts": "~2.1.4"
   },
   "devDependencies": {
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~18",
     "@types/rdfjs__data-model": "~2.0.9",
-    "@types/rdfjs__dataset": "~2.0.7",
-    "depcheck": "~1.4.7",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "@types/rdfjs__dataset": "~2.0.7"
   },
   "files": [
     "dist/*.d.ts",
@@ -44,5 +38,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.15"
+  "version": "4.0.16"
 }

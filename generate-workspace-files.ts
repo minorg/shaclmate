@@ -5,13 +5,14 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.15";
+const VERSION = "4.0.16";
+
+const rdfxVersion = "0.0.2";
 
 const externalDependencies = {
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",
   "@jsonforms/react": "3.5.1",
-  "@kos-kit/sparql-client": "2.0.116",
   "@mui/icons-material": "~6.1.0",
   // "@mui/lab": "6.0.0-beta.22",
   "@mui/material": "~6.1.0",
@@ -24,11 +25,11 @@ const externalDependencies = {
   "@rdfjs/term-map": "~2.0.2",
   "@rdfjs/term-set": "~2.0.3",
   "@rdfjs/types": "~2.0.1",
+  "@rdfx/literal": rdfxVersion,
+  "@rdfx/resource": rdfxVersion,
+  "@rdfx/sparql-client": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
-  "@tsconfig/node18": "~18.2.4",
-  "@tsconfig/strictest": "~2.0.8",
-  "@types/node": "~18",
   "@types/n3": "~1.26.0",
   "@types/rdfjs__data-model": "~2.0.9",
   "@types/rdfjs__dataset": "~2.0.7",
@@ -46,7 +47,6 @@ const externalDependencies = {
   "change-case": "~5.4.4",
   "cmd-ts": "~0.13.0",
   "decimal.js": "~10.6.0",
-  depcheck: "~1.4.7",
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
@@ -57,16 +57,13 @@ const externalDependencies = {
   plur: "~5.1.0",
   "purify-ts": "~2.1.4",
   "rdf-validate-shacl": "0.5.8",
-  "rdfjs-resource": "3.0.7",
   "reserved-identifiers": "~1.0.0",
   react: "~18",
   "react-dom": "~18",
-  rimraf: "~6.0.1",
   sparqljs: "3.7.3",
   toposort: "2.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
-  typescript: "5.9.3",
   "typescript-memoize": "~1.1.1",
   uuid: "~9.0.1",
   vite: "6.0.7",
@@ -99,7 +96,7 @@ const tsconfigDefault: Tsconfig = {
   },
   extends: [
     "@tsconfig/strictest/tsconfig.json",
-    "@tsconfig/node18/tsconfig.json",
+    "@tsconfig/node20/tsconfig.json",
   ],
   include: ["src/**/*.ts"],
 };
@@ -171,7 +168,7 @@ const workspaces = {
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
+          "@tsconfig/node20/tsconfig.json",
         ],
         include: ["src/**/*.ts"],
       },
@@ -186,17 +183,17 @@ const workspaces = {
           // "@mui/lab": "6.0.0-beta.22",
           "@mui/material",
           "@mui/x-date-pickers",
-          "react",
-          "react-dom",
+          "@rdfx/resource",
           "@rdfjs/data-model",
           "@rdfjs/dataset",
           "@rdfjs/types",
           "@types/rdfjs__data-model",
           "@types/rdfjs__dataset",
           "@types/n3",
+          "react",
+          "react-dom",
           "n3",
           "purify-ts",
-          "rdfjs-resource",
           "zod",
         ],
       },
@@ -215,20 +212,20 @@ const workspaces = {
       tsconfig: {
         compilerOptions: {
           tsBuildInfoFile: "./node_modules/.tmp/tsconfig.tsbuildinfo",
-          target: "es2020",
+          target: "es2020" as any,
           exactOptionalPropertyTypes: false,
           useDefineForClassFields: true,
           noUncheckedIndexedAccess: false,
           lib: ["ES2020", "DOM", "DOM.Iterable"],
-          module: "esnext",
+          module: "esnext" as any,
           skipLibCheck: true,
 
-          moduleResolution: "bundler",
+          moduleResolution: "bundler" as any,
           allowImportingTsExtensions: true,
           isolatedModules: true,
-          moduleDetection: "force",
+          moduleDetection: "force" as any,
           noEmit: true,
-          jsx: "react-jsx",
+          jsx: "react-jsx" as any,
         },
         extends: ["@tsconfig/strictest/tsconfig.json"],
         include: ["src"],
@@ -241,10 +238,10 @@ const workspaces = {
           "@rdfjs/data-model",
           "@rdfjs/dataset",
           "@rdfjs/types",
+          "@rdfx/resource",
           "graphql",
           "graphql-yoga",
           "purify-ts",
-          "rdfjs-resource",
         ],
       },
       devDependencies: {
@@ -264,7 +261,7 @@ const workspaces = {
         },
         extends: [
           "@tsconfig/strictest/tsconfig.json",
-          "@tsconfig/node18/tsconfig.json",
+          "@tsconfig/node20/tsconfig.json",
         ],
         include: ["src/**/*.ts"],
       },
@@ -276,10 +273,10 @@ const workspaces = {
           "@rdfjs/data-model",
           "@rdfjs/dataset",
           "@rdfjs/types",
+          "@rdfx/resource",
           "decimal.js",
           "js-sha256",
           "purify-ts",
-          "rdfjs-resource",
           "sparqljs",
           "uuid",
           "zod",
@@ -287,9 +284,9 @@ const workspaces = {
       },
       devDependencies: {
         external: [
-          "@kos-kit/sparql-client",
           "@rdfjs/prefix-map",
           "@rdfjs/serializer-turtle",
+          "@rdfx/sparql-client",
           "@tpluscode/rdf-ns-builders",
           "@types/n3",
           "@types/rdfjs__data-model",
@@ -315,6 +312,8 @@ const workspaces = {
           "@rdfjs/term-map",
           "@rdfjs/term-set",
           "@rdfjs/types",
+          "@rdfx/literal",
+          "@rdfx/resource",
           "@sindresorhus/base62",
           "@tpluscode/rdf-ns-builders",
           "@types/rdfjs__data-model",
@@ -327,7 +326,6 @@ const workspaces = {
           "pino",
           "plur",
           "purify-ts",
-          "rdfjs-resource",
           "reserved-identifiers",
           "toposort",
           "ts-invariant",
@@ -349,13 +347,13 @@ const workspaces = {
           "@rdfjs/term-map",
           "@rdfjs/term-set",
           "@rdfjs/types",
+          "@rdfx/resource",
           "@tpluscode/rdf-ns-builders",
           "@types/rdfjs__data-model",
           "@types/rdfjs__dataset",
           "@types/rdfjs__term-map",
           "@types/rdfjs__term-set",
           "purify-ts",
-          "rdfjs-resource",
           "typescript-memoize",
         ],
       },
@@ -451,23 +449,13 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
               },
               {} as Record<string, string>,
             ),
-            ...(workspace.devDependencies?.external ?? [])
-              .concat(
-                "@tsconfig/node18",
-                "@tsconfig/strictest",
-                "@types/node",
-                "depcheck",
-                "rimraf",
-                "typescript",
-              )
-              .toSorted()
-              .reduce(
-                (map, packageName) => {
-                  map[packageName] = externalDependencies[packageName];
-                  return map;
-                },
-                {} as Record<string, string>,
-              ),
+            ...(workspace.devDependencies?.external ?? []).toSorted().reduce(
+              (map, packageName) => {
+                map[packageName] = externalDependencies[packageName];
+                return map;
+              },
+              {} as Record<string, string>,
+            ),
           },
           // 20251022: switch back to main + types to enable downstream "node" resolution
           // exports:
@@ -550,7 +538,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             },
             extends: [
               "@tsconfig/strictest/tsconfig.json",
-              "@tsconfig/node18/tsconfig.json",
+              "@tsconfig/node20/tsconfig.json",
             ],
             include: ["./**/*.ts", "../src/**/*"],
           },

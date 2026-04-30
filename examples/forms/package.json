@@ -9,26 +9,20 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/resource": "0.0.2",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
     "n3": "~1.26.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.7",
     "react": "~18",
     "react-dom": "~18",
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~18",
     "@types/react": "~18",
     "@types/react-dom": "~18",
     "@vitejs/plugin-react": "~4.3.4",
-    "depcheck": "~1.4.7",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3",
     "vite": "6.0.7"
   },
   "license": "Apache-2.0",
@@ -49,5 +43,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.15"
+  "version": "4.0.16"
 }

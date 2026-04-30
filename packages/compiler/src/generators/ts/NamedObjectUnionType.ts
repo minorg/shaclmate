@@ -1,6 +1,6 @@
+import { PropertyPath } from "@rdfx/resource";
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import { PropertyPath } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
 import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";

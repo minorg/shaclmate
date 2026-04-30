@@ -1,16 +1,10 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@shaclmate/compiler": "4.0.15",
+    "@shaclmate/compiler": "4.0.16",
     "@rdfjs/namespace": "~2.0.1",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
-    "@types/node": "~18",
-    "@types/rdfjs__namespace": "~2.0.10",
-    "depcheck": "~1.4.7",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "@types/rdfjs__namespace": "~2.0.10"
   },
   "files": [
     "dist/*.d.ts",
@@ -37,5 +31,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.15"
+  "version": "4.0.16"
 }

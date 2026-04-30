@@ -3,35 +3,29 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
+    "@rdfx/resource": "0.0.2",
     "decimal.js": "~10.6.0",
     "js-sha256": "~0.11.0",
     "purify-ts": "~2.1.4",
-    "rdfjs-resource": "3.0.7",
     "sparqljs": "3.7.3",
     "uuid": "~9.0.1",
     "zod": "~4.1.12"
   },
   "devDependencies": {
-    "@kos-kit/sparql-client": "2.0.116",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
+    "@rdfx/sparql-client": "0.0.2",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
-    "@tsconfig/node18": "~18.2.4",
-    "@tsconfig/strictest": "~2.0.8",
     "@types/n3": "~1.26.0",
-    "@types/node": "~18",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
     "@types/rdfjs__prefix-map": "~0.1.5",
     "@types/rdfjs__serializer-turtle": "~1.1.0",
     "@types/sparqljs": "3.1.12",
     "@types/uuid": "~9.0.1",
-    "depcheck": "~1.4.7",
     "n3": "~1.26.0",
     "oxigraph": "0.4.11",
-    "rdf-validate-shacl": "0.5.8",
-    "rimraf": "~6.0.1",
-    "typescript": "5.9.3"
+    "rdf-validate-shacl": "0.5.8"
   },
   "files": [
     "dist/*.d.ts",
@@ -58,5 +52,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.15"
+  "version": "4.0.16"
 }
