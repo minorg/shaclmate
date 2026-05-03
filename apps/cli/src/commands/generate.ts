@@ -75,7 +75,7 @@ export async function generate({
     const prefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
     {
-      const validationReport = new SHACLValidator(
+      const validationReport = await new SHACLValidator(
         shaclShaclDataset,
         {},
       ).validate(dataset);
