@@ -9,7 +9,7 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/resource": "0.0.2",
+    "@rdfx/resource": "0.0.5",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
@@ -43,5 +43,5 @@
     "start": "vite dev --port 3000"
   },
   "type": "module",
-  "version": "4.0.16"
+  "version": "4.0.17"
 }

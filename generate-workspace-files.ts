@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.16";
+const VERSION = "4.0.17";
 
-const rdfxVersion = "0.0.2";
+const rdfxVersion = "0.0.5";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -30,6 +30,7 @@ const externalDependencies = {
   "@rdfx/literal": rdfxVersion,
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
+  "@rdfx/testing": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
   "@tsconfig/node20": "^20",
@@ -571,6 +572,7 @@ fs.writeFileSync(
       devDependencies: (
         [
           "@biomejs/biome",
+          "@rdfx/testing",
           "@tsconfig/node20",
           "@tsconfig/strictest",
           "@types/node",
