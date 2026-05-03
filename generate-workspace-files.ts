@@ -8,8 +8,10 @@ import type { CompilerOptions } from "typescript";
 const VERSION = "4.0.16";
 
 const rdfxVersion = "0.0.2";
+const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
+  "@biomejs/biome": "2.3.10",
   "@jsonforms/core": "3.5.1",
   "@jsonforms/material-renderers": "3.5.1",
   "@jsonforms/react": "3.5.1",
@@ -30,7 +32,10 @@ const externalDependencies = {
   "@rdfx/sparql-client": rdfxVersion,
   "@sindresorhus/base62": "~0.1.0",
   "@tpluscode/rdf-ns-builders": "~4.3.0",
+  "@tsconfig/node20": "^20",
+  "@tsconfig/strictest": "~2.0.8",
   "@types/n3": "~1.26.0",
+  "@types/node": "^20",
   "@types/rdfjs__data-model": "~2.0.9",
   "@types/rdfjs__dataset": "~2.0.7",
   "@types/rdfjs__namespace": "~2.0.10",
@@ -43,10 +48,12 @@ const externalDependencies = {
   "@types/sparqljs": "3.1.12",
   "@types/toposort": "2.0.7",
   "@types/uuid": "~9.0.1",
+  "@vitest/coverage-v8": vitestVersion,
   "@vitejs/plugin-react": "~4.3.4",
   "change-case": "~5.4.4",
   "cmd-ts": "~0.13.0",
   "decimal.js": "~10.6.0",
+  depcheck: "~1.4.7",
   graphql: "16.11.0",
   "graphql-scalars": "1.24.2",
   "graphql-yoga": "5.14.0",
@@ -60,13 +67,19 @@ const externalDependencies = {
   "reserved-identifiers": "~1.0.0",
   react: "~18",
   "react-dom": "~18",
+  rimraf: "~6.0.1",
   sparqljs: "3.7.3",
   toposort: "2.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
+  tsx: "~4.16.2",
+  typescript: "5.9.3",
   "typescript-memoize": "~1.1.1",
+  turbo: "~2.5.5",
   uuid: "~9.0.1",
   vite: "6.0.7",
+  vitest: vitestVersion,
+  "vitest-fetch-mock": "~0.4.5",
   zod: "~4.1.12",
 };
 
@@ -549,3 +562,64 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
     }
   }
 }
+
+// Root package.json
+fs.writeFileSync(
+  path.join(myDirPath, "package.json"),
+  JSON.stringify(
+    {
+      devDependencies: (
+        [
+          "@biomejs/biome",
+          "@tsconfig/node20",
+          "@tsconfig/strictest",
+          "@types/node",
+          "@vitest/coverage-v8",
+          "depcheck",
+          "rimraf",
+          "typescript",
+          "tsx",
+          "turbo",
+          "vitest",
+          "vitest-fetch-mock",
+        ] satisfies readonly (keyof typeof externalDependencies)[]
+      )
+        .toSorted()
+        .reduce(
+          (map, packageName) => {
+            map[packageName] = externalDependencies[packageName];
+            return map;
+          },
+          {} as Record<string, string>,
+        ),
+      name: "shaclmate",
+      optionalDependencies: {
+        "@biomejs/cli-linux-x64": externalDependencies["@biomejs/biome"],
+      },
+      packageManager: "npm@11.11.0",
+      private: true,
+      scripts: {
+        build: "turbo run build",
+        check: "biome check",
+        "check:write": "biome check --write",
+        "check:write:unsafe": "biome check --write --unsafe",
+        clean: "turbo run clean",
+        depcheck: "turbo run depcheck",
+        dev: "turbo run --concurrency 12 dev dev:tests",
+        test: "vitest run",
+        "test:coverage": "vitest run --coverage",
+        "test:watch": "vitest watch",
+        typecheck: "turbo run typecheck",
+        "typecheck:watch": "turbo run --concurrency 12 dev:noEmit dev:tests",
+      },
+      workspaces: Object.entries(workspaces).flatMap(
+        ([workspacesDirectoryName, workspaces_]) =>
+          Object.keys(workspaces_).map(
+            (workspaceName) => `${workspacesDirectoryName}/${workspaceName}`,
+          ),
+      ),
+    },
+    undefined,
+    2,
+  ),
+);

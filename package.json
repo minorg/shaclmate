@@ -7,9 +7,9 @@
     "@vitest/coverage-v8": "~4.1.5",
     "depcheck": "~1.4.7",
     "rimraf": "~6.0.1",
-    "typescript": "5.9.3",
     "tsx": "~4.16.2",
     "turbo": "~2.5.5",
+    "typescript": "5.9.3",
     "vitest": "~4.1.5",
     "vitest-fetch-mock": "~0.4.5"
   },
@@ -34,8 +34,12 @@
     "typecheck:watch": "turbo run --concurrency 12 dev:noEmit dev:tests"
   },
   "workspaces": [
-    "apps/*",
-    "examples/*",
-    "packages/*"
+    "apps/cli",
+    "examples/api",
+    "examples/forms",
+    "examples/graphql",
+    "examples/kitchen-sink",
+    "packages/compiler",
+    "packages/shacl-ast"
   ]
 }
