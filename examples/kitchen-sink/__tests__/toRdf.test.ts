@@ -150,11 +150,10 @@ describe("toRdf", async () => {
       );
       expect(shapesGraph.match(shapeNode).size).toBeGreaterThan(0);
 
-      const validationReport = new SHACLValidator(shapesGraph, {}).validateNode(
-        dataGraph,
-        dataResource.identifier,
-        shapeNode,
-      );
+      const validationReport = await new SHACLValidator(
+        shapesGraph,
+        {},
+      ).validateNode(dataGraph, dataResource.identifier, shapeNode);
       if (validationReport.conforms) {
         return;
       }
