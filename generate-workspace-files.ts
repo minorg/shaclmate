@@ -73,6 +73,7 @@ const externalDependencies = {
   "react-dom": "~18",
   rimraf: "~6.0.1",
   sparqljs: "3.7.3",
+  "tmp-promise": "~3.0.3",
   toposort: "2.0.2",
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
@@ -144,14 +145,13 @@ const workspaces = {
       },
       dependencies: {
         external: [
-          "@rdfjs/types",
           "@rdfjs/prefix-map",
+          "@rdfjs/serializer-turtle",
           "@rdfx/fs",
-          "@types/n3",
-          "@types/rdfjs__prefix-map",
-          "@types/which",
+          "@tpluscode/rdf-ns-builders",
           "cmd-ts",
           "n3",
+          "tmp-promise",
           "pino",
           "pino-pretty",
           "purify-ts",
@@ -159,6 +159,14 @@ const workspaces = {
           "which",
         ],
         internal: ["compiler"],
+      },
+      devDependencies: {
+        external: [
+          "@rdfjs/types",
+          "@types/n3",
+          "@types/rdfjs__prefix-map",
+          "@types/which",
+        ],
       },
       description:
         "Command line program to generate TypeScript code from SHACL shapes",

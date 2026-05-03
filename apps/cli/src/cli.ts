@@ -14,6 +14,7 @@ import {
 } from "cmd-ts";
 import { ExistingPath } from "cmd-ts/dist/cjs/batteries/fs.js";
 import { generate } from "./commands/generate.js";
+import { validate } from "./commands/validate.js";
 
 const inputPaths = restPositionals({
   displayName: "inputPaths",
@@ -35,6 +36,7 @@ run(
   subcommands({
     cmds: {
       generate: subcommands({
+        name: "generate",
         cmds: {
           "ast-json": command({
             name: "ast-json",
@@ -44,11 +46,13 @@ run(
               outputFilePath,
             },
             handler: async ({ inputPaths, outputFilePath }) => {
-              generate({
-                generator: new AstJsonGenerator(),
-                inputPaths,
-                outputFilePath,
-              });
+              (
+                await generate({
+                  generator: new AstJsonGenerator(),
+                  inputPaths,
+                  outputFilePath,
+                })
+              ).unsafeCoerce();
             },
           }),
           ts: command({
@@ -59,11 +63,13 @@ run(
               outputFilePath,
             },
             handler: async ({ inputPaths, outputFilePath }) => {
-              generate({
-                generator: new TsGenerator(),
-                inputPaths,
-                outputFilePath,
-              });
+              (
+                await generate({
+                  generator: new TsGenerator(),
+                  inputPaths,
+                  outputFilePath,
+                })
+              ).unsafeCoerce();
             },
           }),
           zod: command({
@@ -74,15 +80,40 @@ run(
               outputFilePath,
             },
             handler: async ({ inputPaths, outputFilePath }) => {
-              generate({
-                generator: new ZodGenerator(),
-                inputPaths,
-                outputFilePath,
-              });
+              (
+                await generate({
+                  generator: new ZodGenerator(),
+                  inputPaths,
+                  outputFilePath,
+                })
+              ).unsafeCoerce();
             },
           }),
         },
-        name: "generate",
+      }),
+      validate: command({
+        name: "validate",
+        description: "validate a data graph with a shapes graph",
+        args: {
+          dataGraphPaths: restPositionals({
+            description: "path(s) to a file or directory of data graph files",
+            type: ExistingPath,
+          }),
+          shapesGraphPath: option({
+            description: "path to a file or directory of shapes graph files",
+            short: "s",
+            long: "--shapes-graph",
+            type: ExistingPath,
+          }),
+        },
+        handler: async ({ dataGraphPaths, shapesGraphPath }) => {
+          (
+            await validate({
+              dataGraphPaths,
+              shapesGraphPaths: [shapesGraphPath],
+            })
+          ).unsafeCoerce();
+        },
       }),
     },
     description: "shaclmate command line interface",
