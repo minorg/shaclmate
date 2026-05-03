@@ -46,12 +46,10 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         objectDataset(data.concreteChildClasses),
       );
       expect(
-        (
-          await objectSet.concreteChildClass(
-            dataFactory.namedNode("http://example.com/nonextant"),
-          )
-        ).isLeft(),
-      ).toStrictEqual(true);
+        await objectSet.concreteChildClass(
+          dataFactory.namedNode("http://example.com/nonextant"),
+        ),
+      ).toBeLeft();
     });
 
     describe("union", () => {

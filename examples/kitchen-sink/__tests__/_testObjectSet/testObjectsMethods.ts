@@ -66,15 +66,13 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
 
       it("missing", async ({ expect }) => {
         expect(
-          (
-            await objectSet.concreteChildClasses({
-              identifiers: [
-                dataFactory.namedNode("http://example.com/nonextant"),
-                data.concreteChildClasses[0].$identifier,
-              ],
-            })
-          ).isLeft(),
-        ).toStrictEqual(true);
+          await objectSet.concreteChildClasses({
+            identifiers: [
+              dataFactory.namedNode("http://example.com/nonextant"),
+              data.concreteChildClasses[0].$identifier,
+            ],
+          }),
+        ).toBeLeft();
       });
     });
   });

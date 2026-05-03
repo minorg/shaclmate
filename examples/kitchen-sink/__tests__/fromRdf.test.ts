@@ -5,6 +5,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
+import "@rdfx/testing";
 
 describe("fromRdf", () => {
   let invalidLanguageInResource: Resource;
@@ -103,7 +104,7 @@ describe("fromRdf", () => {
 
     const fromRdfInstance =
       kitchenSink.ExplicitFromToRdfTypesClass.$fromRdfResource(resource);
-    expect(fromRdfInstance.isLeft()).toBe(true);
+    expect(fromRdfInstance).toBeLeft();
   });
 
   it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
@@ -185,8 +186,8 @@ describe("fromRdf", () => {
         new ResourceSet(dataset, {
           dataFactory,
         }).resource(identifier),
-      ).isLeft(),
-    );
+      ),
+    ).toBeLeft();
     // expect(instance.hasLiteralValueProperty.isNothing()).toStrictEqual(true);
   });
 
@@ -226,7 +227,7 @@ describe("fromRdf", () => {
         dataFactory,
       }).resource(identifier),
     );
-    expect(result.isLeft()).toBe(true);
+    expect(result).toBeLeft();
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
@@ -253,7 +254,7 @@ describe("fromRdf", () => {
         dataFactory,
       }).resource(identifier),
     );
-    expect(result.isLeft()).toBe(true);
+    expect(result).toBeLeft();
     expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
@@ -277,8 +278,8 @@ describe("fromRdf", () => {
     expect(
       kitchenSink.LanguageInPropertiesClass.$fromRdfResource(
         invalidLanguageInResource,
-      ).isLeft(),
-    );
+      ),
+    ).toBeLeft();
   });
 
   it("preferredLanguages: []", ({ expect }) => {
@@ -314,8 +315,8 @@ describe("fromRdf", () => {
         {
           preferredLanguages: [""],
         },
-      ).isLeft(),
-    ).toStrictEqual(true);
+      ),
+    ).toBeLeft();
   });
 
   it("preferredLanguages: ['', 'en']", ({ expect }) => {
@@ -398,8 +399,8 @@ describe("fromRdf", () => {
         })
           .resource(dataFactory.blankNode())
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
-      ).isLeft(),
-    ).toBe(true);
+      ),
+    ).toBeLeft();
   });
 
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
@@ -412,8 +413,8 @@ describe("fromRdf", () => {
             dataFactory.namedNode("http://example.com/InIdentifierInstance3"),
           )
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
-      ).isLeft(),
-    ).toBe(true);
+      ),
+    ).toBeLeft();
   });
 
   it("reject malformed list", ({ expect }) => {
@@ -428,7 +429,7 @@ describe("fromRdf", () => {
     );
     const result =
       kitchenSink.ListPropertiesClass.$fromRdfResource(instanceResource);
-    expect(result.isLeft()).toBe(true);
+    expect(result).toBeLeft();
     // expect(result.extract()).toBeInstanceOf(Resource.ListStructureError);
   });
 
@@ -447,7 +448,7 @@ describe("fromRdf", () => {
     listResource.add(rdf.rest, rdf.nil);
     const result =
       kitchenSink.ListPropertiesClass.$fromRdfResource(instanceResource);
-    expect(result.isLeft()).toBe(true);
+    expect(result).toBeLeft();
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
@@ -463,7 +464,7 @@ describe("fromRdf", () => {
     );
     const result =
       kitchenSink.PropertyCardinalitiesClass.$fromRdfResource(instanceResource);
-    expect(result.isLeft()).toBe(true);
+    expect(result).toBeLeft();
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
@@ -505,8 +506,8 @@ describe("fromRdf", () => {
     const childResource = new ResourceSet(dataset).resource(child.$identifier);
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
-      kitchenSink.ConcreteChildClass.$fromRdfResource(childResource).isLeft(),
-    ).toStrictEqual(true);
+      kitchenSink.ConcreteChildClass.$fromRdfResource(childResource),
+    ).toBeLeft();
     // Add rdf:type <subclass> statement
     dataset.add(
       dataFactory.quad(
