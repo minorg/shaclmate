@@ -7,6 +7,12 @@ export const logger = pino(
       process.env["NODE_ENV"] === "test"
         ? "debug"
         : "info",
+    transport: {
+      target: "pino-pretty",
+      options: {
+        colorize: true,
+      },
+    },
   },
   (pino as any)["destination"] ? (pino as any).destination(2) : undefined,
 );

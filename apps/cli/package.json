@@ -9,18 +9,23 @@
     "@rdfx/fs": "0.0.7",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__prefix-map": "~0.1.5",
-    "cmd-ts": "~0.13.0",
+    "@types/which": "~3.0.4",
+    "cmd-ts": "~0.15.0",
     "n3": "~1.26.0",
     "pino": "~9.1.0",
+    "pino-pretty": "~13.1.2",
     "purify-ts": "~2.1.4",
-    "rdf-validate-shacl": "0.5.8"
+    "rdf-validate-shacl": "0.6.5",
+    "which": "~6.0.1"
   },
   "description": "Command line program to generate TypeScript code from SHACL shapes",
   "devDependencies": {},
   "files": [
     "README.md",
     "dist/*.d.ts",
-    "dist/*.js"
+    "dist/*.js",
+    "dist/commands/*.d.ts",
+    "dist/commands/*.js"
   ],
   "homepage": "https://github.com/minorg/shaclmate",
   "keywords": [

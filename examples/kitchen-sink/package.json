@@ -25,7 +25,7 @@
     "@types/uuid": "~9.0.1",
     "n3": "~1.26.0",
     "oxigraph": "0.4.11",
-    "rdf-validate-shacl": "0.5.8"
+    "rdf-validate-shacl": "0.6.5"
   },
   "files": [
     "dist/*.d.ts",
