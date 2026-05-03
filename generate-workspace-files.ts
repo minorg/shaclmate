@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.17";
 
-const rdfxVersion = "0.0.6";
+const rdfxVersion = "0.0.7";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -513,7 +513,7 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
                 }
               : {}),
             test: fs.existsSync(path.join(packageDirectoryPath, "__tests__"))
-              ? `cd ../.. && vitest run --project ${packageName}`
+              ? `cd ../.. && vitest run ${packageDirectoryPath}/__tests__`
               : undefined,
             typecheck: "tsc --noEmit",
             "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",

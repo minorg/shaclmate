@@ -6,7 +6,7 @@
     "@shaclmate/compiler": "4.0.17",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/fs": "0.0.6",
+    "@rdfx/fs": "0.0.7",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__prefix-map": "~0.1.5",
     "cmd-ts": "~0.13.0",

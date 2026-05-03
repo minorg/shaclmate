@@ -3,7 +3,7 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/resource": "0.0.6",
+    "@rdfx/resource": "0.0.7",
     "decimal.js": "~10.6.0",
     "js-sha256": "~0.11.0",
     "purify-ts": "~2.1.4",
@@ -14,7 +14,7 @@
   "devDependencies": {
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
-    "@rdfx/sparql-client": "0.0.6",
+    "@rdfx/sparql-client": "0.0.7",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__data-model": "~2.0.9",
@@ -46,7 +46,7 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
-    "test": "cd ../.. && vitest run --project @shaclmate/kitchen-sink-example",
+    "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/examples/kitchen-sink/__tests__",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
