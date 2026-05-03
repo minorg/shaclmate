@@ -2,6 +2,7 @@
 import * as fs from "node:fs";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import { RdfDirectory, type RdfFile, RdfFileSystemEntry } from "@rdfx/fs";
 import type { Generator } from "@shaclmate/compiler";
 import {
   AstJsonGenerator,
@@ -21,12 +22,14 @@ import {
 import { ExistingPath } from "cmd-ts/dist/cjs/batteries/fs.js";
 import { DataFactory, Parser, Store, Writer } from "n3";
 import { pino } from "pino";
+import { type Either, EitherAsync } from "purify-ts";
 import SHACLValidator from "rdf-validate-shacl";
 import { shaclShaclDataset } from "./shaclShaclDataset.js";
 
-const inputFilePaths = restPositionals({
-  displayName: "inputFilePaths",
-  description: "paths to RDF files containing SHACL shapes",
+const inputPaths = restPositionals({
+  displayName: "inputPaths",
+  description:
+    "paths to RDF files or directories of RDF files containing SHACL shapes",
   type: ExistingPath,
 });
 
@@ -52,24 +55,24 @@ const outputFilePath = option({
 
 function generate({
   generator,
-  inputFilePaths,
+  inputFiles,
   outputFilePath,
 }: {
   generator: Generator;
-  inputFilePaths: readonly string[];
+  inputFiles: readonly RdfFile[];
   outputFilePath: string;
 }): void {
-  if (inputFilePaths.length === 0) {
+  if (inputFiles.length === 0) {
     throw new Error("must specify at least one input shapes graph file path");
   }
 
   const inputParser = new Parser();
   const dataset = new Store();
   const iriPrefixes: PrefixMapInit = [];
-  for (const inputFilePath of inputFilePaths) {
+  for (const inputFile of inputFiles) {
     dataset.addQuads(
       inputParser.parse(
-        fs.readFileSync(inputFilePath).toString(),
+        fs.readFileSync(inputFile.path).toString(),
         null,
         (prefix, prefixNode) => {
           const existingIriPrefix = iriPrefixes.find(
@@ -136,6 +139,29 @@ function generate({
     });
 }
 
+async function resolveInputPaths(
+  inputPaths: readonly string[],
+): Promise<Either<Error, readonly RdfFile[]>> {
+  return EitherAsync(async ({ liftEither }) => {
+    const inputFiles: RdfFile[] = [];
+    for (const inputPath of inputPaths) {
+      const fileSystemEntry = await liftEither(
+        await RdfFileSystemEntry.fromPath(inputPath),
+      );
+      if (fileSystemEntry instanceof RdfDirectory) {
+        for await (const inputFile of fileSystemEntry.files({
+          recursive: true,
+        })) {
+          inputFiles.push(inputFile);
+        }
+      } else {
+        inputFiles.push(fileSystemEntry);
+      }
+    }
+    return inputFiles;
+  });
+}
+
 run(
   subcommands({
     cmds: {
@@ -145,13 +171,15 @@ run(
             name: "ast-json",
             description: "generate AST JSON for the SHACL shapes graph",
             args: {
-              inputFilePaths,
+              inputPaths,
               outputFilePath,
             },
-            handler: async ({ inputFilePaths, outputFilePath }) => {
+            handler: async ({ inputPaths, outputFilePath }) => {
               generate({
                 generator: new AstJsonGenerator(),
-                inputFilePaths,
+                inputFiles: (
+                  await resolveInputPaths(inputPaths)
+                ).unsafeCoerce(),
                 outputFilePath,
               });
             },
@@ -160,13 +188,15 @@ run(
             name: "ts",
             description: "generate TypeScript for the SHACL shapes graph",
             args: {
-              inputFilePaths,
+              inputPaths,
               outputFilePath,
             },
-            handler: async ({ inputFilePaths, outputFilePath }) => {
+            handler: async ({ inputPaths, outputFilePath }) => {
               generate({
                 generator: new TsGenerator(),
-                inputFilePaths,
+                inputFiles: (
+                  await resolveInputPaths(inputPaths)
+                ).unsafeCoerce(),
                 outputFilePath,
               });
             },
@@ -175,13 +205,15 @@ run(
             name: "zod",
             description: "generate Zod schemas for the SHACL shapes graph",
             args: {
-              inputFilePaths,
+              inputPaths,
               outputFilePath,
             },
-            handler: async ({ inputFilePaths, outputFilePath }) => {
+            handler: async ({ inputPaths, outputFilePath }) => {
               generate({
                 generator: new ZodGenerator(),
-                inputFilePaths,
+                inputFiles: (
+                  await resolveInputPaths(inputPaths)
+                ).unsafeCoerce(),
                 outputFilePath,
               });
             },

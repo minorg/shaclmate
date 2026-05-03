@@ -3,7 +3,7 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/resource": "0.0.5",
+    "@rdfx/resource": "0.0.6",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"

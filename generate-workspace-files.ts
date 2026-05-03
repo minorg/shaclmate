@@ -7,7 +7,7 @@ import type { CompilerOptions } from "typescript";
 
 const VERSION = "4.0.17";
 
-const rdfxVersion = "0.0.5";
+const rdfxVersion = "0.0.6";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -27,6 +27,7 @@ const externalDependencies = {
   "@rdfjs/term-map": "~2.0.2",
   "@rdfjs/term-set": "~2.0.3",
   "@rdfjs/types": "~2.0.1",
+  "@rdfx/fs": rdfxVersion,
   "@rdfx/literal": rdfxVersion,
   "@rdfx/resource": rdfxVersion,
   "@rdfx/sparql-client": rdfxVersion,
@@ -142,11 +143,13 @@ const workspaces = {
         external: [
           "@rdfjs/types",
           "@rdfjs/prefix-map",
+          "@rdfx/fs",
           "@types/n3",
           "@types/rdfjs__prefix-map",
           "cmd-ts",
           "n3",
           "pino",
+          "purify-ts",
           "rdf-validate-shacl",
         ],
         internal: ["compiler"],
