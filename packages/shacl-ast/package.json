@@ -5,7 +5,7 @@
     "@rdfjs/term-map": "~2.0.2",
     "@rdfjs/term-set": "~2.0.3",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/resource": "0.0.2",
+    "@rdfx/resource": "0.0.7",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/rdfjs__data-model": "~2.0.9",
     "@types/rdfjs__dataset": "~2.0.7",
@@ -38,11 +38,11 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
-    "test": "cd ../.. && vitest run --project @shaclmate/shacl-ast",
+    "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/packages/shacl-ast/__tests__",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.16"
+  "version": "4.0.17"
 }

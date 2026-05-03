@@ -9,7 +9,7 @@ export default defineConfig({
       reportOnFailure: true,
     },
     // include: ["**/__tests__/**/*.test.ts"],
-    projects: ["apps/*", "examples/*", "!examples/generate.sh", "packages/*"],
     passWithNoTests: true,
+    setupFiles: ["./vitest.setup.mts"],
   },
 });

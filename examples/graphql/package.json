@@ -3,7 +3,7 @@
     "@rdfjs/data-model": "~2.1.1",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/resource": "0.0.2",
+    "@rdfx/resource": "0.0.7",
     "graphql": "16.11.0",
     "graphql-yoga": "5.14.0",
     "purify-ts": "~2.1.4"
@@ -31,12 +31,12 @@
     "depcheck": "depcheck .",
     "dev": "tsc -w --preserveWatchOutput",
     "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
-    "test": "cd ../.. && vitest run --project @shaclmate/graphql-example",
+    "test": "cd ../.. && vitest run /Users/minor/projects/shaclmate/examples/graphql/__tests__",
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
     "start": "NODE_ENV=development tsx src/server.ts"
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.16"
+  "version": "4.0.17"
 }
