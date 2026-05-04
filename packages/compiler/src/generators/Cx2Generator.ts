@@ -4,14 +4,23 @@ import type { LabeledPropertyGraph } from "./LabeledPropertyGraph.js";
 import { transformAstToLabeledPropertyGraph } from "./transformAstToLabeledPropertyGraph.js";
 
 type AttributeDeclaration = { d: string };
-type Id = number | string;
+type Id = number;
 
 export class Cx2Generator implements Generator {
+  constructor(private readonly visualProperties?: Record<string, unknown>) {}
+
   generate(ast: Ast): string {
     const labeledPropertyGraph = transformAstToLabeledPropertyGraph(ast);
 
+    const edgeAttributeDeclarations: Record<string, AttributeDeclaration> = {
+      interaction: { d: "string" },
+    };
+    const edgeIdMap: Record<LabeledPropertyGraph.Id, Id> = {};
     const edges: { id: Id; s: Id; t: Id; v: Record<string, unknown> }[] = [];
-    const nodeAttributeDeclarations: Record<string, AttributeDeclaration> = {};
+    const nodeAttributeDeclarations: Record<string, AttributeDeclaration> = {
+      name: { d: "string" },
+    };
+    const nodeIdMap: Record<LabeledPropertyGraph.Id, Id> = {};
     const nodes: { id: Id; v: Record<string, unknown> }[] = [];
 
     function attributeDeclaration(
@@ -36,7 +45,15 @@ export class Cx2Generator implements Generator {
     }
 
     for (const lpgNode of labeledPropertyGraph.nodes) {
-      const v: Record<string, unknown> = {};
+      let id = nodeIdMap[lpgNode.id];
+      if (id === undefined) {
+        id = Object.keys(nodeIdMap).length + 1;
+        nodeIdMap[lpgNode.id] = id;
+      }
+
+      const v: Record<string, unknown> = {
+        name: lpgNode.label,
+      };
       for (const [lpgNodePropertyName, lpgNodePropertyValue] of Object.entries(
         lpgNode.properties,
       )) {
@@ -49,19 +66,48 @@ export class Cx2Generator implements Generator {
       }
 
       nodes.push({
-        id: lpgNode.id,
+        id,
         v,
       });
     }
 
     for (const lpgRelationship of labeledPropertyGraph.relationships) {
+      let id: Id = edgeIdMap[lpgRelationship.id];
+      if (id === undefined) {
+        id = Object.keys(edgeIdMap).length + 1;
+        edgeIdMap[lpgRelationship.id] = id;
+      }
+
       edges.push({
-        id: lpgRelationship.id,
-        s: lpgRelationship.sourceNodeId,
-        t: lpgRelationship.targetNodeId,
-        v: {},
+        id,
+        s: nodeIdMap[lpgRelationship.sourceNodeId]!,
+        t: nodeIdMap[lpgRelationship.targetNodeId]!,
+        v: lpgRelationship.label
+          .map<Record<string, unknown>>((label) => ({ interaction: label }))
+          .orDefault({}),
       });
     }
+
+    let visualProperties: any = this.visualProperties ?? {};
+    visualProperties = {
+      ...visualProperties,
+      default: {
+        edge: {
+          ...visualProperties?.default?.edge,
+          EDGE_LABEL: "interaction",
+        },
+      },
+      edgeMapping: {
+        ...visualProperties?.edgeMapping,
+        EDGE_LABEL: {
+          type: "PASSTHROUGH",
+          definition: {
+            attribute: "interaction",
+            type: "string",
+          },
+        },
+      },
+    };
 
     return JSON.stringify(
       [
@@ -71,8 +117,22 @@ export class Cx2Generator implements Generator {
         },
 
         {
+          metaData: [
+            {
+              elementCount: edges.length,
+              name: "edges",
+            },
+            {
+              elementCount: nodes.length,
+              name: "nodes",
+            },
+          ],
+        },
+
+        {
           attributeDeclarations: [
             {
+              edges: edgeAttributeDeclarations,
               nodes: nodeAttributeDeclarations,
             },
           ],
@@ -84,6 +144,10 @@ export class Cx2Generator implements Generator {
 
         {
           edges,
+        },
+
+        {
+          visualProperties: [visualProperties],
         },
 
         {

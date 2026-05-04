@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Resource } from "@rdfx/resource";
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import type * as ast from "../ast/index.js";
 import type { LabeledPropertyGraph } from "./LabeledPropertyGraph.js";
 
@@ -12,7 +12,9 @@ export function transformAstToLabeledPropertyGraph(
 
   for (const namedObjectType of ast.namedObjectTypes) {
     const id = typeId(namedObjectType);
-    const properties: LabeledPropertyGraph.Node["properties"] = {};
+    const properties: LabeledPropertyGraph.Node["properties"] = {
+      name: { type: "string", value: typeName(namedObjectType) },
+    };
 
     for (const namedObjectTypeProperty of namedObjectType.properties) {
       let itemType: ast.Type;
@@ -45,6 +47,7 @@ export function transformAstToLabeledPropertyGraph(
               id: Resource.Identifier.toString(
                 namedObjectTypeProperty.shapeIdentifier,
               ),
+              label: Maybe.of(namedObjectTypeProperty.name),
               properties: {},
               sourceNodeId: id,
               targetNodeId: typeId(itemType),
@@ -61,6 +64,7 @@ export function transformAstToLabeledPropertyGraph(
 
     nodes.push({
       id,
+      label: typeName(namedObjectType),
       properties: properties,
     });
   }
@@ -68,6 +72,7 @@ export function transformAstToLabeledPropertyGraph(
   for (const namedUnionType of ast.namedUnionTypes) {
     nodes.push({
       id: typeId(namedUnionType),
+      label: typeName(namedUnionType),
       properties: {},
     });
   }
@@ -79,6 +84,15 @@ export function transformAstToLabeledPropertyGraph(
 }
 
 function typeId(type: {
+  name: Maybe<string>;
+  shapeIdentifier: BlankNode | NamedNode;
+}) {
+  return type.name.orDefault(
+    Resource.Identifier.toString(type.shapeIdentifier),
+  );
+}
+
+function typeName(type: {
   name: Maybe<string>;
   shapeIdentifier: BlankNode | NamedNode;
 }) {

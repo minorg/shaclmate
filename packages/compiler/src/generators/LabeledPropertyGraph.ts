@@ -1,3 +1,5 @@
+import type { Maybe } from "purify-ts";
+
 export interface LabeledPropertyGraph {
   readonly nodes: readonly LabeledPropertyGraph.Node[];
   readonly relationships: readonly LabeledPropertyGraph.Relationship[];
@@ -8,6 +10,7 @@ export namespace LabeledPropertyGraph {
 
   export interface Node {
     readonly id: Id;
+    readonly label: string;
     readonly properties: Record<PropertyName, PropertyValue>;
   }
 
@@ -65,6 +68,7 @@ export namespace LabeledPropertyGraph {
 
   export interface Relationship {
     readonly id: Id;
+    readonly label: Maybe<string>;
     readonly properties: Record<PropertyName, PropertyValue>;
     readonly sourceNodeId: Id;
     readonly targetNodeId: Id;
