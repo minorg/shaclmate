@@ -19,7 +19,7 @@ export abstract class AbstractContainerType<
   ItemTypeT extends
     AbstractContainerType.ItemType = AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract readonly kind:
+  abstract override readonly kind:
     | "DefaultValueType"
     | "ListType"
     | "OptionType"
@@ -62,8 +62,11 @@ export abstract class AbstractContainerType<
     return true;
   }
 
-  toString(): string {
-    return `${this.kind}(itemType=${this.itemType})`;
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      itemType: (this.itemType as any).toJSON(),
+    };
   }
 }
 

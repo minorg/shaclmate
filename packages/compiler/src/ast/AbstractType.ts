@@ -1,4 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { Resource } from "@rdfx/resource";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
@@ -11,6 +12,11 @@ export abstract class AbstractType {
    * Documentation comment from rdfs:comment.
    */
   readonly comment: Maybe<string> = Maybe.empty();
+
+  /**
+   * Type discriminant
+   */
+  abstract readonly kind: string;
 
   /**
    * Human-readable label from rdfs:label.
@@ -68,5 +74,18 @@ export abstract class AbstractType {
     return true;
   }
 
-  abstract toString(): string;
+  toJSON() {
+    return {
+      comment: this.comment.extract(),
+      kind: this.kind,
+      label: this.label.extract(),
+      name: this.name.extract(),
+      recursive: this.recursive ? true : undefined,
+      shapeIdentifier: Resource.Identifier.toString(this.shapeIdentifier),
+    };
+  }
+
+  toString(): string {
+    return JSON.stringify(this.toJSON());
+  }
 }

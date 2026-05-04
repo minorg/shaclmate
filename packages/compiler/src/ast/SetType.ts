@@ -43,6 +43,13 @@ export class SetType<
 
     return true;
   }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      minCount: this.minCount,
+    };
+  }
 }
 
 export namespace SetType {

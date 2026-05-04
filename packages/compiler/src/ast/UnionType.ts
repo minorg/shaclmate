@@ -20,6 +20,18 @@ export class UnionType<
       )
     );
   }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      members: !this.recursive
+        ? this.members.map((member) => ({
+            discriminantValue: member.discriminantValue.extract(),
+            type: (member.type as any).toJSON(),
+          }))
+        : undefined,
+    };
+  }
 }
 
 export namespace UnionType {

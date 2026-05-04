@@ -1,7 +1,6 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-
+import { Resource } from "@rdfx/resource";
 import type { Maybe } from "purify-ts";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 import {
   arrayEquals,
@@ -9,6 +8,7 @@ import {
   strictEquals,
   termEquals,
 } from "./equals.js";
+import { termToJson } from "./termToJson.js";
 
 export class LiteralType extends AbstractTermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
@@ -91,8 +91,16 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
     return true;
   }
 
-  override toString(): string {
-    return `${this.kind}()`;
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      datatype: this.datatype.map(Resource.Identifier.toString).extract(),
+      languageIn: this.languageIn.length > 0 ? this.languageIn : undefined,
+      maxExclusive: this.maxExclusive.map(termToJson).extract(),
+      maxInclusive: this.maxInclusive.map(termToJson).extract(),
+      minExclusive: this.minExclusive.map(termToJson).extract(),
+      minInclusive: this.minInclusive.map(termToJson).extract(),
+    };
   }
 }
 

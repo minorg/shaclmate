@@ -3,6 +3,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { termEquals } from "./equals.js";
 import type { Type } from "./Type.js";
+import { termToJson } from "./termToJson.js";
 
 /**
  * A type with an sh:defaultValue.
@@ -45,6 +46,13 @@ export class DefaultValueType<
     }
 
     return true;
+  }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      defaultValue: termToJson(this.defaultValue),
+    };
   }
 }
 

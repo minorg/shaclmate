@@ -227,8 +227,26 @@ export class ObjectType extends AbstractType {
     });
   }
 
-  override toString(): string {
-    return `${this.kind}(shapeIdentifier=${Resource.Identifier.toString(this.shapeIdentifier)})`;
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      fromRdfType: this.fromRdfType.map(Resource.Identifier.toString).extract(),
+      identifierMintingStrategy: this.identifierMintingStrategy.extract(),
+      identifierType: this.identifierType.toJSON(),
+      parentObjectTypes:
+        this.parentObjectTypes.length > 0
+          ? this.parentObjectTypes.map((parentObjectType) =>
+              parentObjectType.name.orDefault(
+                Resource.Identifier.toString(parentObjectType.shapeIdentifier),
+              ),
+            )
+          : undefined,
+      synthetic: this.synthetic ? true : undefined,
+      toRdfTypes:
+        this.toRdfTypes.length > 0
+          ? this.toRdfTypes.map(Resource.Identifier.toString)
+          : undefined,
+    };
   }
 }
 
@@ -507,8 +525,24 @@ export namespace ObjectType {
       return helper([{ objectType: rootObjectType, property: rootProperty }]);
     }
 
+    toJSON() {
+      return {
+        comment: this.comment.extract(),
+        description: this.description.extract(),
+        label: this.label.extract(),
+        mutable: this.mutable ? true : undefined,
+        name: this.name,
+        order: this.order,
+        path: PropertyPath.toString(this.path),
+        recursive: this.recursive ? true : undefined,
+        shapeIdentifier: Resource.Identifier.toString(this.shapeIdentifier),
+        type: this.type.toJSON(),
+        visibility: this.visibility,
+      };
+    }
+
     toString(): string {
-      return `${this.name}(path=${PropertyPath.toString(this.path)})`;
+      return JSON.stringify(this.toJSON());
     }
   }
 }
