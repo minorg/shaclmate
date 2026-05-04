@@ -6,7 +6,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/IdentifierMintingStrategy.js";
 import type { Visibility } from "../../../enums/Visibility.js";
-import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -390,7 +389,7 @@ export class IdentifierProperty extends AbstractProperty<
               mintIdentifier = code`${imports.dataFactory}.blankNode()`;
               break;
             case "sha256":
-              logger.warn(
+              this.logger.warn(
                 "minting %s identifiers with %s is unsupported",
                 this.namedObjectType.declarationType,
                 identifierMintingStrategy,

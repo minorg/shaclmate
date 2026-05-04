@@ -4,12 +4,12 @@ import { Resource } from "@rdfx/resource";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { Logger } from "ts-log";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
 import type { TsFeature } from "./enums/TsFeature.js";
 import type * as input from "./input/index.js";
-import { logger } from "./logger.js";
 
 interface RelatedNodeShapes {
   readonly ancestors: input.NodeShape[];
@@ -18,9 +18,13 @@ interface RelatedNodeShapes {
   readonly descendants: input.NodeShape[];
 }
 
-function relatedNodeShapes(
-  shapesGraph: input.ShapesGraph,
-): TermMap<input.NodeShape.$Identifier, RelatedNodeShapes> {
+function relatedNodeShapes({
+  logger,
+  shapesGraph,
+}: {
+  logger: Logger;
+  shapesGraph: input.ShapesGraph;
+}): TermMap<input.NodeShape.$Identifier, RelatedNodeShapes> {
   const immediateRelatedNodeShapes = new TermMap<
     input.NodeShape.$Identifier,
     {
@@ -139,6 +143,7 @@ export class ShapesGraphToAstTransformer {
     BlankNode | NamedNode,
     ast.Type
   > = new TermMap();
+  protected readonly logger: Logger;
   protected readonly shapesGraph: input.ShapesGraph;
   protected readonly relatedNodeShapesByIdentifier: TermMap<
     BlankNode | NamedNode,
@@ -147,13 +152,19 @@ export class ShapesGraphToAstTransformer {
   protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
+    logger,
     shapesGraph,
     tsFeaturesDefault,
   }: {
+    logger: Logger;
     shapesGraph: input.ShapesGraph;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
-    this.relatedNodeShapesByIdentifier = relatedNodeShapes(shapesGraph);
+    this.logger = logger;
+    this.relatedNodeShapesByIdentifier = relatedNodeShapes({
+      logger: this.logger,
+      shapesGraph,
+    });
     this.shapesGraph = shapesGraph;
     this.tsFeaturesDefault =
       tsFeaturesDefault ??

@@ -1,5 +1,6 @@
 import { AbstractShapesGraph } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
+import { dummyLogger, type Logger } from "ts-log";
 import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
 import type { TsFeature } from "../enums/TsFeature.js";
@@ -27,9 +28,13 @@ export class ShapesGraph extends AbstractShapesGraph<
    */
   compile(parameters: {
     generator: Generator;
+    logger?: Logger;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }): Either<Error, string> {
-    return new Compiler(parameters).compile(this);
+    return new Compiler({
+      ...parameters,
+      logger: parameters.logger ?? dummyLogger,
+    }).compile(this);
   }
 
   static builder(): ShapesGraph.Builder {
@@ -40,11 +45,13 @@ export class ShapesGraph extends AbstractShapesGraph<
    * Transform the shapes graph to an AST.
    */
   toAst(options?: {
+    logger?: Logger;
     tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }): Either<Error, Ast> {
     return new ShapesGraphToAstTransformer({
-      ...options,
+      logger: options?.logger ?? dummyLogger,
       shapesGraph: this,
+      tsFeaturesDefault: options?.tsFeaturesDefault,
     }).transform();
   }
 }
