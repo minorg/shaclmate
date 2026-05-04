@@ -35,6 +35,13 @@ export abstract class AbstractCollectionType<
 
     return true;
   }
+
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      mutable: this.mutable ? true : undefined,
+    };
+  }
 }
 
 export namespace AbstractCollectionType {

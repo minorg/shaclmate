@@ -39,7 +39,7 @@ export abstract class AbstractCompoundType<
   /**
    * Type discriminant
    */
-  abstract readonly kind: "IntersectionType" | "UnionType";
+  abstract override readonly kind: "IntersectionType" | "UnionType";
 
   constructor({
     tsFeatures,
@@ -119,10 +119,6 @@ export abstract class AbstractCompoundType<
     // return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
-  }
-
-  toString(): string {
-    return `${this.kind}(memberTypes=[${this.members.map((memberType) => memberType.toString()).join(", ")}])`;
   }
 }
 

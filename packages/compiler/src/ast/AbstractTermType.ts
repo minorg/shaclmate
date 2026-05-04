@@ -2,6 +2,7 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 
 import { AbstractType } from "./AbstractType.js";
 import { arrayEquals, setEquals, strictEquals, termEquals } from "./equals.js";
+import { termToJson } from "./termToJson.js";
 
 /**
  * Abstract base class of term types (BlankNodeType, IdentifierType, LiteralType, IriType, TermType).
@@ -20,7 +21,7 @@ export abstract class AbstractTermType<
 > extends AbstractType {
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
-  abstract readonly kind:
+  abstract override readonly kind:
     | "BlankNodeType"
     | "IdentifierType"
     | "IriType"
@@ -67,7 +68,13 @@ export abstract class AbstractTermType<
     return true;
   }
 
-  override toString() {
-    return `${this.kind}(nodeKinds=${[...this.nodeKinds].join(" | ")})`;
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      hasValues:
+        this.hasValues.length > 0 ? this.hasValues.map(termToJson) : undefined,
+      in: this.in_.length > 0 ? this.in_.map(termToJson) : undefined,
+      nodeKinds: [...this.nodeKinds],
+    };
   }
 }

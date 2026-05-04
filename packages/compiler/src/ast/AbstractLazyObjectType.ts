@@ -14,7 +14,7 @@ export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
   ResolveTypeT extends AbstractLazyObjectType.ResolveTypeConstraint,
 > extends AbstractType {
-  abstract readonly kind:
+  abstract override readonly kind:
     | "LazyObjectOptionType"
     | "LazyObjectSetType"
     | "LazyObjectType";
@@ -60,8 +60,12 @@ export abstract class AbstractLazyObjectType<
     return true;
   }
 
-  override toString() {
-    return `${this.kind}(partialType=${this.partialType}, resolveType=${this.resolveType})`;
+  override toJSON() {
+    return {
+      ...super.toJSON(),
+      partialType: this.partialType.toJSON(),
+      resolveType: this.resolveType.toJSON(),
+    };
   }
 }
 
