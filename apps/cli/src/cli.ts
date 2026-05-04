@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs from "node:fs";
 import {
   AstJsonGenerator,
   Cx2Generator,
@@ -64,11 +65,30 @@ run(
             args: {
               inputPaths,
               outputFilePath,
+              visualPropertiesJsonFilePath: option({
+                description:
+                  "path to a file containing the visualProperties JSON object to include in the CX2 file",
+                long: "visual-properties-json-file-path",
+                type: ExistingPath,
+              }),
             },
-            handler: async ({ inputPaths, outputFilePath }) => {
+            handler: async ({
+              inputPaths,
+              outputFilePath,
+              visualPropertiesJsonFilePath,
+            }) => {
+              let visualProperties: Record<string, unknown> | undefined;
+              if (visualPropertiesJsonFilePath) {
+                visualProperties = JSON.parse(
+                  (
+                    await fs.promises.readFile(visualPropertiesJsonFilePath)
+                  ).toString("utf-8"),
+                );
+              }
+
               (
                 await generate({
-                  generator: new Cx2Generator(),
+                  generator: new Cx2Generator({ visualProperties }),
                   inputPaths,
                   outputFilePath,
                 })
