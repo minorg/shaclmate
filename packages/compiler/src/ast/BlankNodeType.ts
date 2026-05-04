@@ -10,9 +10,9 @@ export class BlankNodeType extends AbstractTermType<NamedNode, BlankNode> {
   override readonly nodeKinds = nodeKinds;
 
   constructor(
-    superParameters: Pick<
+    superParameters: Omit<
       ConstructorParameters<typeof AbstractTermType<NamedNode, BlankNode>>[0],
-      "comment" | "label" | "name" | "shapeIdentifier"
+      "hasValues" | "in_"
     >,
   ) {
     super({

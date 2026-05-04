@@ -53,7 +53,9 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
       ...super.schemaObject,
       in:
         this.in_.length > 0
-          ? this.in_.map(rdfjsTermExpression).concat()
+          ? this.in_
+              .map((in_) => rdfjsTermExpression(in_, { logger: this.logger }))
+              .concat()
           : undefined,
     };
   }
@@ -130,7 +132,9 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
       valueTo: code`chain(values => values.chainMap(value => value.toIri(${
         this.in_.length > 0
           ? code`[${joinCode(
-              this.in_.map((in_) => rdfjsTermExpression(in_)),
+              this.in_.map((in_) =>
+                rdfjsTermExpression(in_, { logger: this.logger }),
+              ),
               { on: ", " },
             )}]`
           : ""

@@ -18,6 +18,7 @@ import { ExistingPath } from "cmd-ts/dist/cjs/batteries/fs.js";
 import { generate } from "./commands/generate.js";
 import { merge } from "./commands/merge.js";
 import { validate } from "./commands/validate.js";
+import { logger } from "./logger.js";
 
 const inputPaths = restPositionals({
   displayName: "inputPaths",
@@ -105,7 +106,7 @@ run(
             handler: async ({ inputPaths, outputFilePath }) => {
               (
                 await generate({
-                  generator: new TsGenerator(),
+                  generator: new TsGenerator({ logger }),
                   inputPaths,
                   outputFilePath,
                 })
@@ -122,7 +123,7 @@ run(
             handler: async ({ inputPaths, outputFilePath }) => {
               (
                 await generate({
-                  generator: new ZodGenerator(),
+                  generator: new ZodGenerator({ logger }),
                   inputPaths,
                   outputFilePath,
                 })

@@ -43,7 +43,7 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
 
   this.fromRdfType.ifJust((fromRdfType) => {
     const fromRdfTypeVariable = this.fromRdfTypeVariable.unsafeCoerce();
-    const predicate = rdfjsTermExpression(rdf.type);
+    const predicate = rdfjsTermExpression(rdf.type, { logger: this.logger });
     // Check the expected type and its known subtypes
     const cases = new Set<string>();
     cases.add(fromRdfType.value);

@@ -140,16 +140,16 @@ export class ListType<
       currentSubListResource = listResource;
     } else {
       const newSubListResource = ${variables.resourceSet}.resource(${subListIdentifier});
-      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier, ${variables.graph});
+      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest, { logger: this.logger })}, newSubListResource.identifier, ${variables.graph});
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
+    currentSubListResource.add(${rdfjsTermExpression(rdf.first, { logger: this.logger })}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first, { logger: this.logger }), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(${rdfjsTermExpression(rdf.rest)}, ${rdfjsTermExpression(rdf.nil)}, ${variables.graph});
+      currentSubListResource.add(${rdfjsTermExpression(rdf.rest, { logger: this.logger })}, ${rdfjsTermExpression(rdf.nil, { logger: this.logger })}, ${variables.graph});
     }
     
     return { currentSubListResource, listResource };
@@ -161,7 +161,7 @@ export class ListType<
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};
   },
-).listResource.identifier : ${rdfjsTermExpression(rdf.nil)}]`;
+).listResource.identifier : ${rdfjsTermExpression(rdf.nil, { logger: this.logger })}]`;
   }
 }
 

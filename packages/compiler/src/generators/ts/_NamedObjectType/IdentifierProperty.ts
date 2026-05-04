@@ -6,7 +6,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/IdentifierMintingStrategy.js";
 import type { Visibility } from "../../../enums/Visibility.js";
-import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -390,7 +389,7 @@ export class IdentifierProperty extends AbstractProperty<
               mintIdentifier = code`${imports.dataFactory}.blankNode()`;
               break;
             case "sha256":
-              logger.warn(
+              this.logger.warn(
                 "minting %s identifiers with %s is unsupported",
                 this.namedObjectType.declarationType,
                 identifierMintingStrategy,
@@ -435,8 +434,10 @@ export class IdentifierProperty extends AbstractProperty<
       code`${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
-          propertyPath: rdfjsTermExpression(rdf.subject),
-          resourceValues: code`${imports.Right}(new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression(rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
+          propertyPath: rdfjsTermExpression(rdf.subject, {
+            logger: this.logger,
+          }),
+          resourceValues: code`${imports.Right}(new ${imports.Resource}.Value(${{ dataFactory: imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression(rdf.subject, { logger: this.logger }), term: code`${variables.resource}.identifier` }}).toValues())`,
         },
       })}.chain(values => values.head())`,
     );

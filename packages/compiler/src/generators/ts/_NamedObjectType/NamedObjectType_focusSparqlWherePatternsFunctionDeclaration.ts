@@ -61,7 +61,7 @@ if (!parameters?.ignoreRdfType) {
       triples: [
         {
           subject: ${variables.focusIdentifier},
-          predicate: ${rdfjsTermExpression(rdf.type)},
+          predicate: ${rdfjsTermExpression(rdf.type, { logger: this.logger })},
           object: rdfTypeVariable
         }
       ],
@@ -74,7 +74,7 @@ if (!parameters?.ignoreRdfType) {
             {
               subject: rdfTypeVariable,
               predicate: {
-                items: [${rdfjsTermExpression(rdfs.subClassOf)}],
+                items: [${rdfjsTermExpression(rdfs.subClassOf, { logger: this.logger })}],
                 pathType: "+" as const,
                 type: "path" as const
               },

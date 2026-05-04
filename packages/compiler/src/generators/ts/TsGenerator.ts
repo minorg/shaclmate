@@ -1,3 +1,4 @@
+import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
@@ -8,7 +9,13 @@ import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
-  private readonly typeFactory = new TypeFactory();
+  private readonly logger: Logger;
+  private readonly typeFactory: TypeFactory;
+
+  constructor({ logger }: { logger: Logger }) {
+    this.logger = logger;
+    this.typeFactory = new TypeFactory({ logger });
+  }
 
   generate(ast_: ast.Ast): string {
     let declarations: Code[] = [];
@@ -53,6 +60,7 @@ export class TsGenerator implements Generator {
 
     if (namedObjectTypesToposorted.length > 0) {
       const uberObjectUnionType = synthesizeUberObjectUnionType({
+        logger: this.logger,
         namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
       });
       declarations = declarations.concat(

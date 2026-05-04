@@ -1,6 +1,8 @@
 import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
+
 import type { Visibility } from "../../../enums/Visibility.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
@@ -10,6 +12,7 @@ import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
+  protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
 
   /**
@@ -102,16 +105,19 @@ export abstract class AbstractProperty<
   readonly visibility: Visibility;
 
   constructor({
+    logger,
     name,
     namedObjectType,
     type,
     visibility,
   }: {
+    logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
     type: TypeT;
     visibility: Visibility;
   }) {
+    this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;
     this.type = type;

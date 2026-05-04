@@ -1,5 +1,6 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { imports } from "./imports.js";
 import type { Typeof } from "./Typeof.js";
@@ -9,6 +10,8 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  * Abstract base class all types.
  */
 export abstract class AbstractType {
+  protected readonly logger: Logger;
+
   /**
    * Is the type abstract?
    */
@@ -136,9 +139,11 @@ export abstract class AbstractType {
   constructor({
     comment,
     label,
-  }: { comment: Maybe<string>; label: Maybe<string> }) {
+    logger,
+  }: { comment: Maybe<string>; label: Maybe<string>; logger: Logger }) {
     this.comment = comment;
     this.label = label;
+    this.logger = logger;
   }
 
   /**
@@ -219,20 +224,6 @@ export abstract class AbstractType {
   }): readonly Code[];
 
   /**
-   * JSON-compatible version of the type.
-   */
-  abstract jsonType(parameters?: {
-    includeDiscriminantProperty?: boolean;
-  }): AbstractType.JsonType;
-
-  /**
-   * Element object for a JSON Forms UI schema.
-   */
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: Code };
-  }): Maybe<Code>;
-
-  /**
    * Zod schema for the JSON type of this type.
    *
    * This method is called in two contexts:
@@ -245,6 +236,20 @@ export abstract class AbstractType {
     includeDiscriminantProperty?: boolean;
     context: "property" | "type";
   }): Code;
+
+  /**
+   * JSON-compatible version of the type.
+   */
+  abstract jsonType(parameters?: {
+    includeDiscriminantProperty?: boolean;
+  }): AbstractType.JsonType;
+
+  /**
+   * Element object for a JSON Forms UI schema.
+   */
+  abstract jsonUiSchemaElement(parameters: {
+    variables: { scopePrefix: Code };
+  }): Maybe<Code>;
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence

@@ -47,7 +47,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   }: Parameters<
     AbstractPrimitiveType<boolean>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype)})]`;
+    return code`[${snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
   }
 
   protected override fromRdfExpressionChain({

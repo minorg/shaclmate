@@ -5,6 +5,7 @@ import {
 } from "@shaclmate/compiler";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
+import { logger } from "./logger.js";
 import { testData } from "./testData.js";
 
 describe("ShapesGraphToAstTransformer: well-formed", () => {
@@ -22,6 +23,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       beforeAll(() => {
         ast = new ShapesGraphToAstTransformer({
+          logger,
           shapesGraph: shapesGraphEither.unsafeCoerce(),
         })
           .transform()
@@ -99,6 +101,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 describe("ShapesGraphToAstTransformer: ill-formed", () => {
   it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
     })
@@ -112,6 +115,7 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
 
   it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
     })
@@ -125,6 +129,7 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
 
   it("sh:defaultValue and sh:in conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.defaultValueInConflict.unsafeCoerce(),
     })
@@ -138,6 +143,7 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
 
   it("inverse paths can only have blank or IRI node kinds", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.inversePathNodeKindConflict.unsafeCoerce(),
     })
@@ -149,6 +155,7 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
 
   it("incompatible node shape identifiers", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
     })
@@ -160,6 +167,7 @@ describe("ShapesGraphToAstTransformer: ill-formed", () => {
 
   it("no required property property", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer({
+      logger,
       shapesGraph:
         testData.shapesGraphs.illFormed.noRequiredProperty.unsafeCoerce(),
     })

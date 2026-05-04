@@ -1,4 +1,5 @@
 import { invariant } from "ts-invariant";
+import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
@@ -9,7 +10,11 @@ import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ZodGenerator implements Generator {
-  private readonly typeFactory = new TypeFactory();
+  private readonly typeFactory: TypeFactory;
+
+  constructor({ logger }: { logger: Logger }) {
+    this.typeFactory = new TypeFactory({ logger });
+  }
 
   generate(ast_: ast.Ast): string {
     const declarations: Code[] = [];

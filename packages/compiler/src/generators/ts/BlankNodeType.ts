@@ -19,9 +19,9 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     code`${snippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
-    superParameters: Pick<
+    superParameters: Omit<
       ConstructorParameters<typeof AbstractIdentifierType<BlankNode>>[0],
-      "comment" | "label"
+      "hasValues" | "in_"
     >,
   ) {
     super({

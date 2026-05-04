@@ -22,11 +22,11 @@ export class IdentifierType extends AbstractIdentifierType<
     code`${snippets.identifierSparqlWherePatterns}`;
 
   constructor(
-    parameters: Pick<
+    parameters: Omit<
       ConstructorParameters<
         typeof AbstractIdentifierType<BlankNode | NamedNode>
       >[0],
-      "comment" | "label"
+      "hasValues" | "in_"
     >,
   ) {
     super({

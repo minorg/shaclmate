@@ -1,6 +1,7 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
+import type { Logger } from "ts-log";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
@@ -13,6 +14,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
  * Synthesize the $Object union.
  */
 export function synthesizeUberObjectUnionType(parameters: {
+  logger: Logger;
   namedObjectTypes: readonly NamedObjectType[];
 }): NamedObjectUnionType {
   const namedObjectTypes = parameters.namedObjectTypes.filter(
@@ -32,6 +34,7 @@ export function synthesizeUberObjectUnionType(parameters: {
     identifierType = new IdentifierType({
       comment: Maybe.empty(),
       label: Maybe.empty(),
+      logger: parameters.logger,
     });
   } else {
     switch ([...nodeKinds][0]) {
@@ -39,6 +42,7 @@ export function synthesizeUberObjectUnionType(parameters: {
         identifierType = new BlankNodeType({
           comment: Maybe.empty(),
           label: Maybe.empty(),
+          logger: parameters.logger,
         });
         break;
       case "IRI":
@@ -47,6 +51,7 @@ export function synthesizeUberObjectUnionType(parameters: {
           hasValues: [],
           in_: [],
           label: Maybe.empty(),
+          logger: parameters.logger,
         });
         break;
     }
@@ -63,6 +68,7 @@ export function synthesizeUberObjectUnionType(parameters: {
     }, new Set<TsFeature>()),
     identifierType,
     label: Maybe.empty(),
+    logger: parameters.logger,
     members: namedObjectTypes.map((namedObjectType) => ({
       discriminantValue: Maybe.empty(),
       type: namedObjectType,

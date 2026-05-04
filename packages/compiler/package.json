@@ -18,7 +18,6 @@
     "@types/rdfjs__term-set": "~2.0.9",
     "@types/toposort": "2.0.7",
     "change-case": "~5.4.4",
-    "pino": "~9.1.0",
     "plur": "~5.1.0",
     "purify-ts": "~2.1.4",
     "reserved-identifiers": "~1.0.0",

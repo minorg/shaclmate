@@ -1,4 +1,5 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+import { dummyLogger } from "ts-log";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -7,6 +8,8 @@ import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
+
+const logger = dummyLogger;
 
 export const snippets_listSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}listSparqlWherePatterns`,
@@ -31,7 +34,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           triples: [
             {
               subject: listVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
+              predicate: ${rdfjsTermExpression(rdf.first, { logger })},
               object: item0Variable,
             },
           ],
@@ -56,7 +59,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
         triples: [
           {
             subject: listVariable,
-            predicate: ${rdfjsTermExpression(rdf.rest)},
+            predicate: ${rdfjsTermExpression(rdf.rest, { logger })},
             object: rest0Variable,
           },
         ],
@@ -73,7 +76,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       triples: [
         {
           subject: listVariable,
-          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] },
+          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest, { logger })}] },
           object: restNVariable,
         },
       ],
@@ -87,7 +90,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           triples: [
             {
               subject: restNVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
+              predicate: ${rdfjsTermExpression(rdf.first, { logger })},
               object: itemNVariable,
             },
           ],
@@ -110,7 +113,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       triples: [
         {
           subject: restNVariable,
-          predicate: ${rdfjsTermExpression(rdf.rest)},
+          predicate: ${rdfjsTermExpression(rdf.rest, { logger })},
           object: variable("RestNBasic"),
         },
       ],

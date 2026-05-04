@@ -7,13 +7,16 @@ import {
 } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
 import { compileTs } from "./compileTs.js";
+import { logger } from "./logger.js";
 import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function generate(shapesGraph: ShapesGraph): string {
-  const source = new ZodGenerator().generate(
-    new ShapesGraphToAstTransformer({ shapesGraph }).transform().unsafeCoerce(),
+  const source = new ZodGenerator({ logger }).generate(
+    new ShapesGraphToAstTransformer({ logger, shapesGraph })
+      .transform()
+      .unsafeCoerce(),
   );
   expect(source).not.toHaveLength(0);
   return source;

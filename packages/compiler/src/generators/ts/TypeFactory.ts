@@ -7,10 +7,8 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
-
+import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
-
-import { logger } from "../../logger.js";
 import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
@@ -52,6 +50,11 @@ export class TypeFactory {
     BlankNode | NamedNode,
     NamedObjectType
   > = new TermMap();
+  private readonly logger: Logger;
+
+  constructor({ logger }: { logger: Logger }) {
+    this.logger = logger;
+  }
 
   createNamedObjectUnionType(
     astType: ast.ObjectUnionType,
@@ -73,6 +76,7 @@ export class TypeFactory {
         ast.ObjectCompoundType.identifierType(astType),
       ),
       label: astType.label,
+      logger: this.logger,
       members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
         (namedObjectType) => ({
           discriminantValue: Maybe.empty(),
@@ -146,6 +150,7 @@ export class TypeFactory {
         }
 
         return new NamedObjectType.DiscriminantProperty({
+          logger: this.logger,
           name: `${syntheticNamePrefix}type`,
           namedObjectType,
           type: new NamedObjectType.DiscriminantProperty.Type({
@@ -160,6 +165,7 @@ export class TypeFactory {
         new NamedObjectType.IdentifierProperty({
           identifierMintingStrategy: astType.identifierMintingStrategy,
           identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
+          logger: this.logger,
           name: `${syntheticNamePrefix}identifier`,
           namedObjectType,
           type: identifierType,
@@ -201,6 +207,7 @@ export class TypeFactory {
             0,
             0,
             new NamedObjectType.IdentifierPrefixProperty({
+              logger: this.logger,
               name: `${syntheticNamePrefix}identifierPrefix`,
               namedObjectType,
               own: !astType.ancestorObjectTypes.some(
@@ -212,6 +219,7 @@ export class TypeFactory {
                 hasValues: [],
                 in_: [],
                 label: astType.label,
+                logger: this.logger,
                 languageIn: [],
                 primitiveIn: [],
               }),
@@ -225,6 +233,7 @@ export class TypeFactory {
 
         return properties;
       },
+      logger: this.logger,
       name,
       recursive: astType.recursive,
       staticModuleName,
@@ -291,6 +300,7 @@ export class TypeFactory {
             features: astType.tsFeatures,
             identifierType: Maybe.empty(),
             label: astType.label,
+            logger: this.logger,
             members: astType.members.map((member) => ({
               discriminantValue: member.discriminantValue,
               type: this.createType(member.type),
@@ -305,6 +315,7 @@ export class TypeFactory {
             comment: astType.comment,
             label: astType.label,
             identifierType: Maybe.empty(),
+            logger: this.logger,
             members: astType.members.map((member) => ({
               discriminantValue: member.discriminantValue,
               type: this.createType(member.type),
@@ -318,6 +329,7 @@ export class TypeFactory {
     return new BlankNodeType({
       comment: astType.comment,
       label: astType.label,
+      logger: this.logger,
     });
   }
 
@@ -331,6 +343,7 @@ export class TypeFactory {
       defaultValue: astType.defaultValue,
       itemType,
       label: astType.label,
+      logger: this.logger,
     });
   }
 
@@ -344,6 +357,7 @@ export class TypeFactory {
         return new IdentifierType({
           comment: astType.comment,
           label: astType.label,
+          logger: this.logger,
         });
       case "IriType":
         return this.createIriType(astType);
@@ -356,6 +370,7 @@ export class TypeFactory {
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
+      logger: this.logger,
     });
   }
 
@@ -363,6 +378,7 @@ export class TypeFactory {
     return new LazyObjectOptionType({
       comment: astType.comment,
       label: astType.label,
+      logger: this.logger,
       partialType: this.createOptionType(astType.partialType) as OptionType<
         NamedObjectType | NamedObjectUnionType
       >,
@@ -376,6 +392,7 @@ export class TypeFactory {
     return new LazyObjectSetType({
       comment: astType.comment,
       label: astType.label,
+      logger: this.logger,
       partialType: this.createSetType(astType.partialType) as SetType<
         NamedObjectType | NamedObjectUnionType
       >,
@@ -389,7 +406,7 @@ export class TypeFactory {
     return new LazyObjectType({
       comment: astType.comment,
       label: astType.label,
-
+      logger: this.logger,
       partialType: this.createType(astType.partialType) as
         | NamedObjectType
         | NamedObjectUnionType,
@@ -407,6 +424,7 @@ export class TypeFactory {
       identifierNodeKind: astType.identifierNodeKind,
       itemType,
       label: astType.label,
+      logger: this.logger,
       minCount: 0,
       mutable: astType.mutable,
       identifierMintingStrategy: astType.identifierMintingStrategy,
@@ -451,6 +469,7 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
+              logger: this.logger,
             });
           case "bigint":
             return new BigIntType({
@@ -460,6 +479,7 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
+              logger: this.logger,
               primitiveIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBigIntLiteral(value).unsafeCoerce(),
               ),
@@ -472,6 +492,7 @@ export class TypeFactory {
               label: astType.label,
               languageIn: [],
               in_: astType.in_,
+              logger: this.logger,
               primitiveIn: astType.in_.map((value) =>
                 LiteralDecoder.decodeBooleanLiteral(value).unsafeCoerce(),
               ),
@@ -487,6 +508,7 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
+              logger: this.logger,
               primitiveIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "date"
                   ? LiteralDecoder.decodeDateLiteral
@@ -504,6 +526,7 @@ export class TypeFactory {
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
+              logger: this.logger,
               primitiveIn: astType.in_.map((value) =>
                 (datatypeDefinition.kind === "float"
                   ? LiteralDecoder.decodeFloatLiteral
@@ -516,9 +539,10 @@ export class TypeFactory {
                 comment: astType.comment,
                 datatype,
                 hasValues: astType.hasValues,
+                in_: astType.in_,
                 label: astType.label,
                 languageIn: astType.languageIn,
-                in_: astType.in_,
+                logger: this.logger,
                 primitiveIn: astType.in_.map((value) => value.value),
               });
             }
@@ -529,15 +553,15 @@ export class TypeFactory {
       if (datatype.equals(rdf.langString)) {
         // Drop down
       } else {
-        logger.warn("unrecognized literal datatype: %s", datatype.value);
+        this.logger.warn("unrecognized literal datatype: %s", datatype.value);
       }
     } else if (datatypes.size > 0) {
-      logger.warn(
+      this.logger.warn(
         "literal type has multiple datatypes: %s",
         JSON.stringify([...datatypes].map((datatype) => datatype.value)),
       );
     } else {
-      logger.debug("literal type has no datatypes");
+      this.logger.debug("literal type has no datatypes");
     }
 
     return new LiteralType({
@@ -546,6 +570,7 @@ export class TypeFactory {
       in_: astType.in_,
       label: astType.label,
       languageIn: astType.languageIn,
+      logger: this.logger,
     });
   }
 
@@ -570,6 +595,7 @@ export class TypeFactory {
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       label: astObjectTypeProperty.label,
+      logger: this.logger,
       mutable: astObjectTypeProperty.mutable,
       namedObjectType,
       name: tsName(astObjectTypeProperty.name),
@@ -594,6 +620,7 @@ export class TypeFactory {
       comment: astType.comment,
       itemType,
       label: astType.label,
+      logger: this.logger,
     });
   }
 
@@ -604,6 +631,7 @@ export class TypeFactory {
       comment: astType.comment,
       itemType,
       label: astType.label,
+      logger: this.logger,
       mutable: astType.mutable,
       minCount: astType.minCount,
     });
@@ -615,6 +643,7 @@ export class TypeFactory {
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
+      logger: this.logger,
       nodeKinds: astType.nodeKinds,
     });
   }
