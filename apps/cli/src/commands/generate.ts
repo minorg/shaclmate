@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
+import Serializer from "@rdfjs/serializer-turtle";
 import type { Generator } from "@shaclmate/compiler";
 import { Compiler, ShapesGraph } from "@shaclmate/compiler";
-import { Writer } from "n3";
 import { type Either, EitherAsync } from "purify-ts";
 import SHACLValidator from "rdf-validate-shacl";
 import { parseInputs } from "./parseInputs.js";
@@ -32,35 +32,28 @@ export async function generate({
       ).validate(dataset);
       if (!validationReport.conforms) {
         process.stderr.write("input is not valid SHACL:\n");
-        const n3WriterPrefixes: Record<string, string> = {};
-        for (const prefixEntry of prefixMap.entries()) {
-          n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
-        }
-        const n3Writer = new Writer({
-          format: "text/turtle",
-          prefixes: n3WriterPrefixes,
-        });
-        for (const quad of validationReport.dataset) {
-          n3Writer.addQuad(quad);
-        }
-        n3Writer.end((_error, result) => process.stderr.write(result));
+        process.stderr.write(
+          new Serializer({
+            prefixes: prefixMap,
+          }).transform(validationReport.dataset),
+        );
         return;
       }
     }
 
-    ShapesGraph.builder()
-      .parseDataset(dataset, { prefixMap })
-      .map((_) => _.build())
-      .chain((shapesGraph) => new Compiler({ generator }).compile(shapesGraph))
-      .ifLeft((error) => {
-        throw error;
-      })
-      .ifRight((output) => {
-        if (outputFilePath.length === 0) {
-          process.stdout.write(output);
-        } else {
-          fs.writeFileSync(outputFilePath, output);
-        }
-      });
+    const output = await liftEither(
+      ShapesGraph.builder()
+        .parseDataset(dataset, { prefixMap })
+        .map((_) => _.build())
+        .chain((shapesGraph) =>
+          new Compiler({ generator }).compile(shapesGraph),
+        ),
+    );
+
+    if (outputFilePath.length === 0) {
+      process.stdout.write(output);
+    } else {
+      await fs.promises.writeFile(outputFilePath, output);
+    }
   });
 }

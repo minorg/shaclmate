@@ -145,11 +145,12 @@ const workspaces = {
       },
       dependencies: {
         external: [
+          "@rdfjs/data-model",
+          "@rdfjs/dataset",
           "@rdfjs/prefix-map",
           "@rdfjs/serializer-turtle",
           "@rdfx/fs",
           "cmd-ts",
-          "n3",
           "tmp-promise",
           "pino",
           "pino-pretty",
@@ -162,7 +163,8 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfjs/types",
-          "@types/n3",
+          "@types/rdfjs__data-model",
+          "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
           "@types/which",
         ],

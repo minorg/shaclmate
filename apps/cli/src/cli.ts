@@ -14,6 +14,7 @@ import {
 } from "cmd-ts";
 import { ExistingPath } from "cmd-ts/dist/cjs/batteries/fs.js";
 import { generate } from "./commands/generate.js";
+import { merge } from "./commands/merge.js";
 import { validate } from "./commands/validate.js";
 
 const inputPaths = restPositionals({
@@ -89,6 +90,22 @@ run(
               ).unsafeCoerce();
             },
           }),
+        },
+      }),
+      merge: command({
+        name: "merge",
+        description: "merge one or more RDF files",
+        args: {
+          inputPaths,
+          outputFilePath,
+        },
+        handler: async ({ inputPaths, outputFilePath }) => {
+          (
+            await merge({
+              inputPaths,
+              outputFilePath,
+            })
+          ).unsafeCoerce();
         },
       }),
       validate: command({
