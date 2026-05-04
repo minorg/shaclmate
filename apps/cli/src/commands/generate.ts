@@ -4,6 +4,7 @@ import type { Generator } from "@shaclmate/compiler";
 import { Compiler, ShapesGraph } from "@shaclmate/compiler";
 import { type Either, EitherAsync } from "purify-ts";
 import SHACLValidator from "rdf-validate-shacl";
+import { logger } from "../logger.js";
 import { parseInputs } from "./parseInputs.js";
 import { shaclShaclDataset } from "./shaclShaclDataset.js";
 
@@ -46,7 +47,7 @@ export async function generate({
         .parseDataset(dataset, { prefixMap })
         .map((_) => _.build())
         .chain((shapesGraph) =>
-          new Compiler({ generator }).compile(shapesGraph),
+          new Compiler({ generator, logger }).compile(shapesGraph),
         ),
     );
 

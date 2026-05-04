@@ -7,13 +7,16 @@ import {
 } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
 import { compileTs } from "./compileTs.js";
+import { logger } from "./logger.js";
 import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function generate(shapesGraph: ShapesGraph): string {
-  const source = new TsGenerator().generate(
-    new ShapesGraphToAstTransformer({ shapesGraph }).transform().unsafeCoerce(),
+  const source = new TsGenerator({ logger }).generate(
+    new ShapesGraphToAstTransformer({ logger, shapesGraph })
+      .transform()
+      .unsafeCoerce(),
   );
   expect(source).not.toHaveLength(0);
   return source;
@@ -60,9 +63,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "kitchenSink") {
-        return;
-      }
+      // if (id !== "kitchenSink") {
+      //   return;
+      // }
 
       const diagnostics = compileTs(
         generate(shapesGraphEither.unsafeCoerce()),
@@ -95,8 +98,9 @@ describe("TsGenerator", () => {
       ...tsFeaturesAll.map((_, i) => tsFeaturesAll.filter((_, j) => i !== j)),
     ] as const) {
       it(tsFeatureCombination.join("+"), () => {
-        const source = new TsGenerator().generate(
+        const source = new TsGenerator({ logger }).generate(
           new ShapesGraphToAstTransformer({
+            logger,
             shapesGraph,
             tsFeaturesDefault: new Set(tsFeatureCombination),
           })
