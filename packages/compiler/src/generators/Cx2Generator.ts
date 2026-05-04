@@ -7,7 +7,11 @@ type AttributeDeclaration = { d: string };
 type Id = number;
 
 export class Cx2Generator implements Generator {
-  constructor(private readonly visualProperties?: Record<string, unknown>) {}
+  private readonly visualProperties: Record<string, unknown> | undefined;
+
+  constructor(options?: { visualProperties?: Record<string, unknown> }) {
+    this.visualProperties = options?.visualProperties;
+  }
 
   generate(ast: Ast): string {
     const labeledPropertyGraph = transformAstToLabeledPropertyGraph(ast);
@@ -57,6 +61,10 @@ export class Cx2Generator implements Generator {
       for (const [lpgNodePropertyName, lpgNodePropertyValue] of Object.entries(
         lpgNode.properties,
       )) {
+        if (lpgNodePropertyName === "name") {
+          continue;
+        }
+
         if (!nodeAttributeDeclarations[lpgNodePropertyName]) {
           nodeAttributeDeclarations[lpgNodePropertyName] =
             attributeDeclaration(lpgNodePropertyValue);
