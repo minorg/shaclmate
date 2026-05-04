@@ -1,3 +1,4 @@
+export * from "./AstJsonGenerator.js";
 export * from "./Generator.js";
-export * as json from "./json/index.js";
-export * as ts from "./ts/index.js";
+export { TsGenerator } from "./ts/TsGenerator.js";
+export { ZodGenerator } from "./ts/ZodGenerator.js";

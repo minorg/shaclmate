@@ -1,7 +1,7 @@
 import type { Term as RdfjsTerm } from "@rdfjs/types";
 import { Resource } from "@rdfx/resource";
-import type * as ast from "../../ast/index.js";
-import type { Generator } from "../Generator.js";
+import type * as ast from "../ast/index.js";
+import type { Generator } from "./Generator.js";
 
 namespace AstJson {
   export interface Name {
