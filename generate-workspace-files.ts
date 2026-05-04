@@ -148,7 +148,6 @@ const workspaces = {
           "@rdfjs/prefix-map",
           "@rdfjs/serializer-turtle",
           "@rdfx/fs",
-          "@tpluscode/rdf-ns-builders",
           "cmd-ts",
           "n3",
           "tmp-promise",

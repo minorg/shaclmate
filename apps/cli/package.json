@@ -7,7 +7,6 @@
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
     "@rdfx/fs": "0.0.7",
-    "@tpluscode/rdf-ns-builders": "~4.3.0",
     "cmd-ts": "~0.15.0",
     "n3": "~1.26.0",
     "pino": "~9.1.0",
