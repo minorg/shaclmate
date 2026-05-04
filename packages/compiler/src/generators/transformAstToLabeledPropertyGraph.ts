@@ -8,39 +8,11 @@ export function transformAstToLabeledPropertyGraph(
   ast: ast.Ast,
 ): LabeledPropertyGraph {
   const nodes: LabeledPropertyGraph.Node[] = [];
-  const propertySchemas: LabeledPropertyGraph.PropertySchema[] = [];
   const relationships: LabeledPropertyGraph.Relationship[] = [];
-
-  function property(
-    name: LabeledPropertyGraph.PropertyName,
-    value: LabeledPropertyGraph.PropertyValue,
-  ): Record<
-    LabeledPropertyGraph.PropertyName,
-    LabeledPropertyGraph.PropertyValue
-  > {
-    if (
-      !propertySchemas.some(
-        (propertySchema) =>
-          propertySchema.name === name && propertySchema.type === value.type,
-      )
-    ) {
-      propertySchemas.push({
-        name,
-        type: value.type,
-      });
-    }
-
-    const result: Record<
-      LabeledPropertyGraph.PropertyName,
-      LabeledPropertyGraph.PropertyValue
-    > = {};
-    result[name] = value;
-    return result;
-  }
 
   for (const namedObjectType of ast.namedObjectTypes) {
     const id = typeId(namedObjectType);
-    let properties: LabeledPropertyGraph.Node["properties"] = {};
+    const properties: LabeledPropertyGraph.Node["properties"] = {};
 
     for (const namedObjectTypeProperty of namedObjectType.properties) {
       let itemType: ast.Type;
@@ -80,12 +52,9 @@ export function transformAstToLabeledPropertyGraph(
           }
           break;
         default:
-          properties = {
-            ...properties,
-            ...property(namedObjectTypeProperty.name, {
-              type: "string",
-              value: JSON.stringify(namedObjectTypeProperty.type.toJSON()),
-            }),
+          properties[namedObjectTypeProperty.name] = {
+            type: "string",
+            value: namedObjectTypeProperty.toString(),
           };
       }
     }
@@ -105,7 +74,6 @@ export function transformAstToLabeledPropertyGraph(
 
   return {
     nodes,
-    propertySchemas,
     relationships,
   };
 }

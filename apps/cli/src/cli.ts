@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import {
   AstJsonGenerator,
+  Cx2Generator,
   TsGenerator,
   ZodGenerator,
 } from "@shaclmate/compiler";
@@ -50,6 +51,24 @@ run(
               (
                 await generate({
                   generator: new AstJsonGenerator(),
+                  inputPaths,
+                  outputFilePath,
+                })
+              ).unsafeCoerce();
+            },
+          }),
+          cx2: command({
+            name: "cx2",
+            description:
+              "generate Cytoscape Exchange Format Specification (Version 2)",
+            args: {
+              inputPaths,
+              outputFilePath,
+            },
+            handler: async ({ inputPaths, outputFilePath }) => {
+              (
+                await generate({
+                  generator: new Cx2Generator(),
                   inputPaths,
                   outputFilePath,
                 })

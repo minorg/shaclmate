@@ -1,6 +1,5 @@
 export interface LabeledPropertyGraph {
   readonly nodes: readonly LabeledPropertyGraph.Node[];
-  readonly propertySchemas: readonly LabeledPropertyGraph.PropertySchema[];
   readonly relationships: readonly LabeledPropertyGraph.Relationship[];
 }
 
@@ -33,44 +32,36 @@ export namespace LabeledPropertyGraph {
     [K in PropertyType]: { type: K; value: PropertyTypeValueMap[K] };
   }[PropertyType];
 
-  export namespace PropertyValue {
-    export function equals(left: PropertyValue, right: PropertyValue): boolean {
-      if (left.type !== right.type) {
-        return false;
-      }
+  // export namespace PropertyValue {
+  //   export function equals(left: PropertyValue, right: PropertyValue): boolean {
+  //     if (left.type !== right.type) {
+  //       return false;
+  //     }
 
-      switch (left.type) {
-        case "boolean":
-        case "double":
-        case "integer":
-        case "long":
-        case "string":
-          return left.value === right.value;
-        case "boolean[]":
-        case "double[]":
-        case "integer[]":
-        case "long[]":
-        case "string[]":
-          if (!Array.isArray(right.value)) {
-            throw new Error("should never happen");
-          }
-          if (left.value.length !== right.value.length) {
-            return false;
-          }
-          return left.value.every(
-            (element, i) => element === (right.value as any)[i],
-          );
-      }
-    }
-  }
-
-  export interface PropertySchema<
-    PropertyTypeT extends PropertyType = PropertyType,
-  > {
-    readonly default?: PropertyTypeValueMap[PropertyTypeT];
-    readonly name: PropertyName;
-    readonly type: PropertyTypeT;
-  }
+  //     switch (left.type) {
+  //       case "boolean":
+  //       case "double":
+  //       case "integer":
+  //       case "long":
+  //       case "string":
+  //         return left.value === right.value;
+  //       case "boolean[]":
+  //       case "double[]":
+  //       case "integer[]":
+  //       case "long[]":
+  //       case "string[]":
+  //         if (!Array.isArray(right.value)) {
+  //           throw new Error("should never happen");
+  //         }
+  //         if (left.value.length !== right.value.length) {
+  //           return false;
+  //         }
+  //         return left.value.every(
+  //           (element, i) => element === (right.value as any)[i],
+  //         );
+  //     }
+  //   }
+  // }
 
   export interface Relationship {
     readonly id: Id;
