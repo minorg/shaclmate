@@ -1,4 +1,5 @@
 import type { PropertyPath } from "@rdfx/resource";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
@@ -9,21 +10,6 @@ import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
-
-function propertyPathToCode(propertyPath: PropertyPath): Code {
-  switch (propertyPath.termType) {
-    case "AlternativePath":
-    case "SequencePath":
-      return code`{ members: [${joinCode(propertyPath.members.map(propertyPathToCode), { on: "," })}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
-    case "InversePath":
-    case "OneOrMorePath":
-    case "ZeroOrMorePath":
-    case "ZeroOrOnePath":
-      return code`{ path: ${propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
-    case "NamedNode":
-      return rdfjsTermExpression(propertyPath);
-  }
-}
 
 export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
@@ -165,7 +151,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       // comment: this.comment.map(JSON.stringify).extract(),
       // description: this.description.map(JSON.stringify).extract(),
       path: this.namedObjectType.features.has("rdf")
-        ? propertyPathToCode(this.path)
+        ? this.propertyPathToCode(this.path)
         : undefined,
       // label: this.label.map(JSON.stringify).extract(),
       // mutable: this.mutable ? true : undefined,
@@ -348,7 +334,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = propertyPathToCode(this.path);
+    const propertyPath = this.propertyPathToCode(this.path);
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {
@@ -356,5 +342,23 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         },
       )}, ${variables.graph});`,
     ];
+  }
+
+  private propertyPathToCode(propertyPath: PropertyPath): Code {
+    switch (propertyPath.termType) {
+      case "AlternativePath":
+      case "SequencePath":
+        return code`{ members: [${joinCode(
+          propertyPath.members.map((member) => this.propertyPathToCode(member)),
+          { on: "," },
+        )}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
+      case "InversePath":
+      case "OneOrMorePath":
+      case "ZeroOrMorePath":
+      case "ZeroOrOnePath":
+        return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
+      case "NamedNode":
+        return rdfjsTermExpression(propertyPath, { logger: this.logger });
+    }
   }
 }

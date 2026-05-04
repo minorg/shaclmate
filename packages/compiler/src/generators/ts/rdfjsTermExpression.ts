@@ -1,11 +1,9 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import { dummyLogger } from "ts-log";
+import type { Logger } from "ts-log";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { imports } from "./imports.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
-
-const logger = dummyLogger;
 
 export function rdfjsTermExpression(
   rdfjsTerm:
@@ -13,6 +11,7 @@ export function rdfjsTermExpression(
     | Omit<Literal, "equals">
     | Omit<NamedNode, "equals">
     | Omit<Variable, "equals">,
+  { logger }: { logger: Logger },
 ): Code {
   switch (rdfjsTerm.termType) {
     case "BlankNode":
@@ -24,7 +23,7 @@ export function rdfjsTermExpression(
         }
         return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${literalOf(rdfjsTerm.language)})`;
       }
-      return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
+      return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype, { logger })})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);

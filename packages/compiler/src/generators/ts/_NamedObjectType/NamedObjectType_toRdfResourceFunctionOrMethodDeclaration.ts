@@ -57,7 +57,7 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
       code`if (!options?.${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
+            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
         ),
         { on: " " },
       )} }`,

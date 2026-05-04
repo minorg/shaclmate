@@ -70,7 +70,12 @@ export class TermType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
+      in:
+        this.in_.length > 0
+          ? this.in_.map((in_) =>
+              rdfjsTermExpression(in_, { logger: this.logger }),
+            )
+          : undefined,
     };
   }
 

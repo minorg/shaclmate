@@ -37,8 +37,8 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
     statements.push(code`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
-    { subject: ${variables.focusIdentifier}, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
-    { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
+    { subject: ${variables.focusIdentifier}, predicate: ${rdfjsTermExpression(rdf.type, { logger: this.logger })}, object: ${rdfTypeVariable} },
+    { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression(rdfs.subClassOf, { logger: this.logger })}, object: ${rdfClassVariable} }
   );
 }`);
   }

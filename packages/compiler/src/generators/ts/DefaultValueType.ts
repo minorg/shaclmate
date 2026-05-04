@@ -154,7 +154,7 @@ export class DefaultValueType<
 
   @Memoize()
   private get defaultValueTermExpression(): Code {
-    return rdfjsTermExpression(this.defaultValue);
+    return rdfjsTermExpression(this.defaultValue, { logger: this.logger });
   }
 
   override fromJsonExpression(
