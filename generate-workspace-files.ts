@@ -5,7 +5,7 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.17";
+const VERSION = "4.0.18";
 
 const rdfxVersion = "0.0.7";
 const vitestVersion = "~4.1.5";
@@ -145,12 +145,12 @@ const workspaces = {
       },
       dependencies: {
         external: [
+          "@rdfjs/data-model",
+          "@rdfjs/dataset",
           "@rdfjs/prefix-map",
           "@rdfjs/serializer-turtle",
           "@rdfx/fs",
-          "@tpluscode/rdf-ns-builders",
           "cmd-ts",
-          "n3",
           "tmp-promise",
           "pino",
           "pino-pretty",
@@ -163,7 +163,8 @@ const workspaces = {
       devDependencies: {
         external: [
           "@rdfjs/types",
-          "@types/n3",
+          "@types/rdfjs__data-model",
+          "@types/rdfjs__dataset",
           "@types/rdfjs__prefix-map",
           "@types/which",
         ],

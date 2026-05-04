@@ -1,16 +1,13 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import Serializer from "@rdfjs/serializer-turtle";
-import { RdfFileSystemEntry } from "@rdfx/fs";
-import { rdf, rdfs, schema, skos, xsd } from "@tpluscode/rdf-ns-builders";
-import { DataFactory, Store } from "n3";
 import { type Either, EitherAsync } from "purify-ts";
 import SHACLValidator from "rdf-validate-shacl";
 import * as tmp from "tmp-promise";
 import which from "which";
 import { logger } from "../logger.js";
+import { parseInputs } from "./parseInputs.js";
 
 function execFileStreaming(
   cmd: string,
@@ -32,43 +29,23 @@ export async function validate({
   shapesGraphPaths: readonly string[];
 }): Promise<Either<Error, void>> {
   return EitherAsync(async ({ liftEither }) => {
-    const dataGraphDataset = new Store();
-    for (const dataGraphPath of dataGraphPaths) {
-      await liftEither(
-        await (await RdfFileSystemEntry.fromPath(dataGraphPath))
-          .unsafeCoerce()
-          .parseInto(dataGraphDataset, { recursive: true }),
-      );
-    }
+    const { dataset: dataGraphDataset, prefixMap: dataGraphPrefixMap } =
+      await liftEither(await parseInputs(dataGraphPaths));
     if (dataGraphDataset.size === 0) {
       throw new Error("data graph is empty!");
     }
     logger.info("data graph size: %d", dataGraphDataset.size);
 
-    const shapesGraphDataset = new Store();
-    for (const shapesGraphPath of shapesGraphPaths) {
-      await liftEither(
-        await (await RdfFileSystemEntry.fromPath(shapesGraphPath))
-          .unsafeCoerce()
-          .parseInto(shapesGraphDataset, { recursive: true }),
-      );
-    }
+    const { dataset: shapesGraphDataset } = await liftEither(
+      await parseInputs(shapesGraphPaths),
+    );
     if (shapesGraphDataset.size === 0) {
       throw new Error("shapes graph is empty!");
     }
     logger.info("shapes graph size: %d", shapesGraphDataset.size);
 
     const serializer = new Serializer({
-      prefixes: new PrefixMap(
-        [
-          ["rdf", rdf[""]],
-          ["rdfs", rdfs[""]],
-          ["schema", schema[""]],
-          ["skos", skos[""]],
-          ["xsd", xsd[""]],
-        ],
-        { factory: DataFactory },
-      ),
+      prefixes: dataGraphPrefixMap,
     });
 
     logger.info("validating with rdf-shacl-validate");
