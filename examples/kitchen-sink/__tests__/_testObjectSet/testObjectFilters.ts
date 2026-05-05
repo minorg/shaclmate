@@ -1,5 +1,5 @@
-import dataFactory from "@rdfjs/data-model";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";

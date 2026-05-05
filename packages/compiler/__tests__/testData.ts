@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import dataFactory from "@rdfx/data-factory";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { Parser } from "n3";
 import { Either, Maybe } from "purify-ts";

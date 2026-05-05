@@ -1,8 +1,8 @@
-import DataFactory from "@rdfjs/data-model";
-import DatasetFactory from "@rdfjs/dataset";
+import datasetFactory from "@rdfjs/dataset";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { DatasetCore, NamedNode } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { RdfDirectory, type RdfFile, RdfFileSystemEntry } from "@rdfx/fs";
 import { Either, EitherAsync, Left } from "purify-ts";
 import { logger } from "../logger.js";
@@ -17,7 +17,7 @@ export async function parseInputs(inputPaths: readonly string[]): Promise<
   >
 > {
   return EitherAsync(async ({ liftEither }) => {
-    const dataset = DatasetFactory.dataset();
+    const dataset = datasetFactory.dataset();
     const prefixMapInit: PrefixMapInit = [];
     for (const inputPath of inputPaths) {
       const parseInputFileSystemEntry = async (
@@ -76,7 +76,7 @@ export async function parseInputs(inputPaths: readonly string[]): Promise<
 
     return {
       dataset,
-      prefixMap: new PrefixMap(prefixMapInit, { factory: DataFactory }),
+      prefixMap: new PrefixMap(prefixMapInit, { factory: dataFactory }),
     };
   });
 }

@@ -1,5 +1,5 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
+import dataFactory from "@rdfx/data-factory";
 import { Resource, ResourceSet } from "@rdfx/resource";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";

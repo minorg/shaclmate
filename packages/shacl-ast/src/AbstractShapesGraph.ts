@@ -1,5 +1,4 @@
-import DataFactory from "@rdfjs/data-model";
-import DatasetFactory from "@rdfjs/dataset";
+import datasetFactory from "@rdfjs/dataset";
 import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
@@ -10,6 +9,7 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
@@ -132,7 +132,7 @@ export abstract class AbstractShapesGraph<
    * Convert the shapes graph to a dataset.
    */
   toDataset(): DatasetCore {
-    const dataset = DatasetFactory.dataset();
+    const dataset = datasetFactory.dataset();
     const resourceSet = new ResourceSet(dataset);
     for (const nodeShape of this.nodeShapes) {
       this.typeFunctions.NodeShape.$toRdfResource(nodeShape, { resourceSet });
@@ -300,7 +300,7 @@ export namespace AbstractShapesGraph {
       let curieDataset: DatasetCore;
       if (options?.prefixMap) {
         const curieCache = new Map<string, Curie | NamedNode>();
-        curieDataset = DatasetFactory.dataset();
+        curieDataset = datasetFactory.dataset();
         const curieFactory = new CurieFactory({
           prefixMap: options.prefixMap!,
         });
@@ -327,7 +327,7 @@ export namespace AbstractShapesGraph {
             !Object.is(curieSubject, quad.subject)
           ) {
             curieDataset.add(
-              DataFactory.quad(
+              dataFactory.quad(
                 curieSubject,
                 quad.predicate,
                 curieObject,

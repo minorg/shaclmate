@@ -1,4 +1,4 @@
-import dataFactory from "@rdfjs/data-model";
+import dataFactory from "@rdfx/data-factory";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import * as ast from "../ast/index.js";

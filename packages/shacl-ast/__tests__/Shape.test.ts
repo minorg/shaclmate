@@ -1,5 +1,5 @@
-import dataFactory from "@rdfjs/data-model";
 import type { NamedNode } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { dash, schema, xsd } from "@tpluscode/rdf-ns-builders";
 import { describe, expect, it } from "vitest";
 import { NodeKind } from "../dist/NodeKind.js";

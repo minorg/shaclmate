@@ -3,7 +3,7 @@ import { imp } from "./ts-poet-wrapper.js";
 export const imports = {
   BigDecimal: imp("Decimal:BigDecimal@decimal.js"),
   BlankNode: imp("BlankNode@@rdfjs/types"),
-  dataFactory: imp("dataFactory=@rdfjs/data-model"),
+  dataFactory: imp("dataFactory=@rdfx/data-factory"),
   DatasetCore: imp("DatasetCore@@rdfjs/types"),
   datasetFactory: imp("datasetFactory=@rdfjs/dataset"),
   Either: imp("Either@purify-ts"),
