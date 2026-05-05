@@ -10,7 +10,7 @@ import type {
   Term,
 } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
-import { Resource, ResourceSet } from "@rdfx/resource";
+import { type Resource, ResourceSet } from "@rdfx/resource";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
@@ -76,22 +76,14 @@ export abstract class AbstractShapesGraph<
     const nodeShape = this.nodeShapesByIdentifier.get(identifier);
     return nodeShape
       ? Either.of(nodeShape)
-      : Left(
-          new Error(
-            `no such node shape ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such node shape ${identifier}`));
   }
 
   ontology(identifier: BlankNode | NamedNode): Either<Error, OntologyT> {
     const ontology = this.ontologiesByIdentifier.get(identifier);
     return ontology
       ? Either.of(ontology)
-      : Left(
-          new Error(
-            `no such ontology ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such ontology ${identifier}`));
   }
 
   propertyGroup(
@@ -100,11 +92,7 @@ export abstract class AbstractShapesGraph<
     const propertyGroup = this.propertyGroupsByIdentifier.get(identifier);
     return propertyGroup
       ? Either.of(propertyGroup)
-      : Left(
-          new Error(
-            `no such property group ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such property group ${identifier}`));
   }
 
   propertyShape(
@@ -113,11 +101,7 @@ export abstract class AbstractShapesGraph<
     const propertyShape = this.propertyShapesByIdentifier.get(identifier);
     return propertyShape
       ? Either.of(propertyShape)
-      : Left(
-          new Error(
-            `no such property shape ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such property shape ${identifier}`));
   }
 
   shape(
@@ -500,9 +484,7 @@ export namespace AbstractShapesGraph {
               !options?.ignoreUndefinedShapes &&
               !datasetHasMatch(quad.object)
             ) {
-              throw new Error(
-                `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
-              );
+              throw new Error(`undefined shape: ${quad.object}`);
             }
           }
         }
@@ -533,7 +515,7 @@ export namespace AbstractShapesGraph {
                 !datasetHasMatch(identifier)
               ) {
                 throw new Error(
-                  `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
+                  `undefined shape: ${identifier as Resource.Identifier}`,
                 );
               }
             }
