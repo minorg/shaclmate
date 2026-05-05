@@ -1,4 +1,3 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
@@ -9,12 +8,14 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
+import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
 import { sha256 } from "js-sha256";
 import {
@@ -212,18 +213,6 @@ const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
 };
 
 interface $BlankNodeFilter {}
-
-export function $blankNodeFromString(
-  identifier: string,
-): Either<Error, BlankNode> {
-  return Either.encase(() =>
-    Resource.Identifier.fromString({ dataFactory, identifier }),
-  ).chain((identifier) =>
-    identifier.termType === "BlankNode"
-      ? Right(identifier)
-      : Left(new Error("expected identifier to be BlankNode")),
-  ) as Either<Error, BlankNode>;
-}
 
 interface $BlankNodeSchema {
   readonly kind: "BlankNode";
@@ -894,14 +883,6 @@ type $Hasher = {
 interface $IdentifierFilter {
   readonly in?: readonly (BlankNode | NamedNode)[];
   readonly type?: "BlankNode" | "NamedNode";
-}
-
-function $identifierFromString(
-  identifier: string,
-): Either<Error, BlankNode | NamedNode> {
-  return Either.encase(() =>
-    Resource.Identifier.fromString({ dataFactory, identifier }),
-  );
 }
 
 interface $IdentifierSchema {
@@ -1751,6 +1732,24 @@ function $numericSparqlWherePatterns<T extends bigint | number>({
     filterPatterns,
     valueVariable,
   });
+}
+
+export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
+  return $parseIdentifier(identifier).chain((identifier) =>
+    identifier.termType === "BlankNode"
+      ? Right(identifier)
+      : Left(new Error("expected identifier to be BlankNode")),
+  ) as Either<Error, BlankNode>;
+}
+
+const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
+
+export function $parseIri(identifier: string): Either<Error, NamedNode> {
+  return $parseIdentifier(identifier).chain((identifier) =>
+    identifier.termType === "NamedNode"
+      ? Right(identifier)
+      : Left(new Error("expected identifier to be NamedNode")),
+  ) as Either<Error, NamedNode>;
 }
 
 type $PropertiesFromRdfResourceFunction<T> = (
@@ -3281,16 +3280,8 @@ export namespace $NamedDefaultPartial {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -3648,8 +3639,8 @@ export namespace $DefaultPartial {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -4015,16 +4006,8 @@ export namespace UuidV4IriIdentifierInterface {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -4555,16 +4538,8 @@ export namespace UuidV4IriIdentifierClass {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -6656,8 +6631,8 @@ export namespace UnionDiscriminantsClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -12379,8 +12354,8 @@ export namespace TermPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -13133,9 +13108,7 @@ export namespace TermPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/TermPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/TermPropertiesClass)`,
                 ),
               );
             })
@@ -13698,16 +13671,8 @@ export namespace Sha256IriIdentifierClass {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -14204,8 +14169,8 @@ export namespace RecursiveClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -14479,9 +14444,7 @@ export namespace RecursiveClassUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember2)`,
                 ),
               );
             })
@@ -14806,8 +14769,8 @@ export namespace RecursiveClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -15081,9 +15044,7 @@ export namespace RecursiveClassUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember1)`,
                 ),
               );
             })
@@ -15414,8 +15375,8 @@ export namespace PropertyVisibilitiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -16051,8 +16012,8 @@ export namespace PropertyPathsClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -16394,9 +16355,7 @@ export namespace PropertyPathsClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyPathsClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyPathsClass)`,
                 ),
               );
             })
@@ -16822,8 +16781,8 @@ export namespace PropertyNamesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -17283,9 +17242,7 @@ export namespace PropertyNamesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyNamesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyNamesClass)`,
                 ),
               );
             })
@@ -17757,8 +17714,8 @@ export namespace PropertyCardinalitiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -18182,9 +18139,7 @@ export namespace PropertyCardinalitiesClass {
                 .chain((values) => values.chainMap((value) => value.toString()))
                 .chain((values) =>
                   NonEmptyList.fromArray(values.toArray()).toEither(
-                    new Error(
-                      `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
-                    ),
+                    new Error(`${$resource.identifier} is an empty set`),
                   ),
                 )
                 .map((valuesArray) =>
@@ -18486,8 +18441,8 @@ export namespace PartialInterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -18778,9 +18733,7 @@ export namespace PartialInterfaceUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
                 ),
               );
             })
@@ -19075,8 +19028,8 @@ export namespace PartialInterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -19367,9 +19320,7 @@ export namespace PartialInterfaceUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
                 ),
               );
             })
@@ -19698,8 +19649,8 @@ export namespace PartialClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -19984,9 +19935,7 @@ export namespace PartialClassUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
                 ),
               );
             })
@@ -20263,8 +20212,8 @@ export namespace PartialClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -20549,9 +20498,7 @@ export namespace PartialClassUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
                 ),
               );
             })
@@ -20807,8 +20754,8 @@ export namespace NewName2Class {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -21045,9 +20992,7 @@ export namespace NewName2Class {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName2Class)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName2Class)`,
                 ),
               );
             })
@@ -21272,8 +21217,8 @@ export namespace NewName1Class {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -21510,9 +21455,7 @@ export namespace NewName1Class {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName1Class)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName1Class)`,
                 ),
               );
             })
@@ -21796,8 +21739,8 @@ export namespace OrderedPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -23053,8 +22996,8 @@ export namespace NumericPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -24122,9 +24065,7 @@ export namespace NumericPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NumericPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NumericPropertiesClass)`,
                 ),
               );
             })
@@ -25281,8 +25222,8 @@ export namespace NodeKindsClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -25867,9 +25808,7 @@ export namespace NodeKindsClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NodeKindsClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NodeKindsClass)`,
                 ),
               );
             })
@@ -26268,8 +26207,8 @@ export namespace NoRdfTypeClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -26739,8 +26678,8 @@ export namespace NoRdfTypeClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -27256,8 +27195,8 @@ export namespace NamedUnionPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -27588,9 +27527,7 @@ export namespace NamedUnionPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NamedUnionPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NamedUnionPropertiesClass)`,
                 ),
               );
             })
@@ -28084,8 +28021,8 @@ export namespace MutablePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -28505,9 +28442,7 @@ export namespace MutablePropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/MutablePropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/MutablePropertiesClass)`,
                 ),
               );
             })
@@ -29152,8 +29087,8 @@ export namespace ListPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -29585,9 +29520,7 @@ export namespace ListPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListPropertiesClass)`,
                 ),
               );
             })
@@ -29980,8 +29913,8 @@ export namespace PartialInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -31386,8 +31319,8 @@ export namespace LazyPropertiesInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -32283,7 +32216,7 @@ export namespace LazyPropertiesInterface {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -32300,7 +32233,7 @@ export namespace LazyPropertiesInterface {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -32318,7 +32251,7 @@ export namespace LazyPropertiesInterface {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -32336,7 +32269,7 @@ export namespace LazyPropertiesInterface {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -32354,7 +32287,7 @@ export namespace LazyPropertiesInterface {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -32374,7 +32307,7 @@ export namespace LazyPropertiesInterface {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -32391,7 +32324,7 @@ export namespace LazyPropertiesInterface {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -32408,7 +32341,7 @@ export namespace LazyPropertiesInterface {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -34632,8 +34565,8 @@ export namespace LazyPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -35498,7 +35431,7 @@ export namespace LazyPropertiesClass {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -35515,7 +35448,7 @@ export namespace LazyPropertiesClass {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -35533,7 +35466,7 @@ export namespace LazyPropertiesClass {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -35550,7 +35483,7 @@ export namespace LazyPropertiesClass {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -35568,7 +35501,7 @@ export namespace LazyPropertiesClass {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -35586,7 +35519,7 @@ export namespace LazyPropertiesClass {
           Promise.resolve(
             Left(
               new Error(
-                `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
               ),
             ),
           ),
@@ -35603,7 +35536,7 @@ export namespace LazyPropertiesClass {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -35620,7 +35553,7 @@ export namespace LazyPropertiesClass {
         Promise.resolve(
           Left(
             new Error(
-              `unable to resolve identifier ${Resource.Identifier.toString(identifier)} deserialized from JSON`,
+              `unable to resolve identifier ${identifier} deserialized from JSON`,
             ),
           ),
         ),
@@ -36555,16 +36488,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -37076,16 +37001,8 @@ export namespace LazilyResolvedIriIdentifierClass {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -37526,8 +37443,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -37826,9 +37743,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember2)`,
                 ),
               );
             })
@@ -38128,8 +38043,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -38428,9 +38343,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember1)`,
                 ),
               );
             })
@@ -38766,8 +38679,8 @@ export namespace LazilyResolvedClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -39058,9 +38971,7 @@ export namespace LazilyResolvedClassUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember2)`,
                 ),
               );
             })
@@ -39341,8 +39252,8 @@ export namespace LazilyResolvedClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -39633,9 +39544,7 @@ export namespace LazilyResolvedClassUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember1)`,
                 ),
               );
             })
@@ -39885,8 +39794,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -40188,9 +40097,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface)`,
                 ),
               );
             })
@@ -40540,8 +40447,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -40842,9 +40749,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass)`,
                 ),
               );
             })
@@ -41140,8 +41045,8 @@ export namespace LanguageInPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -41403,9 +41308,7 @@ export namespace LanguageInPropertiesClass {
               .chain((values) => values.chainMap((value) => value.toLiteral()))
               .chain((values) =>
                 NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(
-                    `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
-                  ),
+                  new Error(`${$resource.identifier} is an empty set`),
                 ),
               )
               .map((valuesArray) =>
@@ -41760,8 +41663,8 @@ export namespace JsPrimitiveUnionPropertyClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -42281,9 +42184,7 @@ export namespace JsPrimitiveUnionPropertyClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/JsPrimitiveUnionPropertyClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/JsPrimitiveUnionPropertyClass)`,
                 ),
               );
             })
@@ -42583,16 +42484,8 @@ export namespace IriIdentifierInterface {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -42833,9 +42726,7 @@ export namespace IriIdentifierInterface {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierInterface)`,
                 ),
               );
             })
@@ -43087,16 +42978,8 @@ export namespace IriIdentifierClass {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -43334,9 +43217,7 @@ export namespace IriIdentifierClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierClass)`,
                 ),
               );
             })
@@ -43549,8 +43430,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -43975,8 +43856,8 @@ export namespace InterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -44270,9 +44151,7 @@ export namespace InterfaceUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
                 ),
               );
             })
@@ -44548,8 +44427,8 @@ export namespace InterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -44843,9 +44722,7 @@ export namespace InterfaceUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
                 ),
               );
             })
@@ -45127,8 +45004,8 @@ export namespace Interface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -45650,8 +45527,8 @@ export namespace IndirectRecursiveHelperClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -45921,9 +45798,7 @@ export namespace IndirectRecursiveHelperClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveHelperClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveHelperClass)`,
                 ),
               );
             })
@@ -46243,8 +46118,8 @@ export namespace IndirectRecursiveClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -46514,9 +46389,7 @@ export namespace IndirectRecursiveClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveClass)`,
                 ),
               );
             })
@@ -47041,8 +46914,8 @@ export namespace InPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -47609,9 +47482,7 @@ export namespace InPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InPropertiesClass)`,
                 ),
               );
             })
@@ -48101,49 +47972,32 @@ export namespace InIdentifierClass {
   >;
 
   export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): Either<
-      Error,
-      NamedNode<
-        | "http://example.com/InIdentifierInstance1"
-        | "http://example.com/InIdentifierInstance2"
-      >
-    > {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      )
-        .chain((identifier) =>
-          identifier.termType === "NamedNode"
-            ? Right(identifier)
-            : Left(new Error("expected identifier to be NamedNode")),
-        )
-        .chain((identifier) => {
-          switch (identifier.value) {
-            case "http://example.com/InIdentifierInstance1":
-              return Right(
-                identifier as NamedNode<"http://example.com/InIdentifierInstance1">,
-              );
-            case "http://example.com/InIdentifierInstance2":
-              return Right(
-                identifier as NamedNode<"http://example.com/InIdentifierInstance2">,
-              );
-            default:
-              return Left(
-                new Error(
-                  "expected NamedNode identifier to be one of http://example.com/InIdentifierInstance1 http://example.com/InIdentifierInstance2",
-                ),
-              );
-          }
-        }) as Either<
-        Error,
-        NamedNode<
-          | "http://example.com/InIdentifierInstance1"
-          | "http://example.com/InIdentifierInstance2"
-        >
-      >;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = (identifier: string) =>
+      $parseIri(identifier).chain((identifier) => {
+        switch (identifier.value) {
+          case "http://example.com/InIdentifierInstance1":
+            return Right(
+              identifier as NamedNode<
+                | "http://example.com/InIdentifierInstance1"
+                | "http://example.com/InIdentifierInstance2"
+              >,
+            );
+          case "http://example.com/InIdentifierInstance2":
+            return Right(
+              identifier as NamedNode<
+                | "http://example.com/InIdentifierInstance1"
+                | "http://example.com/InIdentifierInstance2"
+              >,
+            );
+          default:
+            return Left(
+              new Error(
+                "expected NamedNode identifier to be one of http://example.com/InIdentifierInstance1 http://example.com/InIdentifierInstance2",
+              ),
+            );
+        }
+      });
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -48443,9 +48297,7 @@ export namespace InIdentifierClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InIdentifierClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InIdentifierClass)`,
                 ),
               );
             })
@@ -48739,8 +48591,8 @@ export namespace IdentifierOverride1ClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -49105,16 +48957,8 @@ export namespace IdentifierOverride2ClassStatic {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = IdentifierOverride1ClassStatic.$Json;
@@ -49395,16 +49239,8 @@ export namespace IdentifierOverride3ClassStatic {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = IdentifierOverride2ClassStatic.$Json;
@@ -49664,9 +49500,7 @@ export namespace IdentifierOverride3ClassStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
                 ),
               );
             })
@@ -49853,16 +49687,8 @@ export namespace IdentifierOverride4ClassStatic {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = IdentifierOverride3ClassStatic.$Json;
@@ -50115,9 +49941,7 @@ export namespace IdentifierOverride4ClassStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
                 ),
               );
             })
@@ -50301,16 +50125,8 @@ export namespace IdentifierOverride5Class {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = IdentifierOverride4ClassStatic.$Json;
@@ -50546,9 +50362,7 @@ export namespace IdentifierOverride5Class {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
                 ),
               );
             })
@@ -50815,8 +50629,8 @@ export namespace HasValuePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -51364,8 +51178,8 @@ export namespace FlattenClassUnionMember3 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -51651,9 +51465,7 @@ export namespace FlattenClassUnionMember3 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenClassUnionMember3)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenClassUnionMember3)`,
                 ),
               );
             })
@@ -51955,8 +51767,8 @@ export namespace ExternClassPropertyClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -52248,9 +52060,7 @@ export namespace ExternClassPropertyClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ExternClassPropertyClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ExternClassPropertyClass)`,
                 ),
               );
             })
@@ -52540,8 +52350,8 @@ export namespace AbstractBaseClassForExternClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -52974,8 +52784,8 @@ export namespace ExplicitRdfTypeClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -53259,9 +53069,7 @@ export namespace ExplicitRdfTypeClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
                 ),
               );
             })
@@ -53552,8 +53360,8 @@ export namespace ExplicitFromToRdfTypesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -53842,9 +53650,7 @@ export namespace ExplicitFromToRdfTypesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
                 ),
               );
             })
@@ -54146,8 +53952,8 @@ export namespace DirectRecursiveClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -54413,9 +54219,7 @@ export namespace DirectRecursiveClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DirectRecursiveClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DirectRecursiveClass)`,
                 ),
               );
             })
@@ -54948,8 +54752,8 @@ export namespace DefaultValuePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -55479,9 +55283,7 @@ export namespace DefaultValuePropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DefaultValuePropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DefaultValuePropertiesClass)`,
                 ),
               );
             })
@@ -56467,8 +56269,8 @@ export namespace DateUnionPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -57661,9 +57463,7 @@ export namespace DateUnionPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DateUnionPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DateUnionPropertiesClass)`,
                 ),
               );
             })
@@ -59097,8 +58897,8 @@ export namespace ConvertibleTypePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -60191,9 +59991,7 @@ export namespace ConvertibleTypePropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypePropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypePropertiesClass)`,
                 ),
               );
             })
@@ -60220,9 +60018,7 @@ export namespace ConvertibleTypePropertiesClass {
                 .chain((values) => values.chainMap((value) => value.toIri()))
                 .chain((values) =>
                   NonEmptyList.fromArray(values.toArray()).toEither(
-                    new Error(
-                      `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
-                    ),
+                    new Error(`${$resource.identifier} is an empty set`),
                   ),
                 )
                 .map((valuesArray) =>
@@ -60302,7 +60098,7 @@ export namespace ConvertibleTypePropertiesClass {
                         .chain((values) =>
                           NonEmptyList.fromArray(values.toArray()).toEither(
                             new Error(
-                              `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
+                              `${$resource.identifier} is an empty set`,
                             ),
                           ),
                         )
@@ -60406,7 +60202,7 @@ export namespace ConvertibleTypePropertiesClass {
                                     values.toArray(),
                                   ).toEither(
                                     new Error(
-                                      `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
+                                      `${$resource.identifier} is an empty set`,
                                     ),
                                   ),
                                 )
@@ -60832,8 +60628,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -61170,9 +60966,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
                 ),
               );
             })
@@ -61455,8 +61249,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
@@ -61739,9 +61533,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
                 ),
               );
             })
@@ -61989,8 +61781,8 @@ export namespace ConcreteParentInterfaceStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -62301,9 +62093,7 @@ export namespace ConcreteParentInterfaceStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
                 ),
               );
             })
@@ -62587,8 +62377,8 @@ export namespace ConcreteChildInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -62875,9 +62665,7 @@ export namespace ConcreteChildInterface {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
                 ),
               );
             })
@@ -63228,8 +63016,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -63596,8 +63384,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
@@ -63927,8 +63715,8 @@ export namespace ConcreteParentClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -64233,9 +64021,7 @@ export namespace ConcreteParentClassStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
                 ),
               );
             })
@@ -64486,8 +64272,8 @@ export namespace ConcreteChildClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -64767,9 +64553,7 @@ export namespace ConcreteChildClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
                 ),
               );
             })
@@ -65032,8 +64816,8 @@ export namespace ClassUnionMemberCommonParentStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -65431,8 +65215,8 @@ export namespace ClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -65718,9 +65502,7 @@ export namespace ClassUnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
                 ),
               );
             })
@@ -65957,8 +65739,8 @@ export namespace ClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -66244,9 +66026,7 @@ export namespace ClassUnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
                 ),
               );
             })
@@ -66505,8 +66285,8 @@ export namespace NonClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -66950,8 +66730,8 @@ export namespace PartialClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -67630,8 +67410,8 @@ export namespace ClassPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -68159,9 +67939,7 @@ export namespace ClassPropertiesClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassPropertiesClass)`,
                 ),
               );
             })
@@ -68529,8 +68307,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -68783,9 +68561,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierInterface)`,
                 ),
               );
             })
@@ -69065,8 +68841,8 @@ export namespace BlankNodeOrIriIdentifierClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -69308,9 +69084,7 @@ export namespace BlankNodeOrIriIdentifierClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierClass)`,
                 ),
               );
             })
@@ -69510,8 +69284,8 @@ export namespace BlankNodeIdentifierInterface {
   export type $Identifier = BlankNode;
 
   export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseBlankNode;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -69753,9 +69527,7 @@ export namespace BlankNodeIdentifierInterface {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierInterface)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierInterface)`,
                 ),
               );
             })
@@ -70025,8 +69797,8 @@ export namespace BlankNodeIdentifierClass {
   export type $Identifier = BlankNode;
 
   export namespace $Identifier {
-    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseBlankNode;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -70265,9 +70037,7 @@ export namespace BlankNodeIdentifierClass {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierClass)`,
                 ),
               );
             })
@@ -70621,8 +70391,8 @@ export namespace ClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = ClassUnionMember1.$Json | ClassUnionMember2.$Json;
@@ -71141,8 +70911,8 @@ export namespace FlattenClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -71636,8 +71406,8 @@ export namespace InterfaceUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
@@ -72111,8 +71881,8 @@ export namespace LazilyResolvedClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -72630,8 +72400,8 @@ export namespace LazilyResolvedInterfaceUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -73133,8 +72903,8 @@ export namespace PartialClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -73607,8 +73377,8 @@ export namespace PartialInterfaceUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -74083,8 +73853,8 @@ export namespace NoRdfTypeClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -74551,8 +74321,8 @@ export namespace RecursiveClassUnion {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =
@@ -80040,8 +79810,8 @@ export namespace $Object {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json =

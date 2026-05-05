@@ -18,11 +18,10 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   get parseFunction(): Code {
-    let parseFunction: Code = code`${snippets.parseIri}`;
     if (this.in_.length > 0) {
-      parseFunction = code`${parseFunction}.chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${imports.Right}(identifier as ${imports.NamedNode}<"${iri.value}">);`))} default: return ${imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
+      return code`(identifier: string) => ${snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${imports.Right}(identifier as ${this.name});`))} default: return ${imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
     }
-    return parseFunction;
+    return code`${snippets.parseIri}`;
   }
 
   @Memoize()
