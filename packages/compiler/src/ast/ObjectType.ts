@@ -559,10 +559,6 @@ export namespace ObjectType {
       objectTypesByShapeIdentifier[objectTypeShapeIdentifier] = objectType;
       objectTypeGraphNodes.push(objectTypeShapeIdentifier);
       for (const parentAstObjectType of objectType.parentObjectTypes) {
-        // console.log(
-        //   objectTypeShapeIdentifier,
-        //   Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),
-        // );
         objectTypeGraphEdges.push([
           objectTypeShapeIdentifier,
           NTriplesIdentifier.stringify(parentAstObjectType.shapeIdentifier),
