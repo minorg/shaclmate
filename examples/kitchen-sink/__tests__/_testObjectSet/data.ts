@@ -1,4 +1,4 @@
-import dataFactory from "@rdfjs/data-model";
+import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
 export const data = {

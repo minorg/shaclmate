@@ -1,5 +1,4 @@
-import DataFactory from "@rdfjs/data-model";
-import DatasetFactory from "@rdfjs/dataset";
+import datasetFactory from "@rdfjs/dataset";
 import type PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
@@ -10,7 +9,9 @@ import type {
   NamedNode,
   Term,
 } from "@rdfjs/types";
-import { Resource, ResourceSet } from "@rdfx/resource";
+import dataFactory from "@rdfx/data-factory";
+import { type Resource, ResourceSet } from "@rdfx/resource";
+import { NTriplesTerm } from "@rdfx/string";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
@@ -76,22 +77,14 @@ export abstract class AbstractShapesGraph<
     const nodeShape = this.nodeShapesByIdentifier.get(identifier);
     return nodeShape
       ? Either.of(nodeShape)
-      : Left(
-          new Error(
-            `no such node shape ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such node shape ${identifier}`));
   }
 
   ontology(identifier: BlankNode | NamedNode): Either<Error, OntologyT> {
     const ontology = this.ontologiesByIdentifier.get(identifier);
     return ontology
       ? Either.of(ontology)
-      : Left(
-          new Error(
-            `no such ontology ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such ontology ${identifier}`));
   }
 
   propertyGroup(
@@ -100,11 +93,7 @@ export abstract class AbstractShapesGraph<
     const propertyGroup = this.propertyGroupsByIdentifier.get(identifier);
     return propertyGroup
       ? Either.of(propertyGroup)
-      : Left(
-          new Error(
-            `no such property group ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such property group ${identifier}`));
   }
 
   propertyShape(
@@ -113,11 +102,7 @@ export abstract class AbstractShapesGraph<
     const propertyShape = this.propertyShapesByIdentifier.get(identifier);
     return propertyShape
       ? Either.of(propertyShape)
-      : Left(
-          new Error(
-            `no such property shape ${Resource.Identifier.toString(identifier)}`,
-          ),
-        );
+      : Left(new Error(`no such property shape ${identifier}`));
   }
 
   shape(
@@ -132,7 +117,7 @@ export abstract class AbstractShapesGraph<
    * Convert the shapes graph to a dataset.
    */
   toDataset(): DatasetCore {
-    const dataset = DatasetFactory.dataset();
+    const dataset = datasetFactory.dataset();
     const resourceSet = new ResourceSet(dataset);
     for (const nodeShape of this.nodeShapes) {
       this.typeFunctions.NodeShape.$toRdfResource(nodeShape, { resourceSet });
@@ -163,28 +148,6 @@ export abstract class AbstractShapesGraph<
   }): string {
     const format = options?.format ?? ("application/n-triples" as const);
 
-    function termToString(term: Term) {
-      switch (term.termType) {
-        case "NamedNode":
-          return `<${term.value}>`;
-        case "BlankNode":
-          return `_:${term.value}`;
-        case "Literal": {
-          const escaped = term.value
-            .replace(/\\/g, "\\\\")
-            .replace(/"/g, '\\"')
-            .replace(/\n/g, "\\n")
-            .replace(/\r/g, "\\r");
-          if (term.language) return `"${escaped}"@${term.language}`;
-          if (term.datatype.value !== "http://www.w3.org/2001/XMLSchema#string")
-            return `"${escaped}"^^<${term.datatype.value}>`;
-          return `"${escaped}"`;
-        }
-        default:
-          throw new Error(`unexpected term type: ${term.termType}`);
-      }
-    }
-
     const lines: string[] = [];
     switch (format) {
       case "application/n-quads": {
@@ -192,9 +155,9 @@ export abstract class AbstractShapesGraph<
           const graphString =
             quad.graph.termType === "DefaultGraph"
               ? ""
-              : ` ${termToString(quad.graph)}`;
+              : ` ${NTriplesTerm.stringify(quad.graph)}`;
           lines.push(
-            `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)}${graphString} .\n`,
+            `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)}${graphString} .\n`,
           );
         }
         break;
@@ -203,7 +166,7 @@ export abstract class AbstractShapesGraph<
         {
           for (const quad of this.toDataset()) {
             lines.push(
-              `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)} .\n`,
+              `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)} .\n`,
             );
           }
         }
@@ -300,7 +263,7 @@ export namespace AbstractShapesGraph {
       let curieDataset: DatasetCore;
       if (options?.prefixMap) {
         const curieCache = new Map<string, Curie | NamedNode>();
-        curieDataset = DatasetFactory.dataset();
+        curieDataset = datasetFactory.dataset();
         const curieFactory = new CurieFactory({
           prefixMap: options.prefixMap!,
         });
@@ -327,7 +290,7 @@ export namespace AbstractShapesGraph {
             !Object.is(curieSubject, quad.subject)
           ) {
             curieDataset.add(
-              DataFactory.quad(
+              dataFactory.quad(
                 curieSubject,
                 quad.predicate,
                 curieObject,
@@ -500,9 +463,7 @@ export namespace AbstractShapesGraph {
               !options?.ignoreUndefinedShapes &&
               !datasetHasMatch(quad.object)
             ) {
-              throw new Error(
-                `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
-              );
+              throw new Error(`undefined shape: ${quad.object}`);
             }
           }
         }
@@ -533,7 +494,7 @@ export namespace AbstractShapesGraph {
                 !datasetHasMatch(identifier)
               ) {
                 throw new Error(
-                  `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
+                  `undefined shape: ${identifier as Resource.Identifier}`,
                 );
               }
             }

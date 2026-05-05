@@ -65,7 +65,7 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
         return ${imports.Right}(true as const);
       }
 
-      return ${imports.Left}(new Error(\`\${${imports.Resource}.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
+      return ${imports.Left}(new Error(\`\${${variables.resource}.identifier} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
     }) : ${imports.Right}(true as const)`,
       variable: "_rdfTypeCheck",
     });

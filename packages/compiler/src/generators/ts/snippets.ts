@@ -1,3 +1,4 @@
+import { snippets_parseIri } from "./_snippets/parseIri.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
@@ -6,7 +7,6 @@ import { snippets_BooleanFilter } from "./_snippets/snippets_BooleanFilter.js";
 import { snippets_BooleanSchema } from "./_snippets/snippets_BooleanSchema.js";
 import { snippets_bigDecimalLiteral } from "./_snippets/snippets_bigDecimalLiteral.js";
 import { snippets_bigDecimalSparqlWherePatterns } from "./_snippets/snippets_bigDecimalSparqlWherePatterns.js";
-import { snippets_blankNodeFromString } from "./_snippets/snippets_blankNodeFromString.js";
 import { snippets_blankNodeSparqlWherePatterns } from "./_snippets/snippets_blankNodeSparqlWherePatterns.js";
 import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
@@ -45,7 +45,6 @@ import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
-import { snippets_identifierFromString } from "./_snippets/snippets_identifierFromString.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
@@ -75,6 +74,8 @@ import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_norm
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
 import { snippets_PropertiesFromRdfResourceFunction } from "./_snippets/snippets_PropertiesFromRdfResourceFunction.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
+import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
+import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
@@ -111,7 +112,6 @@ export const snippets = {
   bigDecimalSparqlWherePatterns: snippets_bigDecimalSparqlWherePatterns,
   BlankNodeFilter: snippets_BlankNodeFilter,
   BlankNodeSchema: snippets_BlankNodeSchema,
-  blankNodeFromString: snippets_blankNodeFromString,
   blankNodeSparqlWherePatterns: snippets_blankNodeSparqlWherePatterns,
   booleanEquals: snippets_booleanEquals,
   BooleanFilter: snippets_BooleanFilter,
@@ -149,7 +149,6 @@ export const snippets = {
   FromRdfResourceValuesFunction: snippets_FromRdfResourceValuesFunction,
   Hasher: snippets_Hasher,
   IdentifierFilter: snippets_IdentifierFilter,
-  identifierFromString: snippets_identifierFromString,
   IdentifierSchema: snippets_IdentifierSchema,
   IdentifierSet: snippets_IdentifierSet,
   identifierSparqlWherePatterns: snippets_identifierSparqlWherePatterns,
@@ -181,6 +180,9 @@ export const snippets = {
   NumericFilter: snippets_NumericFilter,
   NumericSchema: snippets_NumericSchema,
   numericSparqlWherePatterns: snippets_numericSparqlWherePatterns,
+  parseBlankNode: snippets_parseBlankNode,
+  parseIdentifier: snippets_parseIdentifier,
+  parseIri: snippets_parseIri,
   PropertiesFromRdfResourceFunction: snippets_PropertiesFromRdfResourceFunction,
   PropertyPath: snippets_PropertyPath,
   RdfVocabularies: snippets_RdfVocabularies,

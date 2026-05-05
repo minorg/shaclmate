@@ -5,7 +5,7 @@ import {
 import { JsonForms } from "@jsonforms/react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import dataFactory from "@rdfjs/data-model";
+import dataFactory from "@rdfx/data-factory";
 import { NonEmptyList } from "purify-ts";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./generated.js";

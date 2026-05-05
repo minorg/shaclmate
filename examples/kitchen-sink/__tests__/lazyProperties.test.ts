@@ -1,6 +1,6 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { ResourceSet } from "@rdfx/resource";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { beforeAll, describe, expect, it } from "vitest";

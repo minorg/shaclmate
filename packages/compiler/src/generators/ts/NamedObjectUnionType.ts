@@ -209,7 +209,10 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
       `${syntheticNamePrefix}Identifier`,
       code`\
 export type ${syntheticNamePrefix}Identifier = ${this.#identifierType.name};
-export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.#identifierType.fromStringFunction, this.#identifierType.toStringFunction])} }`,
+export namespace ${syntheticNamePrefix}Identifier {
+  export const parse = ${this.#identifierType.parseFunction};
+  export const stringify = ${this.#identifierType.stringifyFunction};
+}`,
     );
   }
 

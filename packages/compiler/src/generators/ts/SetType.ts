@@ -52,7 +52,7 @@ export class SetType<
       );
     } else {
       chain.push(
-        code`chain(values => ${imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${imports.Resource}.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
+        code`chain(values => ${imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
       );
     }
     chain.push(

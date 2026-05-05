@@ -1,11 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { PropertyPath, Resource } from "@rdfx/resource";
+import { PropertyPath } from "@rdfx/resource";
+import { NTriplesIdentifier } from "@rdfx/string";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
@@ -230,22 +230,19 @@ export class ObjectType extends AbstractType {
   override toJSON() {
     return {
       ...super.toJSON(),
-      fromRdfType: this.fromRdfType.map(Resource.Identifier.toString).extract(),
+      fromRdfType: this.fromRdfType.extract(),
       identifierMintingStrategy: this.identifierMintingStrategy.extract(),
       identifierType: this.identifierType.toJSON(),
       parentObjectTypes:
         this.parentObjectTypes.length > 0
-          ? this.parentObjectTypes.map((parentObjectType) =>
-              parentObjectType.name.orDefault(
-                Resource.Identifier.toString(parentObjectType.shapeIdentifier),
-              ),
+          ? this.parentObjectTypes.map(
+              (parentObjectType) =>
+                parentObjectType.name.extract() ??
+                parentObjectType.shapeIdentifier,
             )
           : undefined,
       synthetic: this.synthetic ? true : undefined,
-      toRdfTypes:
-        this.toRdfTypes.length > 0
-          ? this.toRdfTypes.map(Resource.Identifier.toString)
-          : undefined,
+      toRdfTypes: this.toRdfTypes.length > 0 ? this.toRdfTypes : undefined,
     };
   }
 }
@@ -535,7 +532,7 @@ export namespace ObjectType {
         order: this.order,
         path: PropertyPath.toString(this.path),
         recursive: this.recursive ? true : undefined,
-        shapeIdentifier: Resource.Identifier.toString(this.shapeIdentifier),
+        shapeIdentifier: this.shapeIdentifier,
         type: this.type.toJSON(),
         visibility: this.visibility,
       };
@@ -555,20 +552,16 @@ export namespace ObjectType {
     const objectTypeGraphNodes: string[] = [];
     const objectTypeGraphEdges: [string, string | undefined][] = [];
     for (const objectType of objectTypes) {
-      const objectTypeShapeIdentifier = Resource.Identifier.toString(
+      const objectTypeShapeIdentifier = NTriplesIdentifier.stringify(
         objectType.shapeIdentifier,
       );
       invariant(!objectTypesByShapeIdentifier[objectTypeShapeIdentifier]);
       objectTypesByShapeIdentifier[objectTypeShapeIdentifier] = objectType;
       objectTypeGraphNodes.push(objectTypeShapeIdentifier);
       for (const parentAstObjectType of objectType.parentObjectTypes) {
-        // console.log(
-        //   objectTypeShapeIdentifier,
-        //   Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),
-        // );
         objectTypeGraphEdges.push([
           objectTypeShapeIdentifier,
-          Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),
+          NTriplesIdentifier.stringify(parentAstObjectType.shapeIdentifier),
         ]);
       }
     }

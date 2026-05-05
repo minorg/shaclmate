@@ -26,7 +26,7 @@ function graphqlQueryObjectType({
         resolve: code`\
 async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObjectType.name}> => 
   (await ${imports.EitherAsync}<Error, ${namedObjectType.name}>(async ({ liftEither }) => 
-    liftEither(await objectSet.${namedObjectType.objectSetMethodNames.object}(await liftEither(${namedObjectType.identifierTypeAlias}.fromString(args.identifier))))
+    liftEither(await objectSet.${namedObjectType.objectSetMethodNames.object}(await liftEither(${namedObjectType.identifierTypeAlias}.parse(args.identifier))))
   )).unsafeCoerce()`,
         type: namedObjectType.graphqlType.name,
       };
@@ -42,7 +42,7 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObj
         },
         resolve: code`\
  async (_source, args: { limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly string[]> =>
-  (await objectSet.${namedObjectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${namedObjectType.identifierTypeAlias}.toString)`,
+  (await objectSet.${namedObjectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${namedObjectType.identifierTypeAlias}.stringify)`,
         type: code`new ${imports.GraphQLNonNull}(new ${imports.GraphQLList}(${imports.GraphQLString}))`,
       };
 
@@ -65,7 +65,7 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   if (args.identifiers) {
     const identifiers: ${namedObjectType.identifierTypeAlias}[] = [];
     for (const identifierArg of args.identifiers) {
-      identifiers.push(await liftEither(${namedObjectType.identifierTypeAlias}.fromString(identifierArg)));
+      identifiers.push(await liftEither(${namedObjectType.identifierTypeAlias}.parse(identifierArg)));
     }
     filter = { ${syntheticNamePrefix}identifier: { in: identifiers } };
   }

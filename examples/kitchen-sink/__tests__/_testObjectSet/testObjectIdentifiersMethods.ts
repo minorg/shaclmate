@@ -1,5 +1,5 @@
-import dataFactory from "@rdfjs/data-model";
 import type { NamedNode } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import type * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { data } from "./data.js";

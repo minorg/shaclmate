@@ -1,4 +1,3 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
@@ -8,12 +7,14 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
+import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import {
   GraphQLFloat,
   GraphQLID,
@@ -25,7 +26,7 @@ import {
   GraphQLString,
   GraphQLUnionType,
 } from "graphql";
-import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
+import { type Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
 
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
@@ -216,14 +217,6 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-function $identifierFromString(
-  identifier: string,
-): Either<Error, BlankNode | NamedNode> {
-  return Either.encase(() =>
-    Resource.Identifier.fromString({ dataFactory, identifier }),
-  );
-}
-
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -365,6 +358,16 @@ interface $NumericFilter<T> {
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
+}
+
+const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
+
+export function $parseIri(identifier: string): Either<Error, NamedNode> {
+  return $parseIdentifier(identifier).chain((identifier) =>
+    identifier.termType === "NamedNode"
+      ? Right(identifier)
+      : Left(new Error("expected identifier to be NamedNode")),
+  ) as Either<Error, NamedNode>;
 }
 
 type $PropertiesFromRdfResourceFunction<T> = (
@@ -579,8 +582,8 @@ export namespace $DefaultPartial {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(
@@ -762,7 +765,7 @@ export namespace UnionMember2 {
         description: undefined,
         name: "_identifier",
         resolve: (source) =>
-          UnionMember2.$Identifier.toString(source.$identifier),
+          UnionMember2.$Identifier.stringify(source.$identifier),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalStringProperty: {
@@ -780,8 +783,8 @@ export namespace UnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(
@@ -887,9 +890,7 @@ export namespace UnionMember2 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
                 ),
               );
             })
@@ -1049,7 +1050,7 @@ export namespace UnionMember1 {
         description: undefined,
         name: "_identifier",
         resolve: (source) =>
-          UnionMember1.$Identifier.toString(source.$identifier),
+          UnionMember1.$Identifier.stringify(source.$identifier),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalNumberProperty: {
@@ -1067,8 +1068,8 @@ export namespace UnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(
@@ -1174,9 +1175,7 @@ export namespace UnionMember1 {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
                 ),
               );
             })
@@ -1362,7 +1361,7 @@ export namespace Nested {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) => Nested.$Identifier.toString(source.$identifier),
+        resolve: (source) => Nested.$Identifier.stringify(source.$identifier),
         type: new GraphQLNonNull(GraphQLString),
       },
       optionalNumberProperty: {
@@ -1395,8 +1394,8 @@ export namespace Nested {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(filter: Nested.$Filter, value: Nested): boolean {
@@ -1519,9 +1518,7 @@ export namespace Nested {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Nested)`,
                 ),
               );
             })
@@ -1727,7 +1724,7 @@ export namespace ParentStatic {
         description: undefined,
         name: "_identifier",
         resolve: (source) =>
-          ParentStatic.$Identifier.toString(source.$identifier),
+          ParentStatic.$Identifier.stringify(source.$identifier),
         type: new GraphQLNonNull(GraphQLString),
       },
       parentStringProperty: {
@@ -1745,16 +1742,8 @@ export namespace ParentStatic {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(
@@ -1862,9 +1851,7 @@ export namespace ParentStatic {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Parent)`,
                 ),
               );
             })
@@ -2194,7 +2181,7 @@ export namespace Child {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) => Child.$Identifier.toString(source.$identifier),
+        resolve: (source) => Child.$Identifier.stringify(source.$identifier),
         type: new GraphQLNonNull(GraphQLString),
       },
       childStringProperty: {
@@ -2257,16 +2244,8 @@ export namespace Child {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
-    export function fromString(identifier: string): Either<Error, NamedNode> {
-      return Either.encase(() =>
-        Resource.Identifier.fromString({ dataFactory, identifier }),
-      ).chain((identifier) =>
-        identifier.termType === "NamedNode"
-          ? Right(identifier)
-          : Left(new Error("expected identifier to be NamedNode")),
-      ) as Either<Error, NamedNode>;
-    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIri;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export function $filter(filter: Child.$Filter, value: Child): boolean {
@@ -2445,9 +2424,7 @@ export namespace Child {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/Child)`,
                 ),
               );
             })
@@ -2823,8 +2800,8 @@ export namespace Union {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export const $schema = {
@@ -3084,8 +3061,8 @@ export namespace $Object {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export const $schema = {
@@ -4175,9 +4152,7 @@ export const graphqlSchema = new GraphQLSchema({
             await EitherAsync<Error, Child>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.child(
-                  await liftEither(
-                    Child.$Identifier.fromString(args.identifier),
-                  ),
+                  await liftEither(Child.$Identifier.parse(args.identifier)),
                 ),
               ),
             )
@@ -4198,7 +4173,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(Child.$Identifier.toString),
+            .map(Child.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       children: {
@@ -4224,9 +4199,7 @@ export const graphqlSchema = new GraphQLSchema({
                   const identifiers: Child.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
-                      await liftEither(
-                        Child.$Identifier.fromString(identifierArg),
-                      ),
+                      await liftEither(Child.$Identifier.parse(identifierArg)),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };
@@ -4261,9 +4234,7 @@ export const graphqlSchema = new GraphQLSchema({
             await EitherAsync<Error, Nested>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.nested(
-                  await liftEither(
-                    Nested.$Identifier.fromString(args.identifier),
-                  ),
+                  await liftEither(Nested.$Identifier.parse(args.identifier)),
                 ),
               ),
             )
@@ -4284,7 +4255,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(Nested.$Identifier.toString),
+            .map(Nested.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       nesteds: {
@@ -4310,9 +4281,7 @@ export const graphqlSchema = new GraphQLSchema({
                   const identifiers: Nested.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
-                      await liftEither(
-                        Nested.$Identifier.fromString(identifierArg),
-                      ),
+                      await liftEither(Nested.$Identifier.parse(identifierArg)),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };
@@ -4348,7 +4317,7 @@ export const graphqlSchema = new GraphQLSchema({
               liftEither(
                 await objectSet.parent(
                   await liftEither(
-                    ParentStatic.$Identifier.fromString(args.identifier),
+                    ParentStatic.$Identifier.parse(args.identifier),
                   ),
                 ),
               ),
@@ -4370,7 +4339,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(ParentStatic.$Identifier.toString),
+            .map(ParentStatic.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       parents: {
@@ -4397,7 +4366,7 @@ export const graphqlSchema = new GraphQLSchema({
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        ParentStatic.$Identifier.fromString(identifierArg),
+                        ParentStatic.$Identifier.parse(identifierArg),
                       ),
                     );
                   }
@@ -4434,7 +4403,7 @@ export const graphqlSchema = new GraphQLSchema({
               liftEither(
                 await objectSet.unionMember1(
                   await liftEither(
-                    UnionMember1.$Identifier.fromString(args.identifier),
+                    UnionMember1.$Identifier.parse(args.identifier),
                   ),
                 ),
               ),
@@ -4456,7 +4425,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(UnionMember1.$Identifier.toString),
+            .map(UnionMember1.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unionMember1s: {
@@ -4483,7 +4452,7 @@ export const graphqlSchema = new GraphQLSchema({
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        UnionMember1.$Identifier.fromString(identifierArg),
+                        UnionMember1.$Identifier.parse(identifierArg),
                       ),
                     );
                   }
@@ -4520,7 +4489,7 @@ export const graphqlSchema = new GraphQLSchema({
               liftEither(
                 await objectSet.unionMember2(
                   await liftEither(
-                    UnionMember2.$Identifier.fromString(args.identifier),
+                    UnionMember2.$Identifier.parse(args.identifier),
                   ),
                 ),
               ),
@@ -4542,7 +4511,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(UnionMember2.$Identifier.toString),
+            .map(UnionMember2.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unionMember2s: {
@@ -4569,7 +4538,7 @@ export const graphqlSchema = new GraphQLSchema({
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
                       await liftEither(
-                        UnionMember2.$Identifier.fromString(identifierArg),
+                        UnionMember2.$Identifier.parse(identifierArg),
                       ),
                     );
                   }
@@ -4605,9 +4574,7 @@ export const graphqlSchema = new GraphQLSchema({
             await EitherAsync<Error, Union>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.union(
-                  await liftEither(
-                    Union.$Identifier.fromString(args.identifier),
-                  ),
+                  await liftEither(Union.$Identifier.parse(args.identifier)),
                 ),
               ),
             )
@@ -4628,7 +4595,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(Union.$Identifier.toString),
+            .map(Union.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       unions: {
@@ -4654,9 +4621,7 @@ export const graphqlSchema = new GraphQLSchema({
                   const identifiers: Union.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
-                      await liftEither(
-                        Union.$Identifier.fromString(identifierArg),
-                      ),
+                      await liftEither(Union.$Identifier.parse(identifierArg)),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };

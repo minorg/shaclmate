@@ -1,4 +1,4 @@
-import dataFactory from "@rdfjs/data-model";
+import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";

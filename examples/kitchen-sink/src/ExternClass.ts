@@ -1,6 +1,6 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type { BlankNode, NamedNode, Quad_Graph, Variable } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import * as rdfjsResource from "@rdfx/resource";
 import { Either } from "purify-ts";
 
