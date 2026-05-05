@@ -1,5 +1,4 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Resource } from "@rdfx/resource";
 import { Maybe } from "purify-ts";
 import type * as ast from "../ast/index.js";
 import type { LabeledPropertyGraph } from "./LabeledPropertyGraph.js";
@@ -44,9 +43,7 @@ export function transformAstToLabeledPropertyGraph(
         case "UnionType":
           if (itemType.name.isJust()) {
             relationships.push({
-              id: Resource.Identifier.toString(
-                namedObjectTypeProperty.shapeIdentifier,
-              ),
+              id: namedObjectTypeProperty.shapeIdentifier.toString(),
               label: Maybe.of(namedObjectTypeProperty.name),
               properties: {},
               sourceNodeId: id,
@@ -87,16 +84,12 @@ function typeId(type: {
   name: Maybe<string>;
   shapeIdentifier: BlankNode | NamedNode;
 }) {
-  return type.name.orDefault(
-    Resource.Identifier.toString(type.shapeIdentifier),
-  );
+  return type.name.orDefault(type.shapeIdentifier.toString());
 }
 
 function typeName(type: {
   name: Maybe<string>;
   shapeIdentifier: BlankNode | NamedNode;
 }) {
-  return type.name.orDefault(
-    Resource.Identifier.toString(type.shapeIdentifier),
-  );
+  return type.name.orDefault(type.shapeIdentifier.toString());
 }

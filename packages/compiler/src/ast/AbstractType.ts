@@ -1,5 +1,4 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Resource } from "@rdfx/resource";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
@@ -81,7 +80,7 @@ export abstract class AbstractType {
       label: this.label.extract(),
       name: this.name.extract(),
       recursive: this.recursive ? true : undefined,
-      shapeIdentifier: Resource.Identifier.toString(this.shapeIdentifier),
+      shapeIdentifier: this.shapeIdentifier,
     };
   }
 

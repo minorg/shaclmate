@@ -1,6 +1,5 @@
 import TermMap from "@rdfjs/term-map";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Resource } from "@rdfx/resource";
 import { dash } from "@tpluscode/rdf-ns-builders";
 import { Either } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -55,7 +54,7 @@ function relatedNodeShapes({
           logger.error(
             "%s is rdfs:subClassOf %s which is either missing or not a node shape: %s",
             childNodeShape,
-            Resource.Identifier.toString(parentClassIdentifier),
+            parentClassIdentifier,
             error.message,
           );
         })

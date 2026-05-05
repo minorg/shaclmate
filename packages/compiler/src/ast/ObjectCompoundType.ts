@@ -1,6 +1,5 @@
 import TermSet from "@rdfjs/term-set";
 import type { NamedNode } from "@rdfjs/types";
-import { Resource } from "@rdfx/resource";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -106,7 +105,7 @@ export namespace ObjectCompoundType {
       fromRdfTypes.size !== expectUniqueFromRdfTypesCount
     ) {
       throw new Error(
-        `one or more ${objectCompoundType} members ([${memberObjectTypes_.map((memberType) => memberType.toString()).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].map((fromRdfType) => Resource.Identifier.toString(fromRdfType)).join(", ")}})`,
+        `one or more ${objectCompoundType} members ([${memberObjectTypes_.map((memberType) => memberType.toString()).join(", ")}]) lack distinguishing fromRdfType's ({${[...fromRdfTypes].join(", ")}})`,
       );
     }
 

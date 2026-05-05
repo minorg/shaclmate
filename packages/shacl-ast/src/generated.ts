@@ -1,4 +1,3 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
@@ -8,6 +7,7 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfjsResourcePropertyPath,
@@ -258,14 +258,6 @@ export type $FromRdfResourceValuesFunction<T> = (
 interface $IdentifierFilter {
   readonly in?: readonly (BlankNode | NamedNode)[];
   readonly type?: "BlankNode" | "NamedNode";
-}
-
-function $identifierFromString(
-  identifier: string,
-): Either<Error, BlankNode | NamedNode> {
-  return Either.encase(() =>
-    Resource.Identifier.fromString({ dataFactory, identifier }),
-  );
 }
 
 class $IdentifierSet {
@@ -1158,11 +1150,6 @@ export namespace PropertyShape {
 
   export type $Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $filter(
     filter: PropertyShape.$Filter,
     value: PropertyShape,
@@ -1631,9 +1618,9 @@ export namespace PropertyShape {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
+                  `${
+                    $resource.identifier
+                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
                 ),
               );
             })
@@ -4039,11 +4026,6 @@ export namespace PropertyGroup {
 
   export type $Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $filter(
     filter: PropertyGroup.$Filter,
     value: PropertyGroup,
@@ -4159,9 +4141,9 @@ export namespace PropertyGroup {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
+                  `${
+                    $resource.identifier
+                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
                 ),
               );
             })
@@ -4354,11 +4336,6 @@ export namespace Ontology {
 
   export type $Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $filter(filter: Ontology.$Filter, value: Ontology): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -4469,9 +4446,9 @@ export namespace Ontology {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
+                  `${
+                    $resource.identifier
+                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
                 ),
               );
             })
@@ -5243,11 +5220,6 @@ export namespace NodeShape {
 
   export type $Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
-
   export function $filter(
     filter: NodeShape.$Filter,
     value: NodeShape,
@@ -5694,9 +5666,9 @@ export namespace NodeShape {
 
               return Left(
                 new Error(
-                  `${Resource.Identifier.toString(
-                    $resource.identifier,
-                  )} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
+                  `${
+                    $resource.identifier
+                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
                 ),
               );
             })
@@ -8029,10 +8001,6 @@ export namespace Shape {
       )) satisfies $FromRdfResourceValuesFunction<Shape>;
 
   export type $Identifier = BlankNode | NamedNode;
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
 
   export const $schema = {
     kind: "NamedObjectUnion" as const,
@@ -8467,10 +8435,6 @@ export namespace $Object {
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
   export type $Identifier = BlankNode | NamedNode;
-  export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
-  }
 
   export const $schema = {
     kind: "NamedObjectUnion" as const,
