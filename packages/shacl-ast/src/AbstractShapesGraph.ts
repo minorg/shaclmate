@@ -11,6 +11,7 @@ import type {
 } from "@rdfjs/types";
 import dataFactory from "@rdfx/data-factory";
 import { type Resource, ResourceSet } from "@rdfx/resource";
+import { NTriplesTerm } from "@rdfx/string";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
 import { Either, Left } from "purify-ts";
 import type { Curie } from "./Curie.js";
@@ -147,28 +148,6 @@ export abstract class AbstractShapesGraph<
   }): string {
     const format = options?.format ?? ("application/n-triples" as const);
 
-    function termToString(term: Term) {
-      switch (term.termType) {
-        case "NamedNode":
-          return `<${term.value}>`;
-        case "BlankNode":
-          return `_:${term.value}`;
-        case "Literal": {
-          const escaped = term.value
-            .replace(/\\/g, "\\\\")
-            .replace(/"/g, '\\"')
-            .replace(/\n/g, "\\n")
-            .replace(/\r/g, "\\r");
-          if (term.language) return `"${escaped}"@${term.language}`;
-          if (term.datatype.value !== "http://www.w3.org/2001/XMLSchema#string")
-            return `"${escaped}"^^<${term.datatype.value}>`;
-          return `"${escaped}"`;
-        }
-        default:
-          throw new Error(`unexpected term type: ${term.termType}`);
-      }
-    }
-
     const lines: string[] = [];
     switch (format) {
       case "application/n-quads": {
@@ -176,9 +155,9 @@ export abstract class AbstractShapesGraph<
           const graphString =
             quad.graph.termType === "DefaultGraph"
               ? ""
-              : ` ${termToString(quad.graph)}`;
+              : ` ${NTriplesTerm.stringify(quad.graph)}`;
           lines.push(
-            `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)}${graphString} .\n`,
+            `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)}${graphString} .\n`,
           );
         }
         break;
@@ -187,7 +166,7 @@ export abstract class AbstractShapesGraph<
         {
           for (const quad of this.toDataset()) {
             lines.push(
-              `${termToString(quad.subject)} ${termToString(quad.predicate)} ${termToString(quad.object)} .\n`,
+              `${NTriplesTerm.stringify(quad.subject)} ${NTriplesTerm.stringify(quad.predicate)} ${NTriplesTerm.stringify(quad.object)} .\n`,
             );
           }
         }
