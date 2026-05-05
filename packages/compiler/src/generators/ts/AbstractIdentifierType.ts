@@ -43,6 +43,6 @@ export abstract class AbstractIdentifierType<
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
-    return code`${imports.Resource}.Identifier.toString(${value})`;
+    return code`${imports.NTriplesTerm}.stringify(${value})`;
   }
 }
