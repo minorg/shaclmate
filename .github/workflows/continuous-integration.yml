@@ -27,5 +27,8 @@ jobs:
           json-summary-path: coverage/coverage-summary.json
           json-final-path: coverage/coverage-final.json
       - name: Run CLI
-        run: apps/cli/dist/cli.js generate ts
-          examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
+        run: apps/cli/dist/cli.js generate ts examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
+      - name: Run API example scripts
+        run: |
+          examples/api/src/compile.ts
+          examples/api/src/dump.ts
