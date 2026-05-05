@@ -14,6 +14,7 @@ import {
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
+import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Either, Left, Maybe, Right } from "purify-ts";
 
 interface $BooleanFilter {
@@ -324,6 +325,8 @@ interface $NumericFilter<T> {
   readonly minExclusive?: T;
   readonly minInclusive?: T;
 }
+
+const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 type $PropertiesFromRdfResourceFunction<T> = (
   resource: Resource,
@@ -1150,6 +1153,11 @@ export namespace PropertyShape {
 
   export type $Identifier = BlankNode | NamedNode;
 
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
   export function $filter(
     filter: PropertyShape.$Filter,
     value: PropertyShape,
@@ -1618,9 +1626,7 @@ export namespace PropertyShape {
 
               return Left(
                 new Error(
-                  `${
-                    $resource.identifier
-                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
                 ),
               );
             })
@@ -4026,6 +4032,11 @@ export namespace PropertyGroup {
 
   export type $Identifier = BlankNode | NamedNode;
 
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
   export function $filter(
     filter: PropertyGroup.$Filter,
     value: PropertyGroup,
@@ -4141,9 +4152,7 @@ export namespace PropertyGroup {
 
               return Left(
                 new Error(
-                  `${
-                    $resource.identifier
-                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
                 ),
               );
             })
@@ -4336,6 +4345,11 @@ export namespace Ontology {
 
   export type $Identifier = BlankNode | NamedNode;
 
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
   export function $filter(filter: Ontology.$Filter, value: Ontology): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -4446,9 +4460,7 @@ export namespace Ontology {
 
               return Left(
                 new Error(
-                  `${
-                    $resource.identifier
-                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
                 ),
               );
             })
@@ -5220,6 +5232,11 @@ export namespace NodeShape {
 
   export type $Identifier = BlankNode | NamedNode;
 
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
   export function $filter(
     filter: NodeShape.$Filter,
     value: NodeShape,
@@ -5666,9 +5683,7 @@ export namespace NodeShape {
 
               return Left(
                 new Error(
-                  `${
-                    $resource.identifier
-                  } has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
                 ),
               );
             })
@@ -8001,6 +8016,10 @@ export namespace Shape {
       )) satisfies $FromRdfResourceValuesFunction<Shape>;
 
   export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export const $schema = {
     kind: "NamedObjectUnion" as const,
@@ -8435,6 +8454,10 @@ export namespace $Object {
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
   export type $Identifier = BlankNode | NamedNode;
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
 
   export const $schema = {
     kind: "NamedObjectUnion" as const,
