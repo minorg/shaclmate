@@ -30,5 +30,5 @@ jobs:
         run: apps/cli/dist/cli.js generate ts examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
       - name: Run API example scripts
         run: |
-          examples/api/src/compile.ts
-          examples/api/src/dump.ts
+          npm exec tsx -- examples/api/src/compile.ts
+          npm exec tsx -- examples/api/src/dump.ts
