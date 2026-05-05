@@ -215,7 +215,7 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeAlias}.toString(source.${this.name})`,
+      resolve: code`(source) => ${this.typeAlias}.stringify(source.${this.name})`,
       type: this.type.graphqlType.name,
     });
   }

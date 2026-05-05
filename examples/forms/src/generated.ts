@@ -1,4 +1,3 @@
-import dataFactory from "@rdfjs/data-model";
 import datasetFactory from "@rdfjs/dataset";
 import type {
   BlankNode,
@@ -8,13 +7,15 @@ import type {
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
+import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
   PropertyPath as RdfjsResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
-import { Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
+import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
+import { type Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
 import { z } from "zod";
 
 /**
@@ -319,14 +320,6 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-function $identifierFromString(
-  identifier: string,
-): Either<Error, BlankNode | NamedNode> {
-  return Either.encase(() =>
-    Resource.Identifier.fromString({ dataFactory, identifier }),
-  );
-}
-
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -386,6 +379,8 @@ interface $NumericFilter<T> {
   readonly minExclusive?: T;
   readonly minInclusive?: T;
 }
+
+const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 type $PropertiesFromRdfResourceFunction<T> = (
   resource: Resource,
@@ -662,8 +657,8 @@ export namespace NestedNodeShape {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -1125,8 +1120,8 @@ export namespace FormNodeShape {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = {
@@ -1465,9 +1460,7 @@ export namespace FormNodeShape {
                     )
                     .chain((values) =>
                       NonEmptyList.fromArray(values.toArray()).toEither(
-                        new Error(
-                          `${Resource.Identifier.toString($resource.identifier)} is an empty set`,
-                        ),
+                        new Error(`${$resource.identifier} is an empty set`),
                       ),
                     )
                     .map((valuesArray) =>
@@ -1845,8 +1838,8 @@ export namespace $Object {
 
   export type $Identifier = BlankNode | NamedNode;
   export namespace $Identifier {
-    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-    export const toString = Resource.Identifier.toString;
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
   }
 
   export type $Json = FormNodeShape.$Json | NestedNodeShape.$Json;
@@ -1860,7 +1853,7 @@ export namespace $Object {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
