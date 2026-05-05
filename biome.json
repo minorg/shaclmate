@@ -32,7 +32,13 @@
         "useLiteralKeys": "off"
       },
       "correctness": {
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "useImportExtensions": {
+          "level": "error",
+          "options": {
+            "forceJsExtensions": true
+          }
+        }
       },
       "recommended": true,
       "style": {
