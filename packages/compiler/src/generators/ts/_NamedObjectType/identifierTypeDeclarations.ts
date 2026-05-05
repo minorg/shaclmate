@@ -1,6 +1,6 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function identifierTypeDeclarations(
   this: NamedObjectType,
@@ -23,6 +23,10 @@ export function identifierTypeDeclarations(
   // Bespoke identifier type and associated functions
   return [
     code`export type ${syntheticNamePrefix}Identifier = ${this.identifierType.name};`,
-    code`export namespace ${syntheticNamePrefix}Identifier { ${joinCode([this.identifierType.fromStringFunction, this.identifierType.toStringFunction])} }`,
+    code`\
+export namespace ${syntheticNamePrefix}Identifier {
+  export const parse = ${this.identifierType.parseFunction};
+  export const stringify = ${this.identifierType.stringifyFunction};
+}`,
   ];
 }

@@ -9,8 +9,7 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly filterFunction = code`${snippets.filterBlankNode}`;
   readonly filterType = code`${snippets.BlankNodeFilter}`;
-  readonly fromStringFunction =
-    code`export const fromString = ${snippets.blankNodeFromString};`;
+  readonly parseFunction = code`${snippets.parseBlankNode};`;
   override readonly kind = "BlankNodeType";
   readonly name = code`${imports.BlankNode}`;
   override readonly nodeKinds = nodeKinds;

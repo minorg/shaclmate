@@ -1,6 +1,8 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -8,7 +10,6 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
 > extends AbstractTermType<NamedNode, IdentifierT> {
-  abstract readonly fromStringFunction: Code;
   override readonly graphqlType = new AbstractTermType.GraphqlType(
     code`${imports.GraphQLString}`,
   );
@@ -17,10 +18,8 @@ export abstract class AbstractIdentifierType<
     | "IdentifierType"
     | "IriType";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
-  readonly toStringFunction = // Re-export rdfjsResource.Resource.Identifier.toString
-    code`\
-// biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-export const toString = ${imports.Resource}.Identifier.toString`;
+  abstract readonly parseFunction: Code;
+  readonly stringifyFunction = code`${imports.NTriplesTerm}.stringify`;
 
   @Memoize()
   override get conversions(): readonly AbstractTermType.Conversion[] {
