@@ -130,7 +130,7 @@ ${this.jsonTypeAliasDeclaration}
 export namespace ${syntheticNamePrefix}Json {
   ${this.jsonSchemaFunctionDeclaration}
 
-  export function ${syntheticNamePrefix}parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
+  export function parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
     const jsonSafeParseResult = schema().safeParse(json);
     if (!jsonSafeParseResult.success) { return ${imports.Left}(jsonSafeParseResult.error); }
     return ${imports.Right}(jsonSafeParseResult.data);

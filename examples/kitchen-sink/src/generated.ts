@@ -2798,7 +2798,7 @@ export namespace NamedUnion1 {
     export const schema = () =>
       z.union([z.object({ "@id": z.string().min(1) }), z.string()]).readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -3057,7 +3057,7 @@ export namespace NamedUnion2 {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -70406,7 +70406,7 @@ export namespace ClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -70930,7 +70930,7 @@ export namespace FlattenClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -71421,7 +71421,7 @@ export namespace InterfaceUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -71898,7 +71898,7 @@ export namespace LazilyResolvedClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -72417,7 +72417,7 @@ export namespace LazilyResolvedInterfaceUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -72920,7 +72920,7 @@ export namespace PartialClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -73394,7 +73394,7 @@ export namespace PartialInterfaceUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -73870,7 +73870,7 @@ export namespace NoRdfTypeClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -74338,7 +74338,7 @@ export namespace RecursiveClassUnion {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -79975,7 +79975,7 @@ export namespace $Object {
         ])
         .readonly();
 
-    export function $parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
