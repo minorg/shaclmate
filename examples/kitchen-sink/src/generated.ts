@@ -2664,18 +2664,7 @@ export type $ToRdfResourceFunction<T> = (
 
 export type $ToRdfResourceValuesFunction<
   ValueT,
-  ReturnT extends
-    | bigint
-    | boolean
-    | number
-    | string
-    | BlankNode
-    | Literal
-    | NamedNode =
-    | bigint
-    | boolean
-    | number
-    | string
+  ReturnT extends BlankNode | Literal | NamedNode =
     | BlankNode
     | Literal
     | NamedNode,

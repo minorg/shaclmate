@@ -3,7 +3,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 
-const ReturnT = code`bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}`;
+const ReturnT = code`${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}`;
 
 export const snippets_ToRdfResourceValuesFunction = conditionalOutput(
   `${syntheticNamePrefix}ToRdfResourceValuesFunction`,
