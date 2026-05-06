@@ -50,8 +50,9 @@ export class ExternClass extends AbstractBaseClassForExternClass {
   }) {
     const resourceSet =
       options?.resourceSet ??
-      new rdfjsResource.ResourceSet(datasetFactory.dataset(), {
+      new rdfjsResource.ResourceSet({
         dataFactory,
+        dataset: datasetFactory.dataset(),
       });
     const resource = super.$toRdfResource({
       graph: options?.graph,

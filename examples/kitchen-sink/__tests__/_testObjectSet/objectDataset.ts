@@ -10,9 +10,7 @@ export function objectDataset(
     | Record<string, readonly kitchenSink.$Object[]>,
 ): DatasetCore {
   const dataset = datasetFactory.dataset();
-  const resourceSet = new ResourceSet(dataset, {
-    dataFactory,
-  });
+  const resourceSet = new ResourceSet({ dataFactory, dataset });
   if (Array.isArray(instances)) {
     for (const instance of instances) {
       kitchenSink.$Object.$toRdfResource(instance, {

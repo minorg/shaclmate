@@ -560,8 +560,14 @@ export type $ToRdfResourceFunction<T> = (
   },
 ) => Resource;
 
-export type $ToRdfResourceValuesFunction<T> = (
-  value: T,
+export type $ToRdfResourceValuesFunction<
+  ValueT,
+  ReturnT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
+> = (
+  value: ValueT,
   options: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
@@ -569,7 +575,7 @@ export type $ToRdfResourceValuesFunction<T> = (
     resource: Resource;
     resourceSet: ResourceSet;
   },
-) => (bigint | boolean | number | string | BlankNode | Literal | NamedNode)[];
+) => ReturnT[];
 export interface NestedNodeShape {
   readonly $identifier: NestedNodeShape.$Identifier;
   readonly $type: "NestedNodeShape" /**
@@ -892,7 +898,10 @@ export namespace NestedNodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_nestedNodeShape.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
@@ -1641,7 +1650,10 @@ export namespace FormNodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_formNodeShape.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
@@ -1909,10 +1921,10 @@ export namespace $Object {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (BlankNode | NamedNode)[] => {
     if (FormNodeShape.isFormNodeShape(value)) {
       return [
         FormNodeShape.$toRdfResource(value, {
@@ -1931,7 +1943,7 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<$Object>;
+  }) satisfies $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
   formNodeShape(
@@ -2034,7 +2046,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $resourceSet(): ResourceSet {
-    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
+    return new ResourceSet({
+      dataFactory: dataFactory,
+      dataset: this.$dataset(),
+    });
   }
 
   async formNodeShape(

@@ -10,8 +10,9 @@ import {
 } from "./generated.js";
 
 export const dataset = datasetFactory.dataset();
-const resourceSet = new ResourceSet(dataset, {
+const resourceSet = new ResourceSet({
   dataFactory,
+  dataset,
 });
 for (let i = 0; i < 4; i++) {
   const lazyObject = new Nested({

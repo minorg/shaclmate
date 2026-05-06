@@ -3271,7 +3271,10 @@ export class $NamedDefaultPartial {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
@@ -3630,7 +3633,10 @@ export class $DefaultPartial {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
@@ -4357,7 +4363,10 @@ export namespace UuidV4IriIdentifierInterface {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _uuidV4IriIdentifierInterface.$identifier,
     );
@@ -4524,7 +4533,10 @@ export class UuidV4IriIdentifierClass {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
@@ -6237,7 +6249,10 @@ export class UnionDiscriminantsClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -12275,7 +12290,10 @@ export class TermPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -13657,7 +13675,10 @@ export class Sha256IriIdentifierClass {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/sha256IriProperty"),
@@ -14137,7 +14158,10 @@ export class RecursiveClassUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -14737,7 +14761,10 @@ export class RecursiveClassUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -15351,7 +15378,10 @@ export class PropertyVisibilitiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/privateProperty"),
@@ -15981,7 +16011,10 @@ export class PropertyPathsClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -16740,7 +16773,10 @@ export class PropertyNamesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -17679,7 +17715,10 @@ export class PropertyCardinalitiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
@@ -18890,7 +18929,10 @@ export namespace PartialInterfaceUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _partialInterfaceUnionMember2.$identifier,
     );
@@ -19477,7 +19519,10 @@ export namespace PartialInterfaceUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _partialInterfaceUnionMember1.$identifier,
     );
@@ -19628,7 +19673,10 @@ export class PartialClassUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -20191,7 +20239,10 @@ export class PartialClassUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -20738,7 +20789,10 @@ export class NewName2Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -21201,7 +21255,10 @@ export class NewName1Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -21715,7 +21772,10 @@ export class OrderedPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/orderedPropertyC"),
@@ -22824,7 +22884,10 @@ export class NumericPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -25172,7 +25235,10 @@ export class NodeKindsClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -26191,7 +26257,10 @@ export class NoRdfTypeClassUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -26662,7 +26731,10 @@ export class NoRdfTypeClassUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -27155,7 +27227,10 @@ export class NamedUnionPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -27940,7 +28015,10 @@ export class MutablePropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -28907,7 +28985,10 @@ export class ListPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -30259,7 +30340,10 @@ export namespace PartialInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_partialInterface.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
@@ -33271,7 +33355,10 @@ export namespace LazyPropertiesInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -34422,7 +34509,10 @@ export class LazyPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -36849,7 +36939,10 @@ export namespace LazilyResolvedIriIdentifierInterface {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _lazilyResolvedIriIdentifierInterface.$identifier,
     );
@@ -36987,7 +37080,10 @@ export class LazilyResolvedIriIdentifierClass {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
@@ -37901,7 +37997,10 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _lazilyResolvedInterfaceUnionMember2.$identifier,
     );
@@ -38501,7 +38600,10 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _lazilyResolvedInterfaceUnionMember1.$identifier,
     );
@@ -38656,7 +38758,10 @@ export class LazilyResolvedClassUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -39229,7 +39334,10 @@ export class LazilyResolvedClassUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -40262,7 +40370,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
     );
@@ -40424,7 +40535,10 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -41031,7 +41145,10 @@ export class LanguageInPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/languageInLiteralProperty"),
@@ -41613,7 +41730,10 @@ export class JsPrimitiveUnionPropertyClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -42851,7 +42971,10 @@ export namespace IriIdentifierInterface {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_iriIdentifierInterface.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -42962,7 +43085,10 @@ export class IriIdentifierClass {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -43734,7 +43860,10 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _interfaceUnionMemberCommonParent.$identifier,
     );
@@ -44295,7 +44424,10 @@ export namespace InterfaceUnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = InterfaceUnionMemberCommonParentStatic.$toRdfResource(
       _interfaceUnionMember2,
       {
@@ -44866,7 +44998,10 @@ export namespace InterfaceUnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = InterfaceUnionMemberCommonParentStatic.$toRdfResource(
       _interfaceUnionMember1,
       {
@@ -45338,7 +45473,10 @@ export namespace Interface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_interface.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/interfaceProperty"),
@@ -45499,7 +45637,10 @@ export class IndirectRecursiveHelperClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -46090,7 +46231,10 @@ export class IndirectRecursiveClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -46850,7 +46994,10 @@ export class InPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -47946,7 +48093,10 @@ export class InIdentifierClass {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -48577,7 +48727,10 @@ export abstract class IdentifierOverride1Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/identifierOverrideProperty"),
@@ -48944,7 +49097,10 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -49219,7 +49375,10 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -49667,7 +49826,10 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -50105,7 +50267,10 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -50610,7 +50775,10 @@ export class HasValuePropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/hasIriValueProperty"),
@@ -51155,7 +51323,10 @@ export class FlattenClassUnionMember3 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -51741,7 +51912,10 @@ export class ExternClassPropertyClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -52334,7 +52508,10 @@ export abstract class AbstractBaseClassForExternClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -52763,7 +52940,10 @@ export class ExplicitRdfTypeClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -53332,7 +53512,10 @@ export class ExplicitFromToRdfTypesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -53926,7 +54109,10 @@ export class DirectRecursiveClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -54659,7 +54845,10 @@ export class DefaultValuePropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -56127,7 +56316,10 @@ export class DateUnionPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -58811,7 +59003,10 @@ export class ConvertibleTypePropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -61129,7 +61324,10 @@ export namespace BaseInterfaceWithPropertiesStatic {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _baseInterfaceWithProperties.$identifier,
     );
@@ -61651,7 +61849,10 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = BaseInterfaceWithPropertiesStatic.$toRdfResource(
       _baseInterfaceWithoutProperties,
       {
@@ -62239,7 +62440,10 @@ export namespace ConcreteParentInterfaceStatic {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = BaseInterfaceWithoutPropertiesStatic.$toRdfResource(
       _concreteParentInterface,
       {
@@ -62809,7 +63013,10 @@ export namespace ConcreteChildInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = ConcreteParentInterfaceStatic.$toRdfResource(
       _concreteChildInterface,
       {
@@ -63000,7 +63207,10 @@ export abstract class AbstractBaseClassWithProperties {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -63371,7 +63581,10 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -63690,7 +63903,10 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -64247,7 +64463,10 @@ export class ConcreteChildClass extends ConcreteParentClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -64800,7 +65019,10 @@ export abstract class ClassUnionMemberCommonParent {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode(
@@ -65190,7 +65412,10 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -65714,7 +65939,10 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -66271,7 +66499,10 @@ export class NonClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/nonClassProperty"),
@@ -66716,7 +66947,10 @@ export class PartialClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
@@ -67359,7 +67593,10 @@ export class ClassPropertiesClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -68692,7 +68929,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _blankNodeOrIriIdentifierInterface.$identifier,
     );
@@ -68823,7 +69063,10 @@ export class BlankNodeOrIriIdentifierClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -69654,7 +69897,10 @@ export namespace BlankNodeIdentifierInterface {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(
       _blankNodeIdentifierInterface.$identifier,
     );
@@ -69781,7 +70027,10 @@ export class BlankNodeIdentifierClass {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -85366,7 +85615,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $resourceSet(): ResourceSet {
-    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
+    return new ResourceSet({
+      dataFactory: dataFactory,
+      dataset: this.$dataset(),
+    });
   }
 
   async baseInterfaceWithoutProperties(
@@ -98327,7 +98579,11 @@ export class $SparqlObjectSet implements $ObjectSet {
         objects.push(
           await liftEither(
             namedObjectType.$fromRdfResource(
-              new Resource(dataset, identifier as NamedNode),
+              new Resource({
+                dataFactory: dataFactory,
+                dataset: dataset,
+                identifier: identifier as NamedNode,
+              }),
               {
                 objectSet: this,
                 preferredLanguages: query?.preferredLanguages,

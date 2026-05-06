@@ -82,8 +82,9 @@ describe("sparql", () => {
         oxigraphStore.query(constructQueryString) as Quad[],
       );
       const constructInstanceEither = harness.fromRdfResource(
-        new ResourceSet(constructResultDataset, {
+        new ResourceSet({
           dataFactory,
+          dataset: constructResultDataset,
         }).resource(harness.instance.$identifier as NamedNode),
         {
           context: {

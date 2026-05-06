@@ -188,8 +188,9 @@ describe("lazyProperties", () => {
     });
 
   beforeAll(() => {
-    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
-      dataFactory: dataFactory,
+    const resourceSet = new ResourceSet({
+      dataFactory,
+      dataset: datasetFactory.dataset(),
     });
     expectedLazilyResolvedBlankNodeOrIriIdentifierClassInstance.$toRdfResource({
       resourceSet,
