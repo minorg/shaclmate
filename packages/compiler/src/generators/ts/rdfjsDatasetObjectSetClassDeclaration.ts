@@ -50,7 +50,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
   }
 
   protected ${syntheticNamePrefix}resourceSet(): ${imports.ResourceSet} {
-    return new ${imports.ResourceSet}(this.${syntheticNamePrefix}dataset(), { dataFactory: ${imports.dataFactory} });
+    return new ${imports.ResourceSet}({ dataFactory: ${imports.dataFactory}, dataset: this.${syntheticNamePrefix}dataset() });
   }
 
   ${joinCode(

@@ -118,7 +118,7 @@ export abstract class AbstractShapesGraph<
    */
   toDataset(): DatasetCore {
     const dataset = datasetFactory.dataset();
-    const resourceSet = new ResourceSet(dataset);
+    const resourceSet = new ResourceSet({ dataFactory, dataset });
     for (const nodeShape of this.nodeShapes) {
       this.typeFunctions.NodeShape.$toRdfResource(nodeShape, { resourceSet });
     }
@@ -305,7 +305,10 @@ export namespace AbstractShapesGraph {
         curieDataset = dataset;
       }
 
-      const curieResourceSet = new ResourceSet(curieDataset);
+      const curieResourceSet = new ResourceSet({
+        dataFactory,
+        dataset: curieDataset,
+      });
 
       return Either.encase(() => {
         function readGraph(): BlankNode | DefaultGraph | NamedNode | undefined {

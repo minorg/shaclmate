@@ -182,7 +182,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       const dataset = ${imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(namedObjectType.${syntheticNamePrefix}fromRdfResource(new ${imports.Resource}(dataset, identifier as ${imports.NamedNode}), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
+        objects.push(await liftEither(namedObjectType.${syntheticNamePrefix}fromRdfResource(new ${imports.Resource}({ dataFactory: ${imports.dataFactory}, dataset: dataset, identifier: identifier as ${imports.NamedNode} }), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
       }
       return objects;
     });

@@ -30,7 +30,7 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
   );
 
   const statements: Code[] = [
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}(${imports.datasetFactory}.dataset(), { dataFactory: ${imports.dataFactory} });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}({ dataFactory: ${imports.dataFactory}, dataset: ${imports.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {

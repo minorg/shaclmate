@@ -503,8 +503,14 @@ export type $ToRdfResourceFunction<T> = (
   },
 ) => Resource;
 
-export type $ToRdfResourceValuesFunction<T> = (
-  value: T,
+export type $ToRdfResourceValuesFunction<
+  ValueT,
+  ReturnT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
+> = (
+  value: ValueT,
   options: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
@@ -512,7 +518,7 @@ export type $ToRdfResourceValuesFunction<T> = (
     resource: Resource;
     resourceSet: ResourceSet;
   },
-) => (bigint | boolean | number | string | BlankNode | Literal | NamedNode)[];
+) => ReturnT[];
 export interface PropertyShape {
   readonly $identifier: PropertyShape.$Identifier;
   readonly $type: "PropertyShape";
@@ -4011,7 +4017,10 @@ export namespace PropertyShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_propertyShape.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -4777,7 +4786,10 @@ export namespace PropertyGroup {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_propertyGroup.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -5661,7 +5673,10 @@ export namespace Ontology {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_ontology.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -10290,7 +10305,10 @@ export namespace NodeShape {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(_nodeShape.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -11231,10 +11249,10 @@ export namespace Shape {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Shape> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (BlankNode | NamedNode)[] => {
     if (NodeShape.isNodeShape(value)) {
       return [
         NodeShape.$toRdfResource(value, {
@@ -11253,7 +11271,7 @@ export namespace Shape {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<Shape>;
+  }) satisfies $ToRdfResourceValuesFunction<Shape>;
 
   export function isShape(object: $Object): object is Shape {
     return (
@@ -11465,10 +11483,10 @@ export namespace $Object {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (BlankNode | NamedNode)[] => {
     if (NodeShape.isNodeShape(value)) {
       return [
         NodeShape.$toRdfResource(value, {
@@ -11503,7 +11521,7 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<$Object>;
+  }) satisfies $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
   nodeShape(
@@ -11657,7 +11675,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $resourceSet(): ResourceSet {
-    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
+    return new ResourceSet({
+      dataFactory: dataFactory,
+      dataset: this.$dataset(),
+    });
   }
 
   async nodeShape(
