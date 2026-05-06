@@ -667,7 +667,7 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to RDF");
-}) as ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
+}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected override get schemaObject(): {
