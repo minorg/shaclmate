@@ -3,11 +3,13 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 
+const ReturnT = code`bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}`;
+
 export const snippets_ToRdfResourceValuesFunction = conditionalOutput(
   `${syntheticNamePrefix}ToRdfResourceValuesFunction`,
   code`\
-export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<T> =
-  (value: T,
+export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<ValueT, ReturnT extends ${ReturnT} = ${ReturnT}> =
+  (value: ValueT,
    options: {
      graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
      ignoreRdfType?: boolean;
@@ -15,5 +17,5 @@ export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<T> =
      resource: ${imports.Resource};
      resourceSet: ${imports.ResourceSet};
    }
-  ) => (bigint | boolean | number | string | ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode})[];`,
+  ) => ReturnT[];`,
 );

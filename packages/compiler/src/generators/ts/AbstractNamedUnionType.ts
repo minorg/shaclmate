@@ -149,7 +149,7 @@ export namespace ${syntheticNamePrefix}Json {
         code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
 
       staticModuleDeclarations[`${syntheticNamePrefix}toRdfResourceValues`] =
-        code`export const ${syntheticNamePrefix}toRdfResourceValues: ${snippets.ToRdfResourceValuesFunction}<${this.name}> = ${this.inlineToRdfResourceValuesFunction};`;
+        code`export const ${syntheticNamePrefix}toRdfResourceValues = ${this.inlineToRdfResourceValuesFunction};`;
     }
 
     if (this.features.has("sparql")) {
