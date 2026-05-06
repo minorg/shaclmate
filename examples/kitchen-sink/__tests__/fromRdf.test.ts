@@ -14,7 +14,10 @@ describe("fromRdf", () => {
 
   beforeAll(() => {
     const languageInDataset = datasetFactory.dataset();
-    const languageInResourceSet = new ResourceSet(languageInDataset);
+    const languageInResourceSet = new ResourceSet({
+      dataFactory,
+      dataset: languageInDataset,
+    });
     invalidLanguageInResource = languageInResourceSet.resource(
       dataFactory.blankNode(),
     );
@@ -89,8 +92,9 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType ignore default rdf:type", ({ expect }) => {
-    const resource = new ResourceSet(datasetFactory.dataset(), {
+    const resource = new ResourceSet({
       dataFactory,
+      dataset: datasetFactory.dataset(),
     }).resource(dataFactory.blankNode());
     resource.add(
       rdf.type,
@@ -108,8 +112,9 @@ describe("fromRdf", () => {
   });
 
   it("explicit fromRdfType accept non-default rdf:type", ({ expect }) => {
-    const resource = new ResourceSet(datasetFactory.dataset(), {
+    const resource = new ResourceSet({
       dataFactory,
+      dataset: datasetFactory.dataset(),
     }).resource(dataFactory.blankNode());
     resource.add(
       rdf.type,
@@ -183,9 +188,7 @@ describe("fromRdf", () => {
     );
     expect(
       kitchenSink.HasValuePropertiesClass.$fromRdfResource(
-        new ResourceSet(dataset, {
-          dataFactory,
-        }).resource(identifier),
+        new ResourceSet({ dataFactory, dataset }).resource(identifier),
       ),
     ).toBeLeft();
     // expect(instance.hasLiteralValueProperty.isNothing()).toStrictEqual(true);
@@ -205,9 +208,7 @@ describe("fromRdf", () => {
       ),
     );
     const instance = kitchenSink.InIdentifierClass.$fromRdfResource(
-      new ResourceSet(dataset, {
-        dataFactory,
-      }).resource(identifier),
+      new ResourceSet({ dataFactory, dataset }).resource(identifier),
     ).extract();
     expect(instance).toBeInstanceOf(Error);
   });
@@ -223,9 +224,7 @@ describe("fromRdf", () => {
       ),
     );
     const result = kitchenSink.InPropertiesClass.$fromRdfResource(
-      new ResourceSet(dataset, {
-        dataFactory,
-      }).resource(identifier),
+      new ResourceSet({ dataFactory, dataset }).resource(identifier),
     );
     expect(result).toBeLeft();
     // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
@@ -250,9 +249,7 @@ describe("fromRdf", () => {
       ),
     );
     const result = kitchenSink.InPropertiesClass.$fromRdfResource(
-      new ResourceSet(dataset, {
-        dataFactory,
-      }).resource(identifier),
+      new ResourceSet({ dataFactory, dataset }).resource(identifier),
     );
     expect(result).toBeLeft();
     expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
@@ -368,9 +365,7 @@ describe("fromRdf", () => {
   it("accept right identifier type (NamedNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdfResource(
-        new ResourceSet(datasetFactory.dataset(), {
-          dataFactory,
-        })
+        new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(dataFactory.namedNode("http://example.com/identifier"))
           .add(rdf.type, kitchenSink.IriIdentifierClass.$fromRdfType),
       ).isRight(),
@@ -380,9 +375,7 @@ describe("fromRdf", () => {
   it("accept right identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdfResource(
-        new ResourceSet(datasetFactory.dataset(), {
-          dataFactory,
-        })
+        new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
           )
@@ -394,9 +387,7 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (BlankNode)", ({ expect }) => {
     expect(
       kitchenSink.IriIdentifierClass.$fromRdfResource(
-        new ResourceSet(datasetFactory.dataset(), {
-          dataFactory,
-        })
+        new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(dataFactory.blankNode())
           .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
       ),
@@ -406,9 +397,7 @@ describe("fromRdf", () => {
   it("reject wrong identifier type (sh:in identifier)", ({ expect }) => {
     expect(
       kitchenSink.InIdentifierClass.$fromRdfResource(
-        new ResourceSet(datasetFactory.dataset(), {
-          dataFactory,
-        })
+        new ResourceSet({ dataFactory, dataset: datasetFactory.dataset() })
           .resource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance3"),
           )
@@ -418,8 +407,9 @@ describe("fromRdf", () => {
   });
 
   it("reject malformed list", ({ expect }) => {
-    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
+    const resourceSet = new ResourceSet({
       dataFactory,
+      dataset: datasetFactory.dataset(),
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
@@ -434,8 +424,9 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped list", ({ expect }) => {
-    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
+    const resourceSet = new ResourceSet({
       dataFactory,
+      dataset: datasetFactory.dataset(),
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     const listResource = resourceSet.resource(dataFactory.blankNode());
@@ -453,8 +444,9 @@ describe("fromRdf", () => {
   });
 
   it("reject mistyped set", ({ expect }) => {
-    const resourceSet = new ResourceSet(datasetFactory.dataset(), {
+    const resourceSet = new ResourceSet({
       dataFactory,
+      dataset: datasetFactory.dataset(),
     });
     const instanceResource = resourceSet.resource(dataFactory.blankNode());
     instanceResource.add(
@@ -503,7 +495,9 @@ describe("fromRdf", () => {
         dataset.add(quad);
       }
     }
-    const childResource = new ResourceSet(dataset).resource(child.$identifier);
+    const childResource = new ResourceSet({ dataFactory, dataset }).resource(
+      child.$identifier,
+    );
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
       kitchenSink.ConcreteChildClass.$fromRdfResource(childResource),

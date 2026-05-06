@@ -538,8 +538,14 @@ export type $ToRdfResourceFunction<T> = (
   },
 ) => Resource;
 
-export type $ToRdfResourceValuesFunction<T> = (
-  value: T,
+export type $ToRdfResourceValuesFunction<
+  ValueT,
+  ReturnT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
+> = (
+  value: ValueT,
   options: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
@@ -547,7 +553,7 @@ export type $ToRdfResourceValuesFunction<T> = (
     resource: Resource;
     resourceSet: ResourceSet;
   },
-) => (bigint | boolean | number | string | BlankNode | Literal | NamedNode)[];
+) => ReturnT[];
 
 type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
 export class $DefaultPartial {
@@ -572,7 +578,10 @@ export class $DefaultPartial {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     return resource;
   }
@@ -733,7 +742,10 @@ export class UnionMember2 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1016,7 +1028,10 @@ export class UnionMember1 {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1316,7 +1331,10 @@ export class Nested {
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -1692,7 +1710,10 @@ export class Parent {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = resourceSet.resource(this.$identifier);
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -2106,7 +2127,10 @@ export class Child extends Parent {
   ): Resource<NamedNode> {
     const resourceSet =
       options?.resourceSet ??
-      new ResourceSet(datasetFactory.dataset(), { dataFactory: dataFactory });
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
     const resource = super.$toRdfResource({
       ignoreRdfType: true,
       graph: options?.graph,
@@ -2832,10 +2856,10 @@ export namespace Union {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<Union> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (BlankNode | NamedNode)[] => {
     if (UnionMember1.isUnionMember1(value)) {
       return [
         value.$toRdfResource({
@@ -2854,7 +2878,7 @@ export namespace Union {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<Union>;
+  }) satisfies $ToRdfResourceValuesFunction<Union>;
 
   export function isUnion(object: $Object): object is Union {
     return (
@@ -3112,10 +3136,10 @@ export namespace $Object {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (NamedNode | BlankNode)[] => {
     if (Child.isChild(value)) {
       return [
         value.$toRdfResource({
@@ -3166,7 +3190,7 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<$Object>;
+  }) satisfies $ToRdfResourceValuesFunction<$Object>;
 }
 export interface $ObjectSet {
   child(
@@ -3337,7 +3361,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $resourceSet(): ResourceSet {
-    return new ResourceSet(this.$dataset(), { dataFactory: dataFactory });
+    return new ResourceSet({
+      dataFactory: dataFactory,
+      dataset: this.$dataset(),
+    });
   }
 
   async child(
