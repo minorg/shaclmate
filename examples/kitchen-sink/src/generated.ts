@@ -2662,8 +2662,14 @@ export type $ToRdfResourceFunction<T> = (
   },
 ) => Resource;
 
-export type $ToRdfResourceValuesFunction<T> = (
-  value: T,
+export type $ToRdfResourceValuesFunction<
+  ValueT,
+  ReturnT extends BlankNode | Literal | NamedNode =
+    | BlankNode
+    | Literal
+    | NamedNode,
+> = (
+  value: ValueT,
   options: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
@@ -2671,7 +2677,7 @@ export type $ToRdfResourceValuesFunction<T> = (
     resource: Resource;
     resourceSet: ResourceSet;
   },
-) => (bigint | boolean | number | string | BlankNode | Literal | NamedNode)[];
+) => ReturnT[];
 
 type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
 
@@ -2818,17 +2824,19 @@ export namespace NamedUnion1 {
     throw new Error("unable to serialize to JSON");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NamedUnion1> =
-    ((value, _options) => {
-      if (typeof value === "object") {
-        return [value];
-      }
-      if (typeof value === "string") {
-        return [$literalFactory.string(value)];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (NamedNode | Literal)[] => {
+    if (typeof value === "object") {
+      return [value];
+    }
+    if (typeof value === "string") {
+      return [$literalFactory.string(value)];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<NamedUnion1>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<NamedUnion1>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion1.$Filter,
@@ -3080,19 +3088,16 @@ export namespace NamedUnion2 {
     throw new Error("unable to serialize to JSON");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NamedUnion2> =
-    ((value, _options) => {
-      if (value.type === "date") {
-        return [$literalFactory.date(value.value, $RdfVocabularies.xsd.date)];
-      }
-      if (value.type === "dateTime") {
-        return [
-          $literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime),
-        ];
-      }
+  export const $toRdfResourceValues = ((value, _options): Literal[] => {
+    if (value.type === "date") {
+      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.date)];
+    }
+    if (value.type === "dateTime") {
+      return [$literalFactory.date(value.value, $RdfVocabularies.xsd.dateTime)];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<NamedUnion2>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<NamedUnion2>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion2.$Filter,
@@ -6240,7 +6245,7 @@ export class UnionDiscriminantsClass {
       ),
       this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.type === "ClassUnionMember1") {
               return [
                 value.value.$toRdfResource({
@@ -6262,7 +6267,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
             | {
                 type: "ClassUnionMember2";
@@ -6287,7 +6292,7 @@ export class UnionDiscriminantsClass {
       ),
       this.optionalClassOrLiteralProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.termType === "ClassUnionMember1") {
               return [
                 value.value.$toRdfResource({
@@ -6301,7 +6306,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
             | Literal
           >
@@ -6320,7 +6325,7 @@ export class UnionDiscriminantsClass {
       dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"),
       this.optionalIriOrLiteralProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): (NamedNode | Literal)[] => {
             if (value.termType === "NamedNode") {
               return [value];
             }
@@ -6329,7 +6334,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<NamedNode | Literal>
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
         )(value, {
           graph: options?.graph,
           resource: resource,
@@ -6345,7 +6350,7 @@ export class UnionDiscriminantsClass {
       dataFactory.namedNode("http://example.com/optionalIriOrStringProperty"),
       this.optionalIriOrStringProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): (NamedNode | Literal)[] => {
             if (typeof value === "object") {
               return [value];
             }
@@ -6354,7 +6359,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<NamedNode | string>
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
         )(value, {
           graph: options?.graph,
           resource: resource,
@@ -6371,7 +6376,7 @@ export class UnionDiscriminantsClass {
         "http://example.com/requiredClassOrClassOrStringProperty",
       ),
       (
-        ((value, _options) => {
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
           if (value.type === "ClassUnionMember1") {
             return [
               value.value.$toRdfResource({
@@ -6393,7 +6398,7 @@ export class UnionDiscriminantsClass {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) as $ToRdfResourceValuesFunction<
+        }) satisfies $ToRdfResourceValuesFunction<
           | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
           | {
               type: "ClassUnionMember2";
@@ -6416,7 +6421,7 @@ export class UnionDiscriminantsClass {
         "http://example.com/requiredClassOrLiteralProperty",
       ),
       (
-        ((value, _options) => {
+        ((value, _options): (BlankNode | NamedNode | Literal)[] => {
           if (value.termType === "ClassUnionMember1") {
             return [
               value.value.$toRdfResource({
@@ -6430,7 +6435,7 @@ export class UnionDiscriminantsClass {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) as $ToRdfResourceValuesFunction<
+        }) satisfies $ToRdfResourceValuesFunction<
           { termType: "ClassUnionMember1"; value: ClassUnionMember1 } | Literal
         >
       )(this.requiredClassOrLiteralProperty, {
@@ -6446,7 +6451,7 @@ export class UnionDiscriminantsClass {
     resource.add(
       dataFactory.namedNode("http://example.com/requiredIriOrLiteralProperty"),
       (
-        ((value, _options) => {
+        ((value, _options): (NamedNode | Literal)[] => {
           if (value.termType === "NamedNode") {
             return [value];
           }
@@ -6455,7 +6460,7 @@ export class UnionDiscriminantsClass {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) as $ToRdfResourceValuesFunction<NamedNode | Literal>
+        }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
       )(this.requiredIriOrLiteralProperty, {
         graph: options?.graph,
         resource: resource,
@@ -6469,7 +6474,7 @@ export class UnionDiscriminantsClass {
     resource.add(
       dataFactory.namedNode("http://example.com/requiredIriOrStringProperty"),
       (
-        ((value, _options) => {
+        ((value, _options): (NamedNode | Literal)[] => {
           if (typeof value === "object") {
             return [value];
           }
@@ -6478,7 +6483,7 @@ export class UnionDiscriminantsClass {
           }
 
           throw new Error("unable to serialize to RDF");
-        }) as $ToRdfResourceValuesFunction<NamedNode | string>
+        }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
       )(this.requiredIriOrStringProperty, {
         graph: options?.graph,
         resource: resource,
@@ -6495,7 +6500,7 @@ export class UnionDiscriminantsClass {
       ),
       this.setClassOrClassOrStringProperty.flatMap((item) =>
         (
-          ((value, _options) => {
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.type === "ClassUnionMember1") {
               return [
                 value.value.$toRdfResource({
@@ -6517,7 +6522,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
             | {
                 type: "ClassUnionMember2";
@@ -6540,7 +6545,7 @@ export class UnionDiscriminantsClass {
       dataFactory.namedNode("http://example.com/setClassOrLiteralProperty"),
       this.setClassOrLiteralProperty.flatMap((item) =>
         (
-          ((value, _options) => {
+          ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.termType === "ClassUnionMember1") {
               return [
                 value.value.$toRdfResource({
@@ -6554,7 +6559,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
             | Literal
           >
@@ -6573,7 +6578,7 @@ export class UnionDiscriminantsClass {
       dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"),
       this.setIriOrLiteralProperty.flatMap((item) =>
         (
-          ((value, _options) => {
+          ((value, _options): (NamedNode | Literal)[] => {
             if (value.termType === "NamedNode") {
               return [value];
             }
@@ -6582,7 +6587,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<NamedNode | Literal>
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
         )(item, {
           graph: options?.graph,
           resource: resource,
@@ -6598,7 +6603,7 @@ export class UnionDiscriminantsClass {
       dataFactory.namedNode("http://example.com/setIriOrStringProperty"),
       this.setIriOrStringProperty.flatMap((item) =>
         (
-          ((value, _options) => {
+          ((value, _options): (NamedNode | Literal)[] => {
             if (typeof value === "object") {
               return [value];
             }
@@ -6607,7 +6612,7 @@ export class UnionDiscriminantsClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<NamedNode | string>
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
         )(item, {
           graph: options?.graph,
           resource: resource,
@@ -41623,7 +41628,7 @@ export class JsPrimitiveUnionPropertyClass {
       dataFactory.namedNode("http://example.com/jsPrimitiveUnionProperty"),
       this.jsPrimitiveUnionProperty.flatMap((item) =>
         (
-          ((value, _options) => {
+          ((value, _options): Literal[] => {
             if (typeof value === "boolean") {
               return [
                 $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
@@ -41639,7 +41644,7 @@ export class JsPrimitiveUnionPropertyClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<boolean | number | string>
+          }) satisfies $ToRdfResourceValuesFunction<boolean | number | string>
         )(item, {
           graph: options?.graph,
           resource: resource,
@@ -56135,7 +56140,7 @@ export class DateUnionPropertiesClass {
       dataFactory.namedNode("http://example.com/dateOrDateTimeProperty"),
       this.dateOrDateTimeProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): Literal[] => {
             if (value.type === "date") {
               return [
                 $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
@@ -56151,7 +56156,7 @@ export class DateUnionPropertiesClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             { type: "date"; value: Date } | { type: "dateTime"; value: Date }
           >
         )(value, {
@@ -56169,7 +56174,7 @@ export class DateUnionPropertiesClass {
       dataFactory.namedNode("http://example.com/dateOrStringProperty"),
       this.dateOrStringProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): Literal[] => {
             if (value.type === "date") {
               return [
                 $literalFactory.date(value.value, $RdfVocabularies.xsd.date),
@@ -56180,7 +56185,7 @@ export class DateUnionPropertiesClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             { type: "date"; value: Date } | { type: "string"; value: string }
           >
         )(value, {
@@ -56198,7 +56203,7 @@ export class DateUnionPropertiesClass {
       dataFactory.namedNode("http://example.com/dateTimeOrDateProperty"),
       this.dateTimeOrDateProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): Literal[] => {
             if (value.type === "dateTime") {
               return [
                 $literalFactory.date(
@@ -56214,7 +56219,7 @@ export class DateUnionPropertiesClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             { type: "dateTime"; value: Date } | { type: "date"; value: Date }
           >
         )(value, {
@@ -56232,7 +56237,7 @@ export class DateUnionPropertiesClass {
       dataFactory.namedNode("http://example.com/stringOrDateProperty"),
       this.stringOrDateProperty.toList().flatMap((value) =>
         (
-          ((value, _options) => {
+          ((value, _options): Literal[] => {
             if (value.type === "string") {
               return [$literalFactory.string(value.value)];
             }
@@ -56243,7 +56248,7 @@ export class DateUnionPropertiesClass {
             }
 
             throw new Error("unable to serialize to RDF");
-          }) as $ToRdfResourceValuesFunction<
+          }) satisfies $ToRdfResourceValuesFunction<
             { type: "string"; value: string } | { type: "date"; value: Date }
           >
         )(value, {
@@ -70518,27 +70523,29 @@ export namespace ClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<ClassUnion> =
-    ((value, _options) => {
-      if (ClassUnionMember1.isClassUnionMember1(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (ClassUnionMember2.isClassUnionMember2(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<ClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<ClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ClassUnion.$Filter,
@@ -71046,35 +71053,37 @@ export namespace FlattenClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<FlattenClassUnion> =
-    ((value, _options) => {
-      if (ClassUnionMember1.isClassUnionMember1(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (ClassUnionMember2.isClassUnionMember2(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<FlattenClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<FlattenClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     FlattenClassUnion.$Filter,
@@ -71533,27 +71542,29 @@ export namespace InterfaceUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<InterfaceUnion> =
-    ((value, _options) => {
-      if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-        return [
-          InterfaceUnionMember1.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-        return [
-          InterfaceUnionMember2.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return [
+        InterfaceUnionMember1.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return [
+        InterfaceUnionMember2.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<InterfaceUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<InterfaceUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     InterfaceUnion.$Filter,
@@ -72023,31 +72034,33 @@ export namespace LazilyResolvedClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedClassUnion> =
-    ((value, _options) => {
-      if (
-        LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
-      ) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (
-        LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
-      ) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<LazilyResolvedClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<LazilyResolvedClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedClassUnion.$Filter,
@@ -72550,35 +72563,37 @@ export namespace LazilyResolvedInterfaceUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion> =
-    ((value, _options) => {
-      if (
-        LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-          value,
-        )
-      ) {
-        return [
-          LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (
-        LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-          value,
-        )
-      ) {
-        return [
-          LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return [
+        LazilyResolvedInterfaceUnionMember1.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return [
+        LazilyResolvedInterfaceUnionMember2.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedInterfaceUnion.$Filter,
@@ -73034,27 +73049,29 @@ export namespace PartialClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialClassUnion> =
-    ((value, _options) => {
-      if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<PartialClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<PartialClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialClassUnion.$Filter,
@@ -73510,27 +73527,29 @@ export namespace PartialInterfaceUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<PartialInterfaceUnion> =
-    ((value, _options) => {
-      if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-        return [
-          PartialInterfaceUnionMember1.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-        return [
-          PartialInterfaceUnionMember2.$toRdfResource(value, {
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return [
+        PartialInterfaceUnionMember1.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return [
+        PartialInterfaceUnionMember2.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<PartialInterfaceUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<PartialInterfaceUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialInterfaceUnion.$Filter,
@@ -73978,27 +73997,29 @@ export namespace NoRdfTypeClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<NoRdfTypeClassUnion> =
-    ((value, _options) => {
-      if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<NoRdfTypeClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<NoRdfTypeClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NoRdfTypeClassUnion.$Filter,
@@ -74446,27 +74467,29 @@ export namespace RecursiveClassUnion {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<RecursiveClassUnion> =
-    ((value, _options) => {
-      if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
-      if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-        return [
-          value.$toRdfResource({
-            graph: _options.graph,
-            resourceSet: _options.resourceSet,
-          }).identifier,
-        ];
-      }
+  export const $toRdfResourceValues = ((
+    value,
+    _options,
+  ): (BlankNode | NamedNode)[] => {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return [
+        value.$toRdfResource({
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
 
-      throw new Error("unable to serialize to RDF");
-    }) as $ToRdfResourceValuesFunction<RecursiveClassUnion>;
+    throw new Error("unable to serialize to RDF");
+  }) satisfies $ToRdfResourceValuesFunction<RecursiveClassUnion>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     RecursiveClassUnion.$Filter,
@@ -80898,10 +80921,10 @@ export namespace $Object {
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues: $ToRdfResourceValuesFunction<$Object> = ((
+  export const $toRdfResourceValues = ((
     value,
     _options,
-  ) => {
+  ): (BlankNode | NamedNode)[] => {
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
       return [
         value.$toRdfResource({
@@ -81550,7 +81573,7 @@ export namespace $Object {
     }
 
     throw new Error("unable to serialize to RDF");
-  }) as $ToRdfResourceValuesFunction<$Object>;
+  }) satisfies $ToRdfResourceValuesFunction<$Object>;
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     $Object.$Filter,

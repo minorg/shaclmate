@@ -1,6 +1,7 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -13,24 +14,6 @@ import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
-const emptyTermTypesSet: ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> =
-  new Set();
-
-function termTypes(
-  type: Type,
-): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
-  switch (type.kind) {
-    case "BlankNodeType":
-    case "IriType":
-    case "IdentifierType":
-    case "LiteralType":
-    case "TermType":
-      return type.termTypes;
-    default:
-      return emptyTermTypesSet;
-  }
-}
-
 export abstract class AbstractUnionType<
   MemberTypeT extends Type,
 > extends AbstractType {
@@ -40,7 +23,6 @@ export abstract class AbstractUnionType<
   >;
 
   override readonly abstract = false;
-  private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
   override readonly recursive: boolean;
 
   constructor({
@@ -303,6 +285,17 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
+  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+    const set = new Set<"BlankNode" | "Literal" | "NamedNode">();
+    for (const member of this.members) {
+      for (const value of member.type.toRdfResourceValueTypes) {
+        set.add(value);
+      }
+    }
+    return set;
+  }
+
+  @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
     return NonEmptyList.fromArray(
       this.concreteMembers.flatMap((member) => member.type.typeofs),
@@ -445,53 +438,6 @@ ${joinCode(
 ) satisfies ${snippets.FromRdfResourceValuesFunction}<${this.name}>)`;
   }
 
-  @Memoize()
-  protected get inlineJsonType(): AbstractType.JsonType {
-    const discriminant = this.discriminant; // To get type narrowing to work
-    switch (discriminant.kind) {
-      case "extrinsic":
-        return new AbstractType.JsonType(
-          code`(${joinCode(
-            this.concreteMembers.map(
-              ({ jsonType, primaryDiscriminantValue }) =>
-                code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`,
-            ),
-            { on: "|" },
-          )})`,
-        );
-
-      case "hybrid":
-        return new AbstractType.JsonType(
-          code`(${joinCode(
-            this.concreteMembers.map(
-              ({ jsonType, primaryDiscriminantValue }, memberI) => {
-                switch (discriminant.memberValues[memberI].kind) {
-                  case "extrinsic":
-                    return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`;
-                  case "intrinsic":
-                    return code`${jsonType}`;
-                  default:
-                    throw new Error();
-                }
-              },
-            ),
-            { on: "|" },
-          )})`,
-        );
-
-      case "intrinsic":
-      case "typeof":
-        return new AbstractType.JsonType(
-          joinCode(
-            this.concreteMembers.map(({ jsonType }) => code`${jsonType}`),
-            { on: "|" },
-          ),
-        );
-      default:
-        throw discriminant satisfies never;
-    }
-  }
-
   protected get inlineJsonSchema(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
@@ -549,6 +495,53 @@ ${joinCode(
   }
 
   @Memoize()
+  protected get inlineJsonType(): AbstractType.JsonType {
+    const discriminant = this.discriminant; // To get type narrowing to work
+    switch (discriminant.kind) {
+      case "extrinsic":
+        return new AbstractType.JsonType(
+          code`(${joinCode(
+            this.concreteMembers.map(
+              ({ jsonType, primaryDiscriminantValue }) =>
+                code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`,
+            ),
+            { on: "|" },
+          )})`,
+        );
+
+      case "hybrid":
+        return new AbstractType.JsonType(
+          code`(${joinCode(
+            this.concreteMembers.map(
+              ({ jsonType, primaryDiscriminantValue }, memberI) => {
+                switch (discriminant.memberValues[memberI].kind) {
+                  case "extrinsic":
+                    return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`;
+                  case "intrinsic":
+                    return code`${jsonType}`;
+                  default:
+                    throw new Error();
+                }
+              },
+            ),
+            { on: "|" },
+          )})`,
+        );
+
+      case "intrinsic":
+      case "typeof":
+        return new AbstractType.JsonType(
+          joinCode(
+            this.concreteMembers.map(({ jsonType }) => code`${jsonType}`),
+            { on: "|" },
+          ),
+        );
+      default:
+        throw discriminant satisfies never;
+    }
+  }
+
+  @Memoize()
   protected get inlineName(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
@@ -596,6 +589,61 @@ ${joinCode(
     }
   }
 
+  protected get inlineToJsonFunction(): Code {
+    return code`\
+((value: ${this.name}): ${this.jsonType().name} => {
+${joinCode(
+  this.concreteMembers.map(
+    ({ typeCheck, typeToJsonExpression, unwrap, wrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${wrap(
+        typeToJsonExpression(unwrap(code`value`)),
+      )}; }`,
+  ),
+)}
+
+  throw new Error("unable to serialize to JSON");
+})`;
+  }
+
+  protected get inlineToRdfResourceValuesFunction(): Code {
+    return code`\
+(((value, _options): (${joinCode(
+      [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
+        switch (toRdfResourceValueType) {
+          case "BlankNode":
+            return code`${imports.BlankNode}`;
+          case "Literal":
+            return code`${imports.Literal}`;
+          case "NamedNode":
+            return code`${imports.NamedNode}`;
+          default:
+            toRdfResourceValueType satisfies never;
+            throw new Error();
+        }
+      }),
+      { on: " | " },
+    )})[] => {
+${joinCode(
+  this.concreteMembers.map(
+    ({ type, unwrap, typeCheck }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.toRdfResourceValuesExpression(
+        {
+          variables: {
+            graph: code`_options.graph`,
+            propertyPath: code`_options.propertyPath`,
+            resource: code`_options.resource`,
+            resourceSet: code`_options.resourceSet`,
+            value: unwrap(code`value`),
+          },
+        },
+      )}; }`,
+  ),
+)}
+
+  throw new Error("unable to serialize to RDF");
+}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
+  }
+
   @Memoize()
   protected get inlineValueSparqlConstructTriplesFunction(): Code {
     return code`\
@@ -628,46 +676,6 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
   
   return [{ patterns: unionPatterns, type: "union" }];
 }) satisfies ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
-  }
-
-  protected get inlineToJsonFunction(): Code {
-    return code`\
-((value: ${this.name}): ${this.jsonType().name} => {
-${joinCode(
-  this.concreteMembers.map(
-    ({ typeCheck, typeToJsonExpression, unwrap, wrap }) =>
-      code`if (${typeCheck(code`value`)}) { return ${wrap(
-        typeToJsonExpression(unwrap(code`value`)),
-      )}; }`,
-  ),
-)}
-
-  throw new Error("unable to serialize to JSON");
-})`;
-  }
-
-  protected get inlineToRdfResourceValuesFunction(): Code {
-    return code`\
-(((value, _options) => {
-${joinCode(
-  this.concreteMembers.map(
-    ({ type, unwrap, typeCheck }) =>
-      code`if (${typeCheck(code`value`)}) { return ${type.toRdfResourceValuesExpression(
-        {
-          variables: {
-            graph: code`_options.graph`,
-            propertyPath: code`_options.propertyPath`,
-            resource: code`_options.resource`,
-            resourceSet: code`_options.resourceSet`,
-            value: unwrap(code`value`),
-          },
-        },
-      )}; }`,
-  ),
-)}
-
-  throw new Error("unable to serialize to RDF");
-}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected override get schemaObject(): {
@@ -712,6 +720,8 @@ ${joinCode(
         )} }`,
     );
   }
+
+  private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
 }
 
 type Discriminant =
@@ -748,6 +758,24 @@ type TypeofDiscriminant = {
   readonly kind: "typeof";
   readonly memberValues: readonly Typeof[];
 };
+
+function termTypes(
+  type: Type,
+): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
+  switch (type.kind) {
+    case "BlankNodeType":
+    case "IriType":
+    case "IdentifierType":
+    case "LiteralType":
+    case "TermType":
+      return type.termTypes;
+    default:
+      return emptyTermTypesSet;
+  }
+}
+
+const emptyTermTypesSet: ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> =
+  new Set();
 
 export namespace Discriminant {
   export function infer(

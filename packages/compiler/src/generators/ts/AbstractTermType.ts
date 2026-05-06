@@ -137,6 +137,11 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
+  override get toRdfResourceValueTypes() {
+    return new Set([...this.nodeKinds].map(NodeKind.toTermType));
+  }
+
+  @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`((_: object) => [])`;
   }

@@ -100,6 +100,10 @@ export abstract class AbstractLazyObjectType<
     }}`;
   }
 
+  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+    return this.partialType.toRdfResourceValueTypes;
+  }
+
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlConstructTriplesFunction}({ ...otherParameters, schema: schema.partial() }))`;
@@ -132,6 +136,12 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
+  override jsonSchema(
+    parameters: Parameters<AbstractType["jsonSchema"]>[0],
+  ): Code {
+    return this.partialType.jsonSchema(parameters);
+  }
+
   override jsonType(
     parameters?: Parameters<AbstractType["jsonType"]>[0],
   ): AbstractType.JsonType {
@@ -142,12 +152,6 @@ export abstract class AbstractLazyObjectType<
     parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
   ): Maybe<Code> {
     return this.partialType.jsonUiSchemaElement(parameters);
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractType["jsonSchema"]>[0],
-  ): Code {
-    return this.partialType.jsonSchema(parameters);
   }
 
   override toJsonExpression({

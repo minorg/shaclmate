@@ -64,6 +64,10 @@ export abstract class AbstractContainerType<
     return code`${removeUndefined(this.schemaObject)}`;
   }
 
+  override get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+    return this.itemType.toRdfResourceValueTypes;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,

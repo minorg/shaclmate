@@ -1,4 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
+import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
@@ -404,6 +405,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   override get schemaType(): Code {
     return code`typeof ${this.schema}`;
+  }
+
+  @Memoize()
+  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+    return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
   }
 
   @Memoize()

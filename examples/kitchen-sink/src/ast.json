@@ -2856,9 +2856,9 @@
       ],
       "properties": [
         {
-          "name": "inIrisProperty",
+          "name": "inStringsProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/inIrisProperty)",
+          "path": "PredicatePath(http://example.com/inStringsProperty)",
           "shapeIdentifier": {
             "value": "b69"
           },
@@ -2868,89 +2868,9 @@
               "value": "b69"
             },
             "itemType": {
-              "kind": "IriType",
+              "kind": "LiteralType",
               "shapeIdentifier": {
                 "value": "b69"
-              },
-              "in": [
-                {
-                  "prefix": "",
-                  "reference": "InPropertiesIri1",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/InPropertiesIri1"
-                },
-                {
-                  "prefix": "",
-                  "reference": "InPropertiesIri2",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/InPropertiesIri2"
-                }
-              ],
-              "nodeKinds": [
-                "IRI"
-              ]
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "name": "inDoublesProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/inDoublesProperty)",
-          "shapeIdentifier": {
-            "value": "b72"
-          },
-          "type": {
-            "kind": "OptionType",
-            "shapeIdentifier": {
-              "value": "b72"
-            },
-            "itemType": {
-              "kind": "LiteralType",
-              "shapeIdentifier": {
-                "value": "b72"
-              },
-              "in": [
-                {
-                  "value": "1e0",
-                  "language": "",
-                  "datatype": {
-                    "value": "http://www.w3.org/2001/XMLSchema#double"
-                  },
-                  "direction": ""
-                },
-                {
-                  "value": "2e0",
-                  "language": "",
-                  "datatype": {
-                    "value": "http://www.w3.org/2001/XMLSchema#double"
-                  },
-                  "direction": ""
-                }
-              ],
-              "nodeKinds": [
-                "Literal"
-              ]
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "name": "inStringsProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/inStringsProperty)",
-          "shapeIdentifier": {
-            "value": "b75"
-          },
-          "type": {
-            "kind": "OptionType",
-            "shapeIdentifier": {
-              "value": "b75"
-            },
-            "itemType": {
-              "kind": "LiteralType",
-              "shapeIdentifier": {
-                "value": "b75"
               },
               "in": [
                 {
@@ -2982,17 +2902,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inBooleansProperty)",
           "shapeIdentifier": {
-            "value": "b78"
+            "value": "b72"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b78"
+              "value": "b72"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b78"
+                "value": "b72"
               },
               "in": [
                 {
@@ -3016,17 +2936,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inDateTimesProperty)",
           "shapeIdentifier": {
-            "value": "b80"
+            "value": "b74"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b80"
+              "value": "b74"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b80"
+                "value": "b74"
               },
               "in": [
                 {
@@ -3050,17 +2970,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inIntegersProperty)",
           "shapeIdentifier": {
-            "value": "b82"
+            "value": "b76"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b82"
+              "value": "b76"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b82"
+                "value": "b76"
               },
               "in": [
                 {
@@ -3076,6 +2996,86 @@
                   "language": "",
                   "datatype": {
                     "value": "http://www.w3.org/2001/XMLSchema#integer"
+                  },
+                  "direction": ""
+                }
+              ],
+              "nodeKinds": [
+                "Literal"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "name": "inIrisProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/inIrisProperty)",
+          "shapeIdentifier": {
+            "value": "b79"
+          },
+          "type": {
+            "kind": "OptionType",
+            "shapeIdentifier": {
+              "value": "b79"
+            },
+            "itemType": {
+              "kind": "IriType",
+              "shapeIdentifier": {
+                "value": "b79"
+              },
+              "in": [
+                {
+                  "prefix": "",
+                  "reference": "InPropertiesIri1",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/InPropertiesIri1"
+                },
+                {
+                  "prefix": "",
+                  "reference": "InPropertiesIri2",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/InPropertiesIri2"
+                }
+              ],
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "name": "inDoublesProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/inDoublesProperty)",
+          "shapeIdentifier": {
+            "value": "b82"
+          },
+          "type": {
+            "kind": "OptionType",
+            "shapeIdentifier": {
+              "value": "b82"
+            },
+            "itemType": {
+              "kind": "LiteralType",
+              "shapeIdentifier": {
+                "value": "b82"
+              },
+              "in": [
+                {
+                  "value": "1e0",
+                  "language": "",
+                  "datatype": {
+                    "value": "http://www.w3.org/2001/XMLSchema#double"
+                  },
+                  "direction": ""
+                },
+                {
+                  "value": "2e0",
+                  "language": "",
+                  "datatype": {
+                    "value": "http://www.w3.org/2001/XMLSchema#double"
                   },
                   "direction": ""
                 }
