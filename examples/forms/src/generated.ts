@@ -914,6 +914,33 @@ export namespace NestedNodeShape {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _nestedNodeShape: NestedNodeShape,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _nestedNodeShape.$identifier.toString(),
+      requiredStringProperty:
+        _nestedNodeShape.requiredStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: NestedNodeShape): string;
+  export function $toString(_nestedNodeShape: NestedNodeShape): string;
+  export function $toString(
+    this: NestedNodeShape | undefined,
+    _nestedNodeShape?: NestedNodeShape,
+  ): string {
+    return `NestedNodeShape(${JSON.stringify($propertiesToStrings((this ?? _nestedNodeShape)!))})`;
+  }
 } /**
  * Form
  */
@@ -1734,6 +1761,48 @@ export namespace FormNodeShape {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _formNodeShape: FormNodeShape,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _formNodeShape.$identifier.toString(),
+      emptyStringSetProperty:
+        _formNodeShape.emptyStringSetProperty.length > 0
+          ? `[${_formNodeShape.emptyStringSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      nestedObjectProperty: NestedNodeShape.$toString(
+        _formNodeShape.nestedObjectProperty,
+      ),
+      nonEmptyStringSetProperty:
+        _formNodeShape.nonEmptyStringSetProperty.length > 0
+          ? `[${_formNodeShape.nonEmptyStringSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      optionalStringProperty: _formNodeShape.optionalStringProperty
+        .map((item) => item.toString())
+        .extract(),
+      requiredIntegerProperty:
+        _formNodeShape.requiredIntegerProperty.toString(),
+      requiredStringProperty: _formNodeShape.requiredStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: FormNodeShape): string;
+  export function $toString(_formNodeShape: FormNodeShape): string;
+  export function $toString(
+    this: FormNodeShape | undefined,
+    _formNodeShape?: FormNodeShape,
+  ): string {
+    return `FormNodeShape(${JSON.stringify($propertiesToStrings((this ?? _formNodeShape)!))})`;
+  }
 }
 export type $Object = FormNodeShape | NestedNodeShape;
 
@@ -1978,6 +2047,17 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const $toString = (value: $Object): $Object.$Json => {
+    if (FormNodeShape.isFormNodeShape(value)) {
+      return FormNodeShape.$toString(value);
+    }
+    if (NestedNodeShape.isNestedNodeShape(value)) {
+      return NestedNodeShape.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 }
 export interface $ObjectSet {
   formNodeShape(

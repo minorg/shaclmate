@@ -15,6 +15,7 @@ export class InterfaceHarness<
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }) => Resource;
+  readonly toString: () => string;
 
   constructor(
     instance: T,
@@ -22,6 +23,7 @@ export class InterfaceHarness<
       $equals,
       $toJson,
       $toRdfResource,
+      $toString,
       ...superParameters
     }: {
       $equals: (left: T, right: T) => $EqualsResult;
@@ -33,6 +35,7 @@ export class InterfaceHarness<
           resourceSet?: ResourceSet;
         },
       ) => Resource;
+      $toString: (instance: T) => string;
     } & ConstructorParameters<typeof Harness<T>>[1],
     shapeName?: string,
   ) {
@@ -40,5 +43,6 @@ export class InterfaceHarness<
     this.equals = (other) => $equals(this.instance, other);
     this.toJson = () => $toJson(this.instance);
     this.toRdfResource = (kwds) => $toRdfResource(this.instance, kwds);
+    this.toString = () => $toString(this.instance);
   }
 }

@@ -537,7 +537,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
     switch (this.declarationType) {
       case "class":
-        return code`${variables.value}.${syntheticNamePrefix}toString()`;
+        return code`${variables.value}.toString()`;
       case "interface":
         return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
     }

@@ -646,13 +646,13 @@ ${joinCode(
 
   protected get inlineToStringFunction(): Code {
     return code`\
-((value: ${this.name}): ${this.jsonType().name} => {
+((value: ${this.name}): string => {
 ${joinCode(
   this.concreteMembers.map(
-    ({ type, typeCheck, unwrap, wrap }) =>
-      code`if (${typeCheck(code`value`)}) { return ${wrap(
-        type.toStringExpression({ variables: { value: unwrap(code`value`) } }),
-      )}; }`,
+    ({ type, typeCheck, unwrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.toStringExpression({
+        variables: { value: unwrap(code`value`) },
+      })}; }`,
   ),
 )}
 

@@ -2844,6 +2844,17 @@ export namespace NamedUnion1 {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NamedUnion1>;
 
+  export const $toString = (value: NamedUnion1): string => {
+    if (typeof value === "object") {
+      return value.toString();
+    }
+    if (typeof value === "string") {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion1.$Filter,
     {
@@ -3109,6 +3120,17 @@ export namespace NamedUnion2 {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NamedUnion2>;
 
+  export const $toString = (value: NamedUnion2): string => {
+    if (value.type === "date") {
+      return value.value.toString();
+    }
+    if (value.type === "dateTime") {
+      return value.value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion2.$Filter,
     {
@@ -3289,8 +3311,20 @@ export class $NamedDefaultPartial {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `$NamedDefaultPartial(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -3655,8 +3689,20 @@ export class $DefaultPartial {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `$DefaultPartial(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -4402,6 +4448,37 @@ export namespace UuidV4IriIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _uuidV4IriIdentifierInterface.$identifier.toString(),
+      uuidV4IriProperty:
+        _uuidV4IriIdentifierInterface.uuidV4IriProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: UuidV4IriIdentifierInterface): string;
+  export function $toString(
+    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: UuidV4IriIdentifierInterface | undefined,
+    _uuidV4IriIdentifierInterface?: UuidV4IriIdentifierInterface,
+  ): string {
+    return `UuidV4IriIdentifierInterface(${JSON.stringify(
+      $propertiesToStrings((_uuidV4IriIdentifierInterface ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     UuidV4IriIdentifierInterface.$Filter,
     typeof UuidV4IriIdentifierInterface.$schema
@@ -4570,8 +4647,23 @@ export class UuidV4IriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      uuidV4IriProperty: this.uuidV4IriProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `UuidV4IriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -6672,8 +6764,224 @@ export class UnionDiscriminantsClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      optionalClassOrClassOrStringProperty:
+        this.optionalClassOrClassOrStringProperty
+          .map((item) =>
+            ((
+              value:
+                | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+                | {
+                    type: "ClassUnionMember2";
+                    value: ClassUnionMember2;
+                  }
+                | { type: "string"; value: string },
+            ): string => {
+              if (value.type === "ClassUnionMember1") {
+                return value.value.toString();
+              }
+              if (value.type === "ClassUnionMember2") {
+                return value.value.toString();
+              }
+              if (value.type === "string") {
+                return value.value.toString();
+              }
+
+              throw new Error("unable to serialize to string");
+            })(item),
+          )
+          .extract(),
+      optionalClassOrLiteralProperty: this.optionalClassOrLiteralProperty
+        .map((item) =>
+          ((
+            value:
+              | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+              | Literal,
+          ): string => {
+            if (value.termType === "ClassUnionMember1") {
+              return value.value.toString();
+            }
+            if (value.termType === "Literal") {
+              return value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      optionalIriOrLiteralProperty: this.optionalIriOrLiteralProperty
+        .map((item) =>
+          ((value: NamedNode | Literal): string => {
+            if (value.termType === "NamedNode") {
+              return value.toString();
+            }
+            if (value.termType === "Literal") {
+              return value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      optionalIriOrStringProperty: this.optionalIriOrStringProperty
+        .map((item) =>
+          ((value: NamedNode | string): string => {
+            if (typeof value === "object") {
+              return value.toString();
+            }
+            if (typeof value === "string") {
+              return value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      requiredClassOrClassOrStringProperty: ((
+        value:
+          | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+          | {
+              type: "ClassUnionMember2";
+              value: ClassUnionMember2;
+            }
+          | { type: "string"; value: string },
+      ): string => {
+        if (value.type === "ClassUnionMember1") {
+          return value.value.toString();
+        }
+        if (value.type === "ClassUnionMember2") {
+          return value.value.toString();
+        }
+        if (value.type === "string") {
+          return value.value.toString();
+        }
+
+        throw new Error("unable to serialize to string");
+      })(this.requiredClassOrClassOrStringProperty),
+      requiredClassOrLiteralProperty: ((
+        value:
+          | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+          | Literal,
+      ): string => {
+        if (value.termType === "ClassUnionMember1") {
+          return value.value.toString();
+        }
+        if (value.termType === "Literal") {
+          return value.toString();
+        }
+
+        throw new Error("unable to serialize to string");
+      })(this.requiredClassOrLiteralProperty),
+      requiredIriOrLiteralProperty: ((value: NamedNode | Literal): string => {
+        if (value.termType === "NamedNode") {
+          return value.toString();
+        }
+        if (value.termType === "Literal") {
+          return value.toString();
+        }
+
+        throw new Error("unable to serialize to string");
+      })(this.requiredIriOrLiteralProperty),
+      requiredIriOrStringProperty: ((value: NamedNode | string): string => {
+        if (typeof value === "object") {
+          return value.toString();
+        }
+        if (typeof value === "string") {
+          return value.toString();
+        }
+
+        throw new Error("unable to serialize to string");
+      })(this.requiredIriOrStringProperty),
+      setClassOrClassOrStringProperty:
+        this.setClassOrClassOrStringProperty.length > 0
+          ? `[${this.setClassOrClassOrStringProperty.map((item) =>
+              ((
+                value:
+                  | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
+                  | {
+                      type: "ClassUnionMember2";
+                      value: ClassUnionMember2;
+                    }
+                  | { type: "string"; value: string },
+              ): string => {
+                if (value.type === "ClassUnionMember1") {
+                  return value.value.toString();
+                }
+                if (value.type === "ClassUnionMember2") {
+                  return value.value.toString();
+                }
+                if (value.type === "string") {
+                  return value.value.toString();
+                }
+
+                throw new Error("unable to serialize to string");
+              })(item),
+            )}]`
+          : undefined,
+      setClassOrLiteralProperty:
+        this.setClassOrLiteralProperty.length > 0
+          ? `[${this.setClassOrLiteralProperty.map((item) =>
+              ((
+                value:
+                  | { termType: "ClassUnionMember1"; value: ClassUnionMember1 }
+                  | Literal,
+              ): string => {
+                if (value.termType === "ClassUnionMember1") {
+                  return value.value.toString();
+                }
+                if (value.termType === "Literal") {
+                  return value.toString();
+                }
+
+                throw new Error("unable to serialize to string");
+              })(item),
+            )}]`
+          : undefined,
+      setIriOrLiteralProperty:
+        this.setIriOrLiteralProperty.length > 0
+          ? `[${this.setIriOrLiteralProperty.map((item) =>
+              ((value: NamedNode | Literal): string => {
+                if (value.termType === "NamedNode") {
+                  return value.toString();
+                }
+                if (value.termType === "Literal") {
+                  return value.toString();
+                }
+
+                throw new Error("unable to serialize to string");
+              })(item),
+            )}]`
+          : undefined,
+      setIriOrStringProperty:
+        this.setIriOrStringProperty.length > 0
+          ? `[${this.setIriOrStringProperty.map((item) =>
+              ((value: NamedNode | string): string => {
+                if (typeof value === "object") {
+                  return value.toString();
+                }
+                if (typeof value === "string") {
+                  return value.toString();
+                }
+
+                throw new Error("unable to serialize to string");
+              })(item),
+            )}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `UnionDiscriminantsClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -12431,8 +12739,47 @@ export class TermPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      blankNodeTermProperty: this.blankNodeTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      booleanTermProperty: this.booleanTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      dateTermProperty: this.dateTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      dateTimeTermProperty: this.dateTimeTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      iriTermProperty: this.iriTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      literalTermProperty: this.literalTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      numberTermProperty: this.numberTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      stringTermProperty: this.stringTermProperty
+        .map((item) => item.toString())
+        .extract(),
+      termProperty: this.termProperty.map((item) => item.toString()).extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `TermPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -13779,8 +14126,23 @@ export class Sha256IriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      sha256IriProperty: this.sha256IriProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `Sha256IriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -14286,8 +14648,26 @@ export class RecursiveClassUnionMember2 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      recursiveClassUnionMember2Property:
+        this.recursiveClassUnionMember2Property
+          .map((item) => RecursiveClassUnion.$toString(item))
+          .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `RecursiveClassUnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -14892,8 +15272,26 @@ export class RecursiveClassUnionMember1 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      recursiveClassUnionMember1Property:
+        this.recursiveClassUnionMember1Property
+          .map((item) => RecursiveClassUnion.$toString(item))
+          .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `RecursiveClassUnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -15504,8 +15902,25 @@ export class PropertyVisibilitiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      privateProperty: this.privateProperty.toString(),
+      protectedProperty: this.protectedProperty.toString(),
+      publicProperty: this.publicProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PropertyVisibilitiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -16150,8 +16565,28 @@ export class PropertyPathsClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      inversePathProperty: this.inversePathProperty
+        .map((item) => item.toString())
+        .extract(),
+      predicatePathProperty: this.predicatePathProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PropertyPathsClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -16934,8 +17369,27 @@ export class PropertyNamesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      actualPropertyName1: this.actualPropertyName1.toString(),
+      actualPropertyName2: this.actualPropertyName2.toString(),
+      actualPropertyName3: this.actualPropertyName3.toString(),
+      actualPropertyName4: this.actualPropertyName4.toString(),
+      actualPropertyName5: this.actualPropertyName5.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PropertyNamesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -17880,8 +18334,34 @@ export class PropertyCardinalitiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      emptyStringSetProperty:
+        this.emptyStringSetProperty.length > 0
+          ? `[${this.emptyStringSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      nonEmptyStringSetProperty:
+        this.nonEmptyStringSetProperty.length > 0
+          ? `[${this.nonEmptyStringSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      optionalStringProperty: this.optionalStringProperty
+        .map((item) => item.toString())
+        .extract(),
+      requiredStringProperty: this.requiredStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PropertyCardinalitiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -19104,6 +19584,37 @@ export namespace PartialInterfaceUnionMember2 {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _partialInterfaceUnionMember2.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _partialInterfaceUnionMember2.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: PartialInterfaceUnionMember2): string;
+  export function $toString(
+    _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
+  ): string;
+  export function $toString(
+    this: PartialInterfaceUnionMember2 | undefined,
+    _partialInterfaceUnionMember2?: PartialInterfaceUnionMember2,
+  ): string {
+    return `PartialInterfaceUnionMember2(${JSON.stringify(
+      $propertiesToStrings((_partialInterfaceUnionMember2 ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialInterfaceUnionMember2.$Filter,
     typeof PartialInterfaceUnionMember2.$schema
@@ -19700,6 +20211,37 @@ export namespace PartialInterfaceUnionMember1 {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _partialInterfaceUnionMember1.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _partialInterfaceUnionMember1.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: PartialInterfaceUnionMember1): string;
+  export function $toString(
+    _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
+  ): string;
+  export function $toString(
+    this: PartialInterfaceUnionMember1 | undefined,
+    _partialInterfaceUnionMember1?: PartialInterfaceUnionMember1,
+  ): string {
+    return `PartialInterfaceUnionMember1(${JSON.stringify(
+      $propertiesToStrings((_partialInterfaceUnionMember1 ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialInterfaceUnionMember1.$Filter,
     typeof PartialInterfaceUnionMember1.$schema
@@ -19848,8 +20390,24 @@ export class PartialClassUnionMember2 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PartialClassUnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -20418,8 +20976,24 @@ export class PartialClassUnionMember1 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PartialClassUnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -20967,8 +21541,20 @@ export class NewName2Class {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NewName2Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -21437,8 +22023,20 @@ export class NewName1Class {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NewName1Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -21965,8 +22563,25 @@ export class OrderedPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      orderedPropertyC: this.orderedPropertyC.toString(),
+      orderedPropertyB: this.orderedPropertyB.toString(),
+      orderedPropertyA: this.orderedPropertyA.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `OrderedPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -23231,8 +23846,70 @@ export class NumericPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      byteNumericProperty: this.byteNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      decimalNumericProperty: this.decimalNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      doubleNumericProperty: this.doubleNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      floatNumericProperty: this.floatNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      integerNumericProperty: this.integerNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      intNumericProperty: this.intNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      longNumericProperty: this.longNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      negativeIntegerNumericProperty: this.negativeIntegerNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      nonNegativeIntegerNumericProperty: this.nonNegativeIntegerNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      nonPositiveIntegerNumericProperty: this.nonPositiveIntegerNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      positiveIntegerNumericProperty: this.positiveIntegerNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      shortNumericProperty: this.shortNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      unsignedByteNumericProperty: this.unsignedByteNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      unsignedIntNumericProperty: this.unsignedIntNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      unsignedLongNumericProperty: this.unsignedLongNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+      unsignedShortNumericProperty: this.unsignedShortNumericProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NumericPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -25513,8 +26190,31 @@ export class NodeKindsClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      blankNodeKindProperty: this.blankNodeKindProperty.toString(),
+      blankNodeOrIriNodeKindProperty:
+        this.blankNodeOrIriNodeKindProperty.toString(),
+      blankNodeOrLiteralNodeKindProperty:
+        this.blankNodeOrLiteralNodeKindProperty.toString(),
+      iriNodeKindProperty: this.iriNodeKindProperty.toString(),
+      iriOrLiteralNodeKindProperty:
+        this.iriOrLiteralNodeKindProperty.toString(),
+      literalNodeKindProperty: this.literalNodeKindProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NodeKindsClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -26521,8 +27221,24 @@ export class NoRdfTypeClassUnionMember2 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      noRdfTypeClassUnionMember2Property:
+        this.noRdfTypeClassUnionMember2Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NoRdfTypeClassUnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -26999,8 +27715,24 @@ export class NoRdfTypeClassUnionMember1 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      noRdfTypeClassUnionMember1Property:
+        this.noRdfTypeClassUnionMember1Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NoRdfTypeClassUnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -27523,8 +28255,24 @@ export class NamedUnionPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      namedUnion1Property: NamedUnion1.$toString(this.namedUnion1Property),
+      namedUnion2Property: NamedUnion2.$toString(this.namedUnion2Property),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NamedUnionPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -28358,8 +29106,32 @@ export class MutablePropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      mutableListProperty: this.mutableListProperty
+        .map((item) => `[${item.map((item) => item.toString())}]`)
+        .extract(),
+      mutableSetProperty:
+        this.mutableSetProperty.length > 0
+          ? `[${this.mutableSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      mutableStringProperty: this.mutableStringProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `MutablePropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -29427,8 +30199,31 @@ export class ListPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      iriListProperty: this.iriListProperty
+        .map((item) => `[${item.map((item) => item.toString())}]`)
+        .extract(),
+      objectListProperty: this.objectListProperty
+        .map((item) => `[${item.map((item) => item.toString())}]`)
+        .extract(),
+      stringListProperty: this.stringListProperty
+        .map((item) => `[${item.map((item) => item.toString())}]`)
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ListPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -30639,6 +31434,33 @@ export namespace PartialInterface {
       options?.graph,
     );
     return resource;
+  }
+
+  export function $propertiesToStrings(
+    _partialInterface: PartialInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _partialInterface.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _partialInterface.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: PartialInterface): string;
+  export function $toString(_partialInterface: PartialInterface): string;
+  export function $toString(
+    this: PartialInterface | undefined,
+    _partialInterface?: PartialInterface,
+  ): string {
+    return `PartialInterface(${JSON.stringify($propertiesToStrings((_partialInterface ?? this)!))})`;
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -33823,6 +34645,76 @@ export namespace LazyPropertiesInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _lazyPropertiesInterface.$identifier.toString(),
+      optionalLazyToResolvedInterfaceProperty:
+        _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalLazyToResolvedInterfaceUnionProperty:
+        _lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalLazyToResolvedIriIdentifierInterfaceProperty:
+        _lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalPartialInterfaceToResolvedInterfaceProperty:
+        _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
+          .map((item) => PartialInterface.$toString(item))
+          .extract(),
+      optionalPartialInterfaceToResolvedInterfaceUnionProperty:
+        _lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
+          .map((item) => PartialInterface.$toString(item))
+          .extract(),
+      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
+        _lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
+          .map((item) => PartialInterfaceUnion.$toString(item))
+          .extract(),
+      requiredLazyToResolvedInterfaceProperty:
+        _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.toString(),
+      requiredPartialInterfaceToResolvedInterfaceProperty:
+        PartialInterface.$toString(
+          _lazyPropertiesInterface
+            .requiredPartialInterfaceToResolvedInterfaceProperty.partial,
+        ),
+      setLazyToResolvedInterfaceProperty:
+        _lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials
+          .length > 0
+          ? `[${_lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.map((item) => item.toString())}]`
+          : undefined,
+      setPartialInterfaceToResolvedInterfaceProperty:
+        _lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty
+          .partials.length > 0
+          ? `[${_lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.map(
+              (item) => PartialInterface.$toString(item),
+            )}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: LazyPropertiesInterface): string;
+  export function $toString(
+    _lazyPropertiesInterface: LazyPropertiesInterface,
+  ): string;
+  export function $toString(
+    this: LazyPropertiesInterface | undefined,
+    _lazyPropertiesInterface?: LazyPropertiesInterface,
+  ): string {
+    return `LazyPropertiesInterface(${JSON.stringify($propertiesToStrings((_lazyPropertiesInterface ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazyPropertiesInterface.$Filter,
     typeof LazyPropertiesInterface.$schema
@@ -34968,8 +35860,58 @@ export class LazyPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      optionalLazyToResolvedClassProperty:
+        this.optionalLazyToResolvedClassProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalLazyToResolvedClassUnionProperty:
+        this.optionalLazyToResolvedClassUnionProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalLazyToResolvedIriIdentifierClassProperty:
+        this.optionalLazyToResolvedIriIdentifierClassProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalPartialClassToResolvedClassProperty:
+        this.optionalPartialClassToResolvedClassProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalPartialClassToResolvedClassUnionProperty:
+        this.optionalPartialClassToResolvedClassUnionProperty.partial
+          .map((item) => item.toString())
+          .extract(),
+      optionalPartialClassUnionToResolvedClassUnionProperty:
+        this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
+          .map((item) => PartialClassUnion.$toString(item))
+          .extract(),
+      requiredLazyToResolvedClassProperty:
+        this.requiredLazyToResolvedClassProperty.partial.toString(),
+      requiredPartialClassToResolvedClassProperty:
+        this.requiredPartialClassToResolvedClassProperty.partial.toString(),
+      setLazyToResolvedClassProperty:
+        this.setLazyToResolvedClassProperty.partials.length > 0
+          ? `[${this.setLazyToResolvedClassProperty.partials.map((item) => item.toString())}]`
+          : undefined,
+      setPartialClassToResolvedClassProperty:
+        this.setPartialClassToResolvedClassProperty.partials.length > 0
+          ? `[${this.setPartialClassToResolvedClassProperty.partials.map((item) => item.toString())}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LazyPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -37316,6 +38258,37 @@ export namespace LazilyResolvedIriIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _lazilyResolvedIriIdentifierInterface.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: LazilyResolvedIriIdentifierInterface): string;
+  export function $toString(
+    _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: LazilyResolvedIriIdentifierInterface | undefined,
+    _lazilyResolvedIriIdentifierInterface?: LazilyResolvedIriIdentifierInterface,
+  ): string {
+    return `LazilyResolvedIriIdentifierInterface(${JSON.stringify(
+      $propertiesToStrings((_lazilyResolvedIriIdentifierInterface ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedIriIdentifierInterface.$Filter,
     typeof LazilyResolvedIriIdentifierInterface.$schema
@@ -37451,8 +38424,24 @@ export class LazilyResolvedIriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LazilyResolvedIriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -38396,6 +39385,37 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _lazilyResolvedInterfaceUnionMember2.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: LazilyResolvedInterfaceUnionMember2): string;
+  export function $toString(
+    _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
+  ): string;
+  export function $toString(
+    this: LazilyResolvedInterfaceUnionMember2 | undefined,
+    _lazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2,
+  ): string {
+    return `LazilyResolvedInterfaceUnionMember2(${JSON.stringify(
+      $propertiesToStrings((_lazilyResolvedInterfaceUnionMember2 ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedInterfaceUnionMember2.$Filter,
     typeof LazilyResolvedInterfaceUnionMember2.$schema
@@ -39005,6 +40025,37 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _lazilyResolvedInterfaceUnionMember1.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: LazilyResolvedInterfaceUnionMember1): string;
+  export function $toString(
+    _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
+  ): string;
+  export function $toString(
+    this: LazilyResolvedInterfaceUnionMember1 | undefined,
+    _lazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1,
+  ): string {
+    return `LazilyResolvedInterfaceUnionMember1(${JSON.stringify(
+      $propertiesToStrings((_lazilyResolvedInterfaceUnionMember1 ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedInterfaceUnionMember1.$Filter,
     typeof LazilyResolvedInterfaceUnionMember1.$schema
@@ -39157,8 +40208,24 @@ export class LazilyResolvedClassUnionMember2 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LazilyResolvedClassUnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -39739,8 +40806,24 @@ export class LazilyResolvedClassUnionMember1 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LazilyResolvedClassUnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -40794,6 +41877,42 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier:
+        _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(
+    this: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): string;
+  export function $toString(
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: LazilyResolvedBlankNodeOrIriIdentifierInterface | undefined,
+    _lazilyResolvedBlankNodeOrIriIdentifierInterface?: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): string {
+    return `LazilyResolvedBlankNodeOrIriIdentifierInterface(${JSON.stringify(
+      $propertiesToStrings(
+        (_lazilyResolvedBlankNodeOrIriIdentifierInterface ?? this)!,
+      ),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
     typeof LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
@@ -40953,8 +42072,24 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LazilyResolvedBlankNodeOrIriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -41561,8 +42696,26 @@ export class LanguageInPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      languageInLiteralProperty:
+        this.languageInLiteralProperty.length > 0
+          ? `[${this.languageInLiteralProperty.map((item) => item.toString())}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `LanguageInPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -42190,8 +43343,40 @@ export class JsPrimitiveUnionPropertyClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      jsPrimitiveUnionProperty:
+        this.jsPrimitiveUnionProperty.length > 0
+          ? `[${this.jsPrimitiveUnionProperty.map((item) =>
+              ((value: boolean | number | string): string => {
+                if (typeof value === "boolean") {
+                  return value.toString();
+                }
+                if (typeof value === "number") {
+                  return value.toString();
+                }
+                if (typeof value === "string") {
+                  return value.toString();
+                }
+
+                throw new Error("unable to serialize to string");
+              })(item),
+            )}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `JsPrimitiveUnionPropertyClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -43409,6 +44594,33 @@ export namespace IriIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _iriIdentifierInterface: IriIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _iriIdentifierInterface.$identifier.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: IriIdentifierInterface): string;
+  export function $toString(
+    _iriIdentifierInterface: IriIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: IriIdentifierInterface | undefined,
+    _iriIdentifierInterface?: IriIdentifierInterface,
+  ): string {
+    return `IriIdentifierInterface(${JSON.stringify($propertiesToStrings((_iriIdentifierInterface ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     IriIdentifierInterface.$Filter,
     typeof IriIdentifierInterface.$schema
@@ -43523,8 +44735,20 @@ export class IriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -44315,6 +45539,37 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _interfaceUnionMemberCommonParent.$identifier.toString(),
+      interfaceUnionMemberCommonParentProperty:
+        _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: InterfaceUnionMemberCommonParent): string;
+  export function $toString(
+    _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
+  ): string;
+  export function $toString(
+    this: InterfaceUnionMemberCommonParent | undefined,
+    _interfaceUnionMemberCommonParent?: InterfaceUnionMemberCommonParent,
+  ): string {
+    return `InterfaceUnionMemberCommonParent(${JSON.stringify(
+      $propertiesToStrings((_interfaceUnionMemberCommonParent ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     InterfaceUnionMemberCommonParentStatic.$Filter,
     typeof InterfaceUnionMemberCommonParentStatic.$schema
@@ -44891,6 +46146,37 @@ export namespace InterfaceUnionMember2 {
       options?.graph,
     );
     return resource;
+  }
+
+  export function $propertiesToStrings(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+  ): Record<string, string> {
+    return Object.entries({
+      ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
+        _interfaceUnionMember2,
+      ),
+      interfaceUnionMember2Property:
+        _interfaceUnionMember2.interfaceUnionMember2Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: InterfaceUnionMember2): string;
+  export function $toString(
+    _interfaceUnionMember2: InterfaceUnionMember2,
+  ): string;
+  export function $toString(
+    this: InterfaceUnionMember2 | undefined,
+    _interfaceUnionMember2?: InterfaceUnionMember2,
+  ): string {
+    return `InterfaceUnionMember2(${JSON.stringify($propertiesToStrings((_interfaceUnionMember2 ?? this)!))})`;
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -45471,6 +46757,37 @@ export namespace InterfaceUnionMember1 {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _interfaceUnionMember1: InterfaceUnionMember1,
+  ): Record<string, string> {
+    return Object.entries({
+      ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
+        _interfaceUnionMember1,
+      ),
+      interfaceUnionMember1Property:
+        _interfaceUnionMember1.interfaceUnionMember1Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: InterfaceUnionMember1): string;
+  export function $toString(
+    _interfaceUnionMember1: InterfaceUnionMember1,
+  ): string;
+  export function $toString(
+    this: InterfaceUnionMember1 | undefined,
+    _interfaceUnionMember1?: InterfaceUnionMember1,
+  ): string {
+    return `InterfaceUnionMember1(${JSON.stringify($propertiesToStrings((_interfaceUnionMember1 ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     InterfaceUnionMember1.$Filter,
     typeof InterfaceUnionMember1.$schema
@@ -45934,6 +47251,32 @@ export namespace Interface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _interface: Interface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _interface.$identifier.toString(),
+      interfaceProperty: _interface.interfaceProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: Interface): string;
+  export function $toString(_interface: Interface): string;
+  export function $toString(
+    this: Interface | undefined,
+    _interface?: Interface,
+  ): string {
+    return `Interface(${JSON.stringify($propertiesToStrings((_interface ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     Interface.$Filter,
     typeof Interface.$schema
@@ -46112,8 +47455,25 @@ export class IndirectRecursiveHelperClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      indirectRecursiveProperty: this.indirectRecursiveProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IndirectRecursiveHelperClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -46711,8 +48071,25 @@ export class IndirectRecursiveClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      indirectRecursiveHelperProperty: this.indirectRecursiveHelperProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IndirectRecursiveClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -47513,8 +48890,40 @@ export class InPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      inBooleansProperty: this.inBooleansProperty
+        .map((item) => item.toString())
+        .extract(),
+      inDateTimesProperty: this.inDateTimesProperty
+        .map((item) => item.toString())
+        .extract(),
+      inDoublesProperty: this.inDoublesProperty
+        .map((item) => item.toString())
+        .extract(),
+      inIntegersProperty: this.inIntegersProperty
+        .map((item) => item.toString())
+        .extract(),
+      inIrisProperty: this.inIrisProperty
+        .map((item) => item.toString())
+        .extract(),
+      inStringsProperty: this.inStringsProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `InPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -48592,8 +50001,25 @@ export class InIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      inIdentifierProperty: this.inIdentifierProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `InIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -49225,8 +50651,23 @@ export abstract class IdentifierOverride1Class {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      identifierOverrideProperty: this.identifierOverrideProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IdentifierOverride1Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -49602,8 +51043,20 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IdentifierOverride2Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -49893,8 +51346,20 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IdentifierOverride3Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -50350,8 +51815,20 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IdentifierOverride4Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -50800,8 +52277,20 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `IdentifierOverride5Class(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -51313,8 +52802,24 @@ export class HasValuePropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      hasIriValueProperty: this.hasIriValueProperty.toString(),
+      hasLiteralValueProperty: this.hasLiteralValueProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `HasValuePropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -51874,8 +53379,24 @@ export class FlattenClassUnionMember3 {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      flattenClassUnionMember3Property:
+        this.flattenClassUnionMember3Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `FlattenClassUnionMember3(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -52470,8 +53991,25 @@ export class ExternClassPropertyClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      externClassProperty: this.externClassProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ExternClassPropertyClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -53065,8 +54603,24 @@ export abstract class AbstractBaseClassForExternClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      abstractBaseClassForExternClassProperty:
+        this.abstractBaseClassForExternClassProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `AbstractBaseClassForExternClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -53510,8 +55064,23 @@ export class ExplicitRdfTypeClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      explicitRdfTypeProperty: this.explicitRdfTypeProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ExplicitRdfTypeClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -54097,8 +55666,24 @@ export class ExplicitFromToRdfTypesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      explicitFromToRdfTypesProperty:
+        this.explicitFromToRdfTypesProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ExplicitFromToRdfTypesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -54700,8 +56285,25 @@ export class DirectRecursiveClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      directRecursiveProperty: this.directRecursiveProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `DirectRecursiveClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -55506,8 +57108,31 @@ export class DefaultValuePropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      dateDefaultValueProperty: this.dateDefaultValueProperty.toString(),
+      dateTimeDefaultValueProperty:
+        this.dateTimeDefaultValueProperty.toString(),
+      falseBooleanDefaultValueProperty:
+        this.falseBooleanDefaultValueProperty.toString(),
+      numberDefaultValueProperty: this.numberDefaultValueProperty.toString(),
+      stringDefaultValueProperty: this.stringDefaultValueProperty.toString(),
+      trueBooleanDefaultValueProperty:
+        this.trueBooleanDefaultValueProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `DefaultValuePropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -57043,8 +58668,94 @@ export class DateUnionPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      dateOrDateTimeProperty: this.dateOrDateTimeProperty
+        .map((item) =>
+          ((
+            value:
+              | { type: "date"; value: Date }
+              | { type: "dateTime"; value: Date },
+          ): string => {
+            if (value.type === "date") {
+              return value.value.toString();
+            }
+            if (value.type === "dateTime") {
+              return value.value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      dateOrStringProperty: this.dateOrStringProperty
+        .map((item) =>
+          ((
+            value:
+              | { type: "date"; value: Date }
+              | { type: "string"; value: string },
+          ): string => {
+            if (value.type === "date") {
+              return value.value.toString();
+            }
+            if (value.type === "string") {
+              return value.value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      dateTimeOrDateProperty: this.dateTimeOrDateProperty
+        .map((item) =>
+          ((
+            value:
+              | { type: "dateTime"; value: Date }
+              | { type: "date"; value: Date },
+          ): string => {
+            if (value.type === "dateTime") {
+              return value.value.toString();
+            }
+            if (value.type === "date") {
+              return value.value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+      stringOrDateProperty: this.stringOrDateProperty
+        .map((item) =>
+          ((
+            value:
+              | { type: "string"; value: string }
+              | { type: "date"; value: Date },
+          ): string => {
+            if (value.type === "string") {
+              return value.value.toString();
+            }
+            if (value.type === "date") {
+              return value.value.toString();
+            }
+
+            throw new Error("unable to serialize to string");
+          })(item),
+        )
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `DateUnionPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -59690,8 +61401,58 @@ export class ConvertibleTypePropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      convertibleIriNonEmptySetProperty:
+        this.convertibleIriNonEmptySetProperty.length > 0
+          ? `[${this.convertibleIriNonEmptySetProperty.map((item) => item.toString())}]`
+          : undefined,
+      convertibleIriOptionProperty: this.convertibleIriOptionProperty
+        .map((item) => item.toString())
+        .extract(),
+      convertibleIriProperty: this.convertibleIriProperty.toString(),
+      convertibleIriSetProperty:
+        this.convertibleIriSetProperty.length > 0
+          ? `[${this.convertibleIriSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      convertibleLiteralNonEmptySetProperty:
+        this.convertibleLiteralNonEmptySetProperty.length > 0
+          ? `[${this.convertibleLiteralNonEmptySetProperty.map((item) => item.toString())}]`
+          : undefined,
+      convertibleLiteralOptionProperty: this.convertibleLiteralOptionProperty
+        .map((item) => item.toString())
+        .extract(),
+      convertibleLiteralProperty: this.convertibleLiteralProperty.toString(),
+      convertibleLiteralSetProperty:
+        this.convertibleLiteralSetProperty.length > 0
+          ? `[${this.convertibleLiteralSetProperty.map((item) => item.toString())}]`
+          : undefined,
+      convertibleTermNonEmptySetProperty:
+        this.convertibleTermNonEmptySetProperty.length > 0
+          ? `[${this.convertibleTermNonEmptySetProperty.map((item) => item.toString())}]`
+          : undefined,
+      convertibleTermOptionProperty: this.convertibleTermOptionProperty
+        .map((item) => item.toString())
+        .extract(),
+      convertibleTermProperty: this.convertibleTermProperty.toString(),
+      convertibleTermSetProperty:
+        this.convertibleTermSetProperty.length > 0
+          ? `[${this.convertibleTermSetProperty.map((item) => item.toString())}]`
+          : undefined,
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ConvertibleTypePropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -61986,6 +63747,37 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _baseInterfaceWithProperties.$identifier.toString(),
+      baseInterfaceWithPropertiesProperty:
+        _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: BaseInterfaceWithProperties): string;
+  export function $toString(
+    _baseInterfaceWithProperties: BaseInterfaceWithProperties,
+  ): string;
+  export function $toString(
+    this: BaseInterfaceWithProperties | undefined,
+    _baseInterfaceWithProperties?: BaseInterfaceWithProperties,
+  ): string {
+    return `BaseInterfaceWithProperties(${JSON.stringify(
+      $propertiesToStrings((_baseInterfaceWithProperties ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BaseInterfaceWithPropertiesStatic.$Filter,
     typeof BaseInterfaceWithPropertiesStatic.$schema
@@ -62511,6 +64303,37 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       );
     }
     return resource;
+  }
+
+  export function $propertiesToStrings(
+    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
+  ): Record<string, string> {
+    return Object.entries({
+      ...BaseInterfaceWithPropertiesStatic.$propertiesToStrings(
+        _baseInterfaceWithoutProperties,
+      ),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: BaseInterfaceWithoutProperties): string;
+  export function $toString(
+    _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
+  ): string;
+  export function $toString(
+    this: BaseInterfaceWithoutProperties | undefined,
+    _baseInterfaceWithoutProperties?: BaseInterfaceWithoutProperties,
+  ): string {
+    return `BaseInterfaceWithoutProperties(${JSON.stringify(
+      $propertiesToStrings((_baseInterfaceWithoutProperties ?? this)!),
+    )})`;
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -63121,6 +64944,37 @@ export namespace ConcreteParentInterfaceStatic {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _concreteParentInterface: ConcreteParentInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      ...BaseInterfaceWithoutPropertiesStatic.$propertiesToStrings(
+        _concreteParentInterface,
+      ),
+      concreteParentInterfaceProperty:
+        _concreteParentInterface.concreteParentInterfaceProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: ConcreteParentInterface): string;
+  export function $toString(
+    _concreteParentInterface: ConcreteParentInterface,
+  ): string;
+  export function $toString(
+    this: ConcreteParentInterface | undefined,
+    _concreteParentInterface?: ConcreteParentInterface,
+  ): string {
+    return `ConcreteParentInterface(${JSON.stringify($propertiesToStrings((_concreteParentInterface ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ConcreteParentInterfaceStatic.$Filter,
     typeof ConcreteParentInterfaceStatic.$schema
@@ -63702,6 +65556,37 @@ export namespace ConcreteChildInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _concreteChildInterface: ConcreteChildInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      ...ConcreteParentInterfaceStatic.$propertiesToStrings(
+        _concreteChildInterface,
+      ),
+      concreteChildInterfaceProperty:
+        _concreteChildInterface.concreteChildInterfaceProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: ConcreteChildInterface): string;
+  export function $toString(
+    _concreteChildInterface: ConcreteChildInterface,
+  ): string;
+  export function $toString(
+    this: ConcreteChildInterface | undefined,
+    _concreteChildInterface?: ConcreteChildInterface,
+  ): string {
+    return `ConcreteChildInterface(${JSON.stringify($propertiesToStrings((_concreteChildInterface ?? this)!))})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ConcreteChildInterface.$Filter,
     typeof ConcreteChildInterface.$schema
@@ -63878,8 +65763,24 @@ export abstract class AbstractBaseClassWithProperties {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      abstractBaseClassWithPropertiesProperty:
+        this.abstractBaseClassWithPropertiesProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `AbstractBaseClassWithProperties(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -64257,8 +66158,20 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `AbstractBaseClassWithoutProperties(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -64597,8 +66510,23 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      ...super.$propertiesToStrings(),
+      concreteParentClassProperty: this.concreteParentClassProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ConcreteParentClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -65165,8 +67093,23 @@ export class ConcreteChildClass extends ConcreteParentClass {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      ...super.$propertiesToStrings(),
+      concreteChildClassProperty: this.concreteChildClassProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ConcreteChildClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -65720,8 +67663,24 @@ export abstract class ClassUnionMemberCommonParent {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      classUnionMemberCommonParentProperty:
+        this.classUnionMemberCommonParentProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ClassUnionMemberCommonParent(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -66128,8 +68087,23 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      ...super.$propertiesToStrings(),
+      classUnionMember2Property: this.classUnionMember2Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ClassUnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -66659,8 +68633,23 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     return resource;
   }
 
+  protected override $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      ...super.$propertiesToStrings(),
+      classUnionMember1Property: this.classUnionMember1Property.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   override toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ClassUnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -67212,8 +69201,23 @@ export class NonClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      nonClassProperty: this.nonClassProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `NonClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -67665,8 +69669,24 @@ export class PartialClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      lazilyResolvedStringProperty:
+        this.lazilyResolvedStringProperty.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `PartialClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -68355,8 +70375,37 @@ export class ClassPropertiesClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({
+      $identifier: this.$identifier.toString(),
+      iriClassProperty: this.iriClassProperty
+        .map((item) => item.toString())
+        .extract(),
+      multiClassProperty: this.multiClassProperty
+        .map((item) => item.toString())
+        .extract(),
+      nodeClassProperty1: this.nodeClassProperty1
+        .map((item) => item.toString())
+        .extract(),
+      nodeClassProperty2: this.nodeClassProperty2
+        .map((item) => item.toString())
+        .extract(),
+      singleClassProperty: this.singleClassProperty
+        .map((item) => item.toString())
+        .extract(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `ClassPropertiesClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -69675,6 +71724,35 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _blankNodeOrIriIdentifierInterface.$identifier.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: BlankNodeOrIriIdentifierInterface): string;
+  export function $toString(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: BlankNodeOrIriIdentifierInterface | undefined,
+    _blankNodeOrIriIdentifierInterface?: BlankNodeOrIriIdentifierInterface,
+  ): string {
+    return `BlankNodeOrIriIdentifierInterface(${JSON.stringify(
+      $propertiesToStrings((_blankNodeOrIriIdentifierInterface ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeOrIriIdentifierInterface.$Filter,
     typeof BlankNodeOrIriIdentifierInterface.$schema
@@ -69807,8 +71885,20 @@ export class BlankNodeOrIriIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `BlankNodeOrIriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -70655,6 +72745,35 @@ export namespace BlankNodeIdentifierInterface {
     return resource;
   }
 
+  export function $propertiesToStrings(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+  ): Record<string, string> {
+    return Object.entries({
+      $identifier: _blankNodeIdentifierInterface.$identifier.toString(),
+    }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  export function $toString(this: BlankNodeIdentifierInterface): string;
+  export function $toString(
+    _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
+  ): string;
+  export function $toString(
+    this: BlankNodeIdentifierInterface | undefined,
+    _blankNodeIdentifierInterface?: BlankNodeIdentifierInterface,
+  ): string {
+    return `BlankNodeIdentifierInterface(${JSON.stringify(
+      $propertiesToStrings((_blankNodeIdentifierInterface ?? this)!),
+    )})`;
+  }
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     BlankNodeIdentifierInterface.$Filter,
     typeof BlankNodeIdentifierInterface.$schema
@@ -70781,8 +72900,20 @@ export class BlankNodeIdentifierClass {
     return resource;
   }
 
+  protected $propertiesToStrings(): Record<string, string> {
+    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
+      (definedPropertiesToString, [propertyName, propertyValue]) => {
+        if (propertyValue !== undefined) {
+          definedPropertiesToString[propertyName] = propertyValue;
+        }
+        return definedPropertiesToString;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   toString(): string {
-    return JSON.stringify(this.$toJson());
+    return `BlankNodeIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -71546,6 +73677,17 @@ export namespace ClassUnion {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<ClassUnion>;
 
+  export const $toString = (value: ClassUnion): string => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     ClassUnion.$Filter,
     typeof ClassUnion.$schema
@@ -72089,6 +74231,20 @@ export namespace FlattenClassUnion {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<FlattenClassUnion>;
 
+  export const $toString = (value: FlattenClassUnion): string => {
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.toString();
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     FlattenClassUnion.$Filter,
     typeof FlattenClassUnion.$schema
@@ -72574,6 +74730,17 @@ export namespace InterfaceUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<InterfaceUnion>;
+
+  export const $toString = (value: InterfaceUnion): string => {
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toString(value);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     InterfaceUnion.$Filter,
@@ -73075,6 +75242,21 @@ export namespace LazilyResolvedClassUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<LazilyResolvedClassUnion>;
+
+  export const $toString = (value: LazilyResolvedClassUnion): string => {
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedClassUnion.$Filter,
@@ -73614,6 +75796,25 @@ export namespace LazilyResolvedInterfaceUnion {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<LazilyResolvedInterfaceUnion>;
 
+  export const $toString = (value: LazilyResolvedInterfaceUnion): string => {
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toString(value);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     LazilyResolvedInterfaceUnion.$Filter,
     typeof LazilyResolvedInterfaceUnion.$schema
@@ -74096,6 +76297,17 @@ export namespace PartialClassUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<PartialClassUnion>;
+
+  export const $toString = (value: PartialClassUnion): string => {
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialClassUnion.$Filter,
@@ -74580,6 +76792,17 @@ export namespace PartialInterfaceUnion {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<PartialInterfaceUnion>;
 
+  export const $toString = (value: PartialInterfaceUnion): string => {
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toString(value);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     PartialInterfaceUnion.$Filter,
     typeof PartialInterfaceUnion.$schema
@@ -75055,6 +77278,17 @@ export namespace NoRdfTypeClassUnion {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NoRdfTypeClassUnion>;
 
+  export const $toString = (value: NoRdfTypeClassUnion): string => {
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NoRdfTypeClassUnion.$Filter,
     typeof NoRdfTypeClassUnion.$schema
@@ -75529,6 +77763,17 @@ export namespace RecursiveClassUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<RecursiveClassUnion>;
+
+  export const $toString = (value: RecursiveClassUnion): string => {
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     RecursiveClassUnion.$Filter,
@@ -82614,6 +84859,277 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const $toString = (value: $Object): string => {
+    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
+      return BlankNodeIdentifierInterface.$toString(value);
+    }
+    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (
+      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return BlankNodeOrIriIdentifierInterface.$toString(value);
+    }
+    if (ClassPropertiesClass.isClassPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (PartialClass.isPartialClass(value)) {
+      return value.toString();
+    }
+    if (NonClass.isNonClass(value)) {
+      return value.toString();
+    }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return value.toString();
+    }
+    if (ConcreteChildClass.isConcreteChildClass(value)) {
+      return value.toString();
+    }
+    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
+      return value.toString();
+    }
+    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
+      return ConcreteChildInterface.$toString(value);
+    }
+    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
+      return ConcreteParentInterfaceStatic.$toString(value);
+    }
+    if (
+      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
+        value,
+      )
+    ) {
+      return BaseInterfaceWithoutPropertiesStatic.$toString(value);
+    }
+    if (
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+    ) {
+      return BaseInterfaceWithPropertiesStatic.$toString(value);
+    }
+    if (
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+    ) {
+      return value.toString();
+    }
+    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
+      return value.toString();
+    }
+    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
+      return value.toString();
+    }
+    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
+      return value.toString();
+    }
+    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
+      return value.toString();
+    }
+    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
+      return value.toString();
+    }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return value.toString();
+    }
+    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
+      return value.toString();
+    }
+    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
+      return value.toString();
+    }
+    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
+      return value.toString();
+    }
+    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+      return value.toString();
+    }
+    if (InIdentifierClass.isInIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (InPropertiesClass.isInPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
+      return value.toString();
+    }
+    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
+      return value.toString();
+    }
+    if (Interface.isInterface(value)) {
+      return Interface.$toString(value);
+    }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return InterfaceUnionMember1.$toString(value);
+    }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return InterfaceUnionMember2.$toString(value);
+    }
+    if (IriIdentifierClass.isIriIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
+      return IriIdentifierInterface.$toString(value);
+    }
+    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
+      return value.toString();
+    }
+    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
+        value,
+      )
+    ) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedBlankNodeOrIriIdentifierInterface.$toString(value);
+    }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toString(value);
+    }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toString(value);
+    }
+    if (
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+    ) {
+      return value.toString();
+    }
+    if (
+      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
+        value,
+      )
+    ) {
+      return LazilyResolvedIriIdentifierInterface.$toString(value);
+    }
+    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
+      return LazyPropertiesInterface.$toString(value);
+    }
+    if (PartialInterface.isPartialInterface(value)) {
+      return PartialInterface.$toString(value);
+    }
+    if (ListPropertiesClass.isListPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
+      return value.toString();
+    }
+    if (NamedUnionPropertiesClass.isNamedUnionPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return value.toString();
+    }
+    if (NodeKindsClass.isNodeKindsClass(value)) {
+      return value.toString();
+    }
+    if (NumericPropertiesClass.isNumericPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (NewName1Class.isNewName1Class(value)) {
+      return value.toString();
+    }
+    if (NewName2Class.isNewName2Class(value)) {
+      return value.toString();
+    }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return value.toString();
+    }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return PartialInterfaceUnionMember1.$toString(value);
+    }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return PartialInterfaceUnionMember2.$toString(value);
+    }
+    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
+      return value.toString();
+    }
+    if (PropertyNamesClass.isPropertyNamesClass(value)) {
+      return value.toString();
+    }
+    if (PropertyPathsClass.isPropertyPathsClass(value)) {
+      return value.toString();
+    }
+    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
+      return value.toString();
+    }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return value.toString();
+    }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return value.toString();
+    }
+    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (TermPropertiesClass.isTermPropertiesClass(value)) {
+      return value.toString();
+    }
+    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
+      return value.toString();
+    }
+    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
+      return value.toString();
+    }
+    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
+      return UuidV4IriIdentifierInterface.$toString(value);
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.toString();
+    }
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     $Object.$Filter,

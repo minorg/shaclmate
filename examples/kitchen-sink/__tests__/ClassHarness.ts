@@ -37,4 +37,8 @@ export class ClassHarness<
   }): Resource {
     return this.instance.$toRdfResource(options);
   }
+
+  override toString(): string {
+    return this.instance.toString();
+  }
 }

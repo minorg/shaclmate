@@ -191,7 +191,7 @@ export abstract class AbstractTermType<
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return variables.value;
+    return code`${variables.value}.toString()`;
   }
 
   /**

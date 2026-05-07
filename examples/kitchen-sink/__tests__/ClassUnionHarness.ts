@@ -11,6 +11,7 @@ export class ClassUnionHarness<
       graph?: Exclude<Quad_Graph, Variable>;
       resourceSet?: ResourceSet;
     }) => Resource;
+    toString: () => string;
   },
 > extends Harness<T> {
   readonly equals: (other: T) => $EqualsResult;
@@ -38,5 +39,9 @@ export class ClassUnionHarness<
     resourceSet?: ResourceSet;
   }): Resource {
     return this.instance.$toRdfResource(options);
+  }
+
+  override toString(): string {
+    return this.instance.toString();
   }
 }
