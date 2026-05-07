@@ -370,6 +370,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       new ast.ObjectType.Property({
         comment: propertyShape.comment,
         description: propertyShape.description,
+        display: propertyShape.display,
         label: propertyShape.label,
         mutable: propertyShape.mutable.orDefault(false),
         name: propertyName.call(this, objectType, propertyShape),

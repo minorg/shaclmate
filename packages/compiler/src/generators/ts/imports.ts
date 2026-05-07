@@ -31,8 +31,8 @@ export const imports = {
   NTriplesTerm: imp("NTriplesTerm@@rdfx/string"),
   Quad: imp("Quad@@rdfjs/types"),
   Quad_Graph: imp("Quad_Graph@@rdfjs/types"),
-  RdfjsResourcePropertyPath: imp(
-    "PropertyPath:RdfjsResourcePropertyPath@@rdfx/resource",
+  RdfxResourcePropertyPath: imp(
+    "PropertyPath:RdfxResourcePropertyPath@@rdfx/resource",
   ),
   Resource: imp("Resource@@rdfx/resource"),
   ResourceSet: imp("ResourceSet@@rdfx/resource"),
