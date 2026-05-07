@@ -89,6 +89,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass1, :UndefinedClass2 ;
+        sh:maxCount 1 ;
+        sh:path :multiClassProperty
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -111,11 +116,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
         sh:path :singleClassProperty
-    ], [
-        rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass1, :UndefinedClass2 ;
-        sh:maxCount 1 ;
-        sh:path :multiClassProperty
     ] .
 
 :ClassUnion

@@ -89,6 +89,7 @@ shaclmate:Shape-mutable
     sh:path shaclmate:mutable .
 
 shaclmate:Shape-shaclmateName
+    shaclmate:display true ;
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;

@@ -437,10 +437,10 @@
       ],
       "properties": [
         {
-          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          "name": "iriClassProperty",
+          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+          "name": "multiClassProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/iriClassProperty)",
+          "path": "PredicatePath(http://example.com/multiClassProperty)",
           "shapeIdentifier": {
             "value": "b4"
           },
@@ -450,9 +450,35 @@
               "value": "b4"
             },
             "itemType": {
-              "kind": "IriType",
+              "kind": "IdentifierType",
               "shapeIdentifier": {
                 "value": "b4"
+              },
+              "nodeKinds": [
+                "BlankNode",
+                "IRI"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "comment": "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+          "name": "iriClassProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/iriClassProperty)",
+          "shapeIdentifier": {
+            "value": "b5"
+          },
+          "type": {
+            "kind": "OptionType",
+            "shapeIdentifier": {
+              "value": "b5"
+            },
+            "itemType": {
+              "kind": "IriType",
+              "shapeIdentifier": {
+                "value": "b5"
               },
               "nodeKinds": [
                 "IRI"
@@ -467,7 +493,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nodeClassProperty1)",
           "shapeIdentifier": {
-            "value": "b5"
+            "value": "b6"
           },
           "type": {
             "comment": "Node shape that isn't an rdfs:Class.",
@@ -513,7 +539,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nodeClassProperty2)",
           "shapeIdentifier": {
-            "value": "b6"
+            "value": "b7"
           },
           "type": {
             "comment": "Node shape used as a partial by LazyPropertiesClass",
@@ -558,32 +584,6 @@
           "name": "singleClassProperty",
           "order": 0,
           "path": "PredicatePath(http://example.com/singleClassProperty)",
-          "shapeIdentifier": {
-            "value": "b7"
-          },
-          "type": {
-            "kind": "OptionType",
-            "shapeIdentifier": {
-              "value": "b7"
-            },
-            "itemType": {
-              "kind": "IdentifierType",
-              "shapeIdentifier": {
-                "value": "b7"
-              },
-              "nodeKinds": [
-                "BlankNode",
-                "IRI"
-              ]
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "comment": "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          "name": "multiClassProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/multiClassProperty)",
           "shapeIdentifier": {
             "value": "b8"
           },

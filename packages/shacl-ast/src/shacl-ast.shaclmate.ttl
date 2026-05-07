@@ -148,6 +148,7 @@ shaclmate:PropertyShape-groups
     sh:path sh:group .
 
 shaclmate:PropertyShape-name
+    shaclmate:display true ;
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
@@ -160,6 +161,7 @@ shaclmate:PropertyShape-order
     sh:path sh:order .
 
 shaclmate:PropertyShape-path
+    shaclmate:display true ;
     a sh:PropertyShape ;
     sh:maxCount 1 ;
     sh:minCount 1 ;
@@ -349,6 +351,7 @@ shaclmate:comment
     sh:path rdfs:comment .
 
 shaclmate:label
+    shaclmate:display true ;
     a sh:PropertyShap ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;

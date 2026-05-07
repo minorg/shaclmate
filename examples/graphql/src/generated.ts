@@ -10,7 +10,7 @@ import type {
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
-  PropertyPath as RdfjsResourcePropertyPath,
+  PropertyPath as RdfxResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
@@ -32,6 +32,23 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
+
+/**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT extends {}>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
+      }
+      return definedProperties;
+    },
+    {} as Record<KeyT, ValueT>,
+  );
+}
 
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
@@ -381,7 +398,7 @@ type $PropertiesFromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-export type $PropertyPath = RdfjsResourcePropertyPath;
+export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
   export type $Filter = object;
@@ -391,7 +408,7 @@ export namespace $PropertyPath {
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.fromResource;
+    RdfxResourcePropertyPath.fromResource;
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $PropertyPath
@@ -407,7 +424,9 @@ export namespace $PropertyPath {
   export const $schema: Readonly<object> = {};
 
   export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.toResource;
+    RdfxResourcePropertyPath.toResource;
+
+  export const $toString = RdfxResourcePropertyPath.toString;
 }
 
 namespace $RdfVocabularies {
@@ -584,6 +603,14 @@ export class $DefaultPartial {
       });
     const resource = resourceSet.resource(this.$identifier);
     return resource;
+  }
+
+  protected $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ $identifier: this.$identifier.toString() });
+  }
+
+  toString(): string {
+    return `$DefaultPartial(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -762,6 +789,14 @@ export class UnionMember2 {
       options?.graph,
     );
     return resource;
+  }
+
+  protected $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ $identifier: this.$identifier.toString() });
+  }
+
+  toString(): string {
+    return `UnionMember2(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -1050,6 +1085,14 @@ export class UnionMember1 {
       options?.graph,
     );
     return resource;
+  }
+
+  protected $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ $identifier: this.$identifier.toString() });
+  }
+
+  toString(): string {
+    return `UnionMember1(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -1365,6 +1408,14 @@ export class Nested {
       options?.graph,
     );
     return resource;
+  }
+
+  protected $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ $identifier: this.$identifier.toString() });
+  }
+
+  toString(): string {
+    return `Nested(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -1730,6 +1781,14 @@ export class Parent {
       options?.graph,
     );
     return resource;
+  }
+
+  protected $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ $identifier: this.$identifier.toString() });
+  }
+
+  toString(): string {
+    return `Parent(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -2191,6 +2250,14 @@ export class Child extends Parent {
       options?.graph,
     );
     return resource;
+  }
+
+  protected override $propertiesToStrings(): Record<string, string> {
+    return $compactRecord({ ...super.$propertiesToStrings() });
+  }
+
+  override toString(): string {
+    return `Child(${JSON.stringify(this.$propertiesToStrings())})`;
   }
 }
 
@@ -2880,6 +2947,17 @@ export namespace Union {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
 
+  export const $toString = (value: Union): string => {
+    if (UnionMember1.isUnionMember1(value)) {
+      return value.toString();
+    }
+    if (UnionMember2.isUnionMember2(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export function isUnion(object: $Object): object is Union {
     return (
       UnionMember1.isUnionMember1(object) || UnionMember2.isUnionMember2(object)
@@ -3191,6 +3269,29 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const $toString = (value: $Object): string => {
+    if (Child.isChild(value)) {
+      return value.toString();
+    }
+    if (ParentStatic.isParent(value)) {
+      return value.toString();
+    }
+    if (Nested.isNested(value)) {
+      return value.toString();
+    }
+    if (UnionMember1.isUnionMember1(value)) {
+      return value.toString();
+    }
+    if (UnionMember2.isUnionMember2(value)) {
+      return value.toString();
+    }
+    if ($DefaultPartial.is$DefaultPartial(value)) {
+      return value.toString();
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 }
 export interface $ObjectSet {
   child(

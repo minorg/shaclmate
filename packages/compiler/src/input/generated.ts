@@ -26,6 +26,23 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $minCount?: number;
 };
 
+/**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT extends {}>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
+      }
+      return definedProperties;
+    },
+    {} as Record<KeyT, ValueT>,
+  );
+}
+
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -4687,119 +4704,15 @@ export namespace PropertyShape {
   export function $propertiesToStrings(
     _propertyShape: PropertyShape,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _propertyShape.$identifier.toString(),
-      and: _propertyShape.and
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      classes:
-        _propertyShape.classes.length > 0
-          ? `[${_propertyShape.classes.map((item) => item.toString())}]`
-          : undefined,
-      comment: _propertyShape.comment.map((item) => item.toString()).extract(),
-      datatype: _propertyShape.datatype
-        .map((item) => item.toString())
-        .extract(),
-      deactivated: _propertyShape.deactivated
-        .map((item) => item.toString())
-        .extract(),
-      defaultValue: _propertyShape.defaultValue
-        .map((item) => item.toString())
-        .extract(),
-      description: _propertyShape.description
-        .map((item) => item.toString())
-        .extract(),
-      display: _propertyShape.display.toString(),
-      flags:
-        _propertyShape.flags.length > 0
-          ? `[${_propertyShape.flags.map((item) => item.toString())}]`
-          : undefined,
-      groups:
-        _propertyShape.groups.length > 0
-          ? `[${_propertyShape.groups.map((item) => item.toString())}]`
-          : undefined,
-      hasValues:
-        _propertyShape.hasValues.length > 0
-          ? `[${_propertyShape.hasValues.map((item) => item.toString())}]`
-          : undefined,
-      in_: _propertyShape.in_
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      isDefinedBy: _propertyShape.isDefinedBy
-        .map((item) => item.toString())
-        .extract(),
       label: _propertyShape.label.map((item) => item.toString()).extract(),
-      languageIn: _propertyShape.languageIn
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      maxCount: _propertyShape.maxCount
-        .map((item) => item.toString())
-        .extract(),
-      maxExclusive: _propertyShape.maxExclusive
-        .map((item) => item.toString())
-        .extract(),
-      maxInclusive: _propertyShape.maxInclusive
-        .map((item) => item.toString())
-        .extract(),
-      maxLength: _propertyShape.maxLength
-        .map((item) => item.toString())
-        .extract(),
-      minCount: _propertyShape.minCount
-        .map((item) => item.toString())
-        .extract(),
-      minExclusive: _propertyShape.minExclusive
-        .map((item) => item.toString())
-        .extract(),
-      minInclusive: _propertyShape.minInclusive
-        .map((item) => item.toString())
-        .extract(),
-      minLength: _propertyShape.minLength
-        .map((item) => item.toString())
-        .extract(),
-      mutable: _propertyShape.mutable.map((item) => item.toString()).extract(),
       name: _propertyShape.name.map((item) => item.toString()).extract(),
-      nodeKind: _propertyShape.nodeKind
-        .map((item) => item.toString())
-        .extract(),
-      nodes:
-        _propertyShape.nodes.length > 0
-          ? `[${_propertyShape.nodes.map((item) => item.toString())}]`
-          : undefined,
-      not:
-        _propertyShape.not.length > 0
-          ? `[${_propertyShape.not.map((item) => item.toString())}]`
-          : undefined,
-      or: _propertyShape.or
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      order: _propertyShape.order.map((item) => item.toString()).extract(),
       path: $PropertyPath.$toString(_propertyShape.path),
-      patterns:
-        _propertyShape.patterns.length > 0
-          ? `[${_propertyShape.patterns.map((item) => item.toString())}]`
-          : undefined,
-      resolve: _propertyShape.resolve.map((item) => item.toString()).extract(),
       shaclmateName: _propertyShape.shaclmateName
         .map((item) => item.toString())
         .extract(),
-      uniqueLang: _propertyShape.uniqueLang
-        .map((item) => item.toString())
-        .extract(),
-      visibility: _propertyShape.visibility
-        .map((item) => item.toString())
-        .extract(),
-      xone: _propertyShape.xone
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: PropertyShape): string;
@@ -5130,19 +5043,10 @@ export namespace PropertyGroup {
   export function $propertiesToStrings(
     _propertyGroup: PropertyGroup,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _propertyGroup.$identifier.toString(),
-      comment: _propertyGroup.comment.map((item) => item.toString()).extract(),
       label: _propertyGroup.label.map((item) => item.toString()).extract(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: PropertyGroup): string;
@@ -6070,34 +5974,10 @@ export namespace Ontology {
   export function $propertiesToStrings(
     _ontology: Ontology,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _ontology.$identifier.toString(),
-      comment: _ontology.comment.map((item) => item.toString()).extract(),
       label: _ontology.label.map((item) => item.toString()).extract(),
-      tsFeatureExcludes:
-        _ontology.tsFeatureExcludes.length > 0
-          ? `[${_ontology.tsFeatureExcludes.map((item) => item.toString())}]`
-          : undefined,
-      tsFeatureIncludes:
-        _ontology.tsFeatureIncludes.length > 0
-          ? `[${_ontology.tsFeatureIncludes.map((item) => item.toString())}]`
-          : undefined,
-      tsImports:
-        _ontology.tsImports.length > 0
-          ? `[${_ontology.tsImports.map((item) => item.toString())}]`
-          : undefined,
-      tsObjectDeclarationType: _ontology.tsObjectDeclarationType
-        .map((item) => item.toString())
-        .extract(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: Ontology): string;
@@ -11261,133 +11141,13 @@ export namespace NodeShape {
   export function $propertiesToStrings(
     _nodeShape: NodeShape,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _nodeShape.$identifier.toString(),
-      abstract: _nodeShape.abstract.map((item) => item.toString()).extract(),
-      and: _nodeShape.and
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      classes:
-        _nodeShape.classes.length > 0
-          ? `[${_nodeShape.classes.map((item) => item.toString())}]`
-          : undefined,
-      closed: _nodeShape.closed.map((item) => item.toString()).extract(),
-      comment: _nodeShape.comment.map((item) => item.toString()).extract(),
-      datatype: _nodeShape.datatype.map((item) => item.toString()).extract(),
-      deactivated: _nodeShape.deactivated
-        .map((item) => item.toString())
-        .extract(),
-      discriminantValue: _nodeShape.discriminantValue
-        .map((item) => item.toString())
-        .extract(),
-      extern: _nodeShape.extern.map((item) => item.toString()).extract(),
-      flags:
-        _nodeShape.flags.length > 0
-          ? `[${_nodeShape.flags.map((item) => item.toString())}]`
-          : undefined,
-      fromRdfType: _nodeShape.fromRdfType
-        .map((item) => item.toString())
-        .extract(),
-      hasValues:
-        _nodeShape.hasValues.length > 0
-          ? `[${_nodeShape.hasValues.map((item) => item.toString())}]`
-          : undefined,
-      identifierMintingStrategy: _nodeShape.identifierMintingStrategy
-        .map((item) => item.toString())
-        .extract(),
-      ignoredProperties: _nodeShape.ignoredProperties
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      in_: _nodeShape.in_
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      isDefinedBy: _nodeShape.isDefinedBy
-        .map((item) => item.toString())
-        .extract(),
       label: _nodeShape.label.map((item) => item.toString()).extract(),
-      languageIn: _nodeShape.languageIn
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      maxCount: _nodeShape.maxCount.map((item) => item.toString()).extract(),
-      maxExclusive: _nodeShape.maxExclusive
-        .map((item) => item.toString())
-        .extract(),
-      maxInclusive: _nodeShape.maxInclusive
-        .map((item) => item.toString())
-        .extract(),
-      maxLength: _nodeShape.maxLength.map((item) => item.toString()).extract(),
-      minCount: _nodeShape.minCount.map((item) => item.toString()).extract(),
-      minExclusive: _nodeShape.minExclusive
-        .map((item) => item.toString())
-        .extract(),
-      minInclusive: _nodeShape.minInclusive
-        .map((item) => item.toString())
-        .extract(),
-      minLength: _nodeShape.minLength.map((item) => item.toString()).extract(),
-      mutable: _nodeShape.mutable.map((item) => item.toString()).extract(),
-      nodeKind: _nodeShape.nodeKind.map((item) => item.toString()).extract(),
-      nodes:
-        _nodeShape.nodes.length > 0
-          ? `[${_nodeShape.nodes.map((item) => item.toString())}]`
-          : undefined,
-      not:
-        _nodeShape.not.length > 0
-          ? `[${_nodeShape.not.map((item) => item.toString())}]`
-          : undefined,
-      or: _nodeShape.or
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-      patterns:
-        _nodeShape.patterns.length > 0
-          ? `[${_nodeShape.patterns.map((item) => item.toString())}]`
-          : undefined,
-      properties:
-        _nodeShape.properties.length > 0
-          ? `[${_nodeShape.properties.map((item) => item.toString())}]`
-          : undefined,
-      rdfType: _nodeShape.rdfType.map((item) => item.toString()).extract(),
       shaclmateName: _nodeShape.shaclmateName
         .map((item) => item.toString())
         .extract(),
-      subClassOf:
-        _nodeShape.subClassOf.length > 0
-          ? `[${_nodeShape.subClassOf.map((item) => item.toString())}]`
-          : undefined,
-      toRdfTypes:
-        _nodeShape.toRdfTypes.length > 0
-          ? `[${_nodeShape.toRdfTypes.map((item) => item.toString())}]`
-          : undefined,
-      tsFeatureExcludes:
-        _nodeShape.tsFeatureExcludes.length > 0
-          ? `[${_nodeShape.tsFeatureExcludes.map((item) => item.toString())}]`
-          : undefined,
-      tsFeatureIncludes:
-        _nodeShape.tsFeatureIncludes.length > 0
-          ? `[${_nodeShape.tsFeatureIncludes.map((item) => item.toString())}]`
-          : undefined,
-      tsImports:
-        _nodeShape.tsImports.length > 0
-          ? `[${_nodeShape.tsImports.map((item) => item.toString())}]`
-          : undefined,
-      tsObjectDeclarationType: _nodeShape.tsObjectDeclarationType
-        .map((item) => item.toString())
-        .extract(),
-      types:
-        _nodeShape.types.length > 0
-          ? `[${_nodeShape.types.map((item) => item.toString())}]`
-          : undefined,
-      xone: _nodeShape.xone
-        .map((item) => `[${item.map((item) => item.toString())}]`)
-        .extract(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: NodeShape): string;
