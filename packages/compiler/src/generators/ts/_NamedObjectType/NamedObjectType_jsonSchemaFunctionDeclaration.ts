@@ -25,9 +25,19 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
     );
   }
 
+  const meta: Record<string, string> = {
+    id: this.name,
+  };
+  this.comment.ifJust((description) => {
+    meta["description"] = description;
+  });
+  this.label.ifJust((label) => {
+    meta["title"] = label;
+  });
+
   // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
-  return ${imports.z}.object({${joinCode(properties, { on: "," })}}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
+  return ${imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
 }`);
 }

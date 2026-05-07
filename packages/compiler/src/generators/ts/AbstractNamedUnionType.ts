@@ -77,7 +77,17 @@ ${joinCode(
   }
 
   get jsonSchemaFunctionDeclaration(): Code {
-    return code`export const schema = () => ${this.inlineJsonSchema};`;
+    const meta: Record<string, string> = {
+      id: this.name,
+    };
+    this.comment.ifJust((description) => {
+      meta["description"] = description;
+    });
+    this.label.ifJust((label) => {
+      meta["title"] = label;
+    });
+
+    return code`export const schema = () => ${this.inlineJsonSchema}.meta(${meta});`;
   }
 
   @Memoize()
