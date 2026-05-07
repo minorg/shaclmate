@@ -2856,9 +2856,9 @@
       ],
       "properties": [
         {
-          "name": "inDoublesProperty",
+          "name": "inIrisProperty",
           "order": 0,
-          "path": "PredicatePath(http://example.com/inDoublesProperty)",
+          "path": "PredicatePath(http://example.com/inIrisProperty)",
           "shapeIdentifier": {
             "value": "b69"
           },
@@ -2868,9 +2868,47 @@
               "value": "b69"
             },
             "itemType": {
-              "kind": "LiteralType",
+              "kind": "IriType",
               "shapeIdentifier": {
                 "value": "b69"
+              },
+              "in": [
+                {
+                  "prefix": "",
+                  "reference": "InPropertiesIri1",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/InPropertiesIri1"
+                },
+                {
+                  "prefix": "",
+                  "reference": "InPropertiesIri2",
+                  "termType": "NamedNode",
+                  "value": "http://example.com/InPropertiesIri2"
+                }
+              ],
+              "nodeKinds": [
+                "IRI"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "name": "inDoublesProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/inDoublesProperty)",
+          "shapeIdentifier": {
+            "value": "b72"
+          },
+          "type": {
+            "kind": "OptionType",
+            "shapeIdentifier": {
+              "value": "b72"
+            },
+            "itemType": {
+              "kind": "LiteralType",
+              "shapeIdentifier": {
+                "value": "b72"
               },
               "in": [
                 {
@@ -2902,17 +2940,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inStringsProperty)",
           "shapeIdentifier": {
-            "value": "b72"
+            "value": "b75"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b72"
+              "value": "b75"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b72"
+                "value": "b75"
               },
               "in": [
                 {
@@ -2944,17 +2982,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inBooleansProperty)",
           "shapeIdentifier": {
-            "value": "b75"
+            "value": "b78"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b75"
+              "value": "b78"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b75"
+                "value": "b78"
               },
               "in": [
                 {
@@ -2978,17 +3016,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inDateTimesProperty)",
           "shapeIdentifier": {
-            "value": "b77"
+            "value": "b80"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b77"
+              "value": "b80"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b77"
+                "value": "b80"
               },
               "in": [
                 {
@@ -3012,17 +3050,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inIntegersProperty)",
           "shapeIdentifier": {
-            "value": "b79"
+            "value": "b82"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b79"
+              "value": "b82"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b79"
+                "value": "b82"
               },
               "in": [
                 {
@@ -3044,44 +3082,6 @@
               ],
               "nodeKinds": [
                 "Literal"
-              ]
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "name": "inIrisProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/inIrisProperty)",
-          "shapeIdentifier": {
-            "value": "b82"
-          },
-          "type": {
-            "kind": "OptionType",
-            "shapeIdentifier": {
-              "value": "b82"
-            },
-            "itemType": {
-              "kind": "IriType",
-              "shapeIdentifier": {
-                "value": "b82"
-              },
-              "in": [
-                {
-                  "prefix": "",
-                  "reference": "InPropertiesIri1",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/InPropertiesIri1"
-                },
-                {
-                  "prefix": "",
-                  "reference": "InPropertiesIri2",
-                  "termType": "NamedNode",
-                  "value": "http://example.com/InPropertiesIri2"
-                }
-              ],
-              "nodeKinds": [
-                "IRI"
               ]
             }
           },

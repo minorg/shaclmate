@@ -594,6 +594,7 @@ export class TypeFactory {
     const property = new NamedObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
+      display: astObjectTypeProperty.display,
       label: astObjectTypeProperty.label,
       logger: this.logger,
       mutable: astObjectTypeProperty.mutable,
