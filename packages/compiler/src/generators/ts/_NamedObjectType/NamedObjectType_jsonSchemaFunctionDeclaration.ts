@@ -20,14 +20,24 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
   if (this.properties.length > 0) {
     properties = properties.concat(
       this.properties
-        .flatMap((property) => property.jsonZchema.toList())
+        .flatMap((property) => property.jsonSchema.toList())
         .map(({ key, schema }) => code`"${key}": ${schema}`),
     );
   }
 
+  const meta: Record<string, string> = {
+    id: this.name,
+  };
+  this.comment.ifJust((description) => {
+    meta["description"] = description;
+  });
+  this.label.ifJust((label) => {
+    meta["title"] = label;
+  });
+
   // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
-  return ${imports.z}.object({${joinCode(properties, { on: "," })}}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
+  return ${imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
 }`);
 }

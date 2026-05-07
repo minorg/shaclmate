@@ -683,11 +683,15 @@ export namespace NestedNodeShape {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NestedNodeShape"),
-        requiredStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NestedNodeShape"),
+          requiredStringProperty: z
+            .string()
+            .meta({ id: "requiredStringProperty", title: "Required string" }),
+        })
+        .meta({ id: "NestedNodeShape" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1154,21 +1158,48 @@ export namespace FormNodeShape {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("FormNodeShape"),
-        emptyStringSetProperty: z.string().array().optional().readonly(),
-        nestedObjectProperty: NestedNodeShape.$Json.schema(),
-        nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly(),
-        optionalStringProperty: z.string().optional(),
-        requiredIntegerProperty: z.number(),
-        requiredStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("FormNodeShape"),
+          emptyStringSetProperty: z
+            .string()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "emptyStringSetProperty",
+              title: "Empty string set",
+            }),
+          nestedObjectProperty: NestedNodeShape.$Json.schema().meta({
+            id: "nestedObjectProperty",
+            title: "Nested object",
+          }),
+          nonEmptyStringSetProperty: z
+            .string()
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({
+              id: "nonEmptyStringSetProperty",
+              title: "Non-empty string set",
+            }),
+          optionalStringProperty: z.string().optional().meta({
+            id: "optionalStringProperty",
+            title: "Optional string",
+          }),
+          requiredIntegerProperty: z
+            .number()
+            .meta({ id: "requiredIntegerProperty", title: "Required integer" }),
+          requiredStringProperty: z
+            .string()
+            .meta({ id: "requiredStringProperty", title: "Required string" }),
+        })
+        .meta({
+          id: "FormNodeShape",
+          title: "Form",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1863,7 +1894,10 @@ export namespace $Object {
           FormNodeShape.$Json.schema(),
           NestedNodeShape.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "$Object",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);

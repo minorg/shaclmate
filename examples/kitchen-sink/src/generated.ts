@@ -2802,7 +2802,13 @@ export namespace NamedUnion1 {
 
   export namespace $Json {
     export const schema = () =>
-      z.union([z.object({ "@id": z.string().min(1) }), z.string()]).readonly();
+      z
+        .union([z.object({ "@id": z.string().min(1) }), z.string()])
+        .readonly()
+        .meta({
+          id: "NamedUnion1",
+          description: "Named union of IRI and string",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -3063,7 +3069,11 @@ export namespace NamedUnion2 {
           z.object({ type: z.literal("date"), value: z.iso.date() }),
           z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "NamedUnion2",
+          description: "Named union of date and date-time",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -3307,10 +3317,14 @@ export namespace $NamedDefaultPartial {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("$NamedDefaultPartial"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("$NamedDefaultPartial"),
+        })
+        .meta({
+          id: "$NamedDefaultPartial",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -3669,10 +3683,14 @@ export namespace $DefaultPartial {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("$DefaultPartial"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("$DefaultPartial"),
+        })
+        .meta({
+          id: "$DefaultPartial",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -4037,11 +4055,17 @@ export namespace UuidV4IriIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("UuidV4IriIdentifierInterface"),
-        uuidV4IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("UuidV4IriIdentifierInterface"),
+          uuidV4IriProperty: z.string().meta({ id: "uuidV4IriProperty" }),
+        })
+        .meta({
+          id: "UuidV4IriIdentifierInterface",
+          description:
+            "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -4575,11 +4599,17 @@ export namespace UuidV4IriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("UuidV4IriIdentifierClass"),
-        uuidV4IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("UuidV4IriIdentifierClass"),
+          uuidV4IriProperty: z.string().meta({ id: "uuidV4IriProperty" }),
+        })
+        .meta({
+          id: "UuidV4IriIdentifierClass",
+          description:
+            "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -6748,188 +6778,221 @@ export namespace UnionDiscriminantsClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("UnionDiscriminantsClass"),
-        optionalClassOrClassOrStringProperty: z
-          .discriminatedUnion("type", [
-            z.object({
-              type: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("UnionDiscriminantsClass"),
+          optionalClassOrClassOrStringProperty: z
+            .discriminatedUnion("type", [
+              z.object({
+                type: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                type: z.literal("ClassUnionMember2"),
+                value: ClassUnionMember2.$Json.schema(),
+              }),
+              z.object({ type: z.literal("string"), value: z.string() }),
+            ])
+            .readonly()
+            .optional()
+            .meta({
+              id: "optionalClassOrClassOrStringProperty",
+              description:
+                "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             }),
-            z.object({
-              type: z.literal("ClassUnionMember2"),
-              value: ClassUnionMember2.$Json.schema(),
+          optionalClassOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                termType: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .optional()
+            .meta({
+              id: "optionalClassOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
-            z.object({ type: z.literal("string"), value: z.string() }),
-          ])
-          .readonly()
-          .optional()
-          .describe(
-            "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
-          ),
-        optionalClassOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              termType: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
+          optionalIriOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .optional()
+            .meta({
+              id: "optionalIriOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
+          optionalIriOrStringProperty: z
+            .union([z.object({ "@id": z.string().min(1) }), z.string()])
+            .readonly()
+            .optional()
+            .meta({
+              id: "optionalIriOrStringProperty",
+              description: "Union that can be discriminated by typeof.",
             }),
-          ])
-          .readonly()
-          .optional()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
-          ),
-        optionalIriOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
+          requiredClassOrClassOrStringProperty: z
+            .discriminatedUnion("type", [
+              z.object({
+                type: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                type: z.literal("ClassUnionMember2"),
+                value: ClassUnionMember2.$Json.schema(),
+              }),
+              z.object({ type: z.literal("string"), value: z.string() }),
+            ])
+            .readonly()
+            .meta({
+              id: "requiredClassOrClassOrStringProperty",
+              description:
+                "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
+          requiredClassOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                termType: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .meta({
+              id: "requiredClassOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
-          ])
-          .readonly()
-          .optional()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType).",
-          ),
-        optionalIriOrStringProperty: z
-          .union([z.object({ "@id": z.string().min(1) }), z.string()])
-          .readonly()
-          .optional()
-          .describe("Union that can be discriminated by typeof."),
-        requiredClassOrClassOrStringProperty: z
-          .discriminatedUnion("type", [
-            z.object({
-              type: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
+          requiredIriOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .meta({
+              id: "requiredIriOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
-            z.object({
-              type: z.literal("ClassUnionMember2"),
-              value: ClassUnionMember2.$Json.schema(),
+          requiredIriOrStringProperty: z
+            .union([z.object({ "@id": z.string().min(1) }), z.string()])
+            .readonly()
+            .meta({
+              id: "requiredIriOrStringProperty",
+              description: "Union that can be discriminated by typeof.",
             }),
-            z.object({ type: z.literal("string"), value: z.string() }),
-          ])
-          .readonly()
-          .describe(
-            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
-          ),
-        requiredClassOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              termType: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
+          setClassOrClassOrStringProperty: z
+            .discriminatedUnion("type", [
+              z.object({
+                type: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                type: z.literal("ClassUnionMember2"),
+                value: ClassUnionMember2.$Json.schema(),
+              }),
+              z.object({ type: z.literal("string"), value: z.string() }),
+            ])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setClassOrClassOrStringProperty",
+              description:
+                "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
+          setClassOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                termType: z.literal("ClassUnionMember1"),
+                value: ClassUnionMember1.$Json.schema(),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setClassOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
-          ])
-          .readonly()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
-          ),
-        requiredIriOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
+          setIriOrLiteralProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                termType: z.literal("Literal"),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+              }),
+            ])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setIriOrLiteralProperty",
+              description:
+                "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
+          setIriOrStringProperty: z
+            .union([z.object({ "@id": z.string().min(1) }), z.string()])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setIriOrStringProperty",
+              description: "Union that can be discriminated by typeof.",
             }),
-          ])
-          .readonly()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType).",
-          ),
-        requiredIriOrStringProperty: z
-          .union([z.object({ "@id": z.string().min(1) }), z.string()])
-          .readonly()
-          .describe("Union that can be discriminated by typeof."),
-        setClassOrClassOrStringProperty: z
-          .discriminatedUnion("type", [
-            z.object({
-              type: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
-            }),
-            z.object({
-              type: z.literal("ClassUnionMember2"),
-              value: ClassUnionMember2.$Json.schema(),
-            }),
-            z.object({ type: z.literal("string"), value: z.string() }),
-          ])
-          .readonly()
-          .array()
-          .optional()
-          .readonly()
-          .describe(
-            "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
-          ),
-        setClassOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              termType: z.literal("ClassUnionMember1"),
-              value: ClassUnionMember1.$Json.schema(),
-            }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            }),
-          ])
-          .readonly()
-          .array()
-          .optional()
-          .readonly()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
-          ),
-        setIriOrLiteralProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
-              "@language": z.string().optional(),
-              termType: z.literal("Literal"),
-              "@type": z.string().optional(),
-              "@value": z.string(),
-            }),
-          ])
-          .readonly()
-          .array()
-          .optional()
-          .readonly()
-          .describe(
-            "Union that can be discriminated by an intrinsic discriminant property (termType).",
-          ),
-        setIriOrStringProperty: z
-          .union([z.object({ "@id": z.string().min(1) }), z.string()])
-          .readonly()
-          .array()
-          .optional()
-          .readonly()
-          .describe("Union that can be discriminated by typeof."),
-      }) satisfies z.ZodType<$Json>;
+        })
+        .meta({
+          id: "UnionDiscriminantsClass",
+          description:
+            "Shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -12416,44 +12479,72 @@ export namespace TermPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("TermPropertiesClass"),
-        blankNodeTermProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional(),
-        booleanTermProperty: z.boolean().optional(),
-        dateTermProperty: z.iso.date().optional(),
-        dateTimeTermProperty: z.iso.datetime().optional(),
-        iriTermProperty: z.object({ "@id": z.string().min(1) }).optional(),
-        literalTermProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .optional(),
-        numberTermProperty: z.number().optional(),
-        stringTermProperty: z.string().optional(),
-        termProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("TermPropertiesClass"),
+          blankNodeTermProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({
+              id: "blankNodeTermProperty",
             }),
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
+          booleanTermProperty: z
+            .boolean()
+            .optional()
+            .meta({ id: "booleanTermProperty" }),
+          dateTermProperty: z.iso
+            .date()
+            .optional()
+            .meta({ id: "dateTermProperty" }),
+          dateTimeTermProperty: z.iso
+            .datetime()
+            .optional()
+            .meta({ id: "dateTimeTermProperty" }),
+          iriTermProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({ id: "iriTermProperty" }),
+          literalTermProperty: z
+            .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ])
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+            })
+            .optional()
+            .meta({ id: "literalTermProperty" }),
+          numberTermProperty: z
+            .number()
+            .optional()
+            .meta({ id: "numberTermProperty" }),
+          stringTermProperty: z
+            .string()
+            .optional()
+            .meta({ id: "stringTermProperty" }),
+          termProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .optional()
+            .meta({ id: "termProperty" }),
+        })
+        .meta({
+          id: "TermPropertiesClass",
+          description: "Shape with properties that are not nested objects",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -13717,11 +13808,17 @@ export namespace Sha256IriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("Sha256IriIdentifierClass"),
-        sha256IriProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("Sha256IriIdentifierClass"),
+          sha256IriProperty: z.string().meta({ id: "sha256IriProperty" }),
+        })
+        .meta({
+          id: "Sha256IriIdentifierClass",
+          description:
+            "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -14218,16 +14315,19 @@ export namespace RecursiveClassUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("RecursiveClassUnionMember2"),
-        recursiveClassUnionMember2Property: z
-          .lazy(
-            (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("RecursiveClassUnionMember2"),
+          recursiveClassUnionMember2Property: z
+            .lazy(
+              (): z.ZodType<RecursiveClassUnion.$Json> =>
+                RecursiveClassUnion.$Json.schema(),
+            )
+            .optional()
+            .meta({ id: "recursiveClassUnionMember2Property" }),
+        })
+        .meta({ id: "RecursiveClassUnionMember2" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -14821,16 +14921,19 @@ export namespace RecursiveClassUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("RecursiveClassUnionMember1"),
-        recursiveClassUnionMember1Property: z
-          .lazy(
-            (): z.ZodType<RecursiveClassUnion.$Json> =>
-              RecursiveClassUnion.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("RecursiveClassUnionMember1"),
+          recursiveClassUnionMember1Property: z
+            .lazy(
+              (): z.ZodType<RecursiveClassUnion.$Json> =>
+                RecursiveClassUnion.$Json.schema(),
+            )
+            .optional()
+            .meta({ id: "recursiveClassUnionMember1Property" }),
+        })
+        .meta({ id: "RecursiveClassUnionMember1" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -15432,13 +15535,19 @@ export namespace PropertyVisibilitiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyVisibilitiesClass"),
-        privateProperty: z.string(),
-        protectedProperty: z.string(),
-        publicProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PropertyVisibilitiesClass"),
+          privateProperty: z.string().meta({ id: "privateProperty" }),
+          protectedProperty: z.string().meta({ id: "protectedProperty" }),
+          publicProperty: z.string().meta({ id: "publicProperty" }),
+        })
+        .meta({
+          id: "PropertyVisibilitiesClass",
+          description:
+            "Shape with properties that have visibility modifiers (private, protected, public)",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -16071,12 +16180,24 @@ export namespace PropertyPathsClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyPathsClass"),
-        inversePathProperty: z.object({ "@id": z.string().min(1) }).optional(),
-        predicatePathProperty: z.string().optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PropertyPathsClass"),
+          inversePathProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({ id: "inversePathProperty" }),
+          predicatePathProperty: z
+            .string()
+            .optional()
+            .meta({ id: "predicatePathProperty" }),
+        })
+        .meta({
+          id: "PropertyPathsClass",
+          description:
+            "Shape that uses different property path types in its properties",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -16846,29 +16967,39 @@ export namespace PropertyNamesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyNamesClass"),
-        actualPropertyName1: z
-          .string()
-          .describe("sh:path: overrides property shape identifier"),
-        actualPropertyName2: z
-          .string()
-          .describe("sh:name: overrides sh:path and rdfs:label"),
-        actualPropertyName3: z
-          .string()
-          .describe(
-            "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
-          ),
-        actualPropertyName4: z
-          .string()
-          .describe("rdfs:label: overrides sh:path"),
-        actualPropertyName5: z
-          .string()
-          .describe(
-            "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
-          ),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PropertyNamesClass"),
+          actualPropertyName1: z.string().meta({
+            id: "actualPropertyName1",
+            description: "sh:path: overrides property shape identifier",
+          }),
+          actualPropertyName2: z.string().meta({
+            id: "actualPropertyName2",
+            description: "sh:name: overrides sh:path and rdfs:label",
+            title: "ignorePropertyName2",
+          }),
+          actualPropertyName3: z.string().meta({
+            id: "actualPropertyName3",
+            description:
+              "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
+          }),
+          actualPropertyName4: z.string().meta({
+            id: "actualPropertyName4",
+            description: "rdfs:label: overrides sh:path",
+            title: "actualPropertyName4",
+          }),
+          actualPropertyName5: z.string().meta({
+            id: "actualPropertyName5",
+            description:
+              "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
+          }),
+        })
+        .meta({
+          id: "PropertyNamesClass",
+          description: "Shape that uses different methods to name properties",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -17781,30 +17912,42 @@ export namespace PropertyCardinalitiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PropertyCardinalitiesClass"),
-        emptyStringSetProperty: z
-          .string()
-          .array()
-          .optional()
-          .readonly()
-          .describe("Set: minCount implicitly=0, no maxCount"),
-        nonEmptyStringSetProperty: z
-          .string()
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly()
-          .describe("Set: minCount=1, no maxCount"),
-        optionalStringProperty: z
-          .string()
-          .optional()
-          .describe("Option: maxCount=1, minCount=0"),
-        requiredStringProperty: z
-          .string()
-          .describe("Required: maxCount=minCount=1"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PropertyCardinalitiesClass"),
+          emptyStringSetProperty: z
+            .string()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "emptyStringSetProperty",
+              description: "Set: minCount implicitly=0, no maxCount",
+            }),
+          nonEmptyStringSetProperty: z
+            .string()
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({
+              id: "nonEmptyStringSetProperty",
+              description: "Set: minCount=1, no maxCount",
+            }),
+          optionalStringProperty: z.string().optional().meta({
+            id: "optionalStringProperty",
+            description: "Option: maxCount=1, minCount=0",
+          }),
+          requiredStringProperty: z.string().meta({
+            id: "requiredStringProperty",
+            description: "Required: maxCount=minCount=1",
+          }),
+        })
+        .meta({
+          id: "PropertyCardinalitiesClass",
+          description: "Shape that has properties with different cardinalities",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -18505,11 +18648,17 @@ export namespace PartialInterfaceUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterfaceUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialInterfaceUnionMember2"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "PartialInterfaceUnionMember2",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -19095,11 +19244,17 @@ export namespace PartialInterfaceUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterfaceUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialInterfaceUnionMember1"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "PartialInterfaceUnionMember1",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -19722,11 +19877,15 @@ export namespace PartialClassUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClassUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialClassUnionMember2"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({ id: "PartialClassUnionMember2" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -20288,11 +20447,15 @@ export namespace PartialClassUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClassUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialClassUnionMember1"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({ id: "PartialClassUnionMember1" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -20832,10 +20995,14 @@ export namespace NewName2Class {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NewName2Class"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({ "@id": z.string().min(1), $type: z.literal("NewName2Class") })
+        .meta({
+          id: "NewName2Class",
+          description:
+            "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes",
+          title: "NewName2Class",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -21298,10 +21465,13 @@ export namespace NewName1Class {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NewName1Class"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({ "@id": z.string().min(1), $type: z.literal("NewName1Class") })
+        .meta({
+          id: "NewName1Class",
+          description:
+            "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -21826,13 +21996,19 @@ export namespace OrderedPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("OrderedPropertiesClass"),
-        orderedPropertyC: z.string(),
-        orderedPropertyB: z.string(),
-        orderedPropertyA: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("OrderedPropertiesClass"),
+          orderedPropertyC: z.string().meta({ id: "orderedPropertyC" }),
+          orderedPropertyB: z.string().meta({ id: "orderedPropertyB" }),
+          orderedPropertyA: z.string().meta({ id: "orderedPropertyA" }),
+        })
+        .meta({
+          id: "OrderedPropertiesClass",
+          description:
+            "Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -23099,26 +23275,79 @@ export namespace NumericPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NumericPropertiesClass"),
-        byteNumericProperty: z.number().optional(),
-        decimalNumericProperty: z.string().optional(),
-        doubleNumericProperty: z.number().optional(),
-        floatNumericProperty: z.number().optional(),
-        integerNumericProperty: z.string().optional(),
-        intNumericProperty: z.number().optional(),
-        longNumericProperty: z.string().optional(),
-        negativeIntegerNumericProperty: z.string().optional(),
-        nonNegativeIntegerNumericProperty: z.string().optional(),
-        nonPositiveIntegerNumericProperty: z.string().optional(),
-        positiveIntegerNumericProperty: z.string().optional(),
-        shortNumericProperty: z.number().optional(),
-        unsignedByteNumericProperty: z.number().optional(),
-        unsignedIntNumericProperty: z.number().optional(),
-        unsignedLongNumericProperty: z.string().optional(),
-        unsignedShortNumericProperty: z.number().optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NumericPropertiesClass"),
+          byteNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "byteNumericProperty" }),
+          decimalNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "decimalNumericProperty" }),
+          doubleNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "doubleNumericProperty" }),
+          floatNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "floatNumericProperty" }),
+          integerNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "integerNumericProperty" }),
+          intNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "intNumericProperty" }),
+          longNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "longNumericProperty" }),
+          negativeIntegerNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "negativeIntegerNumericProperty" }),
+          nonNegativeIntegerNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "nonNegativeIntegerNumericProperty" }),
+          nonPositiveIntegerNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "nonPositiveIntegerNumericProperty" }),
+          positiveIntegerNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "positiveIntegerNumericProperty" }),
+          shortNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "shortNumericProperty" }),
+          unsignedByteNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "unsignedByteNumericProperty" }),
+          unsignedIntNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "unsignedIntNumericProperty" }),
+          unsignedLongNumericProperty: z
+            .string()
+            .optional()
+            .meta({ id: "unsignedLongNumericProperty" }),
+          unsignedShortNumericProperty: z
+            .number()
+            .optional()
+            .meta({ id: "unsignedShortNumericProperty" }),
+        })
+        .meta({
+          id: "NumericPropertiesClass",
+          description: "Shape with properties that have numeric sh:datatype's",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -25336,42 +25565,62 @@ export namespace NodeKindsClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NodeKindsClass"),
-        blankNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        blankNodeOrIriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        blankNodeOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ]),
-        iriNodeKindProperty: z.object({ "@id": z.string().min(1) }),
-        iriOrLiteralNodeKindProperty: z.discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ]),
-        literalNodeKindProperty: z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        }),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NodeKindsClass"),
+          blankNodeKindProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({ id: "blankNodeKindProperty" }),
+          blankNodeOrIriNodeKindProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({
+              id: "blankNodeOrIriNodeKindProperty",
+            }),
+          blankNodeOrLiteralNodeKindProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .meta({ id: "blankNodeOrLiteralNodeKindProperty" }),
+          iriNodeKindProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({ id: "iriNodeKindProperty" }),
+          iriOrLiteralNodeKindProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .meta({ id: "iriOrLiteralNodeKindProperty" }),
+          literalNodeKindProperty: z
+            .object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            })
+            .meta({ id: "literalNodeKindProperty" }),
+        })
+        .meta({
+          id: "NodeKindsClass",
+          description:
+            "Shape that has properties with different sh:nodeKind combinations",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -26301,11 +26550,15 @@ export namespace NoRdfTypeClassUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NoRdfTypeClassUnionMember2"),
-        noRdfTypeClassUnionMember2Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NoRdfTypeClassUnionMember2"),
+          noRdfTypeClassUnionMember2Property: z
+            .string()
+            .meta({ id: "noRdfTypeClassUnionMember2Property" }),
+        })
+        .meta({ id: "NoRdfTypeClassUnionMember2" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -26775,11 +27028,15 @@ export namespace NoRdfTypeClassUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NoRdfTypeClassUnionMember1"),
-        noRdfTypeClassUnionMember1Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NoRdfTypeClassUnionMember1"),
+          noRdfTypeClassUnionMember1Property: z
+            .string()
+            .meta({ id: "noRdfTypeClassUnionMember1Property" }),
+        })
+        .meta({ id: "NoRdfTypeClassUnionMember1" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -27296,12 +27553,18 @@ export namespace NamedUnionPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NamedUnionPropertiesClass"),
-        namedUnion1Property: NamedUnion1.$Json.schema(),
-        namedUnion2Property: NamedUnion2.$Json.schema(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NamedUnionPropertiesClass"),
+          namedUnion1Property: NamedUnion1.$Json
+            .schema()
+            .meta({ id: "namedUnion1Property" }),
+          namedUnion2Property: NamedUnion2.$Json
+            .schema()
+            .meta({ id: "namedUnion2Property" }),
+        })
+        .meta({ id: "NamedUnionPropertiesClass" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -28126,29 +28389,29 @@ export namespace MutablePropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("MutablePropertiesClass"),
-        mutableListProperty: z
-          .string()
-          .array()
-          .optional()
-          .optional()
-          .describe(
-            "List-valued property that can't be reassigned but whose value can be mutated",
-          ),
-        mutableSetProperty: z
-          .string()
-          .array()
-          .optional()
-          .describe(
-            "Set-valued property that can't be reassigned but whose value can be mutated",
-          ),
-        mutableStringProperty: z
-          .string()
-          .optional()
-          .describe("String-valued property that can be re-assigned"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("MutablePropertiesClass"),
+          mutableListProperty: z.string().array().optional().optional().meta({
+            id: "mutableListProperty",
+            description:
+              "List-valued property that can't be reassigned but whose value can be mutated",
+          }),
+          mutableSetProperty: z.string().array().optional().meta({
+            id: "mutableSetProperty",
+            description:
+              "Set-valued property that can't be reassigned but whose value can be mutated",
+          }),
+          mutableStringProperty: z.string().optional().meta({
+            id: "mutableStringProperty",
+            description: "String-valued property that can be re-assigned",
+          }),
+        })
+        .meta({
+          id: "MutablePropertiesClass",
+          description: "Shape with shaclmate:mutable properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -29195,23 +29458,40 @@ export namespace ListPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ListPropertiesClass"),
-        iriListProperty: z
-          .object({ "@id": z.string().min(1) })
-          .array()
-          .optional()
-          .readonly()
-          .optional(),
-        objectListProperty: NonClass.$Json
-          .schema()
-          .array()
-          .optional()
-          .readonly()
-          .optional(),
-        stringListProperty: z.string().array().optional().readonly().optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ListPropertiesClass"),
+          iriListProperty: z
+            .object({ "@id": z.string().min(1) })
+            .array()
+            .optional()
+            .readonly()
+            .optional()
+            .meta({
+              id: "iriListProperty",
+            }),
+          objectListProperty: NonClass.$Json
+            .schema()
+            .array()
+            .optional()
+            .readonly()
+            .optional()
+            .meta({
+              id: "objectListProperty",
+            }),
+          stringListProperty: z
+            .string()
+            .array()
+            .optional()
+            .readonly()
+            .optional()
+            .meta({ id: "stringListProperty" }),
+        })
+        .meta({
+          id: "ListPropertiesClass",
+          description: "Shape that uses the list shapes in properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -30019,11 +30299,19 @@ export namespace PartialInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialInterface"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "PartialInterface",
+          description:
+            "Node shape used as a partial by LazyPropertiesInterface",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -31437,37 +31725,66 @@ export namespace LazyPropertiesInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazyPropertiesInterface"),
-        optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedIriIdentifierInterfaceProperty:
-          $NamedDefaultPartial.$Json.schema().optional(),
-        optionalPartialInterfaceToResolvedInterfaceProperty:
-          PartialInterface.$Json.schema().optional(),
-        optionalPartialInterfaceToResolvedInterfaceUnionProperty:
-          PartialInterface.$Json.schema().optional(),
-        optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-          PartialInterfaceUnion.$Json.schema().optional(),
-        requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json.schema(),
-        requiredPartialInterfaceToResolvedInterfaceProperty:
-          PartialInterface.$Json.schema(),
-        setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
-          .schema()
-          .array()
-          .optional()
-          .readonly(),
-        setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
-          .schema()
-          .array()
-          .optional()
-          .readonly(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazyPropertiesInterface"),
+          optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalLazyToResolvedInterfaceProperty",
+            }),
+          optionalLazyToResolvedInterfaceUnionProperty: $DefaultPartial.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalLazyToResolvedInterfaceUnionProperty",
+            }),
+          optionalLazyToResolvedIriIdentifierInterfaceProperty:
+            $NamedDefaultPartial.$Json.schema().optional().meta({
+              id: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
+            }),
+          optionalPartialInterfaceToResolvedInterfaceProperty:
+            PartialInterface.$Json.schema().optional().meta({
+              id: "optionalPartialInterfaceToResolvedInterfaceProperty",
+            }),
+          optionalPartialInterfaceToResolvedInterfaceUnionProperty:
+            PartialInterface.$Json.schema().optional().meta({
+              id: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+            }),
+          optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
+            PartialInterfaceUnion.$Json.schema().optional().meta({
+              id: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+            }),
+          requiredLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+            .schema()
+            .meta({
+              id: "requiredLazyToResolvedInterfaceProperty",
+            }),
+          requiredPartialInterfaceToResolvedInterfaceProperty:
+            PartialInterface.$Json.schema().meta({
+              id: "requiredPartialInterfaceToResolvedInterfaceProperty",
+            }),
+          setLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
+            .schema()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setLazyToResolvedInterfaceProperty",
+            }),
+          setPartialInterfaceToResolvedInterfaceProperty: PartialInterface.$Json
+            .schema()
+            .array()
+            .optional()
+            .readonly()
+            .meta({ id: "setPartialInterfaceToResolvedInterfaceProperty" }),
+        })
+        .meta({
+          id: "LazyPropertiesInterface",
+          description: "Node shape that has lazy properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -34689,39 +35006,73 @@ export namespace LazyPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazyPropertiesClass"),
-        optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedClassUnionProperty: $DefaultPartial.$Json
-          .schema()
-          .optional(),
-        optionalLazyToResolvedIriIdentifierClassProperty:
-          $NamedDefaultPartial.$Json.schema().optional(),
-        optionalPartialClassToResolvedClassProperty: PartialClass.$Json
-          .schema()
-          .optional(),
-        optionalPartialClassToResolvedClassUnionProperty: PartialClass.$Json
-          .schema()
-          .optional(),
-        optionalPartialClassUnionToResolvedClassUnionProperty:
-          PartialClassUnion.$Json.schema().optional(),
-        requiredLazyToResolvedClassProperty: $DefaultPartial.$Json.schema(),
-        requiredPartialClassToResolvedClassProperty:
-          PartialClass.$Json.schema(),
-        setLazyToResolvedClassProperty: $DefaultPartial.$Json
-          .schema()
-          .array()
-          .optional()
-          .readonly(),
-        setPartialClassToResolvedClassProperty: PartialClass.$Json
-          .schema()
-          .array()
-          .optional()
-          .readonly(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazyPropertiesClass"),
+          optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalLazyToResolvedClassProperty",
+            }),
+          optionalLazyToResolvedClassUnionProperty: $DefaultPartial.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalLazyToResolvedClassUnionProperty",
+            }),
+          optionalLazyToResolvedIriIdentifierClassProperty:
+            $NamedDefaultPartial.$Json.schema().optional().meta({
+              id: "optionalLazyToResolvedIriIdentifierClassProperty",
+            }),
+          optionalPartialClassToResolvedClassProperty: PartialClass.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalPartialClassToResolvedClassProperty",
+            }),
+          optionalPartialClassToResolvedClassUnionProperty: PartialClass.$Json
+            .schema()
+            .optional()
+            .meta({
+              id: "optionalPartialClassToResolvedClassUnionProperty",
+            }),
+          optionalPartialClassUnionToResolvedClassUnionProperty:
+            PartialClassUnion.$Json.schema().optional().meta({
+              id: "optionalPartialClassUnionToResolvedClassUnionProperty",
+            }),
+          requiredLazyToResolvedClassProperty: $DefaultPartial.$Json
+            .schema()
+            .meta({
+              id: "requiredLazyToResolvedClassProperty",
+            }),
+          requiredPartialClassToResolvedClassProperty: PartialClass.$Json
+            .schema()
+            .meta({
+              id: "requiredPartialClassToResolvedClassProperty",
+            }),
+          setLazyToResolvedClassProperty: $DefaultPartial.$Json
+            .schema()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setLazyToResolvedClassProperty",
+            }),
+          setPartialClassToResolvedClassProperty: PartialClass.$Json
+            .schema()
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "setPartialClassToResolvedClassProperty",
+            }),
+        })
+        .meta({
+          id: "LazyPropertiesClass",
+          description: "Node shape that has lazy properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -36603,11 +36954,18 @@ export namespace LazilyResolvedIriIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedIriIdentifierInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedIriIdentifierInterface"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedIriIdentifierInterface",
+          description: "Node shape resolved by LazyPropertiesInterface",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -37122,11 +37480,18 @@ export namespace LazilyResolvedIriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedIriIdentifierClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedIriIdentifierClass"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedIriIdentifierClass",
+          description: "Node shape resolved by LazyPropertiesClass",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -37564,11 +37929,17 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedInterfaceUnionMember2",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -38167,11 +38538,17 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedInterfaceUnionMember1",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -38809,11 +39186,17 @@ export namespace LazilyResolvedClassUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedClassUnionMember2"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedClassUnionMember2"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedClassUnionMember2",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -39385,11 +39768,17 @@ export namespace LazilyResolvedClassUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedClassUnionMember1"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedClassUnionMember1"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedClassUnionMember1",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -39927,11 +40316,18 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedBlankNodeOrIriIdentifierInterface",
+          description: "Node shape resolved by LazyPropertiesInterface",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -40586,11 +40982,18 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "LazilyResolvedBlankNodeOrIriIdentifierClass",
+          description: "Node shape resolved by LazyPropertiesClass",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -41191,21 +41594,29 @@ export namespace LanguageInPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("LanguageInPropertiesClass"),
-        languageInLiteralProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly()
-          .describe("literal property for testing languageIn"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("LanguageInPropertiesClass"),
+          languageInLiteralProperty: z
+            .object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            })
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({
+              id: "languageInLiteralProperty",
+              description: "literal property for testing languageIn",
+            }),
+        })
+        .meta({
+          id: "LanguageInPropertiesClass",
+          description: "Shape that uses the StringList in a property.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -41808,16 +42219,23 @@ export namespace JsPrimitiveUnionPropertyClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("JsPrimitiveUnionPropertyClass"),
-        jsPrimitiveUnionProperty: z
-          .union([z.boolean(), z.number(), z.string()])
-          .readonly()
-          .array()
-          .optional()
-          .readonly(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("JsPrimitiveUnionPropertyClass"),
+          jsPrimitiveUnionProperty: z
+            .union([z.boolean(), z.number(), z.string()])
+            .readonly()
+            .array()
+            .optional()
+            .readonly()
+            .meta({ id: "jsPrimitiveUnionProperty" }),
+        })
+        .meta({
+          id: "JsPrimitiveUnionPropertyClass",
+          description:
+            "Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -42628,10 +43046,15 @@ export namespace IriIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IriIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("IriIdentifierInterface"),
+        })
+        .meta({
+          id: "IriIdentifierInterface",
+          description: "A node shape that only allows IRI identifiers.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -43128,10 +43551,15 @@ export namespace IriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IriIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("IriIdentifierClass"),
+        })
+        .meta({
+          id: "IriIdentifierClass",
+          description: "A node shape that only allows IRI identifiers.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -43573,11 +44001,17 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
-        interfaceUnionMemberCommonParentProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
+          interfaceUnionMemberCommonParentProperty: z.string().meta({
+            id: "interfaceUnionMemberCommonParentProperty",
+          }),
+        })
+        .meta({
+          id: "InterfaceUnionMemberCommonParent",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -44008,12 +44442,16 @@ export namespace InterfaceUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember2"),
-        interfaceUnionMember2Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember2"),
+          interfaceUnionMember2Property: z
+            .string()
+            .meta({ id: "interfaceUnionMember2Property" }),
+        })
+        .meta({ id: "InterfaceUnionMember2" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -44582,12 +45020,16 @@ export namespace InterfaceUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("InterfaceUnionMember1"),
-        interfaceUnionMember1Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("InterfaceUnionMember1"),
+          interfaceUnionMember1Property: z
+            .string()
+            .meta({ id: "interfaceUnionMember1Property" }),
+        })
+        .meta({ id: "InterfaceUnionMember1" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -45164,11 +45606,17 @@ export namespace Interface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("Interface"),
-        interfaceProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("Interface"),
+          interfaceProperty: z.string().meta({ id: "interfaceProperty" }),
+        })
+        .meta({
+          id: "Interface",
+          description:
+            "A node shape that's generated as a TypeScript interface instead of a class.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -45693,16 +46141,21 @@ export namespace IndirectRecursiveHelperClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IndirectRecursiveHelperClass"),
-        indirectRecursiveProperty: z
-          .lazy(
-            (): z.ZodType<IndirectRecursiveClass.$Json> =>
-              IndirectRecursiveClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("IndirectRecursiveHelperClass"),
+          indirectRecursiveProperty: z
+            .lazy(
+              (): z.ZodType<IndirectRecursiveClass.$Json> =>
+                IndirectRecursiveClass.$Json.schema(),
+            )
+            .optional()
+            .meta({ id: "indirectRecursiveProperty" }),
+        })
+        .meta({
+          id: "IndirectRecursiveHelperClass",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -46287,16 +46740,19 @@ export namespace IndirectRecursiveClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("IndirectRecursiveClass"),
-        indirectRecursiveHelperProperty: z
-          .lazy(
-            (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
-              IndirectRecursiveHelperClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("IndirectRecursiveClass"),
+          indirectRecursiveHelperProperty: z
+            .lazy(
+              (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
+                IndirectRecursiveHelperClass.$Json.schema(),
+            )
+            .optional()
+            .meta({ id: "indirectRecursiveHelperProperty" }),
+        })
+        .meta({ id: "IndirectRecursiveClass" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -47095,23 +47551,44 @@ export namespace InPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("InPropertiesClass"),
-        inBooleansProperty: z.literal(true).optional(),
-        inDateTimesProperty: z.iso.datetime().optional(),
-        inDoublesProperty: z.union([z.literal(1), z.literal(2)]).optional(),
-        inIntegersProperty: z.enum(["1", "2"]).optional(),
-        inIrisProperty: z
-          .object({
-            "@id": z.enum([
-              "http://example.com/InPropertiesIri1",
-              "http://example.com/InPropertiesIri2",
-            ]),
-          })
-          .optional(),
-        inStringsProperty: z.enum(["text", "html"]).optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("InPropertiesClass"),
+          inBooleansProperty: z
+            .literal(true)
+            .optional()
+            .meta({ id: "inBooleansProperty" }),
+          inDateTimesProperty: z.iso
+            .datetime()
+            .optional()
+            .meta({ id: "inDateTimesProperty" }),
+          inDoublesProperty: z
+            .union([z.literal(1), z.literal(2)])
+            .optional()
+            .meta({ id: "inDoublesProperty" }),
+          inIntegersProperty: z
+            .enum(["1", "2"])
+            .optional()
+            .meta({ id: "inIntegersProperty" }),
+          inIrisProperty: z
+            .object({
+              "@id": z.enum([
+                "http://example.com/InPropertiesIri1",
+                "http://example.com/InPropertiesIri2",
+              ]),
+            })
+            .optional()
+            .meta({ id: "inIrisProperty" }),
+          inStringsProperty: z
+            .enum(["text", "html"])
+            .optional()
+            .meta({ id: "inStringsProperty" }),
+        })
+        .meta({
+          id: "InPropertiesClass",
+          description: "Shape with sh:in properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -48173,14 +48650,22 @@ export namespace InIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.enum([
-          "http://example.com/InIdentifierInstance1",
-          "http://example.com/InIdentifierInstance2",
-        ]),
-        $type: z.literal("InIdentifierClass"),
-        inIdentifierProperty: z.string().optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.enum([
+            "http://example.com/InIdentifierInstance1",
+            "http://example.com/InIdentifierInstance2",
+          ]),
+          $type: z.literal("InIdentifierClass"),
+          inIdentifierProperty: z
+            .string()
+            .optional()
+            .meta({ id: "inIdentifierProperty" }),
+        })
+        .meta({
+          id: "InIdentifierClass",
+          description: "Shape with sh:in constraining its identifier.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -48764,15 +49249,23 @@ export namespace IdentifierOverride1ClassStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-        identifierOverrideProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+          identifierOverrideProperty: z
+            .string()
+            .meta({ id: "identifierOverrideProperty" }),
+        })
+        .meta({
+          id: "IdentifierOverride1Class",
+          description:
+            "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -49126,15 +49619,21 @@ export namespace IdentifierOverride2ClassStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        ...IdentifierOverride1ClassStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...IdentifierOverride1ClassStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        })
+        .meta({
+          id: "IdentifierOverride2Class",
+          description:
+            "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -49419,15 +49918,21 @@ export namespace IdentifierOverride3ClassStatic {
     }
 
     export function schema() {
-      return z.object({
-        ...IdentifierOverride2ClassStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "IdentifierOverride3Class",
-          "IdentifierOverride4Class",
-          "IdentifierOverride5Class",
-        ]),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...IdentifierOverride2ClassStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        })
+        .meta({
+          id: "IdentifierOverride3Class",
+          description:
+            "Node shape for testing identifier type overriding: IRI identifier, concrete",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -49870,11 +50375,20 @@ export namespace IdentifierOverride4ClassStatic {
     }
 
     export function schema() {
-      return z.object({
-        ...IdentifierOverride3ClassStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum(["IdentifierOverride4Class", "IdentifierOverride5Class"]),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...IdentifierOverride3ClassStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ]),
+        })
+        .meta({
+          id: "IdentifierOverride4Class",
+          description:
+            "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -50311,11 +50825,17 @@ export namespace IdentifierOverride5Class {
     }
 
     export function schema() {
-      return z.object({
-        ...IdentifierOverride4ClassStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("IdentifierOverride5Class"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...IdentifierOverride4ClassStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("IdentifierOverride5Class"),
+        })
+        .meta({
+          id: "IdentifierOverride5Class",
+          description:
+            "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -50823,12 +51343,21 @@ export namespace HasValuePropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("HasValuePropertiesClass"),
-        hasIriValueProperty: z.object({ "@id": z.string().min(1) }),
-        hasLiteralValueProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("HasValuePropertiesClass"),
+          hasIriValueProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({ id: "hasIriValueProperty" }),
+          hasLiteralValueProperty: z
+            .string()
+            .meta({ id: "hasLiteralValueProperty" }),
+        })
+        .meta({
+          id: "HasValuePropertiesClass",
+          description: "Shape with sh:hasValue properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -51374,11 +51903,15 @@ export namespace FlattenClassUnionMember3 {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("FlattenClassUnionMember3"),
-        flattenClassUnionMember3Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("FlattenClassUnionMember3"),
+          flattenClassUnionMember3Property: z
+            .string()
+            .meta({ id: "flattenClassUnionMember3Property" }),
+        })
+        .meta({ id: "FlattenClassUnionMember3" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -51966,11 +52499,20 @@ export namespace ExternClassPropertyClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExternClassPropertyClass"),
-        externClassProperty: ExternClass.$Json.schema().optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ExternClassPropertyClass"),
+          externClassProperty: ExternClass.$Json
+            .schema()
+            .optional()
+            .meta({ id: "externClassProperty" }),
+        })
+        .meta({
+          id: "ExternClassPropertyClass",
+          description:
+            "Node shape that references the ExternClass in a property.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -52544,11 +53086,19 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExternClass"),
-        abstractBaseClassForExternClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ExternClass"),
+          abstractBaseClassForExternClassProperty: z
+            .string()
+            .meta({ id: "abstractBaseClassForExternClassProperty" }),
+        })
+        .meta({
+          id: "AbstractBaseClassForExternClass",
+          description:
+            "An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -52989,11 +53539,19 @@ export namespace ExplicitRdfTypeClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExplicitRdfTypeClass"),
-        explicitRdfTypeProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ExplicitRdfTypeClass"),
+          explicitRdfTypeProperty: z
+            .string()
+            .meta({ id: "explicitRdfTypeProperty" }),
+        })
+        .meta({
+          id: "ExplicitRdfTypeClass",
+          description:
+            "Shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -53568,11 +54126,19 @@ export namespace ExplicitFromToRdfTypesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ExplicitFromToRdfTypesClass"),
-        explicitFromToRdfTypesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ExplicitFromToRdfTypesClass"),
+          explicitFromToRdfTypesProperty: z
+            .string()
+            .meta({ id: "explicitFromToRdfTypesProperty" }),
+        })
+        .meta({
+          id: "ExplicitFromToRdfTypesClass",
+          description:
+            "Shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -54163,16 +54729,19 @@ export namespace DirectRecursiveClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DirectRecursiveClass"),
-        directRecursiveProperty: z
-          .lazy(
-            (): z.ZodType<DirectRecursiveClass.$Json> =>
-              DirectRecursiveClass.$Json.schema(),
-          )
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("DirectRecursiveClass"),
+          directRecursiveProperty: z
+            .lazy(
+              (): z.ZodType<DirectRecursiveClass.$Json> =>
+                DirectRecursiveClass.$Json.schema(),
+            )
+            .optional()
+            .meta({ id: "directRecursiveProperty" }),
+        })
+        .meta({ id: "DirectRecursiveClass" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -54971,16 +55540,33 @@ export namespace DefaultValuePropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DefaultValuePropertiesClass"),
-        dateDefaultValueProperty: z.iso.date(),
-        dateTimeDefaultValueProperty: z.iso.datetime(),
-        falseBooleanDefaultValueProperty: z.boolean(),
-        numberDefaultValueProperty: z.number(),
-        stringDefaultValueProperty: z.string(),
-        trueBooleanDefaultValueProperty: z.boolean(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("DefaultValuePropertiesClass"),
+          dateDefaultValueProperty: z.iso
+            .date()
+            .meta({ id: "dateDefaultValueProperty" }),
+          dateTimeDefaultValueProperty: z.iso
+            .datetime()
+            .meta({ id: "dateTimeDefaultValueProperty" }),
+          falseBooleanDefaultValueProperty: z
+            .boolean()
+            .meta({ id: "falseBooleanDefaultValueProperty" }),
+          numberDefaultValueProperty: z
+            .number()
+            .meta({ id: "numberDefaultValueProperty" }),
+          stringDefaultValueProperty: z
+            .string()
+            .meta({ id: "stringDefaultValueProperty" }),
+          trueBooleanDefaultValueProperty: z
+            .boolean()
+            .meta({ id: "trueBooleanDefaultValueProperty" }),
+        })
+        .meta({
+          id: "DefaultValuePropertiesClass",
+          description: "Shape with sh:defaultValue properties.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -56497,38 +57083,54 @@ export namespace DateUnionPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("DateUnionPropertiesClass"),
-        dateOrDateTimeProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-          ])
-          .readonly()
-          .optional(),
-        dateOrStringProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-            z.object({ type: z.literal("string"), value: z.string() }),
-          ])
-          .readonly()
-          .optional(),
-        dateTimeOrDateProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-          ])
-          .readonly()
-          .optional(),
-        stringOrDateProperty: z
-          .discriminatedUnion("type", [
-            z.object({ type: z.literal("string"), value: z.string() }),
-            z.object({ type: z.literal("date"), value: z.iso.date() }),
-          ])
-          .readonly()
-          .optional(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("DateUnionPropertiesClass"),
+          dateOrDateTimeProperty: z
+            .discriminatedUnion("type", [
+              z.object({ type: z.literal("date"), value: z.iso.date() }),
+              z.object({
+                type: z.literal("dateTime"),
+                value: z.iso.datetime(),
+              }),
+            ])
+            .readonly()
+            .optional()
+            .meta({ id: "dateOrDateTimeProperty" }),
+          dateOrStringProperty: z
+            .discriminatedUnion("type", [
+              z.object({ type: z.literal("date"), value: z.iso.date() }),
+              z.object({ type: z.literal("string"), value: z.string() }),
+            ])
+            .readonly()
+            .optional()
+            .meta({ id: "dateOrStringProperty" }),
+          dateTimeOrDateProperty: z
+            .discriminatedUnion("type", [
+              z.object({
+                type: z.literal("dateTime"),
+                value: z.iso.datetime(),
+              }),
+              z.object({ type: z.literal("date"), value: z.iso.date() }),
+            ])
+            .readonly()
+            .optional()
+            .meta({ id: "dateTimeOrDateProperty" }),
+          stringOrDateProperty: z
+            .discriminatedUnion("type", [
+              z.object({ type: z.literal("string"), value: z.string() }),
+              z.object({ type: z.literal("date"), value: z.iso.date() }),
+            ])
+            .readonly()
+            .optional()
+            .meta({ id: "stringOrDateProperty" }),
+        })
+        .meta({
+          id: "DateUnionPropertiesClass",
+          description:
+            "Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -59176,131 +59778,156 @@ export namespace ConvertibleTypePropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ConvertibleTypePropertiesClass"),
-        convertibleIriNonEmptySetProperty: z
-          .object({ "@id": z.string().min(1) })
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly(),
-        convertibleIriOptionProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional(),
-        convertibleIriProperty: z.object({ "@id": z.string().min(1) }),
-        convertibleIriSetProperty: z
-          .object({ "@id": z.string().min(1) })
-          .array()
-          .optional()
-          .readonly(),
-        convertibleLiteralNonEmptySetProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly(),
-        convertibleLiteralOptionProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .optional(),
-        convertibleLiteralProperty: z.object({
-          "@language": z.string().optional(),
-          "@type": z.string().optional(),
-          "@value": z.string(),
-        }),
-        convertibleLiteralSetProperty: z
-          .object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-          })
-          .array()
-          .optional()
-          .readonly(),
-        convertibleTermNonEmptySetProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ConvertibleTypePropertiesClass"),
+          convertibleIriNonEmptySetProperty: z
+            .object({ "@id": z.string().min(1) })
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({ id: "convertibleIriNonEmptySetProperty" }),
+          convertibleIriOptionProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({
+              id: "convertibleIriOptionProperty",
             }),
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
+          convertibleIriProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({ id: "convertibleIriProperty" }),
+          convertibleIriSetProperty: z
+            .object({ "@id": z.string().min(1) })
+            .array()
+            .optional()
+            .readonly()
+            .meta({
+              id: "convertibleIriSetProperty",
             }),
-            z.object({
+          convertibleLiteralNonEmptySetProperty: z
+            .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ])
-          .array()
-          .nonempty()
-          .min(1)
-          .readonly(),
-        convertibleTermOptionProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
-            }),
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
+            })
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({ id: "convertibleLiteralNonEmptySetProperty" }),
+          convertibleLiteralOptionProperty: z
+            .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ])
-          .optional(),
-        convertibleTermProperty: z.discriminatedUnion("termType", [
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("BlankNode"),
-          }),
-          z.object({
-            "@id": z.string().min(1),
-            termType: z.literal("NamedNode"),
-          }),
-          z.object({
-            "@language": z.string().optional(),
-            "@type": z.string().optional(),
-            "@value": z.string(),
-            termType: z.literal("Literal"),
-          }),
-        ]),
-        convertibleTermSetProperty: z
-          .discriminatedUnion("termType", [
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("BlankNode"),
-            }),
-            z.object({
-              "@id": z.string().min(1),
-              termType: z.literal("NamedNode"),
-            }),
-            z.object({
+            })
+            .optional()
+            .meta({ id: "convertibleLiteralOptionProperty" }),
+          convertibleLiteralProperty: z
+            .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
-              termType: z.literal("Literal"),
-            }),
-          ])
-          .array()
-          .optional()
-          .readonly(),
-      }) satisfies z.ZodType<$Json>;
+            })
+            .meta({ id: "convertibleLiteralProperty" }),
+          convertibleLiteralSetProperty: z
+            .object({
+              "@language": z.string().optional(),
+              "@type": z.string().optional(),
+              "@value": z.string(),
+            })
+            .array()
+            .optional()
+            .readonly()
+            .meta({ id: "convertibleLiteralSetProperty" }),
+          convertibleTermNonEmptySetProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .array()
+            .nonempty()
+            .min(1)
+            .readonly()
+            .meta({ id: "convertibleTermNonEmptySetProperty" }),
+          convertibleTermOptionProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .optional()
+            .meta({ id: "convertibleTermOptionProperty" }),
+          convertibleTermProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .meta({ id: "convertibleTermProperty" }),
+          convertibleTermSetProperty: z
+            .discriminatedUnion("termType", [
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("BlankNode"),
+              }),
+              z.object({
+                "@id": z.string().min(1),
+                termType: z.literal("NamedNode"),
+              }),
+              z.object({
+                "@language": z.string().optional(),
+                "@type": z.string().optional(),
+                "@value": z.string(),
+                termType: z.literal("Literal"),
+              }),
+            ])
+            .array()
+            .optional()
+            .readonly()
+            .meta({ id: "convertibleTermSetProperty" }),
+        })
+        .meta({
+          id: "ConvertibleTypePropertiesClass",
+          description:
+            "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -60852,16 +61479,23 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "BaseInterfaceWithProperties",
-          "BaseInterfaceWithoutProperties",
-          "ConcreteChildInterface",
-          "ConcreteParentInterface",
-        ]),
-        baseInterfaceWithPropertiesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "BaseInterfaceWithProperties",
+            "BaseInterfaceWithoutProperties",
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ]),
+          baseInterfaceWithPropertiesProperty: z
+            .string()
+            .meta({ id: "baseInterfaceWithPropertiesProperty" }),
+        })
+        .meta({
+          id: "BaseInterfaceWithProperties",
+          description: "Base interface for other node shapes.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -61468,15 +62102,21 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     export function schema() {
-      return z.object({
-        ...BaseInterfaceWithPropertiesStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum([
-          "BaseInterfaceWithoutProperties",
-          "ConcreteChildInterface",
-          "ConcreteParentInterface",
-        ]),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...BaseInterfaceWithPropertiesStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "BaseInterfaceWithoutProperties",
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ]),
+        })
+        .meta({
+          id: "BaseInterfaceWithoutProperties",
+          description:
+            "Base interface for other node shapes. Put the base interface with properties above the base interface without.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -62005,12 +62645,20 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     export function schema() {
-      return z.object({
-        ...BaseInterfaceWithoutPropertiesStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
-        concreteParentInterfaceProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...BaseInterfaceWithoutPropertiesStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
+          concreteParentInterfaceProperty: z
+            .string()
+            .meta({ id: "concreteParentInterfaceProperty" }),
+        })
+        .meta({
+          id: "ConcreteParentInterface",
+          description:
+            "Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterface.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -62604,12 +63252,20 @@ export namespace ConcreteChildInterface {
     }
 
     export function schema() {
-      return z.object({
-        ...ConcreteParentInterfaceStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("ConcreteChildInterface"),
-        concreteChildInterfaceProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...ConcreteParentInterfaceStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildInterface"),
+          concreteChildInterfaceProperty: z
+            .string()
+            .meta({ id: "concreteChildInterfaceProperty" }),
+        })
+        .meta({
+          id: "ConcreteChildInterface",
+          description:
+            "Child interface of ConcreteParentInterface. Should inherit properties and node kinds.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -63243,11 +63899,19 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-        abstractBaseClassWithPropertiesProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+          abstractBaseClassWithPropertiesProperty: z
+            .string()
+            .meta({ id: "abstractBaseClassWithPropertiesProperty" }),
+        })
+        .meta({
+          id: "AbstractBaseClassWithProperties",
+          description:
+            "Node shape that serves as an abstract base class for child node shapes.\n\nIt's marked abstract in TypeScript and not exported from the module.\n\nCommon pattern: put the minting strategy and nodeKind on an ABC.\n",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -63610,11 +64274,17 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        ...AbstractBaseClassWithPropertiesStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...AbstractBaseClassWithPropertiesStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+        })
+        .meta({
+          id: "AbstractBaseClassWithoutProperties",
+          description:
+            "Abstract base for other node shapes. Put the ABC with properties above the ABC without.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -63954,12 +64624,20 @@ export namespace ConcreteParentClassStatic {
     }
 
     export function schema() {
-      return z.object({
-        ...AbstractBaseClassWithoutPropertiesStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
-        concreteParentClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...AbstractBaseClassWithoutPropertiesStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
+          concreteParentClassProperty: z
+            .string()
+            .meta({ id: "concreteParentClassProperty" }),
+        })
+        .meta({
+          id: "ConcreteParentClass",
+          description:
+            "Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -64514,12 +65192,20 @@ export namespace ConcreteChildClass {
     }
 
     export function schema() {
-      return z.object({
-        ...ConcreteParentClassStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("ConcreteChildClass"),
-        concreteChildClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...ConcreteParentClassStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("ConcreteChildClass"),
+          concreteChildClassProperty: z
+            .string()
+            .meta({ id: "concreteChildClassProperty" }),
+        })
+        .meta({
+          id: "ConcreteChildClass",
+          description:
+            "Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -65055,11 +65741,17 @@ export namespace ClassUnionMemberCommonParentStatic {
 
   export namespace $Json {
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
-        classUnionMemberCommonParentProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
+          classUnionMemberCommonParentProperty: z
+            .string()
+            .meta({ id: "classUnionMemberCommonParentProperty" }),
+        })
+        .meta({
+          id: "ClassUnionMemberCommonParent",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -65463,12 +66155,16 @@ export namespace ClassUnionMember2 {
     }
 
     export function schema() {
-      return z.object({
-        ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("ClassUnionMember2"),
-        classUnionMember2Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember2"),
+          classUnionMember2Property: z
+            .string()
+            .meta({ id: "classUnionMember2Property" }),
+        })
+        .meta({ id: "ClassUnionMember2" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -65990,12 +66686,16 @@ export namespace ClassUnionMember1 {
     }
 
     export function schema() {
-      return z.object({
-        ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
-        "@id": z.string().min(1),
-        $type: z.literal("ClassUnionMember1"),
-        classUnionMember1Property: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
+          "@id": z.string().min(1),
+          $type: z.literal("ClassUnionMember1"),
+          classUnionMember1Property: z
+            .string()
+            .meta({ id: "classUnionMember1Property" }),
+        })
+        .meta({ id: "ClassUnionMember1" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -66541,11 +67241,16 @@ export namespace NonClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("NonClass"),
-        nonClassProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("NonClass"),
+          nonClassProperty: z.string().meta({ id: "nonClassProperty" }),
+        })
+        .meta({
+          id: "NonClass",
+          description: "Node shape that isn't an rdfs:Class.",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -66989,11 +67694,18 @@ export namespace PartialClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("PartialClass"),
-        lazilyResolvedStringProperty: z.string(),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("PartialClass"),
+          lazilyResolvedStringProperty: z
+            .string()
+            .meta({ id: "lazilyResolvedStringProperty" }),
+        })
+        .meta({
+          id: "PartialClass",
+          description: "Node shape used as a partial by LazyPropertiesClass",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -67676,40 +68388,49 @@ export namespace ClassPropertiesClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("ClassPropertiesClass"),
-        iriClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
-          ),
-        multiClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          ),
-        nodeClassProperty1: NonClass.$Json
-          .schema()
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
-          ),
-        nodeClassProperty2: PartialClass.$Json
-          .schema()
-          .optional()
-          .describe(
-            "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
-          ),
-        singleClassProperty: z
-          .object({ "@id": z.string().min(1) })
-          .optional()
-          .describe(
-            "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
-          ),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("ClassPropertiesClass"),
+          iriClassProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({
+              id: "iriClassProperty",
+              description:
+                "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
+            }),
+          multiClassProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({
+              id: "multiClassProperty",
+              description:
+                "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+            }),
+          nodeClassProperty1: NonClass.$Json.schema().optional().meta({
+            id: "nodeClassProperty1",
+            description:
+              "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
+          }),
+          nodeClassProperty2: PartialClass.$Json.schema().optional().meta({
+            id: "nodeClassProperty2",
+            description:
+              "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
+          }),
+          singleClassProperty: z
+            .object({ "@id": z.string().min(1) })
+            .optional()
+            .meta({
+              id: "singleClassProperty",
+              description:
+                "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
+            }),
+        })
+        .meta({
+          id: "ClassPropertiesClass",
+          description: "Shape with properties that are not nested objects",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -68568,10 +69289,16 @@ export namespace BlankNodeOrIriIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeOrIriIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("BlankNodeOrIriIdentifierInterface"),
+        })
+        .meta({
+          id: "BlankNodeOrIriIdentifierInterface",
+          description:
+            "Node shape that can have a blank node or IRI as an identifier",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -69108,10 +69835,16 @@ export namespace BlankNodeOrIriIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeOrIriIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("BlankNodeOrIriIdentifierClass"),
+        })
+        .meta({
+          id: "BlankNodeOrIriIdentifierClass",
+          description:
+            "Node shape that can have a blank node or IRI as an identifier",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -69551,10 +70284,16 @@ export namespace BlankNodeIdentifierInterface {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeIdentifierInterface"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("BlankNodeIdentifierInterface"),
+        })
+        .meta({
+          id: "BlankNodeIdentifierInterface",
+          description:
+            "Node shape that can only have a blank node as an identifier",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -70070,10 +70809,16 @@ export namespace BlankNodeIdentifierClass {
     }
 
     export function schema() {
-      return z.object({
-        "@id": z.string().min(1),
-        $type: z.literal("BlankNodeIdentifierClass"),
-      }) satisfies z.ZodType<$Json>;
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.literal("BlankNodeIdentifierClass"),
+        })
+        .meta({
+          id: "BlankNodeIdentifierClass",
+          description:
+            "Node shape that can only have a blank node as an identifier",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -70658,7 +71403,12 @@ export namespace ClassUnion {
           ClassUnionMember1.$Json.schema(),
           ClassUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "ClassUnion",
+          description:
+            "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -71184,7 +71934,12 @@ export namespace FlattenClassUnion {
           ClassUnionMember2.$Json.schema(),
           FlattenClassUnionMember3.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "FlattenClassUnion",
+          description:
+            "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -71677,7 +72432,12 @@ export namespace InterfaceUnion {
           InterfaceUnionMember1.$Json.schema(),
           InterfaceUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "InterfaceUnion",
+          description:
+            "Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -72156,7 +72916,12 @@ export namespace LazilyResolvedClassUnion {
           LazilyResolvedClassUnionMember1.$Json.schema(),
           LazilyResolvedClassUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "LazilyResolvedClassUnion",
+          description:
+            "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -72677,7 +73442,12 @@ export namespace LazilyResolvedInterfaceUnion {
           LazilyResolvedInterfaceUnionMember1.$Json.schema(),
           LazilyResolvedInterfaceUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "LazilyResolvedInterfaceUnion",
+          description:
+            "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -73182,7 +73952,12 @@ export namespace PartialClassUnion {
           PartialClassUnionMember1.$Json.schema(),
           PartialClassUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "PartialClassUnion",
+          description:
+            "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -73658,7 +74433,12 @@ export namespace PartialInterfaceUnion {
           PartialInterfaceUnionMember1.$Json.schema(),
           PartialInterfaceUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "PartialInterfaceUnion",
+          description:
+            "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -74136,7 +74916,12 @@ export namespace NoRdfTypeClassUnion {
           NoRdfTypeClassUnionMember1.$Json.schema(),
           NoRdfTypeClassUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "NoRdfTypeClassUnion",
+          description:
+            "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -74606,7 +75391,12 @@ export namespace RecursiveClassUnion {
           RecursiveClassUnionMember1.$Json.schema(),
           RecursiveClassUnionMember2.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({
+          id: "RecursiveClassUnion",
+          description:
+            "Node shape sh:xone's node shapes that have properties with the union's type",
+        });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -80245,7 +81035,8 @@ export namespace $Object {
           $DefaultPartial.$Json.schema(),
           $NamedDefaultPartial.$Json.schema(),
         ])
-        .readonly();
+        .readonly()
+        .meta({ id: "$Object" });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
