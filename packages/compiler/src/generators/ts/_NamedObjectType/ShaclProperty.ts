@@ -132,7 +132,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get jsonZchema(): AbstractProperty<TypeT>["jsonZchema"] {
+  override get jsonSchema(): AbstractProperty<TypeT>["jsonSchema"] {
     let schema = this.type.jsonSchema({
       context: "property",
     });

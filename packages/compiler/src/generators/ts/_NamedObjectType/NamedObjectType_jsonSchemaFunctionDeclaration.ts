@@ -20,7 +20,7 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
   if (this.properties.length > 0) {
     properties = properties.concat(
       this.properties
-        .flatMap((property) => property.jsonZchema.toList())
+        .flatMap((property) => property.jsonSchema.toList())
         .map(({ key, schema }) => code`"${key}": ${schema}`),
     );
   }

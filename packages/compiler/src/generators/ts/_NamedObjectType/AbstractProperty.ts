@@ -69,7 +69,7 @@ export abstract class AbstractProperty<
   /**
    * zod Object key: schema pair on the property serialized by toJsonObjectMember.
    */
-  abstract readonly jsonZchema: Maybe<{
+  abstract readonly jsonSchema: Maybe<{
     readonly key: string;
     readonly schema: Code;
   }>;
