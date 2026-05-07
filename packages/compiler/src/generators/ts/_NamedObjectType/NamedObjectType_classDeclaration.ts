@@ -1,12 +1,11 @@
-import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { NamedObjectType_equalsFunctionOrMethodDeclaration } from "./NamedObjectType_equalsFunctionOrMethodDeclaration.js";
 import { NamedObjectType_hashFunctionOrMethodDeclarations } from "./NamedObjectType_hashFunctionOrMethodDeclarations.js";
 import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
 import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { NamedObjectType_toStringFunctionOrMethodDeclarations } from "./NamedObjectType_toStringFunctionOrMethodDeclaration.js";
 
 function NamedObjectType_constructorDeclaration(this: NamedObjectType): Code {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
@@ -81,21 +80,9 @@ ${joinCode(
     ...NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
       this,
     ).toList(),
-    ...NamedObjectType_toStringMethodDeclaration.call(this).toList(),
+    ...NamedObjectType_toStringFunctionOrMethodDeclarations.call(this),
   ],
   { on: "\n\n" },
 )}
 }`;
-}
-
-function NamedObjectType_toStringMethodDeclaration(
-  this: NamedObjectType,
-): Maybe<Code> {
-  if (!this.features.has("json")) {
-    return Maybe.empty();
-  }
-
-  return Maybe.of(
-    code`${this.parentObjectTypes.length > 0 ? "override " : ""}toString(): string { return JSON.stringify(this.${syntheticNamePrefix}toJson()); }`,
-  );
 }

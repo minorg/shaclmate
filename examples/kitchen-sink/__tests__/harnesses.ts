@@ -223,6 +223,15 @@ export const harnesses = {
     }),
     kitchenSink.DirectRecursiveClass,
   ),
+  displayPropertiesClass: new ClassHarness(
+    new kitchenSink.DisplayPropertiesClass({
+      $identifier,
+      explicitFalseDisplayProperty: "explicitFalseDisplayValue",
+      explicitTrueDisplayProperty: "explicitTrueDisplayValue",
+      implicitFalseDisplayProperty: "implicitFalseDisplayValue",
+    }),
+    kitchenSink.DisplayPropertiesClass,
+  ),
   emptyListPropertiesClass: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
       $identifier,

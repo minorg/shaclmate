@@ -11,7 +11,7 @@ import { snippets_ToRdfResourceFunction } from "./snippets_ToRdfResourceFunction
 export const snippets_PropertyPath = conditionalOutput(
   `${syntheticNamePrefix}PropertyPath`,
   code`\
-export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfjsResourcePropertyPath};
+export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
   export type $Filter = object;
@@ -20,7 +20,7 @@ export namespace ${syntheticNamePrefix}PropertyPath {
     return true;
   }
 
-  export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.fromResource;
+  export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
 
   export const $fromRdfResourceValues: ${snippets_FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
@@ -33,6 +33,8 @@ export namespace ${syntheticNamePrefix}PropertyPath {
 
   export const $schema: Readonly<object> = {};
 
-  export const ${syntheticNamePrefix}toRdfResource: ${snippets_ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfjsResourcePropertyPath}.toResource;
+  export const ${syntheticNamePrefix}toRdfResource: ${snippets_ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
+
+  export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
 );

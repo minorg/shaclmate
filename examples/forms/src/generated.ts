@@ -10,7 +10,7 @@ import type {
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
-  PropertyPath as RdfjsResourcePropertyPath,
+  PropertyPath as RdfxResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
@@ -91,6 +91,23 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
+
+/**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT extends {}>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
+      }
+      return definedProperties;
+    },
+    {} as Record<KeyT, ValueT>,
+  );
+}
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
@@ -393,7 +410,7 @@ type $PropertiesFromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-export type $PropertyPath = RdfjsResourcePropertyPath;
+export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
   export type $Filter = object;
@@ -403,7 +420,7 @@ export namespace $PropertyPath {
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.fromResource;
+    RdfxResourcePropertyPath.fromResource;
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $PropertyPath
@@ -419,7 +436,9 @@ export namespace $PropertyPath {
   export const $schema: Readonly<object> = {};
 
   export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.toResource;
+    RdfxResourcePropertyPath.toResource;
+
+  export const $toString = RdfxResourcePropertyPath.toString;
 }
 
 namespace $RdfVocabularies {
@@ -913,6 +932,23 @@ export namespace NestedNodeShape {
       options?.graph,
     );
     return resource;
+  }
+
+  export function $propertiesToStrings(
+    _nestedNodeShape: NestedNodeShape,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _nestedNodeShape.$identifier.toString(),
+    });
+  }
+
+  export function $toString(this: NestedNodeShape): string;
+  export function $toString(_nestedNodeShape: NestedNodeShape): string;
+  export function $toString(
+    this: NestedNodeShape | undefined,
+    _nestedNodeShape?: NestedNodeShape,
+  ): string {
+    return `NestedNodeShape(${JSON.stringify($propertiesToStrings((_nestedNodeShape ?? this)!))})`;
   }
 } /**
  * Form
@@ -1734,6 +1770,23 @@ export namespace FormNodeShape {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _formNodeShape: FormNodeShape,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _formNodeShape.$identifier.toString(),
+    });
+  }
+
+  export function $toString(this: FormNodeShape): string;
+  export function $toString(_formNodeShape: FormNodeShape): string;
+  export function $toString(
+    this: FormNodeShape | undefined,
+    _formNodeShape?: FormNodeShape,
+  ): string {
+    return `FormNodeShape(${JSON.stringify($propertiesToStrings((_formNodeShape ?? this)!))})`;
+  }
 }
 export type $Object = FormNodeShape | NestedNodeShape;
 
@@ -1978,6 +2031,17 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const $toString = (value: $Object): string => {
+    if (FormNodeShape.isFormNodeShape(value)) {
+      return FormNodeShape.$toString(value);
+    }
+    if (NestedNodeShape.isNestedNodeShape(value)) {
+      return NestedNodeShape.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 }
 export interface $ObjectSet {
   formNodeShape(

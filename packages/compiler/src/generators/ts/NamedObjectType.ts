@@ -38,6 +38,7 @@ import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_Name
 import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
 import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
 import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
+import { NamedObjectType_toStringFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_toStringFunctionOrMethodDeclaration.js";
 import { NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
 import { NamedObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_NamedObjectType/Property.js";
@@ -253,6 +254,9 @@ export class NamedObjectType extends AbstractType {
           ? NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
               this,
             ).toList()
+          : []),
+        ...(this.declarationType === "interface"
+          ? NamedObjectType_toStringFunctionOrMethodDeclarations.call(this)
           : []),
         ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
           this,
@@ -525,6 +529,17 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
         return code`${variables.value}.${syntheticNamePrefix}toJson()`;
       case "interface":
         return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
+    }
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    switch (this.declarationType) {
+      case "class":
+        return code`${variables.value}.toString()`;
+      case "interface":
+        return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
     }
   }
 

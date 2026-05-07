@@ -262,6 +262,11 @@ export namespace ObjectType {
     readonly description: Maybe<string>;
 
     /**
+     * Should the property and its value be displayed in a toString()-type representation?
+     */
+    readonly display: boolean;
+
+    /**
      * Human-readable label from rdfs:label.
      */
     readonly label: Maybe<string>;
@@ -310,6 +315,7 @@ export namespace ObjectType {
     constructor({
       comment,
       description,
+      display,
       label,
       mutable,
       name,
@@ -322,6 +328,7 @@ export namespace ObjectType {
     }: {
       comment: Maybe<string>;
       description: Maybe<string>;
+      display: boolean;
       label: Maybe<string>;
       mutable: boolean;
       name: string;
@@ -334,6 +341,7 @@ export namespace ObjectType {
     }) {
       this.comment = comment;
       this.description = description;
+      this.display = display;
       this.label = label;
       this.mutable = mutable;
       this.name = name;

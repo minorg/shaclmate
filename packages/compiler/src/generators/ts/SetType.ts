@@ -81,6 +81,14 @@ export class SetType<
       },
     )})`;
   }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toStringExpression"]
+  >[0]): Code {
+    return code`(${variables.value}.length > 0 ? \`[\${${variables.value}.map(item => (${this.itemType.toStringExpression({ variables: { value: code`item` } })}))}]\` : undefined)`;
+  }
 }
 
 export namespace SetType {

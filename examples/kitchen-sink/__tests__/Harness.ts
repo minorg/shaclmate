@@ -43,4 +43,6 @@ export abstract class Harness<
     graph?: Exclude<Quad_Graph, Variable>;
     resourceSet?: ResourceSet;
   }): Resource;
+
+  abstract toString(): string;
 }

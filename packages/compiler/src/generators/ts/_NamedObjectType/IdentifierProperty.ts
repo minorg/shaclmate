@@ -425,6 +425,14 @@ export class IdentifierProperty extends AbstractProperty<
     ];
   }
 
+  override toStringExpression(
+    parameters: Parameters<
+      AbstractProperty<IdentifierType>["toStringExpression"]
+    >[0],
+  ): Maybe<Code> {
+    return Maybe.of(this.type.toStringExpression(parameters));
+  }
+
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<

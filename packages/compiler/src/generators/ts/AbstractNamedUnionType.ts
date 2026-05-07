@@ -72,10 +72,6 @@ ${joinCode(
     return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
-  get jsonTypeAliasDeclaration(): Code {
-    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
-  }
-
   get jsonSchemaFunctionDeclaration(): Code {
     const meta: Record<string, string> = {
       id: this.name,
@@ -88,6 +84,10 @@ ${joinCode(
     });
 
     return code`export const schema = () => ${this.inlineJsonSchema}.meta(${meta});`;
+  }
+
+  get jsonTypeAliasDeclaration(): Code {
+    return code`export type ${syntheticNamePrefix}Json = ${this.inlineJsonType.name}`;
   }
 
   @Memoize()
@@ -174,6 +174,9 @@ export namespace ${syntheticNamePrefix}Json {
         code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
+    staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+      code`export const ${syntheticNamePrefix}toString = ${this.inlineToStringFunction};`;
+
     return staticModuleDeclarations;
   }
 
@@ -209,16 +212,6 @@ export namespace ${syntheticNamePrefix}Json {
     return this.inlineHashStatements({ depth, variables });
   }
 
-  @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    if (this.features.has("json")) {
-      return new AbstractType.JsonType(
-        `${this.staticModuleName}.${syntheticNamePrefix}Json`,
-      );
-    }
-    return this.inlineJsonType;
-  }
-
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
@@ -230,6 +223,16 @@ export namespace ${syntheticNamePrefix}Json {
       return expression;
     }
     return this.inlineJsonSchema;
+  }
+
+  @Memoize()
+  override jsonType(): AbstractType.JsonType {
+    if (this.features.has("json")) {
+      return new AbstractType.JsonType(
+        `${this.staticModuleName}.${syntheticNamePrefix}Json`,
+      );
+    }
+    return this.inlineJsonType;
   }
 
   override toJsonExpression({
@@ -249,5 +252,11 @@ export namespace ${syntheticNamePrefix}Json {
       return code`${this.staticModuleName}.${syntheticNamePrefix}toRdfResourceValues(${valueVariable}, ${otherVariables})`;
     }
     return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 }

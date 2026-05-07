@@ -1,18 +1,21 @@
-import dataFactory from "@rdfx/data-factory";
 import { describe, it } from "vitest";
-import "./harnesses.js"; // Must be imported before kitchenSink
-import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import type { Harness } from "./Harness.js";
+import { harnesses } from "./harnesses.js";
 
 describe("toString", () => {
-  it("toString", ({ expect }) => {
-    const instance = new kitchenSink.ConcreteChildClass({
-      abstractBaseClassWithPropertiesProperty: "abc",
-      concreteChildClassProperty: "child",
-      concreteParentClassProperty: "parent",
-      $identifier: dataFactory.namedNode("http://example.com/test"),
+  for (const [id, harness] of Object.entries(harnesses)) {
+    it(id, ({ expect }) => {
+      const string = (harness as Harness<any>).toString();
+      expect(string).not.toHaveLength(0);
+      expect(string).not.toEqual("[object Object]");
     });
-    expect(instance.toString()).toStrictEqual(
-      '{"@id":"http://example.com/test","$type":"ConcreteChildClass","abstractBaseClassWithPropertiesProperty":"abc","concreteParentClassProperty":"parent","concreteChildClassProperty":"child"}',
+  }
+
+  it("explicitly and implicitly exclude and include properties in toString()", ({
+    expect,
+  }) => {
+    expect(harnesses.displayPropertiesClass.toString()).toStrictEqual(
+      `DisplayPropertiesClass({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
     );
   });
 });

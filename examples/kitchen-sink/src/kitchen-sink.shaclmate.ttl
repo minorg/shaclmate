@@ -89,17 +89,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :PartialClass ;
-        sh:path :nodeClassProperty2
-    ], [
-        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:path :singleClassProperty
-    ], [
         rdfs:comment "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
@@ -116,6 +105,17 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:node :NonClass ;
         sh:path :nodeClassProperty1
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :PartialClass ;
+        sh:path :nodeClassProperty2
+    ], [
+        rdfs:comment "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:path :singleClassProperty
     ] .
 
 :ClassUnion
@@ -341,6 +341,31 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:path :directRecursiveProperty
     ] .
 
+:DisplayPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations" ;
+    sh:property [
+        shaclmate:display false ;
+        rdfs:comment "Explicity exclude from the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitFalseDisplayProperty
+    ], [
+        shaclmate:display true ;
+        rdfs:comment "Explicity include in the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitTrueDisplayProperty
+    ], [
+        rdfs:comment "Implicitly exclude from the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :implicitFalseDisplayProperty
+    ] .
+
 :ExplicitFromToRdfTypesClass
     shaclmate:fromRdfType :FromRdfType ;
     shaclmate:toRdfType :ToRdfType ;
@@ -471,6 +496,18 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
+        sh:in (1e0
+            2e0
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inDoublesProperty
+    ], [
+        sh:in ("text"
+            "html"
+        ) ;
+        sh:maxCount 1 ;
+        sh:path :inStringsProperty
+    ], [
         sh:in (true
         ) ;
         sh:maxCount 1 ;
@@ -492,18 +529,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ) ;
         sh:maxCount 1 ;
         sh:path :inIrisProperty
-    ], [
-        sh:in (1e0
-            2e0
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inDoublesProperty
-    ], [
-        sh:in ("text"
-            "html"
-        ) ;
-        sh:maxCount 1 ;
-        sh:path :inStringsProperty
     ] .
 
 :IndirectRecursiveClass

@@ -175,6 +175,16 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return this.partialType.toStringExpression({
+      variables: {
+        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
   protected resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({
     resolvedNamedObjectUnionType,
     partialNamedObjectUnionType,

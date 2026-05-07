@@ -10,7 +10,7 @@ import type {
 import dataFactory from "@rdfx/data-factory";
 import { LiteralFactory } from "@rdfx/literal";
 import {
-  PropertyPath as RdfjsResourcePropertyPath,
+  PropertyPath as RdfxResourcePropertyPath,
   Resource,
   ResourceSet,
 } from "@rdfx/resource";
@@ -25,6 +25,23 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
+
+/**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT extends {}>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
+      }
+      return definedProperties;
+    },
+    {} as Record<KeyT, ValueT>,
+  );
+}
 
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
@@ -339,7 +356,7 @@ type $PropertiesFromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
-export type $PropertyPath = RdfjsResourcePropertyPath;
+export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
   export type $Filter = object;
@@ -349,7 +366,7 @@ export namespace $PropertyPath {
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.fromResource;
+    RdfxResourcePropertyPath.fromResource;
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $PropertyPath
@@ -365,7 +382,9 @@ export namespace $PropertyPath {
   export const $schema: Readonly<object> = {};
 
   export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
-    RdfjsResourcePropertyPath.toResource;
+    RdfxResourcePropertyPath.toResource;
+
+  export const $toString = RdfxResourcePropertyPath.toString;
 }
 
 namespace $RdfVocabularies {
@@ -3991,6 +4010,26 @@ export namespace PropertyShape {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _propertyShape: PropertyShape,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _propertyShape.$identifier.toString(),
+      label: _propertyShape.label.map((item) => item.toString()).extract(),
+      name: _propertyShape.name.map((item) => item.toString()).extract(),
+      path: $PropertyPath.$toString(_propertyShape.path),
+    });
+  }
+
+  export function $toString(this: PropertyShape): string;
+  export function $toString(_propertyShape: PropertyShape): string;
+  export function $toString(
+    this: PropertyShape | undefined,
+    _propertyShape?: PropertyShape,
+  ): string {
+    return `PropertyShape(${JSON.stringify($propertiesToStrings((_propertyShape ?? this)!))})`;
+  }
 }
 export interface PropertyGroup {
   readonly $identifier: PropertyGroup.$Identifier;
@@ -4307,6 +4346,24 @@ export namespace PropertyGroup {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _propertyGroup: PropertyGroup,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _propertyGroup.$identifier.toString(),
+      label: _propertyGroup.label.map((item) => item.toString()).extract(),
+    });
+  }
+
+  export function $toString(this: PropertyGroup): string;
+  export function $toString(_propertyGroup: PropertyGroup): string;
+  export function $toString(
+    this: PropertyGroup | undefined,
+    _propertyGroup?: PropertyGroup,
+  ): string {
+    return `PropertyGroup(${JSON.stringify($propertiesToStrings((_propertyGroup ?? this)!))})`;
+  }
 }
 export interface Ontology {
   readonly $identifier: Ontology.$Identifier;
@@ -4617,6 +4674,24 @@ export namespace Ontology {
       options?.graph,
     );
     return resource;
+  }
+
+  export function $propertiesToStrings(
+    _ontology: Ontology,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _ontology.$identifier.toString(),
+      label: _ontology.label.map((item) => item.toString()).extract(),
+    });
+  }
+
+  export function $toString(this: Ontology): string;
+  export function $toString(_ontology: Ontology): string;
+  export function $toString(
+    this: Ontology | undefined,
+    _ontology?: Ontology,
+  ): string {
+    return `Ontology(${JSON.stringify($propertiesToStrings((_ontology ?? this)!))})`;
   }
 }
 export interface NodeShape {
@@ -7945,6 +8020,24 @@ export namespace NodeShape {
     );
     return resource;
   }
+
+  export function $propertiesToStrings(
+    _nodeShape: NodeShape,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _nodeShape.$identifier.toString(),
+      label: _nodeShape.label.map((item) => item.toString()).extract(),
+    });
+  }
+
+  export function $toString(this: NodeShape): string;
+  export function $toString(_nodeShape: NodeShape): string;
+  export function $toString(
+    this: NodeShape | undefined,
+    _nodeShape?: NodeShape,
+  ): string {
+    return `NodeShape(${JSON.stringify($propertiesToStrings((_nodeShape ?? this)!))})`;
+  }
 }
 export type Shape = NodeShape | PropertyShape;
 
@@ -8324,6 +8417,17 @@ export namespace Shape {
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Shape>;
 
+  export const $toString = (value: Shape): string => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toString(value);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
   export function isShape(object: $Object): object is Shape {
     return (
       NodeShape.isNodeShape(object) || PropertyShape.isPropertyShape(object)
@@ -8573,6 +8677,23 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const $toString = (value: $Object): string => {
+    if (NodeShape.isNodeShape(value)) {
+      return NodeShape.$toString(value);
+    }
+    if (Ontology.isOntology(value)) {
+      return Ontology.$toString(value);
+    }
+    if (PropertyGroup.isPropertyGroup(value)) {
+      return PropertyGroup.$toString(value);
+    }
+    if (PropertyShape.isPropertyShape(value)) {
+      return PropertyShape.$toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
 }
 export interface $ObjectSet {
   nodeShape(

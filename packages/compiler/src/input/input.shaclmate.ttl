@@ -56,7 +56,15 @@ shaclmate:Ontology
     sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+
+shaclmate:PropertyShape-display
+    a sh:PropertyShape ;
+    rdfs:comment "Whether to include this property in a toString()-type display, defaults to false" ;
+    sh:datatype xsd:boolean ;
+    sh:defaultValue false ;
+    sh:maxCount 1 ;
+    sh:path shaclmate:display .
 
 shaclmate:PropertyShape-resolve
     a sh:PropertyShape ;
@@ -81,6 +89,7 @@ shaclmate:Shape-mutable
     sh:path shaclmate:mutable .
 
 shaclmate:Shape-shaclmateName
+    shaclmate:display true ;
     a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;

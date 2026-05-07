@@ -4,6 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AnonymousUnionType } from "./AnonymousUnionType.js";
@@ -162,6 +163,14 @@ export class ListType<
     listResource: ${resourceTypeName};
   },
 ).listResource.identifier : ${rdfjsTermExpression(rdf.nil, { logger: this.logger })}]`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toStringExpression"]
+  >[0]): Code {
+    return code`\`[\${${variables.value}.map(item => (${this.itemType.toStringExpression({ variables: { value: code`item` } })}))}]\``;
   }
 }
 
