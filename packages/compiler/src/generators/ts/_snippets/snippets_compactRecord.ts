@@ -9,13 +9,13 @@ export const snippets_compactRecord = conditionalOutput(
 /**
  * Remove undefined values from a record.
  */  
-function ${syntheticNamePrefix}compactRecord<KeyT extends string, ValueT>(record: Record<KeyT, ValueT | undefined>): Record<KeyT, ValueT> {
+function ${syntheticNamePrefix}compactRecord<KeyT extends string, ValueT extends {}>(record: Record<KeyT, ValueT | undefined>): Record<KeyT, ValueT> {
   return \
     Object.entries(record).reduce((definedProperties, [propertyName, propertyValue]) => {
       if (propertyValue !== undefined) {
-        definedProperties[propertyName] = propertyValue;
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
       }
       return definedProperties;
-    }, {} as Record<string, string>);
+    }, {} as Record<KeyT, ValueT>);
 }`,
 );

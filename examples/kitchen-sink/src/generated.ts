@@ -281,17 +281,17 @@ interface $CollectionSchema<ItemSchemaT> {
 /**
  * Remove undefined values from a record.
  */
-function $compactRecord<KeyT extends string, ValueT>(
+function $compactRecord<KeyT extends string, ValueT extends {}>(
   record: Record<KeyT, ValueT | undefined>,
 ): Record<KeyT, ValueT> {
   return Object.entries(record).reduce(
     (definedProperties, [propertyName, propertyValue]) => {
       if (propertyValue !== undefined) {
-        definedProperties[propertyName] = propertyValue;
+        definedProperties[propertyName as KeyT] = propertyValue as ValueT;
       }
       return definedProperties;
     },
-    {} as Record<string, string>,
+    {} as Record<KeyT, ValueT>,
   );
 }
 
