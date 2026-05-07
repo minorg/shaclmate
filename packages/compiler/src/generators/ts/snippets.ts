@@ -1,4 +1,3 @@
-import { snippets_parseIri } from "./_snippets/parseIri.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
@@ -12,6 +11,7 @@ import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
+import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
@@ -76,6 +76,7 @@ import { snippets_PropertiesFromRdfResourceFunction } from "./_snippets/snippets
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
+import { snippets_parseIri } from "./_snippets/snippets_parseIri.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { snippets_ShaclPropertySchema } from "./_snippets/snippets_ShaclPropertySchema.js";
 import { snippets_SparqlFilterPattern } from "./_snippets/snippets_SparqlFilterPattern.js";
@@ -119,6 +120,7 @@ export const snippets = {
   booleanSparqlWherePatterns: snippets_booleanSparqlWherePatterns,
   CollectionFilter: snippets_CollectionFilter,
   CollectionSchema: snippets_CollectionSchema,
+  compactRecord: snippets_compactRecord,
   dateEquals: snippets_dateEquals,
   DateFilter: snippets_DateFilter,
   DateSchema: snippets_DateSchema,

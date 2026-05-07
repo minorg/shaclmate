@@ -279,6 +279,23 @@ interface $CollectionSchema<ItemSchemaT> {
 }
 
 /**
+ * Remove undefined values from a record.
+ */
+function $compactRecord<KeyT extends string, ValueT>(
+  record: Record<KeyT, ValueT | undefined>,
+): Record<KeyT, ValueT> {
+  return Object.entries(record).reduce(
+    (definedProperties, [propertyName, propertyValue]) => {
+      if (propertyValue !== undefined) {
+        definedProperties[propertyName] = propertyValue;
+      }
+      return definedProperties;
+    },
+    {} as Record<string, string>,
+  );
+}
+
+/**
  * Compare two Dates and return an $EqualsResult.
  */
 function $dateEquals(left: Date, right: Date): $EqualsResult {
@@ -3314,15 +3331,7 @@ export class $NamedDefaultPartial {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -3692,15 +3701,7 @@ export class $DefaultPartial {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -4453,17 +4454,9 @@ export namespace UuidV4IriIdentifierInterface {
   export function $propertiesToStrings(
     _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _uuidV4IriIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: UuidV4IriIdentifierInterface): string;
@@ -4648,15 +4641,7 @@ export class UuidV4IriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -6762,15 +6747,7 @@ export class UnionDiscriminantsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -12533,15 +12510,7 @@ export class TermPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -13893,15 +13862,7 @@ export class Sha256IriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -14412,15 +14373,7 @@ export class RecursiveClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -15030,15 +14983,7 @@ export class RecursiveClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -15654,15 +15599,7 @@ export class PropertyVisibilitiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -16312,15 +16249,7 @@ export class PropertyPathsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -17108,15 +17037,7 @@ export class PropertyNamesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -18066,15 +17987,7 @@ export class PropertyCardinalitiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -19304,17 +19217,9 @@ export namespace PartialInterfaceUnionMember2 {
   export function $propertiesToStrings(
     _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _partialInterfaceUnionMember2.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: PartialInterfaceUnionMember2): string;
@@ -19929,17 +19834,9 @@ export namespace PartialInterfaceUnionMember1 {
   export function $propertiesToStrings(
     _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _partialInterfaceUnionMember1.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: PartialInterfaceUnionMember1): string;
@@ -20104,15 +20001,7 @@ export class PartialClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -20686,15 +20575,7 @@ export class PartialClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -21247,15 +21128,7 @@ export class NewName2Class {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -21729,15 +21602,7 @@ export class NewName1Class {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -22269,15 +22134,7 @@ export class OrderedPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -23547,15 +23404,7 @@ export class NumericPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -25841,15 +25690,7 @@ export class NodeKindsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -26861,15 +26702,7 @@ export class NoRdfTypeClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -27351,15 +27184,7 @@ export class NoRdfTypeClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -27887,15 +27712,7 @@ export class NamedUnionPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -28734,15 +28551,7 @@ export class MutablePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -29815,15 +29624,7 @@ export class ListPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -31043,17 +30844,9 @@ export namespace PartialInterface {
   export function $propertiesToStrings(
     _partialInterface: PartialInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _partialInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: PartialInterface): string;
@@ -34250,17 +34043,9 @@ export namespace LazyPropertiesInterface {
   export function $propertiesToStrings(
     _lazyPropertiesInterface: LazyPropertiesInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _lazyPropertiesInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: LazyPropertiesInterface): string;
@@ -35420,15 +35205,7 @@ export class LazyPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -37782,17 +37559,9 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export function $propertiesToStrings(
     _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _lazilyResolvedIriIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: LazilyResolvedIriIdentifierInterface): string;
@@ -37944,15 +37713,7 @@ export class LazilyResolvedIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -38903,17 +38664,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $propertiesToStrings(
     _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _lazilyResolvedInterfaceUnionMember2.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: LazilyResolvedInterfaceUnionMember2): string;
@@ -39541,17 +39294,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $propertiesToStrings(
     _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _lazilyResolvedInterfaceUnionMember1.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: LazilyResolvedInterfaceUnionMember1): string;
@@ -39720,15 +39465,7 @@ export class LazilyResolvedClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -40314,15 +40051,7 @@ export class LazilyResolvedClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -41383,18 +41112,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $propertiesToStrings(
     _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier:
         _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(
@@ -41574,15 +41295,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -42194,15 +41907,7 @@ export class LanguageInPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -42835,15 +42540,7 @@ export class JsPrimitiveUnionPropertyClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -44068,17 +43765,9 @@ export namespace IriIdentifierInterface {
   export function $propertiesToStrings(
     _iriIdentifierInterface: IriIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _iriIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: IriIdentifierInterface): string;
@@ -44207,15 +43896,7 @@ export class IriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -45013,17 +44694,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export function $propertiesToStrings(
     _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _interfaceUnionMemberCommonParent.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: InterfaceUnionMemberCommonParent): string;
@@ -45620,19 +45293,11 @@ export namespace InterfaceUnionMember2 {
   export function $propertiesToStrings(
     _interfaceUnionMember2: InterfaceUnionMember2,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember2,
       ),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: InterfaceUnionMember2): string;
@@ -46227,19 +45892,11 @@ export namespace InterfaceUnionMember1 {
   export function $propertiesToStrings(
     _interfaceUnionMember1: InterfaceUnionMember1,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember1,
       ),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: InterfaceUnionMember1): string;
@@ -46719,17 +46376,7 @@ export namespace Interface {
   export function $propertiesToStrings(
     _interface: Interface,
   ): Record<string, string> {
-    return Object.entries({
-      $identifier: _interface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: _interface.$identifier.toString() });
   }
 
   export function $toString(this: Interface): string;
@@ -46920,15 +46567,7 @@ export class IndirectRecursiveHelperClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -47531,15 +47170,7 @@ export class IndirectRecursiveClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -48345,15 +47976,7 @@ export class InPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -49436,15 +49059,7 @@ export class InIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -50081,15 +49696,7 @@ export abstract class IdentifierOverride1Class {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -50470,15 +50077,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -50773,15 +50372,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -51242,15 +50833,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -51704,15 +51287,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -52229,15 +51804,7 @@ export class HasValuePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -52802,15 +52369,7 @@ export class FlattenClassUnionMember3 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -53410,15 +52969,7 @@ export class ExternClassPropertyClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -54017,15 +53568,7 @@ export abstract class AbstractBaseClassForExternClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -54474,15 +54017,7 @@ export class ExplicitRdfTypeClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -55073,15 +54608,7 @@ export class ExplicitFromToRdfTypesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -55688,15 +55215,7 @@ export class DirectRecursiveClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -56506,15 +56025,7 @@ export class DefaultValuePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -58055,15 +57566,7 @@ export class DateUnionPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -60714,15 +60217,7 @@ export class ConvertibleTypePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -63024,17 +62519,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $propertiesToStrings(
     _baseInterfaceWithProperties: BaseInterfaceWithProperties,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _baseInterfaceWithProperties.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: BaseInterfaceWithProperties): string;
@@ -63580,19 +63067,11 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $propertiesToStrings(
     _baseInterfaceWithoutProperties: BaseInterfaceWithoutProperties,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       ...BaseInterfaceWithPropertiesStatic.$propertiesToStrings(
         _baseInterfaceWithoutProperties,
       ),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: BaseInterfaceWithoutProperties): string;
@@ -64219,19 +63698,11 @@ export namespace ConcreteParentInterfaceStatic {
   export function $propertiesToStrings(
     _concreteParentInterface: ConcreteParentInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       ...BaseInterfaceWithoutPropertiesStatic.$propertiesToStrings(
         _concreteParentInterface,
       ),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: ConcreteParentInterface): string;
@@ -64829,19 +64300,11 @@ export namespace ConcreteChildInterface {
   export function $propertiesToStrings(
     _concreteChildInterface: ConcreteChildInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       ...ConcreteParentInterfaceStatic.$propertiesToStrings(
         _concreteChildInterface,
       ),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: ConcreteChildInterface): string;
@@ -65032,15 +64495,7 @@ export abstract class AbstractBaseClassWithProperties {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -65423,15 +64878,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -65775,15 +65222,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -66355,15 +65794,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -66922,15 +66353,7 @@ export abstract class ClassUnionMemberCommonParent {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -67342,15 +66765,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -67885,15 +67300,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
   }
 
   protected override $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ ...super.$propertiesToStrings() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ ...super.$propertiesToStrings() });
   }
 
   override toString(): string {
@@ -68450,15 +67857,7 @@ export class NonClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -68915,15 +68314,7 @@ export class PartialClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -69617,15 +69008,7 @@ export class ClassPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -70951,17 +70334,9 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export function $propertiesToStrings(
     _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _blankNodeOrIriIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: BlankNodeOrIriIdentifierInterface): string;
@@ -71110,15 +70485,7 @@ export class BlankNodeOrIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {
@@ -71972,17 +71339,9 @@ export namespace BlankNodeIdentifierInterface {
   export function $propertiesToStrings(
     _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
   ): Record<string, string> {
-    return Object.entries({
+    return $compactRecord({
       $identifier: _blankNodeIdentifierInterface.$identifier.toString(),
-    }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    });
   }
 
   export function $toString(this: BlankNodeIdentifierInterface): string;
@@ -72125,15 +71484,7 @@ export class BlankNodeIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return Object.entries({ $identifier: this.$identifier.toString() }).reduce(
-      (definedPropertiesToString, [propertyName, propertyValue]) => {
-        if (propertyValue !== undefined) {
-          definedPropertiesToString[propertyName] = propertyValue;
-        }
-        return definedPropertiesToString;
-      },
-      {} as Record<string, string>,
-    );
+    return $compactRecord({ $identifier: this.$identifier.toString() });
   }
 
   toString(): string {

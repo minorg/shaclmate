@@ -1,4 +1,5 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
@@ -35,7 +36,7 @@ export function NamedObjectType_toStringFunctionOrMethodDeclarations(
         );
       });
   }
-  const propertiesToStringsReturnExpression = code`Object.entries({${joinCode(propertiesToStringRecordProperties, { on: "," })}}).reduce((definedPropertiesToString, [propertyName, propertyValue]) => { if (propertyValue !== undefined) { definedPropertiesToString[propertyName] = propertyValue; } return definedPropertiesToString; }, {} as Record<string, string>)`;
+  const propertiesToStringsReturnExpression = code`${snippets.compactRecord}({${joinCode(propertiesToStringRecordProperties, { on: "," })}})`;
   const toStringReturnExpression = (propertiesToStrings: Code) =>
     code`\`${this.name}(\${JSON.stringify(${propertiesToStrings})})\``;
 
