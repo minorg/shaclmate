@@ -89,6 +89,18 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
+        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:path :iriClassProperty
+    ], [
+        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
+        sh:class :UndefinedClass ;
+        sh:maxCount 1 ;
+        sh:node :NonClass ;
+        sh:path :nodeClassProperty1
+    ], [
         rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target" ;
         sh:class :UndefinedClass ;
         sh:maxCount 1 ;
@@ -104,18 +116,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:class :UndefinedClass1, :UndefinedClass2 ;
         sh:maxCount 1 ;
         sh:path :multiClassProperty
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:path :iriClassProperty
-    ], [
-        rdfs:comment "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target" ;
-        sh:class :UndefinedClass ;
-        sh:maxCount 1 ;
-        sh:node :NonClass ;
-        sh:path :nodeClassProperty1
     ] .
 
 :ClassUnion
@@ -339,6 +339,31 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:node :DirectRecursiveClass ;
         sh:path :directRecursiveProperty
+    ] .
+
+:DisplayPropertiesClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations" ;
+    sh:property [
+        shaclmate:display false ;
+        rdfs:comment "Explicity exclude from the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitFalseDisplayProperty
+    ], [
+        shaclmate:display true ;
+        rdfs:comment "Explicity include in the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :explicitTrueDisplayProperty
+    ], [
+        rdfs:comment "Implicitly exclude from the display" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :implicitFalseDisplayProperty
     ] .
 
 :ExplicitFromToRdfTypesClass

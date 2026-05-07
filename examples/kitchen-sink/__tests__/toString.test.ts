@@ -10,4 +10,12 @@ describe("toString", () => {
       expect(string).not.toEqual("[object Object]");
     });
   }
+
+  it("explicitly and implicitly exclude and include properties in toString()", ({
+    expect,
+  }) => {
+    expect(harnesses.displayPropertiesClass.toString()).toStrictEqual(
+      `DisplayPropertiesClass({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
+    );
+  });
 });
