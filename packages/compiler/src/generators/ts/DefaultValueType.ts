@@ -1,8 +1,10 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
+
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -192,6 +194,12 @@ export class DefaultValueType<
     return this.itemType.hashStatements(parameters);
   }
 
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
+  ): Code {
+    return this.itemType.jsonSchema(parameters);
+  }
+
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
   ): AbstractType.JsonType {
@@ -204,12 +212,6 @@ export class DefaultValueType<
     >[0],
   ): Maybe<Code> {
     return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return this.itemType.jsonSchema(parameters);
   }
 
   override toJsonExpression(
@@ -230,6 +232,12 @@ export class DefaultValueType<
       .orDefault(
         code`${this.itemType.toRdfResourceValuesExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
       );
+  }
+
+  override toStringExpression(
+    parameters: Parameters<AbstractType["toStringExpression"]>[0],
+  ): Code {
+    return this.itemType.toStringExpression(parameters);
   }
 }
 

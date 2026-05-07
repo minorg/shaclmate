@@ -188,6 +188,12 @@ export abstract class AbstractTermType<
     return code`[${variables.value}]`;
   }
 
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return variables.value;
+  }
+
   /**
    * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
    *

@@ -644,6 +644,22 @@ ${joinCode(
 }) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
+  protected get inlineToStringFunction(): Code {
+    return code`\
+((value: ${this.name}): ${this.jsonType().name} => {
+${joinCode(
+  this.concreteMembers.map(
+    ({ type, typeCheck, unwrap, wrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${wrap(
+        type.toStringExpression({ variables: { value: unwrap(code`value`) } }),
+      )}; }`,
+  ),
+)}
+
+  throw new Error("unable to serialize to string");
+})`;
+  }
+
   @Memoize()
   protected get inlineValueSparqlConstructTriplesFunction(): Code {
     return code`\

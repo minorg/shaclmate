@@ -218,6 +218,14 @@ export class OptionType<
     }
     return toRdfExpression;
   }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toStringExpression"]
+  >[0]): Code {
+    return code`${variables.value}.map(item => (${this.itemType.toStringExpression({ variables: { value: code`item` } })})).extract()`;
+  }
 }
 
 export namespace OptionType {

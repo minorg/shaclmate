@@ -124,14 +124,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    const typeJsonType = this.type.jsonType();
-    return Maybe.of(
-      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredName}`,
-    );
-  }
-
-  @Memoize()
   override get jsonSchema(): AbstractProperty<TypeT>["jsonSchema"] {
     let schema = this.type.jsonSchema({
       context: "property",
@@ -152,6 +144,14 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       key: this.name,
       schema,
     });
+  }
+
+  @Memoize()
+  override get jsonSignature(): Maybe<Code> {
+    const typeJsonType = this.type.jsonType();
+    return Maybe.of(
+      code`${!this.mutable ? "readonly " : ""}${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredName}`,
+    );
   }
 
   protected override get schemaObject() {
@@ -351,6 +351,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         },
       )}, ${variables.graph});`,
     ];
+  }
+
+  override toStringExpression(
+    parameters: Parameters<AbstractProperty<TypeT>["toStringExpression"]>[0],
+  ): Maybe<Code> {
+    return Maybe.of(this.type.toStringExpression(parameters));
   }
 
   private propertyPathToCode(propertyPath: PropertyPath): Code {

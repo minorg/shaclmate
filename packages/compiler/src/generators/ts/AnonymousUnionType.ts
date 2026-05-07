@@ -64,14 +64,14 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     return this.inlineHashStatements(parameters);
   }
 
-  override jsonType(): AbstractType.JsonType {
-    return this.inlineJsonType;
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {
     return this.inlineJsonSchema;
+  }
+
+  override jsonType(): AbstractType.JsonType {
+    return this.inlineJsonType;
   }
 
   override toJsonExpression({
@@ -85,5 +85,11 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
     return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.inlineToStringFunction}(${variables.value})`;
   }
 }

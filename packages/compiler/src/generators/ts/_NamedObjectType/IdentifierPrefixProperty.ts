@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { StringType } from "../StringType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -14,9 +15,9 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
-  override readonly jsonSignature: Maybe<Code> = Maybe.empty();
   override readonly jsonSchema: AbstractProperty<StringType>["jsonSchema"] =
     Maybe.empty();
+  override readonly jsonSignature: Maybe<Code> = Maybe.empty();
   override readonly kind = "IdentifierPrefixProperty";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -112,5 +113,9 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
+  }
+
+  override toStringExpression(): Maybe<Code> {
+    return Maybe.empty();
   }
 }

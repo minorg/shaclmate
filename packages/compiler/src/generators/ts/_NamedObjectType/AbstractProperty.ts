@@ -62,17 +62,17 @@ export abstract class AbstractProperty<
   }>;
 
   /**
-   * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
-   */
-  abstract readonly jsonSignature: Maybe<Code>;
-
-  /**
    * zod Object key: schema pair on the property serialized by toJsonObjectMember.
    */
   abstract readonly jsonSchema: Maybe<{
     readonly key: string;
     readonly schema: Code;
   }>;
+
+  /**
+   * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
+   */
+  abstract readonly jsonSignature: Maybe<Code>;
 
   /**
    * Property type discriminator e.g., "ShaclProperty".
@@ -241,4 +241,11 @@ export abstract class AbstractProperty<
       "propertyPath"
     >;
   }): readonly Code[];
+
+  /**
+   * Expression to serialize this property to a human-readable string (toString).
+   */
+  abstract toStringExpression(parameters: {
+    variables: { value: Code };
+  }): Maybe<Code>;
 }

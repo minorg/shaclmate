@@ -107,6 +107,13 @@ export abstract class AbstractType {
   abstract readonly schemaType: Code;
 
   /**
+   * The type(s) of the array elements produced by the toRdfResourceValuesExpression.
+   */
+  abstract readonly toRdfResourceValueTypes: ReadonlySet<
+    "BlankNode" | "NamedNode" | "Literal"
+  >;
+
+  /**
    * JavaScript typeof(s) the type.
    */
   abstract readonly typeofs: NonEmptyList<Typeof>;
@@ -263,13 +270,6 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * The type(s) of the array elements produced by the toRdfResourceValuesExpression.
-   */
-  abstract readonly toRdfResourceValueTypes: ReadonlySet<
-    "BlankNode" | "NamedNode" | "Literal"
-  >;
-
-  /**
    * An expression that converts a property value of this type to a value or an array of values that can be .add'd to a Resource with
    *   resource.add(predicate, convertedValue, graph)
    *
@@ -289,6 +289,11 @@ export abstract class AbstractType {
       value: Code;
     };
   }): Code;
+
+  /**
+   * An expression that converts a value of this type to a human-readable string (toString).
+   */
+  abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
 }
 
 export namespace AbstractType {

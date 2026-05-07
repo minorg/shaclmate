@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { imports } from "../imports.js";
 import { removeUndefined } from "../removeUndefined.js";
 import { snippets } from "../snippets.js";
@@ -44,11 +45,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
-  }
-
-  @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
       key: this.name,
@@ -57,6 +53,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
           ? code`${imports.z}.enum(${arrayOf(...this.type.values)})`
           : code`${imports.z}.literal(${literalOf(this.type.values[0])})`,
     });
+  }
+
+  @Memoize()
+  override get jsonSignature(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
   private get abstract(): boolean {
@@ -138,6 +139,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
+  }
+
+  override toStringExpression(): Maybe<Code> {
+    return Maybe.empty();
   }
 }
 
