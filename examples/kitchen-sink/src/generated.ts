@@ -3261,9 +3261,16 @@ export class $NamedDefaultPartial {
 
   readonly $type: "$NamedDefaultPartial" = "$NamedDefaultPartial" as const;
 
-  constructor(parameters: { readonly $identifier: NamedNode | string }) {
+  constructor(parameters: {
+    readonly $identifier:
+      | (() => $NamedDefaultPartial.$Identifier)
+      | NamedNode
+      | string;
+  }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -3628,10 +3635,15 @@ export class $DefaultPartial {
   readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => $DefaultPartial.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -4089,7 +4101,10 @@ export class UnionDiscriminantsClass {
   readonly setIriOrStringProperty: readonly (NamedNode | string)[];
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => UnionDiscriminantsClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly optionalClassOrClassOrStringProperty?:
       | Maybe<
           | { type: "ClassUnionMember1"; value: ClassUnionMember1 }
@@ -4147,7 +4162,9 @@ export class UnionDiscriminantsClass {
     readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -10994,7 +11011,10 @@ export class TermPropertiesClass {
   readonly termProperty: Maybe<BlankNode | NamedNode | Literal>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => TermPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly blankNodeTermProperty?: Maybe<BlankNode> | BlankNode;
     readonly booleanTermProperty?: Maybe<boolean> | boolean;
     readonly dateTermProperty?: Maybe<Date> | Date;
@@ -11020,7 +11040,9 @@ export class TermPropertiesClass {
       | (BlankNode | NamedNode | Literal);
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -12719,13 +12741,18 @@ export class RecursiveClassUnionMember2 {
   readonly recursiveClassUnionMember2Property: Maybe<RecursiveClassUnion>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => RecursiveClassUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly recursiveClassUnionMember2Property?:
       | Maybe<RecursiveClassUnion>
       | RecursiveClassUnion;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -13325,13 +13352,18 @@ export class RecursiveClassUnionMember1 {
   readonly recursiveClassUnionMember1Property: Maybe<RecursiveClassUnion>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => RecursiveClassUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly recursiveClassUnionMember1Property?:
       | Maybe<RecursiveClassUnion>
       | RecursiveClassUnion;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -13938,13 +13970,18 @@ export class PropertyVisibilitiesClass {
   readonly publicProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyVisibilitiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly privateProperty: string;
     readonly protectedProperty: string;
     readonly publicProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -14559,12 +14596,17 @@ export class PropertyPathsClass {
   readonly predicatePathProperty: Maybe<string>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyPathsClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly inversePathProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly predicatePathProperty?: Maybe<string> | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -15316,7 +15358,10 @@ export class PropertyNamesClass {
   readonly actualPropertyName5: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyNamesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
@@ -15324,7 +15369,9 @@ export class PropertyNamesClass {
     readonly actualPropertyName5: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -16258,14 +16305,19 @@ export class PropertyCardinalitiesClass {
   readonly requiredStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyCardinalitiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: NonEmptyList<string>;
     readonly optionalStringProperty?: Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -17121,12 +17173,17 @@ export interface PartialInterfaceUnionMember2 {
 
 export namespace PartialInterfaceUnionMember2 {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialInterfaceUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember2 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterfaceUnionMember2.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -17740,12 +17797,17 @@ export interface PartialInterfaceUnionMember1 {
 
 export namespace PartialInterfaceUnionMember1 {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialInterfaceUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember1 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterfaceUnionMember1.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -18360,11 +18422,16 @@ export class PartialClassUnionMember2 {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialClassUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -18930,11 +18997,16 @@ export class PartialClassUnionMember1 {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialClassUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -19500,10 +19572,15 @@ export class NewName2Class {
   readonly $type: "NewName2Class" = "NewName2Class" as const;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NewName2Class.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -19970,10 +20047,15 @@ export class NewName1Class {
   readonly $type: "NewName1Class" = "NewName1Class" as const;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NewName1Class.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -20445,13 +20527,18 @@ export class OrderedPropertiesClass {
   readonly orderedPropertyA: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => OrderedPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
     readonly orderedPropertyA: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -21112,7 +21199,10 @@ export class NumericPropertiesClass {
   readonly unsignedShortNumericProperty: Maybe<number>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NumericPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly byteNumericProperty?: Maybe<number> | number;
     readonly decimalNumericProperty?: Maybe<BigDecimal> | BigDecimal;
     readonly doubleNumericProperty?: Maybe<number> | number;
@@ -21131,7 +21221,9 @@ export class NumericPropertiesClass {
     readonly unsignedShortNumericProperty?: Maybe<number> | number;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -23726,7 +23818,10 @@ export class NodeKindsClass {
   readonly literalNodeKindProperty: Literal;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NodeKindsClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly blankNodeKindProperty: BlankNode;
     readonly blankNodeOrIriNodeKindProperty: (BlankNode | NamedNode) | string;
     readonly blankNodeOrLiteralNodeKindProperty:
@@ -23753,7 +23848,9 @@ export class NodeKindsClass {
       | Literal;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -25036,11 +25133,16 @@ export class NoRdfTypeClassUnionMember2 {
   readonly noRdfTypeClassUnionMember2Property: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NoRdfTypeClassUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly noRdfTypeClassUnionMember2Property: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -25514,11 +25616,16 @@ export class NoRdfTypeClassUnionMember1 {
   readonly noRdfTypeClassUnionMember1Property: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NoRdfTypeClassUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly noRdfTypeClassUnionMember1Property: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -25994,12 +26101,17 @@ export class NamedUnionPropertiesClass {
   readonly namedUnion2Property: NamedUnion2;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NamedUnionPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property: NamedUnion2;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -26715,13 +26827,18 @@ export class MutablePropertiesClass {
   mutableStringProperty: Maybe<string>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => MutablePropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly mutableListProperty?: Maybe<string[]> | readonly string[];
     readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: Maybe<string> | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -27665,7 +27782,10 @@ export class ListPropertiesClass {
   readonly stringListProperty: Maybe<readonly string[]>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ListPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly iriListProperty?:
       | Maybe<readonly NamedNode[]>
       | readonly NamedNode[]
@@ -27676,7 +27796,9 @@ export class ListPropertiesClass {
     readonly stringListProperty?: Maybe<readonly string[]> | readonly string[];
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -28802,12 +28924,17 @@ export interface PartialInterface {
 
 export namespace PartialInterface {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialInterface.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -29352,7 +29479,10 @@ export interface LazyPropertiesInterface {
 
 export namespace LazyPropertiesInterface {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazyPropertiesInterface.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly optionalLazyToResolvedInterfaceProperty?:
       | $LazyObjectOption<
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
@@ -29432,7 +29562,9 @@ export namespace LazyPropertiesInterface {
   }): LazyPropertiesInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazyPropertiesInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -32566,7 +32698,10 @@ export class LazyPropertiesClass {
   >;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazyPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly optionalLazyToResolvedClassProperty?:
       | $LazyObjectOption<
           LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
@@ -32645,7 +32780,9 @@ export class LazyPropertiesClass {
       | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -35496,12 +35633,17 @@ export interface LazilyResolvedIriIdentifierInterface {
 
 export namespace LazilyResolvedIriIdentifierInterface {
   export function $create(parameters: {
-    readonly $identifier: NamedNode | string;
+    readonly $identifier:
+      | (() => LazilyResolvedIriIdentifierInterface.$Identifier)
+      | NamedNode
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedIriIdentifierInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -36026,11 +36168,16 @@ export class LazilyResolvedIriIdentifierClass {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier: NamedNode | string;
+    readonly $identifier:
+      | (() => LazilyResolvedIriIdentifierClass.$Identifier)
+      | NamedNode
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -36498,12 +36645,17 @@ export interface LazilyResolvedInterfaceUnionMember2 {
 
 export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedInterfaceUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember2 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -37132,12 +37284,17 @@ export interface LazilyResolvedInterfaceUnionMember1 {
 
 export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedInterfaceUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember1 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -37767,11 +37924,16 @@ export class LazilyResolvedClassUnionMember2 {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedClassUnionMember2.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -38349,11 +38511,16 @@ export class LazilyResolvedClassUnionMember1 {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedClassUnionMember1.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -38933,12 +39100,17 @@ export interface LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifierInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -39593,11 +39765,16 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -40198,11 +40375,16 @@ export class LanguageInPropertiesClass {
   readonly languageInLiteralProperty: NonEmptyList<Literal>;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => LanguageInPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly languageInLiteralProperty: NonEmptyList<Literal>;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -40742,11 +40924,16 @@ export class JsPrimitiveUnionPropertyClass {
   readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => JsPrimitiveUnionPropertyClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -41716,11 +41903,16 @@ export interface IriIdentifierInterface {
 
 export namespace IriIdentifierInterface {
   export function $create(parameters: {
-    readonly $identifier: NamedNode | string;
+    readonly $identifier:
+      | (() => IriIdentifierInterface.$Identifier)
+      | NamedNode
+      | string;
   }): IriIdentifierInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => IriIdentifierInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -42222,9 +42414,16 @@ export class IriIdentifierClass {
 
   readonly $type: "IriIdentifierClass" = "IriIdentifierClass" as const;
 
-  constructor(parameters: { readonly $identifier: NamedNode | string }) {
+  constructor(parameters: {
+    readonly $identifier:
+      | (() => IriIdentifierClass.$Identifier)
+      | NamedNode
+      | string;
+  }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -42686,12 +42885,17 @@ export interface InterfaceUnionMemberCommonParent {
 
 export namespace InterfaceUnionMemberCommonParentStatic {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => InterfaceUnionMemberCommonParentStatic.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly interfaceUnionMemberCommonParentProperty: string;
   }): Omit<InterfaceUnionMemberCommonParent, "$type"> {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => InterfaceUnionMemberCommonParentStatic.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -43159,13 +43363,18 @@ export interface InterfaceUnionMember2
 export namespace InterfaceUnionMember2 {
   export function $create(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => InterfaceUnionMember2.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly interfaceUnionMember2Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember2 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => InterfaceUnionMember2.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -43760,13 +43969,18 @@ export interface InterfaceUnionMember1
 export namespace InterfaceUnionMember1 {
   export function $create(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => InterfaceUnionMember1.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly interfaceUnionMember1Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember1 {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => InterfaceUnionMember1.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -44362,12 +44576,17 @@ export interface Interface {
 
 export namespace Interface {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => Interface.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly interfaceProperty: string;
   }): Interface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => Interface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -44840,13 +45059,18 @@ export class IndirectRecursiveHelperClass {
   readonly indirectRecursiveProperty: Maybe<IndirectRecursiveClass>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => IndirectRecursiveHelperClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly indirectRecursiveProperty?:
       | Maybe<IndirectRecursiveClass>
       | IndirectRecursiveClass;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -45439,13 +45663,18 @@ export class IndirectRecursiveClass {
   readonly indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelperClass>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => IndirectRecursiveClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly indirectRecursiveHelperProperty?:
       | Maybe<IndirectRecursiveHelperClass>
       | IndirectRecursiveHelperClass;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -46059,7 +46288,10 @@ export class InPropertiesClass {
   readonly inStringsProperty: Maybe<"text" | "html">;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => InPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly inBooleansProperty?: Maybe<true> | true;
     readonly inDateTimesProperty?: Maybe<Date> | Date;
     readonly inDoublesProperty?: Maybe<1 | 2> | 1 | 2;
@@ -46080,7 +46312,9 @@ export class InPropertiesClass {
     readonly inStringsProperty?: Maybe<"text" | "html"> | "text" | "html";
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -47341,6 +47575,7 @@ export class InIdentifierClass {
 
   constructor(parameters: {
     readonly $identifier:
+      | (() => InIdentifierClass.$Identifier)
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
@@ -47350,7 +47585,9 @@ export class InIdentifierClass {
     readonly inIdentifierProperty?: Maybe<string> | string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -48672,7 +48909,10 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
-      readonly $identifier: NamedNode | string;
+      readonly $identifier:
+        | (() => IdentifierOverride3Class.$Identifier)
+        | NamedNode
+        | string;
     } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
   ) {
     super(parameters);
@@ -49089,12 +49329,17 @@ export class HasValuePropertiesClass {
   readonly hasLiteralValueProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => HasValuePropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly hasIriValueProperty: NamedNode | string;
     readonly hasLiteralValueProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -49670,11 +49915,16 @@ export class FlattenClassUnionMember3 {
   readonly flattenClassUnionMember3Property: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => FlattenClassUnionMember3.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly flattenClassUnionMember3Property: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -50247,11 +50497,16 @@ export class ExternClassPropertyClass {
   readonly externClassProperty: Maybe<ExternClass>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ExternClassPropertyClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly externClassProperty?: Maybe<ExternClass> | ExternClass;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -51297,11 +51552,16 @@ export class ExplicitRdfTypeClass {
   readonly explicitRdfTypeProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ExplicitRdfTypeClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly explicitRdfTypeProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -51874,11 +52134,16 @@ export class ExplicitFromToRdfTypesClass {
   readonly explicitFromToRdfTypesProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ExplicitFromToRdfTypesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly explicitFromToRdfTypesProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -52477,13 +52742,18 @@ export class DisplayPropertiesClass {
   readonly implicitFalseDisplayProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => DisplayPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly explicitFalseDisplayProperty: string;
     readonly explicitTrueDisplayProperty: string;
     readonly implicitFalseDisplayProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -53240,13 +53510,18 @@ export class DirectRecursiveClass {
   readonly directRecursiveProperty: Maybe<DirectRecursiveClass>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => DirectRecursiveClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly directRecursiveProperty?:
       | Maybe<DirectRecursiveClass>
       | DirectRecursiveClass;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -53841,7 +54116,10 @@ export class DefaultValuePropertiesClass {
   readonly trueBooleanDefaultValueProperty: boolean;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => DefaultValuePropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly dateDefaultValueProperty?: Date;
     readonly dateTimeDefaultValueProperty?: Date;
     readonly falseBooleanDefaultValueProperty?: boolean;
@@ -53850,7 +54128,9 @@ export class DefaultValuePropertiesClass {
     readonly trueBooleanDefaultValueProperty?: boolean;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -55117,7 +55397,10 @@ export class DateUnionPropertiesClass {
   >;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => DateUnionPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly dateOrDateTimeProperty?:
       | Maybe<{ type: "date"; value: Date } | { type: "dateTime"; value: Date }>
       | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date });
@@ -55132,7 +55415,9 @@ export class DateUnionPropertiesClass {
       | ({ type: "string"; value: string } | { type: "date"; value: Date });
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -57546,7 +57831,10 @@ export class ConvertibleTypePropertiesClass {
   )[];
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ConvertibleTypePropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
     readonly convertibleIriOptionProperty?:
       | Maybe<NamedNode>
@@ -57604,7 +57892,9 @@ export class ConvertibleTypePropertiesClass {
       | readonly string[];
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -60019,12 +60309,17 @@ export interface BaseInterfaceWithProperties {
 
 export namespace BaseInterfaceWithPropertiesStatic {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => BaseInterfaceWithPropertiesStatic.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly baseInterfaceWithPropertiesProperty: string;
   }): BaseInterfaceWithProperties {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -60702,12 +60997,17 @@ export interface BaseInterfaceWithoutProperties
 export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $create(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => BaseInterfaceWithoutPropertiesStatic.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
     } & Parameters<typeof BaseInterfaceWithPropertiesStatic.$create>[0],
   ): BaseInterfaceWithoutProperties {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -61254,13 +61554,18 @@ export interface ConcreteParentInterface
 export namespace ConcreteParentInterfaceStatic {
   export function $create(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ConcreteParentInterfaceStatic.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly concreteParentInterfaceProperty: string;
     } & Parameters<typeof BaseInterfaceWithoutPropertiesStatic.$create>[0],
   ): ConcreteParentInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -61884,13 +62189,18 @@ export interface ConcreteChildInterface extends ConcreteParentInterface {
 export namespace ConcreteChildInterface {
   export function $create(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ConcreteChildInterface.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly concreteChildInterfaceProperty: string;
     } & Parameters<typeof ConcreteParentInterfaceStatic.$create>[0],
   ): ConcreteChildInterface {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => ConcreteChildInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -63195,7 +63505,10 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 
   constructor(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ConcreteParentClassStatic.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly concreteParentClassProperty: string;
     } & ConstructorParameters<typeof AbstractBaseClassWithoutProperties>[0],
   ) {
@@ -63751,7 +64064,10 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
   constructor(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ConcreteChildClass.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly concreteChildClassProperty: string;
     } & ConstructorParameters<typeof ConcreteParentClass>[0],
   ) {
@@ -64699,7 +65015,10 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
   constructor(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ClassUnionMember2.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly classUnionMember2Property: string;
     } & ConstructorParameters<typeof ClassUnionMemberCommonParent>[0],
   ) {
@@ -65227,7 +65546,10 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
   constructor(
     parameters: {
-      readonly $identifier?: (BlankNode | NamedNode) | string;
+      readonly $identifier?:
+        | (() => ClassUnionMember1.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
       readonly classUnionMember1Property: string;
     } & ConstructorParameters<typeof ClassUnionMemberCommonParent>[0],
   ) {
@@ -65759,11 +66081,16 @@ export class PartialClass {
   readonly lazilyResolvedStringProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PartialClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -66227,11 +66554,16 @@ export class NonClass {
   readonly nonClassProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NonClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly nonClassProperty: string;
   }) {
     const $identifierParameter = parameters.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -66702,7 +67034,10 @@ export class ClassPropertiesClass {
   readonly singleClassProperty: Maybe<BlankNode | NamedNode>;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => ClassPropertiesClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly iriClassProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly multiClassProperty?:
       | Maybe<BlankNode | NamedNode>
@@ -66716,7 +67051,9 @@ export class ClassPropertiesClass {
       | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -67852,11 +68189,16 @@ export interface BlankNodeOrIriIdentifierInterface {
 
 export namespace BlankNodeOrIriIdentifierInterface {
   export function $create(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => BlankNodeOrIriIdentifierInterface.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
   }): BlankNodeOrIriIdentifierInterface {
     const $identifierParameter = parameters?.$identifier;
     let $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -68386,10 +68728,15 @@ export class BlankNodeOrIriIdentifierClass {
     "BlankNodeOrIriIdentifierClass" as const;
 
   constructor(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => BlankNodeOrIriIdentifierClass.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
   }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       this.$identifier = () => dataFactory.namedNode($identifierParameter);
@@ -68872,11 +69219,15 @@ export interface BlankNodeIdentifierInterface {
 
 export namespace BlankNodeIdentifierInterface {
   export function $create(parameters?: {
-    readonly $identifier?: BlankNode;
+    readonly $identifier?:
+      | (() => BlankNodeIdentifierInterface.$Identifier)
+      | BlankNode;
   }): BlankNodeIdentifierInterface {
     const $identifierParameter = parameters?.$identifier;
     let $identifier: () => BlankNodeIdentifierInterface.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if ($identifierParameter === undefined) {
       const $eagerIdentifier = dataFactory.blankNode();
@@ -69388,9 +69739,15 @@ export class BlankNodeIdentifierClass {
   readonly $type: "BlankNodeIdentifierClass" =
     "BlankNodeIdentifierClass" as const;
 
-  constructor(parameters?: { readonly $identifier?: BlankNode }) {
+  constructor(parameters?: {
+    readonly $identifier?:
+      | (() => BlankNodeIdentifierClass.$Identifier)
+      | BlankNode;
+  }) {
     const $identifierParameter = parameters?.$identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       this.$identifier = () => $identifierParameter;
     } else if ($identifierParameter === undefined) {
       const $eagerIdentifier = dataFactory.blankNode();

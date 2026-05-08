@@ -50,7 +50,7 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>
     ).has("BlankNode");
 
-    const typeNames: Code[] = [];
+    const typeNames: Code[] = [code`(() => ${this.typeAlias})`];
     for (const conversion of this.type.conversions) {
       if (
         conversion.sourceTypeof !== "undefined" &&
@@ -209,8 +209,11 @@ export class IdentifierProperty extends AbstractProperty<
         break;
     }
 
-    const conversionBranches: Code[] = [];
+    const conversionBranches: Code[] = [
+      code`if (typeof ${parameterVariable} === "function") { ${lhs} = ${parameterVariable}; }`,
+    ];
     for (const conversion of typeConversions) {
+      invariant(conversion.sourceTypeof !== "function");
       invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
         code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${lhs} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
