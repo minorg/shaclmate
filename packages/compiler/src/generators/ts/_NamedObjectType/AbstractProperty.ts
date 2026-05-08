@@ -137,6 +137,13 @@ export abstract class AbstractProperty<
   }
 
   /**
+   * Expression to access the value of this property on an object instance. May evaluate a thunk.
+   */
+  accessExpression({ variables }: { variables: { object: Code } }): Code {
+    return code`${variables.object}.${this.name}`;
+  }
+
+  /**
    * Statements to assign the parameter of described by constructorParametersSignature to a class or interface member.
    */
   abstract constructorStatements(parameters: {
@@ -181,13 +188,6 @@ export abstract class AbstractProperty<
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: Code };
   }): Maybe<Code>;
-
-  /**
-   * Expression to read the value of this property on an object instance. May evaluate a thunk.
-   */
-  readExpression({ variables }: { variables: { object: Code } }): Code {
-    return code`${variables.object}.${this.name}`;
-  }
 
   /**
    * SPARQL.js CONSTRUCT template triples for this property.

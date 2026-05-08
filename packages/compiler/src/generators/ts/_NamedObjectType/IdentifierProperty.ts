@@ -95,7 +95,7 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeAlias}.stringify(${this.readExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.typeAlias}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
       type: this.type.graphqlType.name,
     });
   }
@@ -165,6 +165,16 @@ export class IdentifierProperty extends AbstractProperty<
 
   private get override(): boolean {
     return this.namedObjectType.parentObjectTypes.length > 0;
+  }
+
+  override accessExpression({
+    variables,
+  }: Parameters<
+    AbstractProperty<
+      BlankNodeType | IdentifierType | IriType
+    >["accessExpression"]
+  >[0]): Code {
+    return code`${variables.object}.${this.name}()`;
   }
 
   override constructorStatements({
@@ -267,14 +277,6 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(
       code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     );
-  }
-
-  override readExpression({
-    variables,
-  }: Parameters<
-    AbstractProperty<BlankNodeType | IdentifierType | IriType>["readExpression"]
-  >[0]): Code {
-    return code`${variables.object}.${this.name}()`;
   }
 
   override sparqlConstructTriplesExpression(): Maybe<Code> {
