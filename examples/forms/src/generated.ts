@@ -596,7 +596,7 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 export interface NestedNodeShape {
-  readonly $identifier: NestedNodeShape.$Identifier;
+  readonly $identifier: () => NestedNodeShape.$Identifier;
   readonly $type: "NestedNodeShape" /**
    * Required string
    */;
@@ -609,15 +609,17 @@ export namespace NestedNodeShape {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
-    let $identifier: NestedNodeShape.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => NestedNodeShape.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "NestedNodeShape" as const;
     const requiredStringProperty = parameters.requiredStringProperty;
@@ -773,7 +775,7 @@ export namespace NestedNodeShape {
   };
 
   export function $fromJson(json: NestedNodeShape.$Json): NestedNodeShape {
-    return $propertiesFromJson(json);
+    return NestedNodeShape.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
@@ -796,7 +798,7 @@ export namespace NestedNodeShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -955,7 +957,7 @@ export namespace NestedNodeShape {
  */
 
 export interface FormNodeShape {
-  readonly $identifier: FormNodeShape.$Identifier;
+  readonly $identifier: () => FormNodeShape.$Identifier;
   readonly $type: "FormNodeShape" /**
    * Empty string set
    */;
@@ -993,15 +995,17 @@ export namespace FormNodeShape {
     readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
-    let $identifier: FormNodeShape.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => FormNodeShape.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "FormNodeShape" as const;
     let emptyStringSetProperty: readonly string[];
@@ -1371,7 +1375,7 @@ export namespace FormNodeShape {
   };
 
   export function $fromJson(json: FormNodeShape.$Json): FormNodeShape {
-    return $propertiesFromJson(json);
+    return FormNodeShape.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
@@ -1394,7 +1398,7 @@ export namespace FormNodeShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<

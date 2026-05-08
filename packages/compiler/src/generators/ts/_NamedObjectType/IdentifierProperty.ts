@@ -87,112 +87,6 @@ export class IdentifierProperty extends AbstractProperty<
     });
   }
 
-  // @Memoize()
-  // override get getAccessorDeclaration(): Maybe<Code> {
-  //   // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
-  //   // have get accessors.
-
-  //   const checkIdentifierTermTypeStatements = (
-  //     identifierVariable: string,
-  //     identifierVariableNodeKinds?: ReadonlySet<IdentifierNodeKind>,
-  //   ): readonly Code[] => {
-  //     if (this.type.nodeKinds.size === 2) {
-  //       return [];
-  //     }
-
-  //     const expectedNodeKind: IdentifierNodeKind =
-  //       this.type.kind === "IriType" ? "IRI" : "BlankNode";
-
-  //     if (identifierVariableNodeKinds) {
-  //       if (
-  //         identifierVariableNodeKinds.size === 1 &&
-  //         identifierVariableNodeKinds.has(expectedNodeKind)
-  //       ) {
-  //         return [];
-  //       }
-  //     }
-
-  //     return [
-  //       code`if (${identifierVariable}.termType !== "${NodeKind.toTermType(expectedNodeKind)}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
-  //     ];
-  //   };
-
-  //   if (this.identifierMintingStrategy.isJust()) {
-  //     // Mint the identifier lazily in the get accessor
-  //     let memoizeMintedIdentifier: boolean;
-  //     let mintIdentifier: Code;
-  //     switch (this.identifierMintingStrategy.unsafeCoerce()) {
-  //       case "blankNode":
-  //         memoizeMintedIdentifier = true;
-  //         mintIdentifier = code`${imports.dataFactory}.blankNode()`;
-  //         break;
-  //       case "sha256":
-  //         // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-  //         memoizeMintedIdentifier = !this.namedObjectType.mutable;
-  //         mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
-  //         break;
-  //       case "uuidv4":
-  //         memoizeMintedIdentifier = true;
-  //         mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${imports.uuid}.v4()}\`)`;
-  //         break;
-  //     }
-
-  //     return Maybe.of(code`\
-  //     ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
-  //       [
-  //         code`if (this._${this.name} === undefined) { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
-  //         ...checkIdentifierTermTypeStatements(`this._${this.name}`),
-  //         code`return this._${this.name};`,
-  //       ],
-  //     )} }`);
-  //   }
-
-  //   // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
-  //   if (
-  //     this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
-  //       ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-  //     ) ||
-  //     this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
-  //       descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-  //     )
-  //   ) {
-  //     if (this.namedObjectType.parentObjectTypes.length > 0) {
-  //       // If this object type isn't the root, delegate up.
-  //       const checkSuperIdentifierTermTypeStatements =
-  //         checkIdentifierTermTypeStatements(
-  //           "identifier",
-  //           this.namedObjectType.parentObjectTypes[0].identifierType.nodeKinds,
-  //         );
-  //       if (checkSuperIdentifierTermTypeStatements.length === 0) {
-  //         return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
-  //       }
-
-  //       return Maybe.of(
-  //         code`override get ${this.name}(): ${this.typeAlias} { ${joinCode([
-  //           code`const identifier = super.${this.name};`,
-  //           ...checkSuperIdentifierTermTypeStatements,
-  //           code`return identifier;`,
-  //         ])} }`,
-  //       );
-  //     }
-
-  //     // This object type is the root but it has no identifier minting strategy.
-  //     // Just return the declared property in the get accessor.
-  //     // Subclasses will override the get accessor.
-  //     return Maybe.of(
-  //       code`${this.override ? "override " : ""}get ${this.name}(): ${this.typeAlias} { ${joinCode(
-  //         [
-  //           code`if (this.${this.declarationName} === undefined) { throw new Error("unable to mint identifier"); }`,
-  //           code`return this.${this.declarationName};`,
-  //         ],
-  //       )}`,
-  //     );
-  //   }
-
-  //   // None of the object type hierarchy has an identifier minting strategy, don't need a get accessor
-  //   return Maybe.empty();
-  // }
-
   @Memoize()
   override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
@@ -232,15 +126,6 @@ export class IdentifierProperty extends AbstractProperty<
       schema,
     });
   }
-
-  // protected override get schemaObject() {
-  //   return {
-  //     ...super.schemaObject,
-  //     identifierMintingStrategy: this.identifierMintingStrategy
-  //       .map((_) => code`${literalOf(_)} as const`)
-  //       .extract(),
-  //   };
-  // }
 
   private get abstract(): boolean {
     return this.namedObjectType.abstract;
@@ -293,7 +178,11 @@ export class IdentifierProperty extends AbstractProperty<
     }
 
     let lhs: string;
-    const statements: Code[] = [];
+    const parameterVariable = code`${this.name}Parameter`;
+    const statements: Code[] = [
+      // Pull out the parameter so the function can capture it if necessary.
+      code`const ${parameterVariable} = ${variables.parameter};`,
+    ];
     const typeConversions = this.type.conversions;
     switch (this.namedObjectType.declarationType) {
       case "class": {
@@ -313,20 +202,20 @@ export class IdentifierProperty extends AbstractProperty<
     for (const conversion of typeConversions) {
       invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
-        code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = () => ${conversion.conversionExpression(variables.parameter)}; }`,
+        code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${lhs} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
       );
     }
     if (
       (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
     ) {
       conversionBranches.push(
-        code`if (${variables.parameter} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${imports.dataFactory}.blankNode(); ${lhs} = () => ${syntheticNamePrefix}eagerIdentifier;`,
+        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${imports.dataFactory}.blankNode(); ${lhs} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
       );
     }
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
-      code`{ ${lhs} = (${variables.parameter}) satisfies never;\n }`,
+      code`{ ${lhs} = (${parameterVariable}) satisfies never;\n }`,
     );
     statements.push(joinCode(conversionBranches, { on: " else " }));
 

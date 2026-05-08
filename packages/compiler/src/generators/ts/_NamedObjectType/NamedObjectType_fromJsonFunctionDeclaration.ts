@@ -14,12 +14,8 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  let returnExpression = code`${syntheticNamePrefix}propertiesFromJson(json)`;
-  if (this.declarationType === "class") {
-    returnExpression = code`new ${this.name}(${returnExpression})`;
-  }
   return Maybe.of(code`\
 export function ${syntheticNamePrefix}fromJson(json: ${this.jsonType().name}): ${this.name} {
-  return ${returnExpression};
+  return ${this.newExpression({ parameters: code`${syntheticNamePrefix}propertiesFromJson(json)` })};
 }`);
 }
