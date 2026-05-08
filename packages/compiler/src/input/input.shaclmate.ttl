@@ -6,7 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-identifierMintingStrategy, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
 
 shaclmate:NodeShape-abstract
     a sh:PropertyShape ;
@@ -31,15 +31,6 @@ shaclmate:NodeShape-fromRdfType
     sh:maxCount 1 ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:fromRdfType .
-
-shaclmate:NodeShape-identifierMintingStrategy
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_IdentifierMintingStrategy_BlankNode
-        shaclmate:_IdentifierMintingStrategy_SHA256
-        shaclmate:_IdentifierMintingStrategy_UUIDv4
-    ) ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:identifierMintingStrategy .
 
 shaclmate:NodeShape-rdfType
     a sh:PropertyShape ;
