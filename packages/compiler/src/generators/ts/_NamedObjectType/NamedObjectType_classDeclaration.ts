@@ -71,9 +71,6 @@ ${joinCode(
   [
     ...this.properties.flatMap((property) => property.declaration.toList()),
     NamedObjectType_constructorDeclaration.call(this),
-    ...this.properties.flatMap((property) =>
-      property.getAccessorDeclaration.toList(),
-    ),
     ...NamedObjectType_equalsFunctionOrMethodDeclaration.call(this).toList(),
     ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
     ...NamedObjectType_toJsonFunctionOrMethodDeclaration.call(this).toList(),

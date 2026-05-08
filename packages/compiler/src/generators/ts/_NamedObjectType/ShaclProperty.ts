@@ -110,10 +110,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  override get getAccessorDeclaration(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
   @Memoize()
   override get graphqlField(): AbstractProperty<TypeT>["graphqlField"] {
     const args = this.type.graphqlArgs;

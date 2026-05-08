@@ -93,111 +93,111 @@ export class IdentifierProperty extends AbstractProperty<
     });
   }
 
-  @Memoize()
-  override get getAccessorDeclaration(): Maybe<Code> {
-    // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
-    // have get accessors.
+  // @Memoize()
+  // override get getAccessorDeclaration(): Maybe<Code> {
+  //   // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
+  //   // have get accessors.
 
-    const checkIdentifierTermTypeStatements = (
-      identifierVariable: string,
-      identifierVariableNodeKinds?: ReadonlySet<IdentifierNodeKind>,
-    ): readonly Code[] => {
-      if (this.type.nodeKinds.size === 2) {
-        return [];
-      }
+  //   const checkIdentifierTermTypeStatements = (
+  //     identifierVariable: string,
+  //     identifierVariableNodeKinds?: ReadonlySet<IdentifierNodeKind>,
+  //   ): readonly Code[] => {
+  //     if (this.type.nodeKinds.size === 2) {
+  //       return [];
+  //     }
 
-      const expectedNodeKind: IdentifierNodeKind =
-        this.type.kind === "IriType" ? "IRI" : "BlankNode";
+  //     const expectedNodeKind: IdentifierNodeKind =
+  //       this.type.kind === "IriType" ? "IRI" : "BlankNode";
 
-      if (identifierVariableNodeKinds) {
-        if (
-          identifierVariableNodeKinds.size === 1 &&
-          identifierVariableNodeKinds.has(expectedNodeKind)
-        ) {
-          return [];
-        }
-      }
+  //     if (identifierVariableNodeKinds) {
+  //       if (
+  //         identifierVariableNodeKinds.size === 1 &&
+  //         identifierVariableNodeKinds.has(expectedNodeKind)
+  //       ) {
+  //         return [];
+  //       }
+  //     }
 
-      return [
-        code`if (${identifierVariable}.termType !== "${NodeKind.toTermType(expectedNodeKind)}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
-      ];
-    };
+  //     return [
+  //       code`if (${identifierVariable}.termType !== "${NodeKind.toTermType(expectedNodeKind)}") { throw new Error(\`expected identifier to be ${expectedNodeKind}, not \${${identifierVariable}.termType}\`); }`,
+  //     ];
+  //   };
 
-    if (this.identifierMintingStrategy.isJust()) {
-      // Mint the identifier lazily in the get accessor
-      let memoizeMintedIdentifier: boolean;
-      let mintIdentifier: Code;
-      switch (this.identifierMintingStrategy.unsafeCoerce()) {
-        case "blankNode":
-          memoizeMintedIdentifier = true;
-          mintIdentifier = code`${imports.dataFactory}.blankNode()`;
-          break;
-        case "sha256":
-          // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
-          memoizeMintedIdentifier = !this.namedObjectType.mutable;
-          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
-          break;
-        case "uuidv4":
-          memoizeMintedIdentifier = true;
-          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${imports.uuid}.v4()}\`)`;
-          break;
-      }
+  //   if (this.identifierMintingStrategy.isJust()) {
+  //     // Mint the identifier lazily in the get accessor
+  //     let memoizeMintedIdentifier: boolean;
+  //     let mintIdentifier: Code;
+  //     switch (this.identifierMintingStrategy.unsafeCoerce()) {
+  //       case "blankNode":
+  //         memoizeMintedIdentifier = true;
+  //         mintIdentifier = code`${imports.dataFactory}.blankNode()`;
+  //         break;
+  //       case "sha256":
+  //         // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
+  //         memoizeMintedIdentifier = !this.namedObjectType.mutable;
+  //         mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
+  //         break;
+  //       case "uuidv4":
+  //         memoizeMintedIdentifier = true;
+  //         mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${imports.uuid}.v4()}\`)`;
+  //         break;
+  //     }
 
-      return Maybe.of(code`\
-      ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
-        [
-          code`if (this._${this.name} === undefined) { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
-          ...checkIdentifierTermTypeStatements(`this._${this.name}`),
-          code`return this._${this.name};`,
-        ],
-      )} }`);
-    }
+  //     return Maybe.of(code`\
+  //     ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
+  //       [
+  //         code`if (this._${this.name} === undefined) { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
+  //         ...checkIdentifierTermTypeStatements(`this._${this.name}`),
+  //         code`return this._${this.name};`,
+  //       ],
+  //     )} }`);
+  //   }
 
-    // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
-    if (
-      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      )
-    ) {
-      if (this.namedObjectType.parentObjectTypes.length > 0) {
-        // If this object type isn't the root, delegate up.
-        const checkSuperIdentifierTermTypeStatements =
-          checkIdentifierTermTypeStatements(
-            "identifier",
-            this.namedObjectType.parentObjectTypes[0].identifierType.nodeKinds,
-          );
-        if (checkSuperIdentifierTermTypeStatements.length === 0) {
-          return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
-        }
+  //   // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
+  //   if (
+  //     this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
+  //       ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+  //     ) ||
+  //     this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
+  //       descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+  //     )
+  //   ) {
+  //     if (this.namedObjectType.parentObjectTypes.length > 0) {
+  //       // If this object type isn't the root, delegate up.
+  //       const checkSuperIdentifierTermTypeStatements =
+  //         checkIdentifierTermTypeStatements(
+  //           "identifier",
+  //           this.namedObjectType.parentObjectTypes[0].identifierType.nodeKinds,
+  //         );
+  //       if (checkSuperIdentifierTermTypeStatements.length === 0) {
+  //         return Maybe.empty(); // Don't need a get accessor just to return super.identifier.
+  //       }
 
-        return Maybe.of(
-          code`override get ${this.name}(): ${this.typeAlias} { ${joinCode([
-            code`const identifier = super.${this.name};`,
-            ...checkSuperIdentifierTermTypeStatements,
-            code`return identifier;`,
-          ])} }`,
-        );
-      }
+  //       return Maybe.of(
+  //         code`override get ${this.name}(): ${this.typeAlias} { ${joinCode([
+  //           code`const identifier = super.${this.name};`,
+  //           ...checkSuperIdentifierTermTypeStatements,
+  //           code`return identifier;`,
+  //         ])} }`,
+  //       );
+  //     }
 
-      // This object type is the root but it has no identifier minting strategy.
-      // Just return the declared property in the get accessor.
-      // Subclasses will override the get accessor.
-      return Maybe.of(
-        code`${this.override ? "override " : ""}get ${this.name}(): ${this.typeAlias} { ${joinCode(
-          [
-            code`if (this.${this.declarationName} === undefined) { throw new Error("unable to mint identifier"); }`,
-            code`return this.${this.declarationName};`,
-          ],
-        )}`,
-      );
-    }
+  //     // This object type is the root but it has no identifier minting strategy.
+  //     // Just return the declared property in the get accessor.
+  //     // Subclasses will override the get accessor.
+  //     return Maybe.of(
+  //       code`${this.override ? "override " : ""}get ${this.name}(): ${this.typeAlias} { ${joinCode(
+  //         [
+  //           code`if (this.${this.declarationName} === undefined) { throw new Error("unable to mint identifier"); }`,
+  //           code`return this.${this.declarationName};`,
+  //         ],
+  //       )}`,
+  //     );
+  //   }
 
-    // None of the object type hierarchy has an identifier minting strategy, don't need a get accessor
-    return Maybe.empty();
-  }
+  //   // None of the object type hierarchy has an identifier minting strategy, don't need a get accessor
+  //   return Maybe.empty();
+  // }
 
   @Memoize()
   override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {

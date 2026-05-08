@@ -13,7 +13,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
-  override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly kind = "DiscriminantProperty";

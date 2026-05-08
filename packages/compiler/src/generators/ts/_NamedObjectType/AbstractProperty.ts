@@ -39,11 +39,6 @@ export abstract class AbstractProperty<
   }>;
 
   /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly getAccessorDeclaration: Maybe<Code>;
-
-  /**
    * GraphQL.js field definition.
    */
   abstract readonly graphqlField: Maybe<{
