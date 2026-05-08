@@ -47,7 +47,7 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
         property
           .toJsonObjectMemberExpression({
             variables: {
-              value: property.valueExpression({
+              value: property.readExpression({
                 variables: { object: this.thisVariable },
               }),
             },

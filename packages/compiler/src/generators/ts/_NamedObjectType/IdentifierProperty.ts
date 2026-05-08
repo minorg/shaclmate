@@ -4,6 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -94,20 +95,9 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeAlias}.stringify(${this.valueExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.typeAlias}.stringify(${this.readExpression({ variables: { object: code`source` } })})`,
       type: this.type.graphqlType.name,
     });
-  }
-
-  @Memoize()
-  override get jsonSignature(): Maybe<Code> {
-    if (this.type.in_.length > 0) {
-      return Maybe.of(
-        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
-      );
-    }
-
-    return Maybe.of(code`readonly "@id": string`);
   }
 
   @Memoize()
@@ -125,6 +115,17 @@ export class IdentifierProperty extends AbstractProperty<
       key: "@id",
       schema,
     });
+  }
+
+  @Memoize()
+  override get jsonSignature(): Maybe<Code> {
+    if (this.type.in_.length > 0) {
+      return Maybe.of(
+        code`readonly "@id": ${this.type.in_.map((iri) => `"${iri.value}"`).join(" | ")}`,
+      );
+    }
+
+    return Maybe.of(code`readonly "@id": string`);
   }
 
   private get abstract(): boolean {
@@ -232,14 +233,6 @@ export class IdentifierProperty extends AbstractProperty<
     ];
   }
 
-  override toStringExpression(
-    parameters: Parameters<
-      AbstractProperty<IdentifierType>["toStringExpression"]
-    >[0],
-  ): Maybe<Code> {
-    return Maybe.of(this.type.toStringExpression(parameters));
-  }
-
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<
@@ -274,6 +267,14 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(
       code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     );
+  }
+
+  override readExpression({
+    variables,
+  }: Parameters<
+    AbstractProperty<BlankNodeType | IdentifierType | IriType>["readExpression"]
+  >[0]): Code {
+    return code`${variables.object}.${this.name}()`;
   }
 
   override sparqlConstructTriplesExpression(): Maybe<Code> {
@@ -328,13 +329,11 @@ export class IdentifierProperty extends AbstractProperty<
     return [];
   }
 
-  override valueExpression({
-    variables,
-  }: Parameters<
-    AbstractProperty<
-      BlankNodeType | IdentifierType | IriType
-    >["valueExpression"]
-  >[0]): Code {
-    return code`${variables.object}.${this.name}()`;
+  override toStringExpression(
+    parameters: Parameters<
+      AbstractProperty<IdentifierType>["toStringExpression"]
+    >[0],
+  ): Maybe<Code> {
+    return Maybe.of(this.type.toStringExpression(parameters));
   }
 }

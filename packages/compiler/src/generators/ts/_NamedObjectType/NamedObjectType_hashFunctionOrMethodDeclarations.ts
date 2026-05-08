@@ -82,7 +82,7 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
           depth: 0,
           variables: {
             hasher: hasherVariable,
-            value: code`${property.valueExpression({ variables: { object: this.thisVariable } })}`,
+            value: code`${property.readExpression({ variables: { object: this.thisVariable } })}`,
           },
         }),
       ),
