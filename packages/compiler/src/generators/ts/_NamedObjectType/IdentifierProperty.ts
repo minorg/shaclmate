@@ -4,7 +4,6 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { Visibility } from "../../../enums/Visibility.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -46,14 +45,9 @@ export class IdentifierProperty extends AbstractProperty<
       }
     }
 
-    const hasQuestionToken =
-      this.identifierMintingStrategy.isJust() ||
-      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      );
+    const hasQuestionToken = (
+      this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>
+    ).has("BlankNode");
 
     const typeNames: Code[] = [];
     for (const conversion of this.type.conversions) {
@@ -75,8 +69,8 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get declaration(): Maybe<Code> {
     return this.declarationModifiers.map(
-      ({ abstract, hasQuestionToken, override, readonly, visibility }) =>
-        code`${visibility ? `${visibility} ` : ""}${abstract ? "abstract " : ""}${override ? "override " : ""}${readonly ? "readonly " : ""}${this.declarationName}${hasQuestionToken ? "?" : ""}: ${this.typeAlias};`,
+      ({ abstract, override, readonly }) =>
+        code`${abstract ? "abstract " : ""}${override ? "override " : ""}${readonly ? "readonly " : ""}${this.name}: () => ${this.typeAlias};`,
     );
   }
 
@@ -255,10 +249,8 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   private get declarationModifiers(): Maybe<{
     abstract?: boolean;
-    hasQuestionToken?: boolean;
     override?: boolean;
     readonly?: boolean;
-    visibility?: Visibility;
   }> {
     if (this.namedObjectType.declarationType === "interface") {
       return Maybe.of({ readonly: true });
@@ -267,26 +259,6 @@ export class IdentifierProperty extends AbstractProperty<
     if (this.namedObjectType.parentObjectTypes.length > 0) {
       // An ancestor will declare the identifier property.
       return Maybe.empty();
-    }
-
-    if (
-      this.identifierMintingStrategy.isJust() ||
-      this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.namedObjectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      )
-    ) {
-      return Maybe.of({
-        hasQuestionToken: true,
-        visibility: this.namedObjectType.descendantObjectTypes.some(
-          (descendantObjectType) =>
-            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        )
-          ? "protected"
-          : "private",
-      });
     }
 
     if (this.abstract) {
@@ -303,26 +275,6 @@ export class IdentifierProperty extends AbstractProperty<
       override: this.override,
       readonly: true,
     });
-  }
-
-  private get declarationName(): string {
-    if (
-      this.namedObjectType.declarationType === "class" &&
-      (this.identifierMintingStrategy.isJust() ||
-        this.namedObjectType.ancestorObjectTypes.some((ancestorObjectType) =>
-          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ) ||
-        this.namedObjectType.descendantObjectTypes.some(
-          (descendantObjectType) =>
-            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ))
-    ) {
-      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
-      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
-      return `_${this.name}`;
-    }
-
-    return this.name;
   }
 
   private get override(): boolean {
@@ -348,12 +300,12 @@ export class IdentifierProperty extends AbstractProperty<
         if (this.declaration.isNothing()) {
           return [];
         }
-        lhs = `this.${this.declarationName}`;
+        lhs = `this.${this.name}`;
         break;
       }
       case "interface":
         lhs = this.name;
-        statements.push(code`let ${this.name}: ${this.typeAlias};`);
+        statements.push(code`let ${this.name}: () => ${this.typeAlias};`);
         break;
     }
 
@@ -361,41 +313,16 @@ export class IdentifierProperty extends AbstractProperty<
     for (const conversion of typeConversions) {
       invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
-        code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+        code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = () => ${conversion.conversionExpression(variables.parameter)}; }`,
       );
     }
-    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-      switch (this.namedObjectType.declarationType) {
-        case "class":
-          // The identifier will be minted lazily in the get accessor
-          invariant(this.getAccessorDeclaration.isJust());
-          conversionBranches.push(
-            code`if (${variables.parameter} === undefined) { }`,
-          );
-          break;
-        case "interface": {
-          let mintIdentifier: Code;
-          switch (identifierMintingStrategy) {
-            case "blankNode":
-              mintIdentifier = code`${imports.dataFactory}.blankNode()`;
-              break;
-            case "sha256":
-              this.logger.warn(
-                "minting %s identifiers with %s is unsupported",
-                this.namedObjectType.declarationType,
-                identifierMintingStrategy,
-              );
-              return;
-            case "uuidv4":
-              mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.namedObjectType.discriminantValue}:"}\${${imports.uuid}.v4()}\`)`;
-              break;
-          }
-          conversionBranches.push(
-            code`if (${variables.parameter} === undefined) { ${lhs} = ${mintIdentifier}; }`,
-          );
-        }
-      }
-    });
+    if (
+      (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
+    ) {
+      conversionBranches.push(
+        code`if (${variables.parameter} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${imports.dataFactory}.blankNode(); ${lhs} = () => ${syntheticNamePrefix}eagerIdentifier;`,
+      );
+    }
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
