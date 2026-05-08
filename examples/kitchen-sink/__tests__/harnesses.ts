@@ -754,19 +754,6 @@ export const harnesses = {
     }),
     kitchenSink.NonClass,
   ),
-  sha256IriIdentifierClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriIdentifierClass({
-      $identifier,
-      sha256IriProperty: "test",
-    }),
-    kitchenSink.Sha256IriIdentifierClass,
-  ),
-  sha256IriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.Sha256IriIdentifierClass({
-      sha256IriProperty: "test",
-    }),
-    kitchenSink.Sha256IriIdentifierClass,
-  ),
   stringListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({
       $identifier,
@@ -904,33 +891,5 @@ export const harnesses = {
       ],
     }),
     kitchenSink.UnionDiscriminantsClass,
-  ),
-  uuidv4IriIdentifierClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriIdentifierClass({
-      $identifier,
-      uuidV4IriProperty: "test",
-    }),
-    kitchenSink.UuidV4IriIdentifierClass,
-  ),
-  uuidv4IriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.UuidV4IriIdentifierClass({
-      uuidV4IriProperty: "test",
-    }),
-    kitchenSink.UuidV4IriIdentifierClass,
-  ),
-  uuidv4IriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    {
-      $identifier,
-      $type: "UuidV4IriIdentifierInterface",
-      uuidV4IriProperty: "test",
-    } satisfies kitchenSink.UuidV4IriIdentifierInterface,
-    kitchenSink.UuidV4IriIdentifierInterface,
-  ),
-  uuidv4IriIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.UuidV4IriIdentifierInterface.$create({
-      $identifierPrefix: "http://example.com/",
-      uuidV4IriProperty: "test",
-    }),
-    kitchenSink.UuidV4IriIdentifierInterface,
   ),
 };
