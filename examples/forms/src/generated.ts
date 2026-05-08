@@ -2199,7 +2199,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Either<Error, readonly FormNodeShape.$Identifier[]> {
     return this.formNodeShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -2277,7 +2277,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NestedNodeShape.$Identifier[]> {
     return this.nestedNodeShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -2355,7 +2355,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 

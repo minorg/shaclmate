@@ -100,7 +100,7 @@ async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdenti
             // objectIdentifiersSync
             code`\
 ${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${imports.Either}<Error, readonly ${namedObjectType.identifierTypeAlias}[]> {
-  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));
+  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier()));
 }`,
 
             // objects
