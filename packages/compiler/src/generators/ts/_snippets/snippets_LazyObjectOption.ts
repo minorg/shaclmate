@@ -24,7 +24,7 @@ export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${
     if (this.partial.isNothing()) {
       return ${imports.Right}(${imports.Maybe}.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier, options)).map(${imports.Maybe}.of);
+    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier(), options)).map(${imports.Maybe}.of);
   }
 }`,
 );

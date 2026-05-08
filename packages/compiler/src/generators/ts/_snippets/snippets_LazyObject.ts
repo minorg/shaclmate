@@ -21,7 +21,7 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${import
   }
 
   resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier, options);
+    return this.resolver(this.partial.${syntheticNamePrefix}identifier(), options);
   }
 }`,
 );

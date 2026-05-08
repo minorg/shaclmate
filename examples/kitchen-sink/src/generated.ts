@@ -1016,8 +1016,8 @@ function $isReadonlyStringArray(x: unknown): x is readonly string[] {
  */
 export class $LazyObject<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 > {
   readonly partial: PartialObjectT;
   private readonly resolver: (
@@ -1042,7 +1042,7 @@ export class $LazyObject<
   resolve(options?: {
     preferredLanguages?: readonly string[];
   }): Promise<Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.$identifier, options);
+    return this.resolver(this.partial.$identifier(), options);
   }
 }
 
@@ -1051,8 +1051,8 @@ export class $LazyObject<
  */
 export class $LazyObjectOption<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 > {
   readonly partial: Maybe<PartialObjectT>;
   private readonly resolver: (
@@ -1081,7 +1081,7 @@ export class $LazyObjectOption<
       return Right(Maybe.empty());
     }
     return (
-      await this.resolver(this.partial.unsafeCoerce().$identifier, options)
+      await this.resolver(this.partial.unsafeCoerce().$identifier(), options)
     ).map(Maybe.of);
   }
 }
@@ -1091,8 +1091,8 @@ export class $LazyObjectOption<
  */
 export class $LazyObjectSet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 > {
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (
@@ -1140,7 +1140,7 @@ export class $LazyObjectSet<
     return await this.resolver(
       this.partials
         .slice(offset, offset + limit)
-        .map((partial) => partial.$identifier),
+        .map((partial) => partial.$identifier()),
       {
         preferredLanguages: options?.preferredLanguages,
       },
@@ -3257,22 +3257,23 @@ export namespace NamedUnion2 {
   >;
 }
 export class $NamedDefaultPartial {
-  readonly $identifier: $NamedDefaultPartial.$Identifier;
+  readonly $identifier: () => $NamedDefaultPartial.$Identifier;
 
   readonly $type: "$NamedDefaultPartial" = "$NamedDefaultPartial" as const;
 
   constructor(parameters: { readonly $identifier: NamedNode | string }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      this.$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
   }
 
   $equals(other: $NamedDefaultPartial): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -3295,7 +3296,7 @@ export class $NamedDefaultPartial {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -3309,7 +3310,7 @@ export class $NamedDefaultPartial {
   $toJson(): $NamedDefaultPartial.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier.value,
+        "@id": this.$identifier().value,
         $type: this.$type,
       } satisfies $NamedDefaultPartial.$Json),
     );
@@ -3324,7 +3325,7 @@ export class $NamedDefaultPartial {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     return resource;
   }
 
@@ -3403,7 +3404,7 @@ export namespace $NamedDefaultPartial {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -3622,24 +3623,28 @@ export namespace $NamedDefaultPartial {
     );
 }
 export class $DefaultPartial {
-  readonly $identifier: $DefaultPartial.$Identifier;
+  readonly $identifier: () => $DefaultPartial.$Identifier;
 
   readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
 
-  constructor(parameters: {
-    readonly $identifier: (BlankNode | NamedNode) | string;
+  constructor(parameters?: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this.$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
   }
 
   $equals(other: $DefaultPartial): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -3662,7 +3667,7 @@ export class $DefaultPartial {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -3677,9 +3682,9 @@ export class $DefaultPartial {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
       } satisfies $DefaultPartial.$Json),
     );
@@ -3694,7 +3699,7 @@ export class $DefaultPartial {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     return resource;
   }
 
@@ -3773,7 +3778,7 @@ export namespace $DefaultPartial {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -3994,7 +3999,7 @@ export namespace $DefaultPartial {
  */
 
 export class UnionDiscriminantsClass {
-  private _$identifier?: UnionDiscriminantsClass.$Identifier;
+  readonly $identifier: () => UnionDiscriminantsClass.$Identifier;
 
   readonly $type: "UnionDiscriminantsClass" =
     "UnionDiscriminantsClass" as const;
@@ -4141,13 +4146,16 @@ export class UnionDiscriminantsClass {
     readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
     readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters.optionalClassOrClassOrStringProperty)) {
       this.optionalClassOrClassOrStringProperty =
@@ -4254,15 +4262,8 @@ export class UnionDiscriminantsClass {
     }
   }
 
-  get $identifier(): UnionDiscriminantsClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: UnionDiscriminantsClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -4837,7 +4838,7 @@ export class UnionDiscriminantsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -4977,9 +4978,9 @@ export class UnionDiscriminantsClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         optionalClassOrClassOrStringProperty:
           this.optionalClassOrClassOrStringProperty
@@ -5345,7 +5346,7 @@ export class UnionDiscriminantsClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalClassOrClassOrStringProperty",
@@ -6142,7 +6143,7 @@ export namespace UnionDiscriminantsClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -10970,7 +10971,7 @@ export namespace UnionDiscriminantsClass {
  */
 
 export class TermPropertiesClass {
-  private _$identifier?: TermPropertiesClass.$Identifier;
+  readonly $identifier: () => TermPropertiesClass.$Identifier;
 
   readonly $type: "TermPropertiesClass" = "TermPropertiesClass" as const;
 
@@ -11018,13 +11019,16 @@ export class TermPropertiesClass {
       | string
       | (BlankNode | NamedNode | Literal);
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.blankNodeTermProperty)) {
       this.blankNodeTermProperty = parameters?.blankNodeTermProperty;
@@ -11169,15 +11173,8 @@ export class TermPropertiesClass {
     }
   }
 
-  get $identifier(): TermPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: TermPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -11308,7 +11305,7 @@ export class TermPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -11356,9 +11353,9 @@ export class TermPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         blankNodeTermProperty: this.blankNodeTermProperty
           .map((item) => ({ "@id": `_:${item.value}` }))
@@ -11423,7 +11420,7 @@ export class TermPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -11683,7 +11680,7 @@ export namespace TermPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -12714,7 +12711,7 @@ export namespace TermPropertiesClass {
     );
 }
 export class RecursiveClassUnionMember2 {
-  private _$identifier?: RecursiveClassUnionMember2.$Identifier;
+  readonly $identifier: () => RecursiveClassUnionMember2.$Identifier;
 
   readonly $type: "RecursiveClassUnionMember2" =
     "RecursiveClassUnionMember2" as const;
@@ -12727,13 +12724,16 @@ export class RecursiveClassUnionMember2 {
       | Maybe<RecursiveClassUnion>
       | RecursiveClassUnion;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.recursiveClassUnionMember2Property)) {
       this.recursiveClassUnionMember2Property =
@@ -12752,15 +12752,8 @@ export class RecursiveClassUnionMember2 {
     }
   }
 
-  get $identifier(): RecursiveClassUnionMember2.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: RecursiveClassUnionMember2): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -12796,7 +12789,7 @@ export class RecursiveClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -12814,9 +12807,9 @@ export class RecursiveClassUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         recursiveClassUnionMember2Property:
           this.recursiveClassUnionMember2Property
@@ -12835,7 +12828,7 @@ export class RecursiveClassUnionMember2 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -12947,7 +12940,7 @@ export namespace RecursiveClassUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -13324,7 +13317,7 @@ export namespace RecursiveClassUnionMember2 {
     );
 }
 export class RecursiveClassUnionMember1 {
-  private _$identifier?: RecursiveClassUnionMember1.$Identifier;
+  readonly $identifier: () => RecursiveClassUnionMember1.$Identifier;
 
   readonly $type: "RecursiveClassUnionMember1" =
     "RecursiveClassUnionMember1" as const;
@@ -13337,13 +13330,16 @@ export class RecursiveClassUnionMember1 {
       | Maybe<RecursiveClassUnion>
       | RecursiveClassUnion;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.recursiveClassUnionMember1Property)) {
       this.recursiveClassUnionMember1Property =
@@ -13362,15 +13358,8 @@ export class RecursiveClassUnionMember1 {
     }
   }
 
-  get $identifier(): RecursiveClassUnionMember1.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: RecursiveClassUnionMember1): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -13406,7 +13395,7 @@ export class RecursiveClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -13424,9 +13413,9 @@ export class RecursiveClassUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         recursiveClassUnionMember1Property:
           this.recursiveClassUnionMember1Property
@@ -13445,7 +13434,7 @@ export class RecursiveClassUnionMember1 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -13557,7 +13546,7 @@ export namespace RecursiveClassUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -13937,7 +13926,7 @@ export namespace RecursiveClassUnionMember1 {
  */
 
 export class PropertyVisibilitiesClass {
-  private _$identifier?: PropertyVisibilitiesClass.$Identifier;
+  readonly $identifier: () => PropertyVisibilitiesClass.$Identifier;
 
   readonly $type: "PropertyVisibilitiesClass" =
     "PropertyVisibilitiesClass" as const;
@@ -13954,28 +13943,24 @@ export class PropertyVisibilitiesClass {
     readonly protectedProperty: string;
     readonly publicProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.privateProperty = parameters.privateProperty;
     this.protectedProperty = parameters.protectedProperty;
     this.publicProperty = parameters.publicProperty;
   }
 
-  get $identifier(): PropertyVisibilitiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PropertyVisibilitiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -14031,7 +14016,7 @@ export class PropertyVisibilitiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -14049,9 +14034,9 @@ export class PropertyVisibilitiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         privateProperty: this.privateProperty,
         protectedProperty: this.protectedProperty,
@@ -14069,7 +14054,7 @@ export class PropertyVisibilitiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/privateProperty"),
       [$literalFactory.string(this.privateProperty)],
@@ -14183,7 +14168,7 @@ export namespace PropertyVisibilitiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -14565,7 +14550,7 @@ export namespace PropertyVisibilitiesClass {
  */
 
 export class PropertyPathsClass {
-  private _$identifier?: PropertyPathsClass.$Identifier;
+  readonly $identifier: () => PropertyPathsClass.$Identifier;
 
   readonly $type: "PropertyPathsClass" = "PropertyPathsClass" as const;
 
@@ -14578,13 +14563,16 @@ export class PropertyPathsClass {
     readonly inversePathProperty?: Maybe<NamedNode> | NamedNode | string;
     readonly predicatePathProperty?: Maybe<string> | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.inversePathProperty)) {
       this.inversePathProperty = parameters?.inversePathProperty;
@@ -14612,15 +14600,8 @@ export class PropertyPathsClass {
     }
   }
 
-  get $identifier(): PropertyPathsClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PropertyPathsClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -14667,7 +14648,7 @@ export class PropertyPathsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -14689,9 +14670,9 @@ export class PropertyPathsClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         inversePathProperty: this.inversePathProperty
           .map((item) => ({ "@id": item.value }))
@@ -14712,7 +14693,7 @@ export class PropertyPathsClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -14833,7 +14814,7 @@ export namespace PropertyPathsClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -15305,7 +15286,7 @@ export namespace PropertyPathsClass {
  */
 
 export class PropertyNamesClass {
-  private _$identifier?: PropertyNamesClass.$Identifier;
+  readonly $identifier: () => PropertyNamesClass.$Identifier;
 
   readonly $type: "PropertyNamesClass" = "PropertyNamesClass" as const;
 
@@ -15342,13 +15323,16 @@ export class PropertyNamesClass {
     readonly actualPropertyName4: string;
     readonly actualPropertyName5: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.actualPropertyName1 = parameters.actualPropertyName1;
     this.actualPropertyName2 = parameters.actualPropertyName2;
@@ -15357,15 +15341,8 @@ export class PropertyNamesClass {
     this.actualPropertyName5 = parameters.actualPropertyName5;
   }
 
-  get $identifier(): PropertyNamesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PropertyNamesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -15448,7 +15425,7 @@ export class PropertyNamesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -15468,9 +15445,9 @@ export class PropertyNamesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         actualPropertyName1: this.actualPropertyName1,
         actualPropertyName2: this.actualPropertyName2,
@@ -15490,7 +15467,7 @@ export class PropertyNamesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -15653,7 +15630,7 @@ export namespace PropertyNamesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -16255,7 +16232,7 @@ export namespace PropertyNamesClass {
  */
 
 export class PropertyCardinalitiesClass {
-  private _$identifier?: PropertyCardinalitiesClass.$Identifier;
+  readonly $identifier: () => PropertyCardinalitiesClass.$Identifier;
 
   readonly $type: "PropertyCardinalitiesClass" =
     "PropertyCardinalitiesClass" as const;
@@ -16287,13 +16264,16 @@ export class PropertyCardinalitiesClass {
     readonly optionalStringProperty?: Maybe<string> | string;
     readonly requiredStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (parameters.emptyStringSetProperty === undefined) {
       this.emptyStringSetProperty = [];
@@ -16317,15 +16297,8 @@ export class PropertyCardinalitiesClass {
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
 
-  get $identifier(): PropertyCardinalitiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PropertyCardinalitiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -16396,7 +16369,7 @@ export class PropertyCardinalitiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -16421,9 +16394,9 @@ export class PropertyCardinalitiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         emptyStringSetProperty: this.emptyStringSetProperty.map((item) => item),
         nonEmptyStringSetProperty: this.nonEmptyStringSetProperty.map(
@@ -16446,7 +16419,7 @@ export class PropertyCardinalitiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
       this.emptyStringSetProperty.flatMap((item) => [
@@ -16599,7 +16572,7 @@ export namespace PropertyCardinalitiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -17141,7 +17114,7 @@ export namespace PropertyCardinalitiesClass {
     );
 }
 export interface PartialInterfaceUnionMember2 {
-  readonly $identifier: PartialInterfaceUnionMember2.$Identifier;
+  readonly $identifier: () => PartialInterfaceUnionMember2.$Identifier;
   readonly $type: "PartialInterfaceUnionMember2";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -17151,15 +17124,17 @@ export namespace PartialInterfaceUnionMember2 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember2 {
-    let $identifier: PartialInterfaceUnionMember2.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => PartialInterfaceUnionMember2.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "PartialInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
@@ -17171,7 +17146,7 @@ export namespace PartialInterfaceUnionMember2 {
     left: PartialInterfaceUnionMember2,
     right: PartialInterfaceUnionMember2,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -17212,7 +17187,7 @@ export namespace PartialInterfaceUnionMember2 {
       _partialInterfaceUnionMember2,
       _hasher,
     );
-    _hasher.update(_partialInterfaceUnionMember2.$identifier.value);
+    _hasher.update(_partialInterfaceUnionMember2.$identifier().value);
     _hasher.update(_partialInterfaceUnionMember2.$type);
     return _hasher;
   }
@@ -17298,7 +17273,7 @@ export namespace PartialInterfaceUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -17429,7 +17404,7 @@ export namespace PartialInterfaceUnionMember2 {
   export function $fromJson(
     json: PartialInterfaceUnionMember2.$Json,
   ): PartialInterfaceUnionMember2 {
-    return $propertiesFromJson(json);
+    return PartialInterfaceUnionMember2.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -17451,7 +17426,7 @@ export namespace PartialInterfaceUnionMember2 {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -17660,9 +17635,9 @@ export namespace PartialInterfaceUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partialInterfaceUnionMember2.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterfaceUnionMember2.$identifier.value}`
-            : _partialInterfaceUnionMember2.$identifier.value,
+          _partialInterfaceUnionMember2.$identifier().termType === "BlankNode"
+            ? `_:${_partialInterfaceUnionMember2.$identifier().value}`
+            : _partialInterfaceUnionMember2.$identifier().value,
         $type: _partialInterfaceUnionMember2.$type,
         lazilyResolvedStringProperty:
           _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
@@ -17683,7 +17658,7 @@ export namespace PartialInterfaceUnionMember2 {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _partialInterfaceUnionMember2.$identifier,
+      _partialInterfaceUnionMember2.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -17758,7 +17733,7 @@ export namespace PartialInterfaceUnionMember2 {
     );
 }
 export interface PartialInterfaceUnionMember1 {
-  readonly $identifier: PartialInterfaceUnionMember1.$Identifier;
+  readonly $identifier: () => PartialInterfaceUnionMember1.$Identifier;
   readonly $type: "PartialInterfaceUnionMember1";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -17768,15 +17743,17 @@ export namespace PartialInterfaceUnionMember1 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember1 {
-    let $identifier: PartialInterfaceUnionMember1.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => PartialInterfaceUnionMember1.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "PartialInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
@@ -17788,7 +17765,7 @@ export namespace PartialInterfaceUnionMember1 {
     left: PartialInterfaceUnionMember1,
     right: PartialInterfaceUnionMember1,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -17829,7 +17806,7 @@ export namespace PartialInterfaceUnionMember1 {
       _partialInterfaceUnionMember1,
       _hasher,
     );
-    _hasher.update(_partialInterfaceUnionMember1.$identifier.value);
+    _hasher.update(_partialInterfaceUnionMember1.$identifier().value);
     _hasher.update(_partialInterfaceUnionMember1.$type);
     return _hasher;
   }
@@ -17915,7 +17892,7 @@ export namespace PartialInterfaceUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -18046,7 +18023,7 @@ export namespace PartialInterfaceUnionMember1 {
   export function $fromJson(
     json: PartialInterfaceUnionMember1.$Json,
   ): PartialInterfaceUnionMember1 {
-    return $propertiesFromJson(json);
+    return PartialInterfaceUnionMember1.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -18068,7 +18045,7 @@ export namespace PartialInterfaceUnionMember1 {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -18277,9 +18254,9 @@ export namespace PartialInterfaceUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partialInterfaceUnionMember1.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterfaceUnionMember1.$identifier.value}`
-            : _partialInterfaceUnionMember1.$identifier.value,
+          _partialInterfaceUnionMember1.$identifier().termType === "BlankNode"
+            ? `_:${_partialInterfaceUnionMember1.$identifier().value}`
+            : _partialInterfaceUnionMember1.$identifier().value,
         $type: _partialInterfaceUnionMember1.$type,
         lazilyResolvedStringProperty:
           _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
@@ -18300,7 +18277,7 @@ export namespace PartialInterfaceUnionMember1 {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _partialInterfaceUnionMember1.$identifier,
+      _partialInterfaceUnionMember1.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -18375,7 +18352,7 @@ export namespace PartialInterfaceUnionMember1 {
     );
 }
 export class PartialClassUnionMember2 {
-  private _$identifier?: PartialClassUnionMember2.$Identifier;
+  readonly $identifier: () => PartialClassUnionMember2.$Identifier;
 
   readonly $type: "PartialClassUnionMember2" =
     "PartialClassUnionMember2" as const;
@@ -18386,26 +18363,22 @@ export class PartialClassUnionMember2 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): PartialClassUnionMember2.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PartialClassUnionMember2): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -18440,7 +18413,7 @@ export class PartialClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -18456,9 +18429,9 @@ export class PartialClassUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClassUnionMember2.$Json),
@@ -18474,7 +18447,7 @@ export class PartialClassUnionMember2 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -18571,7 +18544,7 @@ export namespace PartialClassUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -18949,7 +18922,7 @@ export namespace PartialClassUnionMember2 {
     );
 }
 export class PartialClassUnionMember1 {
-  private _$identifier?: PartialClassUnionMember1.$Identifier;
+  readonly $identifier: () => PartialClassUnionMember1.$Identifier;
 
   readonly $type: "PartialClassUnionMember1" =
     "PartialClassUnionMember1" as const;
@@ -18960,26 +18933,22 @@ export class PartialClassUnionMember1 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): PartialClassUnionMember1.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PartialClassUnionMember1): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -19014,7 +18983,7 @@ export class PartialClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -19030,9 +18999,9 @@ export class PartialClassUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClassUnionMember1.$Json),
@@ -19048,7 +19017,7 @@ export class PartialClassUnionMember1 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -19145,7 +19114,7 @@ export namespace PartialClassUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -19526,32 +19495,28 @@ export namespace PartialClassUnionMember1 {
  */
 
 export class NewName2Class {
-  private _$identifier?: NewName2Class.$Identifier;
+  readonly $identifier: () => NewName2Class.$Identifier;
 
   readonly $type: "NewName2Class" = "NewName2Class" as const;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
-  }
-
-  get $identifier(): NewName2Class.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   $equals(other: NewName2Class): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -19574,7 +19539,7 @@ export class NewName2Class {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -19589,9 +19554,9 @@ export class NewName2Class {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
       } satisfies NewName2Class.$Json),
     );
@@ -19606,7 +19571,7 @@ export class NewName2Class {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -19692,7 +19657,7 @@ export namespace NewName2Class {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -20000,32 +19965,28 @@ export namespace NewName2Class {
  */
 
 export class NewName1Class {
-  private _$identifier?: NewName1Class.$Identifier;
+  readonly $identifier: () => NewName1Class.$Identifier;
 
   readonly $type: "NewName1Class" = "NewName1Class" as const;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
-  }
-
-  get $identifier(): NewName1Class.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   $equals(other: NewName1Class): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -20048,7 +20009,7 @@ export class NewName1Class {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -20063,9 +20024,9 @@ export class NewName1Class {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
       } satisfies NewName1Class.$Json),
     );
@@ -20080,7 +20041,7 @@ export class NewName1Class {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -20165,7 +20126,7 @@ export namespace NewName1Class {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -20473,7 +20434,7 @@ export namespace NewName1Class {
  */
 
 export class OrderedPropertiesClass {
-  private _$identifier?: OrderedPropertiesClass.$Identifier;
+  readonly $identifier: () => OrderedPropertiesClass.$Identifier;
 
   readonly $type: "OrderedPropertiesClass" = "OrderedPropertiesClass" as const;
 
@@ -20489,28 +20450,24 @@ export class OrderedPropertiesClass {
     readonly orderedPropertyB: string;
     readonly orderedPropertyA: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.orderedPropertyC = parameters.orderedPropertyC;
     this.orderedPropertyB = parameters.orderedPropertyB;
     this.orderedPropertyA = parameters.orderedPropertyA;
   }
 
-  get $identifier(): OrderedPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: OrderedPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -20566,7 +20523,7 @@ export class OrderedPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -20584,9 +20541,9 @@ export class OrderedPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         orderedPropertyC: this.orderedPropertyC,
         orderedPropertyB: this.orderedPropertyB,
@@ -20604,7 +20561,7 @@ export class OrderedPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/orderedPropertyC"),
       [$literalFactory.string(this.orderedPropertyC)],
@@ -20718,7 +20675,7 @@ export namespace OrderedPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -21118,7 +21075,7 @@ export namespace OrderedPropertiesClass {
  */
 
 export class NumericPropertiesClass {
-  private _$identifier?: NumericPropertiesClass.$Identifier;
+  readonly $identifier: () => NumericPropertiesClass.$Identifier;
 
   readonly $type: "NumericPropertiesClass" = "NumericPropertiesClass" as const;
 
@@ -21173,13 +21130,16 @@ export class NumericPropertiesClass {
     readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint;
     readonly unsignedShortNumericProperty?: Maybe<number> | number;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.byteNumericProperty)) {
       this.byteNumericProperty = parameters?.byteNumericProperty;
@@ -21373,15 +21333,8 @@ export class NumericPropertiesClass {
     }
   }
 
-  get $identifier(): NumericPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NumericPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -21596,7 +21549,7 @@ export class NumericPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -21659,9 +21612,9 @@ export class NumericPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         byteNumericProperty: this.byteNumericProperty
           .map((item) => item)
@@ -21726,7 +21679,7 @@ export class NumericPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -22113,7 +22066,7 @@ export namespace NumericPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -23756,7 +23709,7 @@ export namespace NumericPropertiesClass {
  */
 
 export class NodeKindsClass {
-  private _$identifier?: NodeKindsClass.$Identifier;
+  readonly $identifier: () => NodeKindsClass.$Identifier;
 
   readonly $type: "NodeKindsClass" = "NodeKindsClass" as const;
 
@@ -23799,13 +23752,16 @@ export class NodeKindsClass {
       | string
       | Literal;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.blankNodeKindProperty = parameters.blankNodeKindProperty;
     if (typeof parameters.blankNodeOrIriNodeKindProperty === "object") {
@@ -23927,15 +23883,8 @@ export class NodeKindsClass {
     }
   }
 
-  get $identifier(): NodeKindsClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NodeKindsClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -24030,7 +23979,7 @@ export class NodeKindsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -24059,9 +24008,9 @@ export class NodeKindsClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         blankNodeKindProperty: {
           "@id": `_:${this.blankNodeKindProperty.value}`,
@@ -24134,7 +24083,7 @@ export class NodeKindsClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -24350,7 +24299,7 @@ export namespace NodeKindsClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -25079,7 +25028,7 @@ export namespace NodeKindsClass {
     );
 }
 export class NoRdfTypeClassUnionMember2 {
-  private _$identifier?: NoRdfTypeClassUnionMember2.$Identifier;
+  readonly $identifier: () => NoRdfTypeClassUnionMember2.$Identifier;
 
   readonly $type: "NoRdfTypeClassUnionMember2" =
     "NoRdfTypeClassUnionMember2" as const;
@@ -25090,27 +25039,23 @@ export class NoRdfTypeClassUnionMember2 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly noRdfTypeClassUnionMember2Property: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.noRdfTypeClassUnionMember2Property =
       parameters.noRdfTypeClassUnionMember2Property;
   }
 
-  get $identifier(): NoRdfTypeClassUnionMember2.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NoRdfTypeClassUnionMember2): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -25145,7 +25090,7 @@ export class NoRdfTypeClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -25161,9 +25106,9 @@ export class NoRdfTypeClassUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         noRdfTypeClassUnionMember2Property:
           this.noRdfTypeClassUnionMember2Property,
@@ -25180,7 +25125,7 @@ export class NoRdfTypeClassUnionMember2 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/noRdfTypeClassUnionMember2Property",
@@ -25272,7 +25217,7 @@ export namespace NoRdfTypeClassUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -25561,7 +25506,7 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
 }
 export class NoRdfTypeClassUnionMember1 {
-  private _$identifier?: NoRdfTypeClassUnionMember1.$Identifier;
+  readonly $identifier: () => NoRdfTypeClassUnionMember1.$Identifier;
 
   readonly $type: "NoRdfTypeClassUnionMember1" =
     "NoRdfTypeClassUnionMember1" as const;
@@ -25572,27 +25517,23 @@ export class NoRdfTypeClassUnionMember1 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly noRdfTypeClassUnionMember1Property: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.noRdfTypeClassUnionMember1Property =
       parameters.noRdfTypeClassUnionMember1Property;
   }
 
-  get $identifier(): NoRdfTypeClassUnionMember1.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NoRdfTypeClassUnionMember1): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -25627,7 +25568,7 @@ export class NoRdfTypeClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -25643,9 +25584,9 @@ export class NoRdfTypeClassUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         noRdfTypeClassUnionMember1Property:
           this.noRdfTypeClassUnionMember1Property,
@@ -25662,7 +25603,7 @@ export class NoRdfTypeClassUnionMember1 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/noRdfTypeClassUnionMember1Property",
@@ -25754,7 +25695,7 @@ export namespace NoRdfTypeClassUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -26043,7 +25984,7 @@ export namespace NoRdfTypeClassUnionMember1 {
     );
 }
 export class NamedUnionPropertiesClass {
-  private _$identifier?: NamedUnionPropertiesClass.$Identifier;
+  readonly $identifier: () => NamedUnionPropertiesClass.$Identifier;
 
   readonly $type: "NamedUnionPropertiesClass" =
     "NamedUnionPropertiesClass" as const;
@@ -26057,13 +25998,16 @@ export class NamedUnionPropertiesClass {
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property: NamedUnion2;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (typeof parameters.namedUnion1Property === "object") {
       this.namedUnion1Property = parameters.namedUnion1Property;
@@ -26075,15 +26019,8 @@ export class NamedUnionPropertiesClass {
     this.namedUnion2Property = parameters.namedUnion2Property;
   }
 
-  get $identifier(): NamedUnionPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NamedUnionPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -26130,7 +26067,7 @@ export class NamedUnionPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -26147,9 +26084,9 @@ export class NamedUnionPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         namedUnion1Property: NamedUnion1.$toJson(this.namedUnion1Property),
         namedUnion2Property: NamedUnion2.$toJson(this.namedUnion2Property),
@@ -26166,7 +26103,7 @@ export class NamedUnionPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -26290,7 +26227,7 @@ export namespace NamedUnionPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -26758,7 +26695,7 @@ export namespace NamedUnionPropertiesClass {
  */
 
 export class MutablePropertiesClass {
-  private _$identifier?: MutablePropertiesClass.$Identifier;
+  readonly $identifier: () => MutablePropertiesClass.$Identifier;
 
   readonly $type: "MutablePropertiesClass" = "MutablePropertiesClass" as const;
 
@@ -26783,13 +26720,16 @@ export class MutablePropertiesClass {
     readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: Maybe<string> | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.mutableListProperty)) {
       this.mutableListProperty = parameters?.mutableListProperty;
@@ -26822,15 +26762,8 @@ export class MutablePropertiesClass {
     }
   }
 
-  get $identifier(): MutablePropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: MutablePropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -26891,7 +26824,7 @@ export class MutablePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -26917,9 +26850,9 @@ export class MutablePropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         mutableListProperty: this.mutableListProperty
           .map((item) => item.map((item) => item))
@@ -26941,7 +26874,7 @@ export class MutablePropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -26964,7 +26897,7 @@ export class MutablePropertiesClass {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -26992,7 +26925,9 @@ export class MutablePropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -27122,7 +27057,7 @@ export namespace MutablePropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -27719,7 +27654,7 @@ export namespace MutablePropertiesClass {
  */
 
 export class ListPropertiesClass {
-  private _$identifier?: ListPropertiesClass.$Identifier;
+  readonly $identifier: () => ListPropertiesClass.$Identifier;
 
   readonly $type: "ListPropertiesClass" = "ListPropertiesClass" as const;
 
@@ -27740,13 +27675,16 @@ export class ListPropertiesClass {
       | readonly NonClass[];
     readonly stringListProperty?: Maybe<readonly string[]> | readonly string[];
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.iriListProperty)) {
       this.iriListProperty = parameters?.iriListProperty;
@@ -27781,15 +27719,8 @@ export class ListPropertiesClass {
     }
   }
 
-  get $identifier(): ListPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ListPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -27854,7 +27785,7 @@ export class ListPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -27885,9 +27816,9 @@ export class ListPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         iriListProperty: this.iriListProperty
           .map((item) => item.map((item) => ({ "@id": item.value })))
@@ -27911,7 +27842,7 @@ export class ListPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -27934,7 +27865,7 @@ export class ListPropertiesClass {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -27962,7 +27893,9 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -27987,7 +27920,7 @@ export class ListPropertiesClass {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -28020,7 +27953,9 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -28045,7 +27980,7 @@ export class ListPropertiesClass {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -28073,7 +28008,9 @@ export class ListPropertiesClass {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -28201,7 +28138,7 @@ export namespace ListPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -28858,7 +28795,7 @@ export namespace ListPropertiesClass {
  */
 
 export interface PartialInterface {
-  readonly $identifier: PartialInterface.$Identifier;
+  readonly $identifier: () => PartialInterface.$Identifier;
   readonly $type: "PartialInterface";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -28868,15 +28805,17 @@ export namespace PartialInterface {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterface {
-    let $identifier: PartialInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => PartialInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "PartialInterface" as const;
     const lazilyResolvedStringProperty =
@@ -28888,7 +28827,7 @@ export namespace PartialInterface {
     left: PartialInterface,
     right: PartialInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -28926,7 +28865,7 @@ export namespace PartialInterface {
     _hasher: HasherT,
   ): HasherT {
     PartialInterface.$hashShaclProperties(_partialInterface, _hasher);
-    _hasher.update(_partialInterface.$identifier.value);
+    _hasher.update(_partialInterface.$identifier().value);
     _hasher.update(_partialInterface.$type);
     return _hasher;
   }
@@ -29014,7 +28953,7 @@ export namespace PartialInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -29086,7 +29025,7 @@ export namespace PartialInterface {
   };
 
   export function $fromJson(json: PartialInterface.$Json): PartialInterface {
-    return $propertiesFromJson(json);
+    return PartialInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<PartialInterface> = (
@@ -29109,7 +29048,7 @@ export namespace PartialInterface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -29275,9 +29214,9 @@ export namespace PartialInterface {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partialInterface.$identifier.termType === "BlankNode"
-            ? `_:${_partialInterface.$identifier.value}`
-            : _partialInterface.$identifier.value,
+          _partialInterface.$identifier().termType === "BlankNode"
+            ? `_:${_partialInterface.$identifier().value}`
+            : _partialInterface.$identifier().value,
         $type: _partialInterface.$type,
         lazilyResolvedStringProperty:
           _partialInterface.lazilyResolvedStringProperty,
@@ -29295,7 +29234,7 @@ export namespace PartialInterface {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_partialInterface.$identifier);
+    const resource = resourceSet.resource(_partialInterface.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(_partialInterface.lazilyResolvedStringProperty)],
@@ -29357,7 +29296,7 @@ export namespace PartialInterface {
  */
 
 export interface LazyPropertiesInterface {
-  readonly $identifier: LazyPropertiesInterface.$Identifier;
+  readonly $identifier: () => LazyPropertiesInterface.$Identifier;
   readonly $type: "LazyPropertiesInterface";
   readonly optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
     LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
@@ -29491,15 +29430,17 @@ export namespace LazyPropertiesInterface {
         >
       | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
   }): LazyPropertiesInterface {
-    let $identifier: LazyPropertiesInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => LazyPropertiesInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "LazyPropertiesInterface" as const;
     let optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
@@ -30122,7 +30063,7 @@ export namespace LazyPropertiesInterface {
     left: LazyPropertiesInterface,
     right: LazyPropertiesInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -30315,7 +30256,7 @@ export namespace LazyPropertiesInterface {
       _lazyPropertiesInterface,
       _hasher,
     );
-    _hasher.update(_lazyPropertiesInterface.$identifier.value);
+    _hasher.update(_lazyPropertiesInterface.$identifier().value);
     _hasher.update(_lazyPropertiesInterface.$type);
     return _hasher;
   }
@@ -30531,7 +30472,7 @@ export namespace LazyPropertiesInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -31183,7 +31124,7 @@ export namespace LazyPropertiesInterface {
   export function $fromJson(
     json: LazyPropertiesInterface.$Json,
   ): LazyPropertiesInterface {
-    return $propertiesFromJson(json);
+    return LazyPropertiesInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -31205,7 +31146,7 @@ export namespace LazyPropertiesInterface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -32299,9 +32240,9 @@ export namespace LazyPropertiesInterface {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazyPropertiesInterface.$identifier.termType === "BlankNode"
-            ? `_:${_lazyPropertiesInterface.$identifier.value}`
-            : _lazyPropertiesInterface.$identifier.value,
+          _lazyPropertiesInterface.$identifier().termType === "BlankNode"
+            ? `_:${_lazyPropertiesInterface.$identifier().value}`
+            : _lazyPropertiesInterface.$identifier().value,
         $type: _lazyPropertiesInterface.$type,
         optionalLazyToResolvedInterfaceProperty:
           _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
@@ -32356,7 +32297,9 @@ export namespace LazyPropertiesInterface {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_lazyPropertiesInterface.$identifier);
+    const resource = resourceSet.resource(
+      _lazyPropertiesInterface.$identifier(),
+    );
     resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalLazyToResolvedInterfaceProperty",
@@ -32558,7 +32501,7 @@ export namespace LazyPropertiesInterface {
  */
 
 export class LazyPropertiesClass {
-  private _$identifier?: LazyPropertiesClass.$Identifier;
+  readonly $identifier: () => LazyPropertiesClass.$Identifier;
 
   readonly $type: "LazyPropertiesClass" = "LazyPropertiesClass" as const;
 
@@ -32701,13 +32644,16 @@ export class LazyPropertiesClass {
         >
       | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (
       typeof parameters.optionalLazyToResolvedClassProperty === "object" &&
@@ -33234,15 +33180,8 @@ export class LazyPropertiesClass {
     }
   }
 
-  get $identifier(): LazyPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: LazyPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -33427,7 +33366,7 @@ export class LazyPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -33476,9 +33415,9 @@ export class LazyPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         optionalLazyToResolvedClassProperty:
           this.optionalLazyToResolvedClassProperty.partial
@@ -33529,7 +33468,7 @@ export class LazyPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalLazyToResolvedClassProperty",
@@ -33842,7 +33781,7 @@ export namespace LazyPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -35550,7 +35489,7 @@ export namespace LazyPropertiesClass {
  */
 
 export interface LazilyResolvedIriIdentifierInterface {
-  readonly $identifier: LazilyResolvedIriIdentifierInterface.$Identifier;
+  readonly $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
   readonly $type: "LazilyResolvedIriIdentifierInterface";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -35560,13 +35499,14 @@ export namespace LazilyResolvedIriIdentifierInterface {
     readonly $identifier: NamedNode | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedIriIdentifierInterface {
-    let $identifier: LazilyResolvedIriIdentifierInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
@@ -35578,7 +35518,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     left: LazilyResolvedIriIdentifierInterface,
     right: LazilyResolvedIriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -35619,7 +35559,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       _lazilyResolvedIriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedIriIdentifierInterface.$identifier.value);
+    _hasher.update(_lazilyResolvedIriIdentifierInterface.$identifier().value);
     _hasher.update(_lazilyResolvedIriIdentifierInterface.$type);
     return _hasher;
   }
@@ -35710,7 +35650,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -35785,7 +35725,9 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export function $fromJson(
     json: LazilyResolvedIriIdentifierInterface.$Json,
   ): LazilyResolvedIriIdentifierInterface {
-    return $propertiesFromJson(json);
+    return LazilyResolvedIriIdentifierInterface.$create(
+      $propertiesFromJson(json),
+    );
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -35810,7 +35752,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -35984,7 +35926,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   ): LazilyResolvedIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _lazilyResolvedIriIdentifierInterface.$identifier.value,
+        "@id": _lazilyResolvedIriIdentifierInterface.$identifier().value,
         $type: _lazilyResolvedIriIdentifierInterface.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
@@ -36005,7 +35947,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _lazilyResolvedIriIdentifierInterface.$identifier,
+      _lazilyResolvedIriIdentifierInterface.$identifier(),
     );
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
@@ -36076,7 +36018,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
  */
 
 export class LazilyResolvedIriIdentifierClass {
-  readonly $identifier: LazilyResolvedIriIdentifierClass.$Identifier;
+  readonly $identifier: () => LazilyResolvedIriIdentifierClass.$Identifier;
 
   readonly $type: "LazilyResolvedIriIdentifierClass" =
     "LazilyResolvedIriIdentifierClass" as const;
@@ -36087,18 +36029,19 @@ export class LazilyResolvedIriIdentifierClass {
     readonly $identifier: NamedNode | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      this.$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
   $equals(other: LazilyResolvedIriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -36133,7 +36076,7 @@ export class LazilyResolvedIriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -36148,7 +36091,7 @@ export class LazilyResolvedIriIdentifierClass {
   $toJson(): LazilyResolvedIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier.value,
+        "@id": this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedIriIdentifierClass.$Json),
@@ -36166,7 +36109,7 @@ export class LazilyResolvedIriIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
@@ -36259,7 +36202,7 @@ export namespace LazilyResolvedIriIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -36548,7 +36491,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     );
 }
 export interface LazilyResolvedInterfaceUnionMember2 {
-  readonly $identifier: LazilyResolvedInterfaceUnionMember2.$Identifier;
+  readonly $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
   readonly $type: "LazilyResolvedInterfaceUnionMember2";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -36558,15 +36501,17 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember2 {
-    let $identifier: LazilyResolvedInterfaceUnionMember2.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
@@ -36578,7 +36523,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     left: LazilyResolvedInterfaceUnionMember2,
     right: LazilyResolvedInterfaceUnionMember2,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -36619,7 +36564,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       _lazilyResolvedInterfaceUnionMember2,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedInterfaceUnionMember2.$identifier.value);
+    _hasher.update(_lazilyResolvedInterfaceUnionMember2.$identifier().value);
     _hasher.update(_lazilyResolvedInterfaceUnionMember2.$type);
     return _hasher;
   }
@@ -36709,7 +36654,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -36840,7 +36785,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $fromJson(
     json: LazilyResolvedInterfaceUnionMember2.$Json,
   ): LazilyResolvedInterfaceUnionMember2 {
-    return $propertiesFromJson(json);
+    return LazilyResolvedInterfaceUnionMember2.$create(
+      $propertiesFromJson(json),
+    );
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -36865,7 +36812,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -37077,10 +37024,10 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedInterfaceUnionMember2.$identifier.termType ===
+          _lazilyResolvedInterfaceUnionMember2.$identifier().termType ===
           "BlankNode"
-            ? `_:${_lazilyResolvedInterfaceUnionMember2.$identifier.value}`
-            : _lazilyResolvedInterfaceUnionMember2.$identifier.value,
+            ? `_:${_lazilyResolvedInterfaceUnionMember2.$identifier().value}`
+            : _lazilyResolvedInterfaceUnionMember2.$identifier().value,
         $type: _lazilyResolvedInterfaceUnionMember2.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
@@ -37101,7 +37048,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _lazilyResolvedInterfaceUnionMember2.$identifier,
+      _lazilyResolvedInterfaceUnionMember2.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -37178,7 +37125,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     );
 }
 export interface LazilyResolvedInterfaceUnionMember1 {
-  readonly $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier;
+  readonly $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
   readonly $type: "LazilyResolvedInterfaceUnionMember1";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -37188,15 +37135,17 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember1 {
-    let $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
@@ -37208,7 +37157,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     left: LazilyResolvedInterfaceUnionMember1,
     right: LazilyResolvedInterfaceUnionMember1,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -37249,7 +37198,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       _lazilyResolvedInterfaceUnionMember1,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedInterfaceUnionMember1.$identifier.value);
+    _hasher.update(_lazilyResolvedInterfaceUnionMember1.$identifier().value);
     _hasher.update(_lazilyResolvedInterfaceUnionMember1.$type);
     return _hasher;
   }
@@ -37339,7 +37288,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -37470,7 +37419,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $fromJson(
     json: LazilyResolvedInterfaceUnionMember1.$Json,
   ): LazilyResolvedInterfaceUnionMember1 {
-    return $propertiesFromJson(json);
+    return LazilyResolvedInterfaceUnionMember1.$create(
+      $propertiesFromJson(json),
+    );
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -37495,7 +37446,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -37707,10 +37658,10 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedInterfaceUnionMember1.$identifier.termType ===
+          _lazilyResolvedInterfaceUnionMember1.$identifier().termType ===
           "BlankNode"
-            ? `_:${_lazilyResolvedInterfaceUnionMember1.$identifier.value}`
-            : _lazilyResolvedInterfaceUnionMember1.$identifier.value,
+            ? `_:${_lazilyResolvedInterfaceUnionMember1.$identifier().value}`
+            : _lazilyResolvedInterfaceUnionMember1.$identifier().value,
         $type: _lazilyResolvedInterfaceUnionMember1.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
@@ -37731,7 +37682,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _lazilyResolvedInterfaceUnionMember1.$identifier,
+      _lazilyResolvedInterfaceUnionMember1.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -37808,7 +37759,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     );
 }
 export class LazilyResolvedClassUnionMember2 {
-  private _$identifier?: LazilyResolvedClassUnionMember2.$Identifier;
+  readonly $identifier: () => LazilyResolvedClassUnionMember2.$Identifier;
 
   readonly $type: "LazilyResolvedClassUnionMember2" =
     "LazilyResolvedClassUnionMember2" as const;
@@ -37819,26 +37770,22 @@ export class LazilyResolvedClassUnionMember2 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): LazilyResolvedClassUnionMember2.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: LazilyResolvedClassUnionMember2): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -37873,7 +37820,7 @@ export class LazilyResolvedClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -37889,9 +37836,9 @@ export class LazilyResolvedClassUnionMember2 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedClassUnionMember2.$Json),
@@ -37909,7 +37856,7 @@ export class LazilyResolvedClassUnionMember2 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -38010,7 +37957,7 @@ export namespace LazilyResolvedClassUnionMember2 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -38394,7 +38341,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
 }
 export class LazilyResolvedClassUnionMember1 {
-  private _$identifier?: LazilyResolvedClassUnionMember1.$Identifier;
+  readonly $identifier: () => LazilyResolvedClassUnionMember1.$Identifier;
 
   readonly $type: "LazilyResolvedClassUnionMember1" =
     "LazilyResolvedClassUnionMember1" as const;
@@ -38405,26 +38352,22 @@ export class LazilyResolvedClassUnionMember1 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): LazilyResolvedClassUnionMember1.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: LazilyResolvedClassUnionMember1): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -38459,7 +38402,7 @@ export class LazilyResolvedClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -38475,9 +38418,9 @@ export class LazilyResolvedClassUnionMember1 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedClassUnionMember1.$Json),
@@ -38495,7 +38438,7 @@ export class LazilyResolvedClassUnionMember1 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -38596,7 +38539,7 @@ export namespace LazilyResolvedClassUnionMember1 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -38983,7 +38926,7 @@ export namespace LazilyResolvedClassUnionMember1 {
  */
 
 export interface LazilyResolvedBlankNodeOrIriIdentifierInterface {
-  readonly $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
+  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
   readonly lazilyResolvedStringProperty: string;
 }
@@ -38993,15 +38936,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifierInterface {
-    let $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
@@ -39013,7 +38958,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     left: LazilyResolvedBlankNodeOrIriIdentifierInterface,
     right: LazilyResolvedBlankNodeOrIriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -39055,7 +39000,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       _hasher,
     );
     _hasher.update(
-      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value,
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier().value,
     );
     _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifierInterface.$type);
     return _hasher;
@@ -39148,7 +39093,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -39279,7 +39224,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $fromJson(
     json: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json,
   ): LazilyResolvedBlankNodeOrIriIdentifierInterface {
-    return $propertiesFromJson(json);
+    return LazilyResolvedBlankNodeOrIriIdentifierInterface.$create(
+      $propertiesFromJson(json),
+    );
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -39304,7 +39251,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -39524,10 +39471,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier()
             .termType === "BlankNode"
-            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.value}`
-            : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier
+            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier().value}`
+            : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier()
                 .value,
         $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
         lazilyResolvedStringProperty:
@@ -39549,7 +39496,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier,
+      _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -39638,7 +39585,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
  */
 
 export class LazilyResolvedBlankNodeOrIriIdentifierClass {
-  private _$identifier?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
+  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
 
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass" =
     "LazilyResolvedBlankNodeOrIriIdentifierClass" as const;
@@ -39649,26 +39596,22 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: LazilyResolvedBlankNodeOrIriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -39703,7 +39646,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -39719,9 +39662,9 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierClass.$Json),
@@ -39739,7 +39682,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -39843,7 +39786,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -40244,7 +40187,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
  */
 
 export class LanguageInPropertiesClass {
-  private _$identifier?: LanguageInPropertiesClass.$Identifier;
+  readonly $identifier: () => LanguageInPropertiesClass.$Identifier;
 
   readonly $type: "LanguageInPropertiesClass" =
     "LanguageInPropertiesClass" as const;
@@ -40258,26 +40201,22 @@ export class LanguageInPropertiesClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly languageInLiteralProperty: NonEmptyList<Literal>;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.languageInLiteralProperty = parameters.languageInLiteralProperty;
   }
 
-  get $identifier(): LanguageInPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: LanguageInPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -40312,7 +40251,7 @@ export class LanguageInPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -40333,9 +40272,9 @@ export class LanguageInPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         languageInLiteralProperty: this.languageInLiteralProperty.map(
           (item) => ({
@@ -40360,7 +40299,7 @@ export class LanguageInPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/languageInLiteralProperty"),
       this.languageInLiteralProperty.flatMap((item) => [item]),
@@ -40468,7 +40407,7 @@ export namespace LanguageInPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -40795,7 +40734,7 @@ export namespace LanguageInPropertiesClass {
  */
 
 export class JsPrimitiveUnionPropertyClass {
-  private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
+  readonly $identifier: () => JsPrimitiveUnionPropertyClass.$Identifier;
 
   readonly $type: "JsPrimitiveUnionPropertyClass" =
     "JsPrimitiveUnionPropertyClass" as const;
@@ -40806,13 +40745,16 @@ export class JsPrimitiveUnionPropertyClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (parameters?.jsPrimitiveUnionProperty === undefined) {
       this.jsPrimitiveUnionProperty = [];
@@ -40824,15 +40766,8 @@ export class JsPrimitiveUnionPropertyClass {
     }
   }
 
-  get $identifier(): JsPrimitiveUnionPropertyClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: JsPrimitiveUnionPropertyClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -40897,7 +40832,7 @@ export class JsPrimitiveUnionPropertyClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -40923,9 +40858,9 @@ export class JsPrimitiveUnionPropertyClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map((item) =>
           ((value: boolean | number | string): boolean | number | string => {
@@ -40957,7 +40892,7 @@ export class JsPrimitiveUnionPropertyClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -41091,7 +41026,7 @@ export namespace JsPrimitiveUnionPropertyClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -41775,7 +41710,7 @@ export namespace JsPrimitiveUnionPropertyClass {
  */
 
 export interface IriIdentifierInterface {
-  readonly $identifier: IriIdentifierInterface.$Identifier;
+  readonly $identifier: () => IriIdentifierInterface.$Identifier;
   readonly $type: "IriIdentifierInterface";
 }
 
@@ -41783,13 +41718,14 @@ export namespace IriIdentifierInterface {
   export function $create(parameters: {
     readonly $identifier: NamedNode | string;
   }): IriIdentifierInterface {
-    let $identifier: IriIdentifierInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => IriIdentifierInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "IriIdentifierInterface" as const;
     return { $identifier, $type };
@@ -41799,7 +41735,7 @@ export namespace IriIdentifierInterface {
     left: IriIdentifierInterface,
     right: IriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -41828,7 +41764,7 @@ export namespace IriIdentifierInterface {
       _iriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_iriIdentifierInterface.$identifier.value);
+    _hasher.update(_iriIdentifierInterface.$identifier().value);
     _hasher.update(_iriIdentifierInterface.$type);
     return _hasher;
   }
@@ -41906,7 +41842,7 @@ export namespace IriIdentifierInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -42001,7 +41937,7 @@ export namespace IriIdentifierInterface {
   export function $fromJson(
     json: IriIdentifierInterface.$Json,
   ): IriIdentifierInterface {
-    return $propertiesFromJson(json);
+    return IriIdentifierInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -42023,7 +41959,7 @@ export namespace IriIdentifierInterface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -42198,7 +42134,7 @@ export namespace IriIdentifierInterface {
   ): IriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _iriIdentifierInterface.$identifier.value,
+        "@id": _iriIdentifierInterface.$identifier().value,
         $type: _iriIdentifierInterface.$type,
       } satisfies IriIdentifierInterface.$Json),
     );
@@ -42214,7 +42150,9 @@ export namespace IriIdentifierInterface {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_iriIdentifierInterface.$identifier);
+    const resource = resourceSet.resource(
+      _iriIdentifierInterface.$identifier(),
+    );
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -42280,22 +42218,23 @@ export namespace IriIdentifierInterface {
  */
 
 export class IriIdentifierClass {
-  readonly $identifier: IriIdentifierClass.$Identifier;
+  readonly $identifier: () => IriIdentifierClass.$Identifier;
 
   readonly $type: "IriIdentifierClass" = "IriIdentifierClass" as const;
 
   constructor(parameters: { readonly $identifier: NamedNode | string }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      this.$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
   }
 
   $equals(other: IriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -42318,7 +42257,7 @@ export class IriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -42332,7 +42271,7 @@ export class IriIdentifierClass {
   $toJson(): IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier.value,
+        "@id": this.$identifier().value,
         $type: this.$type,
       } satisfies IriIdentifierClass.$Json),
     );
@@ -42347,7 +42286,7 @@ export class IriIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -42434,7 +42373,7 @@ export namespace IriIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -42740,7 +42679,7 @@ export namespace IriIdentifierClass {
     );
 }
 export interface InterfaceUnionMemberCommonParent {
-  readonly $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier;
+  readonly $identifier: () => InterfaceUnionMemberCommonParentStatic.$Identifier;
   readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
   readonly interfaceUnionMemberCommonParentProperty: string;
 }
@@ -42750,15 +42689,17 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly interfaceUnionMemberCommonParentProperty: string;
   }): Omit<InterfaceUnionMemberCommonParent, "$type"> {
-    let $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => InterfaceUnionMemberCommonParentStatic.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const interfaceUnionMemberCommonParentProperty =
       parameters.interfaceUnionMemberCommonParentProperty;
@@ -42769,7 +42710,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     left: InterfaceUnionMemberCommonParent,
     right: InterfaceUnionMemberCommonParent,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -42810,7 +42751,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       _interfaceUnionMemberCommonParent,
       _hasher,
     );
-    _hasher.update(_interfaceUnionMemberCommonParent.$identifier.value);
+    _hasher.update(_interfaceUnionMemberCommonParent.$identifier().value);
     _hasher.update(_interfaceUnionMemberCommonParent.$type);
     return _hasher;
   }
@@ -42890,7 +42831,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -43115,9 +43056,10 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _interfaceUnionMemberCommonParent.$identifier.termType === "BlankNode"
-            ? `_:${_interfaceUnionMemberCommonParent.$identifier.value}`
-            : _interfaceUnionMemberCommonParent.$identifier.value,
+          _interfaceUnionMemberCommonParent.$identifier().termType ===
+          "BlankNode"
+            ? `_:${_interfaceUnionMemberCommonParent.$identifier().value}`
+            : _interfaceUnionMemberCommonParent.$identifier().value,
         $type: _interfaceUnionMemberCommonParent.$type,
         interfaceUnionMemberCommonParentProperty:
           _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
@@ -43138,7 +43080,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _interfaceUnionMemberCommonParent.$identifier,
+      _interfaceUnionMemberCommonParent.$identifier(),
     );
     resource.add(
       dataFactory.namedNode(
@@ -43209,7 +43151,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 }
 export interface InterfaceUnionMember2
   extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: InterfaceUnionMember2.$Identifier;
+  readonly $identifier: () => InterfaceUnionMember2.$Identifier;
   readonly $type: "InterfaceUnionMember2";
   readonly interfaceUnionMember2Property: string;
 }
@@ -43221,15 +43163,17 @@ export namespace InterfaceUnionMember2 {
       readonly interfaceUnionMember2Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember2 {
-    let $identifier: InterfaceUnionMember2.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => InterfaceUnionMember2.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
@@ -43469,7 +43413,7 @@ export namespace InterfaceUnionMember2 {
   export function $fromJson(
     json: InterfaceUnionMember2.$Json,
   ): InterfaceUnionMember2 {
-    return $propertiesFromJson(json);
+    return InterfaceUnionMember2.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -43491,7 +43435,7 @@ export namespace InterfaceUnionMember2 {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -43808,7 +43752,7 @@ export namespace InterfaceUnionMember2 {
 }
 export interface InterfaceUnionMember1
   extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: InterfaceUnionMember1.$Identifier;
+  readonly $identifier: () => InterfaceUnionMember1.$Identifier;
   readonly $type: "InterfaceUnionMember1";
   readonly interfaceUnionMember1Property: string;
 }
@@ -43820,15 +43764,17 @@ export namespace InterfaceUnionMember1 {
       readonly interfaceUnionMember1Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember1 {
-    let $identifier: InterfaceUnionMember1.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => InterfaceUnionMember1.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
@@ -44068,7 +44014,7 @@ export namespace InterfaceUnionMember1 {
   export function $fromJson(
     json: InterfaceUnionMember1.$Json,
   ): InterfaceUnionMember1 {
-    return $propertiesFromJson(json);
+    return InterfaceUnionMember1.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -44090,7 +44036,7 @@ export namespace InterfaceUnionMember1 {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -44409,7 +44355,7 @@ export namespace InterfaceUnionMember1 {
  */
 
 export interface Interface {
-  readonly $identifier: Interface.$Identifier;
+  readonly $identifier: () => Interface.$Identifier;
   readonly $type: "Interface";
   readonly interfaceProperty: string;
 }
@@ -44419,15 +44365,17 @@ export namespace Interface {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly interfaceProperty: string;
   }): Interface {
-    let $identifier: Interface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => Interface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "Interface" as const;
     const interfaceProperty = parameters.interfaceProperty;
@@ -44435,7 +44383,7 @@ export namespace Interface {
   }
 
   export function $equals(left: Interface, right: Interface): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -44472,7 +44420,7 @@ export namespace Interface {
     _hasher: HasherT,
   ): HasherT {
     Interface.$hashShaclProperties(_interface, _hasher);
-    _hasher.update(_interface.$identifier.value);
+    _hasher.update(_interface.$identifier().value);
     _hasher.update(_interface.$type);
     return _hasher;
   }
@@ -44558,7 +44506,7 @@ export namespace Interface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -44627,7 +44575,7 @@ export namespace Interface {
   };
 
   export function $fromJson(json: Interface.$Json): Interface {
-    return $propertiesFromJson(json);
+    return Interface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<Interface> = (
@@ -44650,7 +44598,7 @@ export namespace Interface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -44808,9 +44756,9 @@ export namespace Interface {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _interface.$identifier.termType === "BlankNode"
-            ? `_:${_interface.$identifier.value}`
-            : _interface.$identifier.value,
+          _interface.$identifier().termType === "BlankNode"
+            ? `_:${_interface.$identifier().value}`
+            : _interface.$identifier().value,
         $type: _interface.$type,
         interfaceProperty: _interface.interfaceProperty,
       } satisfies Interface.$Json),
@@ -44827,7 +44775,7 @@ export namespace Interface {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_interface.$identifier);
+    const resource = resourceSet.resource(_interface.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/interfaceProperty"),
       [$literalFactory.string(_interface.interfaceProperty)],
@@ -44884,7 +44832,7 @@ export namespace Interface {
     );
 }
 export class IndirectRecursiveHelperClass {
-  private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
+  readonly $identifier: () => IndirectRecursiveHelperClass.$Identifier;
 
   readonly $type: "IndirectRecursiveHelperClass" =
     "IndirectRecursiveHelperClass" as const;
@@ -44897,13 +44845,16 @@ export class IndirectRecursiveHelperClass {
       | Maybe<IndirectRecursiveClass>
       | IndirectRecursiveClass;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.indirectRecursiveProperty)) {
       this.indirectRecursiveProperty = parameters?.indirectRecursiveProperty;
@@ -44922,15 +44873,8 @@ export class IndirectRecursiveHelperClass {
     }
   }
 
-  get $identifier(): IndirectRecursiveHelperClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: IndirectRecursiveHelperClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -44966,7 +44910,7 @@ export class IndirectRecursiveHelperClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -44984,9 +44928,9 @@ export class IndirectRecursiveHelperClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         indirectRecursiveProperty: this.indirectRecursiveProperty
           .map((item) => item.$toJson())
@@ -45006,7 +44950,7 @@ export class IndirectRecursiveHelperClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -45115,7 +45059,7 @@ export namespace IndirectRecursiveHelperClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -45488,7 +45432,7 @@ export namespace IndirectRecursiveHelperClass {
     );
 }
 export class IndirectRecursiveClass {
-  private _$identifier?: IndirectRecursiveClass.$Identifier;
+  readonly $identifier: () => IndirectRecursiveClass.$Identifier;
 
   readonly $type: "IndirectRecursiveClass" = "IndirectRecursiveClass" as const;
 
@@ -45500,13 +45444,16 @@ export class IndirectRecursiveClass {
       | Maybe<IndirectRecursiveHelperClass>
       | IndirectRecursiveHelperClass;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.indirectRecursiveHelperProperty)) {
       this.indirectRecursiveHelperProperty =
@@ -45527,15 +45474,8 @@ export class IndirectRecursiveClass {
     }
   }
 
-  get $identifier(): IndirectRecursiveClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: IndirectRecursiveClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -45571,7 +45511,7 @@ export class IndirectRecursiveClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -45589,9 +45529,9 @@ export class IndirectRecursiveClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         indirectRecursiveHelperProperty: this.indirectRecursiveHelperProperty
           .map((item) => item.$toJson())
@@ -45609,7 +45549,7 @@ export class IndirectRecursiveClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -45716,7 +45656,7 @@ export namespace IndirectRecursiveClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -46097,7 +46037,7 @@ export namespace IndirectRecursiveClass {
  */
 
 export class InPropertiesClass {
-  private _$identifier?: InPropertiesClass.$Identifier;
+  readonly $identifier: () => InPropertiesClass.$Identifier;
 
   readonly $type: "InPropertiesClass" = "InPropertiesClass" as const;
 
@@ -46139,13 +46079,16 @@ export class InPropertiesClass {
       | "http://example.com/InPropertiesIri2";
     readonly inStringsProperty?: Maybe<"text" | "html"> | "text" | "html";
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.inBooleansProperty)) {
       this.inBooleansProperty = parameters?.inBooleansProperty;
@@ -46211,15 +46154,8 @@ export class InPropertiesClass {
     }
   }
 
-  get $identifier(): InPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: InPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -46314,7 +46250,7 @@ export class InPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -46348,9 +46284,9 @@ export class InPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         inBooleansProperty: this.inBooleansProperty
           .map((item) => item)
@@ -46379,7 +46315,7 @@ export class InPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -46577,7 +46513,7 @@ export namespace InPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -47397,7 +47333,7 @@ export namespace InPropertiesClass {
  */
 
 export class InIdentifierClass {
-  readonly $identifier: InIdentifierClass.$Identifier;
+  readonly $identifier: () => InIdentifierClass.$Identifier;
 
   readonly $type: "InIdentifierClass" = "InIdentifierClass" as const;
 
@@ -47413,12 +47349,13 @@ export class InIdentifierClass {
       | "http://example.com/InIdentifierInstance2";
     readonly inIdentifierProperty?: Maybe<string> | string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this.$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this.$identifier = dataFactory.namedNode(parameters.$identifier);
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
     } else {
-      this.$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters.inIdentifierProperty)) {
       this.inIdentifierProperty = parameters.inIdentifierProperty;
@@ -47433,7 +47370,7 @@ export class InIdentifierClass {
   }
 
   $equals(other: InIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -47468,7 +47405,7 @@ export class InIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -47485,7 +47422,7 @@ export class InIdentifierClass {
   $toJson(): InIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier.value,
+        "@id": this.$identifier().value,
         $type: this.$type,
         inIdentifierProperty: this.inIdentifierProperty
           .map((item) => item)
@@ -47503,7 +47440,7 @@ export class InIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -47638,7 +47575,7 @@ export namespace InIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
+      !$filterIri(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -48048,36 +47985,18 @@ export namespace InIdentifierClass {
  */
 
 export abstract class IdentifierOverride1Class {
-  protected _$identifier?: IdentifierOverride1ClassStatic.$Identifier;
+  abstract readonly $identifier: () => IdentifierOverride1ClassStatic.$Identifier;
 
   abstract readonly $type: "IdentifierOverride3Class";
 
   readonly identifierOverrideProperty: string;
 
-  constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly identifierOverrideProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
+  constructor(parameters: { readonly identifierOverrideProperty: string }) {
     this.identifierOverrideProperty = parameters.identifierOverrideProperty;
   }
 
-  get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: IdentifierOverride1Class): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -48112,7 +48031,7 @@ export abstract class IdentifierOverride1Class {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -48128,9 +48047,9 @@ export abstract class IdentifierOverride1Class {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         identifierOverrideProperty: this.identifierOverrideProperty,
       } satisfies IdentifierOverride1ClassStatic.$Json),
@@ -48146,7 +48065,7 @@ export abstract class IdentifierOverride1Class {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/identifierOverrideProperty"),
       [$literalFactory.string(this.identifierOverrideProperty)],
@@ -48232,7 +48151,7 @@ export namespace IdentifierOverride1ClassStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -48489,18 +48408,6 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     parameters: ConstructorParameters<typeof IdentifierOverride1Class>[0],
   ) {
     super(parameters);
-  }
-
-  override get $identifier(): IdentifierOverride2ClassStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
   }
 
   override $toRdfResource(
@@ -48765,22 +48672,10 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
-      readonly $identifier?: NamedNode | string;
+      readonly $identifier: NamedNode | string;
     } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
   ) {
     super(parameters);
-  }
-
-  override get $identifier(): IdentifierOverride3Class.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
   }
 
   override $toRdfResource(
@@ -49184,7 +49079,7 @@ export namespace IdentifierOverride3Class {
  */
 
 export class HasValuePropertiesClass {
-  private _$identifier?: HasValuePropertiesClass.$Identifier;
+  readonly $identifier: () => HasValuePropertiesClass.$Identifier;
 
   readonly $type: "HasValuePropertiesClass" =
     "HasValuePropertiesClass" as const;
@@ -49198,13 +49093,16 @@ export class HasValuePropertiesClass {
     readonly hasIriValueProperty: NamedNode | string;
     readonly hasLiteralValueProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (typeof parameters.hasIriValueProperty === "object") {
       this.hasIriValueProperty = parameters.hasIriValueProperty;
@@ -49218,15 +49116,8 @@ export class HasValuePropertiesClass {
     this.hasLiteralValueProperty = parameters.hasLiteralValueProperty;
   }
 
-  get $identifier(): HasValuePropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: HasValuePropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -49273,7 +49164,7 @@ export class HasValuePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -49291,9 +49182,9 @@ export class HasValuePropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         hasIriValueProperty: { "@id": this.hasIriValueProperty.value },
         hasLiteralValueProperty: this.hasLiteralValueProperty,
@@ -49310,7 +49201,7 @@ export class HasValuePropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/hasIriValueProperty"),
       [this.hasIriValueProperty],
@@ -49416,7 +49307,7 @@ export namespace HasValuePropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -49771,7 +49662,7 @@ export namespace HasValuePropertiesClass {
     );
 }
 export class FlattenClassUnionMember3 {
-  private _$identifier?: FlattenClassUnionMember3.$Identifier;
+  readonly $identifier: () => FlattenClassUnionMember3.$Identifier;
 
   readonly $type: "FlattenClassUnionMember3" =
     "FlattenClassUnionMember3" as const;
@@ -49782,27 +49673,23 @@ export class FlattenClassUnionMember3 {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly flattenClassUnionMember3Property: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.flattenClassUnionMember3Property =
       parameters.flattenClassUnionMember3Property;
   }
 
-  get $identifier(): FlattenClassUnionMember3.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: FlattenClassUnionMember3): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -49837,7 +49724,7 @@ export class FlattenClassUnionMember3 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -49853,9 +49740,9 @@ export class FlattenClassUnionMember3 {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         flattenClassUnionMember3Property: this.flattenClassUnionMember3Property,
       } satisfies FlattenClassUnionMember3.$Json),
@@ -49871,7 +49758,7 @@ export class FlattenClassUnionMember3 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -49970,7 +49857,7 @@ export namespace FlattenClassUnionMember3 {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -50352,7 +50239,7 @@ export namespace FlattenClassUnionMember3 {
  */
 
 export class ExternClassPropertyClass {
-  private _$identifier?: ExternClassPropertyClass.$Identifier;
+  readonly $identifier: () => ExternClassPropertyClass.$Identifier;
 
   readonly $type: "ExternClassPropertyClass" =
     "ExternClassPropertyClass" as const;
@@ -50363,13 +50250,16 @@ export class ExternClassPropertyClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly externClassProperty?: Maybe<ExternClass> | ExternClass;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.externClassProperty)) {
       this.externClassProperty = parameters?.externClassProperty;
@@ -50386,15 +50276,8 @@ export class ExternClassPropertyClass {
     }
   }
 
-  get $identifier(): ExternClassPropertyClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ExternClassPropertyClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -50430,7 +50313,7 @@ export class ExternClassPropertyClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -50448,9 +50331,9 @@ export class ExternClassPropertyClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         externClassProperty: this.externClassProperty
           .map((item) => item.$toJson())
@@ -50468,7 +50351,7 @@ export class ExternClassPropertyClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -50574,7 +50457,7 @@ export namespace ExternClassPropertyClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -50975,37 +50858,21 @@ export namespace ExternClassPropertyClass {
  */
 
 export abstract class AbstractBaseClassForExternClass {
-  protected _$identifier?: AbstractBaseClassForExternClassStatic.$Identifier;
+  abstract readonly $identifier: () => AbstractBaseClassForExternClassStatic.$Identifier;
 
   abstract readonly $type: "ExternClass";
 
   readonly abstractBaseClassForExternClassProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly abstractBaseClassForExternClassProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
     this.abstractBaseClassForExternClassProperty =
       parameters.abstractBaseClassForExternClassProperty;
   }
 
-  get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: AbstractBaseClassForExternClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -51040,7 +50907,7 @@ export abstract class AbstractBaseClassForExternClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -51056,9 +50923,9 @@ export abstract class AbstractBaseClassForExternClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         abstractBaseClassForExternClassProperty:
           this.abstractBaseClassForExternClassProperty,
@@ -51077,7 +50944,7 @@ export abstract class AbstractBaseClassForExternClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/abstractBaseClassForExternClassProperty",
@@ -51165,7 +51032,7 @@ export namespace AbstractBaseClassForExternClassStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -51423,7 +51290,7 @@ import { ExternClass } from "./ExternClass.js"; /**
  */
 
 export class ExplicitRdfTypeClass {
-  private _$identifier?: ExplicitRdfTypeClass.$Identifier;
+  readonly $identifier: () => ExplicitRdfTypeClass.$Identifier;
 
   readonly $type: "ExplicitRdfTypeClass" = "ExplicitRdfTypeClass" as const;
 
@@ -51433,26 +51300,22 @@ export class ExplicitRdfTypeClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly explicitRdfTypeProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.explicitRdfTypeProperty = parameters.explicitRdfTypeProperty;
   }
 
-  get $identifier(): ExplicitRdfTypeClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ExplicitRdfTypeClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -51487,7 +51350,7 @@ export class ExplicitRdfTypeClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -51503,9 +51366,9 @@ export class ExplicitRdfTypeClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         explicitRdfTypeProperty: this.explicitRdfTypeProperty,
       } satisfies ExplicitRdfTypeClass.$Json),
@@ -51521,7 +51384,7 @@ export class ExplicitRdfTypeClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -51622,7 +51485,7 @@ export namespace ExplicitRdfTypeClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -52003,7 +51866,7 @@ export namespace ExplicitRdfTypeClass {
  */
 
 export class ExplicitFromToRdfTypesClass {
-  private _$identifier?: ExplicitFromToRdfTypesClass.$Identifier;
+  readonly $identifier: () => ExplicitFromToRdfTypesClass.$Identifier;
 
   readonly $type: "ExplicitFromToRdfTypesClass" =
     "ExplicitFromToRdfTypesClass" as const;
@@ -52014,27 +51877,23 @@ export class ExplicitFromToRdfTypesClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly explicitFromToRdfTypesProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.explicitFromToRdfTypesProperty =
       parameters.explicitFromToRdfTypesProperty;
   }
 
-  get $identifier(): ExplicitFromToRdfTypesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ExplicitFromToRdfTypesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -52069,7 +51928,7 @@ export class ExplicitFromToRdfTypesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -52085,9 +51944,9 @@ export class ExplicitFromToRdfTypesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         explicitFromToRdfTypesProperty: this.explicitFromToRdfTypesProperty,
       } satisfies ExplicitFromToRdfTypesClass.$Json),
@@ -52105,7 +51964,7 @@ export class ExplicitFromToRdfTypesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -52213,7 +52072,7 @@ export namespace ExplicitFromToRdfTypesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -52598,7 +52457,7 @@ export namespace ExplicitFromToRdfTypesClass {
  */
 
 export class DisplayPropertiesClass {
-  private _$identifier?: DisplayPropertiesClass.$Identifier;
+  readonly $identifier: () => DisplayPropertiesClass.$Identifier;
 
   readonly $type: "DisplayPropertiesClass" = "DisplayPropertiesClass" as const;
 
@@ -52623,28 +52482,24 @@ export class DisplayPropertiesClass {
     readonly explicitTrueDisplayProperty: string;
     readonly implicitFalseDisplayProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.explicitFalseDisplayProperty = parameters.explicitFalseDisplayProperty;
     this.explicitTrueDisplayProperty = parameters.explicitTrueDisplayProperty;
     this.implicitFalseDisplayProperty = parameters.implicitFalseDisplayProperty;
   }
 
-  get $identifier(): DisplayPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: DisplayPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -52703,7 +52558,7 @@ export class DisplayPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -52721,9 +52576,9 @@ export class DisplayPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         explicitFalseDisplayProperty: this.explicitFalseDisplayProperty,
         explicitTrueDisplayProperty: this.explicitTrueDisplayProperty,
@@ -52741,7 +52596,7 @@ export class DisplayPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -52874,7 +52729,7 @@ export namespace DisplayPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -53378,7 +53233,7 @@ export namespace DisplayPropertiesClass {
     );
 }
 export class DirectRecursiveClass {
-  private _$identifier?: DirectRecursiveClass.$Identifier;
+  readonly $identifier: () => DirectRecursiveClass.$Identifier;
 
   readonly $type: "DirectRecursiveClass" = "DirectRecursiveClass" as const;
 
@@ -53390,13 +53245,16 @@ export class DirectRecursiveClass {
       | Maybe<DirectRecursiveClass>
       | DirectRecursiveClass;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.directRecursiveProperty)) {
       this.directRecursiveProperty = parameters?.directRecursiveProperty;
@@ -53415,15 +53273,8 @@ export class DirectRecursiveClass {
     }
   }
 
-  get $identifier(): DirectRecursiveClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: DirectRecursiveClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -53459,7 +53310,7 @@ export class DirectRecursiveClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -53477,9 +53328,9 @@ export class DirectRecursiveClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         directRecursiveProperty: this.directRecursiveProperty
           .map((item) => item.$toJson())
@@ -53497,7 +53348,7 @@ export class DirectRecursiveClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -53602,7 +53453,7 @@ export namespace DirectRecursiveClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -53972,7 +53823,7 @@ export namespace DirectRecursiveClass {
  */
 
 export class DefaultValuePropertiesClass {
-  private _$identifier?: DefaultValuePropertiesClass.$Identifier;
+  readonly $identifier: () => DefaultValuePropertiesClass.$Identifier;
 
   readonly $type: "DefaultValuePropertiesClass" =
     "DefaultValuePropertiesClass" as const;
@@ -53998,13 +53849,16 @@ export class DefaultValuePropertiesClass {
     readonly stringDefaultValueProperty?: string;
     readonly trueBooleanDefaultValueProperty?: boolean;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (
       typeof parameters?.dateDefaultValueProperty === "object" &&
@@ -54065,15 +53919,8 @@ export class DefaultValuePropertiesClass {
     }
   }
 
-  get $identifier(): DefaultValuePropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: DefaultValuePropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -54168,7 +54015,7 @@ export class DefaultValuePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -54189,9 +54036,9 @@ export class DefaultValuePropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         dateDefaultValueProperty: this.dateDefaultValueProperty
           .toISOString()
@@ -54217,7 +54064,7 @@ export class DefaultValuePropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -54429,7 +54276,7 @@ export namespace DefaultValuePropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -55248,7 +55095,7 @@ export namespace DefaultValuePropertiesClass {
  */
 
 export class DateUnionPropertiesClass {
-  private _$identifier?: DateUnionPropertiesClass.$Identifier;
+  readonly $identifier: () => DateUnionPropertiesClass.$Identifier;
 
   readonly $type: "DateUnionPropertiesClass" =
     "DateUnionPropertiesClass" as const;
@@ -55284,13 +55131,16 @@ export class DateUnionPropertiesClass {
       | Maybe<{ type: "string"; value: string } | { type: "date"; value: Date }>
       | ({ type: "string"; value: string } | { type: "date"; value: Date });
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.dateOrDateTimeProperty)) {
       this.dateOrDateTimeProperty = parameters?.dateOrDateTimeProperty;
@@ -55338,15 +55188,8 @@ export class DateUnionPropertiesClass {
     }
   }
 
-  get $identifier(): DateUnionPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: DateUnionPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -55543,7 +55386,7 @@ export class DateUnionPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -55590,9 +55433,9 @@ export class DateUnionPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         dateOrDateTimeProperty: this.dateOrDateTimeProperty
           .map((item) =>
@@ -55705,7 +55548,7 @@ export class DateUnionPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -55985,7 +55828,7 @@ export namespace DateUnionPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -57665,7 +57508,7 @@ export namespace DateUnionPropertiesClass {
  */
 
 export class ConvertibleTypePropertiesClass {
-  private _$identifier?: ConvertibleTypePropertiesClass.$Identifier;
+  readonly $identifier: () => ConvertibleTypePropertiesClass.$Identifier;
 
   readonly $type: "ConvertibleTypePropertiesClass" =
     "ConvertibleTypePropertiesClass" as const;
@@ -57760,13 +57603,16 @@ export class ConvertibleTypePropertiesClass {
       | readonly number[]
       | readonly string[];
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.convertibleIriNonEmptySetProperty =
       parameters.convertibleIriNonEmptySetProperty;
@@ -58022,15 +57868,8 @@ export class ConvertibleTypePropertiesClass {
     }
   }
 
-  get $identifier(): ConvertibleTypePropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ConvertibleTypePropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -58197,7 +58036,7 @@ export class ConvertibleTypePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -58262,9 +58101,9 @@ export class ConvertibleTypePropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         convertibleIriNonEmptySetProperty:
           this.convertibleIriNonEmptySetProperty.map((item) => ({
@@ -58412,7 +58251,7 @@ export class ConvertibleTypePropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -58818,7 +58657,7 @@ export namespace ConvertibleTypePropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -60169,7 +60008,7 @@ export namespace ConvertibleTypePropertiesClass {
  */
 
 export interface BaseInterfaceWithProperties {
-  readonly $identifier: BaseInterfaceWithPropertiesStatic.$Identifier;
+  readonly $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
   readonly $type:
     | "BaseInterfaceWithProperties"
     | "BaseInterfaceWithoutProperties"
@@ -60183,15 +60022,17 @@ export namespace BaseInterfaceWithPropertiesStatic {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly baseInterfaceWithPropertiesProperty: string;
   }): BaseInterfaceWithProperties {
-    let $identifier: BaseInterfaceWithPropertiesStatic.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
@@ -60203,7 +60044,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     left: BaseInterfaceWithProperties,
     right: BaseInterfaceWithProperties,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -60244,7 +60085,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       _baseInterfaceWithProperties,
       _hasher,
     );
-    _hasher.update(_baseInterfaceWithProperties.$identifier.value);
+    _hasher.update(_baseInterfaceWithProperties.$identifier().value);
     _hasher.update(_baseInterfaceWithProperties.$type);
     return _hasher;
   }
@@ -60342,7 +60183,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -60489,7 +60330,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $fromJson(
     json: BaseInterfaceWithPropertiesStatic.$Json,
   ): BaseInterfaceWithProperties {
-    return $propertiesFromJson(json);
+    return BaseInterfaceWithPropertiesStatic.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -60514,7 +60355,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -60747,9 +60588,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _baseInterfaceWithProperties.$identifier.termType === "BlankNode"
-            ? `_:${_baseInterfaceWithProperties.$identifier.value}`
-            : _baseInterfaceWithProperties.$identifier.value,
+          _baseInterfaceWithProperties.$identifier().termType === "BlankNode"
+            ? `_:${_baseInterfaceWithProperties.$identifier().value}`
+            : _baseInterfaceWithProperties.$identifier().value,
         $type: _baseInterfaceWithProperties.$type,
         baseInterfaceWithPropertiesProperty:
           _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
@@ -60770,7 +60611,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _baseInterfaceWithProperties.$identifier,
+      _baseInterfaceWithProperties.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -60851,7 +60692,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
 export interface BaseInterfaceWithoutProperties
   extends BaseInterfaceWithProperties {
-  readonly $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier;
+  readonly $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
   readonly $type:
     | "BaseInterfaceWithoutProperties"
     | "ConcreteChildInterface"
@@ -60864,15 +60705,17 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       readonly $identifier?: (BlankNode | NamedNode) | string;
     } & Parameters<typeof BaseInterfaceWithPropertiesStatic.$create>[0],
   ): BaseInterfaceWithoutProperties {
-    let $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "BaseInterfaceWithoutProperties" as const;
     return {
@@ -61078,7 +60921,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $fromJson(
     json: BaseInterfaceWithoutPropertiesStatic.$Json,
   ): BaseInterfaceWithoutProperties {
-    return $propertiesFromJson(json);
+    return BaseInterfaceWithoutPropertiesStatic.$create(
+      $propertiesFromJson(json),
+    );
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -61103,7 +60948,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -61401,7 +61246,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
 export interface ConcreteParentInterface
   extends BaseInterfaceWithoutProperties {
-  readonly $identifier: ConcreteParentInterfaceStatic.$Identifier;
+  readonly $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
   readonly $type: "ConcreteParentInterface" | "ConcreteChildInterface";
   readonly concreteParentInterfaceProperty: string;
 }
@@ -61413,15 +61258,17 @@ export namespace ConcreteParentInterfaceStatic {
       readonly concreteParentInterfaceProperty: string;
     } & Parameters<typeof BaseInterfaceWithoutPropertiesStatic.$create>[0],
   ): ConcreteParentInterface {
-    let $identifier: ConcreteParentInterfaceStatic.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
@@ -61679,7 +61526,7 @@ export namespace ConcreteParentInterfaceStatic {
   export function $fromJson(
     json: ConcreteParentInterfaceStatic.$Json,
   ): ConcreteParentInterface {
-    return $propertiesFromJson(json);
+    return ConcreteParentInterfaceStatic.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -61701,7 +61548,7 @@ export namespace ConcreteParentInterfaceStatic {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -62029,7 +61876,7 @@ export namespace ConcreteParentInterfaceStatic {
  */
 
 export interface ConcreteChildInterface extends ConcreteParentInterface {
-  readonly $identifier: ConcreteChildInterface.$Identifier;
+  readonly $identifier: () => ConcreteChildInterface.$Identifier;
   readonly $type: "ConcreteChildInterface";
   readonly concreteChildInterfaceProperty: string;
 }
@@ -62041,15 +61888,17 @@ export namespace ConcreteChildInterface {
       readonly concreteChildInterfaceProperty: string;
     } & Parameters<typeof ConcreteParentInterfaceStatic.$create>[0],
   ): ConcreteChildInterface {
-    let $identifier: ConcreteChildInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ConcreteChildInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
@@ -62293,7 +62142,7 @@ export namespace ConcreteChildInterface {
   export function $fromJson(
     json: ConcreteChildInterface.$Json,
   ): ConcreteChildInterface {
-    return $propertiesFromJson(json);
+    return ConcreteChildInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -62315,7 +62164,7 @@ export namespace ConcreteChildInterface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -62631,37 +62480,21 @@ export namespace ConcreteChildInterface {
  */
 
 export abstract class AbstractBaseClassWithProperties {
-  protected _$identifier?: AbstractBaseClassWithPropertiesStatic.$Identifier;
+  abstract readonly $identifier: () => AbstractBaseClassWithPropertiesStatic.$Identifier;
 
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
 
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
   }
 
-  get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: AbstractBaseClassWithProperties): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -62696,7 +62529,7 @@ export abstract class AbstractBaseClassWithProperties {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -62712,9 +62545,9 @@ export abstract class AbstractBaseClassWithProperties {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         abstractBaseClassWithPropertiesProperty:
           this.abstractBaseClassWithPropertiesProperty,
@@ -62733,7 +62566,7 @@ export abstract class AbstractBaseClassWithProperties {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/abstractBaseClassWithPropertiesProperty",
@@ -62821,7 +62654,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -63087,13 +62920,6 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     >[0],
   ) {
     super(parameters);
-  }
-
-  override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   override $toRdfResource(
@@ -63375,13 +63201,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   ) {
     super(parameters);
     this.concreteParentClassProperty = parameters.concreteParentClassProperty;
-  }
-
-  override get $identifier(): ConcreteParentClassStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
@@ -63940,13 +63759,6 @@ export class ConcreteChildClass extends ConcreteParentClass {
     this.concreteChildClassProperty = parameters.concreteChildClassProperty;
   }
 
-  override get $identifier(): ConcreteChildClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   override $equals(other: ConcreteChildClass): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -64459,37 +64271,21 @@ export namespace ConcreteChildClass {
     );
 }
 export abstract class ClassUnionMemberCommonParent {
-  protected _$identifier?: ClassUnionMemberCommonParentStatic.$Identifier;
+  abstract readonly $identifier: () => ClassUnionMemberCommonParentStatic.$Identifier;
 
   abstract readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
 
   readonly classUnionMemberCommonParentProperty: string;
 
   constructor(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly classUnionMemberCommonParentProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
     this.classUnionMemberCommonParentProperty =
       parameters.classUnionMemberCommonParentProperty;
   }
 
-  get $identifier(): ClassUnionMemberCommonParentStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ClassUnionMemberCommonParent): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -64524,7 +64320,7 @@ export abstract class ClassUnionMemberCommonParent {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -64540,9 +64336,9 @@ export abstract class ClassUnionMemberCommonParent {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         classUnionMemberCommonParentProperty:
           this.classUnionMemberCommonParentProperty,
@@ -64561,7 +64357,7 @@ export abstract class ClassUnionMemberCommonParent {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode(
         "http://example.com/classUnionMemberCommonParentProperty",
@@ -64647,7 +64443,7 @@ export namespace ClassUnionMemberCommonParentStatic {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -64909,13 +64705,6 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   ) {
     super(parameters);
     this.classUnionMember2Property = parameters.classUnionMember2Property;
-  }
-
-  override get $identifier(): ClassUnionMember2.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   override $equals(other: ClassUnionMember2): $EqualsResult {
@@ -65446,13 +65235,6 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     this.classUnionMember1Property = parameters.classUnionMember1Property;
   }
 
-  override get $identifier(): ClassUnionMember1.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   override $equals(other: ClassUnionMember1): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -65970,7 +65752,7 @@ export namespace ClassUnionMember1 {
  */
 
 export class PartialClass {
-  private _$identifier?: PartialClass.$Identifier;
+  readonly $identifier: () => PartialClass.$Identifier;
 
   readonly $type: "PartialClass" = "PartialClass" as const;
 
@@ -65980,26 +65762,22 @@ export class PartialClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
 
-  get $identifier(): PartialClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: PartialClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -66034,7 +65812,7 @@ export class PartialClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -66050,9 +65828,9 @@ export class PartialClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClass.$Json),
@@ -66068,7 +65846,7 @@ export class PartialClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
       [$literalFactory.string(this.lazilyResolvedStringProperty)],
@@ -66161,7 +65939,7 @@ export namespace PartialClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -66442,7 +66220,7 @@ export namespace PartialClass {
  */
 
 export class NonClass {
-  private _$identifier?: NonClass.$Identifier;
+  readonly $identifier: () => NonClass.$Identifier;
 
   readonly $type: "NonClass" = "NonClass" as const;
 
@@ -66452,26 +66230,22 @@ export class NonClass {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly nonClassProperty: string;
   }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     this.nonClassProperty = parameters.nonClassProperty;
   }
 
-  get $identifier(): NonClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: NonClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -66505,7 +66279,7 @@ export class NonClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -66521,9 +66295,9 @@ export class NonClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         nonClassProperty: this.nonClassProperty,
       } satisfies NonClass.$Json),
@@ -66539,7 +66313,7 @@ export class NonClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/nonClassProperty"),
       [$literalFactory.string(this.nonClassProperty)],
@@ -66627,7 +66401,7 @@ export namespace NonClass {
   export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -66898,7 +66672,7 @@ export namespace NonClass {
  */
 
 export class ClassPropertiesClass {
-  private _$identifier?: ClassPropertiesClass.$Identifier;
+  readonly $identifier: () => ClassPropertiesClass.$Identifier;
 
   readonly $type: "ClassPropertiesClass" = "ClassPropertiesClass" as const;
 
@@ -66941,13 +66715,16 @@ export class ClassPropertiesClass {
       | (BlankNode | NamedNode)
       | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
     if (Maybe.isMaybe(parameters?.iriClassProperty)) {
       this.iriClassProperty = parameters?.iriClassProperty;
@@ -67015,15 +66792,8 @@ export class ClassPropertiesClass {
     }
   }
 
-  get $identifier(): ClassPropertiesClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
-  }
-
   $equals(other: ClassPropertiesClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -67108,7 +66878,7 @@ export class ClassPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -67141,9 +66911,9 @@ export class ClassPropertiesClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
         iriClassProperty: this.iriClassProperty
           .map((item) => ({ "@id": item.value }))
@@ -67181,7 +66951,7 @@ export class ClassPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -67360,7 +67130,7 @@ export namespace ClassPropertiesClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -68076,7 +67846,7 @@ export namespace ClassPropertiesClass {
  */
 
 export interface BlankNodeOrIriIdentifierInterface {
-  readonly $identifier: BlankNodeOrIriIdentifierInterface.$Identifier;
+  readonly $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
   readonly $type: "BlankNodeOrIriIdentifierInterface";
 }
 
@@ -68084,15 +67854,17 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export function $create(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
   }): BlankNodeOrIriIdentifierInterface {
-    let $identifier: BlankNodeOrIriIdentifierInterface.$Identifier;
-    if (typeof parameters?.$identifier === "object") {
-      $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters?.$identifier;
+    let $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters?.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "BlankNodeOrIriIdentifierInterface" as const;
     return { $identifier, $type };
@@ -68102,7 +67874,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
     left: BlankNodeOrIriIdentifierInterface,
     right: BlankNodeOrIriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -68131,7 +67903,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       _blankNodeOrIriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_blankNodeOrIriIdentifierInterface.$identifier.value);
+    _hasher.update(_blankNodeOrIriIdentifierInterface.$identifier().value);
     _hasher.update(_blankNodeOrIriIdentifierInterface.$type);
     return _hasher;
   }
@@ -68210,7 +67982,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -68306,7 +68078,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export function $fromJson(
     json: BlankNodeOrIriIdentifierInterface.$Json,
   ): BlankNodeOrIriIdentifierInterface {
-    return $propertiesFromJson(json);
+    return BlankNodeOrIriIdentifierInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -68331,7 +68103,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
         objectSet,
         preferredLanguages,
       },
-    );
+    ).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -68515,10 +68287,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _blankNodeOrIriIdentifierInterface.$identifier.termType ===
+          _blankNodeOrIriIdentifierInterface.$identifier().termType ===
           "BlankNode"
-            ? `_:${_blankNodeOrIriIdentifierInterface.$identifier.value}`
-            : _blankNodeOrIriIdentifierInterface.$identifier.value,
+            ? `_:${_blankNodeOrIriIdentifierInterface.$identifier().value}`
+            : _blankNodeOrIriIdentifierInterface.$identifier().value,
         $type: _blankNodeOrIriIdentifierInterface.$type,
       } satisfies BlankNodeOrIriIdentifierInterface.$Json),
     );
@@ -68537,7 +68309,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _blankNodeOrIriIdentifierInterface.$identifier,
+      _blankNodeOrIriIdentifierInterface.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -68608,7 +68380,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
  */
 
 export class BlankNodeOrIriIdentifierClass {
-  private _$identifier?: BlankNodeOrIriIdentifierClass.$Identifier;
+  readonly $identifier: () => BlankNodeOrIriIdentifierClass.$Identifier;
 
   readonly $type: "BlankNodeOrIriIdentifierClass" =
     "BlankNodeOrIriIdentifierClass" as const;
@@ -68616,25 +68388,21 @@ export class BlankNodeOrIriIdentifierClass {
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
-  }
-
-  get $identifier(): BlankNodeOrIriIdentifierClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    return this._$identifier;
   }
 
   $equals(other: BlankNodeOrIriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -68657,7 +68425,7 @@ export class BlankNodeOrIriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -68672,9 +68440,9 @@ export class BlankNodeOrIriIdentifierClass {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+          this.$identifier().termType === "BlankNode"
+            ? `_:${this.$identifier().value}`
+            : this.$identifier().value,
         $type: this.$type,
       } satisfies BlankNodeOrIriIdentifierClass.$Json),
     );
@@ -68691,7 +68459,7 @@ export class BlankNodeOrIriIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -68781,7 +68549,7 @@ export namespace BlankNodeOrIriIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -69098,7 +68866,7 @@ export namespace BlankNodeOrIriIdentifierClass {
  */
 
 export interface BlankNodeIdentifierInterface {
-  readonly $identifier: BlankNodeIdentifierInterface.$Identifier;
+  readonly $identifier: () => BlankNodeIdentifierInterface.$Identifier;
   readonly $type: "BlankNodeIdentifierInterface";
 }
 
@@ -69106,13 +68874,15 @@ export namespace BlankNodeIdentifierInterface {
   export function $create(parameters?: {
     readonly $identifier?: BlankNode;
   }): BlankNodeIdentifierInterface {
-    let $identifier: BlankNodeIdentifierInterface.$Identifier;
-    if (typeof parameters?.$identifier === "object") {
-      $identifier = parameters?.$identifier;
-    } else if (parameters?.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters?.$identifier;
+    let $identifier: () => BlankNodeIdentifierInterface.$Identifier;
+    if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters?.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "BlankNodeIdentifierInterface" as const;
     return { $identifier, $type };
@@ -69122,7 +68892,7 @@ export namespace BlankNodeIdentifierInterface {
     left: BlankNodeIdentifierInterface,
     right: BlankNodeIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -69151,7 +68921,7 @@ export namespace BlankNodeIdentifierInterface {
       _blankNodeIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_blankNodeIdentifierInterface.$identifier.value);
+    _hasher.update(_blankNodeIdentifierInterface.$identifier().value);
     _hasher.update(_blankNodeIdentifierInterface.$type);
     return _hasher;
   }
@@ -69230,7 +69000,7 @@ export namespace BlankNodeIdentifierInterface {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
+      !$filterBlankNode(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -69326,7 +69096,7 @@ export namespace BlankNodeIdentifierInterface {
   export function $fromJson(
     json: BlankNodeIdentifierInterface.$Json,
   ): BlankNodeIdentifierInterface {
-    return $propertiesFromJson(json);
+    return BlankNodeIdentifierInterface.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -69348,7 +69118,7 @@ export namespace BlankNodeIdentifierInterface {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -69523,7 +69293,7 @@ export namespace BlankNodeIdentifierInterface {
   ): BlankNodeIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": `_:${_blankNodeIdentifierInterface.$identifier.value}`,
+        "@id": `_:${_blankNodeIdentifierInterface.$identifier().value}`,
         $type: _blankNodeIdentifierInterface.$type,
       } satisfies BlankNodeIdentifierInterface.$Json),
     );
@@ -69542,7 +69312,7 @@ export namespace BlankNodeIdentifierInterface {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(
-      _blankNodeIdentifierInterface.$identifier,
+      _blankNodeIdentifierInterface.$identifier(),
     );
     if (!options?.ignoreRdfType) {
       resource.add(
@@ -69613,34 +69383,25 @@ export namespace BlankNodeIdentifierInterface {
  */
 
 export class BlankNodeIdentifierClass {
-  private _$identifier?: BlankNodeIdentifierClass.$Identifier;
+  readonly $identifier: () => BlankNodeIdentifierClass.$Identifier;
 
   readonly $type: "BlankNodeIdentifierClass" =
     "BlankNodeIdentifierClass" as const;
 
   constructor(parameters?: { readonly $identifier?: BlankNode }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (parameters?.$identifier === undefined) {
+    const $identifierParameter = parameters?.$identifier;
+    if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this.$identifier = $identifierParameter satisfies never;
     }
-  }
-
-  get $identifier(): BlankNodeIdentifierClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.blankNode();
-    }
-    if (this._$identifier.termType !== "BlankNode") {
-      throw new Error(
-        `expected identifier to be BlankNode, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
   }
 
   $equals(other: BlankNodeIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
+    return $booleanEquals(this.$identifier(), other.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
         right: other,
@@ -69663,7 +69424,7 @@ export class BlankNodeIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
     return _hasher;
   }
@@ -69677,7 +69438,7 @@ export class BlankNodeIdentifierClass {
   $toJson(): BlankNodeIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": `_:${this.$identifier.value}`,
+        "@id": `_:${this.$identifier().value}`,
         $type: this.$type,
       } satisfies BlankNodeIdentifierClass.$Json),
     );
@@ -69692,7 +69453,7 @@ export class BlankNodeIdentifierClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(this.$identifier);
+    const resource = resourceSet.resource(this.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -69780,7 +69541,7 @@ export namespace BlankNodeIdentifierClass {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterBlankNode(filter.$identifier, value.$identifier)
+      !$filterBlankNode(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -70129,7 +69890,7 @@ export namespace ClassUnion {
   export const $filter = (filter: ClassUnion.$Filter, value: ClassUnion) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -70607,7 +70368,7 @@ export namespace FlattenClassUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -71169,7 +70930,7 @@ export namespace InterfaceUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -71651,7 +71412,7 @@ export namespace LazilyResolvedClassUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -72179,7 +71940,7 @@ export namespace LazilyResolvedInterfaceUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -72730,7 +72491,7 @@ export namespace PartialClassUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -73220,7 +72981,7 @@ export namespace PartialInterfaceUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -73714,7 +73475,7 @@ export namespace NoRdfTypeClassUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -74200,7 +73961,7 @@ export namespace RecursiveClassUnion {
   ) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -75408,7 +75169,7 @@ export namespace $Object {
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -85228,7 +84989,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     readonly BaseInterfaceWithoutPropertiesStatic.$Identifier[]
   > {
     return this.baseInterfaceWithoutPropertiesesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85326,7 +85087,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly BaseInterfaceWithPropertiesStatic.$Identifier[]> {
     return this.baseInterfaceWithPropertiesesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85423,7 +85184,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]> {
     return this.blankNodeIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85517,7 +85278,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]> {
     return this.blankNodeIdentifierInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85611,7 +85372,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]> {
     return this.blankNodeOrIriIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85705,7 +85466,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly BlankNodeOrIriIdentifierInterface.$Identifier[]> {
     return this.blankNodeOrIriIdentifierInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85797,7 +85558,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ClassPropertiesClass.$Identifier[]> {
     return this.classPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85887,7 +85648,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ClassUnionMember1.$Identifier[]> {
     return this.classUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -85977,7 +85738,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ClassUnionMember2.$Identifier[]> {
     return this.classUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86069,7 +85830,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ConcreteChildClass.$Identifier[]> {
     return this.concreteChildClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86161,7 +85922,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ConcreteChildInterface.$Identifier[]> {
     return this.concreteChildInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86253,7 +86014,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ConcreteParentClassStatic.$Identifier[]> {
     return this.concreteParentClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86350,7 +86111,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ConcreteParentInterfaceStatic.$Identifier[]> {
     return this.concreteParentInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86447,7 +86208,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]> {
     return this.convertibleTypePropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86539,7 +86300,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly DateUnionPropertiesClass.$Identifier[]> {
     return this.dateUnionPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86633,7 +86394,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]> {
     return this.defaultValuePropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86725,7 +86486,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly DirectRecursiveClass.$Identifier[]> {
     return this.directRecursiveClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86817,7 +86578,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly DisplayPropertiesClass.$Identifier[]> {
     return this.displayPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -86911,7 +86672,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]> {
     return this.explicitFromToRdfTypesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87003,7 +86764,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]> {
     return this.explicitRdfTypeClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87095,7 +86856,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ExternClassPropertyClass.$Identifier[]> {
     return this.externClassPropertyClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87187,7 +86948,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly FlattenClassUnionMember3.$Identifier[]> {
     return this.flattenClassUnionMember3sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87279,7 +87040,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly HasValuePropertiesClass.$Identifier[]> {
     return this.hasValuePropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87371,7 +87132,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly IdentifierOverride3Class.$Identifier[]> {
     return this.identifierOverride3ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87463,7 +87224,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly IndirectRecursiveClass.$Identifier[]> {
     return this.indirectRecursiveClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87557,7 +87318,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]> {
     return this.indirectRecursiveHelperClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87647,7 +87408,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly InIdentifierClass.$Identifier[]> {
     return this.inIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87737,7 +87498,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly InPropertiesClass.$Identifier[]> {
     return this.inPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87815,7 +87576,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Interface.$Filter, Interface.$Identifier>,
   ): Either<Error, readonly Interface.$Identifier[]> {
     return this.interfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87901,7 +87662,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly InterfaceUnionMember1.$Identifier[]> {
     return this.interfaceUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -87993,7 +87754,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly InterfaceUnionMember2.$Identifier[]> {
     return this.interfaceUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88085,7 +87846,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly IriIdentifierClass.$Identifier[]> {
     return this.iriIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88177,7 +87938,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly IriIdentifierInterface.$Identifier[]> {
     return this.iriIdentifierInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88271,7 +88032,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]> {
     return this.jsPrimitiveUnionPropertyClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88363,7 +88124,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LanguageInPropertiesClass.$Identifier[]> {
     return this.languageInPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88468,7 +88229,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query).map(
-      (objects) => objects.map((object) => object.$identifier),
+      (objects) => objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88578,7 +88339,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query).map(
-      (objects) => objects.map((object) => object.$identifier),
+      (objects) => objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88677,7 +88438,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedClassUnionMember1.$Identifier[]> {
     return this.lazilyResolvedClassUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88771,7 +88532,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedClassUnionMember2.$Identifier[]> {
     return this.lazilyResolvedClassUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88865,7 +88626,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]> {
     return this.lazilyResolvedInterfaceUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -88959,7 +88720,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]> {
     return this.lazilyResolvedInterfaceUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89053,7 +88814,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedIriIdentifierClass.$Identifier[]> {
     return this.lazilyResolvedIriIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89150,7 +88911,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
   > {
     return this.lazilyResolvedIriIdentifierInterfacesSync(query).map(
-      (objects) => objects.map((object) => object.$identifier),
+      (objects) => objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89242,7 +89003,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazyPropertiesClass.$Identifier[]> {
     return this.lazyPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89334,7 +89095,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazyPropertiesInterface.$Identifier[]> {
     return this.lazyPropertiesInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89426,7 +89187,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly ListPropertiesClass.$Identifier[]> {
     return this.listPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89518,7 +89279,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly MutablePropertiesClass.$Identifier[]> {
     return this.mutablePropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89610,7 +89371,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NamedUnionPropertiesClass.$Identifier[]> {
     return this.namedUnionPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89688,7 +89449,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NewName1Class.$Filter, NewName1Class.$Identifier>,
   ): Either<Error, readonly NewName1Class.$Identifier[]> {
     return this.newName1ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89760,7 +89521,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NewName2Class.$Filter, NewName2Class.$Identifier>,
   ): Either<Error, readonly NewName2Class.$Identifier[]> {
     return this.newName2ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89838,7 +89599,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NodeKindsClass.$Identifier[]> {
     return this.nodeKindsClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89916,7 +89677,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NonClass.$Filter, NonClass.$Identifier>,
   ): Either<Error, readonly NonClass.$Identifier[]> {
     return this.nonClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -89998,7 +89759,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]> {
     return this.noRdfTypeClassUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90090,7 +89851,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]> {
     return this.noRdfTypeClassUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90182,7 +89943,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NumericPropertiesClass.$Identifier[]> {
     return this.numericPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90274,7 +90035,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly OrderedPropertiesClass.$Identifier[]> {
     return this.orderedPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90352,7 +90113,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialClass.$Filter, PartialClass.$Identifier>,
   ): Either<Error, readonly PartialClass.$Identifier[]> {
     return this.partialClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90438,7 +90199,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialClassUnionMember1.$Identifier[]> {
     return this.partialClassUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90530,7 +90291,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialClassUnionMember2.$Identifier[]> {
     return this.partialClassUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90614,7 +90375,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialInterface.$Identifier[]> {
     return this.partialInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90708,7 +90469,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialInterfaceUnionMember1.$Identifier[]> {
     return this.partialInterfaceUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90802,7 +90563,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialInterfaceUnionMember2.$Identifier[]> {
     return this.partialInterfaceUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90894,7 +90655,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]> {
     return this.propertyCardinalitiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -90986,7 +90747,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PropertyNamesClass.$Identifier[]> {
     return this.propertyNamesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91078,7 +90839,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PropertyPathsClass.$Identifier[]> {
     return this.propertyPathsClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91170,7 +90931,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]> {
     return this.propertyVisibilitiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91262,7 +91023,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]> {
     return this.recursiveClassUnionMember1sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91354,7 +91115,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]> {
     return this.recursiveClassUnionMember2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91446,7 +91207,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly TermPropertiesClass.$Identifier[]> {
     return this.termPropertiesClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91538,7 +91299,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly UnionDiscriminantsClass.$Identifier[]> {
     return this.unionDiscriminantsClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91616,7 +91377,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnion.$Filter, ClassUnion.$Identifier>,
   ): Either<Error, readonly ClassUnion.$Identifier[]> {
     return this.classUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91707,7 +91468,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly FlattenClassUnion.$Identifier[]> {
     return this.flattenClassUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91803,7 +91564,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly InterfaceUnion.$Identifier[]> {
     return this.interfaceUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -91902,7 +91663,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]> {
     return this.lazilyResolvedClassUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92003,7 +91764,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]> {
     return this.lazilyResolvedInterfaceUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92104,7 +91865,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]> {
     return this.noRdfTypeClassUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92201,7 +91962,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialClassUnion.$Identifier[]> {
     return this.partialClassUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92300,7 +92061,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly PartialInterfaceUnion.$Identifier[]> {
     return this.partialInterfaceUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92399,7 +92160,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly RecursiveClassUnion.$Identifier[]> {
     return this.recursiveClassUnionsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92484,7 +92245,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -92894,7 +92655,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -93016,7 +92777,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectUnionsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -97450,7 +97211,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   protected async $objects<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(

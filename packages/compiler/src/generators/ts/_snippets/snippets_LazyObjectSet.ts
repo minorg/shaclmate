@@ -39,7 +39,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
       offset = 0;
     }
 
-    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier), { preferredLanguages: options?.preferredLanguages });
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier()), { preferredLanguages: options?.preferredLanguages });
   }
 }`,
 );
