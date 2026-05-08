@@ -1,7 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import type { Maybe } from "purify-ts";
-import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -31,11 +29,6 @@ export class ListType<
   override readonly kind = "ListType";
 
   /**
-   * Strategy for minting new list and sub-list identifiers.
-   */
-  readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-
-  /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
    *
    * This is usually the identifier of an sh:NodeShape that is also an rdfs:Class (i.e., a node shape with implicit
@@ -44,18 +37,15 @@ export class ListType<
   readonly toRdfTypes: readonly NamedNode[];
 
   constructor({
-    identifierMintingStrategy,
     identifierNodeKind,
     toRdfTypes,
     ...superParameters
   }: {
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierNodeKind: IdentifierNodeKind;
     shapeIdentifier: BlankNode | NamedNode;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
     super(superParameters);
-    this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierNodeKind = identifierNodeKind;
     this.toRdfTypes = toRdfTypes;
   }

@@ -7,7 +7,6 @@ import type { TsFeature } from "../enums/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
-import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
@@ -18,7 +17,6 @@ const listPropertiesObjectType = new ast.ObjectType({
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),
-  identifierMintingStrategy: Maybe.empty(),
   identifierType: new ast.IdentifierType({
     comment: Maybe.empty(),
     label: Maybe.empty(),
@@ -60,15 +58,14 @@ export function transformShapeToAstListType(
     }
     const nodeShape = shape;
 
-    return Eithers.chain3(
-      nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
+    return Eithers.chain2(
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
         nodeShape.xone
           .orDefault([])
           .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
-    ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
+    ).chain(([nodeKinds, xone]) => {
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       const listType = new ast.ListType<ast.ListType.ItemType>({
@@ -78,7 +75,6 @@ export function transformShapeToAstListType(
         label: nodeShape.label,
         mutable: nodeShape.mutable.orDefault(false),
         name: shapeAstTypeName(nodeShape),
-        identifierMintingStrategy,
         shapeIdentifier: nodeShape.$identifier,
         toRdfTypes: nodeShape.toRdfTypes,
       });

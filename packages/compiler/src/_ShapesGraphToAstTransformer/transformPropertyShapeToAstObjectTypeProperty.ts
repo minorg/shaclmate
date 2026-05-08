@@ -37,7 +37,6 @@ function synthesizePartialAstObjectType({
     extern: false,
     fromRdfType: Maybe.empty(),
     identifierType,
-    identifierMintingStrategy: Maybe.empty(),
     label: Maybe.empty(),
     name: Maybe.of(syntheticName),
     shapeIdentifier: dataFactory.namedNode(
