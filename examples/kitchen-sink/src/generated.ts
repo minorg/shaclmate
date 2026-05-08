@@ -17,7 +17,6 @@ import {
 } from "@rdfx/resource";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
-import { sha256 } from "js-sha256";
 import {
   Either,
   EitherAsync,
@@ -27,7 +26,6 @@ import {
   Right,
 } from "purify-ts";
 import * as sparqljs from "sparqljs";
-import * as uuid from "uuid";
 import { z } from "zod";
 
 /**
@@ -3984,1016 +3982,6 @@ export namespace $DefaultPartial {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       $DefaultPartial.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
- */
-
-export interface UuidV4IriIdentifierInterface {
-  readonly $identifier: UuidV4IriIdentifierInterface.$Identifier;
-  readonly $type: "UuidV4IriIdentifierInterface";
-  readonly uuidV4IriProperty: string;
-}
-
-export namespace UuidV4IriIdentifierInterface {
-  export function $create(parameters: {
-    readonly $identifier?: NamedNode | string;
-    readonly $identifierPrefix?: string;
-    readonly uuidV4IriProperty: string;
-  }): Omit<UuidV4IriIdentifierInterface, "$identifierPrefix"> {
-    let $identifier: UuidV4IriIdentifierInterface.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.namedNode(
-        `${parameters.$identifierPrefix ?? "urn:shaclmate:UuidV4IriIdentifierInterface:"}${uuid.v4()}`,
-      );
-    } else {
-      $identifier = parameters.$identifier satisfies never;
-    }
-    const $type = "UuidV4IriIdentifierInterface" as const;
-    const uuidV4IriProperty = parameters.uuidV4IriProperty;
-    return { $identifier, $type, uuidV4IriProperty };
-  }
-
-  export function $equals(
-    left: UuidV4IriIdentifierInterface,
-    right: UuidV4IriIdentifierInterface,
-  ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(left.uuidV4IriProperty, right.uuidV4IriProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "uuidV4IriProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-    _hasher: HasherT,
-  ): HasherT {
-    UuidV4IriIdentifierInterface.$hashShaclProperties(
-      _uuidV4IriIdentifierInterface,
-      _hasher,
-    );
-    _hasher.update(_uuidV4IriIdentifierInterface.$identifier.value);
-    _hasher.update(_uuidV4IriIdentifierInterface.$type);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_uuidV4IriIdentifierInterface.uuidV4IriProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierInterface";
-    readonly uuidV4IriProperty: string;
-  };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("UuidV4IriIdentifierInterface"),
-          uuidV4IriProperty: z.string().meta({ id: "uuidV4IriProperty" }),
-        })
-        .meta({
-          id: "UuidV4IriIdentifierInterface",
-          description:
-            "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "UuidV4IriIdentifierInterface" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/uuidV4IriProperty`,
-            type: "Control",
-          },
-        ],
-        label: "UuidV4IriIdentifierInterface",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: UuidV4IriIdentifierInterface.$Filter,
-    value: UuidV4IriIdentifierInterface,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    UuidV4IriIdentifierInterface.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.uuidV4IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "uuidV4IriProperty",
-        propertySchema: $schema.properties.uuidV4IriProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    UuidV4IriIdentifierInterface.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $iriSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema:
-            UuidV4IriIdentifierInterface.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.uuidV4IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "uuidV4IriProperty",
-        propertySchema: $schema.properties.uuidV4IriProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: UuidV4IriIdentifierInterface.$Json,
-  ): UuidV4IriIdentifierInterface {
-    return $propertiesFromJson(json);
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    UuidV4IriIdentifierInterface
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UuidV4IriIdentifierInterface.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    });
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    UuidV4IriIdentifierInterface
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            UuidV4IriIdentifierInterface.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isUuidV4IriIdentifierInterface(
-    object: $Object,
-  ): object is UuidV4IriIdentifierInterface {
-    switch (object.$type) {
-      case "UuidV4IriIdentifierInterface":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: UuidV4IriIdentifierInterface.$Json,
-  ): {
-    $identifier: NamedNode;
-    $type: "UuidV4IriIdentifierInterface";
-    uuidV4IriProperty: string;
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const $type = "UuidV4IriIdentifierInterface" as const;
-    const uuidV4IriProperty = $json["uuidV4IriProperty"];
-    return { $identifier, $type, uuidV4IriProperty };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: NamedNode;
-    $type: "UuidV4IriIdentifierInterface";
-    uuidV4IriProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIri()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"UuidV4IriIdentifierInterface">(
-          "UuidV4IriIdentifierInterface" as const,
-        ).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: _$options.graph,
-            resource: $resource,
-            propertySchema: $schema.properties.uuidV4IriProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    _$options.preferredLanguages,
-                  ),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((uuidV4IriProperty) => ({
-            $identifier,
-            $type,
-            uuidV4IriProperty,
-          })),
-        ),
-      );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UuidV4IriIdentifierInterface"],
-        }),
-      },
-      uuidV4IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: UuidV4IriIdentifierInterface.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "uuidV4IriIdentifierInterface";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        UuidV4IriIdentifierInterface.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          UuidV4IriIdentifierInterface.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof UuidV4IriIdentifierInterface.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriIdentifierInterface.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-  ): UuidV4IriIdentifierInterface.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": _uuidV4IriIdentifierInterface.$identifier.value,
-        $type: _uuidV4IriIdentifierInterface.$type,
-        uuidV4IriProperty: _uuidV4IriIdentifierInterface.uuidV4IriProperty,
-      } satisfies UuidV4IriIdentifierInterface.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-    options?: Parameters<
-      $ToRdfResourceFunction<UuidV4IriIdentifierInterface>
-    >[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _uuidV4IriIdentifierInterface.$identifier,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      [$literalFactory.string(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _uuidV4IriIdentifierInterface.$identifier.toString(),
-    });
-  }
-
-  export function $toString(this: UuidV4IriIdentifierInterface): string;
-  export function $toString(
-    _uuidV4IriIdentifierInterface: UuidV4IriIdentifierInterface,
-  ): string;
-  export function $toString(
-    this: UuidV4IriIdentifierInterface | undefined,
-    _uuidV4IriIdentifierInterface?: UuidV4IriIdentifierInterface,
-  ): string {
-    return `UuidV4IriIdentifierInterface(${JSON.stringify(
-      $propertiesToStrings((_uuidV4IriIdentifierInterface ?? this)!),
-    )})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    UuidV4IriIdentifierInterface.$Filter,
-    typeof UuidV4IriIdentifierInterface.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    UuidV4IriIdentifierInterface.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    UuidV4IriIdentifierInterface.$Filter,
-    typeof UuidV4IriIdentifierInterface.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      UuidV4IriIdentifierInterface.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.
- */
-
-export class UuidV4IriIdentifierClass {
-  private _$identifier?: UuidV4IriIdentifierClass.$Identifier;
-
-  protected readonly _$identifierPrefix?: string;
-
-  readonly $type: "UuidV4IriIdentifierClass" =
-    "UuidV4IriIdentifierClass" as const;
-
-  readonly uuidV4IriProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: NamedNode | string;
-    readonly $identifierPrefix?: string;
-    readonly uuidV4IriProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-    this._$identifierPrefix = parameters.$identifierPrefix;
-    this.uuidV4IriProperty = parameters.uuidV4IriProperty;
-  }
-
-  get $identifier(): UuidV4IriIdentifierClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${uuid.v4()}`,
-      );
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  $equals(other: UuidV4IriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.uuidV4IriProperty, other.uuidV4IriProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "uuidV4IriProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<HasherT extends $Hasher>(
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(this.uuidV4IriProperty);
-    return _hasher;
-  }
-
-  $toJson(): UuidV4IriIdentifierClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": this.$identifier.value,
-        $type: this.$type,
-        uuidV4IriProperty: this.uuidV4IriProperty,
-      } satisfies UuidV4IriIdentifierClass.$Json),
-    );
-  }
-
-  $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<UuidV4IriIdentifierClass>>[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(this.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      [$literalFactory.string(this.uuidV4IriProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
-  }
-
-  toString(): string {
-    return `UuidV4IriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace UuidV4IriIdentifierClass {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "UuidV4IriIdentifierClass";
-    readonly uuidV4IriProperty: string;
-  };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("UuidV4IriIdentifierClass"),
-          uuidV4IriProperty: z.string().meta({ id: "uuidV4IriProperty" }),
-        })
-        .meta({
-          id: "UuidV4IriIdentifierClass",
-          description:
-            "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "UuidV4IriIdentifierClass" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/uuidV4IriProperty`,
-            type: "Control",
-          },
-        ],
-        label: "UuidV4IriIdentifierClass",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: UuidV4IriIdentifierClass.$Filter,
-    value: UuidV4IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.uuidV4IriProperty !== undefined &&
-      !$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly uuidV4IriProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    UuidV4IriIdentifierClass.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.uuidV4IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "uuidV4IriProperty",
-        propertySchema: $schema.properties.uuidV4IriProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    UuidV4IriIdentifierClass.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $iriSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema:
-            UuidV4IriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.uuidV4IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "uuidV4IriProperty",
-        propertySchema: $schema.properties.uuidV4IriProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: UuidV4IriIdentifierClass.$Json,
-  ): UuidV4IriIdentifierClass {
-    return new UuidV4IriIdentifierClass($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    UuidV4IriIdentifierClass
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UuidV4IriIdentifierClass.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map((properties) => new UuidV4IriIdentifierClass(properties));
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    UuidV4IriIdentifierClass
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            UuidV4IriIdentifierClass.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isUuidV4IriIdentifierClass(
-    object: $Object,
-  ): object is UuidV4IriIdentifierClass {
-    switch (object.$type) {
-      case "UuidV4IriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: UuidV4IriIdentifierClass.$Json): {
-    $identifier: NamedNode;
-    uuidV4IriProperty: string;
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const uuidV4IriProperty = $json["uuidV4IriProperty"];
-    return { $identifier, uuidV4IriProperty };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: NamedNode;
-    uuidV4IriProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIri()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.uuidV4IriProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
-      );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["UuidV4IriIdentifierClass"],
-        }),
-      },
-      uuidV4IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: UuidV4IriIdentifierClass.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "uuidV4IriIdentifierClass";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        UuidV4IriIdentifierClass.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          UuidV4IriIdentifierClass.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof UuidV4IriIdentifierClass.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      UuidV4IriIdentifierClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    UuidV4IriIdentifierClass.$Filter,
-    typeof UuidV4IriIdentifierClass.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    UuidV4IriIdentifierClass.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    UuidV4IriIdentifierClass.$Filter,
-    typeof UuidV4IriIdentifierClass.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      UuidV4IriIdentifierClass.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -13717,504 +12705,6 @@ export namespace TermPropertiesClass {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       TermPropertiesClass.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
- */
-
-export class Sha256IriIdentifierClass {
-  private _$identifier?: Sha256IriIdentifierClass.$Identifier;
-
-  protected readonly _$identifierPrefix?: string;
-
-  readonly $type: "Sha256IriIdentifierClass" =
-    "Sha256IriIdentifierClass" as const;
-
-  readonly sha256IriProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: NamedNode | string;
-    readonly $identifierPrefix?: string;
-    readonly sha256IriProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-    this._$identifierPrefix = parameters.$identifierPrefix;
-    this.sha256IriProperty = parameters.sha256IriProperty;
-  }
-
-  get $identifier(): Sha256IriIdentifierClass.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  $equals(other: Sha256IriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(this.sha256IriProperty, other.sha256IriProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "sha256IriProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<HasherT extends $Hasher>(
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(this.sha256IriProperty);
-    return _hasher;
-  }
-
-  $toJson(): Sha256IriIdentifierClass.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id": this.$identifier.value,
-        $type: this.$type,
-        sha256IriProperty: this.sha256IriProperty,
-      } satisfies Sha256IriIdentifierClass.$Json),
-    );
-  }
-
-  $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<Sha256IriIdentifierClass>>[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(this.$identifier);
-    resource.add(
-      dataFactory.namedNode("http://example.com/sha256IriProperty"),
-      [$literalFactory.string(this.sha256IriProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
-  }
-
-  toString(): string {
-    return `Sha256IriIdentifierClass(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace Sha256IriIdentifierClass {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "Sha256IriIdentifierClass";
-    readonly sha256IriProperty: string;
-  };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("Sha256IriIdentifierClass"),
-          sha256IriProperty: z.string().meta({ id: "sha256IriProperty" }),
-        })
-        .meta({
-          id: "Sha256IriIdentifierClass",
-          description:
-            "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "Sha256IriIdentifierClass" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/sha256IriProperty`,
-            type: "Control",
-          },
-        ],
-        label: "Sha256IriIdentifierClass",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: Sha256IriIdentifierClass.$Filter,
-    value: Sha256IriIdentifierClass,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIri(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-    if (
-      filter.sha256IriProperty !== undefined &&
-      !$filterString(filter.sha256IriProperty, value.sha256IriProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-    readonly sha256IriProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    Sha256IriIdentifierClass.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.sha256IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "sha256IriProperty",
-        propertySchema: $schema.properties.sha256IriProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    Sha256IriIdentifierClass.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $iriSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema:
-            Sha256IriIdentifierClass.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.sha256IriProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "sha256IriProperty",
-        propertySchema: $schema.properties.sha256IriProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: Sha256IriIdentifierClass.$Json,
-  ): Sha256IriIdentifierClass {
-    return new Sha256IriIdentifierClass($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    Sha256IriIdentifierClass
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return Sha256IriIdentifierClass.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map((properties) => new Sha256IriIdentifierClass(properties));
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    Sha256IriIdentifierClass
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            Sha256IriIdentifierClass.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isSha256IriIdentifierClass(
-    object: $Object,
-  ): object is Sha256IriIdentifierClass {
-    switch (object.$type) {
-      case "Sha256IriIdentifierClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: Sha256IriIdentifierClass.$Json): {
-    $identifier: NamedNode;
-    sha256IriProperty: string;
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const sha256IriProperty = $json["sha256IriProperty"];
-    return { $identifier, sha256IriProperty };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: NamedNode;
-    sha256IriProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIri()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.sha256IriProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
-      );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["Sha256IriIdentifierClass"],
-        }),
-      },
-      sha256IriProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/sha256IriProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: Sha256IriIdentifierClass.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "sha256IriIdentifierClass";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        Sha256IriIdentifierClass.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          Sha256IriIdentifierClass.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof Sha256IriIdentifierClass.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      Sha256IriIdentifierClass.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    Sha256IriIdentifierClass.$Filter,
-    typeof Sha256IriIdentifierClass.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    Sha256IriIdentifierClass.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    Sha256IriIdentifierClass.$Filter,
-    typeof Sha256IriIdentifierClass.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      Sha256IriIdentifierClass.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -28270,8 +26760,6 @@ export namespace NamedUnionPropertiesClass {
 export class MutablePropertiesClass {
   private _$identifier?: MutablePropertiesClass.$Identifier;
 
-  protected readonly _$identifierPrefix?: string;
-
   readonly $type: "MutablePropertiesClass" = "MutablePropertiesClass" as const;
 
   /**
@@ -28291,7 +26779,6 @@ export class MutablePropertiesClass {
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly $identifierPrefix?: string;
     readonly mutableListProperty?: Maybe<string[]> | readonly string[];
     readonly mutableSetProperty?: readonly string[];
     readonly mutableStringProperty?: Maybe<string> | string;
@@ -28304,7 +26791,6 @@ export class MutablePropertiesClass {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
-    this._$identifierPrefix = parameters?.$identifierPrefix;
     if (Maybe.isMaybe(parameters?.mutableListProperty)) {
       this.mutableListProperty = parameters?.mutableListProperty;
     } else if (typeof parameters?.mutableListProperty === "object") {
@@ -28338,17 +26824,9 @@ export class MutablePropertiesClass {
 
   get $identifier(): MutablePropertiesClass.$Identifier {
     if (this._$identifier === undefined) {
-      return dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: MutablePropertiesClass): $EqualsResult {
@@ -28360,17 +26838,6 @@ export class MutablePropertiesClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
@@ -29118,10 +27585,6 @@ export namespace MutablePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
       },
       $type: {
         kind: "Discriminant" as const,
@@ -49587,10 +48050,7 @@ export namespace InIdentifierClass {
 export abstract class IdentifierOverride1Class {
   protected _$identifier?: IdentifierOverride1ClassStatic.$Identifier;
 
-  abstract readonly $type:
-    | "IdentifierOverride3Class"
-    | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class";
+  abstract readonly $type: "IdentifierOverride3Class";
 
   readonly identifierOverrideProperty: string;
 
@@ -49714,10 +48174,7 @@ export namespace IdentifierOverride1ClassStatic {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type:
-      | "IdentifierOverride3Class"
-      | "IdentifierOverride4Class"
-      | "IdentifierOverride5Class";
+    readonly $type: "IdentifierOverride3Class";
     readonly identifierOverrideProperty: string;
   };
 
@@ -49726,11 +48183,7 @@ export namespace IdentifierOverride1ClassStatic {
       return z
         .object({
           "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
+          $type: z.literal("IdentifierOverride3Class"),
           identifierOverrideProperty: z
             .string()
             .meta({ id: "identifierOverrideProperty" }),
@@ -49856,8 +48309,6 @@ export namespace IdentifierOverride1ClassStatic {
   ): object is IdentifierOverride1Class {
     switch (object.$type) {
       case "IdentifierOverride3Class":
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
         return true;
       default:
         return false;
@@ -49921,11 +48372,7 @@ export namespace IdentifierOverride1ClassStatic {
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
-          descendantValues: [
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ],
+          descendantValues: ["IdentifierOverride3Class"],
           kind: "TypeDiscriminant" as const,
         }),
       },
@@ -50035,10 +48482,7 @@ export namespace IdentifierOverride1ClassStatic {
  */
 
 export abstract class IdentifierOverride2Class extends IdentifierOverride1Class {
-  abstract override readonly $type:
-    | "IdentifierOverride3Class"
-    | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class";
+  abstract override readonly $type: "IdentifierOverride3Class";
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -50101,11 +48545,7 @@ export namespace IdentifierOverride2ClassStatic {
         .object({
           ...IdentifierOverride1ClassStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
+          $type: z.literal("IdentifierOverride3Class"),
         })
         .meta({
           id: "IdentifierOverride2Class",
@@ -50176,8 +48616,6 @@ export namespace IdentifierOverride2ClassStatic {
   ): object is IdentifierOverride2Class {
     switch (object.$type) {
       case "IdentifierOverride3Class":
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
         return true;
       default:
         return false;
@@ -50321,10 +48759,8 @@ export namespace IdentifierOverride2ClassStatic {
  */
 
 export class IdentifierOverride3Class extends IdentifierOverride2Class {
-  override readonly $type:
-    | "IdentifierOverride3Class"
-    | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class" = "IdentifierOverride3Class" as const;
+  override readonly $type: "IdentifierOverride3Class" =
+    "IdentifierOverride3Class" as const;
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
@@ -50335,7 +48771,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     super(parameters);
   }
 
-  override get $identifier(): IdentifierOverride3ClassStatic.$Identifier {
+  override get $identifier(): IdentifierOverride3Class.$Identifier {
     if (this._$identifier === undefined) {
       this._$identifier = dataFactory.blankNode();
     }
@@ -50380,7 +48816,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   }
 }
 
-export namespace IdentifierOverride3ClassStatic {
+export namespace IdentifierOverride3Class {
   export type $Identifier = NamedNode;
 
   export namespace $Identifier {
@@ -50404,11 +48840,7 @@ export namespace IdentifierOverride3ClassStatic {
         .object({
           ...IdentifierOverride2ClassStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride3Class",
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
+          $type: z.literal("IdentifierOverride3Class"),
         })
         .meta({
           id: "IdentifierOverride3Class",
@@ -50430,7 +48862,7 @@ export namespace IdentifierOverride3ClassStatic {
   }
 
   export function $filter(
-    filter: IdentifierOverride3ClassStatic.$Filter,
+    filter: IdentifierOverride3Class.$Filter,
     value: IdentifierOverride3Class,
   ): boolean {
     if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
@@ -50444,7 +48876,7 @@ export namespace IdentifierOverride3ClassStatic {
   } & IdentifierOverride2ClassStatic.$Filter;
 
   export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride3ClassStatic.$Filter
+    IdentifierOverride3Class.$Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
     triples = triples.concat(
@@ -50473,7 +48905,7 @@ export namespace IdentifierOverride3ClassStatic {
   };
 
   export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride3ClassStatic.$Filter
+    IdentifierOverride3Class.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
     patterns = patterns.concat(
@@ -50490,23 +48922,8 @@ export namespace IdentifierOverride3ClassStatic {
     );
     if (!parameters?.ignoreRdfType) {
       patterns.push(
-        {
-          type: "values" as const,
-          values: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
-              identifier as NamedNode;
-            return valuePatternRow;
-          }),
-        },
         $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(
-            `${parameters.variablePrefix}FromRdfType`,
-          ),
+          rdfType: IdentifierOverride3Class.$fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -50546,7 +48963,7 @@ export namespace IdentifierOverride3ClassStatic {
   };
 
   export function $fromJson(
-    json: IdentifierOverride3ClassStatic.$Json,
+    json: IdentifierOverride3Class.$Json,
   ): IdentifierOverride3Class {
     return new IdentifierOverride3Class($propertiesFromJson(json));
   }
@@ -50564,7 +48981,7 @@ export namespace IdentifierOverride3ClassStatic {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return IdentifierOverride3ClassStatic.$propertiesFromRdfResource(resource, {
+    return IdentifierOverride3Class.$propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
@@ -50581,7 +48998,7 @@ export namespace IdentifierOverride3ClassStatic {
         value
           .toResource()
           .chain((resource) =>
-            IdentifierOverride3ClassStatic.$fromRdfResource(resource, options),
+            IdentifierOverride3Class.$fromRdfResource(resource, options),
           ),
       ),
     );
@@ -50594,8 +49011,6 @@ export namespace IdentifierOverride3ClassStatic {
     object: $Object,
   ): object is IdentifierOverride3Class {
     switch (object.$type) {
-      case "IdentifierOverride4Class":
-      case "IdentifierOverride5Class":
       case "IdentifierOverride3Class":
         return true;
       default:
@@ -50604,7 +49019,7 @@ export namespace IdentifierOverride3ClassStatic {
   }
 
   export function $propertiesFromJson(
-    $json: IdentifierOverride3ClassStatic.$Json,
+    $json: IdentifierOverride3Class.$Json,
   ): { $identifier: NamedNode } & ReturnType<
     typeof IdentifierOverride2ClassStatic.$propertiesFromJson
   > {
@@ -50634,17 +49049,14 @@ export namespace IdentifierOverride3ClassStatic {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
                 case "http://example.com/IdentifierOverride3Class":
-                case "http://example.com/IdentifierOverride4Class":
-                case "http://example.com/IdentifierOverride5Class":
                   return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $resource.isInstanceOf(
-                  IdentifierOverride3ClassStatic.$fromRdfType,
-                  { graph: _$options.graph },
-                )
+                $resource.isInstanceOf(IdentifierOverride3Class.$fromRdfType, {
+                  graph: _$options.graph,
+                })
               ) {
                 return Right(true as const);
               }
@@ -50684,7 +49096,7 @@ export namespace IdentifierOverride3ClassStatic {
     subject,
     ...queryParameters
   }: {
-    filter?: IdentifierOverride3ClassStatic.$Filter;
+    filter?: IdentifierOverride3Class.$Filter;
     ignoreRdfType?: boolean;
     prefixes?: { [prefix: string]: string };
     preferredLanguages?: readonly string[];
@@ -50703,7 +49115,7 @@ export namespace IdentifierOverride3ClassStatic {
       prefixes: prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
+        IdentifierOverride3Class.$focusSparqlConstructTriples({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,
@@ -50713,7 +49125,7 @@ export namespace IdentifierOverride3ClassStatic {
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
-          IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
+          IdentifierOverride3Class.$focusSparqlWherePatterns({
             filter,
             focusIdentifier: subject,
             ignoreRdfType: !!ignoreRdfType,
@@ -50727,20 +49139,20 @@ export namespace IdentifierOverride3ClassStatic {
 
   export function $sparqlConstructQueryString(
     parameters: Parameters<
-      typeof IdentifierOverride3ClassStatic.$sparqlConstructQuery
+      typeof IdentifierOverride3Class.$sparqlConstructQuery
     >[0] &
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride3ClassStatic.$sparqlConstructQuery(parameters),
+      IdentifierOverride3Class.$sparqlConstructQuery(parameters),
     );
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride3ClassStatic.$Filter,
-    typeof IdentifierOverride3ClassStatic.$schema
+    IdentifierOverride3Class.$Filter,
+    typeof IdentifierOverride3Class.$schema
   > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
+    IdentifierOverride3Class.$focusSparqlConstructTriples({
       filter,
       focusIdentifier: valueVariable,
       ignoreRdfType,
@@ -50748,8 +49160,8 @@ export namespace IdentifierOverride3ClassStatic {
     });
 
   export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride3ClassStatic.$Filter,
-    typeof IdentifierOverride3ClassStatic.$schema
+    IdentifierOverride3Class.$Filter,
+    typeof IdentifierOverride3Class.$schema
   > = ({
     filter,
     ignoreRdfType,
@@ -50759,898 +49171,7 @@ export namespace IdentifierOverride3ClassStatic {
     variablePrefix,
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting
- */
-
-export class IdentifierOverride4Class extends IdentifierOverride3Class {
-  protected readonly _$identifierPrefix?: string;
-
-  override readonly $type:
-    | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class" = "IdentifierOverride4Class" as const;
-
-  constructor(
-    parameters: {
-      readonly $identifier?: NamedNode | string;
-      readonly $identifierPrefix?: string;
-    } & ConstructorParameters<typeof IdentifierOverride3Class>[0],
-  ) {
-    super(parameters);
-    this._$identifierPrefix = parameters.$identifierPrefix;
-  }
-
-  override get $identifier(): IdentifierOverride4ClassStatic.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${uuid.v4()}`,
-      );
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  override $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<IdentifierOverride4Class>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = super.$toRdfResource({
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IdentifierOverride4Class"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
-
-  protected override $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ ...super.$propertiesToStrings() });
-  }
-
-  override toString(): string {
-    return `IdentifierOverride4Class(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace IdentifierOverride4ClassStatic {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = IdentifierOverride3ClassStatic.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...IdentifierOverride3ClassStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "IdentifierOverride4Class",
-            "IdentifierOverride5Class",
-          ]),
-        })
-        .meta({
-          id: "IdentifierOverride4Class",
-          description:
-            "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride3ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride4Class",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: IdentifierOverride4ClassStatic.$Filter,
-    value: IdentifierOverride4Class,
-  ): boolean {
-    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride3ClassStatic.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride4ClassStatic.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride4ClassStatic.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        {
-          type: "values" as const,
-          values: [
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
-              identifier as NamedNode;
-            return valuePatternRow;
-          }),
-        },
-        $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(
-            `${parameters.variablePrefix}FromRdfType`,
-          ),
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: IdentifierOverride4ClassStatic.$Json,
-  ): IdentifierOverride4Class {
-    return new IdentifierOverride4Class($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    IdentifierOverride4Class
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IdentifierOverride4ClassStatic.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map((properties) => new IdentifierOverride4Class(properties));
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    IdentifierOverride4Class
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            IdentifierOverride4ClassStatic.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride4Class",
-  );
-
-  export function isIdentifierOverride4Class(
-    object: $Object,
-  ): object is IdentifierOverride4Class {
-    switch (object.$type) {
-      case "IdentifierOverride5Class":
-      case "IdentifierOverride4Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: IdentifierOverride4ClassStatic.$Json,
-  ): { $identifier: NamedNode } & ReturnType<
-    typeof IdentifierOverride3ClassStatic.$propertiesFromJson
-  > {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return {
-      ...IdentifierOverride3ClassStatic.$propertiesFromJson($json),
-      $identifier,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof IdentifierOverride3ClassStatic.$propertiesFromRdfResource
-      >
-    >
-  > = ($resource, _$options) => {
-    return IdentifierOverride3ClassStatic.$propertiesFromRdfResource(
-      $resource,
-      { ..._$options, ignoreRdfType: true },
-    ).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IdentifierOverride4Class":
-                case "http://example.com/IdentifierOverride5Class":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(
-                  IdentifierOverride4ClassStatic.$fromRdfType,
-                  { graph: _$options.graph },
-                )
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIri()))
-          .chain((values) => values.head())
-          .map(($identifier) => ({ ...$super0, $identifier })),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: { ...IdentifierOverride3ClassStatic.$schema.properties },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: IdentifierOverride4ClassStatic.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "identifierOverride4Class";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof IdentifierOverride4ClassStatic.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride4ClassStatic.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride4ClassStatic.$Filter,
-    typeof IdentifierOverride4ClassStatic.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride4ClassStatic.$Filter,
-    typeof IdentifierOverride4ClassStatic.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting
- */
-
-export class IdentifierOverride5Class extends IdentifierOverride4Class {
-  override readonly $type: "IdentifierOverride5Class" =
-    "IdentifierOverride5Class" as const;
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly $identifier?: NamedNode | string;
-      readonly $identifierPrefix?: string;
-    } & ConstructorParameters<typeof IdentifierOverride4Class>[0],
-  ) {
-    super(parameters);
-  }
-
-  override get $identifier(): IdentifierOverride5Class.$Identifier {
-    if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
-    }
-    if (this._$identifier.termType !== "NamedNode") {
-      throw new Error(
-        `expected identifier to be IRI, not ${this._$identifier.termType}`,
-      );
-    }
-    return this._$identifier;
-  }
-
-  protected override get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
-  }
-
-  override $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<IdentifierOverride5Class>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = super.$toRdfResource({
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IdentifierOverride5Class"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
-
-  protected override $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ ...super.$propertiesToStrings() });
-  }
-
-  override toString(): string {
-    return `IdentifierOverride5Class(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace IdentifierOverride5Class {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = IdentifierOverride4ClassStatic.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...IdentifierOverride4ClassStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride5Class"),
-        })
-        .meta({
-          id: "IdentifierOverride5Class",
-          description:
-            "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride4ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride5Class",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: IdentifierOverride5Class.$Filter,
-    value: IdentifierOverride5Class,
-  ): boolean {
-    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride4ClassStatic.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride5Class.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride5Class.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: IdentifierOverride5Class.$fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: IdentifierOverride5Class.$Json,
-  ): IdentifierOverride5Class {
-    return new IdentifierOverride5Class($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    IdentifierOverride5Class
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IdentifierOverride5Class.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map((properties) => new IdentifierOverride5Class(properties));
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    IdentifierOverride5Class
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            IdentifierOverride5Class.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride5Class",
-  );
-
-  export function isIdentifierOverride5Class(
-    object: $Object,
-  ): object is IdentifierOverride5Class {
-    switch (object.$type) {
-      case "IdentifierOverride5Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: IdentifierOverride5Class.$Json,
-  ): { $identifier: NamedNode } & ReturnType<
-    typeof IdentifierOverride4ClassStatic.$propertiesFromJson
-  > {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return {
-      ...IdentifierOverride4ClassStatic.$propertiesFromJson($json),
-      $identifier,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof IdentifierOverride4ClassStatic.$propertiesFromRdfResource
-      >
-    >
-  > = ($resource, _$options) => {
-    return IdentifierOverride4ClassStatic.$propertiesFromRdfResource(
-      $resource,
-      { ..._$options, ignoreRdfType: true },
-    ).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IdentifierOverride5Class":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(IdentifierOverride5Class.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIri()))
-          .chain((values) => values.head())
-          .map(($identifier) => ({ ...$super0, $identifier })),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: { ...IdentifierOverride4ClassStatic.$schema.properties },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: IdentifierOverride5Class.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "identifierOverride5Class";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IdentifierOverride5Class.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          IdentifierOverride5Class.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof IdentifierOverride5Class.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride5Class.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride5Class.$Filter,
-    typeof IdentifierOverride5Class.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride5Class.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride5Class.$Filter,
-    typeof IdentifierOverride5Class.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride5Class.$focusSparqlWherePatterns({
+      IdentifierOverride3Class.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -56453,8 +53974,6 @@ export namespace DirectRecursiveClass {
 export class DefaultValuePropertiesClass {
   private _$identifier?: DefaultValuePropertiesClass.$Identifier;
 
-  protected readonly _$identifierPrefix?: string;
-
   readonly $type: "DefaultValuePropertiesClass" =
     "DefaultValuePropertiesClass" as const;
 
@@ -56472,7 +53991,6 @@ export class DefaultValuePropertiesClass {
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly $identifierPrefix?: string;
     readonly dateDefaultValueProperty?: Date;
     readonly dateTimeDefaultValueProperty?: Date;
     readonly falseBooleanDefaultValueProperty?: boolean;
@@ -56488,7 +54006,6 @@ export class DefaultValuePropertiesClass {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
     }
-    this._$identifierPrefix = parameters?.$identifierPrefix;
     if (
       typeof parameters?.dateDefaultValueProperty === "object" &&
       parameters?.dateDefaultValueProperty instanceof Date
@@ -56550,17 +54067,9 @@ export class DefaultValuePropertiesClass {
 
   get $identifier(): DefaultValuePropertiesClass.$Identifier {
     if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: DefaultValuePropertiesClass): $EqualsResult {
@@ -56572,17 +54081,6 @@ export class DefaultValuePropertiesClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
@@ -57562,10 +55060,6 @@ export namespace DefaultValuePropertiesClass {
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
-      },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
       },
       $type: {
         kind: "Discriminant" as const,
@@ -65134,16 +62628,10 @@ export namespace ConcreteChildInterface {
     );
 } /**
  * Node shape that serves as an abstract base class for child node shapes.
- *
- * It's marked abstract in TypeScript and not exported from the module.
- *
- * Common pattern: put the minting strategy and nodeKind on an ABC.
  */
 
 export abstract class AbstractBaseClassWithProperties {
   protected _$identifier?: AbstractBaseClassWithPropertiesStatic.$Identifier;
-
-  protected readonly _$identifierPrefix?: string;
 
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
 
@@ -65151,7 +62639,6 @@ export abstract class AbstractBaseClassWithProperties {
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
-    readonly $identifierPrefix?: string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
     if (typeof parameters.$identifier === "object") {
@@ -65162,24 +62649,15 @@ export abstract class AbstractBaseClassWithProperties {
     } else {
       this._$identifier = parameters.$identifier satisfies never;
     }
-    this._$identifierPrefix = parameters.$identifierPrefix;
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
   }
 
   get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
     if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   $equals(other: AbstractBaseClassWithProperties): $EqualsResult {
@@ -65191,17 +62669,6 @@ export abstract class AbstractBaseClassWithProperties {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$identifierPrefix, other.$identifierPrefix).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$identifierPrefix",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(this.$type, other.$type).mapLeft(
           (propertyValuesUnequal) => ({
@@ -65313,7 +62780,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         .meta({
           id: "AbstractBaseClassWithProperties",
           description:
-            "Node shape that serves as an abstract base class for child node shapes.\n\nIt's marked abstract in TypeScript and not exported from the module.\n\nCommon pattern: put the minting strategy and nodeKind on an ABC.\n",
+            "Node shape that serves as an abstract base class for child node shapes.",
         }) satisfies z.ZodType<$Json>;
     }
 
@@ -65496,10 +62963,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         kind: "Identifier" as const,
         type: () => ({ kind: "Identifier" as const }),
       },
-      $identifierPrefix: {
-        kind: "IdentifierPrefix" as const,
-        type: () => ({ kind: "String" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
@@ -65619,7 +63082,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 
   // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
-    parameters: { readonly $identifierPrefix?: string } & ConstructorParameters<
+    parameters: ConstructorParameters<
       typeof AbstractBaseClassWithProperties
     >[0],
   ) {
@@ -65628,17 +63091,9 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 
   override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
     if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected override get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $toRdfResource(
@@ -65915,7 +63370,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
-      readonly $identifierPrefix?: string;
       readonly concreteParentClassProperty: string;
     } & ConstructorParameters<typeof AbstractBaseClassWithoutProperties>[0],
   ) {
@@ -65925,17 +63379,9 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 
   override get $identifier(): ConcreteParentClassStatic.$Identifier {
     if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected override get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $equals(other: ConcreteParentClass): $EqualsResult {
@@ -66476,7 +63922,7 @@ export namespace ConcreteParentClassStatic {
       }),
     );
 } /**
- * Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.
+ * Child (class) of ConcreteParentClass. Should inherit properties and node kinds.
  */
 
 export class ConcreteChildClass extends ConcreteParentClass {
@@ -66487,7 +63933,6 @@ export class ConcreteChildClass extends ConcreteParentClass {
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
-      readonly $identifierPrefix?: string;
       readonly concreteChildClassProperty: string;
     } & ConstructorParameters<typeof ConcreteParentClass>[0],
   ) {
@@ -66497,17 +63942,9 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
   override get $identifier(): ConcreteChildClass.$Identifier {
     if (this._$identifier === undefined) {
-      this._$identifier = dataFactory.namedNode(
-        `${this.$identifierPrefix}${this.$hashShaclProperties(sha256.create())}`,
-      );
+      this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
-  }
-
-  protected override get $identifierPrefix(): string {
-    return this._$identifierPrefix !== undefined
-      ? this._$identifierPrefix
-      : `urn:shaclmate:${this.$type}:`;
   }
 
   override $equals(other: ConcreteChildClass): $EqualsResult {
@@ -66619,7 +64056,7 @@ export namespace ConcreteChildClass {
         .meta({
           id: "ConcreteChildClass",
           description:
-            "Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.",
+            "Child (class) of ConcreteParentClass. Should inherit properties and node kinds.",
         }) satisfies z.ZodType<$Json>;
     }
 
@@ -77232,8 +74669,6 @@ export type $Object =
   | ExternClassPropertyClass
   | FlattenClassUnionMember3
   | HasValuePropertiesClass
-  | IdentifierOverride5Class
-  | IdentifierOverride4Class
   | IdentifierOverride3Class
   | IdentifierOverride2Class
   | IdentifierOverride1Class
@@ -77280,11 +74715,8 @@ export type $Object =
   | PropertyVisibilitiesClass
   | RecursiveClassUnionMember1
   | RecursiveClassUnionMember2
-  | Sha256IriIdentifierClass
   | TermPropertiesClass
   | UnionDiscriminantsClass
-  | UuidV4IriIdentifierClass
-  | UuidV4IriIdentifierInterface
   | $DefaultPartial
   | $NamedDefaultPartial;
 
@@ -77521,26 +74953,8 @@ export namespace $Object {
       );
     }
     if (
-      IdentifierOverride5Class.isIdentifierOverride5Class(left) &&
-      IdentifierOverride5Class.isIdentifierOverride5Class(right)
-    ) {
-      return ((left, right) => left.$equals(right))(
-        left as IdentifierOverride5Class,
-        right as IdentifierOverride5Class,
-      );
-    }
-    if (
-      IdentifierOverride4ClassStatic.isIdentifierOverride4Class(left) &&
-      IdentifierOverride4ClassStatic.isIdentifierOverride4Class(right)
-    ) {
-      return ((left, right) => left.$equals(right))(
-        left as IdentifierOverride4Class,
-        right as IdentifierOverride4Class,
-      );
-    }
-    if (
-      IdentifierOverride3ClassStatic.isIdentifierOverride3Class(left) &&
-      IdentifierOverride3ClassStatic.isIdentifierOverride3Class(right)
+      IdentifierOverride3Class.isIdentifierOverride3Class(left) &&
+      IdentifierOverride3Class.isIdentifierOverride3Class(right)
     ) {
       return ((left, right) => left.$equals(right))(
         left as IdentifierOverride3Class,
@@ -77942,15 +75356,6 @@ export namespace $Object {
       );
     }
     if (
-      Sha256IriIdentifierClass.isSha256IriIdentifierClass(left) &&
-      Sha256IriIdentifierClass.isSha256IriIdentifierClass(right)
-    ) {
-      return ((left, right) => left.$equals(right))(
-        left as Sha256IriIdentifierClass,
-        right as Sha256IriIdentifierClass,
-      );
-    }
-    if (
       TermPropertiesClass.isTermPropertiesClass(left) &&
       TermPropertiesClass.isTermPropertiesClass(right)
     ) {
@@ -77966,24 +75371,6 @@ export namespace $Object {
       return ((left, right) => left.$equals(right))(
         left as UnionDiscriminantsClass,
         right as UnionDiscriminantsClass,
-      );
-    }
-    if (
-      UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(left) &&
-      UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(right)
-    ) {
-      return ((left, right) => left.$equals(right))(
-        left as UuidV4IriIdentifierClass,
-        right as UuidV4IriIdentifierClass,
-      );
-    }
-    if (
-      UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(left) &&
-      UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(right)
-    ) {
-      return UuidV4IriIdentifierInterface.$equals(
-        left as UuidV4IriIdentifierInterface,
-        right as UuidV4IriIdentifierInterface,
       );
     }
     if (
@@ -78318,37 +75705,11 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["IdentifierOverride5Class"] !== undefined &&
-      IdentifierOverride5Class.isIdentifierOverride5Class(value)
-    ) {
-      if (
-        !IdentifierOverride5Class.$filter(
-          filter.on["IdentifierOverride5Class"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["IdentifierOverride4Class"] !== undefined &&
-      IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)
-    ) {
-      if (
-        !IdentifierOverride4ClassStatic.$filter(
-          filter.on["IdentifierOverride4Class"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
       filter.on?.["IdentifierOverride3Class"] !== undefined &&
-      IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)
+      IdentifierOverride3Class.isIdentifierOverride3Class(value)
     ) {
       if (
-        !IdentifierOverride3ClassStatic.$filter(
+        !IdentifierOverride3Class.$filter(
           filter.on["IdentifierOverride3Class"],
           value,
         )
@@ -78859,19 +76220,6 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["Sha256IriIdentifierClass"] !== undefined &&
-      Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)
-    ) {
-      if (
-        !Sha256IriIdentifierClass.$filter(
-          filter.on["Sha256IriIdentifierClass"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
       filter.on?.["TermPropertiesClass"] !== undefined &&
       TermPropertiesClass.isTermPropertiesClass(value)
     ) {
@@ -78888,32 +76236,6 @@ export namespace $Object {
       if (
         !UnionDiscriminantsClass.$filter(
           filter.on["UnionDiscriminantsClass"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UuidV4IriIdentifierClass"] !== undefined &&
-      UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)
-    ) {
-      if (
-        !UuidV4IriIdentifierClass.$filter(
-          filter.on["UuidV4IriIdentifierClass"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["UuidV4IriIdentifierInterface"] !== undefined &&
-      UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)
-    ) {
-      if (
-        !UuidV4IriIdentifierInterface.$filter(
-          filter.on["UuidV4IriIdentifierInterface"],
           value,
         )
       ) {
@@ -78970,9 +76292,7 @@ export namespace $Object {
       readonly ExternClassPropertyClass?: ExternClassPropertyClass.$Filter;
       readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
       readonly HasValuePropertiesClass?: HasValuePropertiesClass.$Filter;
-      readonly IdentifierOverride5Class?: IdentifierOverride5Class.$Filter;
-      readonly IdentifierOverride4Class?: IdentifierOverride4ClassStatic.$Filter;
-      readonly IdentifierOverride3Class?: IdentifierOverride3ClassStatic.$Filter;
+      readonly IdentifierOverride3Class?: IdentifierOverride3Class.$Filter;
       readonly InIdentifierClass?: InIdentifierClass.$Filter;
       readonly InPropertiesClass?: InPropertiesClass.$Filter;
       readonly IndirectRecursiveClass?: IndirectRecursiveClass.$Filter;
@@ -79015,11 +76335,8 @@ export namespace $Object {
       readonly PropertyVisibilitiesClass?: PropertyVisibilitiesClass.$Filter;
       readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
       readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
-      readonly Sha256IriIdentifierClass?: Sha256IriIdentifierClass.$Filter;
       readonly TermPropertiesClass?: TermPropertiesClass.$Filter;
       readonly UnionDiscriminantsClass?: UnionDiscriminantsClass.$Filter;
-      readonly UuidV4IriIdentifierClass?: UuidV4IriIdentifierClass.$Filter;
-      readonly UuidV4IriIdentifierInterface?: UuidV4IriIdentifierInterface.$Filter;
       readonly $DefaultPartial?: $DefaultPartial.$Filter;
       readonly $NamedDefaultPartial?: $NamedDefaultPartial.$Filter;
     };
@@ -79186,19 +76503,7 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
       }).concat(),
-      ...IdentifierOverride5Class.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride5Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
-      }).concat(),
-      ...IdentifierOverride4ClassStatic.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride4Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
-      }).concat(),
-      ...IdentifierOverride3ClassStatic.$focusSparqlConstructTriples({
+      ...IdentifierOverride3Class.$focusSparqlConstructTriples({
         filter: filter?.on?.IdentifierOverride3Class,
         focusIdentifier,
         ignoreRdfType: false,
@@ -79460,12 +76765,6 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}RecursiveClassUnionMember2`,
       }).concat(),
-      ...Sha256IriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.Sha256IriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
-      }).concat(),
       ...TermPropertiesClass.$focusSparqlConstructTriples({
         filter: filter?.on?.TermPropertiesClass,
         focusIdentifier,
@@ -79477,18 +76776,6 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
-      }).concat(),
-      ...UuidV4IriIdentifierClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.UuidV4IriIdentifierClass,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
-      }).concat(),
-      ...UuidV4IriIdentifierInterface.$focusSparqlConstructTriples({
-        filter: filter?.on?.UuidV4IriIdentifierInterface,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
       }).concat(),
       ...$DefaultPartial
         .$focusSparqlConstructTriples({
@@ -79793,27 +77080,7 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: IdentifierOverride5Class.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride5Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride5Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride4ClassStatic.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride4Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride4Class`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride3ClassStatic.$focusSparqlWherePatterns({
+          patterns: IdentifierOverride3Class.$focusSparqlWherePatterns({
             filter: filter?.on?.IdentifierOverride3Class,
             focusIdentifier,
             ignoreRdfType: false,
@@ -80253,16 +77520,6 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: Sha256IriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.Sha256IriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}Sha256IriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
           patterns: TermPropertiesClass.$focusSparqlWherePatterns({
             filter: filter?.on?.TermPropertiesClass,
             focusIdentifier,
@@ -80279,26 +77536,6 @@ export namespace $Object {
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}UnionDiscriminantsClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UuidV4IriIdentifierClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.UuidV4IriIdentifierClass,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UuidV4IriIdentifierClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: UuidV4IriIdentifierInterface.$focusSparqlWherePatterns({
-            filter: filter?.on?.UuidV4IriIdentifierInterface,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}UuidV4IriIdentifierInterface`,
           }).concat(),
           type: "group",
         },
@@ -80448,19 +77685,9 @@ export namespace $Object {
         value as HasValuePropertiesClass.$Json,
       );
     }
-    if (value.$type === "IdentifierOverride5Class") {
-      return IdentifierOverride5Class.$fromJson(
-        value as IdentifierOverride5Class.$Json,
-      );
-    }
-    if (value.$type === "IdentifierOverride4Class") {
-      return IdentifierOverride4ClassStatic.$fromJson(
-        value as IdentifierOverride4ClassStatic.$Json,
-      );
-    }
     if (value.$type === "IdentifierOverride3Class") {
-      return IdentifierOverride3ClassStatic.$fromJson(
-        value as IdentifierOverride3ClassStatic.$Json,
+      return IdentifierOverride3Class.$fromJson(
+        value as IdentifierOverride3Class.$Json,
       );
     }
     if (value.$type === "InIdentifierClass") {
@@ -80649,27 +77876,12 @@ export namespace $Object {
         value as RecursiveClassUnionMember2.$Json,
       );
     }
-    if (value.$type === "Sha256IriIdentifierClass") {
-      return Sha256IriIdentifierClass.$fromJson(
-        value as Sha256IriIdentifierClass.$Json,
-      );
-    }
     if (value.$type === "TermPropertiesClass") {
       return TermPropertiesClass.$fromJson(value as TermPropertiesClass.$Json);
     }
     if (value.$type === "UnionDiscriminantsClass") {
       return UnionDiscriminantsClass.$fromJson(
         value as UnionDiscriminantsClass.$Json,
-      );
-    }
-    if (value.$type === "UuidV4IriIdentifierClass") {
-      return UuidV4IriIdentifierClass.$fromJson(
-        value as UuidV4IriIdentifierClass.$Json,
-      );
-    }
-    if (value.$type === "UuidV4IriIdentifierInterface") {
-      return UuidV4IriIdentifierInterface.$fromJson(
-        value as UuidV4IriIdentifierInterface.$Json,
       );
     }
     if (value.$type === "$DefaultPartial") {
@@ -80864,21 +78076,7 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          IdentifierOverride5Class.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride4ClassStatic.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride3ClassStatic.$fromRdfResource(resource, {
+          IdentifierOverride3Class.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -81185,13 +78383,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          Sha256IriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
           TermPropertiesClass.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
@@ -81200,20 +78391,6 @@ export namespace $Object {
       .altLazy(
         () =>
           UnionDiscriminantsClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UuidV4IriIdentifierClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          UuidV4IriIdentifierInterface.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -81569,7 +78746,7 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                IdentifierOverride5Class.$fromRdfResourceValues(valueAsValues, {
+                IdentifierOverride3Class.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -81578,36 +78755,6 @@ export namespace $Object {
                   propertyPath: _options.propertyPath,
                   resource: _options.resource,
                 }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                IdentifierOverride4ClassStatic.$fromRdfResourceValues(
-                  valueAsValues,
-                  {
-                    context: _options.context,
-                    graph: _options.graph,
-                    ignoreRdfType: false,
-                    objectSet: _options.objectSet,
-                    preferredLanguages: _options.preferredLanguages,
-                    propertyPath: _options.propertyPath,
-                    resource: _options.resource,
-                  },
-                ) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                IdentifierOverride3ClassStatic.$fromRdfResourceValues(
-                  valueAsValues,
-                  {
-                    context: _options.context,
-                    graph: _options.graph,
-                    ignoreRdfType: false,
-                    objectSet: _options.objectSet,
-                    preferredLanguages: _options.preferredLanguages,
-                    propertyPath: _options.propertyPath,
-                    resource: _options.resource,
-                  },
-                ) as Either<Error, Resource.Values<$Object>>,
             )
             .altLazy(
               () =>
@@ -82175,18 +79322,6 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                Sha256IriIdentifierClass.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
                 TermPropertiesClass.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -82208,33 +79343,6 @@ export namespace $Object {
                   propertyPath: _options.propertyPath,
                   resource: _options.resource,
                 }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                UuidV4IriIdentifierClass.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                UuidV4IriIdentifierInterface.$fromRdfResourceValues(
-                  valueAsValues,
-                  {
-                    context: _options.context,
-                    graph: _options.graph,
-                    ignoreRdfType: false,
-                    objectSet: _options.objectSet,
-                    preferredLanguages: _options.preferredLanguages,
-                    propertyPath: _options.propertyPath,
-                    resource: _options.resource,
-                  },
-                ) as Either<Error, Resource.Values<$Object>>,
             )
             .altLazy(
               () =>
@@ -82355,13 +79463,7 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       value.$hash(hasher);
     }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      value.$hash(hasher);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      value.$hash(hasher);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       value.$hash(hasher);
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
@@ -82516,20 +79618,11 @@ export namespace $Object {
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
       value.$hash(hasher);
     }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
       value.$hash(hasher);
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
       value.$hash(hasher);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      value.$hash(hasher);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      UuidV4IriIdentifierInterface.$hash(value, hasher);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
       value.$hash(hasher);
@@ -82572,9 +79665,7 @@ export namespace $Object {
     | ExternClassPropertyClass.$Json
     | FlattenClassUnionMember3.$Json
     | HasValuePropertiesClass.$Json
-    | IdentifierOverride5Class.$Json
-    | IdentifierOverride4ClassStatic.$Json
-    | IdentifierOverride3ClassStatic.$Json
+    | IdentifierOverride3Class.$Json
     | InIdentifierClass.$Json
     | InPropertiesClass.$Json
     | IndirectRecursiveClass.$Json
@@ -82617,11 +79708,8 @@ export namespace $Object {
     | PropertyVisibilitiesClass.$Json
     | RecursiveClassUnionMember1.$Json
     | RecursiveClassUnionMember2.$Json
-    | Sha256IriIdentifierClass.$Json
     | TermPropertiesClass.$Json
     | UnionDiscriminantsClass.$Json
-    | UuidV4IriIdentifierClass.$Json
-    | UuidV4IriIdentifierInterface.$Json
     | $DefaultPartial.$Json
     | $NamedDefaultPartial.$Json;
 
@@ -82654,9 +79742,7 @@ export namespace $Object {
           ExternClassPropertyClass.$Json.schema(),
           FlattenClassUnionMember3.$Json.schema(),
           HasValuePropertiesClass.$Json.schema(),
-          IdentifierOverride5Class.$Json.schema(),
-          IdentifierOverride4ClassStatic.$Json.schema(),
-          IdentifierOverride3ClassStatic.$Json.schema(),
+          IdentifierOverride3Class.$Json.schema(),
           InIdentifierClass.$Json.schema(),
           InPropertiesClass.$Json.schema(),
           IndirectRecursiveClass.$Json.schema(),
@@ -82699,11 +79785,8 @@ export namespace $Object {
           PropertyVisibilitiesClass.$Json.schema(),
           RecursiveClassUnionMember1.$Json.schema(),
           RecursiveClassUnionMember2.$Json.schema(),
-          Sha256IriIdentifierClass.$Json.schema(),
           TermPropertiesClass.$Json.schema(),
           UnionDiscriminantsClass.$Json.schema(),
-          UuidV4IriIdentifierClass.$Json.schema(),
-          UuidV4IriIdentifierInterface.$Json.schema(),
           $DefaultPartial.$Json.schema(),
           $NamedDefaultPartial.$Json.schema(),
         ])
@@ -82819,17 +79902,9 @@ export namespace $Object {
         discriminantValues: ["HasValuePropertiesClass"],
         type: HasValuePropertiesClass.$schema,
       },
-      IdentifierOverride5Class: {
-        discriminantValues: ["IdentifierOverride5Class"],
-        type: IdentifierOverride5Class.$schema,
-      },
-      IdentifierOverride4Class: {
-        discriminantValues: ["IdentifierOverride4Class"],
-        type: IdentifierOverride4ClassStatic.$schema,
-      },
       IdentifierOverride3Class: {
         discriminantValues: ["IdentifierOverride3Class"],
-        type: IdentifierOverride3ClassStatic.$schema,
+        type: IdentifierOverride3Class.$schema,
       },
       InIdentifierClass: {
         discriminantValues: ["InIdentifierClass"],
@@ -82996,10 +80071,6 @@ export namespace $Object {
         discriminantValues: ["RecursiveClassUnionMember2"],
         type: RecursiveClassUnionMember2.$schema,
       },
-      Sha256IriIdentifierClass: {
-        discriminantValues: ["Sha256IriIdentifierClass"],
-        type: Sha256IriIdentifierClass.$schema,
-      },
       TermPropertiesClass: {
         discriminantValues: ["TermPropertiesClass"],
         type: TermPropertiesClass.$schema,
@@ -83007,14 +80078,6 @@ export namespace $Object {
       UnionDiscriminantsClass: {
         discriminantValues: ["UnionDiscriminantsClass"],
         type: UnionDiscriminantsClass.$schema,
-      },
-      UuidV4IriIdentifierClass: {
-        discriminantValues: ["UuidV4IriIdentifierClass"],
-        type: UuidV4IriIdentifierClass.$schema,
-      },
-      UuidV4IriIdentifierInterface: {
-        discriminantValues: ["UuidV4IriIdentifierInterface"],
-        type: UuidV4IriIdentifierInterface.$schema,
       },
       $DefaultPartial: {
         discriminantValues: ["$DefaultPartial"],
@@ -83172,13 +80235,7 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       return value.$toJson();
     }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toJson();
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toJson();
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return value.$toJson();
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
@@ -83333,20 +80390,11 @@ export namespace $Object {
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
       return value.$toJson();
     }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toJson();
-    }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
       return value.$toJson();
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
       return value.$toJson();
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toJson();
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toJson(value);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
       return value.$toJson();
@@ -83452,13 +80500,7 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       return value.$toRdfResource(options);
     }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return value.$toRdfResource(options);
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
@@ -83619,20 +80661,11 @@ export namespace $Object {
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
       return value.$toRdfResource(options);
     }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
       return value.$toRdfResource(options);
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
       return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toRdfResource(value, options);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
       return value.$toRdfResource(options);
@@ -83859,23 +80892,7 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return [
-        value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return [
-        value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return [
         value.$toRdfResource({
           graph: _options.graph,
@@ -84245,14 +81262,6 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return [
-        value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
       return [
         value.$toRdfResource({
@@ -84264,22 +81273,6 @@ export namespace $Object {
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
       return [
         value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return [
-        value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return [
-        UuidV4IriIdentifierInterface.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -84393,13 +81386,7 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       return value.toString();
     }
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return value.toString();
-    }
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return value.toString();
-    }
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
+    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return value.toString();
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
@@ -84554,20 +81541,11 @@ export namespace $Object {
     if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
       return value.toString();
     }
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return value.toString();
-    }
     if (TermPropertiesClass.isTermPropertiesClass(value)) {
       return value.toString();
     }
     if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
       return value.toString();
-    }
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return value.toString();
-    }
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return UuidV4IriIdentifierInterface.$toString(value);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
       return value.toString();
@@ -84786,23 +81764,7 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      IdentifierOverride5Class.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride5Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride5Class"].type,
-      }),
-    );
-    triples = triples.concat(
-      IdentifierOverride4ClassStatic.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride4Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride4Class"].type,
-      }),
-    );
-    triples = triples.concat(
-      IdentifierOverride3ClassStatic.$valueSparqlConstructTriples({
+      IdentifierOverride3Class.$valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["IdentifierOverride3Class"],
         ignoreRdfType: false,
@@ -85152,14 +82114,6 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      Sha256IriIdentifierClass.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["Sha256IriIdentifierClass"],
-        ignoreRdfType: false,
-        schema: schema.members["Sha256IriIdentifierClass"].type,
-      }),
-    );
-    triples = triples.concat(
       TermPropertiesClass.$valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["TermPropertiesClass"],
@@ -85173,22 +82127,6 @@ export namespace $Object {
         filter: filter?.on?.["UnionDiscriminantsClass"],
         ignoreRdfType: false,
         schema: schema.members["UnionDiscriminantsClass"].type,
-      }),
-    );
-    triples = triples.concat(
-      UuidV4IriIdentifierClass.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["UuidV4IriIdentifierClass"],
-        ignoreRdfType: false,
-        schema: schema.members["UuidV4IriIdentifierClass"].type,
-      }),
-    );
-    triples = triples.concat(
-      UuidV4IriIdentifierInterface.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["UuidV4IriIdentifierInterface"],
-        ignoreRdfType: false,
-        schema: schema.members["UuidV4IriIdentifierInterface"].type,
       }),
     );
     triples = triples.concat(
@@ -85446,25 +82384,7 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: IdentifierOverride5Class.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride5Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride5Class"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IdentifierOverride4ClassStatic.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride4Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride4Class"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IdentifierOverride3ClassStatic.$valueSparqlWherePatterns({
+      patterns: IdentifierOverride3Class.$valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["IdentifierOverride3Class"],
         ignoreRdfType: false,
@@ -85859,15 +82779,6 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: Sha256IriIdentifierClass.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["Sha256IriIdentifierClass"],
-        ignoreRdfType: false,
-        schema: schema.members["Sha256IriIdentifierClass"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
       patterns: TermPropertiesClass.$valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["TermPropertiesClass"],
@@ -85882,24 +82793,6 @@ export namespace $Object {
         filter: filter?.on?.["UnionDiscriminantsClass"],
         ignoreRdfType: false,
         schema: schema.members["UnionDiscriminantsClass"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: UuidV4IriIdentifierClass.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["UuidV4IriIdentifierClass"],
-        ignoreRdfType: false,
-        schema: schema.members["UuidV4IriIdentifierClass"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: UuidV4IriIdentifierInterface.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["UuidV4IriIdentifierInterface"],
-        ignoreRdfType: false,
-        schema: schema.members["UuidV4IriIdentifierInterface"].type,
       }).concat(),
       type: "group",
     });
@@ -86615,15 +83508,15 @@ export interface $ObjectSet {
   ): Promise<Either<Error, readonly HasValuePropertiesClass[]>>;
 
   identifierOverride3Class(
-    identifier: IdentifierOverride3ClassStatic.$Identifier,
+    identifier: IdentifierOverride3Class.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>>;
 
   identifierOverride3ClassCount(
     query?: Pick<
       $ObjectSet.Query<
-        IdentifierOverride3ClassStatic.$Filter,
-        IdentifierOverride3ClassStatic.$Identifier
+        IdentifierOverride3Class.$Filter,
+        IdentifierOverride3Class.$Identifier
       >,
       "filter"
     >,
@@ -86631,79 +83524,17 @@ export interface $ObjectSet {
 
   identifierOverride3ClassIdentifiers(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
-  >;
+  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>>;
 
   identifierOverride3Classes(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>>;
-
-  identifierOverride4Class(
-    identifier: IdentifierOverride4ClassStatic.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride4Class>>;
-
-  identifierOverride4ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride4ClassStatic.$Filter,
-        IdentifierOverride4ClassStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  identifierOverride4ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
-  >;
-
-  identifierOverride4Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride4Class[]>>;
-
-  identifierOverride5Class(
-    identifier: IdentifierOverride5Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride5Class>>;
-
-  identifierOverride5ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride5Class.$Filter,
-        IdentifierOverride5Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  identifierOverride5ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>>;
-
-  identifierOverride5Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class[]>>;
 
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
@@ -87964,35 +84795,6 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2[]>>;
 
-  sha256IriIdentifierClass(
-    identifier: Sha256IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, Sha256IriIdentifierClass>>;
-
-  sha256IriIdentifierClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        Sha256IriIdentifierClass.$Filter,
-        Sha256IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  sha256IriIdentifierClassIdentifiers(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>>;
-
-  sha256IriIdentifierClasses(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>>;
-
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -88050,66 +84852,6 @@ export interface $ObjectSet {
       UnionDiscriminantsClass.$Identifier
     >,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass[]>>;
-
-  uuidV4IriIdentifierClass(
-    identifier: UuidV4IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierClass>>;
-
-  uuidV4IriIdentifierClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierClass.$Filter,
-        UuidV4IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  uuidV4IriIdentifierClassIdentifiers(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>>;
-
-  uuidV4IriIdentifierClasses(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>>;
-
-  uuidV4IriIdentifierInterface(
-    identifier: UuidV4IriIdentifierInterface.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierInterface>>;
-
-  uuidV4IriIdentifierInterfaceCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierInterface.$Filter,
-        UuidV4IriIdentifierInterface.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  uuidV4IriIdentifierInterfaceIdentifiers(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
-  >;
-
-  uuidV4IriIdentifierInterfaces(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>>;
 
   classUnion(
     identifier: ClassUnion.$Identifier,
@@ -90571,14 +87313,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async identifierOverride3Class(
-    identifier: IdentifierOverride3ClassStatic.$Identifier,
+    identifier: IdentifierOverride3Class.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>> {
     return this.identifierOverride3ClassSync(identifier, options);
   }
 
   identifierOverride3ClassSync(
-    identifier: IdentifierOverride3ClassStatic.$Identifier,
+    identifier: IdentifierOverride3Class.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, IdentifierOverride3Class> {
     return this.identifierOverride3ClassesSync({
@@ -90590,8 +87332,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   async identifierOverride3ClassCount(
     query?: Pick<
       $ObjectSet.Query<
-        IdentifierOverride3ClassStatic.$Filter,
-        IdentifierOverride3ClassStatic.$Identifier
+        IdentifierOverride3Class.$Filter,
+        IdentifierOverride3Class.$Identifier
       >,
       "filter"
     >,
@@ -90602,8 +87344,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   identifierOverride3ClassCountSync(
     query?: Pick<
       $ObjectSet.Query<
-        IdentifierOverride3ClassStatic.$Filter,
-        IdentifierOverride3ClassStatic.$Identifier
+        IdentifierOverride3Class.$Filter,
+        IdentifierOverride3Class.$Identifier
       >,
       "filter"
     >,
@@ -90615,21 +87357,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride3ClassIdentifiers(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
-  > {
+  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>> {
     return this.identifierOverride3ClassIdentifiersSync(query);
   }
 
   identifierOverride3ClassIdentifiersSync(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
-  ): Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]> {
+  ): Either<Error, readonly IdentifierOverride3Class.$Identifier[]> {
     return this.identifierOverride3ClassesSync(query).map((objects) =>
       objects.map((object) => object.$identifier),
     );
@@ -90637,8 +87377,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride3Classes(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
     return this.identifierOverride3ClassesSync(query);
@@ -90646,212 +87386,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   identifierOverride3ClassesSync(
     query?: $ObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
   ): Either<Error, readonly IdentifierOverride3Class[]> {
     return this.$objectsSync<
       IdentifierOverride3Class,
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >(
       {
-        $filter: IdentifierOverride3ClassStatic.$filter,
-        $fromRdfResource: IdentifierOverride3ClassStatic.$fromRdfResource,
-        $fromRdfTypes: [
-          IdentifierOverride3ClassStatic.$fromRdfType,
-          IdentifierOverride4ClassStatic.$fromRdfType,
-          IdentifierOverride5Class.$fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async identifierOverride4Class(
-    identifier: IdentifierOverride4ClassStatic.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride4Class>> {
-    return this.identifierOverride4ClassSync(identifier, options);
-  }
-
-  identifierOverride4ClassSync(
-    identifier: IdentifierOverride4ClassStatic.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IdentifierOverride4Class> {
-    return this.identifierOverride4ClassesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async identifierOverride4ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride4ClassStatic.$Filter,
-        IdentifierOverride4ClassStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.identifierOverride4ClassCountSync(query);
-  }
-
-  identifierOverride4ClassCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride4ClassStatic.$Filter,
-        IdentifierOverride4ClassStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.identifierOverride4ClassesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async identifierOverride4ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
-  > {
-    return this.identifierOverride4ClassIdentifiersSync(query);
-  }
-
-  identifierOverride4ClassIdentifiersSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]> {
-    return this.identifierOverride4ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
-    );
-  }
-
-  async identifierOverride4Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride4Class[]>> {
-    return this.identifierOverride4ClassesSync(query);
-  }
-
-  identifierOverride4ClassesSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride4Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride4Class,
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(
-      {
-        $filter: IdentifierOverride4ClassStatic.$filter,
-        $fromRdfResource: IdentifierOverride4ClassStatic.$fromRdfResource,
-        $fromRdfTypes: [
-          IdentifierOverride4ClassStatic.$fromRdfType,
-          IdentifierOverride5Class.$fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async identifierOverride5Class(
-    identifier: IdentifierOverride5Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride5Class>> {
-    return this.identifierOverride5ClassSync(identifier, options);
-  }
-
-  identifierOverride5ClassSync(
-    identifier: IdentifierOverride5Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IdentifierOverride5Class> {
-    return this.identifierOverride5ClassesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async identifierOverride5ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride5Class.$Filter,
-        IdentifierOverride5Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.identifierOverride5ClassCountSync(query);
-  }
-
-  identifierOverride5ClassCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride5Class.$Filter,
-        IdentifierOverride5Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.identifierOverride5ClassesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async identifierOverride5ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>> {
-    return this.identifierOverride5ClassIdentifiersSync(query);
-  }
-
-  identifierOverride5ClassIdentifiersSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride5Class.$Identifier[]> {
-    return this.identifierOverride5ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
-    );
-  }
-
-  async identifierOverride5Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class[]>> {
-    return this.identifierOverride5ClassesSync(query);
-  }
-
-  identifierOverride5ClassesSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride5Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride5Class,
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(
-      {
-        $filter: IdentifierOverride5Class.$filter,
-        $fromRdfResource: IdentifierOverride5Class.$fromRdfResource,
-        $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
+        $filter: IdentifierOverride3Class.$filter,
+        $fromRdfResource: IdentifierOverride3Class.$fromRdfResource,
+        $fromRdfTypes: [IdentifierOverride3Class.$fromRdfType],
       },
       query,
     );
@@ -94840,98 +91387,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async sha256IriIdentifierClass(
-    identifier: Sha256IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, Sha256IriIdentifierClass>> {
-    return this.sha256IriIdentifierClassSync(identifier, options);
-  }
-
-  sha256IriIdentifierClassSync(
-    identifier: Sha256IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, Sha256IriIdentifierClass> {
-    return this.sha256IriIdentifierClassesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async sha256IriIdentifierClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        Sha256IriIdentifierClass.$Filter,
-        Sha256IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.sha256IriIdentifierClassCountSync(query);
-  }
-
-  sha256IriIdentifierClassCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        Sha256IriIdentifierClass.$Filter,
-        Sha256IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.sha256IriIdentifierClassesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async sha256IriIdentifierClassIdentifiers(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>> {
-    return this.sha256IriIdentifierClassIdentifiersSync(query);
-  }
-
-  sha256IriIdentifierClassIdentifiersSync(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]> {
-    return this.sha256IriIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
-    );
-  }
-
-  async sha256IriIdentifierClasses(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>> {
-    return this.sha256IriIdentifierClassesSync(query);
-  }
-
-  sha256IriIdentifierClassesSync(
-    query?: $ObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Either<Error, readonly Sha256IriIdentifierClass[]> {
-    return this.$objectsSync<
-      Sha256IriIdentifierClass,
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(
-      {
-        $filter: Sha256IriIdentifierClass.$filter,
-        $fromRdfResource: Sha256IriIdentifierClass.$fromRdfResource,
-        $fromRdfTypes: [],
-      },
-      query,
-    );
-  }
-
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -95110,192 +91565,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: UnionDiscriminantsClass.$filter,
         $fromRdfResource: UnionDiscriminantsClass.$fromRdfResource,
-        $fromRdfTypes: [],
-      },
-      query,
-    );
-  }
-
-  async uuidV4IriIdentifierClass(
-    identifier: UuidV4IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
-    return this.uuidV4IriIdentifierClassSync(identifier, options);
-  }
-
-  uuidV4IriIdentifierClassSync(
-    identifier: UuidV4IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UuidV4IriIdentifierClass> {
-    return this.uuidV4IriIdentifierClassesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriIdentifierClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierClass.$Filter,
-        UuidV4IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.uuidV4IriIdentifierClassCountSync(query);
-  }
-
-  uuidV4IriIdentifierClassCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierClass.$Filter,
-        UuidV4IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.uuidV4IriIdentifierClassesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async uuidV4IriIdentifierClassIdentifiers(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>> {
-    return this.uuidV4IriIdentifierClassIdentifiersSync(query);
-  }
-
-  uuidV4IriIdentifierClassIdentifiersSync(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]> {
-    return this.uuidV4IriIdentifierClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
-    );
-  }
-
-  async uuidV4IriIdentifierClasses(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>> {
-    return this.uuidV4IriIdentifierClassesSync(query);
-  }
-
-  uuidV4IriIdentifierClassesSync(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Either<Error, readonly UuidV4IriIdentifierClass[]> {
-    return this.$objectsSync<
-      UuidV4IriIdentifierClass,
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(
-      {
-        $filter: UuidV4IriIdentifierClass.$filter,
-        $fromRdfResource: UuidV4IriIdentifierClass.$fromRdfResource,
-        $fromRdfTypes: [],
-      },
-      query,
-    );
-  }
-
-  async uuidV4IriIdentifierInterface(
-    identifier: UuidV4IriIdentifierInterface.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
-    return this.uuidV4IriIdentifierInterfaceSync(identifier, options);
-  }
-
-  uuidV4IriIdentifierInterfaceSync(
-    identifier: UuidV4IriIdentifierInterface.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, UuidV4IriIdentifierInterface> {
-    return this.uuidV4IriIdentifierInterfacesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriIdentifierInterfaceCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierInterface.$Filter,
-        UuidV4IriIdentifierInterface.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.uuidV4IriIdentifierInterfaceCountSync(query);
-  }
-
-  uuidV4IriIdentifierInterfaceCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        UuidV4IriIdentifierInterface.$Filter,
-        UuidV4IriIdentifierInterface.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.uuidV4IriIdentifierInterfacesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async uuidV4IriIdentifierInterfaceIdentifiers(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
-  > {
-    return this.uuidV4IriIdentifierInterfaceIdentifiersSync(query);
-  }
-
-  uuidV4IriIdentifierInterfaceIdentifiersSync(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]> {
-    return this.uuidV4IriIdentifierInterfacesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
-    );
-  }
-
-  async uuidV4IriIdentifierInterfaces(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
-    return this.uuidV4IriIdentifierInterfacesSync(query);
-  }
-
-  uuidV4IriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Either<Error, readonly UuidV4IriIdentifierInterface[]> {
-    return this.$objectsSync<
-      UuidV4IriIdentifierInterface,
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(
-      {
-        $filter: UuidV4IriIdentifierInterface.$filter,
-        $fromRdfResource: UuidV4IriIdentifierInterface.$fromRdfResource,
         $fromRdfTypes: [],
       },
       query,
@@ -96377,25 +92646,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: IdentifierOverride5Class.$fromRdfResource,
-          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: IdentifierOverride4ClassStatic.$fromRdfResource,
-          $fromRdfTypes: [
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: IdentifierOverride3ClassStatic.$fromRdfResource,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
+          $fromRdfResource: IdentifierOverride3Class.$fromRdfResource,
+          $fromRdfTypes: [IdentifierOverride3Class.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -96618,27 +92870,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: Sha256IriIdentifierClass.$fromRdfResource,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdfResource: TermPropertiesClass.$fromRdfResource,
           $fromRdfTypes: [TermPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdfResource: UnionDiscriminantsClass.$fromRdfResource,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: UuidV4IriIdentifierClass.$fromRdfResource,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: UuidV4IriIdentifierInterface.$fromRdfResource,
           $fromRdfTypes: [],
         },
         {
@@ -98172,7 +94409,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async identifierOverride3Class(
-    identifier: IdentifierOverride3ClassStatic.$Identifier,
+    identifier: IdentifierOverride3Class.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, IdentifierOverride3Class>> {
     return (
@@ -98186,149 +94423,41 @@ export class $SparqlObjectSet implements $ObjectSet {
   async identifierOverride3ClassCount(
     query?: Pick<
       $SparqlObjectSet.Query<
-        IdentifierOverride3ClassStatic.$Filter,
-        IdentifierOverride3ClassStatic.$Identifier
+        IdentifierOverride3Class.$Filter,
+        IdentifierOverride3Class.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
     return this.$objectCount<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
-    >(IdentifierOverride3ClassStatic, query);
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
+    >(IdentifierOverride3Class, query);
   }
 
   async identifierOverride3ClassIdentifiers(
     query?: $SparqlObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
-  > {
+  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>> {
     return this.$objectIdentifiers<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
-    >(IdentifierOverride3ClassStatic, query);
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
+    >(IdentifierOverride3Class, query);
   }
 
   async identifierOverride3Classes(
     query?: $SparqlObjectSet.Query<
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
     >,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
     return this.$objects<
       IdentifierOverride3Class,
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
-    >(IdentifierOverride3ClassStatic, query);
-  }
-
-  async identifierOverride4Class(
-    identifier: IdentifierOverride4ClassStatic.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride4Class>> {
-    return (
-      await this.identifierOverride4Classes({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async identifierOverride4ClassCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        IdentifierOverride4ClassStatic.$Filter,
-        IdentifierOverride4ClassStatic.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(IdentifierOverride4ClassStatic, query);
-  }
-
-  async identifierOverride4ClassIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(IdentifierOverride4ClassStatic, query);
-  }
-
-  async identifierOverride4Classes(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride4Class[]>> {
-    return this.$objects<
-      IdentifierOverride4Class,
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(IdentifierOverride4ClassStatic, query);
-  }
-
-  async identifierOverride5Class(
-    identifier: IdentifierOverride5Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride5Class>> {
-    return (
-      await this.identifierOverride5Classes({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async identifierOverride5ClassCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        IdentifierOverride5Class.$Filter,
-        IdentifierOverride5Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(IdentifierOverride5Class, query);
-  }
-
-  async identifierOverride5ClassIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(IdentifierOverride5Class, query);
-  }
-
-  async identifierOverride5Classes(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride5Class[]>> {
-    return this.$objects<
-      IdentifierOverride5Class,
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(IdentifierOverride5Class, query);
+      IdentifierOverride3Class.$Filter,
+      IdentifierOverride3Class.$Identifier
+    >(IdentifierOverride3Class, query);
   }
 
   async indirectRecursiveClass(
@@ -100624,58 +96753,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(RecursiveClassUnionMember2, query);
   }
 
-  async sha256IriIdentifierClass(
-    identifier: Sha256IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, Sha256IriIdentifierClass>> {
-    return (
-      await this.sha256IriIdentifierClasses({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async sha256IriIdentifierClassCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        Sha256IriIdentifierClass.$Filter,
-        Sha256IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(Sha256IriIdentifierClass, query);
-  }
-
-  async sha256IriIdentifierClassIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(Sha256IriIdentifierClass, query);
-  }
-
-  async sha256IriIdentifierClasses(
-    query?: $SparqlObjectSet.Query<
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>> {
-    return this.$objects<
-      Sha256IriIdentifierClass,
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(Sha256IriIdentifierClass, query);
-  }
-
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -100778,112 +96855,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionDiscriminantsClass.$Filter,
       UnionDiscriminantsClass.$Identifier
     >(UnionDiscriminantsClass, query);
-  }
-
-  async uuidV4IriIdentifierClass(
-    identifier: UuidV4IriIdentifierClass.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
-    return (
-      await this.uuidV4IriIdentifierClasses({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriIdentifierClassCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        UuidV4IriIdentifierClass.$Filter,
-        UuidV4IriIdentifierClass.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(UuidV4IriIdentifierClass, query);
-  }
-
-  async uuidV4IriIdentifierClassIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(UuidV4IriIdentifierClass, query);
-  }
-
-  async uuidV4IriIdentifierClasses(
-    query?: $SparqlObjectSet.Query<
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>> {
-    return this.$objects<
-      UuidV4IriIdentifierClass,
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(UuidV4IriIdentifierClass, query);
-  }
-
-  async uuidV4IriIdentifierInterface(
-    identifier: UuidV4IriIdentifierInterface.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
-    return (
-      await this.uuidV4IriIdentifierInterfaces({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async uuidV4IriIdentifierInterfaceCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        UuidV4IriIdentifierInterface.$Filter,
-        UuidV4IriIdentifierInterface.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(UuidV4IriIdentifierInterface, query);
-  }
-
-  async uuidV4IriIdentifierInterfaceIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<
-    Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(UuidV4IriIdentifierInterface, query);
-  }
-
-  async uuidV4IriIdentifierInterfaces(
-    query?: $SparqlObjectSet.Query<
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >,
-  ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
-    return this.$objects<
-      UuidV4IriIdentifierInterface,
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(UuidV4IriIdentifierInterface, query);
   }
 
   async classUnion(
