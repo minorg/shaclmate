@@ -243,4 +243,11 @@ export abstract class AbstractProperty<
   abstract toStringExpression(parameters: {
     variables: { value: Code };
   }): Maybe<Code>;
+
+  /**
+   * Expression to get the value of this property on an object instance. May evaluate a thunk.
+   */
+  valueExpression({ variables }: { variables: { object: Code } }): Code {
+    return code`${variables.object}.${this.name}`;
+  }
 }

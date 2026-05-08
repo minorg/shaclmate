@@ -332,7 +332,7 @@ ${joinCode([
   ...this.identifierType
     .map(
       (identifierType) => code`\
-if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
+if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier())) {
   return false;
 }`,
     )

@@ -46,7 +46,11 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
       ...this.ownProperties.flatMap((property) =>
         property
           .toJsonObjectMemberExpression({
-            variables: { value: code`${this.thisVariable}.${property.name}` },
+            variables: {
+              value: property.valueExpression({
+                variables: { object: this.thisVariable },
+              }),
+            },
           })
           .toList(),
       ),

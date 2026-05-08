@@ -327,4 +327,14 @@ export class IdentifierProperty extends AbstractProperty<
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
     return [];
   }
+
+  override valueExpression({
+    variables,
+  }: Parameters<
+    AbstractProperty<
+      BlankNodeType | IdentifierType | IriType
+    >["valueExpression"]
+  >[0]): Code {
+    return code`${variables.object}.${this.name}()`;
+  }
 }

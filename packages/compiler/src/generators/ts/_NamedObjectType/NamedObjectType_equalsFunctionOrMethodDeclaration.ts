@@ -12,10 +12,10 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
   }
 
   const chain: Code[] = [];
-  let leftVariable: string;
+  let leftVariable: Code;
   let parameters: Code;
   let preamble: string;
-  let rightVariable: string;
+  let rightVariable: Code;
   switch (this.declarationType) {
     case "class":
       if (this.ownProperties.length === 0) {
@@ -23,7 +23,7 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
         return Maybe.empty();
       }
 
-      leftVariable = "this";
+      leftVariable = code`this`;
       parameters = code`other: ${this.name}`;
       if (this.parentObjectTypes.length > 0) {
         chain.push(code`super.${syntheticNamePrefix}equals(other)`);
@@ -31,7 +31,7 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
       } else {
         preamble = "";
       }
-      rightVariable = "other";
+      rightVariable = code`other`;
       break;
     case "interface":
       // For every parent, find the nearest equals implementation
@@ -40,16 +40,16 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
           code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
         );
       }
-      leftVariable = "left";
+      leftVariable = code`left`;
       parameters = code`left: ${this.name}, right: ${this.name}`;
       preamble = "export function ";
-      rightVariable = "right";
+      rightVariable = code`right`;
   }
 
   for (const property of this.ownProperties) {
     property.equalsFunction.ifJust((equalsFunction) => {
       chain.push(
-        code`(${equalsFunction})(${leftVariable}.${property.name}, ${rightVariable}.${property.name}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
+        code`(${equalsFunction})(${property.valueExpression({ variables: { object: leftVariable } })}, ${property.valueExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
       );
     });
   }
