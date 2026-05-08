@@ -8,7 +8,6 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
-import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_NamedObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
 import { NamedObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
@@ -584,8 +583,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }
 
 export namespace NamedObjectType {
-  export const IdentifierPrefixProperty = _IdentifierPrefixProperty;
-  export type IdentifierPrefixProperty = _IdentifierPrefixProperty;
   export const IdentifierProperty = _IdentifierProperty;
   export type IdentifierProperty = _IdentifierProperty;
   export type ObjectSetMethodNames = {

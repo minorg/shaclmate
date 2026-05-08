@@ -8,7 +8,6 @@ import { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
-import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
@@ -75,8 +74,7 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    return Eithers.chain5(
-      nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
+    return Eithers.chain4(
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
         nodeShape.properties.map((propertyShapeIdentifier) =>
@@ -100,13 +98,7 @@ export function transformShapeToAstObjectType(
               ),
             ),
     ).chain<Error, Maybe<ast.ObjectType>>(
-      ([
-        identifierMintingStrategy,
-        nodeKinds,
-        propertyShapes,
-        tsFeatures,
-        tsObjectDeclarationType,
-      ]) => {
+      ([nodeKinds, propertyShapes, tsFeatures, tsObjectDeclarationType]) => {
         const abstract = nodeShape.abstract.orDefault(false);
 
         const {
@@ -198,7 +190,6 @@ export function transformShapeToAstObjectType(
           fromRdfType,
           label: nodeShape.label,
           identifierType,
-          identifierMintingStrategy,
           name: shapeAstTypeName(nodeShape),
           shapeIdentifier: nodeShape.$identifier,
           synthetic: false,

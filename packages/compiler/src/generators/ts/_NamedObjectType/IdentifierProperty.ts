@@ -4,7 +4,6 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../../../enums/IdentifierMintingStrategy.js";
 import type { Visibility } from "../../../enums/Visibility.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
@@ -19,8 +18,6 @@ import { AbstractProperty } from "./AbstractProperty.js";
 export class IdentifierProperty extends AbstractProperty<
   BlankNodeType | IdentifierType | IriType
 > {
-  private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-  private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: Code;
 
   override readonly kind = "IdentifierProperty";
@@ -28,20 +25,14 @@ export class IdentifierProperty extends AbstractProperty<
   override readonly recursive = false;
 
   constructor({
-    identifierMintingStrategy,
-    identifierPrefixPropertyName,
     typeAlias,
     ...superParameters
   }: {
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierPrefixPropertyName: string;
     type: BlankNodeType | IdentifierType | IriType;
     typeAlias: Code;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
     invariant(this.visibility === "public");
-    this.identifierMintingStrategy = identifierMintingStrategy;
-    this.identifierPrefixPropertyName = identifierPrefixPropertyName;
     this.typeAlias = typeAlias;
   }
 
