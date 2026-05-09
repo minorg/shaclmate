@@ -47,11 +47,9 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
   }
 
   for (const property of this.ownProperties) {
-    property.equalsFunction.ifJust((equalsFunction) => {
-      chain.push(
-        code`(${equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
-      );
-    });
+    chain.push(
+      code`(${property.equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
+    );
   }
 
   return Maybe.of(code`\

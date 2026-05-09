@@ -82,7 +82,6 @@ export class NamedObjectType extends AbstractType {
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
     lazyDiscriminantProperty,
-    lazyIdentifierProperty,
     lazyParentObjectTypes,
     lazyProperties,
     name,
@@ -106,9 +105,6 @@ export class NamedObjectType extends AbstractType {
     lazyDiscriminantProperty: (
       namedObjectType: NamedObjectType,
     ) => NamedObjectType.DiscriminantProperty;
-    lazyIdentifierProperty: (
-      namedObjectType: NamedObjectType,
-    ) => NamedObjectType.IdentifierProperty;
     lazyDescendantObjectTypes: () => readonly NamedObjectType[];
     lazyParentObjectTypes: () => readonly NamedObjectType[];
     lazyProperties: (
@@ -133,7 +129,6 @@ export class NamedObjectType extends AbstractType {
     this.lazyChildObjectTypes = lazyChildObjectTypes;
     this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
     this.lazyDiscriminantProperty = lazyDiscriminantProperty;
-    this.lazyIdentifierProperty = lazyIdentifierProperty;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.name = name;
@@ -343,11 +338,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return new AbstractType.GraphqlType(
       code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
-  }
-
-  @Memoize()
-  get identifierProperty(): NamedObjectType.IdentifierProperty {
-    return this.lazyIdentifierProperty(this);
   }
 
   @Memoize()
@@ -570,10 +560,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   private readonly lazyDiscriminantProperty: (
     namedObjectType: NamedObjectType,
   ) => NamedObjectType.DiscriminantProperty;
-
-  private readonly lazyIdentifierProperty: (
-    namedObjectType: NamedObjectType,
-  ) => NamedObjectType.IdentifierProperty;
 
   private readonly lazyParentObjectTypes: () => readonly NamedObjectType[];
 

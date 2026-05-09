@@ -10,7 +10,7 @@ import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
   override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
-  override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
+  override readonly equalsFunction = code`${snippets.strictEquals}`;
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
@@ -29,14 +29,12 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     invariant(this.visibility === "public");
   }
 
-  override get declaration(): Maybe<Code> {
+  override get declaration(): Code {
     switch (this.namedObjectType.declarationType) {
       case "class":
-        return Maybe.of(
-          code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`,
-        );
+        return code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`;
       case "interface":
-        return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
+        return code`readonly ${this.name}: ${this.type.name};`;
       default:
         this.namedObjectType.declarationType satisfies never;
         throw new Error("should never reach this point");

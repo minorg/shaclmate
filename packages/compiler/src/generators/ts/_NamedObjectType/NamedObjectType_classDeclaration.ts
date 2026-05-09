@@ -69,7 +69,7 @@ ${this.comment
   )}export ${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode(
   [
-    ...this.properties.flatMap((property) => property.declaration.toList()),
+    ...this.ownProperties.map((property) => property.declaration),
     NamedObjectType_constructorDeclaration.call(this),
     ...NamedObjectType_equalsFunctionOrMethodDeclaration.call(this).toList(),
     ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),

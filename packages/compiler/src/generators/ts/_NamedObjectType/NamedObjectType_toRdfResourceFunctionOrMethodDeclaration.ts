@@ -48,7 +48,7 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
   } else {
     statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.identifierProperty.accessExpression({ variables: { object: this.thisVariable } })});`,
+      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${syntheticNamePrefix}identifier());`,
     );
   }
 

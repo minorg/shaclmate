@@ -606,12 +606,17 @@ export interface NestedNodeShape {
 
 export namespace NestedNodeShape {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NestedNodeShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => NestedNodeShape.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);
@@ -987,7 +992,10 @@ export interface FormNodeShape {
 
 export namespace FormNodeShape {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => FormNodeShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: NonEmptyList<string>;
@@ -997,7 +1005,9 @@ export namespace FormNodeShape {
   }): FormNodeShape {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => FormNodeShape.$Identifier;
-    if (typeof $identifierParameter === "object") {
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
       $identifier = () => $identifierParameter;
     } else if (typeof $identifierParameter === "string") {
       $identifier = () => dataFactory.namedNode($identifierParameter);

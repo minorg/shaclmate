@@ -21,14 +21,14 @@ export abstract class AbstractProperty<
   abstract readonly constructorParametersSignature: Maybe<Code>;
 
   /**
-   * Optional property declaration to include in a class or interface declaration of the object type.
+   * Property declaration to include in a class or interface declaration of the object type.
    */
-  abstract readonly declaration: Maybe<Code>;
+  abstract readonly declaration: Code;
 
   /**
    * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
    */
-  abstract readonly equalsFunction: Maybe<Code>;
+  abstract readonly equalsFunction: Code;
 
   /**
    * Optional property in the object type's filter.

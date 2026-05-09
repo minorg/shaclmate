@@ -161,15 +161,6 @@ export class TypeFactory {
           visibility: "public",
         });
       },
-      lazyIdentifierProperty: (namedObjectType: NamedObjectType) =>
-        new NamedObjectType.IdentifierProperty({
-          logger: this.logger,
-          name: `${syntheticNamePrefix}identifier`,
-          namedObjectType,
-          type: identifierType,
-          typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-          visibility: "public",
-        }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
           this.createNamedObjectType(astType),
@@ -199,8 +190,23 @@ export class TypeFactory {
           properties.splice(0, 0, namedObjectType._discriminantProperty);
         }
 
-        // Every NamedObjectType has an identifier property. Some are abstract.
-        properties.splice(0, 0, namedObjectType.identifierProperty);
+        if (
+          namedObjectType.declarationType === "interface" ||
+          namedObjectType.parentObjectTypes.length === 0
+        ) {
+          properties.splice(
+            0,
+            0,
+            new NamedObjectType.IdentifierProperty({
+              logger: this.logger,
+              name: `${syntheticNamePrefix}identifier`,
+              namedObjectType,
+              type: identifierType,
+              typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+              visibility: "public",
+            }),
+          );
+        }
 
         return properties;
       },

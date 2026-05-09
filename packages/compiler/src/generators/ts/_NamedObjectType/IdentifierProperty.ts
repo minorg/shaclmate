@@ -38,14 +38,6 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get constructorParametersSignature(): Maybe<Code> {
-    if (this.abstract) {
-      const declarationModifiers = this.declarationModifiers.extractNullable();
-      if (declarationModifiers === null || declarationModifiers.abstract) {
-        // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
-        return Maybe.empty();
-      }
-    }
-
     const hasQuestionToken = (
       this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>
     ).has("BlankNode");
@@ -68,16 +60,13 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get declaration(): Maybe<Code> {
-    return this.declarationModifiers.map(
-      ({ abstract, override, readonly }) =>
-        code`${abstract ? "abstract " : ""}${override ? "override " : ""}${readonly ? "readonly " : ""}${this.name}: () => ${this.typeAlias};`,
-    );
+  override get declaration(): Code {
+    return code`readonly ${this.name}: () => ${this.typeAlias};`;
   }
 
   @Memoize()
-  get equalsFunction(): Maybe<Code> {
-    return Maybe.of(this.type.equalsFunction);
+  get equalsFunction(): Code {
+    return this.type.equalsFunction;
   }
 
   @Memoize()
@@ -128,45 +117,6 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly "@id": string`);
   }
 
-  private get abstract(): boolean {
-    return this.namedObjectType.abstract;
-  }
-
-  @Memoize()
-  private get declarationModifiers(): Maybe<{
-    abstract?: boolean;
-    override?: boolean;
-    readonly?: boolean;
-  }> {
-    if (this.namedObjectType.declarationType === "interface") {
-      return Maybe.of({ readonly: true });
-    }
-
-    if (this.namedObjectType.parentObjectTypes.length > 0) {
-      // An ancestor will declare the identifier property.
-      return Maybe.empty();
-    }
-
-    if (this.abstract) {
-      // Declare the property abstract and public
-      return Maybe.of({
-        abstract: true,
-        override: this.override,
-        readonly: true,
-      });
-    }
-
-    // Declare the property public
-    return Maybe.of({
-      override: this.override,
-      readonly: true,
-    });
-  }
-
-  private get override(): boolean {
-    return this.namedObjectType.parentObjectTypes.length > 0;
-  }
-
   override accessExpression({
     variables,
   }: Parameters<
@@ -182,12 +132,6 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorStatements"]
   >[0]): readonly Code[] {
-    const constructorParametersSignature =
-      this.constructorParametersSignature.extractNullable();
-    if (constructorParametersSignature === null) {
-      return [];
-    }
-
     let lhs: string;
     const parameterVariable = code`${this.name}Parameter`;
     const statements: Code[] = [
@@ -197,9 +141,6 @@ export class IdentifierProperty extends AbstractProperty<
     const typeConversions = this.type.conversions;
     switch (this.namedObjectType.declarationType) {
       case "class": {
-        if (this.declaration.isNothing()) {
-          return [];
-        }
         lhs = `this.${this.name}`;
         break;
       }
@@ -298,7 +239,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.namedObjectType.identifierProperty.name}.type()`,
+        schema: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,
