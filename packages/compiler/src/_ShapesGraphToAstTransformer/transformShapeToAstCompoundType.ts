@@ -75,7 +75,7 @@ export function transformShapeToAstCompoundType(
           comment: shape.comment,
           label: shape.label,
           name: shapeAstTypeName(shape),
-          shapeIdentifier: shape.$identifier,
+          shapeIdentifier: shape.$identifier(),
           tsFeatures,
         });
 
@@ -87,7 +87,7 @@ export function transformShapeToAstCompoundType(
 
         // Put a placeholder in the cache to deal with cyclic references
         this.cachedAstTypesByShapeIdentifier.set(
-          shape.$identifier,
+          shape.$identifier(),
           compoundType,
         );
 
@@ -155,7 +155,7 @@ export function transformShapeToAstCompoundType(
             },
           )
           .ifLeft(() => {
-            this.cachedAstTypesByShapeIdentifier.delete(shape.$identifier);
+            this.cachedAstTypesByShapeIdentifier.delete(shape.$identifier());
           });
       },
     );

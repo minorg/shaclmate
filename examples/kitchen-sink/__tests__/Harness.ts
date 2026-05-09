@@ -4,7 +4,7 @@ import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 
 export abstract class Harness<
-  T extends { readonly $identifier: Resource.Identifier },
+  T extends { readonly $identifier: () => Resource.Identifier },
 > {
   readonly fromJson: (json: any) => T;
   readonly fromRdfResource: (

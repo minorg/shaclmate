@@ -2,10 +2,8 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import type { IdentifierMintingStrategy } from "../../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
@@ -33,7 +31,6 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export class ListType<
   ItemTypeT extends ListType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
-  private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
@@ -41,19 +38,14 @@ export class ListType<
 
   constructor({
     identifierNodeKind,
-    identifierMintingStrategy,
     toRdfTypes,
     ...superParameters
   }: {
     identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
     super(superParameters);
     this.identifierNodeKind = identifierNodeKind;
-    this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
-      identifierNodeKind === "BlankNode" ? "blankNode" : "sha256",
-    );
     this.toRdfTypes = toRdfTypes;
   }
 
@@ -103,36 +95,19 @@ export class ListType<
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    let listIdentifier: Code;
+    let mintListIdentifierFunction: Code;
+    let mintSubListIdentifierFunction: Code;
     let resourceTypeName: Code;
-    let subListIdentifier: Code;
     switch (this.identifierNodeKind) {
       case "BlankNode": {
-        listIdentifier =
-          subListIdentifier = code`${imports.dataFactory}.blankNode()`;
+        mintListIdentifierFunction =
+          mintSubListIdentifierFunction = code`(() => ${imports.dataFactory}.blankNode())`;
         resourceTypeName = code`${imports.Resource}<${imports.BlankNode}>`;
         break;
       }
       case "IRI": {
-        switch (this.identifierMintingStrategy) {
-          case "blankNode":
-            throw new RangeError(this.identifierMintingStrategy);
-          case "sha256":
-            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
-        (hasher, item) => {
-          ${joinCode(this.itemType.hashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`item` } }).concat())}
-          return hasher;
-        },
-        ${imports.sha256}.create(),
-      )}\`)`;
-            break;
-          case "uuidv4":
-            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${imports.uuid}.v4()}\`)`;
-            break;
-        }
         resourceTypeName = code`${imports.Resource}<${imports.NamedNode}>`;
-        subListIdentifier = code`${imports.dataFactory}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
-        break;
+        throw new RangeError("list IRI minting is unsupported");
       }
     }
 
@@ -140,7 +115,7 @@ export class ListType<
     if (itemIndex === 0) {
       currentSubListResource = listResource;
     } else {
-      const newSubListResource = ${variables.resourceSet}.resource(${subListIdentifier});
+      const newSubListResource = ${variables.resourceSet}.resource(${mintSubListIdentifierFunction}());
       currentSubListResource!.add(${rdfjsTermExpression(rdf.rest, { logger: this.logger })}, newSubListResource.identifier, ${variables.graph});
       currentSubListResource = newSubListResource;
     }
@@ -157,7 +132,7 @@ export class ListType<
   },
   {
     currentSubListResource: null,
-    listResource: resourceSet.resource(${listIdentifier}),
+    listResource: resourceSet.resource(${mintListIdentifierFunction}()),
   } as {
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};

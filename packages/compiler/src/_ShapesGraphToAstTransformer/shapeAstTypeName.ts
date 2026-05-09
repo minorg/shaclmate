@@ -7,7 +7,8 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
     return Maybe.empty();
   }
 
-  if (shape.$identifier.termType !== "NamedNode") {
+  const shapeIdentifier = shape.$identifier();
+  if (shapeIdentifier.termType !== "NamedNode") {
     return Maybe.empty();
   }
 
@@ -22,14 +23,12 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
   }
 
   // CURIE shape identifier
-  if (shape.$identifier instanceof Curie) {
-    if (shape.$identifier.hasUniqueReference) {
-      return Maybe.of(shape.$identifier.reference);
+  if (shapeIdentifier instanceof Curie) {
+    if (shapeIdentifier.hasUniqueReference) {
+      return Maybe.of(shapeIdentifier.reference);
     }
 
-    return Maybe.of(
-      `${shape.$identifier.prefix}_${shape.$identifier.reference}`,
-    );
+    return Maybe.of(`${shapeIdentifier.prefix}_${shapeIdentifier.reference}`);
   }
 
   return Maybe.empty();

@@ -7,8 +7,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 async function expectEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyObjectOption<
     ObjectIdentifierT,
@@ -23,8 +23,8 @@ async function expectEmptyOptional<
 
 async function expectEmptySet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(
   actual: kitchenSink.$LazyObjectSet<
     ObjectIdentifierT,
@@ -39,8 +39,8 @@ async function expectEmptySet<
 
 async function expectRequired<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -57,9 +57,9 @@ async function expectRequired<
   ) => kitchenSink.$EqualsResult;
   expected: ResolvedObjectT;
 }): Promise<void> {
-  expect(actual.partial.$identifier.equals(expected.$identifier)).toStrictEqual(
-    true,
-  );
+  expect(
+    actual.partial.$identifier().equals(expected.$identifier()),
+  ).toStrictEqual(true);
 
   const resolvedObject = (await actual.resolve()).unsafeCoerce();
   expect(equals(resolvedObject, expected).extract()).toStrictEqual(true);
@@ -67,8 +67,8 @@ async function expectRequired<
 
 async function expectSet<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -88,7 +88,7 @@ async function expectSet<
   expect(actual.partials).toHaveLength(expected.length);
   actual.partials.forEach((actualPartial, partialI) => {
     expect(
-      actualPartial.$identifier.equals(expected[partialI].$identifier),
+      actualPartial.$identifier().equals(expected[partialI].$identifier()),
     ).toStrictEqual(true);
   });
 
@@ -112,8 +112,8 @@ async function expectSet<
 
 async function expectedNonEmptyOptional<
   ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >({
   actual,
   equals,
@@ -131,7 +131,7 @@ async function expectedNonEmptyOptional<
   expected: ResolvedObjectT;
 }): Promise<void> {
   expect(
-    actual.partial.unsafeCoerce().$identifier.equals(expected.$identifier),
+    actual.partial.unsafeCoerce().$identifier().equals(expected.$identifier()),
   ).toStrictEqual(true);
 
   const resolvedObject = (await actual.resolve()).unsafeCoerce().unsafeCoerce();

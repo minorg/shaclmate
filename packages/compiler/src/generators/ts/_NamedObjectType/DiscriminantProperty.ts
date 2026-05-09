@@ -4,16 +4,13 @@ import { Memoize } from "typescript-memoize";
 
 import { imports } from "../imports.js";
 import { removeUndefined } from "../removeUndefined.js";
-import { snippets } from "../snippets.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
   override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
-  override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
-  override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly kind = "DiscriminantProperty";
@@ -30,14 +27,12 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     invariant(this.visibility === "public");
   }
 
-  override get declaration(): Maybe<Code> {
+  override get declaration(): Code {
     switch (this.namedObjectType.declarationType) {
       case "class":
-        return Maybe.of(
-          code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`,
-        );
+        return code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`;
       case "interface":
-        return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
+        return code`readonly ${this.name}: ${this.type.name};`;
       default:
         this.namedObjectType.declarationType satisfies never;
         throw new Error("should never reach this point");
@@ -46,6 +41,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of({
       key: this.name,
       schema:
@@ -57,6 +56,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
@@ -105,6 +108,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
+    if (this.override) {
+      return [];
+    }
+
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
@@ -113,6 +120,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
@@ -134,6 +145,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of(code`${this.name}: ${variables.value}`);
   }
 

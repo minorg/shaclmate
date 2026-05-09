@@ -11,12 +11,10 @@ export function NamedObjectType_jsonTypeAliasDeclaration(
   }
 
   const members: Code[] = [];
-  if (this.ownProperties.length > 0) {
+  if (this.properties.length > 0) {
     members.push(
       code`{ ${joinCode(
-        this.ownProperties.flatMap((property) =>
-          property.jsonSignature.toList(),
-        ),
+        this.properties.flatMap((property) => property.jsonSignature.toList()),
         { on: ";" },
       )} }`,
     );

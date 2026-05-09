@@ -49,7 +49,6 @@ const externalDependencies = {
   "@types/react-dom": "~18",
   "@types/sparqljs": "3.1.12",
   "@types/toposort": "2.0.7",
-  "@types/uuid": "~9.0.1",
   "@types/which": "~3.0.4",
   "@vitest/coverage-v8": vitestVersion,
   "@vitejs/plugin-react": "~4.3.4",
@@ -82,7 +81,6 @@ const externalDependencies = {
   typescript: "5.9.3",
   "typescript-memoize": "~1.1.1",
   turbo: "~2.5.5",
-  uuid: "~9.0.1",
   vite: "6.0.7",
   vitest: vitestVersion,
   "vitest-fetch-mock": "~0.4.5",
@@ -306,10 +304,8 @@ const workspaces = {
           "@rdfx/data-factory",
           "@rdfx/resource",
           "decimal.js",
-          "js-sha256",
           "purify-ts",
           "sparqljs",
-          "uuid",
           "zod",
         ],
       },
@@ -324,7 +320,7 @@ const workspaces = {
           "@types/rdfjs__prefix-map",
           "@types/rdfjs__serializer-turtle",
           "@types/sparqljs",
-          "@types/uuid",
+          "js-sha256",
           "n3",
           "oxigraph",
           "rdf-validate-shacl",
@@ -393,6 +389,7 @@ const workspaces = {
   } satisfies Record<PackageName, Workspace>,
 } as const;
 
+// @ts-expect-error: this script will never be built into CommonJS, can ignore this error
 const myDirPath = path.dirname(url.fileURLToPath(import.meta.url));
 
 for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
@@ -522,11 +519,9 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             ...(testsDirectoryPath !== null
               ? {
                   "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+                  test: `cd ../.. && vitest run ${packageDirectoryPath}/__tests__`,
                 }
               : {}),
-            test: fs.existsSync(path.join(packageDirectoryPath, "__tests__"))
-              ? `cd ../.. && vitest run ${packageDirectoryPath}/__tests__`
-              : undefined,
             typecheck: "tsc --noEmit",
             "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
             ...workspace.scripts,
@@ -626,8 +621,8 @@ fs.writeFileSync(
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",
-        typecheck: "turbo run typecheck",
-        "typecheck:watch": "turbo run --concurrency 12 dev:noEmit dev:tests",
+        typecheck: "tsc",
+        "typecheck:watch": "tsc -w --preserveWatchOutput",
       },
       workspaces: Object.entries(workspaces).flatMap(
         ([workspacesDirectoryName, workspaces_]) =>
@@ -639,4 +634,52 @@ fs.writeFileSync(
     undefined,
     2,
   ),
+);
+
+// Root tsconfig.json
+// Only used for type checking
+fs.writeFileSync(
+  path.join(myDirPath, "tsconfig.json"),
+  `${JSON.stringify(
+    {
+      compilerOptions: {
+        exactOptionalPropertyTypes: false,
+        experimentalDecorators: true,
+        forceConsistentCasingInFileNames: true,
+        jsx: "react-jsx",
+        noEmit: true,
+        noUncheckedIndexedAccess: false,
+        types: ["node"],
+      },
+      extends: [
+        "@tsconfig/node20/tsconfig.json",
+        "@tsconfig/strictest/tsconfig.json",
+      ],
+      include: ["*.ts"].concat(
+        Object.entries(workspaces).flatMap(
+          ([workspacesDirectoryName, workspaces]) =>
+            Object.keys(workspaces).flatMap((workspaceName) => {
+              const workspaceDirectoryPath = path.join(
+                workspacesDirectoryName,
+                workspaceName,
+              );
+
+              const paths: string[] = [
+                path.join(workspaceDirectoryPath, "src", "**", "*.ts*"),
+              ];
+              if (
+                fs.existsSync(path.join(workspaceDirectoryPath, "__tests__"))
+              ) {
+                paths.push(
+                  path.join(workspaceDirectoryPath, "__tests__", "**", "*.ts"),
+                );
+              }
+              return paths;
+            }),
+        ),
+      ),
+    },
+    undefined,
+    2,
+  )}\n`,
 );

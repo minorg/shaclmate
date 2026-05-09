@@ -246,9 +246,9 @@ export namespace ${syntheticNamePrefix}Identifier {
     > = {};
 
     this.concreteMembers.forEach((member, memberI) => {
-      for (const memberTypeProperty of member.type.ownProperties.concat(
+      for (const memberTypeProperty of member.type.properties.concat(
         member.type.ancestorObjectTypes.flatMap(
-          (ancestorObjectType) => ancestorObjectType.ownProperties,
+          (ancestorObjectType) => ancestorObjectType.properties,
         ),
       )) {
         if (memberTypeProperty.kind !== "ShaclProperty") {

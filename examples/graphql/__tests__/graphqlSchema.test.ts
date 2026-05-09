@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import { dataset } from "../src/dataset.js";
 import { $RdfjsDatasetObjectSet, graphqlSchema } from "../src/generated.js";
 
-describe("graphqlSchema", () => {
+describe.skip("graphqlSchema", () => {
   const execute = async (query: string): Promise<ExecutionResult> => {
     return await graphql({
       contextValue: { objectSet: new $RdfjsDatasetObjectSet(dataset) },

@@ -48,7 +48,7 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
   } else {
     statements.push(
-      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${this.identifierProperty.name});`,
+      code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${syntheticNamePrefix}identifier());`,
     );
   }
 
@@ -71,7 +71,9 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
           graph: code`options?.${variables.graph}`,
           resource: variables.resource,
           resourceSet: variables.resourceSet,
-          value: code`${this.thisVariable}.${property.name}`,
+          value: property.accessExpression({
+            variables: { object: this.thisVariable },
+          }),
         },
       }),
     );

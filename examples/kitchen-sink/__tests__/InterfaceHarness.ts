@@ -5,7 +5,7 @@ import { Harness } from "./Harness.js";
 
 export class InterfaceHarness<
   T extends {
-    readonly $identifier: Resource.Identifier;
+    readonly $identifier: () => Resource.Identifier;
     readonly $type: string;
   },
 > extends Harness<T> {

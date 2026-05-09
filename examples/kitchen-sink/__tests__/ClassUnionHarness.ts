@@ -5,7 +5,7 @@ import { Harness } from "./Harness.js";
 
 export class ClassUnionHarness<
   T extends {
-    $identifier: Resource.Identifier;
+    $identifier: () => Resource.Identifier;
     $toJson: () => any;
     $toRdfResource: (options?: {
       graph?: Exclude<Quad_Graph, Variable>;

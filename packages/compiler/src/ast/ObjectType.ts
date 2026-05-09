@@ -6,7 +6,6 @@ import type { Maybe } from "purify-ts";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import type { TsFeature } from "../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type { Visibility } from "../enums/Visibility.js";
@@ -76,11 +75,6 @@ export class ObjectType extends AbstractType {
   readonly fromRdfType: Maybe<NamedNode>;
 
   /**
-   * Strategy for minting new object identifiers.
-   */
-  readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-
-  /**
    * Identifier type.
    */
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
@@ -128,7 +122,6 @@ export class ObjectType extends AbstractType {
     abstract,
     extern,
     fromRdfType,
-    identifierMintingStrategy,
     identifierType,
     synthetic,
     toRdfTypes,
@@ -140,7 +133,6 @@ export class ObjectType extends AbstractType {
     abstract: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
@@ -152,7 +144,6 @@ export class ObjectType extends AbstractType {
     this.abstract = abstract;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
-    this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierType = identifierType;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
@@ -231,7 +222,6 @@ export class ObjectType extends AbstractType {
     return {
       ...super.toJSON(),
       fromRdfType: this.fromRdfType.extract(),
-      identifierMintingStrategy: this.identifierMintingStrategy.extract(),
       identifierType: this.identifierType.toJSON(),
       parentObjectTypes:
         this.parentObjectTypes.length > 0

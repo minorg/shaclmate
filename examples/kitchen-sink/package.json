@@ -5,10 +5,8 @@
     "@rdfx/data-factory": "0.0.12",
     "@rdfx/resource": "0.0.12",
     "decimal.js": "~10.6.0",
-    "js-sha256": "~0.11.0",
     "purify-ts": "~2.1.4",
     "sparqljs": "3.7.3",
-    "uuid": "~9.0.1",
     "zod": "~4.1.12"
   },
   "devDependencies": {
@@ -21,7 +19,7 @@
     "@types/rdfjs__prefix-map": "~0.1.5",
     "@types/rdfjs__serializer-turtle": "~1.1.0",
     "@types/sparqljs": "3.1.12",
-    "@types/uuid": "~9.0.1",
+    "js-sha256": "~0.11.0",
     "n3": "~1.26.0",
     "oxigraph": "0.4.11",
     "rdf-validate-shacl": "0.6.5"

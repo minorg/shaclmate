@@ -8,7 +8,7 @@ export const snippets_LazyObjectSet = conditionalOutput(
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
   readonly partials: readonly PartialObjectT[];
   private readonly resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
 
@@ -39,7 +39,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
       offset = 0;
     }
 
-    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier), { preferredLanguages: options?.preferredLanguages });
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier()), { preferredLanguages: options?.preferredLanguages });
   }
 }`,
 );

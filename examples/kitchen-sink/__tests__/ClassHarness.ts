@@ -6,7 +6,7 @@ import { Harness } from "./Harness.js";
 export class ClassHarness<
   T extends {
     $equals: (other: T) => $EqualsResult;
-    readonly $identifier: Resource.Identifier;
+    readonly $identifier: () => Resource.Identifier;
     $toJson: () => any;
     $toRdfResource: (options?: {
       graph?: Exclude<Quad_Graph, Variable>;

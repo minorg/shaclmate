@@ -17,7 +17,7 @@ export function NamedObjectType_jsonUiSchemaFunctionDeclaration(
         code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix })`,
     )
     .concat(
-      this.ownProperties.flatMap((property) =>
+      this.properties.flatMap((property) =>
         property.jsonUiSchemaElement({ variables }).toList(),
       ),
     );

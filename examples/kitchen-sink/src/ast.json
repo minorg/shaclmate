@@ -10,7 +10,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/AbstractBaseClassForExternClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -52,7 +51,7 @@
       ]
     },
     {
-      "comment": "Node shape that serves as an abstract base class for child node shapes.\n\nIt's marked abstract in TypeScript and not exported from the module.\n\nCommon pattern: put the minting strategy and nodeKind on an ABC.\n",
+      "comment": "Node shape that serves as an abstract base class for child node shapes.",
       "kind": "ObjectType",
       "name": "AbstractBaseClassWithProperties",
       "shapeIdentifier": {
@@ -61,7 +60,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/AbstractBaseClassWithProperties"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -112,7 +110,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/AbstractBaseClassWithoutProperties"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -147,7 +144,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BaseInterfaceWithProperties"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -212,7 +208,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BaseInterfaceWithoutProperties"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -255,7 +250,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeIdentifierClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "BlankNodeType",
         "shapeIdentifier": {
@@ -294,7 +288,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeIdentifierInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "BlankNodeType",
         "shapeIdentifier": {
@@ -333,7 +326,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeOrIriIdentifierClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -373,7 +365,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/BlankNodeOrIriIdentifierInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -413,7 +404,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -515,7 +505,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/NonClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -561,7 +550,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/PartialClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -617,7 +605,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NonClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -637,12 +624,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nonClassProperty)",
           "shapeIdentifier": {
-            "value": "b182"
+            "value": "b181"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b182"
+              "value": "b181"
             },
             "nodeKinds": [
               "Literal"
@@ -668,7 +655,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PartialClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -688,12 +674,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b208"
+            "value": "b207"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b208"
+              "value": "b207"
             },
             "nodeKinds": [
               "Literal"
@@ -724,7 +710,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -785,7 +770,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassUnionMemberCommonParent"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -841,7 +825,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -894,7 +877,7 @@
       ]
     },
     {
-      "comment": "Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.",
+      "comment": "Child (class) of ConcreteParentClass. Should inherit properties and node kinds.",
       "kind": "ObjectType",
       "name": "ConcreteChildClass",
       "shapeIdentifier": {
@@ -909,7 +892,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConcreteChildClass"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -977,7 +959,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConcreteParentClass"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -1045,7 +1026,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConcreteChildInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -1113,7 +1093,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConcreteParentInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -1181,7 +1160,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ConvertibleTypePropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -1506,7 +1484,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DateUnionPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -1783,7 +1760,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DefaultValuePropertiesClass"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2016,7 +1992,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DirectRecursiveClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2073,7 +2048,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/DirectRecursiveClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -2117,7 +2091,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/DisplayPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2233,7 +2206,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/FromRdfType"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2304,7 +2276,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RdfType"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2369,7 +2340,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ExternClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2412,7 +2382,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ExternClassPropertyClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2468,7 +2437,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/ExternClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -2514,7 +2482,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/FlattenClassUnionMember3"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2573,7 +2540,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/HasValuePropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2645,211 +2611,6 @@
       ]
     },
     {
-      "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
-      "kind": "ObjectType",
-      "name": "IdentifierOverride1Class",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IdentifierOverride1Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride1Class"
-      },
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IdentifierOverride1Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride1Class"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "properties": [
-        {
-          "name": "identifierOverrideProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/identifierOverrideProperty)",
-          "shapeIdentifier": {
-            "value": "b68"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b68"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
-      "kind": "ObjectType",
-      "name": "IdentifierOverride2Class",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IdentifierOverride2Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride2Class"
-      },
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IdentifierOverride2Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride2Class"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "IdentifierOverride1Class"
-      ],
-      "properties": []
-    },
-    {
-      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete",
-      "kind": "ObjectType",
-      "name": "IdentifierOverride3Class",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IdentifierOverride3Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride3Class"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "IdentifierOverride3Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride3Class"
-      },
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IdentifierOverride3Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride3Class"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "IdentifierOverride2Class"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "IdentifierOverride3Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride3Class"
-        }
-      ],
-      "properties": []
-    },
-    {
-      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting",
-      "kind": "ObjectType",
-      "name": "IdentifierOverride4Class",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IdentifierOverride4Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride4Class"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "IdentifierOverride4Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride4Class"
-      },
-      "identifierMintingStrategy": "uuidv4",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IdentifierOverride4Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride4Class"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "IdentifierOverride3Class"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "IdentifierOverride4Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride4Class"
-        }
-      ],
-      "properties": []
-    },
-    {
-      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting",
-      "kind": "ObjectType",
-      "name": "IdentifierOverride5Class",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "IdentifierOverride5Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride5Class"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "IdentifierOverride5Class",
-        "termType": "NamedNode",
-        "value": "http://example.com/IdentifierOverride5Class"
-      },
-      "identifierMintingStrategy": "sha256",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "IdentifierOverride5Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride5Class"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "IdentifierOverride4Class"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "IdentifierOverride5Class",
-          "termType": "NamedNode",
-          "value": "http://example.com/IdentifierOverride5Class"
-        }
-      ],
-      "properties": []
-    },
-    {
       "comment": "Shape with sh:in constraining its identifier.",
       "kind": "ObjectType",
       "name": "InIdentifierClass",
@@ -2905,17 +2666,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inIdentifierProperty)",
           "shapeIdentifier": {
-            "value": "b71"
+            "value": "b70"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b71"
+              "value": "b70"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b71"
+                "value": "b70"
               },
               "nodeKinds": [
                 "Literal"
@@ -2948,7 +2709,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -2976,17 +2736,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inDoublesProperty)",
           "shapeIdentifier": {
-            "value": "b72"
+            "value": "b71"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b72"
+              "value": "b71"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b72"
+                "value": "b71"
               },
               "in": [
                 {
@@ -3018,17 +2778,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inStringsProperty)",
           "shapeIdentifier": {
-            "value": "b75"
+            "value": "b74"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b75"
+              "value": "b74"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b75"
+                "value": "b74"
               },
               "in": [
                 {
@@ -3060,17 +2820,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inBooleansProperty)",
           "shapeIdentifier": {
-            "value": "b78"
+            "value": "b77"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b78"
+              "value": "b77"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b78"
+                "value": "b77"
               },
               "in": [
                 {
@@ -3094,17 +2854,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inDateTimesProperty)",
           "shapeIdentifier": {
-            "value": "b80"
+            "value": "b79"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b80"
+              "value": "b79"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b80"
+                "value": "b79"
               },
               "in": [
                 {
@@ -3128,17 +2888,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inIntegersProperty)",
           "shapeIdentifier": {
-            "value": "b82"
+            "value": "b81"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b82"
+              "value": "b81"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b82"
+                "value": "b81"
               },
               "in": [
                 {
@@ -3170,17 +2930,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/inIrisProperty)",
           "shapeIdentifier": {
-            "value": "b85"
+            "value": "b84"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b85"
+              "value": "b84"
             },
             "itemType": {
               "kind": "IriType",
               "shapeIdentifier": {
-                "value": "b85"
+                "value": "b84"
               },
               "in": [
                 {
@@ -3221,7 +2981,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/IndirectRecursiveClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3250,7 +3009,7 @@
           "path": "PredicatePath(http://example.com/indirectRecursiveHelperProperty)",
           "recursive": true,
           "shapeIdentifier": {
-            "value": "b88"
+            "value": "b87"
           },
           "type": {
             "kind": "OptionType",
@@ -3278,7 +3037,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/IndirectRecursiveHelperClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -3322,7 +3080,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/IndirectRecursiveHelperClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3351,7 +3108,7 @@
           "path": "PredicatePath(http://example.com/indirectRecursiveProperty)",
           "recursive": true,
           "shapeIdentifier": {
-            "value": "b89"
+            "value": "b88"
           },
           "type": {
             "kind": "OptionType",
@@ -3379,7 +3136,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/IndirectRecursiveClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -3417,7 +3173,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/Interface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3437,12 +3192,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/interfaceProperty)",
           "shapeIdentifier": {
-            "value": "b90"
+            "value": "b89"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b90"
+              "value": "b89"
             },
             "nodeKinds": [
               "Literal"
@@ -3473,7 +3228,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InterfaceUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3504,12 +3258,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/interfaceUnionMember1Property)",
           "shapeIdentifier": {
-            "value": "b93"
+            "value": "b92"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b93"
+              "value": "b92"
             },
             "nodeKinds": [
               "Literal"
@@ -3534,7 +3288,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InterfaceUnionMemberCommonParent"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3554,12 +3307,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/interfaceUnionMemberCommonParentProperty)",
           "shapeIdentifier": {
-            "value": "b95"
+            "value": "b94"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b95"
+              "value": "b94"
             },
             "nodeKinds": [
               "Literal"
@@ -3590,7 +3343,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InterfaceUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3621,12 +3373,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/interfaceUnionMember2Property)",
           "shapeIdentifier": {
-            "value": "b94"
+            "value": "b93"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b94"
+              "value": "b93"
             },
             "nodeKinds": [
               "Literal"
@@ -3734,7 +3486,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/JsPrimitiveUnionPropertyClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3762,24 +3513,24 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/jsPrimitiveUnionProperty)",
           "shapeIdentifier": {
-            "value": "b108"
+            "value": "b107"
           },
           "type": {
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b108"
+              "value": "b107"
             },
             "itemType": {
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b108"
+                "value": "b107"
               },
               "members": [
                 {
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b110"
+                      "value": "b109"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -3796,7 +3547,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b112"
+                      "value": "b111"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -3813,7 +3564,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b114"
+                      "value": "b113"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -3844,7 +3595,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LanguageInPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3865,17 +3615,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/languageInLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b115"
+            "value": "b114"
           },
           "type": {
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b115"
+              "value": "b114"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b115"
+                "value": "b114"
               },
               "nodeKinds": [
                 "Literal"
@@ -3907,7 +3657,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -3935,12 +3684,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b118"
+            "value": "b117"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b118"
+              "value": "b117"
             },
             "nodeKinds": [
               "Literal"
@@ -3972,7 +3721,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -4000,12 +3748,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b119"
+            "value": "b118"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b119"
+              "value": "b118"
             },
             "nodeKinds": [
               "Literal"
@@ -4036,7 +3784,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedClassUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -4056,6 +3803,69 @@
           "reference": "LazilyResolvedClassUnionMember1",
           "termType": "NamedNode",
           "value": "http://example.com/LazilyResolvedClassUnionMember1"
+        }
+      ],
+      "properties": [
+        {
+          "name": "lazilyResolvedStringProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
+          "shapeIdentifier": {
+            "value": "b121"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b121"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": "LazilyResolvedClassUnionMember2",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "LazilyResolvedClassUnionMember2",
+        "termType": "NamedNode",
+        "value": "http://example.com/LazilyResolvedClassUnionMember2"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "LazilyResolvedClassUnionMember2",
+        "termType": "NamedNode",
+        "value": "http://example.com/LazilyResolvedClassUnionMember2"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "LazilyResolvedClassUnionMember2",
+          "termType": "NamedNode",
+          "value": "http://example.com/LazilyResolvedClassUnionMember2"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "LazilyResolvedClassUnionMember2",
+          "termType": "NamedNode",
+          "value": "http://example.com/LazilyResolvedClassUnionMember2"
         }
       ],
       "properties": [
@@ -4087,70 +3897,6 @@
     },
     {
       "kind": "ObjectType",
-      "name": "LazilyResolvedClassUnionMember2",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "LazilyResolvedClassUnionMember2",
-        "termType": "NamedNode",
-        "value": "http://example.com/LazilyResolvedClassUnionMember2"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "LazilyResolvedClassUnionMember2",
-        "termType": "NamedNode",
-        "value": "http://example.com/LazilyResolvedClassUnionMember2"
-      },
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "LazilyResolvedClassUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedClassUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "LazilyResolvedClassUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/LazilyResolvedClassUnionMember2"
-        }
-      ],
-      "properties": [
-        {
-          "name": "lazilyResolvedStringProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
-          "shapeIdentifier": {
-            "value": "b123"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b123"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
       "name": "LazilyResolvedInterfaceUnionMember1",
       "shapeIdentifier": {
         "prefix": "",
@@ -4164,7 +3910,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -4192,12 +3937,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b126"
+            "value": "b125"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b126"
+              "value": "b125"
             },
             "nodeKinds": [
               "Literal"
@@ -4228,7 +3973,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -4256,12 +4000,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b127"
+            "value": "b126"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b127"
+              "value": "b126"
             },
             "nodeKinds": [
               "Literal"
@@ -4305,12 +4049,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b128"
+            "value": "b127"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b128"
+              "value": "b127"
             },
             "nodeKinds": [
               "Literal"
@@ -4354,12 +4098,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b129"
+            "value": "b128"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b129"
+              "value": "b128"
             },
             "nodeKinds": [
               "Literal"
@@ -4385,7 +4129,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazyPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -4405,12 +4148,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredLazyToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b130"
+            "value": "b129"
           },
           "type": {
             "kind": "LazyObjectType",
             "shapeIdentifier": {
-              "value": "b130"
+              "value": "b129"
             },
             "partialType": {
               "kind": "ObjectType",
@@ -4422,7 +4165,7 @@
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
-                  "value": "b130"
+                  "value": "b129"
                 },
                 "nodeKinds": [
                   "BlankNode",
@@ -4447,7 +4190,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -4478,12 +4220,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedIriIdentifierClassProperty)",
           "shapeIdentifier": {
-            "value": "b131"
+            "value": "b130"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b131"
+              "value": "b130"
             },
             "partialType": {
               "kind": "OptionType",
@@ -4502,7 +4244,7 @@
                 "identifierType": {
                   "kind": "IriType",
                   "shapeIdentifier": {
-                    "value": "b131"
+                    "value": "b130"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -4553,12 +4295,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedClassUnionProperty)",
           "shapeIdentifier": {
-            "value": "b132"
+            "value": "b131"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b132"
+              "value": "b131"
             },
             "partialType": {
               "kind": "OptionType",
@@ -4577,7 +4319,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b132"
+                    "value": "b131"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -4624,7 +4366,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -4664,7 +4405,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -4699,12 +4439,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialClassToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b133"
+            "value": "b132"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b133"
+              "value": "b132"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesClass",
@@ -4726,7 +4466,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -4768,7 +4507,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -4800,12 +4538,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setPartialClassToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b134"
+            "value": "b133"
           },
           "type": {
             "kind": "LazyObjectSetType",
             "shapeIdentifier": {
-              "value": "b134"
+              "value": "b133"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesClass",
@@ -4827,7 +4565,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -4870,7 +4607,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -4903,12 +4639,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredPartialClassToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b135"
+            "value": "b134"
           },
           "type": {
             "kind": "LazyObjectType",
             "shapeIdentifier": {
-              "value": "b135"
+              "value": "b134"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesClass",
@@ -4920,7 +4656,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/PartialClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -4951,7 +4686,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -4982,12 +4716,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialClassToResolvedClassUnionProperty)",
           "shapeIdentifier": {
-            "value": "b136"
+            "value": "b135"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b136"
+              "value": "b135"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesClass",
@@ -5009,7 +4743,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -5062,7 +4795,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5102,7 +4834,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5137,12 +4868,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty)",
           "shapeIdentifier": {
-            "value": "b137"
+            "value": "b136"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b137"
+              "value": "b136"
             },
             "partialType": {
               "comment": "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
@@ -5181,7 +4912,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/ClassUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5221,7 +4951,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/ClassUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5285,7 +5014,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5325,7 +5053,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedClassUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5360,12 +5087,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b138"
+            "value": "b137"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b138"
+              "value": "b137"
             },
             "partialType": {
               "kind": "OptionType",
@@ -5384,7 +5111,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b138"
+                    "value": "b137"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -5420,7 +5147,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -5452,12 +5178,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setLazyToResolvedClassProperty)",
           "shapeIdentifier": {
-            "value": "b139"
+            "value": "b138"
           },
           "type": {
             "kind": "LazyObjectSetType",
             "shapeIdentifier": {
-              "value": "b139"
+              "value": "b138"
             },
             "partialType": {
               "kind": "SetType",
@@ -5476,7 +5202,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b139"
+                    "value": "b138"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -5513,7 +5239,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -5553,7 +5278,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/LazyPropertiesInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -5573,12 +5297,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredLazyToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b140"
+            "value": "b139"
           },
           "type": {
             "kind": "LazyObjectType",
             "shapeIdentifier": {
-              "value": "b140"
+              "value": "b139"
             },
             "partialType": {
               "kind": "ObjectType",
@@ -5590,7 +5314,7 @@
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
-                  "value": "b140"
+                  "value": "b139"
                 },
                 "nodeKinds": [
                   "BlankNode",
@@ -5615,7 +5339,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -5646,12 +5369,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b141"
+            "value": "b140"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b141"
+              "value": "b140"
             },
             "partialType": {
               "kind": "OptionType",
@@ -5670,7 +5393,7 @@
                 "identifierType": {
                   "kind": "IriType",
                   "shapeIdentifier": {
-                    "value": "b141"
+                    "value": "b140"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -5721,12 +5444,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedInterfaceUnionProperty)",
           "shapeIdentifier": {
-            "value": "b142"
+            "value": "b141"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b142"
+              "value": "b141"
             },
             "partialType": {
               "kind": "OptionType",
@@ -5745,7 +5468,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b142"
+                    "value": "b141"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -5792,7 +5515,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5832,7 +5554,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -5867,12 +5588,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b143"
+            "value": "b142"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b143"
+              "value": "b142"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesInterface",
@@ -5894,7 +5615,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -5936,7 +5656,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -5968,12 +5687,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setPartialInterfaceToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b144"
+            "value": "b143"
           },
           "type": {
             "kind": "LazyObjectSetType",
             "shapeIdentifier": {
-              "value": "b144"
+              "value": "b143"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesInterface",
@@ -5995,7 +5714,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6038,7 +5756,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6071,12 +5788,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b145"
+            "value": "b144"
           },
           "type": {
             "kind": "LazyObjectType",
             "shapeIdentifier": {
-              "value": "b145"
+              "value": "b144"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesInterface",
@@ -6088,7 +5805,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/PartialInterface"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -6119,7 +5835,6 @@
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
               },
-              "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
                 "shapeIdentifier": {
@@ -6150,12 +5865,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty)",
           "shapeIdentifier": {
-            "value": "b146"
+            "value": "b145"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b146"
+              "value": "b145"
             },
             "partialType": {
               "comment": "Node shape used as a partial by LazyPropertiesInterface",
@@ -6177,7 +5892,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/PartialInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6230,7 +5944,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6270,7 +5983,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6305,12 +6017,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty)",
           "shapeIdentifier": {
-            "value": "b147"
+            "value": "b146"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b147"
+              "value": "b146"
             },
             "partialType": {
               "comment": "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
@@ -6349,7 +6061,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/InterfaceUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6389,7 +6100,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/InterfaceUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6453,7 +6163,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6493,7 +6202,6 @@
                         "termType": "NamedNode",
                         "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                       },
-                      "identifierMintingStrategy": "blankNode",
                       "identifierType": {
                         "kind": "IdentifierType",
                         "shapeIdentifier": {
@@ -6528,12 +6236,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalLazyToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b148"
+            "value": "b147"
           },
           "type": {
             "kind": "LazyObjectOptionType",
             "shapeIdentifier": {
-              "value": "b148"
+              "value": "b147"
             },
             "partialType": {
               "kind": "OptionType",
@@ -6552,7 +6260,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b148"
+                    "value": "b147"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -6588,7 +6296,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6620,12 +6327,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setLazyToResolvedInterfaceProperty)",
           "shapeIdentifier": {
-            "value": "b149"
+            "value": "b148"
           },
           "type": {
             "kind": "LazyObjectSetType",
             "shapeIdentifier": {
-              "value": "b149"
+              "value": "b148"
             },
             "partialType": {
               "kind": "SetType",
@@ -6644,7 +6351,7 @@
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
-                    "value": "b149"
+                    "value": "b148"
                   },
                   "nodeKinds": [
                     "BlankNode",
@@ -6681,7 +6388,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6721,7 +6427,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PartialInterface"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -6741,12 +6446,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b213"
+            "value": "b212"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b213"
+              "value": "b212"
             },
             "nodeKinds": [
               "Literal"
@@ -6778,7 +6483,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ListPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -6806,7 +6510,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/objectListProperty)",
           "shapeIdentifier": {
-            "value": "b150"
+            "value": "b149"
           },
           "type": {
             "comment": "A node shape that models an RDF list of objects. Should be transformed into a mutable list data structure when used as a property.",
@@ -6838,7 +6542,6 @@
                   "termType": "NamedNode",
                   "value": "http://example.com/NonClass"
                 },
-                "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
                   "shapeIdentifier": {
@@ -6862,7 +6565,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/iriListProperty)",
           "shapeIdentifier": {
-            "value": "b151"
+            "value": "b150"
           },
           "type": {
             "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
@@ -6887,7 +6590,7 @@
               "itemType": {
                 "kind": "IriType",
                 "shapeIdentifier": {
-                  "value": "b100"
+                  "value": "b99"
                 },
                 "nodeKinds": [
                   "IRI"
@@ -6902,7 +6605,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/stringListProperty)",
           "shapeIdentifier": {
-            "value": "b152"
+            "value": "b151"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property.",
@@ -6927,7 +6630,7 @@
               "itemType": {
                 "kind": "LiteralType",
                 "shapeIdentifier": {
-                  "value": "b241"
+                  "value": "b239"
                 },
                 "nodeKinds": [
                   "Literal"
@@ -6961,7 +6664,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/MutablePropertiesClass"
       },
-      "identifierMintingStrategy": "sha256",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -6991,17 +6693,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/mutableStringProperty)",
           "shapeIdentifier": {
-            "value": "b153"
+            "value": "b152"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b153"
+              "value": "b152"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b153"
+                "value": "b152"
               },
               "nodeKinds": [
                 "Literal"
@@ -7022,7 +6724,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/mutableListProperty)",
           "shapeIdentifier": {
-            "value": "b154"
+            "value": "b153"
           },
           "type": {
             "comment": "A node shape that models an RDF list of strings. Should be transformed into a mutable list data structure when used as a property.",
@@ -7047,7 +6749,7 @@
               "itemType": {
                 "kind": "LiteralType",
                 "shapeIdentifier": {
-                  "value": "b160"
+                  "value": "b159"
                 },
                 "nodeKinds": [
                   "Literal"
@@ -7071,17 +6773,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/mutableSetProperty)",
           "shapeIdentifier": {
-            "value": "b155"
+            "value": "b154"
           },
           "type": {
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b155"
+              "value": "b154"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b155"
+                "value": "b154"
               },
               "nodeKinds": [
                 "Literal"
@@ -7115,7 +6817,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NamedUnionPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -7143,7 +6844,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/namedUnion1Property)",
           "shapeIdentifier": {
-            "value": "b170"
+            "value": "b169"
           },
           "type": {
             "comment": "Named union of IRI and string",
@@ -7160,7 +6861,7 @@
                 "type": {
                   "kind": "IriType",
                   "shapeIdentifier": {
-                    "value": "b163"
+                    "value": "b162"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -7171,7 +6872,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b165"
+                    "value": "b164"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -7193,7 +6894,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/namedUnion2Property)",
           "shapeIdentifier": {
-            "value": "b171"
+            "value": "b170"
           },
           "type": {
             "comment": "Named union of date and date-time",
@@ -7211,7 +6912,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b167"
+                    "value": "b166"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -7229,7 +6930,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b169"
+                    "value": "b168"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -7257,7 +6958,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NoRdfTypeClassUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -7277,12 +6977,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/noRdfTypeClassUnionMember1Property)",
           "shapeIdentifier": {
-            "value": "b174"
+            "value": "b173"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b174"
+              "value": "b173"
             },
             "nodeKinds": [
               "Literal"
@@ -7307,7 +7007,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NoRdfTypeClassUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -7327,12 +7026,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/noRdfTypeClassUnionMember2Property)",
           "shapeIdentifier": {
-            "value": "b175"
+            "value": "b174"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b175"
+              "value": "b174"
             },
             "nodeKinds": [
               "Literal"
@@ -7364,7 +7063,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NodeKindsClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -7392,12 +7090,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b176"
+            "value": "b175"
           },
           "type": {
             "kind": "BlankNodeType",
             "shapeIdentifier": {
-              "value": "b176"
+              "value": "b175"
             },
             "nodeKinds": [
               "BlankNode"
@@ -7410,12 +7108,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeOrIriNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b177"
+            "value": "b176"
           },
           "type": {
             "kind": "IdentifierType",
             "shapeIdentifier": {
-              "value": "b177"
+              "value": "b176"
             },
             "nodeKinds": [
               "BlankNode",
@@ -7429,12 +7127,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeOrLiteralNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b178"
+            "value": "b177"
           },
           "type": {
             "kind": "TermType",
             "shapeIdentifier": {
-              "value": "b178"
+              "value": "b177"
             },
             "nodeKinds": [
               "BlankNode",
@@ -7448,12 +7146,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/iriNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b179"
+            "value": "b178"
           },
           "type": {
             "kind": "IriType",
             "shapeIdentifier": {
-              "value": "b179"
+              "value": "b178"
             },
             "nodeKinds": [
               "IRI"
@@ -7466,12 +7164,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/iriOrLiteralNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b180"
+            "value": "b179"
           },
           "type": {
             "kind": "TermType",
             "shapeIdentifier": {
-              "value": "b180"
+              "value": "b179"
             },
             "nodeKinds": [
               "IRI",
@@ -7485,12 +7183,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/literalNodeKindProperty)",
           "shapeIdentifier": {
-            "value": "b181"
+            "value": "b180"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b181"
+              "value": "b180"
             },
             "nodeKinds": [
               "Literal"
@@ -7516,7 +7214,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/NumericPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -7544,17 +7241,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/byteNumericProperty)",
           "shapeIdentifier": {
-            "value": "b183"
+            "value": "b182"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b183"
+              "value": "b182"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b183"
+                "value": "b182"
               },
               "nodeKinds": [
                 "Literal"
@@ -7574,17 +7271,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/decimalNumericProperty)",
           "shapeIdentifier": {
-            "value": "b184"
+            "value": "b183"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b184"
+              "value": "b183"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b184"
+                "value": "b183"
               },
               "nodeKinds": [
                 "Literal"
@@ -7604,17 +7301,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/doubleNumericProperty)",
           "shapeIdentifier": {
-            "value": "b185"
+            "value": "b184"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b185"
+              "value": "b184"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b185"
+                "value": "b184"
               },
               "nodeKinds": [
                 "Literal"
@@ -7634,17 +7331,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/floatNumericProperty)",
           "shapeIdentifier": {
-            "value": "b186"
+            "value": "b185"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b186"
+              "value": "b185"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b186"
+                "value": "b185"
               },
               "nodeKinds": [
                 "Literal"
@@ -7664,17 +7361,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/intNumericProperty)",
           "shapeIdentifier": {
-            "value": "b187"
+            "value": "b186"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b187"
+              "value": "b186"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b187"
+                "value": "b186"
               },
               "nodeKinds": [
                 "Literal"
@@ -7694,17 +7391,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/integerNumericProperty)",
           "shapeIdentifier": {
-            "value": "b188"
+            "value": "b187"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b188"
+              "value": "b187"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b188"
+                "value": "b187"
               },
               "nodeKinds": [
                 "Literal"
@@ -7724,17 +7421,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/longNumericProperty)",
           "shapeIdentifier": {
-            "value": "b189"
+            "value": "b188"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b189"
+              "value": "b188"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b189"
+                "value": "b188"
               },
               "nodeKinds": [
                 "Literal"
@@ -7754,17 +7451,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/negativeIntegerNumericProperty)",
           "shapeIdentifier": {
-            "value": "b190"
+            "value": "b189"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b190"
+              "value": "b189"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b190"
+                "value": "b189"
               },
               "nodeKinds": [
                 "Literal"
@@ -7784,17 +7481,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nonNegativeIntegerNumericProperty)",
           "shapeIdentifier": {
-            "value": "b191"
+            "value": "b190"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b191"
+              "value": "b190"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b191"
+                "value": "b190"
               },
               "nodeKinds": [
                 "Literal"
@@ -7814,17 +7511,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nonPositiveIntegerNumericProperty)",
           "shapeIdentifier": {
-            "value": "b192"
+            "value": "b191"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b192"
+              "value": "b191"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b192"
+                "value": "b191"
               },
               "nodeKinds": [
                 "Literal"
@@ -7844,17 +7541,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/positiveIntegerNumericProperty)",
           "shapeIdentifier": {
-            "value": "b193"
+            "value": "b192"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b193"
+              "value": "b192"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b193"
+                "value": "b192"
               },
               "nodeKinds": [
                 "Literal"
@@ -7874,17 +7571,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/shortNumericProperty)",
           "shapeIdentifier": {
-            "value": "b194"
+            "value": "b193"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b194"
+              "value": "b193"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b194"
+                "value": "b193"
               },
               "nodeKinds": [
                 "Literal"
@@ -7904,17 +7601,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedByteNumericProperty)",
           "shapeIdentifier": {
-            "value": "b195"
+            "value": "b194"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b195"
+              "value": "b194"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b195"
+                "value": "b194"
               },
               "nodeKinds": [
                 "Literal"
@@ -7934,17 +7631,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedIntNumericProperty)",
           "shapeIdentifier": {
-            "value": "b196"
+            "value": "b195"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b196"
+              "value": "b195"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b196"
+                "value": "b195"
               },
               "nodeKinds": [
                 "Literal"
@@ -7964,17 +7661,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedLongNumericProperty)",
           "shapeIdentifier": {
-            "value": "b197"
+            "value": "b196"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b197"
+              "value": "b196"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b197"
+                "value": "b196"
               },
               "nodeKinds": [
                 "Literal"
@@ -7994,17 +7691,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/unsignedShortNumericProperty)",
           "shapeIdentifier": {
-            "value": "b198"
+            "value": "b197"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b198"
+              "value": "b197"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b198"
+                "value": "b197"
               },
               "nodeKinds": [
                 "Literal"
@@ -8031,7 +7728,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/OrderedPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8051,12 +7747,12 @@
           "order": 1,
           "path": "PredicatePath(http://example.com/orderedPropertyC)",
           "shapeIdentifier": {
-            "value": "b205"
+            "value": "b204"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b205"
+              "value": "b204"
             },
             "nodeKinds": [
               "Literal"
@@ -8075,12 +7771,12 @@
           "order": 2,
           "path": "PredicatePath(http://example.com/orderedPropertyB)",
           "shapeIdentifier": {
-            "value": "b207"
+            "value": "b206"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b207"
+              "value": "b206"
             },
             "nodeKinds": [
               "Literal"
@@ -8099,12 +7795,12 @@
           "order": 3,
           "path": "PredicatePath(http://example.com/orderedPropertyA)",
           "shapeIdentifier": {
-            "value": "b206"
+            "value": "b205"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b206"
+              "value": "b205"
             },
             "nodeKinds": [
               "Literal"
@@ -8136,7 +7832,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/OverrideName1Class"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8177,7 +7872,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/OverrideName2Class"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8216,7 +7910,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/ClassUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8236,6 +7929,69 @@
           "reference": "ClassUnionMember1",
           "termType": "NamedNode",
           "value": "http://example.com/ClassUnionMember1"
+        }
+      ],
+      "properties": [
+        {
+          "name": "lazilyResolvedStringProperty",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
+          "shapeIdentifier": {
+            "value": "b210"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b210"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": "PartialClassUnionMember2",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "PartialClassUnionMember2",
+        "termType": "NamedNode",
+        "value": "http://example.com/PartialClassUnionMember2"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ClassUnionMember2",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassUnionMember2"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "PartialClassUnionMember2",
+          "termType": "NamedNode",
+          "value": "http://example.com/PartialClassUnionMember2"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ClassUnionMember2",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassUnionMember2"
         }
       ],
       "properties": [
@@ -8267,70 +8023,6 @@
     },
     {
       "kind": "ObjectType",
-      "name": "PartialClassUnionMember2",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "PartialClassUnionMember2",
-        "termType": "NamedNode",
-        "value": "http://example.com/PartialClassUnionMember2"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "ClassUnionMember2",
-        "termType": "NamedNode",
-        "value": "http://example.com/ClassUnionMember2"
-      },
-      "identifierMintingStrategy": "blankNode",
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "PartialClassUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/PartialClassUnionMember2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "ClassUnionMember2",
-          "termType": "NamedNode",
-          "value": "http://example.com/ClassUnionMember2"
-        }
-      ],
-      "properties": [
-        {
-          "name": "lazilyResolvedStringProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
-          "shapeIdentifier": {
-            "value": "b212"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b212"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
       "name": "PartialInterfaceUnionMember1",
       "shapeIdentifier": {
         "prefix": "",
@@ -8344,7 +8036,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InterfaceUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8372,12 +8063,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b216"
+            "value": "b215"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b216"
+              "value": "b215"
             },
             "nodeKinds": [
               "Literal"
@@ -8408,7 +8099,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/InterfaceUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8436,12 +8126,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/lazilyResolvedStringProperty)",
           "shapeIdentifier": {
-            "value": "b217"
+            "value": "b216"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b217"
+              "value": "b216"
             },
             "nodeKinds": [
               "Literal"
@@ -8467,7 +8157,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyCardinalitiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8488,12 +8177,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredStringProperty)",
           "shapeIdentifier": {
-            "value": "b218"
+            "value": "b217"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b218"
+              "value": "b217"
             },
             "nodeKinds": [
               "Literal"
@@ -8513,17 +8202,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalStringProperty)",
           "shapeIdentifier": {
-            "value": "b219"
+            "value": "b218"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b219"
+              "value": "b218"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b219"
+                "value": "b218"
               },
               "nodeKinds": [
                 "Literal"
@@ -8544,17 +8233,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/emptyStringSetProperty)",
           "shapeIdentifier": {
-            "value": "b220"
+            "value": "b219"
           },
           "type": {
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b220"
+              "value": "b219"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b220"
+                "value": "b219"
               },
               "nodeKinds": [
                 "Literal"
@@ -8576,17 +8265,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nonEmptyStringSetProperty)",
           "shapeIdentifier": {
-            "value": "b221"
+            "value": "b220"
           },
           "type": {
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b221"
+              "value": "b220"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b221"
+                "value": "b220"
               },
               "nodeKinds": [
                 "Literal"
@@ -8620,7 +8309,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyNamesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8680,6 +8368,32 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/actualPropertyName1)",
           "shapeIdentifier": {
+            "value": "b221"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b221"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "comment": "sh:name: overrides sh:path and rdfs:label",
+          "label": "ignorePropertyName2",
+          "name": "actualPropertyName2",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/ignorePropertyName2)",
+          "shapeIdentifier": {
             "value": "b222"
           },
           "type": {
@@ -8700,11 +8414,10 @@
           "visibility": "public"
         },
         {
-          "comment": "sh:name: overrides sh:path and rdfs:label",
-          "label": "ignorePropertyName2",
-          "name": "actualPropertyName2",
+          "comment": "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
+          "name": "actualPropertyName3",
           "order": 0,
-          "path": "PredicatePath(http://example.com/ignorePropertyName2)",
+          "path": "PredicatePath(http://example.com/ignorePropertyName3)",
           "shapeIdentifier": {
             "value": "b223"
           },
@@ -8726,10 +8439,11 @@
           "visibility": "public"
         },
         {
-          "comment": "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
-          "name": "actualPropertyName3",
+          "comment": "rdfs:label: overrides sh:path",
+          "label": "actualPropertyName4",
+          "name": "actualPropertyName4",
           "order": 0,
-          "path": "PredicatePath(http://example.com/ignorePropertyName3)",
+          "path": "PredicatePath(http://example.com/ignorePropertyName4)",
           "shapeIdentifier": {
             "value": "b224"
           },
@@ -8737,32 +8451,6 @@
             "kind": "LiteralType",
             "shapeIdentifier": {
               "value": "b224"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "comment": "rdfs:label: overrides sh:path",
-          "label": "actualPropertyName4",
-          "name": "actualPropertyName4",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/ignorePropertyName4)",
-          "shapeIdentifier": {
-            "value": "b225"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b225"
             },
             "nodeKinds": [
               "Literal"
@@ -8794,7 +8482,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyPathsClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8822,17 +8509,17 @@
           "order": 0,
           "path": "InversePath(PredicatePath(http://example.com/inversePathProperty))",
           "shapeIdentifier": {
-            "value": "b226"
+            "value": "b225"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b226"
+              "value": "b225"
             },
             "itemType": {
               "kind": "IriType",
               "shapeIdentifier": {
-                "value": "b226"
+                "value": "b225"
               },
               "nodeKinds": [
                 "IRI"
@@ -8846,17 +8533,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/predicatePathProperty)",
           "shapeIdentifier": {
-            "value": "b228"
+            "value": "b227"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b228"
+              "value": "b227"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b228"
+                "value": "b227"
               },
               "nodeKinds": [
                 "Literal"
@@ -8883,7 +8570,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/PropertyVisibilitiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -8903,12 +8589,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/protectedProperty)",
           "shapeIdentifier": {
-            "value": "b229"
+            "value": "b228"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b229"
+              "value": "b228"
             },
             "nodeKinds": [
               "Literal"
@@ -8927,12 +8613,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/privateProperty)",
           "shapeIdentifier": {
-            "value": "b230"
+            "value": "b229"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b230"
+              "value": "b229"
             },
             "nodeKinds": [
               "Literal"
@@ -8951,12 +8637,12 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/publicProperty)",
           "shapeIdentifier": {
-            "value": "b231"
+            "value": "b230"
           },
           "type": {
             "kind": "LiteralType",
             "shapeIdentifier": {
-              "value": "b231"
+              "value": "b230"
             },
             "nodeKinds": [
               "Literal"
@@ -8988,7 +8674,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RecursiveClassUnionMember1"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -9017,7 +8702,7 @@
           "path": "PredicatePath(http://example.com/recursiveClassUnionMember1Property)",
           "recursive": true,
           "shapeIdentifier": {
-            "value": "b234"
+            "value": "b233"
           },
           "type": {
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -9063,7 +8748,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/RecursiveClassUnionMember2"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -9092,7 +8776,7 @@
           "path": "PredicatePath(http://example.com/recursiveClassUnionMember2Property)",
           "recursive": true,
           "shapeIdentifier": {
-            "value": "b235"
+            "value": "b234"
           },
           "type": {
             "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
@@ -9123,56 +8807,6 @@
       ]
     },
     {
-      "comment": "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.",
-      "kind": "ObjectType",
-      "name": "Sha256IriIdentifierClass",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "Sha256IriIdentifierClass",
-        "termType": "NamedNode",
-        "value": "http://example.com/Sha256IriIdentifierClass"
-      },
-      "identifierMintingStrategy": "sha256",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "Sha256IriIdentifierClass",
-          "termType": "NamedNode",
-          "value": "http://example.com/Sha256IriIdentifierClass"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "properties": [
-        {
-          "name": "sha256IriProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/sha256IriProperty)",
-          "shapeIdentifier": {
-            "value": "b236"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b236"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
       "comment": "Shape with properties that are not nested objects",
       "kind": "ObjectType",
       "name": "TermPropertiesClass",
@@ -9188,7 +8822,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/TermPropertiesClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -9216,17 +8849,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/blankNodeTermProperty)",
           "shapeIdentifier": {
-            "value": "b243"
+            "value": "b241"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b243"
+              "value": "b241"
             },
             "itemType": {
               "kind": "BlankNodeType",
               "shapeIdentifier": {
-                "value": "b243"
+                "value": "b241"
               },
               "nodeKinds": [
                 "BlankNode"
@@ -9240,17 +8873,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/booleanTermProperty)",
           "shapeIdentifier": {
-            "value": "b244"
+            "value": "b242"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b244"
+              "value": "b242"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b244"
+                "value": "b242"
               },
               "nodeKinds": [
                 "Literal"
@@ -9270,17 +8903,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTermProperty)",
           "shapeIdentifier": {
-            "value": "b245"
+            "value": "b243"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b245"
+              "value": "b243"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b245"
+                "value": "b243"
               },
               "nodeKinds": [
                 "Literal"
@@ -9300,17 +8933,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/dateTimeTermProperty)",
           "shapeIdentifier": {
-            "value": "b246"
+            "value": "b244"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b246"
+              "value": "b244"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b246"
+                "value": "b244"
               },
               "nodeKinds": [
                 "Literal"
@@ -9330,17 +8963,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/numberTermProperty)",
           "shapeIdentifier": {
-            "value": "b247"
+            "value": "b245"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b247"
+              "value": "b245"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b247"
+                "value": "b245"
               },
               "nodeKinds": [
                 "Literal"
@@ -9360,17 +8993,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/iriTermProperty)",
           "shapeIdentifier": {
-            "value": "b248"
+            "value": "b246"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b248"
+              "value": "b246"
             },
             "itemType": {
               "kind": "IriType",
               "shapeIdentifier": {
-                "value": "b248"
+                "value": "b246"
               },
               "nodeKinds": [
                 "IRI"
@@ -9384,17 +9017,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/literalTermProperty)",
           "shapeIdentifier": {
-            "value": "b249"
+            "value": "b247"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b249"
+              "value": "b247"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b249"
+                "value": "b247"
               },
               "nodeKinds": [
                 "Literal"
@@ -9408,17 +9041,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/stringTermProperty)",
           "shapeIdentifier": {
-            "value": "b250"
+            "value": "b248"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b250"
+              "value": "b248"
             },
             "itemType": {
               "kind": "LiteralType",
               "shapeIdentifier": {
-                "value": "b250"
+                "value": "b248"
               },
               "nodeKinds": [
                 "Literal"
@@ -9438,17 +9071,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/termProperty)",
           "shapeIdentifier": {
-            "value": "b251"
+            "value": "b249"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b251"
+              "value": "b249"
             },
             "itemType": {
               "kind": "TermType",
               "shapeIdentifier": {
-                "value": "b251"
+                "value": "b249"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -9471,7 +9104,6 @@
         "termType": "NamedNode",
         "value": "http://example.com/UnionDiscriminantsClass"
       },
-      "identifierMintingStrategy": "blankNode",
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -9492,19 +9124,19 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalClassOrClassOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b252"
+            "value": "b250"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b252"
+              "value": "b250"
             },
             "itemType": {
               "comment": "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b252"
+                "value": "b250"
               },
               "members": [
                 {
@@ -9523,7 +9155,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -9566,7 +9197,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember2"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -9597,7 +9227,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b258"
+                      "value": "b256"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -9621,26 +9251,26 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalIriOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b259"
+            "value": "b257"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b259"
+              "value": "b257"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b259"
+                "value": "b257"
               },
               "members": [
                 {
                   "type": {
                     "kind": "IriType",
                     "shapeIdentifier": {
-                      "value": "b261"
+                      "value": "b259"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -9651,7 +9281,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b263"
+                      "value": "b261"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -9669,19 +9299,19 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalClassOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b264"
+            "value": "b262"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b264"
+              "value": "b262"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b264"
+                "value": "b262"
               },
               "members": [
                 {
@@ -9700,7 +9330,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -9731,7 +9360,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b268"
+                      "value": "b266"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -9749,26 +9378,26 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/optionalIriOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b269"
+            "value": "b267"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b269"
+              "value": "b267"
             },
             "itemType": {
               "comment": "Union that can be discriminated by typeof.",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b269"
+                "value": "b267"
               },
               "members": [
                 {
                   "type": {
                     "kind": "IriType",
                     "shapeIdentifier": {
-                      "value": "b271"
+                      "value": "b269"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -9779,7 +9408,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b273"
+                      "value": "b271"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -9803,13 +9432,13 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredClassOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b274"
+            "value": "b272"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "UnionType",
             "shapeIdentifier": {
-              "value": "b274"
+              "value": "b272"
             },
             "members": [
               {
@@ -9828,7 +9457,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/ClassUnionMember1"
                   },
-                  "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
                     "shapeIdentifier": {
@@ -9859,7 +9487,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b278"
+                    "value": "b276"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -9876,13 +9504,13 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredClassOrClassOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b279"
+            "value": "b277"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "kind": "UnionType",
             "shapeIdentifier": {
-              "value": "b279"
+              "value": "b277"
             },
             "members": [
               {
@@ -9901,7 +9529,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/ClassUnionMember1"
                   },
-                  "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
                     "shapeIdentifier": {
@@ -9944,7 +9571,6 @@
                     "termType": "NamedNode",
                     "value": "http://example.com/ClassUnionMember2"
                   },
-                  "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
                     "shapeIdentifier": {
@@ -9975,7 +9601,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b285"
+                    "value": "b283"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -9998,19 +9624,19 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setClassOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b286"
+            "value": "b284"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b286"
+              "value": "b284"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b286"
+                "value": "b284"
               },
               "members": [
                 {
@@ -10029,7 +9655,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -10060,7 +9685,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b290"
+                      "value": "b288"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -10079,20 +9704,20 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredIriOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b291"
+            "value": "b289"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "UnionType",
             "shapeIdentifier": {
-              "value": "b291"
+              "value": "b289"
             },
             "members": [
               {
                 "type": {
                   "kind": "IriType",
                   "shapeIdentifier": {
-                    "value": "b293"
+                    "value": "b291"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -10103,7 +9728,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b295"
+                    "value": "b293"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -10120,20 +9745,20 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/requiredIriOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b296"
+            "value": "b294"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "UnionType",
             "shapeIdentifier": {
-              "value": "b296"
+              "value": "b294"
             },
             "members": [
               {
                 "type": {
                   "kind": "IriType",
                   "shapeIdentifier": {
-                    "value": "b298"
+                    "value": "b296"
                   },
                   "nodeKinds": [
                     "IRI"
@@ -10144,7 +9769,7 @@
                 "type": {
                   "kind": "LiteralType",
                   "shapeIdentifier": {
-                    "value": "b300"
+                    "value": "b298"
                   },
                   "nodeKinds": [
                     "Literal"
@@ -10167,19 +9792,19 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setClassOrClassOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b301"
+            "value": "b299"
           },
           "type": {
             "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b301"
+              "value": "b299"
             },
             "itemType": {
               "comment": "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b301"
+                "value": "b299"
               },
               "members": [
                 {
@@ -10198,7 +9823,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember1"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -10241,7 +9865,6 @@
                       "termType": "NamedNode",
                       "value": "http://example.com/ClassUnionMember2"
                     },
-                    "identifierMintingStrategy": "blankNode",
                     "identifierType": {
                       "kind": "IdentifierType",
                       "shapeIdentifier": {
@@ -10272,7 +9895,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b307"
+                      "value": "b305"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -10297,26 +9920,26 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setIriOrLiteralProperty)",
           "shapeIdentifier": {
-            "value": "b308"
+            "value": "b306"
           },
           "type": {
             "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b308"
+              "value": "b306"
             },
             "itemType": {
               "comment": "Union that can be discriminated by an intrinsic discriminant property (termType).",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b308"
+                "value": "b306"
               },
               "members": [
                 {
                   "type": {
                     "kind": "IriType",
                     "shapeIdentifier": {
-                      "value": "b310"
+                      "value": "b308"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -10327,7 +9950,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b312"
+                      "value": "b310"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -10346,26 +9969,26 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/setIriOrStringProperty)",
           "shapeIdentifier": {
-            "value": "b313"
+            "value": "b311"
           },
           "type": {
             "comment": "Union that can be discriminated by typeof.",
             "kind": "SetType",
             "shapeIdentifier": {
-              "value": "b313"
+              "value": "b311"
             },
             "itemType": {
               "comment": "Union that can be discriminated by typeof.",
               "kind": "UnionType",
               "shapeIdentifier": {
-                "value": "b313"
+                "value": "b311"
               },
               "members": [
                 {
                   "type": {
                     "kind": "IriType",
                     "shapeIdentifier": {
-                      "value": "b315"
+                      "value": "b313"
                     },
                     "nodeKinds": [
                       "IRI"
@@ -10376,7 +9999,7 @@
                   "type": {
                     "kind": "LiteralType",
                     "shapeIdentifier": {
-                      "value": "b317"
+                      "value": "b315"
                     },
                     "nodeKinds": [
                       "Literal"
@@ -10398,106 +10021,6 @@
       ]
     },
     {
-      "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
-      "kind": "ObjectType",
-      "name": "UuidV4IriIdentifierClass",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "UuidV4IriIdentifierClass",
-        "termType": "NamedNode",
-        "value": "http://example.com/UuidV4IriIdentifierClass"
-      },
-      "identifierMintingStrategy": "uuidv4",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "UuidV4IriIdentifierClass",
-          "termType": "NamedNode",
-          "value": "http://example.com/UuidV4IriIdentifierClass"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "properties": [
-        {
-          "name": "uuidV4IriProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/uuidV4IriProperty)",
-          "shapeIdentifier": {
-            "value": "b318"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b318"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
-      "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
-      "kind": "ObjectType",
-      "name": "UuidV4IriIdentifierInterface",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "UuidV4IriIdentifierInterface",
-        "termType": "NamedNode",
-        "value": "http://example.com/UuidV4IriIdentifierInterface"
-      },
-      "identifierMintingStrategy": "uuidv4",
-      "identifierType": {
-        "kind": "IriType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "UuidV4IriIdentifierInterface",
-          "termType": "NamedNode",
-          "value": "http://example.com/UuidV4IriIdentifierInterface"
-        },
-        "nodeKinds": [
-          "IRI"
-        ]
-      },
-      "properties": [
-        {
-          "name": "uuidV4IriProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/uuidV4IriProperty)",
-          "shapeIdentifier": {
-            "value": "b319"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b319"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          },
-          "visibility": "public"
-        }
-      ]
-    },
-    {
       "kind": "ObjectType",
       "name": "DefaultPartial",
       "shapeIdentifier": {
@@ -10507,7 +10030,7 @@
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
-          "value": "b130"
+          "value": "b129"
         },
         "nodeKinds": [
           "BlankNode",
@@ -10527,7 +10050,7 @@
       "identifierType": {
         "kind": "IriType",
         "shapeIdentifier": {
-          "value": "b131"
+          "value": "b130"
         },
         "nodeKinds": [
           "IRI"

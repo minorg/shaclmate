@@ -8,7 +8,6 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
-import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_NamedObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
 import { NamedObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
@@ -83,7 +82,6 @@ export class NamedObjectType extends AbstractType {
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
     lazyDiscriminantProperty,
-    lazyIdentifierProperty,
     lazyParentObjectTypes,
     lazyProperties,
     name,
@@ -107,9 +105,6 @@ export class NamedObjectType extends AbstractType {
     lazyDiscriminantProperty: (
       namedObjectType: NamedObjectType,
     ) => NamedObjectType.DiscriminantProperty;
-    lazyIdentifierProperty: (
-      namedObjectType: NamedObjectType,
-    ) => NamedObjectType.IdentifierProperty;
     lazyDescendantObjectTypes: () => readonly NamedObjectType[];
     lazyParentObjectTypes: () => readonly NamedObjectType[];
     lazyProperties: (
@@ -134,7 +129,6 @@ export class NamedObjectType extends AbstractType {
     this.lazyChildObjectTypes = lazyChildObjectTypes;
     this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
     this.lazyDiscriminantProperty = lazyDiscriminantProperty;
-    this.lazyIdentifierProperty = lazyIdentifierProperty;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
     this.name = name;
@@ -347,11 +341,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get identifierProperty(): NamedObjectType.IdentifierProperty {
-    return this.lazyIdentifierProperty(this);
-  }
-
-  @Memoize()
   get identifierTypeAlias(): Code {
     return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
   }
@@ -364,24 +353,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
     return NamedObjectType_objectSetMethodNames.call(this);
-  }
-
-  @Memoize()
-  get ownProperties(): readonly NamedObjectType.Property[] {
-    if (this.parentObjectTypes.length === 0) {
-      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminant properties
-      // for all of its subtypes in the hierarchy.
-      // invariant(this.properties.length >= 2, this.name);
-      return this.properties;
-    }
-    return this.ownShaclProperties;
-  }
-
-  @Memoize()
-  get ownShaclProperties(): readonly NamedObjectType.ShaclProperty<Type>[] {
-    return this.properties.filter(
-      (property) => property.kind === "ShaclProperty",
-    );
   }
 
   @Memoize()
@@ -572,10 +543,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     namedObjectType: NamedObjectType,
   ) => NamedObjectType.DiscriminantProperty;
 
-  private readonly lazyIdentifierProperty: (
-    namedObjectType: NamedObjectType,
-  ) => NamedObjectType.IdentifierProperty;
-
   private readonly lazyParentObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyProperties: (
@@ -584,8 +551,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }
 
 export namespace NamedObjectType {
-  export const IdentifierPrefixProperty = _IdentifierPrefixProperty;
-  export type IdentifierPrefixProperty = _IdentifierPrefixProperty;
   export const IdentifierProperty = _IdentifierProperty;
   export type IdentifierProperty = _IdentifierProperty;
   export type ObjectSetMethodNames = {

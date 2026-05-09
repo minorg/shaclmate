@@ -21,11 +21,12 @@ export function shapeOntology(
     return Either.of(Maybe.of(ontologies[0]));
   }
 
-  if (shape.$identifier.termType === "NamedNode") {
+  const shapeIdentifier = shape.$identifier();
+  if (shapeIdentifier.termType === "NamedNode") {
     const prefixOntologies = ontologies.filter(
       (ontology) =>
-        ontology.$identifier.termType === "NamedNode" &&
-        shape.$identifier.value.startsWith(ontology.$identifier.value),
+        ontology.$identifier().termType === "NamedNode" &&
+        shapeIdentifier.value.startsWith(ontology.$identifier().value),
     );
     if (prefixOntologies.length === 1) {
       // If there's a single ontology whose IRI is a prefix of this shape's IRI, consider the shape a part of the ontology

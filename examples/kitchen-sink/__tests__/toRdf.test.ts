@@ -33,7 +33,7 @@ describe("toRdf", async () => {
     expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChildClass.instance.$identifier,
+        harnesses.concreteChildClass.instance.$identifier(),
       ),
     ).toStrictEqual(true);
     expect(

@@ -12,11 +12,11 @@ export function NamedObjectType_filterFunctionDeclaration(
     );
   }
 
-  if (this.ownProperties.length > 0) {
-    for (const ownProperty of this.ownProperties) {
-      ownProperty.filterProperty.ifJust(({ name }) => {
+  if (this.properties.length > 0) {
+    for (const property of this.properties) {
+      property.filterProperty.ifJust(({ name }) => {
         statements.push(
-          code`if (filter.${name} !== undefined && !${ownProperty.type.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
+          code`if (filter.${name} !== undefined && !${property.type.filterFunction}(filter.${name}, ${property.accessExpression({ variables: { object: code`value` } })})) { return false; }`,
         );
       });
     }

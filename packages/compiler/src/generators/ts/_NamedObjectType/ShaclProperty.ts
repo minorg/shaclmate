@@ -72,7 +72,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get declaration(): Maybe<Code> {
+  override get declaration(): Code {
     const lhs: Code[] = [];
     if (
       this.namedObjectType.declarationType === "class" &&
@@ -84,18 +84,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       lhs.push(code`readonly`);
     }
     lhs.push(code`${this.name}`);
-    return Maybe.of(
-      code`${this.comment
-        .alt(this.description)
-        .alt(this.label)
-        .map(tsComment)
-        .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.name};`,
-    );
-  }
-
-  @Memoize()
-  override get equalsFunction(): Maybe<Code> {
-    return Maybe.of(this.type.equalsFunction);
+    return code`${this.comment
+      .alt(this.description)
+      .alt(this.label)
+      .map(tsComment)
+      .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.name};`;
   }
 
   @Memoize()
@@ -108,10 +101,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       name: this.name,
       type: this.type.filterType,
     });
-  }
-
-  override get getAccessorDeclaration(): Maybe<Code> {
-    return Maybe.empty();
   }
 
   @Memoize()
@@ -134,7 +123,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
 
     const meta: Record<string, string> = {
-      id: this.name,
+      id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
     };
     this.comment.alt(this.description).ifJust((description) => {
       meta["description"] = description;

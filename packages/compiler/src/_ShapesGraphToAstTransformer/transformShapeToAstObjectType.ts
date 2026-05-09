@@ -8,7 +8,6 @@ import { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
-import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
@@ -71,12 +70,11 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    if (nodeShape.$identifier.termType !== "NamedNode") {
+    if (nodeShape.$identifier().termType !== "NamedNode") {
       return Either.of(Maybe.empty());
     }
 
-    return Eithers.chain5(
-      nodeShapeIdentifierMintingStrategy.call(this, nodeShape),
+    return Eithers.chain4(
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
         nodeShape.properties.map((propertyShapeIdentifier) =>
@@ -100,21 +98,16 @@ export function transformShapeToAstObjectType(
               ),
             ),
     ).chain<Error, Maybe<ast.ObjectType>>(
-      ([
-        identifierMintingStrategy,
-        nodeKinds,
-        propertyShapes,
-        tsFeatures,
-        tsObjectDeclarationType,
-      ]) => {
+      ([nodeKinds, propertyShapes, tsFeatures, tsObjectDeclarationType]) => {
         const abstract = nodeShape.abstract.orDefault(false);
 
+        const nodeShapeIdentifier = nodeShape.$identifier();
         const {
           ancestors: ancestorNodeShapes,
           descendants: descendantNodeShapes,
           children: childNodeShapes,
           parents: parentNodeShapes,
-        } = this.relatedNodeShapesByIdentifier.get(nodeShape.$identifier)!;
+        } = this.relatedNodeShapesByIdentifier.get(nodeShapeIdentifier)!;
 
         const isClass =
           nodeShape.subClassOf.length > 0 ||
@@ -127,8 +120,8 @@ export function transformShapeToAstObjectType(
         let toRdfTypes: NamedNode[];
         if (!abstract) {
           fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-          if (isClass && nodeShape.$identifier.termType === "NamedNode") {
-            fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.$identifier));
+          if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
+            fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
           }
           toRdfTypes = nodeShape.toRdfTypes.concat();
           if (toRdfTypes.length === 0) {
@@ -161,7 +154,7 @@ export function transformShapeToAstObjectType(
           comment: Maybe.empty(),
           label: Maybe.empty(),
           name: Maybe.empty(),
-          shapeIdentifier: nodeShape.$identifier,
+          shapeIdentifier: nodeShape.$identifier(),
         };
         if (nodeKinds.size === 2) {
           invariant(nodeShape.in_.isNothing());
@@ -198,9 +191,8 @@ export function transformShapeToAstObjectType(
           fromRdfType,
           label: nodeShape.label,
           identifierType,
-          identifierMintingStrategy,
           name: shapeAstTypeName(nodeShape),
-          shapeIdentifier: nodeShape.$identifier,
+          shapeIdentifier: nodeShape.$identifier(),
           synthetic: false,
           toRdfTypes,
           tsFeatures,
@@ -209,7 +201,7 @@ export function transformShapeToAstObjectType(
         });
 
         this.cachedAstTypesByShapeIdentifier.set(
-          nodeShape.$identifier,
+          nodeShape.$identifier(),
           objectType,
         );
 
@@ -272,7 +264,7 @@ export function transformShapeToAstObjectType(
 
           return Either.of<Error, Maybe<ast.ObjectType>>(Maybe.of(objectType));
         })().ifLeft(() => {
-          this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier);
+          this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier());
         });
       },
     );

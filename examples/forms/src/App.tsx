@@ -3,8 +3,7 @@ import {
   materialRenderers,
 } from "@jsonforms/material-renderers";
 import { JsonForms } from "@jsonforms/react";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
+import {Grid, Typography} from "@mui/material";
 import dataFactory from "@rdfx/data-factory";
 import { NonEmptyList } from "purify-ts";
 import { type FC, useMemo, useState } from "react";

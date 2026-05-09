@@ -21,14 +21,9 @@ export abstract class AbstractProperty<
   abstract readonly constructorParametersSignature: Maybe<Code>;
 
   /**
-   * Optional property declaration to include in a class or interface declaration of the object type.
+   * Property declaration to include in a class or interface declaration of the object type.
    */
-  abstract readonly declaration: Maybe<Code>;
-
-  /**
-   * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
-   */
-  abstract readonly equalsFunction: Maybe<Code>;
+  abstract readonly declaration: Code;
 
   /**
    * Optional property in the object type's filter.
@@ -37,11 +32,6 @@ export abstract class AbstractProperty<
     readonly name: string;
     readonly type: Code;
   }>;
-
-  /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly getAccessorDeclaration: Maybe<Code>;
 
   /**
    * GraphQL.js field definition.
@@ -139,6 +129,13 @@ export abstract class AbstractProperty<
       // name: literalOf(this.name),
       type: code`() => (${this.type.schema})`,
     };
+  }
+
+  /**
+   * Expression to access the value of this property on an object instance. May evaluate a thunk.
+   */
+  accessExpression({ variables }: { variables: { object: Code } }): Code {
+    return code`${variables.object}.${this.name}`;
   }
 
   /**

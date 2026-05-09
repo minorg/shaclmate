@@ -34,7 +34,7 @@ export function transformShapeToAstTermType(
         comment: Maybe.empty(),
         name: Maybe.empty(),
         label: Maybe.empty(),
-        shapeIdentifier: shape.$identifier,
+        shapeIdentifier: shape.$identifier(),
       };
 
       let termType:

@@ -13,7 +13,7 @@ export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(
           code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties`,
       )
       .concat(
-        this.ownProperties.map(
+        this.properties.map(
           (property) => code`${property.name}: ${property.schema}`,
         ),
       ),

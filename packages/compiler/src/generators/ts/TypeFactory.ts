@@ -3,7 +3,7 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { LiteralDecoder, literalDatatypeDefinitions } from "@rdfx/literal";
 import base62 from "@sindresorhus/base62";
-import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
+import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
@@ -161,17 +161,6 @@ export class TypeFactory {
           visibility: "public",
         });
       },
-      lazyIdentifierProperty: (namedObjectType: NamedObjectType) =>
-        new NamedObjectType.IdentifierProperty({
-          identifierMintingStrategy: astType.identifierMintingStrategy,
-          identifierPrefixPropertyName: `${syntheticNamePrefix}identifierPrefix`,
-          logger: this.logger,
-          name: `${syntheticNamePrefix}identifier`,
-          namedObjectType,
-          type: identifierType,
-          typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-          visibility: "public",
-        }),
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
           this.createNamedObjectType(astType),
@@ -201,35 +190,23 @@ export class TypeFactory {
           properties.splice(0, 0, namedObjectType._discriminantProperty);
         }
 
-        // Some ObjectTypes have an identifierPrefix property, depending on their identifier minting strategy.
-        if (namedObjectTypeNeedsIdentifierPrefixProperty(astType)) {
+        if (
+          namedObjectType.declarationType === "interface" ||
+          namedObjectType.parentObjectTypes.length === 0
+        ) {
           properties.splice(
             0,
             0,
-            new NamedObjectType.IdentifierPrefixProperty({
+            new NamedObjectType.IdentifierProperty({
               logger: this.logger,
-              name: `${syntheticNamePrefix}identifierPrefix`,
+              name: `${syntheticNamePrefix}identifier`,
               namedObjectType,
-              own: !astType.ancestorObjectTypes.some(
-                namedObjectTypeNeedsIdentifierPrefixProperty,
-              ),
-              type: new StringType({
-                comment: astType.comment,
-                datatype: xsd.string,
-                hasValues: [],
-                in_: [],
-                label: astType.label,
-                logger: this.logger,
-                languageIn: [],
-                primitiveIn: [],
-              }),
-              visibility: "protected",
+              type: identifierType,
+              typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+              visibility: "public",
             }),
           );
         }
-
-        // Every NamedObjectType has an identifier property. Some are abstract.
-        properties.splice(0, 0, namedObjectType.identifierProperty);
 
         return properties;
       },
@@ -427,7 +404,6 @@ export class TypeFactory {
       logger: this.logger,
       minCount: 0,
       mutable: astType.mutable,
-      identifierMintingStrategy: astType.identifierMintingStrategy,
       toRdfTypes: astType.toRdfTypes,
     });
   }
@@ -648,25 +624,6 @@ export class TypeFactory {
       nodeKinds: astType.nodeKinds,
     });
   }
-}
-
-function namedObjectTypeNeedsIdentifierPrefixProperty(
-  namedObjectType: ast.ObjectType,
-): boolean {
-  return namedObjectType.identifierMintingStrategy
-    .map((identifierMintingStrategy) => {
-      switch (identifierMintingStrategy) {
-        case "blankNode":
-          return false;
-        case "sha256":
-        case "uuidv4":
-          return true;
-        default:
-          identifierMintingStrategy satisfies never;
-          throw new RangeError(identifierMintingStrategy);
-      }
-    })
-    .orDefault(false);
 }
 
 function tsName(name: string, options?: { synthetic?: boolean }): string {

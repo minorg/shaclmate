@@ -25,14 +25,8 @@
 
 :AbstractBaseClassWithProperties
     shaclmate:abstract true ;
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a owl:Class, sh:NodeShape ;
-    rdfs:comment """Node shape that serves as an abstract base class for child node shapes.
-
-It's marked abstract in TypeScript and not exported from the module.
-
-Common pattern: put the minting strategy and nodeKind on an ABC.
-""" ;
+    rdfs:comment "Node shape that serves as an abstract base class for child node shapes." ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
         sh:datatype xsd:string ;
@@ -157,7 +151,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ConcreteChildClass
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy." ;
+    rdfs:comment "Child (class) of ConcreteParentClass. Should inherit properties and node kinds." ;
     rdfs:subClassOf :ConcreteParentClass ;
     sh:property [
         sh:datatype xsd:string ;
@@ -304,7 +298,6 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :DefaultValuePropertiesClass
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:defaultValue properties." ;
     sh:property [
@@ -440,45 +433,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:path :hasLiteralValueProperty
     ] .
-
-:IdentifierOverride1Class
-    shaclmate:abstract true ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract" ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :identifierOverrideProperty
-    ] .
-
-:IdentifierOverride2Class
-    shaclmate:abstract true ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract" ;
-    rdfs:subClassOf :IdentifierOverride1Class ;
-    sh:nodeKind sh:IRI .
-
-:IdentifierOverride3Class
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete" ;
-    rdfs:subClassOf :IdentifierOverride2Class ;
-    sh:nodeKind sh:IRI .
-
-:IdentifierOverride4Class
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting" ;
-    rdfs:subClassOf :IdentifierOverride3Class ;
-    sh:nodeKind sh:IRI .
-
-:IdentifierOverride5Class
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting" ;
-    rdfs:subClassOf :IdentifierOverride4Class ;
-    sh:nodeKind sh:IRI .
 
 :InIdentifierClass
     a owl:Class, sh:NodeShape ;
@@ -908,7 +862,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :MutablePropertiesClass
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with shaclmate:mutable properties." ;
     sh:property [
@@ -1389,18 +1342,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :recursiveClassUnionMember2Property
     ] .
 
-:Sha256IriIdentifierClass
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    a sh:NodeShape ;
-    rdfs:comment "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied." ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :sha256IriProperty
-    ] .
-
 :StringList
     a sh:NodeShape ;
     rdfs:comment "A node shape that models an RDF list of strings. Should be transformed into a list data structure when used as a property." ;
@@ -1606,30 +1547,5 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:datatype xsd:string
             ]
         )
-    ] .
-
-:UuidV4IriIdentifierClass
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    a sh:NodeShape ;
-    rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :uuidV4IriProperty
-    ] .
-
-:UuidV4IriIdentifierInterface
-    shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_UUIDv4 ;
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
-    rdfs:comment "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied." ;
-    sh:nodeKind sh:IRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :uuidV4IriProperty
     ] .
 

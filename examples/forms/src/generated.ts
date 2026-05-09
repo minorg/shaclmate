@@ -596,7 +596,7 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 export interface NestedNodeShape {
-  readonly $identifier: NestedNodeShape.$Identifier;
+  readonly $identifier: () => NestedNodeShape.$Identifier;
   readonly $type: "NestedNodeShape" /**
    * Required string
    */;
@@ -606,18 +606,25 @@ export interface NestedNodeShape {
 
 export namespace NestedNodeShape {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NestedNodeShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
-    let $identifier: NestedNodeShape.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => NestedNodeShape.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "NestedNodeShape" as const;
     const requiredStringProperty = parameters.requiredStringProperty;
@@ -628,7 +635,7 @@ export namespace NestedNodeShape {
     left: NestedNodeShape,
     right: NestedNodeShape,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -636,17 +643,6 @@ export namespace NestedNodeShape {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.requiredStringProperty,
@@ -666,7 +662,7 @@ export namespace NestedNodeShape {
     _hasher: HasherT,
   ): HasherT {
     NestedNodeShape.$hashShaclProperties(_nestedNodeShape, _hasher);
-    _hasher.update(_nestedNodeShape.$identifier.value);
+    _hasher.update(_nestedNodeShape.$identifier().value);
     _hasher.update(_nestedNodeShape.$type);
     return _hasher;
   }
@@ -706,9 +702,10 @@ export namespace NestedNodeShape {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NestedNodeShape"),
-          requiredStringProperty: z
-            .string()
-            .meta({ id: "requiredStringProperty", title: "Required string" }),
+          requiredStringProperty: z.string().meta({
+            id: "NestedNodeShape-requiredStringProperty",
+            title: "Required string",
+          }),
         })
         .meta({ id: "NestedNodeShape" }) satisfies z.ZodType<$Json>;
     }
@@ -751,7 +748,7 @@ export namespace NestedNodeShape {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -773,7 +770,7 @@ export namespace NestedNodeShape {
   };
 
   export function $fromJson(json: NestedNodeShape.$Json): NestedNodeShape {
-    return $propertiesFromJson(json);
+    return NestedNodeShape.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
@@ -796,7 +793,7 @@ export namespace NestedNodeShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -906,9 +903,9 @@ export namespace NestedNodeShape {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _nestedNodeShape.$identifier.termType === "BlankNode"
-            ? `_:${_nestedNodeShape.$identifier.value}`
-            : _nestedNodeShape.$identifier.value,
+          _nestedNodeShape.$identifier().termType === "BlankNode"
+            ? `_:${_nestedNodeShape.$identifier().value}`
+            : _nestedNodeShape.$identifier().value,
         $type: _nestedNodeShape.$type,
         requiredStringProperty: _nestedNodeShape.requiredStringProperty,
       } satisfies NestedNodeShape.$Json),
@@ -925,7 +922,7 @@ export namespace NestedNodeShape {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_nestedNodeShape.$identifier);
+    const resource = resourceSet.resource(_nestedNodeShape.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
       [$literalFactory.string(_nestedNodeShape.requiredStringProperty)],
@@ -938,7 +935,7 @@ export namespace NestedNodeShape {
     _nestedNodeShape: NestedNodeShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _nestedNodeShape.$identifier.toString(),
+      $identifier: _nestedNodeShape.$identifier().toString(),
     });
   }
 
@@ -955,7 +952,7 @@ export namespace NestedNodeShape {
  */
 
 export interface FormNodeShape {
-  readonly $identifier: FormNodeShape.$Identifier;
+  readonly $identifier: () => FormNodeShape.$Identifier;
   readonly $type: "FormNodeShape" /**
    * Empty string set
    */;
@@ -985,7 +982,10 @@ export interface FormNodeShape {
 
 export namespace FormNodeShape {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => FormNodeShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
     readonly nonEmptyStringSetProperty: NonEmptyList<string>;
@@ -993,15 +993,19 @@ export namespace FormNodeShape {
     readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
-    let $identifier: FormNodeShape.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => FormNodeShape.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "FormNodeShape" as const;
     let emptyStringSetProperty: readonly string[];
@@ -1044,7 +1048,7 @@ export namespace FormNodeShape {
     left: FormNodeShape,
     right: FormNodeShape,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier, right.$identifier)
+    return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
         left: left,
         right: right,
@@ -1052,17 +1056,6 @@ export namespace FormNodeShape {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
           left.emptyStringSetProperty,
@@ -1142,7 +1135,7 @@ export namespace FormNodeShape {
     _hasher: HasherT,
   ): HasherT {
     FormNodeShape.$hashShaclProperties(_formNodeShape, _hasher);
-    _hasher.update(_formNodeShape.$identifier.value);
+    _hasher.update(_formNodeShape.$identifier().value);
     _hasher.update(_formNodeShape.$type);
     return _hasher;
   }
@@ -1204,11 +1197,11 @@ export namespace FormNodeShape {
             .optional()
             .readonly()
             .meta({
-              id: "emptyStringSetProperty",
+              id: "FormNodeShape-emptyStringSetProperty",
               title: "Empty string set",
             }),
           nestedObjectProperty: NestedNodeShape.$Json.schema().meta({
-            id: "nestedObjectProperty",
+            id: "FormNodeShape-nestedObjectProperty",
             title: "Nested object",
           }),
           nonEmptyStringSetProperty: z
@@ -1218,19 +1211,21 @@ export namespace FormNodeShape {
             .min(1)
             .readonly()
             .meta({
-              id: "nonEmptyStringSetProperty",
+              id: "FormNodeShape-nonEmptyStringSetProperty",
               title: "Non-empty string set",
             }),
           optionalStringProperty: z.string().optional().meta({
-            id: "optionalStringProperty",
+            id: "FormNodeShape-optionalStringProperty",
             title: "Optional string",
           }),
-          requiredIntegerProperty: z
-            .number()
-            .meta({ id: "requiredIntegerProperty", title: "Required integer" }),
-          requiredStringProperty: z
-            .string()
-            .meta({ id: "requiredStringProperty", title: "Required string" }),
+          requiredIntegerProperty: z.number().meta({
+            id: "FormNodeShape-requiredIntegerProperty",
+            title: "Required integer",
+          }),
+          requiredStringProperty: z.string().meta({
+            id: "FormNodeShape-requiredStringProperty",
+            title: "Required string",
+          }),
         })
         .meta({
           id: "FormNodeShape",
@@ -1299,7 +1294,7 @@ export namespace FormNodeShape {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -1371,7 +1366,7 @@ export namespace FormNodeShape {
   };
 
   export function $fromJson(json: FormNodeShape.$Json): FormNodeShape {
-    return $propertiesFromJson(json);
+    return FormNodeShape.$create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
@@ -1394,7 +1389,7 @@ export namespace FormNodeShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -1689,9 +1684,9 @@ export namespace FormNodeShape {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _formNodeShape.$identifier.termType === "BlankNode"
-            ? `_:${_formNodeShape.$identifier.value}`
-            : _formNodeShape.$identifier.value,
+          _formNodeShape.$identifier().termType === "BlankNode"
+            ? `_:${_formNodeShape.$identifier().value}`
+            : _formNodeShape.$identifier().value,
         $type: _formNodeShape.$type,
         emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
           (item) => item,
@@ -1721,7 +1716,7 @@ export namespace FormNodeShape {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_formNodeShape.$identifier);
+    const resource = resourceSet.resource(_formNodeShape.$identifier());
     resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
       _formNodeShape.emptyStringSetProperty.flatMap((item) => [
@@ -1775,7 +1770,7 @@ export namespace FormNodeShape {
     _formNodeShape: FormNodeShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _formNodeShape.$identifier.toString(),
+      $identifier: _formNodeShape.$identifier().toString(),
     });
   }
 
@@ -1827,7 +1822,7 @@ export namespace $Object {
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -2195,7 +2190,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Either<Error, readonly FormNodeShape.$Identifier[]> {
     return this.formNodeShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -2273,7 +2268,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >,
   ): Either<Error, readonly NestedNodeShape.$Identifier[]> {
     return this.nestedNodeShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -2351,7 +2346,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -2386,7 +2381,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -2508,7 +2503,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectUnionsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(

@@ -31,8 +31,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest watch",
-    "typecheck": "turbo run typecheck",
-    "typecheck:watch": "turbo run --concurrency 12 dev:noEmit dev:tests"
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc -w --preserveWatchOutput"
   },
   "workspaces": [
     "apps/cli",

@@ -16,8 +16,6 @@ ${this.comment
           .join(", ")}`
       : ""
   } {
-  ${joinCode(
-    this.properties.flatMap((property) => property.declaration.toList()),
-  )}
+  ${joinCode(this.properties.map((property) => property.declaration))}
 }`;
 }

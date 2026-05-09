@@ -25,7 +25,7 @@ export function sparqlObjectSetClassDeclaration({
   };
 
   const typeParameters = {
-    ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
+    ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
     ObjectFilterT: code`ObjectFilterT`,
     ObjectIdentifierT: code`ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}`,
   };

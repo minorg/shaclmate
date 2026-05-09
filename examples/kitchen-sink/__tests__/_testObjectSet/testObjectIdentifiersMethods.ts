@@ -16,9 +16,9 @@ export function testObjectIdentifiersMethods(
         data.concreteChildClasses[1],
       ];
       const namedGraph1Object = data.concreteChildClasses[2];
-      const namedGraph1Iri = namedGraph1Object.$identifier as NamedNode;
+      const namedGraph1Iri = namedGraph1Object.$identifier() as NamedNode;
       const namedGraph2Object = data.concreteChildClasses[3];
-      const namedGraph2Iri = namedGraph2Object.$identifier as NamedNode;
+      const namedGraph2Iri = namedGraph2Object.$identifier() as NamedNode;
       const datasetObjects: Record<string, readonly kitchenSink.$Object[]> = {
         "": defaultGraphObjects,
       };
@@ -44,7 +44,7 @@ export function testObjectIdentifiersMethods(
               .map((_) => _.value)
               .sort(),
           ).toStrictEqual(
-            defaultGraphObjects.map((_) => _.$identifier.value).sort(),
+            defaultGraphObjects.map((_) => _.$identifier().value).sort(),
           );
         });
 
@@ -57,7 +57,7 @@ export function testObjectIdentifiersMethods(
             )
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual([namedGraph1Object.$identifier.value]);
+          ).toStrictEqual([namedGraph1Object.$identifier().value]);
         });
       });
 
@@ -67,7 +67,7 @@ export function testObjectIdentifiersMethods(
             (await namedGraph1ObjectSet.concreteChildClassIdentifiers())
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual([namedGraph1Object.$identifier.value]);
+          ).toStrictEqual([namedGraph1Object.$identifier().value]);
         });
 
         it("query of different named graph", async ({ expect }) => {
@@ -79,7 +79,7 @@ export function testObjectIdentifiersMethods(
             )
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual([namedGraph2Object.$identifier.value]);
+          ).toStrictEqual([namedGraph2Object.$identifier().value]);
         });
       });
 
@@ -92,7 +92,7 @@ export function testObjectIdentifiersMethods(
               .sort(),
           ).toStrictEqual(
             [...defaultGraphObjects, namedGraph1Object, namedGraph2Object]
-              .map((_) => _.$identifier.value)
+              .map((_) => _.$identifier().value)
               .sort(),
           );
         });
@@ -106,7 +106,9 @@ export function testObjectIdentifiersMethods(
             )
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual(defaultGraphObjects.map((_) => _.$identifier.value));
+          ).toStrictEqual(
+            defaultGraphObjects.map((_) => _.$identifier().value),
+          );
         });
 
         it("query of named graph 1", async ({ expect }) => {
@@ -118,7 +120,7 @@ export function testObjectIdentifiersMethods(
             )
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual([namedGraph1Object.$identifier.value]);
+          ).toStrictEqual([namedGraph1Object.$identifier().value]);
         });
 
         it("query of named graph 2", async ({ expect }) => {
@@ -130,7 +132,7 @@ export function testObjectIdentifiersMethods(
             )
               .unsafeCoerce()
               .map((_) => _.value),
-          ).toStrictEqual([namedGraph2Object.$identifier.value]);
+          ).toStrictEqual([namedGraph2Object.$identifier().value]);
         });
       });
     });
@@ -144,7 +146,7 @@ export function testObjectIdentifiersMethods(
           .unsafeCoerce()
           .map((identifier) => identifier.value),
       ).toStrictEqual(
-        data.concreteChildClasses.map((object) => object.$identifier.value),
+        data.concreteChildClasses.map((object) => object.$identifier().value),
       );
     });
 
@@ -156,7 +158,7 @@ export function testObjectIdentifiersMethods(
         (await objectSet.concreteChildClassIdentifiers({ limit: 1 }))
           .unsafeCoerce()
           .map((identifier) => identifier.value),
-      ).toStrictEqual([data.concreteChildClasses[0].$identifier.value]);
+      ).toStrictEqual([data.concreteChildClasses[0].$identifier().value]);
     });
 
     it("offset 1", async ({ expect }) => {
@@ -174,7 +176,7 @@ export function testObjectIdentifiersMethods(
       ).toStrictEqual(
         data.concreteChildClasses
           .slice(1)
-          .map((object) => object.$identifier.value),
+          .map((object) => object.$identifier().value),
       );
     });
 
@@ -193,8 +195,8 @@ export function testObjectIdentifiersMethods(
           .map((identifier) => identifier.value)
           .sort(),
       ).toStrictEqual([
-        data.concreteChildClasses[1].$identifier.value,
-        data.concreteChildClasses[2].$identifier.value,
+        data.concreteChildClasses[1].$identifier().value,
+        data.concreteChildClasses[2].$identifier().value,
       ]);
     });
 
@@ -208,7 +210,7 @@ export function testObjectIdentifiersMethods(
               .map((identifier) => identifier.value),
           ),
         ).toStrictEqual(
-          new Set(data.classUnions.map((object) => object.$identifier.value)),
+          new Set(data.classUnions.map((object) => object.$identifier().value)),
         );
       });
 
@@ -218,7 +220,7 @@ export function testObjectIdentifiersMethods(
           (await objectSet.classUnionIdentifiers({ limit: 1 }))
             .unsafeCoerce()
             .map((identifier) => identifier.value),
-        ).toStrictEqual([data.classUnions[0].$identifier.value]);
+        ).toStrictEqual([data.classUnions[0].$identifier().value]);
       });
     });
   });

@@ -22,9 +22,9 @@ describe("fromJson", () => {
     );
     expect(fromJsonInstance).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
     expect(
-      fromJsonInstance.$identifier.equals(
-        harnesses.concreteChildClass.instance.$identifier,
-      ),
+      fromJsonInstance
+        .$identifier()
+        .equals(harnesses.concreteChildClass.instance.$identifier()),
     );
     expect(fromJsonInstance.concreteParentClassProperty).toStrictEqual(
       harnesses.concreteChildClass.instance.concreteParentClassProperty,
