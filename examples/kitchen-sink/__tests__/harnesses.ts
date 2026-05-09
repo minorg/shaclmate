@@ -33,10 +33,9 @@ export const harnesses = {
     kitchenSink.BlankNodeIdentifierClass,
   ),
   blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    {
+    kitchenSink.BlankNodeIdentifierInterface.$create({
       $identifier: dataFactory.blankNode(),
-      $type: "BlankNodeIdentifierInterface",
-    },
+    }),
     kitchenSink.BlankNodeIdentifierInterface,
   ),
   blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
@@ -48,10 +47,9 @@ export const harnesses = {
     kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
   blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    {
+    kitchenSink.BlankNodeOrIriIdentifierInterface.$create({
       $identifier: dataFactory.blankNode(),
-      $type: "BlankNodeOrIriIdentifierInterface",
-    },
+    }),
     kitchenSink.BlankNodeOrIriIdentifierInterface,
   ),
   blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier:
@@ -114,13 +112,12 @@ export const harnesses = {
     kitchenSink.ConcreteChildClass,
   ),
   concreteChildInterface: new InterfaceHarness(
-    {
+    kitchenSink.ConcreteChildInterface.$create({
       baseInterfaceWithPropertiesProperty: "abc",
       concreteChildInterfaceProperty: "child",
       concreteParentInterfaceProperty: "parent",
       $identifier,
-      $type: "ConcreteChildInterface",
-    },
+    }),
     kitchenSink.ConcreteChildInterface,
   ),
   concreteParentClass: new ClassHarness(
@@ -132,12 +129,11 @@ export const harnesses = {
     kitchenSink.ConcreteParentClassStatic,
   ),
   concreteParentInterface: new InterfaceHarness(
-    {
+    kitchenSink.ConcreteParentInterfaceStatic.$create({
       baseInterfaceWithPropertiesProperty: "abc",
       concreteParentInterfaceProperty: "parent",
       $identifier,
-      $type: "ConcreteParentInterface",
-    },
+    }),
     kitchenSink.ConcreteParentInterfaceStatic,
   ),
   convertibleTypePropertiesClass: new ClassHarness(
@@ -328,30 +324,27 @@ export const harnesses = {
     kitchenSink.InPropertiesClass,
   ),
   interfaceClass: new InterfaceHarness<kitchenSink.Interface>(
-    {
+    kitchenSink.Interface.$create({
       $identifier,
       interfaceProperty: "Test",
-      $type: "Interface",
-    },
+    }),
     kitchenSink.Interface,
   ),
   interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
-    {
+    kitchenSink.InterfaceUnionMember1.$create({
       $identifier,
       interfaceUnionMemberCommonParentProperty: "common parent",
       interfaceUnionMember1Property: "Test1",
-      $type: "InterfaceUnionMember1",
-    },
+    }),
     kitchenSink.InterfaceUnion,
     "InterfaceUnion",
   ),
   interfaceUnionMember2: new InterfaceHarness<kitchenSink.InterfaceUnion>(
-    {
+    kitchenSink.InterfaceUnionMember2.$create({
       $identifier,
       interfaceUnionMemberCommonParentProperty: "common parent",
       interfaceUnionMember2Property: "Test2",
-      $type: "InterfaceUnionMember2",
-    },
+    }),
     kitchenSink.InterfaceUnion,
     "InterfaceUnion",
   ),

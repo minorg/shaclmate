@@ -14,7 +14,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
       expect(
         (
           await objectSet.concreteChildClass(
-            data.concreteChildClasses[0].$identifier,
+            data.concreteChildClasses[0].$identifier(),
           )
         )
           .unsafeCoerce()
@@ -29,7 +29,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
       );
       const expectedObject = data.concreteChildClasses[0];
       const actualObject = (
-        await objectSet.concreteParentClass(expectedObject.$identifier)
+        await objectSet.concreteParentClass(expectedObject.$identifier())
       ).unsafeCoerce();
       expect(actualObject).toBeInstanceOf(kitchenSink.ConcreteParentClass);
       expect(actualObject).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
@@ -57,7 +57,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         const objectSet = createObjectSet(objectDataset(data.classUnions));
         for (const expectedClassUnion of data.classUnions) {
           expect(
-            (await objectSet.classUnion(expectedClassUnion.$identifier))
+            (await objectSet.classUnion(expectedClassUnion.$identifier()))
               .unsafeCoerce()
               .$equals(expectedClassUnion as any)
               .unsafeCoerce(),
@@ -71,7 +71,9 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         );
         for (const expectedClassUnion of data.noRdfTypeClassUnions) {
           const actualClassUnion = (
-            await objectSet.noRdfTypeClassUnion(expectedClassUnion.$identifier)
+            await objectSet.noRdfTypeClassUnion(
+              expectedClassUnion.$identifier(),
+            )
           ).unsafeCoerce();
           const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
             expectedClassUnion,
@@ -85,7 +87,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         const objectSet = createObjectSet(objectDataset(data.interfaceUnions));
         for (const expectedInterfaceUnion of data.interfaceUnions) {
           const actualClassUnion = (
-            await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier)
+            await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier())
           ).unsafeCoerce();
           const equalsResult = kitchenSink.InterfaceUnion.$equals(
             expectedInterfaceUnion,

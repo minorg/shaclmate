@@ -496,7 +496,7 @@ describe("fromRdf", () => {
       }
     }
     const childResource = new ResourceSet({ dataFactory, dataset }).resource(
-      child.$identifier,
+      child.$identifier(),
     );
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
@@ -505,7 +505,7 @@ describe("fromRdf", () => {
     // Add rdf:type <subclass> statement
     dataset.add(
       dataFactory.quad(
-        child.$identifier,
+        child.$identifier(),
         rdf.type,
         dataFactory.namedNode("http://example.com/newSubType"),
       ),

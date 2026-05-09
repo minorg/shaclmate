@@ -42,7 +42,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         const expected = data.concreteChildClasses;
         const actual = (
           await objectSet.concreteChildClasses({
-            identifiers: expected.map((_) => _.$identifier),
+            identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
@@ -55,7 +55,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         const expected = data.concreteChildClasses.slice(2);
         const actual = (
           await objectSet.concreteChildClasses({
-            identifiers: expected.map((_) => _.$identifier),
+            identifiers: expected.map((_) => _.$identifier()),
           })
         ).unsafeCoerce();
         expect(actual).toHaveLength(expected.length);
@@ -69,7 +69,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
           await objectSet.concreteChildClasses({
             identifiers: [
               dataFactory.namedNode("http://example.com/nonextant"),
-              data.concreteChildClasses[0].$identifier,
+              data.concreteChildClasses[0].$identifier(),
             ],
           }),
         ).toBeLeft();

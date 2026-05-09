@@ -66,23 +66,21 @@ export const data = {
   interfaceUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
-        return {
+        return kitchenSink.InterfaceUnionMember1.$create({
           $identifier: dataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
           interfaceUnionMember1Property: `string ${i}`,
-          $type: "InterfaceUnionMember1",
-        } satisfies kitchenSink.InterfaceUnion;
+        }) satisfies kitchenSink.InterfaceUnion;
       case 1:
-        return {
+        return kitchenSink.InterfaceUnionMember2.$create({
           $identifier: dataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
           interfaceUnionMember2Property: `string ${i}`,
-          $type: "InterfaceUnionMember2",
-        } satisfies kitchenSink.InterfaceUnion;
+        }) satisfies kitchenSink.InterfaceUnion;
       default:
         throw new RangeError(i.toString());
     }

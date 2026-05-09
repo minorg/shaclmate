@@ -59,7 +59,7 @@ describe("sparql", () => {
   }
 
   for (const [id, harness] of Object.entries(harnesses)) {
-    if (harness.instance.$identifier.termType !== "NamedNode") {
+    if (harness.instance.$identifier().termType !== "NamedNode") {
       continue;
     }
 
@@ -85,7 +85,7 @@ describe("sparql", () => {
         new ResourceSet({
           dataFactory,
           dataset: constructResultDataset,
-        }).resource(harness.instance.$identifier as NamedNode),
+        }).resource(harness.instance.$identifier() as NamedNode),
         {
           context: {
             extra: 1,
