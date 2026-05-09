@@ -225,16 +225,16 @@ export namespace AbstractShapesGraph {
       for (const object of objects) {
         switch (object.$type) {
           case "NodeShape":
-            this.nodeShapesByIdentifier.set(object.$identifier, object);
+            this.nodeShapesByIdentifier.set(object.$identifier(), object);
             break;
           case "Ontology":
-            this.ontologiesByIdentifier.set(object.$identifier, object);
+            this.ontologiesByIdentifier.set(object.$identifier(), object);
             break;
           case "PropertyGroup":
-            this.propertyGroupsByIdentifier.set(object.$identifier, object);
+            this.propertyGroupsByIdentifier.set(object.$identifier(), object);
             break;
           case "PropertyShape":
-            this.propertyShapesByIdentifier.set(object.$identifier, object);
+            this.propertyShapesByIdentifier.set(object.$identifier(), object);
             break;
         }
       }

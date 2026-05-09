@@ -34,7 +34,7 @@ function relatedNodeShapes({
 
   for (const childNodeShape of shapesGraph.nodeShapes) {
     let childRelatedNodeShapes = immediateRelatedNodeShapes.get(
-      childNodeShape.$identifier,
+      childNodeShape.$identifier(),
     );
     if (!childRelatedNodeShapes) {
       childRelatedNodeShapes = {
@@ -42,7 +42,7 @@ function relatedNodeShapes({
         parents: new TermMap(),
       };
       immediateRelatedNodeShapes.set(
-        childNodeShape.$identifier,
+        childNodeShape.$identifier(),
         childRelatedNodeShapes,
       );
     }
@@ -60,12 +60,12 @@ function relatedNodeShapes({
         })
         .ifRight((parentNodeShape) => {
           childRelatedNodeShapes.parents.set(
-            parentNodeShape.$identifier,
+            parentNodeShape.$identifier(),
             parentNodeShape,
           );
 
           let parentRelatedNodeShapes = immediateRelatedNodeShapes.get(
-            parentNodeShape.$identifier,
+            parentNodeShape.$identifier(),
           );
           if (!parentRelatedNodeShapes) {
             parentRelatedNodeShapes = {
@@ -73,13 +73,13 @@ function relatedNodeShapes({
               parents: new TermMap(),
             };
             immediateRelatedNodeShapes.set(
-              parentNodeShape.$identifier,
+              parentNodeShape.$identifier(),
               parentRelatedNodeShapes,
             );
           }
 
           parentRelatedNodeShapes.children.set(
-            childNodeShape.$identifier,
+            childNodeShape.$identifier(),
             childNodeShape,
           );
         });
@@ -90,7 +90,7 @@ function relatedNodeShapes({
 
   for (const nodeShape of shapesGraph.nodeShapes) {
     const { children: childNodeShapes, parents: parentNodeShapes } =
-      immediateRelatedNodeShapes.get(nodeShape.$identifier)!;
+      immediateRelatedNodeShapes.get(nodeShape.$identifier())!;
 
     const ancestorNodeShapes = new TermMap<
       input.NodeShape.$Identifier,
@@ -99,10 +99,13 @@ function relatedNodeShapes({
 
     function recurseAncestorNodeShapes(nodeShape: input.NodeShape) {
       for (const parentNodeShape of immediateRelatedNodeShapes
-        .get(nodeShape.$identifier)!
+        .get(nodeShape.$identifier())!
         .parents.values()) {
-        if (!ancestorNodeShapes.has(parentNodeShape.$identifier)) {
-          ancestorNodeShapes.set(parentNodeShape.$identifier, parentNodeShape);
+        if (!ancestorNodeShapes.has(parentNodeShape.$identifier())) {
+          ancestorNodeShapes.set(
+            parentNodeShape.$identifier(),
+            parentNodeShape,
+          );
           recurseAncestorNodeShapes(parentNodeShape);
         }
       }
@@ -115,17 +118,20 @@ function relatedNodeShapes({
     >();
     function recurseDescendantNodeShapes(nodeShape: input.NodeShape) {
       for (const childNodeShape of immediateRelatedNodeShapes
-        .get(nodeShape.$identifier)!
+        .get(nodeShape.$identifier())!
         .children.values()) {
-        if (!descendantNodeShapes.has(childNodeShape.$identifier)) {
-          descendantNodeShapes.set(childNodeShape.$identifier, childNodeShape);
+        if (!descendantNodeShapes.has(childNodeShape.$identifier())) {
+          descendantNodeShapes.set(
+            childNodeShape.$identifier(),
+            childNodeShape,
+          );
           recurseDescendantNodeShapes(childNodeShape);
         }
       }
     }
     recurseDescendantNodeShapes(nodeShape);
 
-    result.set(nodeShape.$identifier, {
+    result.set(nodeShape.$identifier(), {
       ancestors: [...ancestorNodeShapes.values()],
       children: [...childNodeShapes.values()],
       descendants: [...descendantNodeShapes.values()],
@@ -177,11 +183,11 @@ export class ShapesGraphToAstTransformer {
     const astNamedUnionTypes: ast.UnionType[] = [];
 
     for (const nodeShape of this.shapesGraph.nodeShapes) {
-      if (nodeShape.$identifier.termType !== "NamedNode") {
+      if (nodeShape.$identifier().termType !== "NamedNode") {
         continue;
       }
 
-      if (nodeShape.$identifier.value.startsWith(dash[""].value)) {
+      if (nodeShape.$identifier().value.startsWith(dash[""].value)) {
         continue;
       }
 

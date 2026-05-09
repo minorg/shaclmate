@@ -70,7 +70,7 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    if (nodeShape.$identifier.termType !== "NamedNode") {
+    if (nodeShape.$identifier().termType !== "NamedNode") {
       return Either.of(Maybe.empty());
     }
 
@@ -101,12 +101,13 @@ export function transformShapeToAstObjectType(
       ([nodeKinds, propertyShapes, tsFeatures, tsObjectDeclarationType]) => {
         const abstract = nodeShape.abstract.orDefault(false);
 
+        const nodeShapeIdentifier = nodeShape.$identifier();
         const {
           ancestors: ancestorNodeShapes,
           descendants: descendantNodeShapes,
           children: childNodeShapes,
           parents: parentNodeShapes,
-        } = this.relatedNodeShapesByIdentifier.get(nodeShape.$identifier)!;
+        } = this.relatedNodeShapesByIdentifier.get(nodeShapeIdentifier)!;
 
         const isClass =
           nodeShape.subClassOf.length > 0 ||
@@ -119,8 +120,8 @@ export function transformShapeToAstObjectType(
         let toRdfTypes: NamedNode[];
         if (!abstract) {
           fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-          if (isClass && nodeShape.$identifier.termType === "NamedNode") {
-            fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.$identifier));
+          if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
+            fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
           }
           toRdfTypes = nodeShape.toRdfTypes.concat();
           if (toRdfTypes.length === 0) {

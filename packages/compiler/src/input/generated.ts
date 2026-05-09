@@ -600,7 +600,7 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 export interface PropertyShape {
-  readonly $identifier: PropertyShape.$Identifier;
+  readonly $identifier: () => PropertyShape.$Identifier;
   readonly $type: "PropertyShape";
   readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
   readonly classes: readonly NamedNode[];
@@ -661,7 +661,10 @@ export interface PropertyShape {
 
 export namespace PropertyShape {
   export function $create(parameters: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly and?:
       | Maybe<readonly (BlankNode | NamedNode)[]>
       | readonly (BlankNode | NamedNode)[]
@@ -800,15 +803,19 @@ export namespace PropertyShape {
       | readonly (BlankNode | NamedNode)[]
       | readonly string[];
   }): PropertyShape {
-    let $identifier: PropertyShape.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (parameters.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => PropertyShape.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "PropertyShape" as const;
     let and: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -1350,7 +1357,7 @@ export namespace PropertyShape {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -1765,7 +1772,7 @@ export namespace PropertyShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -4211,7 +4218,7 @@ export namespace PropertyShape {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_propertyShape.$identifier);
+    const resource = resourceSet.resource(_propertyShape.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -4234,7 +4241,7 @@ export namespace PropertyShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -4262,7 +4269,9 @@ export namespace PropertyShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -4352,7 +4361,7 @@ export namespace PropertyShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -4380,7 +4389,9 @@ export namespace PropertyShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -4417,7 +4428,7 @@ export namespace PropertyShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -4445,7 +4456,9 @@ export namespace PropertyShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -4557,7 +4570,7 @@ export namespace PropertyShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -4585,7 +4598,9 @@ export namespace PropertyShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -4660,7 +4675,7 @@ export namespace PropertyShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -4688,7 +4703,9 @@ export namespace PropertyShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -4705,7 +4722,7 @@ export namespace PropertyShape {
     _propertyShape: PropertyShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _propertyShape.$identifier.toString(),
+      $identifier: _propertyShape.$identifier().toString(),
       label: _propertyShape.label.map((item) => item.toString()).extract(),
       name: _propertyShape.name.map((item) => item.toString()).extract(),
       path: $PropertyPath.$toString(_propertyShape.path),
@@ -4725,7 +4742,7 @@ export namespace PropertyShape {
   }
 }
 export interface PropertyGroup {
-  readonly $identifier: PropertyGroup.$Identifier;
+  readonly $identifier: () => PropertyGroup.$Identifier;
   readonly $type: "PropertyGroup";
   readonly comment: Maybe<string>;
   readonly label: Maybe<string>;
@@ -4733,19 +4750,26 @@ export interface PropertyGroup {
 
 export namespace PropertyGroup {
   export function $create(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => PropertyGroup.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly comment?: Maybe<string> | string;
     readonly label?: Maybe<string> | string;
   }): PropertyGroup {
-    let $identifier: PropertyGroup.$Identifier;
-    if (typeof parameters?.$identifier === "object") {
-      $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters?.$identifier;
+    let $identifier: () => PropertyGroup.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters?.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "PropertyGroup" as const;
     let comment: Maybe<string>;
@@ -4784,7 +4808,7 @@ export namespace PropertyGroup {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -4835,7 +4859,7 @@ export namespace PropertyGroup {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -5015,7 +5039,7 @@ export namespace PropertyGroup {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_propertyGroup.$identifier);
+    const resource = resourceSet.resource(_propertyGroup.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -5044,7 +5068,7 @@ export namespace PropertyGroup {
     _propertyGroup: PropertyGroup,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _propertyGroup.$identifier.toString(),
+      $identifier: _propertyGroup.$identifier().toString(),
       label: _propertyGroup.label.map((item) => item.toString()).extract(),
     });
   }
@@ -5059,7 +5083,7 @@ export namespace PropertyGroup {
   }
 }
 export interface Ontology {
-  readonly $identifier: Ontology.$Identifier;
+  readonly $identifier: () => Ontology.$Identifier;
   readonly $type: "Ontology";
   readonly comment: Maybe<string>;
   readonly label: Maybe<string>;
@@ -5098,7 +5122,10 @@ export interface Ontology {
 
 export namespace Ontology {
   export function $create(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => Ontology.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly comment?: Maybe<string> | string;
     readonly label?: Maybe<string> | string;
     readonly tsFeatureExcludes?:
@@ -5166,15 +5193,19 @@ export namespace Ontology {
       | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class"
       | "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Interface";
   }): Ontology {
-    let $identifier: Ontology.$Identifier;
-    if (typeof parameters?.$identifier === "object") {
-      $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters?.$identifier;
+    let $identifier: () => Ontology.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters?.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "Ontology" as const;
     let comment: Maybe<string>;
@@ -5293,7 +5324,7 @@ export namespace Ontology {
   export function $filter(filter: Ontology.$Filter, value: Ontology): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -5412,7 +5443,7 @@ export namespace Ontology {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -5920,7 +5951,7 @@ export namespace Ontology {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_ontology.$identifier);
+    const resource = resourceSet.resource(_ontology.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -5975,7 +6006,7 @@ export namespace Ontology {
     _ontology: Ontology,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _ontology.$identifier.toString(),
+      $identifier: _ontology.$identifier().toString(),
       label: _ontology.label.map((item) => item.toString()).extract(),
     });
   }
@@ -5990,7 +6021,7 @@ export namespace Ontology {
   }
 }
 export interface NodeShape {
-  readonly $identifier: NodeShape.$Identifier;
+  readonly $identifier: () => NodeShape.$Identifier;
   readonly $type: "NodeShape";
   readonly abstract: Maybe<boolean>;
   readonly and: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -6074,7 +6105,10 @@ export interface NodeShape {
 
 export namespace NodeShape {
   export function $create(parameters?: {
-    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly $identifier?:
+      | (() => NodeShape.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly abstract?: Maybe<boolean> | boolean;
     readonly and?:
       | Maybe<readonly (BlankNode | NamedNode)[]>
@@ -6258,15 +6292,19 @@ export namespace NodeShape {
       | readonly (BlankNode | NamedNode)[]
       | readonly string[];
   }): NodeShape {
-    let $identifier: NodeShape.$Identifier;
-    if (typeof parameters?.$identifier === "object") {
-      $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (parameters?.$identifier === undefined) {
-      $identifier = dataFactory.blankNode();
+    const $identifierParameter = parameters?.$identifier;
+    let $identifier: () => NodeShape.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
     } else {
-      $identifier = parameters?.$identifier satisfies never;
+      $identifier = $identifierParameter satisfies never;
     }
     const $type = "NodeShape" as const;
     let abstract: Maybe<boolean>;
@@ -6911,7 +6949,7 @@ export namespace NodeShape {
   ): boolean {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -7406,7 +7444,7 @@ export namespace NodeShape {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    });
+    }).map($create);
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -10384,7 +10422,7 @@ export namespace NodeShape {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_nodeShape.$identifier);
+    const resource = resourceSet.resource(_nodeShape.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
@@ -10416,7 +10454,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10444,7 +10482,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10537,7 +10577,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10565,7 +10605,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10590,7 +10632,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10618,7 +10660,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10655,7 +10699,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10683,7 +10727,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10788,7 +10834,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10816,7 +10862,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10904,7 +10952,7 @@ export namespace NodeShape {
                   currentSubListResource = listResource;
                 } else {
                   const newSubListResource = resourceSet.resource(
-                    dataFactory.blankNode(),
+                    (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
@@ -10932,7 +10980,9 @@ export namespace NodeShape {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(dataFactory.blankNode()),
+                listResource: resourceSet.resource(
+                  (() => dataFactory.blankNode())(),
+                ),
               } as {
                 currentSubListResource: Resource<BlankNode> | null;
                 listResource: Resource<BlankNode>;
@@ -10949,7 +10999,7 @@ export namespace NodeShape {
     _nodeShape: NodeShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _nodeShape.$identifier.toString(),
+      $identifier: _nodeShape.$identifier().toString(),
       label: _nodeShape.label.map((item) => item.toString()).extract(),
       shaclmateName: _nodeShape.shaclmateName
         .map((item) => item.toString())
@@ -10972,7 +11022,7 @@ export namespace Shape {
   export const $filter = (filter: Shape.$Filter, value: Shape) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -11385,7 +11435,7 @@ export namespace $Object {
   export const $filter = (filter: $Object.$Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
+      !$filterIdentifier(filter.$identifier, value.$identifier())
     ) {
       return false;
     }
@@ -11843,7 +11893,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NodeShape.$Filter, NodeShape.$Identifier>,
   ): Either<Error, readonly NodeShape.$Identifier[]> {
     return this.nodeShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -11915,7 +11965,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Ontology.$Filter, Ontology.$Identifier>,
   ): Either<Error, readonly Ontology.$Identifier[]> {
     return this.ontologiesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -11983,7 +12033,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PropertyGroup.$Filter, PropertyGroup.$Identifier>,
   ): Either<Error, readonly PropertyGroup.$Identifier[]> {
     return this.propertyGroupsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -12055,7 +12105,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PropertyShape.$Filter, PropertyShape.$Identifier>,
   ): Either<Error, readonly PropertyShape.$Identifier[]> {
     return this.propertyShapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -12121,7 +12171,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Shape.$Filter, Shape.$Identifier>,
   ): Either<Error, readonly Shape.$Identifier[]> {
     return this.shapesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -12196,7 +12246,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
     return this.objectsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier),
+      objects.map((object) => object.$identifier()),
     );
   }
 
@@ -12241,7 +12291,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
@@ -12363,7 +12413,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   protected $objectUnionsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
