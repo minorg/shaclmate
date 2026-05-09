@@ -702,9 +702,10 @@ export namespace NestedNodeShape {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NestedNodeShape"),
-          requiredStringProperty: z
-            .string()
-            .meta({ id: "requiredStringProperty", title: "Required string" }),
+          requiredStringProperty: z.string().meta({
+            id: "NestedNodeShape-requiredStringProperty",
+            title: "Required string",
+          }),
         })
         .meta({ id: "NestedNodeShape" }) satisfies z.ZodType<$Json>;
     }
@@ -1196,11 +1197,11 @@ export namespace FormNodeShape {
             .optional()
             .readonly()
             .meta({
-              id: "emptyStringSetProperty",
+              id: "FormNodeShape-emptyStringSetProperty",
               title: "Empty string set",
             }),
           nestedObjectProperty: NestedNodeShape.$Json.schema().meta({
-            id: "nestedObjectProperty",
+            id: "FormNodeShape-nestedObjectProperty",
             title: "Nested object",
           }),
           nonEmptyStringSetProperty: z
@@ -1210,19 +1211,21 @@ export namespace FormNodeShape {
             .min(1)
             .readonly()
             .meta({
-              id: "nonEmptyStringSetProperty",
+              id: "FormNodeShape-nonEmptyStringSetProperty",
               title: "Non-empty string set",
             }),
           optionalStringProperty: z.string().optional().meta({
-            id: "optionalStringProperty",
+            id: "FormNodeShape-optionalStringProperty",
             title: "Optional string",
           }),
-          requiredIntegerProperty: z
-            .number()
-            .meta({ id: "requiredIntegerProperty", title: "Required integer" }),
-          requiredStringProperty: z
-            .string()
-            .meta({ id: "requiredStringProperty", title: "Required string" }),
+          requiredIntegerProperty: z.number().meta({
+            id: "FormNodeShape-requiredIntegerProperty",
+            title: "Required integer",
+          }),
+          requiredStringProperty: z.string().meta({
+            id: "FormNodeShape-requiredStringProperty",
+            title: "Required string",
+          }),
         })
         .meta({
           id: "FormNodeShape",
