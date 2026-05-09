@@ -26,11 +26,6 @@ export abstract class AbstractProperty<
   abstract readonly declaration: Code;
 
   /**
-   * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
-   */
-  abstract readonly equalsFunction: Code;
-
-  /**
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{

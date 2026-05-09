@@ -184,13 +184,6 @@ export class TypeFactory {
           );
 
         if (
-          namedObjectType._discriminantProperty.type.ownValues.length > 0 ||
-          namedObjectType._discriminantProperty.type.descendantValues.length > 0
-        ) {
-          properties.splice(0, 0, namedObjectType._discriminantProperty);
-        }
-
-        if (
           namedObjectType.declarationType === "interface" ||
           namedObjectType.parentObjectTypes.length === 0
         ) {
@@ -206,6 +199,13 @@ export class TypeFactory {
               visibility: "public",
             }),
           );
+        }
+
+        if (
+          namedObjectType._discriminantProperty.type.ownValues.length > 0 ||
+          namedObjectType._discriminantProperty.type.descendantValues.length > 0
+        ) {
+          properties.splice(0, 0, namedObjectType._discriminantProperty);
         }
 
         return properties;

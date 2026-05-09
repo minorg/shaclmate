@@ -12,7 +12,7 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
 
   if (
     this.declarationType === "class" &&
-    this.ownProperties.length === 0 &&
+    this.properties.length === 0 &&
     this.parentObjectTypes.length > 0
   ) {
     return Maybe.empty();
@@ -41,9 +41,9 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
       break;
   }
 
-  if (this.ownProperties.length > 0) {
+  if (this.properties.length > 0) {
     jsonObjectMembers.push(
-      ...this.ownProperties.flatMap((property) =>
+      ...this.properties.flatMap((property) =>
         property
           .toJsonObjectMemberExpression({
             variables: {

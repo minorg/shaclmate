@@ -356,24 +356,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
-  get ownProperties(): readonly NamedObjectType.Property[] {
-    if (this.parentObjectTypes.length === 0) {
-      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminant properties
-      // for all of its subtypes in the hierarchy.
-      // invariant(this.properties.length >= 2, this.name);
-      return this.properties;
-    }
-    return this.ownShaclProperties;
-  }
-
-  @Memoize()
-  get ownShaclProperties(): readonly NamedObjectType.ShaclProperty<Type>[] {
-    return this.properties.filter(
-      (property) => property.kind === "ShaclProperty",
-    );
-  }
-
-  @Memoize()
   get parentObjectTypes(): readonly NamedObjectType[] {
     return this.lazyParentObjectTypes();
   }

@@ -12,15 +12,17 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
     return [];
   }
 
-  const hashOwnShaclPropertiesStatements = this.ownShaclProperties.flatMap(
+  const hashOwnShaclPropertiesStatements = this.properties.flatMap(
     (property) =>
-      property.hashStatements({
-        depth: 0,
-        variables: {
-          hasher: hasherVariable,
-          value: code`${this.thisVariable}.${property.name}`,
-        },
-      }),
+      property.kind === "ShaclProperty"
+        ? property.hashStatements({
+            depth: 0,
+            variables: {
+              hasher: hasherVariable,
+              value: code`${this.thisVariable}.${property.name}`,
+            },
+          })
+        : [],
   );
 
   if (
@@ -75,7 +77,7 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
   hashShaclPropertiesStatements.push(code`return ${hasherVariable};`);
 
   hashStatements.push(
-    ...this.ownProperties
+    ...this.properties
       .filter((property) => property.kind !== "ShaclProperty")
       .flatMap((property) =>
         property.hashStatements({

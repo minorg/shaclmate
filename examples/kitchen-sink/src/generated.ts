@@ -3257,9 +3257,9 @@ export namespace NamedUnion2 {
   >;
 }
 export class $NamedDefaultPartial {
-  readonly $identifier: () => $NamedDefaultPartial.$Identifier;
-
   readonly $type: "$NamedDefaultPartial" = "$NamedDefaultPartial" as const;
+
+  readonly $identifier: () => $NamedDefaultPartial.$Identifier;
 
   constructor(parameters: {
     readonly $identifier:
@@ -3280,31 +3280,21 @@ export class $NamedDefaultPartial {
   }
 
   $equals(other: $NamedDefaultPartial): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -3317,8 +3307,8 @@ export class $NamedDefaultPartial {
   $toJson(): $NamedDefaultPartial.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier().value,
         $type: this.$type,
+        "@id": this.$identifier().value,
       } satisfies $NamedDefaultPartial.$Json),
     );
   }
@@ -3354,8 +3344,8 @@ export namespace $NamedDefaultPartial {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "$NamedDefaultPartial";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -3370,8 +3360,8 @@ export namespace $NamedDefaultPartial {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("$NamedDefaultPartial"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "$NamedDefaultPartial",
@@ -3383,11 +3373,6 @@ export namespace $NamedDefaultPartial {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "$NamedDefaultPartial" as const },
@@ -3396,6 +3381,11 @@ export namespace $NamedDefaultPartial {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -3525,16 +3515,16 @@ export namespace $NamedDefaultPartial {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["$NamedDefaultPartial"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
       },
     },
   } as const;
@@ -3630,9 +3620,9 @@ export namespace $NamedDefaultPartial {
     );
 }
 export class $DefaultPartial {
-  readonly $identifier: () => $DefaultPartial.$Identifier;
-
   readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
+
+  readonly $identifier: () => $DefaultPartial.$Identifier;
 
   constructor(parameters?: {
     readonly $identifier?:
@@ -3656,31 +3646,21 @@ export class $DefaultPartial {
   }
 
   $equals(other: $DefaultPartial): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -3693,11 +3673,11 @@ export class $DefaultPartial {
   $toJson(): $DefaultPartial.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
       } satisfies $DefaultPartial.$Json),
     );
   }
@@ -3733,8 +3713,8 @@ export namespace $DefaultPartial {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "$DefaultPartial";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -3749,8 +3729,8 @@ export namespace $DefaultPartial {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("$DefaultPartial"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "$DefaultPartial",
@@ -3762,11 +3742,6 @@ export namespace $DefaultPartial {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "$DefaultPartial" as const },
@@ -3775,6 +3750,11 @@ export namespace $DefaultPartial {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -3905,16 +3885,16 @@ export namespace $DefaultPartial {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["$DefaultPartial"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
     },
   } as const;
@@ -4011,10 +3991,10 @@ export namespace $DefaultPartial {
  */
 
 export class UnionDiscriminantsClass {
-  readonly $identifier: () => UnionDiscriminantsClass.$Identifier;
-
   readonly $type: "UnionDiscriminantsClass" =
     "UnionDiscriminantsClass" as const;
+
+  readonly $identifier: () => UnionDiscriminantsClass.$Identifier;
 
   /**
    * Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).
@@ -4288,17 +4268,6 @@ export class UnionDiscriminantsClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) =>
           $maybeEquals(
@@ -4855,8 +4824,8 @@ export class UnionDiscriminantsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -4994,11 +4963,11 @@ export class UnionDiscriminantsClass {
   $toJson(): UnionDiscriminantsClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         optionalClassOrClassOrStringProperty:
           this.optionalClassOrClassOrStringProperty
             .map((item) =>
@@ -5770,8 +5739,8 @@ export namespace UnionDiscriminantsClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "UnionDiscriminantsClass";
+    readonly "@id": string;
     readonly optionalClassOrClassOrStringProperty?:
       | { type: "ClassUnionMember1"; value: ClassUnionMember1.$Json }
       | {
@@ -5864,8 +5833,8 @@ export namespace UnionDiscriminantsClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("UnionDiscriminantsClass"),
+          "@id": z.string().min(1),
           optionalClassOrClassOrStringProperty: z
             .discriminatedUnion("type", [
               z.object({
@@ -6084,11 +6053,6 @@ export namespace UnionDiscriminantsClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "UnionDiscriminantsClass" as const },
@@ -6097,6 +6061,11 @@ export namespace UnionDiscriminantsClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -10614,16 +10583,16 @@ export namespace UnionDiscriminantsClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["UnionDiscriminantsClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       optionalClassOrClassOrStringProperty: {
         kind: "Shacl" as const,
@@ -10988,9 +10957,9 @@ export namespace UnionDiscriminantsClass {
  */
 
 export class TermPropertiesClass {
-  readonly $identifier: () => TermPropertiesClass.$Identifier;
-
   readonly $type: "TermPropertiesClass" = "TermPropertiesClass" as const;
+
+  readonly $identifier: () => TermPropertiesClass.$Identifier;
 
   readonly blankNodeTermProperty: Maybe<BlankNode>;
 
@@ -11205,17 +11174,6 @@ export class TermPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.blankNodeTermProperty,
           other.blankNodeTermProperty,
@@ -11327,8 +11285,8 @@ export class TermPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -11374,11 +11332,11 @@ export class TermPropertiesClass {
   $toJson(): TermPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         blankNodeTermProperty: this.blankNodeTermProperty
           .map((item) => ({ "@id": `_:${item.value}` }))
           .extract(),
@@ -11534,8 +11492,8 @@ export namespace TermPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "TermPropertiesClass";
+    readonly "@id": string;
     readonly blankNodeTermProperty?: { readonly "@id": string };
     readonly booleanTermProperty?: boolean;
     readonly dateTermProperty?: string;
@@ -11570,8 +11528,8 @@ export namespace TermPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("TermPropertiesClass"),
+          "@id": z.string().min(1),
           blankNodeTermProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
@@ -11641,11 +11599,6 @@ export namespace TermPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "TermPropertiesClass" as const },
@@ -11654,6 +11607,11 @@ export namespace TermPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -12556,16 +12514,16 @@ export namespace TermPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["TermPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       blankNodeTermProperty: {
         kind: "Shacl" as const,
@@ -12733,10 +12691,10 @@ export namespace TermPropertiesClass {
     );
 }
 export class RecursiveClassUnionMember2 {
-  readonly $identifier: () => RecursiveClassUnionMember2.$Identifier;
-
   readonly $type: "RecursiveClassUnionMember2" =
     "RecursiveClassUnionMember2" as const;
+
+  readonly $identifier: () => RecursiveClassUnionMember2.$Identifier;
 
   readonly recursiveClassUnionMember2Property: Maybe<RecursiveClassUnion>;
 
@@ -12789,17 +12747,6 @@ export class RecursiveClassUnionMember2 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, RecursiveClassUnion.$equals))(
           this.recursiveClassUnionMember2Property,
@@ -12816,8 +12763,8 @@ export class RecursiveClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -12833,11 +12780,11 @@ export class RecursiveClassUnionMember2 {
   $toJson(): RecursiveClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         recursiveClassUnionMember2Property:
           this.recursiveClassUnionMember2Property
             .map((item) => RecursiveClassUnion.$toJson(item))
@@ -12900,8 +12847,8 @@ export namespace RecursiveClassUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "RecursiveClassUnionMember2";
+    readonly "@id": string;
     readonly recursiveClassUnionMember2Property?: RecursiveClassUnion.$Json;
   };
 
@@ -12917,8 +12864,8 @@ export namespace RecursiveClassUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("RecursiveClassUnionMember2"),
+          "@id": z.string().min(1),
           recursiveClassUnionMember2Property: z
             .lazy(
               (): z.ZodType<RecursiveClassUnion.$Json> =>
@@ -12935,11 +12882,6 @@ export namespace RecursiveClassUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "RecursiveClassUnionMember2" as const },
@@ -12948,6 +12890,11 @@ export namespace RecursiveClassUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -13227,16 +13174,16 @@ export namespace RecursiveClassUnionMember2 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["RecursiveClassUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       recursiveClassUnionMember2Property: {
         kind: "Shacl" as const,
@@ -13344,10 +13291,10 @@ export namespace RecursiveClassUnionMember2 {
     );
 }
 export class RecursiveClassUnionMember1 {
-  readonly $identifier: () => RecursiveClassUnionMember1.$Identifier;
-
   readonly $type: "RecursiveClassUnionMember1" =
     "RecursiveClassUnionMember1" as const;
+
+  readonly $identifier: () => RecursiveClassUnionMember1.$Identifier;
 
   readonly recursiveClassUnionMember1Property: Maybe<RecursiveClassUnion>;
 
@@ -13400,17 +13347,6 @@ export class RecursiveClassUnionMember1 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, RecursiveClassUnion.$equals))(
           this.recursiveClassUnionMember1Property,
@@ -13427,8 +13363,8 @@ export class RecursiveClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -13444,11 +13380,11 @@ export class RecursiveClassUnionMember1 {
   $toJson(): RecursiveClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         recursiveClassUnionMember1Property:
           this.recursiveClassUnionMember1Property
             .map((item) => RecursiveClassUnion.$toJson(item))
@@ -13511,8 +13447,8 @@ export namespace RecursiveClassUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "RecursiveClassUnionMember1";
+    readonly "@id": string;
     readonly recursiveClassUnionMember1Property?: RecursiveClassUnion.$Json;
   };
 
@@ -13528,8 +13464,8 @@ export namespace RecursiveClassUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("RecursiveClassUnionMember1"),
+          "@id": z.string().min(1),
           recursiveClassUnionMember1Property: z
             .lazy(
               (): z.ZodType<RecursiveClassUnion.$Json> =>
@@ -13546,11 +13482,6 @@ export namespace RecursiveClassUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "RecursiveClassUnionMember1" as const },
@@ -13559,6 +13490,11 @@ export namespace RecursiveClassUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -13838,16 +13774,16 @@ export namespace RecursiveClassUnionMember1 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["RecursiveClassUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       recursiveClassUnionMember1Property: {
         kind: "Shacl" as const,
@@ -13958,10 +13894,10 @@ export namespace RecursiveClassUnionMember1 {
  */
 
 export class PropertyVisibilitiesClass {
-  readonly $identifier: () => PropertyVisibilitiesClass.$Identifier;
-
   readonly $type: "PropertyVisibilitiesClass" =
     "PropertyVisibilitiesClass" as const;
+
+  readonly $identifier: () => PropertyVisibilitiesClass.$Identifier;
 
   private readonly privateProperty: string;
 
@@ -14006,17 +13942,6 @@ export class PropertyVisibilitiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(this.privateProperty, other.privateProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -14053,8 +13978,8 @@ export class PropertyVisibilitiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -14070,11 +13995,11 @@ export class PropertyVisibilitiesClass {
   $toJson(): PropertyVisibilitiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         privateProperty: this.privateProperty,
         protectedProperty: this.protectedProperty,
         publicProperty: this.publicProperty,
@@ -14128,8 +14053,8 @@ export namespace PropertyVisibilitiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PropertyVisibilitiesClass";
+    readonly "@id": string;
     readonly privateProperty: string;
     readonly protectedProperty: string;
     readonly publicProperty: string;
@@ -14147,8 +14072,8 @@ export namespace PropertyVisibilitiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PropertyVisibilitiesClass"),
+          "@id": z.string().min(1),
           privateProperty: z.string().meta({ id: "privateProperty" }),
           protectedProperty: z.string().meta({ id: "protectedProperty" }),
           publicProperty: z.string().meta({ id: "publicProperty" }),
@@ -14165,11 +14090,6 @@ export namespace PropertyVisibilitiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PropertyVisibilitiesClass" as const },
@@ -14178,6 +14098,11 @@ export namespace PropertyVisibilitiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -14462,16 +14387,16 @@ export namespace PropertyVisibilitiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyVisibilitiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       privateProperty: {
         kind: "Shacl" as const,
@@ -14587,9 +14512,9 @@ export namespace PropertyVisibilitiesClass {
  */
 
 export class PropertyPathsClass {
-  readonly $identifier: () => PropertyPathsClass.$Identifier;
-
   readonly $type: "PropertyPathsClass" = "PropertyPathsClass" as const;
+
+  readonly $identifier: () => PropertyPathsClass.$Identifier;
 
   readonly inversePathProperty: Maybe<NamedNode>;
 
@@ -14652,17 +14577,6 @@ export class PropertyPathsClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.inversePathProperty,
           other.inversePathProperty,
@@ -14690,8 +14604,8 @@ export class PropertyPathsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -14711,11 +14625,11 @@ export class PropertyPathsClass {
   $toJson(): PropertyPathsClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         inversePathProperty: this.inversePathProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -14779,8 +14693,8 @@ export namespace PropertyPathsClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PropertyPathsClass";
+    readonly "@id": string;
     readonly inversePathProperty?: { readonly "@id": string };
     readonly predicatePathProperty?: string;
   };
@@ -14797,8 +14711,8 @@ export namespace PropertyPathsClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PropertyPathsClass"),
+          "@id": z.string().min(1),
           inversePathProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
@@ -14820,11 +14734,6 @@ export namespace PropertyPathsClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PropertyPathsClass" as const },
@@ -14833,6 +14742,11 @@ export namespace PropertyPathsClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -15203,16 +15117,16 @@ export namespace PropertyPathsClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyPathsClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       inversePathProperty: {
         kind: "Shacl" as const,
@@ -15328,9 +15242,9 @@ export namespace PropertyPathsClass {
  */
 
 export class PropertyNamesClass {
-  readonly $identifier: () => PropertyNamesClass.$Identifier;
-
   readonly $type: "PropertyNamesClass" = "PropertyNamesClass" as const;
+
+  readonly $identifier: () => PropertyNamesClass.$Identifier;
 
   /**
    * sh:path: overrides property shape identifier
@@ -15398,17 +15312,6 @@ export class PropertyNamesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.actualPropertyName1,
           other.actualPropertyName1,
@@ -15472,8 +15375,8 @@ export class PropertyNamesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -15491,11 +15394,11 @@ export class PropertyNamesClass {
   $toJson(): PropertyNamesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         actualPropertyName1: this.actualPropertyName1,
         actualPropertyName2: this.actualPropertyName2,
         actualPropertyName3: this.actualPropertyName3,
@@ -15568,8 +15471,8 @@ export namespace PropertyNamesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PropertyNamesClass";
+    readonly "@id": string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
     readonly actualPropertyName3: string;
@@ -15589,8 +15492,8 @@ export namespace PropertyNamesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PropertyNamesClass"),
+          "@id": z.string().min(1),
           actualPropertyName1: z.string().meta({
             id: "actualPropertyName1",
             description: "sh:path: overrides property shape identifier",
@@ -15627,11 +15530,6 @@ export namespace PropertyNamesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PropertyNamesClass" as const },
@@ -15640,6 +15538,11 @@ export namespace PropertyNamesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -16148,16 +16051,16 @@ export namespace PropertyNamesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyNamesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       actualPropertyName1: {
         kind: "Shacl" as const,
@@ -16279,10 +16182,10 @@ export namespace PropertyNamesClass {
  */
 
 export class PropertyCardinalitiesClass {
-  readonly $identifier: () => PropertyCardinalitiesClass.$Identifier;
-
   readonly $type: "PropertyCardinalitiesClass" =
     "PropertyCardinalitiesClass" as const;
+
+  readonly $identifier: () => PropertyCardinalitiesClass.$Identifier;
 
   /**
    * Set: minCount implicitly=0, no maxCount
@@ -16359,17 +16262,6 @@ export class PropertyCardinalitiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
           this.emptyStringSetProperty,
           other.emptyStringSetProperty,
@@ -16421,8 +16313,8 @@ export class PropertyCardinalitiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -16445,11 +16337,11 @@ export class PropertyCardinalitiesClass {
   $toJson(): PropertyCardinalitiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         emptyStringSetProperty: this.emptyStringSetProperty.map((item) => item),
         nonEmptyStringSetProperty: this.nonEmptyStringSetProperty.map(
           (item) => item,
@@ -16519,8 +16411,8 @@ export namespace PropertyCardinalitiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PropertyCardinalitiesClass";
+    readonly "@id": string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
@@ -16539,8 +16431,8 @@ export namespace PropertyCardinalitiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PropertyCardinalitiesClass"),
+          "@id": z.string().min(1),
           emptyStringSetProperty: z
             .string()
             .array()
@@ -16580,11 +16472,6 @@ export namespace PropertyCardinalitiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PropertyCardinalitiesClass" as const },
@@ -16593,6 +16480,11 @@ export namespace PropertyCardinalitiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -17021,16 +16913,16 @@ export namespace PropertyCardinalitiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PropertyCardinalitiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       emptyStringSetProperty: {
         kind: "Shacl" as const,
@@ -17166,8 +17058,8 @@ export namespace PropertyCardinalitiesClass {
     );
 }
 export interface PartialInterfaceUnionMember2 {
-  readonly $identifier: () => PartialInterfaceUnionMember2.$Identifier;
   readonly $type: "PartialInterfaceUnionMember2";
+  readonly $identifier: () => PartialInterfaceUnionMember2.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -17179,6 +17071,7 @@ export namespace PartialInterfaceUnionMember2 {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember2 {
+    const $type = "PartialInterfaceUnionMember2" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterfaceUnionMember2.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -17193,10 +17086,9 @@ export namespace PartialInterfaceUnionMember2 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "PartialInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -17211,17 +17103,6 @@ export namespace PartialInterfaceUnionMember2 {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -17244,8 +17125,8 @@ export namespace PartialInterfaceUnionMember2 {
       _partialInterfaceUnionMember2,
       _hasher,
     );
-    _hasher.update(_partialInterfaceUnionMember2.$identifier().value);
     _hasher.update(_partialInterfaceUnionMember2.$type);
+    _hasher.update(_partialInterfaceUnionMember2.$identifier().value);
     return _hasher;
   }
 
@@ -17265,8 +17146,8 @@ export namespace PartialInterfaceUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialInterfaceUnionMember2";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -17282,8 +17163,8 @@ export namespace PartialInterfaceUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialInterfaceUnionMember2"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -17298,11 +17179,6 @@ export namespace PartialInterfaceUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialInterfaceUnionMember2" as const },
@@ -17311,6 +17187,11 @@ export namespace PartialInterfaceUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -17517,21 +17398,21 @@ export namespace PartialInterfaceUnionMember2 {
   export function $propertiesFromJson(
     $json: PartialInterfaceUnionMember2.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterfaceUnionMember2";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "PartialInterfaceUnionMember2" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "PartialInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterfaceUnionMember2";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -17564,20 +17445,20 @@ export namespace PartialInterfaceUnionMember2 {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"PartialInterfaceUnionMember2">(
-            "PartialInterfaceUnionMember2" as const,
-          ).chain(($type) =>
+      Right<"PartialInterfaceUnionMember2">(
+        "PartialInterfaceUnionMember2" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -17594,27 +17475,27 @@ export namespace PartialInterfaceUnionMember2 {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               lazilyResolvedStringProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialInterfaceUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -17691,11 +17572,11 @@ export namespace PartialInterfaceUnionMember2 {
   ): PartialInterfaceUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _partialInterfaceUnionMember2.$type,
         "@id":
           _partialInterfaceUnionMember2.$identifier().termType === "BlankNode"
             ? `_:${_partialInterfaceUnionMember2.$identifier().value}`
             : _partialInterfaceUnionMember2.$identifier().value,
-        $type: _partialInterfaceUnionMember2.$type,
         lazilyResolvedStringProperty:
           _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
       } satisfies PartialInterfaceUnionMember2.$Json),
@@ -17790,8 +17671,8 @@ export namespace PartialInterfaceUnionMember2 {
     );
 }
 export interface PartialInterfaceUnionMember1 {
-  readonly $identifier: () => PartialInterfaceUnionMember1.$Identifier;
   readonly $type: "PartialInterfaceUnionMember1";
+  readonly $identifier: () => PartialInterfaceUnionMember1.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -17803,6 +17684,7 @@ export namespace PartialInterfaceUnionMember1 {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterfaceUnionMember1 {
+    const $type = "PartialInterfaceUnionMember1" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterfaceUnionMember1.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -17817,10 +17699,9 @@ export namespace PartialInterfaceUnionMember1 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "PartialInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -17835,17 +17716,6 @@ export namespace PartialInterfaceUnionMember1 {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -17868,8 +17738,8 @@ export namespace PartialInterfaceUnionMember1 {
       _partialInterfaceUnionMember1,
       _hasher,
     );
-    _hasher.update(_partialInterfaceUnionMember1.$identifier().value);
     _hasher.update(_partialInterfaceUnionMember1.$type);
+    _hasher.update(_partialInterfaceUnionMember1.$identifier().value);
     return _hasher;
   }
 
@@ -17889,8 +17759,8 @@ export namespace PartialInterfaceUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialInterfaceUnionMember1";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -17906,8 +17776,8 @@ export namespace PartialInterfaceUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialInterfaceUnionMember1"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -17922,11 +17792,6 @@ export namespace PartialInterfaceUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialInterfaceUnionMember1" as const },
@@ -17935,6 +17800,11 @@ export namespace PartialInterfaceUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -18141,21 +18011,21 @@ export namespace PartialInterfaceUnionMember1 {
   export function $propertiesFromJson(
     $json: PartialInterfaceUnionMember1.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterfaceUnionMember1";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "PartialInterfaceUnionMember1" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "PartialInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterfaceUnionMember1";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -18188,20 +18058,20 @@ export namespace PartialInterfaceUnionMember1 {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"PartialInterfaceUnionMember1">(
-            "PartialInterfaceUnionMember1" as const,
-          ).chain(($type) =>
+      Right<"PartialInterfaceUnionMember1">(
+        "PartialInterfaceUnionMember1" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -18218,27 +18088,27 @@ export namespace PartialInterfaceUnionMember1 {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               lazilyResolvedStringProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialInterfaceUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -18315,11 +18185,11 @@ export namespace PartialInterfaceUnionMember1 {
   ): PartialInterfaceUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _partialInterfaceUnionMember1.$type,
         "@id":
           _partialInterfaceUnionMember1.$identifier().termType === "BlankNode"
             ? `_:${_partialInterfaceUnionMember1.$identifier().value}`
             : _partialInterfaceUnionMember1.$identifier().value,
-        $type: _partialInterfaceUnionMember1.$type,
         lazilyResolvedStringProperty:
           _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
       } satisfies PartialInterfaceUnionMember1.$Json),
@@ -18414,10 +18284,10 @@ export namespace PartialInterfaceUnionMember1 {
     );
 }
 export class PartialClassUnionMember2 {
-  readonly $identifier: () => PartialClassUnionMember2.$Identifier;
-
   readonly $type: "PartialClassUnionMember2" =
     "PartialClassUnionMember2" as const;
+
+  readonly $identifier: () => PartialClassUnionMember2.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -18454,17 +18324,6 @@ export class PartialClassUnionMember2 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -18480,8 +18339,8 @@ export class PartialClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -18495,11 +18354,11 @@ export class PartialClassUnionMember2 {
   $toJson(): PartialClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClassUnionMember2.$Json),
     );
@@ -18548,8 +18407,8 @@ export namespace PartialClassUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialClassUnionMember2";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -18565,8 +18424,8 @@ export namespace PartialClassUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialClassUnionMember2"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -18579,11 +18438,6 @@ export namespace PartialClassUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialClassUnionMember2" as const },
@@ -18592,6 +18446,11 @@ export namespace PartialClassUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -18875,16 +18734,16 @@ export namespace PartialClassUnionMember2 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialClassUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -18989,10 +18848,10 @@ export namespace PartialClassUnionMember2 {
     );
 }
 export class PartialClassUnionMember1 {
-  readonly $identifier: () => PartialClassUnionMember1.$Identifier;
-
   readonly $type: "PartialClassUnionMember1" =
     "PartialClassUnionMember1" as const;
+
+  readonly $identifier: () => PartialClassUnionMember1.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -19029,17 +18888,6 @@ export class PartialClassUnionMember1 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -19055,8 +18903,8 @@ export class PartialClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -19070,11 +18918,11 @@ export class PartialClassUnionMember1 {
   $toJson(): PartialClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClassUnionMember1.$Json),
     );
@@ -19123,8 +18971,8 @@ export namespace PartialClassUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialClassUnionMember1";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -19140,8 +18988,8 @@ export namespace PartialClassUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialClassUnionMember1"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -19154,11 +19002,6 @@ export namespace PartialClassUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialClassUnionMember1" as const },
@@ -19167,6 +19010,11 @@ export namespace PartialClassUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -19450,16 +19298,16 @@ export namespace PartialClassUnionMember1 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialClassUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -19567,9 +19415,9 @@ export namespace PartialClassUnionMember1 {
  */
 
 export class NewName2Class {
-  readonly $identifier: () => NewName2Class.$Identifier;
-
   readonly $type: "NewName2Class" = "NewName2Class" as const;
+
+  readonly $identifier: () => NewName2Class.$Identifier;
 
   constructor(parameters?: {
     readonly $identifier?:
@@ -19593,31 +19441,21 @@ export class NewName2Class {
   }
 
   $equals(other: NewName2Class): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -19630,11 +19468,11 @@ export class NewName2Class {
   $toJson(): NewName2Class.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
       } satisfies NewName2Class.$Json),
     );
   }
@@ -19677,8 +19515,8 @@ export namespace NewName2Class {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NewName2Class";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -19692,7 +19530,7 @@ export namespace NewName2Class {
 
     export function schema() {
       return z
-        .object({ "@id": z.string().min(1), $type: z.literal("NewName2Class") })
+        .object({ $type: z.literal("NewName2Class"), "@id": z.string().min(1) })
         .meta({
           id: "NewName2Class",
           description:
@@ -19706,11 +19544,6 @@ export namespace NewName2Class {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NewName2Class" as const },
@@ -19719,6 +19552,11 @@ export namespace NewName2Class {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -19936,16 +19774,16 @@ export namespace NewName2Class {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NewName2Class"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
     },
   } as const;
@@ -20042,9 +19880,9 @@ export namespace NewName2Class {
  */
 
 export class NewName1Class {
-  readonly $identifier: () => NewName1Class.$Identifier;
-
   readonly $type: "NewName1Class" = "NewName1Class" as const;
+
+  readonly $identifier: () => NewName1Class.$Identifier;
 
   constructor(parameters?: {
     readonly $identifier?:
@@ -20068,31 +19906,21 @@ export class NewName1Class {
   }
 
   $equals(other: NewName1Class): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -20105,11 +19933,11 @@ export class NewName1Class {
   $toJson(): NewName1Class.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
       } satisfies NewName1Class.$Json),
     );
   }
@@ -20152,8 +19980,8 @@ export namespace NewName1Class {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NewName1Class";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -20167,7 +19995,7 @@ export namespace NewName1Class {
 
     export function schema() {
       return z
-        .object({ "@id": z.string().min(1), $type: z.literal("NewName1Class") })
+        .object({ $type: z.literal("NewName1Class"), "@id": z.string().min(1) })
         .meta({
           id: "NewName1Class",
           description:
@@ -20180,11 +20008,6 @@ export namespace NewName1Class {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NewName1Class" as const },
@@ -20193,6 +20016,11 @@ export namespace NewName1Class {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -20410,16 +20238,16 @@ export namespace NewName1Class {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NewName1Class"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
     },
   } as const;
@@ -20516,9 +20344,9 @@ export namespace NewName1Class {
  */
 
 export class OrderedPropertiesClass {
-  readonly $identifier: () => OrderedPropertiesClass.$Identifier;
-
   readonly $type: "OrderedPropertiesClass" = "OrderedPropertiesClass" as const;
+
+  readonly $identifier: () => OrderedPropertiesClass.$Identifier;
 
   readonly orderedPropertyC: string;
 
@@ -20563,17 +20391,6 @@ export class OrderedPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(this.orderedPropertyC, other.orderedPropertyC).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -20610,8 +20427,8 @@ export class OrderedPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -20627,11 +20444,11 @@ export class OrderedPropertiesClass {
   $toJson(): OrderedPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         orderedPropertyC: this.orderedPropertyC,
         orderedPropertyB: this.orderedPropertyB,
         orderedPropertyA: this.orderedPropertyA,
@@ -20685,8 +20502,8 @@ export namespace OrderedPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "OrderedPropertiesClass";
+    readonly "@id": string;
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
     readonly orderedPropertyA: string;
@@ -20704,8 +20521,8 @@ export namespace OrderedPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("OrderedPropertiesClass"),
+          "@id": z.string().min(1),
           orderedPropertyC: z.string().meta({ id: "orderedPropertyC" }),
           orderedPropertyB: z.string().meta({ id: "orderedPropertyB" }),
           orderedPropertyA: z.string().meta({ id: "orderedPropertyA" }),
@@ -20722,11 +20539,6 @@ export namespace OrderedPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "OrderedPropertiesClass" as const },
@@ -20735,6 +20547,11 @@ export namespace OrderedPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -21037,16 +20854,16 @@ export namespace OrderedPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["OrderedPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       orderedPropertyC: {
         kind: "Shacl" as const,
@@ -21162,9 +20979,9 @@ export namespace OrderedPropertiesClass {
  */
 
 export class NumericPropertiesClass {
-  readonly $identifier: () => NumericPropertiesClass.$Identifier;
-
   readonly $type: "NumericPropertiesClass" = "NumericPropertiesClass" as const;
+
+  readonly $identifier: () => NumericPropertiesClass.$Identifier;
 
   readonly byteNumericProperty: Maybe<number>;
 
@@ -21435,17 +21252,6 @@ export class NumericPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.byteNumericProperty,
           other.byteNumericProperty,
@@ -21641,8 +21447,8 @@ export class NumericPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -21703,11 +21509,11 @@ export class NumericPropertiesClass {
   $toJson(): NumericPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         byteNumericProperty: this.byteNumericProperty
           .map((item) => item)
           .extract(),
@@ -21956,8 +21762,8 @@ export namespace NumericPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NumericPropertiesClass";
+    readonly "@id": string;
     readonly byteNumericProperty?: number;
     readonly decimalNumericProperty?: string;
     readonly doubleNumericProperty?: number;
@@ -21988,8 +21794,8 @@ export namespace NumericPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NumericPropertiesClass"),
+          "@id": z.string().min(1),
           byteNumericProperty: z
             .number()
             .optional()
@@ -22066,11 +21872,6 @@ export namespace NumericPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NumericPropertiesClass" as const },
@@ -22079,6 +21880,11 @@ export namespace NumericPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -23543,16 +23349,16 @@ export namespace NumericPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NumericPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       byteNumericProperty: {
         kind: "Shacl" as const,
@@ -23801,9 +23607,9 @@ export namespace NumericPropertiesClass {
  */
 
 export class NodeKindsClass {
-  readonly $identifier: () => NodeKindsClass.$Identifier;
-
   readonly $type: "NodeKindsClass" = "NodeKindsClass" as const;
+
+  readonly $identifier: () => NodeKindsClass.$Identifier;
 
   readonly blankNodeKindProperty: BlankNode;
 
@@ -23990,17 +23796,6 @@ export class NodeKindsClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $booleanEquals(
           this.blankNodeKindProperty,
           other.blankNodeKindProperty,
@@ -24076,8 +23871,8 @@ export class NodeKindsClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -24104,11 +23899,11 @@ export class NodeKindsClass {
   $toJson(): NodeKindsClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         blankNodeKindProperty: {
           "@id": `_:${this.blankNodeKindProperty.value}`,
         },
@@ -24243,8 +24038,8 @@ export namespace NodeKindsClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NodeKindsClass";
+    readonly "@id": string;
     readonly blankNodeKindProperty: { readonly "@id": string };
     readonly blankNodeOrIriNodeKindProperty: { readonly "@id": string };
     readonly blankNodeOrLiteralNodeKindProperty:
@@ -24283,8 +24078,8 @@ export namespace NodeKindsClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NodeKindsClass"),
+          "@id": z.string().min(1),
           blankNodeKindProperty: z
             .object({ "@id": z.string().min(1) })
             .meta({ id: "blankNodeKindProperty" }),
@@ -24344,11 +24139,6 @@ export namespace NodeKindsClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NodeKindsClass" as const },
@@ -24357,6 +24147,11 @@ export namespace NodeKindsClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -24984,16 +24779,16 @@ export namespace NodeKindsClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NodeKindsClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       blankNodeKindProperty: {
         kind: "Shacl" as const,
@@ -25125,10 +24920,10 @@ export namespace NodeKindsClass {
     );
 }
 export class NoRdfTypeClassUnionMember2 {
-  readonly $identifier: () => NoRdfTypeClassUnionMember2.$Identifier;
-
   readonly $type: "NoRdfTypeClassUnionMember2" =
     "NoRdfTypeClassUnionMember2" as const;
+
+  readonly $identifier: () => NoRdfTypeClassUnionMember2.$Identifier;
 
   readonly noRdfTypeClassUnionMember2Property: string;
 
@@ -25166,17 +24961,6 @@ export class NoRdfTypeClassUnionMember2 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.noRdfTypeClassUnionMember2Property,
           other.noRdfTypeClassUnionMember2Property,
@@ -25192,8 +24976,8 @@ export class NoRdfTypeClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -25207,11 +24991,11 @@ export class NoRdfTypeClassUnionMember2 {
   $toJson(): NoRdfTypeClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         noRdfTypeClassUnionMember2Property:
           this.noRdfTypeClassUnionMember2Property,
       } satisfies NoRdfTypeClassUnionMember2.$Json),
@@ -25256,8 +25040,8 @@ export namespace NoRdfTypeClassUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NoRdfTypeClassUnionMember2";
+    readonly "@id": string;
     readonly noRdfTypeClassUnionMember2Property: string;
   };
 
@@ -25273,8 +25057,8 @@ export namespace NoRdfTypeClassUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NoRdfTypeClassUnionMember2"),
+          "@id": z.string().min(1),
           noRdfTypeClassUnionMember2Property: z
             .string()
             .meta({ id: "noRdfTypeClassUnionMember2Property" }),
@@ -25287,11 +25071,6 @@ export namespace NoRdfTypeClassUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NoRdfTypeClassUnionMember2" as const },
@@ -25300,6 +25079,11 @@ export namespace NoRdfTypeClassUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -25494,16 +25278,16 @@ export namespace NoRdfTypeClassUnionMember2 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NoRdfTypeClassUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       noRdfTypeClassUnionMember2Property: {
         kind: "Shacl" as const,
@@ -25608,10 +25392,10 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
 }
 export class NoRdfTypeClassUnionMember1 {
-  readonly $identifier: () => NoRdfTypeClassUnionMember1.$Identifier;
-
   readonly $type: "NoRdfTypeClassUnionMember1" =
     "NoRdfTypeClassUnionMember1" as const;
+
+  readonly $identifier: () => NoRdfTypeClassUnionMember1.$Identifier;
 
   readonly noRdfTypeClassUnionMember1Property: string;
 
@@ -25649,17 +25433,6 @@ export class NoRdfTypeClassUnionMember1 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.noRdfTypeClassUnionMember1Property,
           other.noRdfTypeClassUnionMember1Property,
@@ -25675,8 +25448,8 @@ export class NoRdfTypeClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -25690,11 +25463,11 @@ export class NoRdfTypeClassUnionMember1 {
   $toJson(): NoRdfTypeClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         noRdfTypeClassUnionMember1Property:
           this.noRdfTypeClassUnionMember1Property,
       } satisfies NoRdfTypeClassUnionMember1.$Json),
@@ -25739,8 +25512,8 @@ export namespace NoRdfTypeClassUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NoRdfTypeClassUnionMember1";
+    readonly "@id": string;
     readonly noRdfTypeClassUnionMember1Property: string;
   };
 
@@ -25756,8 +25529,8 @@ export namespace NoRdfTypeClassUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NoRdfTypeClassUnionMember1"),
+          "@id": z.string().min(1),
           noRdfTypeClassUnionMember1Property: z
             .string()
             .meta({ id: "noRdfTypeClassUnionMember1Property" }),
@@ -25770,11 +25543,6 @@ export namespace NoRdfTypeClassUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NoRdfTypeClassUnionMember1" as const },
@@ -25783,6 +25551,11 @@ export namespace NoRdfTypeClassUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -25977,16 +25750,16 @@ export namespace NoRdfTypeClassUnionMember1 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NoRdfTypeClassUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       noRdfTypeClassUnionMember1Property: {
         kind: "Shacl" as const,
@@ -26091,10 +25864,10 @@ export namespace NoRdfTypeClassUnionMember1 {
     );
 }
 export class NamedUnionPropertiesClass {
-  readonly $identifier: () => NamedUnionPropertiesClass.$Identifier;
-
   readonly $type: "NamedUnionPropertiesClass" =
     "NamedUnionPropertiesClass" as const;
+
+  readonly $identifier: () => NamedUnionPropertiesClass.$Identifier;
 
   readonly namedUnion1Property: NamedUnion1;
 
@@ -26141,17 +25914,6 @@ export class NamedUnionPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         NamedUnion1.$equals(
           this.namedUnion1Property,
           other.namedUnion1Property,
@@ -26179,8 +25941,8 @@ export class NamedUnionPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -26195,11 +25957,11 @@ export class NamedUnionPropertiesClass {
   $toJson(): NamedUnionPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         namedUnion1Property: NamedUnion1.$toJson(this.namedUnion1Property),
         namedUnion2Property: NamedUnion2.$toJson(this.namedUnion2Property),
       } satisfies NamedUnionPropertiesClass.$Json),
@@ -26268,8 +26030,8 @@ export namespace NamedUnionPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NamedUnionPropertiesClass";
+    readonly "@id": string;
     readonly namedUnion1Property: NamedUnion1.$Json;
     readonly namedUnion2Property: NamedUnion2.$Json;
   };
@@ -26286,8 +26048,8 @@ export namespace NamedUnionPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NamedUnionPropertiesClass"),
+          "@id": z.string().min(1),
           namedUnion1Property: NamedUnion1.$Json
             .schema()
             .meta({ id: "namedUnion1Property" }),
@@ -26303,11 +26065,6 @@ export namespace NamedUnionPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NamedUnionPropertiesClass" as const },
@@ -26316,6 +26073,11 @@ export namespace NamedUnionPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -26663,16 +26425,16 @@ export namespace NamedUnionPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NamedUnionPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       namedUnion1Property: {
         kind: "Shacl" as const,
@@ -26807,9 +26569,9 @@ export namespace NamedUnionPropertiesClass {
  */
 
 export class MutablePropertiesClass {
-  readonly $identifier: () => MutablePropertiesClass.$Identifier;
-
   readonly $type: "MutablePropertiesClass" = "MutablePropertiesClass" as const;
+
+  readonly $identifier: () => MutablePropertiesClass.$Identifier;
 
   /**
    * List-valued property that can't be reassigned but whose value can be mutated
@@ -26889,17 +26651,6 @@ export class MutablePropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) =>
             $arrayEquals(left, right, $strictEquals),
@@ -26941,8 +26692,8 @@ export class MutablePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -26966,11 +26717,11 @@ export class MutablePropertiesClass {
   $toJson(): MutablePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         mutableListProperty: this.mutableListProperty
           .map((item) => item.map((item) => item))
           .extract(),
@@ -27087,8 +26838,8 @@ export namespace MutablePropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "MutablePropertiesClass";
+    readonly "@id": string;
     readonly mutableListProperty?: string[];
     mutableSetProperty?: string[];
     mutableStringProperty?: string;
@@ -27106,8 +26857,8 @@ export namespace MutablePropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("MutablePropertiesClass"),
+          "@id": z.string().min(1),
           mutableListProperty: z.string().array().optional().optional().meta({
             id: "mutableListProperty",
             description:
@@ -27134,11 +26885,6 @@ export namespace MutablePropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "MutablePropertiesClass" as const },
@@ -27147,6 +26893,11 @@ export namespace MutablePropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -27634,16 +27385,16 @@ export namespace MutablePropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["MutablePropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       mutableListProperty: {
         kind: "Shacl" as const,
@@ -27771,9 +27522,9 @@ export namespace MutablePropertiesClass {
  */
 
 export class ListPropertiesClass {
-  readonly $identifier: () => ListPropertiesClass.$Identifier;
-
   readonly $type: "ListPropertiesClass" = "ListPropertiesClass" as const;
+
+  readonly $identifier: () => ListPropertiesClass.$Identifier;
 
   readonly iriListProperty: Maybe<readonly NamedNode[]>;
 
@@ -27851,17 +27602,6 @@ export class ListPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) =>
             $arrayEquals(left, right, $booleanEquals),
@@ -27907,8 +27647,8 @@ export class ListPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -27937,11 +27677,11 @@ export class ListPropertiesClass {
   $toJson(): ListPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         iriListProperty: this.iriListProperty
           .map((item) => item.map((item) => ({ "@id": item.value })))
           .extract(),
@@ -28163,8 +27903,8 @@ export namespace ListPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ListPropertiesClass";
+    readonly "@id": string;
     readonly iriListProperty?: readonly { readonly "@id": string }[];
     readonly objectListProperty?: readonly NonClass.$Json[];
     readonly stringListProperty?: readonly string[];
@@ -28182,8 +27922,8 @@ export namespace ListPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ListPropertiesClass"),
+          "@id": z.string().min(1),
           iriListProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
@@ -28221,11 +27961,6 @@ export namespace ListPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ListPropertiesClass" as const },
@@ -28234,6 +27969,11 @@ export namespace ListPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -28779,16 +28519,16 @@ export namespace ListPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ListPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       iriListProperty: {
         kind: "Shacl" as const,
@@ -28917,8 +28657,8 @@ export namespace ListPropertiesClass {
  */
 
 export interface PartialInterface {
-  readonly $identifier: () => PartialInterface.$Identifier;
   readonly $type: "PartialInterface";
+  readonly $identifier: () => PartialInterface.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -28930,6 +28670,7 @@ export namespace PartialInterface {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialInterface {
+    const $type = "PartialInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => PartialInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -28944,10 +28685,9 @@ export namespace PartialInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "PartialInterface" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -28962,17 +28702,6 @@ export namespace PartialInterface {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -28992,8 +28721,8 @@ export namespace PartialInterface {
     _hasher: HasherT,
   ): HasherT {
     PartialInterface.$hashShaclProperties(_partialInterface, _hasher);
-    _hasher.update(_partialInterface.$identifier().value);
     _hasher.update(_partialInterface.$type);
+    _hasher.update(_partialInterface.$identifier().value);
     return _hasher;
   }
 
@@ -29013,8 +28742,8 @@ export namespace PartialInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialInterface";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -29030,8 +28759,8 @@ export namespace PartialInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialInterface"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -29048,11 +28777,6 @@ export namespace PartialInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialInterface" as const },
@@ -29061,6 +28785,11 @@ export namespace PartialInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -29203,71 +28932,72 @@ export namespace PartialInterface {
   }
 
   export function $propertiesFromJson($json: PartialInterface.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterface";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "PartialInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "PartialInterface" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "PartialInterface";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"PartialInterface">("PartialInterface" as const).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: _$options.graph,
-            resource: $resource,
-            propertySchema: $schema.properties.lazilyResolvedStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    _$options.preferredLanguages,
+    return Right<"PartialInterface">("PartialInterface" as const).chain(
+      ($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema: $schema.properties.lazilyResolvedStringProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      _$options.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
                   ),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
-            $type,
-            lazilyResolvedStringProperty,
-          })),
-        ),
-      );
+            }).map((lazilyResolvedStringProperty) => ({
+              $type,
+              $identifier,
+              lazilyResolvedStringProperty,
+            })),
+          ),
+    );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -29340,11 +29070,11 @@ export namespace PartialInterface {
   ): PartialInterface.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _partialInterface.$type,
         "@id":
           _partialInterface.$identifier().termType === "BlankNode"
             ? `_:${_partialInterface.$identifier().value}`
             : _partialInterface.$identifier().value,
-        $type: _partialInterface.$type,
         lazilyResolvedStringProperty:
           _partialInterface.lazilyResolvedStringProperty,
       } satisfies PartialInterface.$Json),
@@ -29423,8 +29153,8 @@ export namespace PartialInterface {
  */
 
 export interface LazyPropertiesInterface {
-  readonly $identifier: () => LazyPropertiesInterface.$Identifier;
   readonly $type: "LazyPropertiesInterface";
+  readonly $identifier: () => LazyPropertiesInterface.$Identifier;
   readonly optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
     LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
     $DefaultPartial,
@@ -29560,6 +29290,7 @@ export namespace LazyPropertiesInterface {
         >
       | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
   }): LazyPropertiesInterface {
+    const $type = "LazyPropertiesInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazyPropertiesInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -29574,7 +29305,6 @@ export namespace LazyPropertiesInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "LazyPropertiesInterface" as const;
     let optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
@@ -30176,8 +29906,8 @@ export namespace LazyPropertiesInterface {
         parameters.setPartialInterfaceToResolvedInterfaceProperty satisfies never;
     }
     return {
-      $identifier,
       $type,
+      $identifier,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
       optionalLazyToResolvedIriIdentifierInterfaceProperty,
@@ -30203,17 +29933,6 @@ export namespace LazyPropertiesInterface {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) =>
           ((left, right) =>
@@ -30388,8 +30107,8 @@ export namespace LazyPropertiesInterface {
       _lazyPropertiesInterface,
       _hasher,
     );
-    _hasher.update(_lazyPropertiesInterface.$identifier().value);
     _hasher.update(_lazyPropertiesInterface.$type);
+    _hasher.update(_lazyPropertiesInterface.$identifier().value);
     return _hasher;
   }
 
@@ -30454,8 +30173,8 @@ export namespace LazyPropertiesInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazyPropertiesInterface";
+    readonly "@id": string;
     readonly optionalLazyToResolvedInterfaceProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedInterfaceUnionProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $NamedDefaultPartial.$Json;
@@ -30480,8 +30199,8 @@ export namespace LazyPropertiesInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazyPropertiesInterface"),
+          "@id": z.string().min(1),
           optionalLazyToResolvedInterfaceProperty: $DefaultPartial.$Json
             .schema()
             .optional()
@@ -30545,11 +30264,6 @@ export namespace LazyPropertiesInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LazyPropertiesInterface" as const },
@@ -30558,6 +30272,11 @@ export namespace LazyPropertiesInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           $DefaultPartial.$Json.uiSchema({
@@ -31306,8 +31025,8 @@ export namespace LazyPropertiesInterface {
   }
 
   export function $propertiesFromJson($json: LazyPropertiesInterface.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "LazyPropertiesInterface";
+    $identifier: BlankNode | NamedNode;
     optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
@@ -31359,10 +31078,10 @@ export namespace LazyPropertiesInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
   } {
+    const $type = "LazyPropertiesInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "LazyPropertiesInterface" as const;
     const optionalLazyToResolvedInterfaceProperty = new $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
@@ -31536,8 +31255,8 @@ export namespace LazyPropertiesInterface {
         ),
     });
     return {
-      $identifier,
       $type,
+      $identifier,
       optionalLazyToResolvedInterfaceProperty,
       optionalLazyToResolvedInterfaceUnionProperty,
       optionalLazyToResolvedIriIdentifierInterfaceProperty,
@@ -31552,8 +31271,8 @@ export namespace LazyPropertiesInterface {
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "LazyPropertiesInterface";
+    $identifier: BlankNode | NamedNode;
     optionalLazyToResolvedInterfaceProperty: $LazyObjectOption<
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
       $DefaultPartial,
@@ -31605,20 +31324,20 @@ export namespace LazyPropertiesInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface
     >;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"LazyPropertiesInterface">(
-          "LazyPropertiesInterface" as const,
-        ).chain(($type) =>
+    return Right<"LazyPropertiesInterface">(
+      "LazyPropertiesInterface" as const,
+    ).chain(($type) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
@@ -32139,8 +31858,8 @@ export namespace LazyPropertiesInterface {
                                           (
                                             setPartialInterfaceToResolvedInterfaceProperty,
                                           ) => ({
-                                            $identifier,
                                             $type,
+                                            $identifier,
                                             optionalLazyToResolvedInterfaceProperty,
                                             optionalLazyToResolvedInterfaceUnionProperty,
                                             optionalLazyToResolvedIriIdentifierInterfaceProperty,
@@ -32163,21 +31882,21 @@ export namespace LazyPropertiesInterface {
             ),
           ),
         ),
-      );
+    );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazyPropertiesInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       optionalLazyToResolvedInterfaceProperty: {
         kind: "Shacl" as const,
@@ -32371,11 +32090,11 @@ export namespace LazyPropertiesInterface {
   ): LazyPropertiesInterface.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _lazyPropertiesInterface.$type,
         "@id":
           _lazyPropertiesInterface.$identifier().termType === "BlankNode"
             ? `_:${_lazyPropertiesInterface.$identifier().value}`
             : _lazyPropertiesInterface.$identifier().value,
-        $type: _lazyPropertiesInterface.$type,
         optionalLazyToResolvedInterfaceProperty:
           _lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
             .map((item) => item.$toJson())
@@ -32633,9 +32352,9 @@ export namespace LazyPropertiesInterface {
  */
 
 export class LazyPropertiesClass {
-  readonly $identifier: () => LazyPropertiesClass.$Identifier;
-
   readonly $type: "LazyPropertiesClass" = "LazyPropertiesClass" as const;
+
+  readonly $identifier: () => LazyPropertiesClass.$Identifier;
 
   readonly optionalLazyToResolvedClassProperty: $LazyObjectOption<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
@@ -33327,17 +33046,6 @@ export class LazyPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           ((left, right) =>
             $maybeEquals(left, right, (left, right) => left.$equals(right)))(
@@ -33503,8 +33211,8 @@ export class LazyPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -33551,11 +33259,11 @@ export class LazyPropertiesClass {
   $toJson(): LazyPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         optionalLazyToResolvedClassProperty:
           this.optionalLazyToResolvedClassProperty.partial
             .map((item) => item.$toJson())
@@ -33761,8 +33469,8 @@ export namespace LazyPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazyPropertiesClass";
+    readonly "@id": string;
     readonly optionalLazyToResolvedClassProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedClassUnionProperty?: $DefaultPartial.$Json;
     readonly optionalLazyToResolvedIriIdentifierClassProperty?: $NamedDefaultPartial.$Json;
@@ -33787,8 +33495,8 @@ export namespace LazyPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazyPropertiesClass"),
+          "@id": z.string().min(1),
           optionalLazyToResolvedClassProperty: $DefaultPartial.$Json
             .schema()
             .optional()
@@ -33859,11 +33567,6 @@ export namespace LazyPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LazyPropertiesClass" as const },
@@ -33872,6 +33575,11 @@ export namespace LazyPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           $DefaultPartial.$Json.uiSchema({
@@ -35394,16 +35102,16 @@ export namespace LazyPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazyPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       optionalLazyToResolvedClassProperty: {
         kind: "Shacl" as const,
@@ -35626,8 +35334,8 @@ export namespace LazyPropertiesClass {
  */
 
 export interface LazilyResolvedIriIdentifierInterface {
-  readonly $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
   readonly $type: "LazilyResolvedIriIdentifierInterface";
+  readonly $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -35639,6 +35347,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedIriIdentifierInterface {
+    const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedIriIdentifierInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -35650,10 +35359,9 @@ export namespace LazilyResolvedIriIdentifierInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -35668,17 +35376,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -35701,8 +35398,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
       _lazilyResolvedIriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedIriIdentifierInterface.$identifier().value);
     _hasher.update(_lazilyResolvedIriIdentifierInterface.$type);
+    _hasher.update(_lazilyResolvedIriIdentifierInterface.$identifier().value);
     return _hasher;
   }
 
@@ -35724,8 +35421,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedIriIdentifierInterface";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -35741,8 +35438,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedIriIdentifierInterface"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -35758,11 +35455,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: {
@@ -35773,6 +35465,11 @@ export namespace LazilyResolvedIriIdentifierInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -35927,35 +35624,35 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export function $propertiesFromJson(
     $json: LazilyResolvedIriIdentifierInterface.$Json,
   ): {
-    $identifier: NamedNode;
     $type: "LazilyResolvedIriIdentifierInterface";
+    $identifier: NamedNode;
     lazilyResolvedStringProperty: string;
   } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
     const $type = "LazilyResolvedIriIdentifierInterface" as const;
+    const $identifier = dataFactory.namedNode($json["@id"]);
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: NamedNode;
     $type: "LazilyResolvedIriIdentifierInterface";
+    $identifier: NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIri()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"LazilyResolvedIriIdentifierInterface">(
-          "LazilyResolvedIriIdentifierInterface" as const,
-        ).chain(($type) =>
+    return Right<"LazilyResolvedIriIdentifierInterface">(
+      "LazilyResolvedIriIdentifierInterface" as const,
+    ).chain(($type) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIri()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
@@ -35972,26 +35669,26 @@ export namespace LazilyResolvedIriIdentifierInterface {
                   values.chainMap((value) => value.toString()),
                 ),
           }).map((lazilyResolvedStringProperty) => ({
-            $identifier,
             $type,
+            $identifier,
             lazilyResolvedStringProperty,
           })),
         ),
-      );
+    );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedIriIdentifierInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -36068,8 +35765,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
   ): LazilyResolvedIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _lazilyResolvedIriIdentifierInterface.$identifier().value,
         $type: _lazilyResolvedIriIdentifierInterface.$type,
+        "@id": _lazilyResolvedIriIdentifierInterface.$identifier().value,
         lazilyResolvedStringProperty:
           _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedIriIdentifierInterface.$Json),
@@ -36160,10 +35857,10 @@ export namespace LazilyResolvedIriIdentifierInterface {
  */
 
 export class LazilyResolvedIriIdentifierClass {
-  readonly $identifier: () => LazilyResolvedIriIdentifierClass.$Identifier;
-
   readonly $type: "LazilyResolvedIriIdentifierClass" =
     "LazilyResolvedIriIdentifierClass" as const;
+
+  readonly $identifier: () => LazilyResolvedIriIdentifierClass.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -36197,17 +35894,6 @@ export class LazilyResolvedIriIdentifierClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -36223,8 +35909,8 @@ export class LazilyResolvedIriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -36238,8 +35924,8 @@ export class LazilyResolvedIriIdentifierClass {
   $toJson(): LazilyResolvedIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier().value,
         $type: this.$type,
+        "@id": this.$identifier().value,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedIriIdentifierClass.$Json),
     );
@@ -36283,8 +35969,8 @@ export namespace LazilyResolvedIriIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedIriIdentifierClass";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -36300,8 +35986,8 @@ export namespace LazilyResolvedIriIdentifierClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedIriIdentifierClass"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -36317,11 +36003,6 @@ export namespace LazilyResolvedIriIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LazilyResolvedIriIdentifierClass" as const },
@@ -36330,6 +36011,11 @@ export namespace LazilyResolvedIriIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -36524,16 +36210,16 @@ export namespace LazilyResolvedIriIdentifierClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedIriIdentifierClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -36638,8 +36324,8 @@ export namespace LazilyResolvedIriIdentifierClass {
     );
 }
 export interface LazilyResolvedInterfaceUnionMember2 {
-  readonly $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
   readonly $type: "LazilyResolvedInterfaceUnionMember2";
+  readonly $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -36651,6 +36337,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember2 {
+    const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedInterfaceUnionMember2.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -36665,10 +36352,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -36683,17 +36369,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -36716,8 +36391,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       _lazilyResolvedInterfaceUnionMember2,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedInterfaceUnionMember2.$identifier().value);
     _hasher.update(_lazilyResolvedInterfaceUnionMember2.$type);
+    _hasher.update(_lazilyResolvedInterfaceUnionMember2.$identifier().value);
     return _hasher;
   }
 
@@ -36739,8 +36414,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedInterfaceUnionMember2";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -36756,8 +36431,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedInterfaceUnionMember2"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -36772,11 +36447,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: {
@@ -36787,6 +36457,11 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -37001,21 +36676,21 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $propertiesFromJson(
     $json: LazilyResolvedInterfaceUnionMember2.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedInterfaceUnionMember2";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedInterfaceUnionMember2";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -37048,20 +36723,20 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"LazilyResolvedInterfaceUnionMember2">(
-            "LazilyResolvedInterfaceUnionMember2" as const,
-          ).chain(($type) =>
+      Right<"LazilyResolvedInterfaceUnionMember2">(
+        "LazilyResolvedInterfaceUnionMember2" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -37078,27 +36753,27 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               lazilyResolvedStringProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedInterfaceUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -37175,12 +36850,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   ): LazilyResolvedInterfaceUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _lazilyResolvedInterfaceUnionMember2.$type,
         "@id":
           _lazilyResolvedInterfaceUnionMember2.$identifier().termType ===
           "BlankNode"
             ? `_:${_lazilyResolvedInterfaceUnionMember2.$identifier().value}`
             : _lazilyResolvedInterfaceUnionMember2.$identifier().value,
-        $type: _lazilyResolvedInterfaceUnionMember2.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedInterfaceUnionMember2.$Json),
@@ -37277,8 +36952,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     );
 }
 export interface LazilyResolvedInterfaceUnionMember1 {
-  readonly $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
   readonly $type: "LazilyResolvedInterfaceUnionMember1";
+  readonly $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -37290,6 +36965,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedInterfaceUnionMember1 {
+    const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedInterfaceUnionMember1.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -37304,10 +36980,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -37322,17 +36997,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -37355,8 +37019,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       _lazilyResolvedInterfaceUnionMember1,
       _hasher,
     );
-    _hasher.update(_lazilyResolvedInterfaceUnionMember1.$identifier().value);
     _hasher.update(_lazilyResolvedInterfaceUnionMember1.$type);
+    _hasher.update(_lazilyResolvedInterfaceUnionMember1.$identifier().value);
     return _hasher;
   }
 
@@ -37378,8 +37042,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedInterfaceUnionMember1";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -37395,8 +37059,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedInterfaceUnionMember1"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -37411,11 +37075,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: {
@@ -37426,6 +37085,11 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -37640,21 +37304,21 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $propertiesFromJson(
     $json: LazilyResolvedInterfaceUnionMember1.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedInterfaceUnionMember1";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedInterfaceUnionMember1";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -37687,20 +37351,20 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"LazilyResolvedInterfaceUnionMember1">(
-            "LazilyResolvedInterfaceUnionMember1" as const,
-          ).chain(($type) =>
+      Right<"LazilyResolvedInterfaceUnionMember1">(
+        "LazilyResolvedInterfaceUnionMember1" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -37717,27 +37381,27 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               lazilyResolvedStringProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedInterfaceUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -37814,12 +37478,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   ): LazilyResolvedInterfaceUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _lazilyResolvedInterfaceUnionMember1.$type,
         "@id":
           _lazilyResolvedInterfaceUnionMember1.$identifier().termType ===
           "BlankNode"
             ? `_:${_lazilyResolvedInterfaceUnionMember1.$identifier().value}`
             : _lazilyResolvedInterfaceUnionMember1.$identifier().value,
-        $type: _lazilyResolvedInterfaceUnionMember1.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedInterfaceUnionMember1.$Json),
@@ -37916,10 +37580,10 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     );
 }
 export class LazilyResolvedClassUnionMember2 {
-  readonly $identifier: () => LazilyResolvedClassUnionMember2.$Identifier;
-
   readonly $type: "LazilyResolvedClassUnionMember2" =
     "LazilyResolvedClassUnionMember2" as const;
+
+  readonly $identifier: () => LazilyResolvedClassUnionMember2.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -37956,17 +37620,6 @@ export class LazilyResolvedClassUnionMember2 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -37982,8 +37635,8 @@ export class LazilyResolvedClassUnionMember2 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -37997,11 +37650,11 @@ export class LazilyResolvedClassUnionMember2 {
   $toJson(): LazilyResolvedClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedClassUnionMember2.$Json),
     );
@@ -38054,8 +37707,8 @@ export namespace LazilyResolvedClassUnionMember2 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedClassUnionMember2";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -38071,8 +37724,8 @@ export namespace LazilyResolvedClassUnionMember2 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedClassUnionMember2"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -38087,11 +37740,6 @@ export namespace LazilyResolvedClassUnionMember2 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LazilyResolvedClassUnionMember2" as const },
@@ -38100,6 +37748,11 @@ export namespace LazilyResolvedClassUnionMember2 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -38389,16 +38042,16 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedClassUnionMember2"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -38503,10 +38156,10 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
 }
 export class LazilyResolvedClassUnionMember1 {
-  readonly $identifier: () => LazilyResolvedClassUnionMember1.$Identifier;
-
   readonly $type: "LazilyResolvedClassUnionMember1" =
     "LazilyResolvedClassUnionMember1" as const;
+
+  readonly $identifier: () => LazilyResolvedClassUnionMember1.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -38543,17 +38196,6 @@ export class LazilyResolvedClassUnionMember1 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -38569,8 +38211,8 @@ export class LazilyResolvedClassUnionMember1 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -38584,11 +38226,11 @@ export class LazilyResolvedClassUnionMember1 {
   $toJson(): LazilyResolvedClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedClassUnionMember1.$Json),
     );
@@ -38641,8 +38283,8 @@ export namespace LazilyResolvedClassUnionMember1 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedClassUnionMember1";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -38658,8 +38300,8 @@ export namespace LazilyResolvedClassUnionMember1 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedClassUnionMember1"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -38674,11 +38316,6 @@ export namespace LazilyResolvedClassUnionMember1 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LazilyResolvedClassUnionMember1" as const },
@@ -38687,6 +38324,11 @@ export namespace LazilyResolvedClassUnionMember1 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -38976,16 +38618,16 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedClassUnionMember1"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -39093,8 +38735,8 @@ export namespace LazilyResolvedClassUnionMember1 {
  */
 
 export interface LazilyResolvedBlankNodeOrIriIdentifierInterface {
-  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
   readonly lazilyResolvedStringProperty: string;
 }
 
@@ -39106,6 +38748,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifierInterface {
+    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -39120,10 +38763,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty =
       parameters.lazilyResolvedStringProperty;
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export function $equals(
@@ -39138,17 +38780,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.lazilyResolvedStringProperty,
@@ -39171,10 +38802,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       _lazilyResolvedBlankNodeOrIriIdentifierInterface,
       _hasher,
     );
+    _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifierInterface.$type);
     _hasher.update(
       _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier().value,
     );
-    _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifierInterface.$type);
     return _hasher;
   }
 
@@ -39196,8 +38827,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -39213,8 +38844,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierInterface"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -39230,11 +38861,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: {
@@ -39246,6 +38872,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -39460,21 +39091,21 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $propertiesFromJson(
     $json: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   } {
+    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
+    return { $type, $identifier, lazilyResolvedStringProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "LazilyResolvedBlankNodeOrIriIdentifierInterface";
+    $identifier: BlankNode | NamedNode;
     lazilyResolvedStringProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -39509,20 +39140,20 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"LazilyResolvedBlankNodeOrIriIdentifierInterface">(
-            "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
-          ).chain(($type) =>
+      Right<"LazilyResolvedBlankNodeOrIriIdentifierInterface">(
+        "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -39539,27 +39170,27 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((lazilyResolvedStringProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               lazilyResolvedStringProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -39642,13 +39273,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   ): LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
         "@id":
           _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier()
             .termType === "BlankNode"
             ? `_:${_lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier().value}`
             : _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier()
                 .value,
-        $type: _lazilyResolvedBlankNodeOrIriIdentifierInterface.$type,
         lazilyResolvedStringProperty:
           _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierInterface.$Json),
@@ -39757,10 +39388,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
  */
 
 export class LazilyResolvedBlankNodeOrIriIdentifierClass {
-  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
-
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass" =
     "LazilyResolvedBlankNodeOrIriIdentifierClass" as const;
+
+  readonly $identifier: () => LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -39797,17 +39428,6 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -39823,8 +39443,8 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -39838,11 +39458,11 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   $toJson(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierClass.$Json),
     );
@@ -39895,8 +39515,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -39912,8 +39532,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifierClass"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -39929,11 +39549,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: {
@@ -39944,6 +39559,11 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -40241,16 +39861,16 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -40364,10 +39984,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
  */
 
 export class LanguageInPropertiesClass {
-  readonly $identifier: () => LanguageInPropertiesClass.$Identifier;
-
   readonly $type: "LanguageInPropertiesClass" =
     "LanguageInPropertiesClass" as const;
+
+  readonly $identifier: () => LanguageInPropertiesClass.$Identifier;
 
   /**
    * literal property for testing languageIn
@@ -40407,17 +40027,6 @@ export class LanguageInPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $arrayEquals(left, right, $booleanEquals))(
           this.languageInLiteralProperty,
           other.languageInLiteralProperty,
@@ -40433,8 +40042,8 @@ export class LanguageInPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -40453,11 +40062,11 @@ export class LanguageInPropertiesClass {
   $toJson(): LanguageInPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         languageInLiteralProperty: this.languageInLiteralProperty.map(
           (item) => ({
             "@language": item.language.length > 0 ? item.language : undefined,
@@ -40508,8 +40117,8 @@ export namespace LanguageInPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "LanguageInPropertiesClass";
+    readonly "@id": string;
     readonly languageInLiteralProperty: readonly {
       readonly "@language"?: string;
       readonly "@type"?: string;
@@ -40529,8 +40138,8 @@ export namespace LanguageInPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("LanguageInPropertiesClass"),
+          "@id": z.string().min(1),
           languageInLiteralProperty: z
             .object({
               "@language": z.string().optional(),
@@ -40557,11 +40166,6 @@ export namespace LanguageInPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "LanguageInPropertiesClass" as const },
@@ -40570,6 +40174,11 @@ export namespace LanguageInPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -40795,16 +40404,16 @@ export namespace LanguageInPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["LanguageInPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       languageInLiteralProperty: {
         kind: "Shacl" as const,
@@ -40916,10 +40525,10 @@ export namespace LanguageInPropertiesClass {
  */
 
 export class JsPrimitiveUnionPropertyClass {
-  readonly $identifier: () => JsPrimitiveUnionPropertyClass.$Identifier;
-
   readonly $type: "JsPrimitiveUnionPropertyClass" =
     "JsPrimitiveUnionPropertyClass" as const;
+
+  readonly $identifier: () => JsPrimitiveUnionPropertyClass.$Identifier;
 
   readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
 
@@ -40962,17 +40571,6 @@ export class JsPrimitiveUnionPropertyClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) =>
           $arrayEquals(
@@ -41019,8 +40617,8 @@ export class JsPrimitiveUnionPropertyClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -41044,11 +40642,11 @@ export class JsPrimitiveUnionPropertyClass {
   $toJson(): JsPrimitiveUnionPropertyClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map((item) =>
           ((value: boolean | number | string): boolean | number | string => {
             if (typeof value === "boolean") {
@@ -41142,8 +40740,8 @@ export namespace JsPrimitiveUnionPropertyClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "JsPrimitiveUnionPropertyClass";
+    readonly "@id": string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   };
 
@@ -41159,8 +40757,8 @@ export namespace JsPrimitiveUnionPropertyClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("JsPrimitiveUnionPropertyClass"),
+          "@id": z.string().min(1),
           jsPrimitiveUnionProperty: z
             .union([z.boolean(), z.number(), z.string()])
             .readonly()
@@ -41181,11 +40779,6 @@ export namespace JsPrimitiveUnionPropertyClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "JsPrimitiveUnionPropertyClass" as const },
@@ -41194,6 +40787,11 @@ export namespace JsPrimitiveUnionPropertyClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -41761,16 +41359,16 @@ export namespace JsPrimitiveUnionPropertyClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["JsPrimitiveUnionPropertyClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       jsPrimitiveUnionProperty: {
         kind: "Shacl" as const,
@@ -41897,8 +41495,8 @@ export namespace JsPrimitiveUnionPropertyClass {
  */
 
 export interface IriIdentifierInterface {
-  readonly $identifier: () => IriIdentifierInterface.$Identifier;
   readonly $type: "IriIdentifierInterface";
+  readonly $identifier: () => IriIdentifierInterface.$Identifier;
 }
 
 export namespace IriIdentifierInterface {
@@ -41908,6 +41506,7 @@ export namespace IriIdentifierInterface {
       | NamedNode
       | string;
   }): IriIdentifierInterface {
+    const $type = "IriIdentifierInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => IriIdentifierInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -41919,33 +41518,22 @@ export namespace IriIdentifierInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "IriIdentifierInterface" as const;
-    return { $identifier, $type };
+    return { $type, $identifier };
   }
 
   export function $equals(
     left: IriIdentifierInterface,
     right: IriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: left,
         right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -41956,8 +41544,8 @@ export namespace IriIdentifierInterface {
       _iriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_iriIdentifierInterface.$identifier().value);
     _hasher.update(_iriIdentifierInterface.$type);
+    _hasher.update(_iriIdentifierInterface.$identifier().value);
     return _hasher;
   }
 
@@ -41976,8 +41564,8 @@ export namespace IriIdentifierInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "IriIdentifierInterface";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -41992,8 +41580,8 @@ export namespace IriIdentifierInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("IriIdentifierInterface"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "IriIdentifierInterface",
@@ -42006,11 +41594,6 @@ export namespace IriIdentifierInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "IriIdentifierInterface" as const },
@@ -42019,6 +41602,11 @@ export namespace IriIdentifierInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -42183,17 +41771,17 @@ export namespace IriIdentifierInterface {
   }
 
   export function $propertiesFromJson($json: IriIdentifierInterface.$Json): {
-    $identifier: NamedNode;
     $type: "IriIdentifierInterface";
+    $identifier: NamedNode;
   } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
     const $type = "IriIdentifierInterface" as const;
-    return { $identifier, $type };
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return { $type, $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: NamedNode;
     $type: "IriIdentifierInterface";
+    $identifier: NamedNode;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -42224,39 +41812,35 @@ export namespace IriIdentifierInterface {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIri()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"IriIdentifierInterface">(
-            "IriIdentifierInterface" as const,
-          ).map(($type) => ({
-            $identifier,
-            $type,
-          })),
-        ),
+      Right<"IriIdentifierInterface">("IriIdentifierInterface" as const).chain(
+        ($type) =>
+          Right(
+            new Resource.Value({
+              dataFactory: dataFactory,
+              focusResource: $resource,
+              propertyPath: $RdfVocabularies.rdf.subject,
+              term: $resource.identifier,
+            }).toValues(),
+          )
+            .chain((values) => values.chainMap((value) => value.toIri()))
+            .chain((values) => values.head())
+            .map(($identifier) => ({ $type, $identifier })),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["IriIdentifierInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
       },
     },
   } as const;
@@ -42326,8 +41910,8 @@ export namespace IriIdentifierInterface {
   ): IriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": _iriIdentifierInterface.$identifier().value,
         $type: _iriIdentifierInterface.$type,
+        "@id": _iriIdentifierInterface.$identifier().value,
       } satisfies IriIdentifierInterface.$Json),
     );
   }
@@ -42410,9 +41994,9 @@ export namespace IriIdentifierInterface {
  */
 
 export class IriIdentifierClass {
-  readonly $identifier: () => IriIdentifierClass.$Identifier;
-
   readonly $type: "IriIdentifierClass" = "IriIdentifierClass" as const;
+
+  readonly $identifier: () => IriIdentifierClass.$Identifier;
 
   constructor(parameters: {
     readonly $identifier:
@@ -42433,31 +42017,21 @@ export class IriIdentifierClass {
   }
 
   $equals(other: IriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -42470,8 +42044,8 @@ export class IriIdentifierClass {
   $toJson(): IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier().value,
         $type: this.$type,
+        "@id": this.$identifier().value,
       } satisfies IriIdentifierClass.$Json),
     );
   }
@@ -42514,8 +42088,8 @@ export namespace IriIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "IriIdentifierClass";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -42530,8 +42104,8 @@ export namespace IriIdentifierClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("IriIdentifierClass"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "IriIdentifierClass",
@@ -42544,11 +42118,6 @@ export namespace IriIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "IriIdentifierClass" as const },
@@ -42557,6 +42126,11 @@ export namespace IriIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -42775,16 +42349,16 @@ export namespace IriIdentifierClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Iri" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["IriIdentifierClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Iri" as const }),
       },
     },
   } as const;
@@ -42878,8 +42452,8 @@ export namespace IriIdentifierClass {
     );
 }
 export interface InterfaceUnionMemberCommonParent {
-  readonly $identifier: () => InterfaceUnionMemberCommonParentStatic.$Identifier;
   readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
+  readonly $identifier: () => InterfaceUnionMemberCommonParentStatic.$Identifier;
   readonly interfaceUnionMemberCommonParentProperty: string;
 }
 
@@ -42923,17 +42497,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           left.interfaceUnionMemberCommonParentProperty,
           right.interfaceUnionMemberCommonParentProperty,
@@ -42955,8 +42518,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       _interfaceUnionMemberCommonParent,
       _hasher,
     );
-    _hasher.update(_interfaceUnionMemberCommonParent.$identifier().value);
     _hasher.update(_interfaceUnionMemberCommonParent.$type);
+    _hasher.update(_interfaceUnionMemberCommonParent.$identifier().value);
     return _hasher;
   }
 
@@ -42978,8 +42541,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
+    readonly "@id": string;
     readonly interfaceUnionMemberCommonParentProperty: string;
   };
 
@@ -42987,8 +42550,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
+          "@id": z.string().min(1),
           interfaceUnionMemberCommonParentProperty: z.string().meta({
             id: "interfaceUnionMemberCommonParentProperty",
           }),
@@ -43003,11 +42566,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "InterfaceUnionMemberCommonParent" as const },
@@ -43016,6 +42574,11 @@ export namespace InterfaceUnionMemberCommonParentStatic {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -43173,16 +42736,16 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           descendantValues: ["InterfaceUnionMember1", "InterfaceUnionMember2"],
           kind: "TypeDiscriminant" as const,
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       interfaceUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
@@ -43259,12 +42822,12 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   ): InterfaceUnionMemberCommonParentStatic.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _interfaceUnionMemberCommonParent.$type,
         "@id":
           _interfaceUnionMemberCommonParent.$identifier().termType ===
           "BlankNode"
             ? `_:${_interfaceUnionMemberCommonParent.$identifier().value}`
             : _interfaceUnionMemberCommonParent.$identifier().value,
-        $type: _interfaceUnionMemberCommonParent.$type,
         interfaceUnionMemberCommonParentProperty:
           _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
       } satisfies InterfaceUnionMemberCommonParentStatic.$Json),
@@ -43355,8 +42918,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 }
 export interface InterfaceUnionMember2
   extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: () => InterfaceUnionMember2.$Identifier;
   readonly $type: "InterfaceUnionMember2";
+  readonly $identifier: () => InterfaceUnionMember2.$Identifier;
   readonly interfaceUnionMember2Property: string;
 }
 
@@ -43370,6 +42933,7 @@ export namespace InterfaceUnionMember2 {
       readonly interfaceUnionMember2Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember2 {
+    const $type = "InterfaceUnionMember2" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => InterfaceUnionMember2.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -43384,13 +42948,12 @@ export namespace InterfaceUnionMember2 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
       parameters.interfaceUnionMember2Property;
     return {
       ...InterfaceUnionMemberCommonParentStatic.$create(parameters),
-      $identifier,
       $type,
+      $identifier,
       interfaceUnionMember2Property,
     };
   }
@@ -43399,8 +42962,19 @@ export namespace InterfaceUnionMember2 {
     left: InterfaceUnionMember2,
     right: InterfaceUnionMember2,
   ): $EqualsResult {
-    return InterfaceUnionMemberCommonParentStatic.$equals(left, right).chain(
-      () =>
+    return InterfaceUnionMemberCommonParentStatic.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
         $strictEquals(
           left.interfaceUnionMember2Property,
           right.interfaceUnionMember2Property,
@@ -43411,7 +42985,7 @@ export namespace InterfaceUnionMember2 {
           propertyValuesUnequal,
           type: "property" as const,
         })),
-    );
+      );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -43419,6 +42993,7 @@ export namespace InterfaceUnionMember2 {
     _hasher: HasherT,
   ): HasherT {
     InterfaceUnionMember2.$hashShaclProperties(_interfaceUnionMember2, _hasher);
+    _hasher.update(_interfaceUnionMember2.$identifier().value);
     return _hasher;
   }
 
@@ -43442,6 +43017,7 @@ export namespace InterfaceUnionMember2 {
   }
 
   export type $Json = {
+    readonly "@id": string;
     readonly interfaceUnionMember2Property: string;
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
@@ -43459,7 +43035,6 @@ export namespace InterfaceUnionMember2 {
         .object({
           ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember2"),
           interfaceUnionMember2Property: z
             .string()
             .meta({ id: "interfaceUnionMember2Property" }),
@@ -43474,6 +43049,11 @@ export namespace InterfaceUnionMember2 {
           InterfaceUnionMemberCommonParentStatic.$Json.uiSchema({
             scopePrefix,
           }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
           {
             scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
             type: "Control",
@@ -43490,6 +43070,12 @@ export namespace InterfaceUnionMember2 {
     value: InterfaceUnionMember2,
   ): boolean {
     if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
       return false;
     }
     if (
@@ -43604,6 +43190,19 @@ export namespace InterfaceUnionMember2 {
         },
       );
     }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: InterfaceUnionMember2.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.interfaceUnionMember2Property,
@@ -43676,30 +43275,30 @@ export namespace InterfaceUnionMember2 {
   }
 
   export function $propertiesFromJson($json: InterfaceUnionMember2.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "InterfaceUnionMember2";
+    $identifier: BlankNode | NamedNode;
     interfaceUnionMember2Property: string;
   } & ReturnType<
     typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
   > {
+    const $type = "InterfaceUnionMember2" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
       $json["interfaceUnionMember2Property"];
     return {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($json),
-      $identifier,
       $type,
+      $identifier,
       interfaceUnionMember2Property,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
     {
-      $identifier: BlankNode | NamedNode;
       $type: "InterfaceUnionMember2";
+      $identifier: BlankNode | NamedNode;
       interfaceUnionMember2Property: string;
     } & $UnwrapR<
       ReturnType<
@@ -43742,44 +43341,45 @@ export namespace InterfaceUnionMember2 {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"InterfaceUnionMember2">(
-              "InterfaceUnionMember2" as const,
-            ).chain(($type) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema:
-                  $schema.properties.interfaceUnionMember2Property,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
+        Right<"InterfaceUnionMember2">("InterfaceUnionMember2" as const).chain(
+          ($type) =>
+            Right(
+              new Resource.Value({
+                dataFactory: dataFactory,
+                focusResource: $resource,
+                propertyPath: $RdfVocabularies.rdf.subject,
+                term: $resource.identifier,
+              }).toValues(),
+            )
+              .chain((values) =>
+                values.chainMap((value) => value.toIdentifier()),
+              )
+              .chain((values) => values.head())
+              .chain(($identifier) =>
+                $shaclPropertyFromRdf({
+                  graph: _$options.graph,
+                  resource: $resource,
+                  propertySchema:
+                    $schema.properties.interfaceUnionMember2Property,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages(
+                          values,
+                          _$options.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
                       ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).map((interfaceUnionMember2Property) => ({
-                ...$super0,
-                $identifier,
-                $type,
-                interfaceUnionMember2Property,
-              })),
-            ),
-          ),
+                }).map((interfaceUnionMember2Property) => ({
+                  ...$super0,
+                  $type,
+                  $identifier,
+                  interfaceUnionMember2Property,
+                })),
+              ),
+        ),
       ),
     );
   };
@@ -43787,6 +43387,17 @@ export namespace InterfaceUnionMember2 {
   export const $schema = {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["InterfaceUnionMember2"],
+        }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
       interfaceUnionMember2Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -43863,6 +43474,10 @@ export namespace InterfaceUnionMember2 {
         ...InterfaceUnionMemberCommonParentStatic.$toJson(
           _interfaceUnionMember2,
         ),
+        "@id":
+          _interfaceUnionMember2.$identifier().termType === "BlankNode"
+            ? `_:${_interfaceUnionMember2.$identifier().value}`
+            : _interfaceUnionMember2.$identifier().value,
         interfaceUnionMember2Property:
           _interfaceUnionMember2.interfaceUnionMember2Property,
       } satisfies InterfaceUnionMember2.$Json),
@@ -43913,6 +43528,7 @@ export namespace InterfaceUnionMember2 {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember2,
       ),
+      $identifier: _interfaceUnionMember2.$identifier.toString(),
     });
   }
 
@@ -43961,8 +43577,8 @@ export namespace InterfaceUnionMember2 {
 }
 export interface InterfaceUnionMember1
   extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: () => InterfaceUnionMember1.$Identifier;
   readonly $type: "InterfaceUnionMember1";
+  readonly $identifier: () => InterfaceUnionMember1.$Identifier;
   readonly interfaceUnionMember1Property: string;
 }
 
@@ -43976,6 +43592,7 @@ export namespace InterfaceUnionMember1 {
       readonly interfaceUnionMember1Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
   ): InterfaceUnionMember1 {
+    const $type = "InterfaceUnionMember1" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => InterfaceUnionMember1.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -43990,13 +43607,12 @@ export namespace InterfaceUnionMember1 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       parameters.interfaceUnionMember1Property;
     return {
       ...InterfaceUnionMemberCommonParentStatic.$create(parameters),
-      $identifier,
       $type,
+      $identifier,
       interfaceUnionMember1Property,
     };
   }
@@ -44005,8 +43621,19 @@ export namespace InterfaceUnionMember1 {
     left: InterfaceUnionMember1,
     right: InterfaceUnionMember1,
   ): $EqualsResult {
-    return InterfaceUnionMemberCommonParentStatic.$equals(left, right).chain(
-      () =>
+    return InterfaceUnionMemberCommonParentStatic.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
         $strictEquals(
           left.interfaceUnionMember1Property,
           right.interfaceUnionMember1Property,
@@ -44017,7 +43644,7 @@ export namespace InterfaceUnionMember1 {
           propertyValuesUnequal,
           type: "property" as const,
         })),
-    );
+      );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -44025,6 +43652,7 @@ export namespace InterfaceUnionMember1 {
     _hasher: HasherT,
   ): HasherT {
     InterfaceUnionMember1.$hashShaclProperties(_interfaceUnionMember1, _hasher);
+    _hasher.update(_interfaceUnionMember1.$identifier().value);
     return _hasher;
   }
 
@@ -44048,6 +43676,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export type $Json = {
+    readonly "@id": string;
     readonly interfaceUnionMember1Property: string;
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
@@ -44065,7 +43694,6 @@ export namespace InterfaceUnionMember1 {
         .object({
           ...InterfaceUnionMemberCommonParentStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.literal("InterfaceUnionMember1"),
           interfaceUnionMember1Property: z
             .string()
             .meta({ id: "interfaceUnionMember1Property" }),
@@ -44080,6 +43708,11 @@ export namespace InterfaceUnionMember1 {
           InterfaceUnionMemberCommonParentStatic.$Json.uiSchema({
             scopePrefix,
           }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
           {
             scope: `${scopePrefix}/properties/interfaceUnionMember1Property`,
             type: "Control",
@@ -44096,6 +43729,12 @@ export namespace InterfaceUnionMember1 {
     value: InterfaceUnionMember1,
   ): boolean {
     if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
       return false;
     }
     if (
@@ -44210,6 +43849,19 @@ export namespace InterfaceUnionMember1 {
         },
       );
     }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: InterfaceUnionMember1.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.interfaceUnionMember1Property,
@@ -44282,30 +43934,30 @@ export namespace InterfaceUnionMember1 {
   }
 
   export function $propertiesFromJson($json: InterfaceUnionMember1.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "InterfaceUnionMember1";
+    $identifier: BlankNode | NamedNode;
     interfaceUnionMember1Property: string;
   } & ReturnType<
     typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
   > {
+    const $type = "InterfaceUnionMember1" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       $json["interfaceUnionMember1Property"];
     return {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($json),
-      $identifier,
       $type,
+      $identifier,
       interfaceUnionMember1Property,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
     {
-      $identifier: BlankNode | NamedNode;
       $type: "InterfaceUnionMember1";
+      $identifier: BlankNode | NamedNode;
       interfaceUnionMember1Property: string;
     } & $UnwrapR<
       ReturnType<
@@ -44348,44 +44000,45 @@ export namespace InterfaceUnionMember1 {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"InterfaceUnionMember1">(
-              "InterfaceUnionMember1" as const,
-            ).chain(($type) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema:
-                  $schema.properties.interfaceUnionMember1Property,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
+        Right<"InterfaceUnionMember1">("InterfaceUnionMember1" as const).chain(
+          ($type) =>
+            Right(
+              new Resource.Value({
+                dataFactory: dataFactory,
+                focusResource: $resource,
+                propertyPath: $RdfVocabularies.rdf.subject,
+                term: $resource.identifier,
+              }).toValues(),
+            )
+              .chain((values) =>
+                values.chainMap((value) => value.toIdentifier()),
+              )
+              .chain((values) => values.head())
+              .chain(($identifier) =>
+                $shaclPropertyFromRdf({
+                  graph: _$options.graph,
+                  resource: $resource,
+                  propertySchema:
+                    $schema.properties.interfaceUnionMember1Property,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages(
+                          values,
+                          _$options.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
                       ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).map((interfaceUnionMember1Property) => ({
-                ...$super0,
-                $identifier,
-                $type,
-                interfaceUnionMember1Property,
-              })),
-            ),
-          ),
+                }).map((interfaceUnionMember1Property) => ({
+                  ...$super0,
+                  $type,
+                  $identifier,
+                  interfaceUnionMember1Property,
+                })),
+              ),
+        ),
       ),
     );
   };
@@ -44393,6 +44046,17 @@ export namespace InterfaceUnionMember1 {
   export const $schema = {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["InterfaceUnionMember1"],
+        }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
       interfaceUnionMember1Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -44469,6 +44133,10 @@ export namespace InterfaceUnionMember1 {
         ...InterfaceUnionMemberCommonParentStatic.$toJson(
           _interfaceUnionMember1,
         ),
+        "@id":
+          _interfaceUnionMember1.$identifier().termType === "BlankNode"
+            ? `_:${_interfaceUnionMember1.$identifier().value}`
+            : _interfaceUnionMember1.$identifier().value,
         interfaceUnionMember1Property:
           _interfaceUnionMember1.interfaceUnionMember1Property,
       } satisfies InterfaceUnionMember1.$Json),
@@ -44519,6 +44187,7 @@ export namespace InterfaceUnionMember1 {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember1,
       ),
+      $identifier: _interfaceUnionMember1.$identifier.toString(),
     });
   }
 
@@ -44569,8 +44238,8 @@ export namespace InterfaceUnionMember1 {
  */
 
 export interface Interface {
-  readonly $identifier: () => Interface.$Identifier;
   readonly $type: "Interface";
+  readonly $identifier: () => Interface.$Identifier;
   readonly interfaceProperty: string;
 }
 
@@ -44582,6 +44251,7 @@ export namespace Interface {
       | string;
     readonly interfaceProperty: string;
   }): Interface {
+    const $type = "Interface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => Interface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -44596,9 +44266,8 @@ export namespace Interface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "Interface" as const;
     const interfaceProperty = parameters.interfaceProperty;
-    return { $identifier, $type, interfaceProperty };
+    return { $type, $identifier, interfaceProperty };
   }
 
   export function $equals(left: Interface, right: Interface): $EqualsResult {
@@ -44610,17 +44279,6 @@ export namespace Interface {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(left.interfaceProperty, right.interfaceProperty).mapLeft(
           (propertyValuesUnequal) => ({
@@ -44639,8 +44297,8 @@ export namespace Interface {
     _hasher: HasherT,
   ): HasherT {
     Interface.$hashShaclProperties(_interface, _hasher);
-    _hasher.update(_interface.$identifier().value);
     _hasher.update(_interface.$type);
+    _hasher.update(_interface.$identifier().value);
     return _hasher;
   }
 
@@ -44660,8 +44318,8 @@ export namespace Interface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "Interface";
+    readonly "@id": string;
     readonly interfaceProperty: string;
   };
 
@@ -44677,8 +44335,8 @@ export namespace Interface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("Interface"),
+          "@id": z.string().min(1),
           interfaceProperty: z.string().meta({ id: "interfaceProperty" }),
         })
         .meta({
@@ -44693,11 +44351,6 @@ export namespace Interface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "Interface" as const },
@@ -44706,6 +44359,11 @@ export namespace Interface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -44841,35 +44499,35 @@ export namespace Interface {
   }
 
   export function $propertiesFromJson($json: Interface.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "Interface";
+    $identifier: BlankNode | NamedNode;
     interfaceProperty: string;
   } {
+    const $type = "Interface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "Interface" as const;
     const interfaceProperty = $json["interfaceProperty"];
-    return { $identifier, $type, interfaceProperty };
+    return { $type, $identifier, interfaceProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "Interface";
+    $identifier: BlankNode | NamedNode;
     interfaceProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"Interface">("Interface" as const).chain(($type) =>
+    return Right<"Interface">("Interface" as const).chain(($type) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
@@ -44886,26 +44544,26 @@ export namespace Interface {
                   values.chainMap((value) => value.toString()),
                 ),
           }).map((interfaceProperty) => ({
-            $identifier,
             $type,
+            $identifier,
             interfaceProperty,
           })),
         ),
-      );
+    );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["Interface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       interfaceProperty: {
         kind: "Shacl" as const,
@@ -44974,11 +44632,11 @@ export namespace Interface {
   export function $toJson(_interface: Interface): Interface.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _interface.$type,
         "@id":
           _interface.$identifier().termType === "BlankNode"
             ? `_:${_interface.$identifier().value}`
             : _interface.$identifier().value,
-        $type: _interface.$type,
         interfaceProperty: _interface.interfaceProperty,
       } satisfies Interface.$Json),
     );
@@ -45051,10 +44709,10 @@ export namespace Interface {
     );
 }
 export class IndirectRecursiveHelperClass {
-  readonly $identifier: () => IndirectRecursiveHelperClass.$Identifier;
-
   readonly $type: "IndirectRecursiveHelperClass" =
     "IndirectRecursiveHelperClass" as const;
+
+  readonly $identifier: () => IndirectRecursiveHelperClass.$Identifier;
 
   readonly indirectRecursiveProperty: Maybe<IndirectRecursiveClass>;
 
@@ -45107,17 +44765,6 @@ export class IndirectRecursiveHelperClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) => left.$equals(right)))(
           this.indirectRecursiveProperty,
@@ -45134,8 +44781,8 @@ export class IndirectRecursiveHelperClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -45151,11 +44798,11 @@ export class IndirectRecursiveHelperClass {
   $toJson(): IndirectRecursiveHelperClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         indirectRecursiveProperty: this.indirectRecursiveProperty
           .map((item) => item.$toJson())
           .extract(),
@@ -45215,8 +44862,8 @@ export namespace IndirectRecursiveHelperClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "IndirectRecursiveHelperClass";
+    readonly "@id": string;
     readonly indirectRecursiveProperty?: IndirectRecursiveClass.$Json;
   };
 
@@ -45232,8 +44879,8 @@ export namespace IndirectRecursiveHelperClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("IndirectRecursiveHelperClass"),
+          "@id": z.string().min(1),
           indirectRecursiveProperty: z
             .lazy(
               (): z.ZodType<IndirectRecursiveClass.$Json> =>
@@ -45252,11 +44899,6 @@ export namespace IndirectRecursiveHelperClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "IndirectRecursiveHelperClass" as const },
@@ -45265,6 +44907,11 @@ export namespace IndirectRecursiveHelperClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           IndirectRecursiveClass.$Json.uiSchema({
@@ -45539,16 +45186,16 @@ export namespace IndirectRecursiveHelperClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["IndirectRecursiveHelperClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       indirectRecursiveProperty: {
         kind: "Shacl" as const,
@@ -45656,9 +45303,9 @@ export namespace IndirectRecursiveHelperClass {
     );
 }
 export class IndirectRecursiveClass {
-  readonly $identifier: () => IndirectRecursiveClass.$Identifier;
-
   readonly $type: "IndirectRecursiveClass" = "IndirectRecursiveClass" as const;
+
+  readonly $identifier: () => IndirectRecursiveClass.$Identifier;
 
   readonly indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelperClass>;
 
@@ -45713,17 +45360,6 @@ export class IndirectRecursiveClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) => left.$equals(right)))(
           this.indirectRecursiveHelperProperty,
@@ -45740,8 +45376,8 @@ export class IndirectRecursiveClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -45757,11 +45393,11 @@ export class IndirectRecursiveClass {
   $toJson(): IndirectRecursiveClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         indirectRecursiveHelperProperty: this.indirectRecursiveHelperProperty
           .map((item) => item.$toJson())
           .extract(),
@@ -45819,8 +45455,8 @@ export namespace IndirectRecursiveClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "IndirectRecursiveClass";
+    readonly "@id": string;
     readonly indirectRecursiveHelperProperty?: IndirectRecursiveHelperClass.$Json;
   };
 
@@ -45836,8 +45472,8 @@ export namespace IndirectRecursiveClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("IndirectRecursiveClass"),
+          "@id": z.string().min(1),
           indirectRecursiveHelperProperty: z
             .lazy(
               (): z.ZodType<IndirectRecursiveHelperClass.$Json> =>
@@ -45854,11 +45490,6 @@ export namespace IndirectRecursiveClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "IndirectRecursiveClass" as const },
@@ -45867,6 +45498,11 @@ export namespace IndirectRecursiveClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           IndirectRecursiveHelperClass.$Json.uiSchema({
@@ -46146,16 +45782,16 @@ export namespace IndirectRecursiveClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["IndirectRecursiveClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       indirectRecursiveHelperProperty: {
         kind: "Shacl" as const,
@@ -46266,9 +45902,9 @@ export namespace IndirectRecursiveClass {
  */
 
 export class InPropertiesClass {
-  readonly $identifier: () => InPropertiesClass.$Identifier;
-
   readonly $type: "InPropertiesClass" = "InPropertiesClass" as const;
+
+  readonly $identifier: () => InPropertiesClass.$Identifier;
 
   readonly inBooleansProperty: Maybe<true>;
 
@@ -46398,17 +46034,6 @@ export class InPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.inBooleansProperty,
           other.inBooleansProperty,
@@ -46484,8 +46109,8 @@ export class InPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -46517,11 +46142,11 @@ export class InPropertiesClass {
   $toJson(): InPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         inBooleansProperty: this.inBooleansProperty
           .map((item) => item)
           .extract(),
@@ -46626,8 +46251,8 @@ export namespace InPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "InPropertiesClass";
+    readonly "@id": string;
     readonly inBooleansProperty?: true;
     readonly inDateTimesProperty?: string;
     readonly inDoublesProperty?: 1 | 2;
@@ -46652,8 +46277,8 @@ export namespace InPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("InPropertiesClass"),
+          "@id": z.string().min(1),
           inBooleansProperty: z
             .literal(true)
             .optional()
@@ -46695,11 +46320,6 @@ export namespace InPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "InPropertiesClass" as const },
@@ -46708,6 +46328,11 @@ export namespace InPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -47404,16 +47029,16 @@ export namespace InPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["InPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       inBooleansProperty: {
         kind: "Shacl" as const,
@@ -47567,9 +47192,9 @@ export namespace InPropertiesClass {
  */
 
 export class InIdentifierClass {
-  readonly $identifier: () => InIdentifierClass.$Identifier;
-
   readonly $type: "InIdentifierClass" = "InIdentifierClass" as const;
+
+  readonly $identifier: () => InIdentifierClass.$Identifier;
 
   readonly inIdentifierProperty: Maybe<string>;
 
@@ -47616,17 +47241,6 @@ export class InIdentifierClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.inIdentifierProperty,
           other.inIdentifierProperty,
@@ -47642,8 +47256,8 @@ export class InIdentifierClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -47659,8 +47273,8 @@ export class InIdentifierClass {
   $toJson(): InIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": this.$identifier().value,
         $type: this.$type,
+        "@id": this.$identifier().value,
         inIdentifierProperty: this.inIdentifierProperty
           .map((item) => item)
           .extract(),
@@ -47740,10 +47354,10 @@ export namespace InIdentifierClass {
   }
 
   export type $Json = {
+    readonly $type: "InIdentifierClass";
     readonly "@id":
       | "http://example.com/InIdentifierInstance1"
       | "http://example.com/InIdentifierInstance2";
-    readonly $type: "InIdentifierClass";
     readonly inIdentifierProperty?: string;
   };
 
@@ -47759,11 +47373,11 @@ export namespace InIdentifierClass {
     export function schema() {
       return z
         .object({
+          $type: z.literal("InIdentifierClass"),
           "@id": z.enum([
             "http://example.com/InIdentifierInstance1",
             "http://example.com/InIdentifierInstance2",
           ]),
-          $type: z.literal("InIdentifierClass"),
           inIdentifierProperty: z
             .string()
             .optional()
@@ -47780,11 +47394,6 @@ export namespace InIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "InIdentifierClass" as const },
@@ -47793,6 +47402,11 @@ export namespace InIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -48102,6 +47716,13 @@ export namespace InIdentifierClass {
 
   export const $schema = {
     properties: {
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["InIdentifierClass"],
+        }),
+      },
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({
@@ -48110,13 +47731,6 @@ export namespace InIdentifierClass {
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
             dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
           ],
-        }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["InIdentifierClass"],
         }),
       },
       inIdentifierProperty: {
@@ -48218,1111 +47832,14 @@ export namespace InIdentifierClass {
       }),
     );
 } /**
- * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
- */
-
-export abstract class IdentifierOverride1Class {
-  abstract readonly $identifier: () => IdentifierOverride1ClassStatic.$Identifier;
-
-  abstract readonly $type: "IdentifierOverride3Class";
-
-  readonly identifierOverrideProperty: string;
-
-  constructor(parameters: { readonly identifierOverrideProperty: string }) {
-    this.identifierOverrideProperty = parameters.identifierOverrideProperty;
-  }
-
-  $equals(other: IdentifierOverride1Class): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.identifierOverrideProperty,
-          other.identifierOverrideProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "identifierOverrideProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
-  }
-
-  $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
-    this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
-    _hasher.update(this.$type);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<HasherT extends $Hasher>(
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(this.identifierOverrideProperty);
-    return _hasher;
-  }
-
-  $toJson(): IdentifierOverride1ClassStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier().termType === "BlankNode"
-            ? `_:${this.$identifier().value}`
-            : this.$identifier().value,
-        $type: this.$type,
-        identifierOverrideProperty: this.identifierOverrideProperty,
-      } satisfies IdentifierOverride1ClassStatic.$Json),
-    );
-  }
-
-  $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<IdentifierOverride1Class>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(this.$identifier());
-    resource.add(
-      dataFactory.namedNode("http://example.com/identifierOverrideProperty"),
-      [$literalFactory.string(this.identifierOverrideProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
-  }
-
-  toString(): string {
-    return `IdentifierOverride1Class(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace IdentifierOverride1ClassStatic {
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "IdentifierOverride3Class";
-    readonly identifierOverrideProperty: string;
-  };
-
-  export namespace $Json {
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride3Class"),
-          identifierOverrideProperty: z
-            .string()
-            .meta({ id: "identifierOverrideProperty" }),
-        })
-        .meta({
-          id: "IdentifierOverride1Class",
-          description:
-            "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "IdentifierOverride1Class" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/identifierOverrideProperty`,
-            type: "Control",
-          },
-        ],
-        label: "IdentifierOverride1Class",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: IdentifierOverride1ClassStatic.$Filter,
-    value: IdentifierOverride1Class,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.identifierOverrideProperty !== undefined &&
-      !$filterString(
-        filter.identifierOverrideProperty,
-        value.identifierOverrideProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly identifierOverrideProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride1ClassStatic.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.identifierOverrideProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "identifierOverrideProperty",
-        propertySchema: $schema.properties.identifierOverrideProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride1ClassStatic.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema:
-            IdentifierOverride1ClassStatic.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.identifierOverrideProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "identifierOverrideProperty",
-        propertySchema: $schema.properties.identifierOverrideProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function isIdentifierOverride1Class(
-    object: $Object,
-  ): object is IdentifierOverride1Class {
-    switch (object.$type) {
-      case "IdentifierOverride3Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: IdentifierOverride1ClassStatic.$Json,
-  ): {
-    $identifier: BlankNode | NamedNode;
-    identifierOverrideProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const identifierOverrideProperty = $json["identifierOverrideProperty"];
-    return { $identifier, identifierOverrideProperty };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    identifierOverrideProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.identifierOverrideProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((identifierOverrideProperty) => ({
-          $identifier,
-          identifierOverrideProperty,
-        })),
-      );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          descendantValues: ["IdentifierOverride3Class"],
-          kind: "TypeDiscriminant" as const,
-        }),
-      },
-      identifierOverrideProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/identifierOverrideProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: IdentifierOverride1ClassStatic.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "identifierOverride1Class";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IdentifierOverride1ClassStatic.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          IdentifierOverride1ClassStatic.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof IdentifierOverride1ClassStatic.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride1ClassStatic.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride1ClassStatic.$Filter,
-    typeof IdentifierOverride1ClassStatic.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride1ClassStatic.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride1ClassStatic.$Filter,
-    typeof IdentifierOverride1ClassStatic.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride1ClassStatic.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
- */
-
-export abstract class IdentifierOverride2Class extends IdentifierOverride1Class {
-  abstract override readonly $type: "IdentifierOverride3Class";
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: ConstructorParameters<typeof IdentifierOverride1Class>[0],
-  ) {
-    super(parameters);
-  }
-
-  override $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<IdentifierOverride2Class>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = super.$toRdfResource({
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    return resource;
-  }
-
-  protected override $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ ...super.$propertiesToStrings() });
-  }
-
-  override toString(): string {
-    return `IdentifierOverride2Class(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace IdentifierOverride2ClassStatic {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = IdentifierOverride1ClassStatic.$Json;
-
-  export namespace $Json {
-    export function schema() {
-      return z
-        .object({
-          ...IdentifierOverride1ClassStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride3Class"),
-        })
-        .meta({
-          id: "IdentifierOverride2Class",
-          description:
-            "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride1ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride2Class",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: IdentifierOverride2ClassStatic.$Filter,
-    value: IdentifierOverride2Class,
-  ): boolean {
-    if (!IdentifierOverride1ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride1ClassStatic.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride2ClassStatic.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      IdentifierOverride1ClassStatic.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride2ClassStatic.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      IdentifierOverride1ClassStatic.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function isIdentifierOverride2Class(
-    object: $Object,
-  ): object is IdentifierOverride2Class {
-    switch (object.$type) {
-      case "IdentifierOverride3Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: IdentifierOverride2ClassStatic.$Json,
-  ): { $identifier: NamedNode } & ReturnType<
-    typeof IdentifierOverride1ClassStatic.$propertiesFromJson
-  > {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return {
-      ...IdentifierOverride1ClassStatic.$propertiesFromJson($json),
-      $identifier,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof IdentifierOverride1ClassStatic.$propertiesFromRdfResource
-      >
-    >
-  > = ($resource, _$options) => {
-    return IdentifierOverride1ClassStatic.$propertiesFromRdfResource(
-      $resource,
-      { ..._$options, ignoreRdfType: true },
-    ).chain(($super0) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIri()))
-        .chain((values) => values.head())
-        .map(($identifier) => ({ ...$super0, $identifier })),
-    );
-  };
-
-  export const $schema = {
-    properties: { ...IdentifierOverride1ClassStatic.$schema.properties },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: IdentifierOverride2ClassStatic.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "identifierOverride2Class";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IdentifierOverride2ClassStatic.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          IdentifierOverride2ClassStatic.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof IdentifierOverride2ClassStatic.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride2ClassStatic.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride2ClassStatic.$Filter,
-    typeof IdentifierOverride2ClassStatic.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride2ClassStatic.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride2ClassStatic.$Filter,
-    typeof IdentifierOverride2ClassStatic.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride2ClassStatic.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Node shape for testing identifier type overriding: IRI identifier, concrete
- */
-
-export class IdentifierOverride3Class extends IdentifierOverride2Class {
-  override readonly $type: "IdentifierOverride3Class" =
-    "IdentifierOverride3Class" as const;
-
-  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
-  constructor(
-    parameters: {
-      readonly $identifier:
-        | (() => IdentifierOverride3Class.$Identifier)
-        | NamedNode
-        | string;
-    } & ConstructorParameters<typeof IdentifierOverride2Class>[0],
-  ) {
-    super(parameters);
-  }
-
-  override $toRdfResource(
-    options?: Parameters<$ToRdfResourceFunction<IdentifierOverride3Class>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = super.$toRdfResource({
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/IdentifierOverride3Class"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
-
-  protected override $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ ...super.$propertiesToStrings() });
-  }
-
-  override toString(): string {
-    return `IdentifierOverride3Class(${JSON.stringify(this.$propertiesToStrings())})`;
-  }
-}
-
-export namespace IdentifierOverride3Class {
-  export type $Identifier = NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIri;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = IdentifierOverride2ClassStatic.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...IdentifierOverride2ClassStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("IdentifierOverride3Class"),
-        })
-        .meta({
-          id: "IdentifierOverride3Class",
-          description:
-            "Node shape for testing identifier type overriding: IRI identifier, concrete",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          IdentifierOverride2ClassStatic.$Json.uiSchema({ scopePrefix }),
-        ],
-        label: "IdentifierOverride3Class",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: IdentifierOverride3Class.$Filter,
-    value: IdentifierOverride3Class,
-  ): boolean {
-    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IriFilter;
-  } & IdentifierOverride2ClassStatic.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    IdentifierOverride3Class.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      IdentifierOverride2ClassStatic.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    IdentifierOverride3Class.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      IdentifierOverride2ClassStatic.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: IdentifierOverride3Class.$fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: IdentifierOverride3Class.$Json,
-  ): IdentifierOverride3Class {
-    return new IdentifierOverride3Class($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    IdentifierOverride3Class
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return IdentifierOverride3Class.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map((properties) => new IdentifierOverride3Class(properties));
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    IdentifierOverride3Class
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            IdentifierOverride3Class.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/IdentifierOverride3Class",
-  );
-
-  export function isIdentifierOverride3Class(
-    object: $Object,
-  ): object is IdentifierOverride3Class {
-    switch (object.$type) {
-      case "IdentifierOverride3Class":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson(
-    $json: IdentifierOverride3Class.$Json,
-  ): { $identifier: NamedNode } & ReturnType<
-    typeof IdentifierOverride2ClassStatic.$propertiesFromJson
-  > {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return {
-      ...IdentifierOverride2ClassStatic.$propertiesFromJson($json),
-      $identifier,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: NamedNode } & $UnwrapR<
-      ReturnType<
-        typeof IdentifierOverride2ClassStatic.$propertiesFromRdfResource
-      >
-    >
-  > = ($resource, _$options) => {
-    return IdentifierOverride2ClassStatic.$propertiesFromRdfResource(
-      $resource,
-      { ..._$options, ignoreRdfType: true },
-    ).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IdentifierOverride3Class":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(IdentifierOverride3Class.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIri()))
-          .chain((values) => values.head())
-          .map(($identifier) => ({ ...$super0, $identifier })),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: { ...IdentifierOverride2ClassStatic.$schema.properties },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: IdentifierOverride3Class.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable"
-        ? subject.value
-        : "identifierOverride3Class";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        IdentifierOverride3Class.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          IdentifierOverride3Class.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof IdentifierOverride3Class.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      IdentifierOverride3Class.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    IdentifierOverride3Class.$Filter,
-    typeof IdentifierOverride3Class.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    IdentifierOverride3Class.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    IdentifierOverride3Class.$Filter,
-    typeof IdentifierOverride3Class.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      IdentifierOverride3Class.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
  * Shape with sh:hasValue properties.
  */
 
 export class HasValuePropertiesClass {
-  readonly $identifier: () => HasValuePropertiesClass.$Identifier;
-
   readonly $type: "HasValuePropertiesClass" =
     "HasValuePropertiesClass" as const;
+
+  readonly $identifier: () => HasValuePropertiesClass.$Identifier;
 
   readonly hasIriValueProperty: NamedNode;
 
@@ -49371,17 +47888,6 @@ export class HasValuePropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $booleanEquals(
           this.hasIriValueProperty,
           other.hasIriValueProperty,
@@ -49409,8 +47915,8 @@ export class HasValuePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -49426,11 +47932,11 @@ export class HasValuePropertiesClass {
   $toJson(): HasValuePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         hasIriValueProperty: { "@id": this.hasIriValueProperty.value },
         hasLiteralValueProperty: this.hasLiteralValueProperty,
       } satisfies HasValuePropertiesClass.$Json),
@@ -49478,8 +47984,8 @@ export namespace HasValuePropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "HasValuePropertiesClass";
+    readonly "@id": string;
     readonly hasIriValueProperty: { readonly "@id": string };
     readonly hasLiteralValueProperty: string;
   };
@@ -49496,8 +48002,8 @@ export namespace HasValuePropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("HasValuePropertiesClass"),
+          "@id": z.string().min(1),
           hasIriValueProperty: z
             .object({ "@id": z.string().min(1) })
             .meta({ id: "hasIriValueProperty" }),
@@ -49516,11 +48022,6 @@ export namespace HasValuePropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "HasValuePropertiesClass" as const },
@@ -49529,6 +48030,11 @@ export namespace HasValuePropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -49788,16 +48294,16 @@ export namespace HasValuePropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["HasValuePropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       hasIriValueProperty: {
         kind: "Shacl" as const,
@@ -49907,10 +48413,10 @@ export namespace HasValuePropertiesClass {
     );
 }
 export class FlattenClassUnionMember3 {
-  readonly $identifier: () => FlattenClassUnionMember3.$Identifier;
-
   readonly $type: "FlattenClassUnionMember3" =
     "FlattenClassUnionMember3" as const;
+
+  readonly $identifier: () => FlattenClassUnionMember3.$Identifier;
 
   readonly flattenClassUnionMember3Property: string;
 
@@ -49948,17 +48454,6 @@ export class FlattenClassUnionMember3 {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.flattenClassUnionMember3Property,
           other.flattenClassUnionMember3Property,
@@ -49974,8 +48469,8 @@ export class FlattenClassUnionMember3 {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -49989,11 +48484,11 @@ export class FlattenClassUnionMember3 {
   $toJson(): FlattenClassUnionMember3.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         flattenClassUnionMember3Property: this.flattenClassUnionMember3Property,
       } satisfies FlattenClassUnionMember3.$Json),
     );
@@ -50044,8 +48539,8 @@ export namespace FlattenClassUnionMember3 {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "FlattenClassUnionMember3";
+    readonly "@id": string;
     readonly flattenClassUnionMember3Property: string;
   };
 
@@ -50061,8 +48556,8 @@ export namespace FlattenClassUnionMember3 {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("FlattenClassUnionMember3"),
+          "@id": z.string().min(1),
           flattenClassUnionMember3Property: z
             .string()
             .meta({ id: "flattenClassUnionMember3Property" }),
@@ -50075,11 +48570,6 @@ export namespace FlattenClassUnionMember3 {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "FlattenClassUnionMember3" as const },
@@ -50088,6 +48578,11 @@ export namespace FlattenClassUnionMember3 {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -50372,16 +48867,16 @@ export namespace FlattenClassUnionMember3 {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["FlattenClassUnionMember3"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       flattenClassUnionMember3Property: {
         kind: "Shacl" as const,
@@ -50489,10 +48984,10 @@ export namespace FlattenClassUnionMember3 {
  */
 
 export class ExternClassPropertyClass {
-  readonly $identifier: () => ExternClassPropertyClass.$Identifier;
-
   readonly $type: "ExternClassPropertyClass" =
     "ExternClassPropertyClass" as const;
+
+  readonly $identifier: () => ExternClassPropertyClass.$Identifier;
 
   readonly externClassProperty: Maybe<ExternClass>;
 
@@ -50541,17 +49036,6 @@ export class ExternClassPropertyClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) => left.$equals(right)))(
           this.externClassProperty,
@@ -50568,8 +49052,8 @@ export class ExternClassPropertyClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -50585,11 +49069,11 @@ export class ExternClassPropertyClass {
   $toJson(): ExternClassPropertyClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         externClassProperty: this.externClassProperty
           .map((item) => item.$toJson())
           .extract(),
@@ -50645,8 +49129,8 @@ export namespace ExternClassPropertyClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ExternClassPropertyClass";
+    readonly "@id": string;
     readonly externClassProperty?: ExternClass.$Json;
   };
 
@@ -50662,8 +49146,8 @@ export namespace ExternClassPropertyClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ExternClassPropertyClass"),
+          "@id": z.string().min(1),
           externClassProperty: ExternClass.$Json
             .schema()
             .optional()
@@ -50681,11 +49165,6 @@ export namespace ExternClassPropertyClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ExternClassPropertyClass" as const },
@@ -50694,6 +49173,11 @@ export namespace ExternClassPropertyClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           ExternClass.$Json.uiSchema({
@@ -50995,16 +49479,16 @@ export namespace ExternClassPropertyClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ExternClassPropertyClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       externClassProperty: {
         kind: "Shacl" as const,
@@ -51113,15 +49597,32 @@ export namespace ExternClassPropertyClass {
  */
 
 export abstract class AbstractBaseClassForExternClass {
-  abstract readonly $identifier: () => AbstractBaseClassForExternClassStatic.$Identifier;
-
   abstract readonly $type: "ExternClass";
+
+  readonly $identifier: () => AbstractBaseClassForExternClassStatic.$Identifier;
 
   readonly abstractBaseClassForExternClassProperty: string;
 
   constructor(parameters: {
+    readonly $identifier?:
+      | (() => AbstractBaseClassForExternClassStatic.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly abstractBaseClassForExternClassProperty: string;
   }) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
+    } else {
+      this.$identifier = $identifierParameter satisfies never;
+    }
     this.abstractBaseClassForExternClassProperty =
       parameters.abstractBaseClassForExternClassProperty;
   }
@@ -51135,17 +49636,6 @@ export abstract class AbstractBaseClassForExternClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           this.abstractBaseClassForExternClassProperty,
@@ -51162,8 +49652,8 @@ export abstract class AbstractBaseClassForExternClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -51177,11 +49667,11 @@ export abstract class AbstractBaseClassForExternClass {
   $toJson(): AbstractBaseClassForExternClassStatic.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         abstractBaseClassForExternClassProperty:
           this.abstractBaseClassForExternClassProperty,
       } satisfies AbstractBaseClassForExternClassStatic.$Json),
@@ -51228,8 +49718,8 @@ export namespace AbstractBaseClassForExternClassStatic {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ExternClass";
+    readonly "@id": string;
     readonly abstractBaseClassForExternClassProperty: string;
   };
 
@@ -51237,8 +49727,8 @@ export namespace AbstractBaseClassForExternClassStatic {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ExternClass"),
+          "@id": z.string().min(1),
           abstractBaseClassForExternClassProperty: z
             .string()
             .meta({ id: "abstractBaseClassForExternClassProperty" }),
@@ -51255,11 +49745,6 @@ export namespace AbstractBaseClassForExternClassStatic {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "AbstractBaseClassForExternClass" as const },
@@ -51268,6 +49753,11 @@ export namespace AbstractBaseClassForExternClassStatic {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -51424,16 +49914,16 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           descendantValues: ["ExternClass"],
           kind: "TypeDiscriminant" as const,
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       abstractBaseClassForExternClassProperty: {
         kind: "Shacl" as const,
@@ -51545,9 +50035,9 @@ import { ExternClass } from "./ExternClass.js"; /**
  */
 
 export class ExplicitRdfTypeClass {
-  readonly $identifier: () => ExplicitRdfTypeClass.$Identifier;
-
   readonly $type: "ExplicitRdfTypeClass" = "ExplicitRdfTypeClass" as const;
+
+  readonly $identifier: () => ExplicitRdfTypeClass.$Identifier;
 
   readonly explicitRdfTypeProperty: string;
 
@@ -51584,17 +50074,6 @@ export class ExplicitRdfTypeClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.explicitRdfTypeProperty,
           other.explicitRdfTypeProperty,
@@ -51610,8 +50089,8 @@ export class ExplicitRdfTypeClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -51625,11 +50104,11 @@ export class ExplicitRdfTypeClass {
   $toJson(): ExplicitRdfTypeClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         explicitRdfTypeProperty: this.explicitRdfTypeProperty,
       } satisfies ExplicitRdfTypeClass.$Json),
     );
@@ -51678,8 +50157,8 @@ export namespace ExplicitRdfTypeClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ExplicitRdfTypeClass";
+    readonly "@id": string;
     readonly explicitRdfTypeProperty: string;
   };
 
@@ -51695,8 +50174,8 @@ export namespace ExplicitRdfTypeClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ExplicitRdfTypeClass"),
+          "@id": z.string().min(1),
           explicitRdfTypeProperty: z
             .string()
             .meta({ id: "explicitRdfTypeProperty" }),
@@ -51713,11 +50192,6 @@ export namespace ExplicitRdfTypeClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ExplicitRdfTypeClass" as const },
@@ -51726,6 +50200,11 @@ export namespace ExplicitRdfTypeClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -52008,16 +50487,16 @@ export namespace ExplicitRdfTypeClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ExplicitRdfTypeClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       explicitRdfTypeProperty: {
         kind: "Shacl" as const,
@@ -52126,10 +50605,10 @@ export namespace ExplicitRdfTypeClass {
  */
 
 export class ExplicitFromToRdfTypesClass {
-  readonly $identifier: () => ExplicitFromToRdfTypesClass.$Identifier;
-
   readonly $type: "ExplicitFromToRdfTypesClass" =
     "ExplicitFromToRdfTypesClass" as const;
+
+  readonly $identifier: () => ExplicitFromToRdfTypesClass.$Identifier;
 
   readonly explicitFromToRdfTypesProperty: string;
 
@@ -52167,17 +50646,6 @@ export class ExplicitFromToRdfTypesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.explicitFromToRdfTypesProperty,
           other.explicitFromToRdfTypesProperty,
@@ -52193,8 +50661,8 @@ export class ExplicitFromToRdfTypesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -52208,11 +50676,11 @@ export class ExplicitFromToRdfTypesClass {
   $toJson(): ExplicitFromToRdfTypesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         explicitFromToRdfTypesProperty: this.explicitFromToRdfTypesProperty,
       } satisfies ExplicitFromToRdfTypesClass.$Json),
     );
@@ -52270,8 +50738,8 @@ export namespace ExplicitFromToRdfTypesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ExplicitFromToRdfTypesClass";
+    readonly "@id": string;
     readonly explicitFromToRdfTypesProperty: string;
   };
 
@@ -52287,8 +50755,8 @@ export namespace ExplicitFromToRdfTypesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ExplicitFromToRdfTypesClass"),
+          "@id": z.string().min(1),
           explicitFromToRdfTypesProperty: z
             .string()
             .meta({ id: "explicitFromToRdfTypesProperty" }),
@@ -52305,11 +50773,6 @@ export namespace ExplicitFromToRdfTypesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ExplicitFromToRdfTypesClass" as const },
@@ -52318,6 +50781,11 @@ export namespace ExplicitFromToRdfTypesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -52605,16 +51073,16 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ExplicitFromToRdfTypesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       explicitFromToRdfTypesProperty: {
         kind: "Shacl" as const,
@@ -52722,9 +51190,9 @@ export namespace ExplicitFromToRdfTypesClass {
  */
 
 export class DisplayPropertiesClass {
-  readonly $identifier: () => DisplayPropertiesClass.$Identifier;
-
   readonly $type: "DisplayPropertiesClass" = "DisplayPropertiesClass" as const;
+
+  readonly $identifier: () => DisplayPropertiesClass.$Identifier;
 
   /**
    * Explicity exclude from the display
@@ -52778,17 +51246,6 @@ export class DisplayPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.explicitFalseDisplayProperty,
           other.explicitFalseDisplayProperty,
@@ -52828,8 +51285,8 @@ export class DisplayPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -52845,11 +51302,11 @@ export class DisplayPropertiesClass {
   $toJson(): DisplayPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         explicitFalseDisplayProperty: this.explicitFalseDisplayProperty,
         explicitTrueDisplayProperty: this.explicitTrueDisplayProperty,
         implicitFalseDisplayProperty: this.implicitFalseDisplayProperty,
@@ -52913,8 +51370,8 @@ export namespace DisplayPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "DisplayPropertiesClass";
+    readonly "@id": string;
     readonly explicitFalseDisplayProperty: string;
     readonly explicitTrueDisplayProperty: string;
     readonly implicitFalseDisplayProperty: string;
@@ -52932,8 +51389,8 @@ export namespace DisplayPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("DisplayPropertiesClass"),
+          "@id": z.string().min(1),
           explicitFalseDisplayProperty: z.string().meta({
             id: "explicitFalseDisplayProperty",
             description: "Explicity exclude from the display",
@@ -52959,11 +51416,6 @@ export namespace DisplayPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "DisplayPropertiesClass" as const },
@@ -52972,6 +51424,11 @@ export namespace DisplayPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -53375,16 +51832,16 @@ export namespace DisplayPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["DisplayPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       explicitFalseDisplayProperty: {
         kind: "Shacl" as const,
@@ -53503,9 +51960,9 @@ export namespace DisplayPropertiesClass {
     );
 }
 export class DirectRecursiveClass {
-  readonly $identifier: () => DirectRecursiveClass.$Identifier;
-
   readonly $type: "DirectRecursiveClass" = "DirectRecursiveClass" as const;
+
+  readonly $identifier: () => DirectRecursiveClass.$Identifier;
 
   readonly directRecursiveProperty: Maybe<DirectRecursiveClass>;
 
@@ -53558,17 +52015,6 @@ export class DirectRecursiveClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) =>
           $maybeEquals(left, right, (left, right) => left.$equals(right)))(
           this.directRecursiveProperty,
@@ -53585,8 +52031,8 @@ export class DirectRecursiveClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -53602,11 +52048,11 @@ export class DirectRecursiveClass {
   $toJson(): DirectRecursiveClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         directRecursiveProperty: this.directRecursiveProperty
           .map((item) => item.$toJson())
           .extract(),
@@ -53662,8 +52108,8 @@ export namespace DirectRecursiveClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "DirectRecursiveClass";
+    readonly "@id": string;
     readonly directRecursiveProperty?: DirectRecursiveClass.$Json;
   };
 
@@ -53679,8 +52125,8 @@ export namespace DirectRecursiveClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("DirectRecursiveClass"),
+          "@id": z.string().min(1),
           directRecursiveProperty: z
             .lazy(
               (): z.ZodType<DirectRecursiveClass.$Json> =>
@@ -53697,11 +52143,6 @@ export namespace DirectRecursiveClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "DirectRecursiveClass" as const },
@@ -53710,6 +52151,11 @@ export namespace DirectRecursiveClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           DirectRecursiveClass.$Json.uiSchema({
@@ -53980,16 +52426,16 @@ export namespace DirectRecursiveClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["DirectRecursiveClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       directRecursiveProperty: {
         kind: "Shacl" as const,
@@ -54098,10 +52544,10 @@ export namespace DirectRecursiveClass {
  */
 
 export class DefaultValuePropertiesClass {
-  readonly $identifier: () => DefaultValuePropertiesClass.$Identifier;
-
   readonly $type: "DefaultValuePropertiesClass" =
     "DefaultValuePropertiesClass" as const;
+
+  readonly $identifier: () => DefaultValuePropertiesClass.$Identifier;
 
   readonly dateDefaultValueProperty: Date;
 
@@ -54209,17 +52655,6 @@ export class DefaultValuePropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $dateEquals(
           this.dateDefaultValueProperty,
           other.dateDefaultValueProperty,
@@ -54295,8 +52730,8 @@ export class DefaultValuePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -54315,11 +52750,11 @@ export class DefaultValuePropertiesClass {
   $toJson(): DefaultValuePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         dateDefaultValueProperty: this.dateDefaultValueProperty
           .toISOString()
           .replace(/T.*$/, ""),
@@ -54450,8 +52885,8 @@ export namespace DefaultValuePropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "DefaultValuePropertiesClass";
+    readonly "@id": string;
     readonly dateDefaultValueProperty: string;
     readonly dateTimeDefaultValueProperty: string;
     readonly falseBooleanDefaultValueProperty: boolean;
@@ -54472,8 +52907,8 @@ export namespace DefaultValuePropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("DefaultValuePropertiesClass"),
+          "@id": z.string().min(1),
           dateDefaultValueProperty: z.iso
             .date()
             .meta({ id: "dateDefaultValueProperty" }),
@@ -54504,11 +52939,6 @@ export namespace DefaultValuePropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "DefaultValuePropertiesClass" as const },
@@ -54517,6 +52947,11 @@ export namespace DefaultValuePropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -55184,16 +53619,16 @@ export namespace DefaultValuePropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["DefaultValuePropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       dateDefaultValueProperty: {
         kind: "Shacl" as const,
@@ -55375,10 +53810,10 @@ export namespace DefaultValuePropertiesClass {
  */
 
 export class DateUnionPropertiesClass {
-  readonly $identifier: () => DateUnionPropertiesClass.$Identifier;
-
   readonly $type: "DateUnionPropertiesClass" =
     "DateUnionPropertiesClass" as const;
+
+  readonly $identifier: () => DateUnionPropertiesClass.$Identifier;
 
   readonly dateOrDateTimeProperty: Maybe<
     { type: "date"; value: Date } | { type: "dateTime"; value: Date }
@@ -55482,17 +53917,6 @@ export class DateUnionPropertiesClass {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) =>
           $maybeEquals(
@@ -55671,8 +54095,8 @@ export class DateUnionPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -55717,11 +54141,11 @@ export class DateUnionPropertiesClass {
   $toJson(): DateUnionPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         dateOrDateTimeProperty: this.dateOrDateTimeProperty
           .map((item) =>
             ((
@@ -55988,8 +54412,8 @@ export namespace DateUnionPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "DateUnionPropertiesClass";
+    readonly "@id": string;
     readonly dateOrDateTimeProperty?:
       | { type: "date"; value: string }
       | { type: "dateTime"; value: string };
@@ -56016,8 +54440,8 @@ export namespace DateUnionPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("DateUnionPropertiesClass"),
+          "@id": z.string().min(1),
           dateOrDateTimeProperty: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("date"), value: z.iso.date() }),
@@ -56069,11 +54493,6 @@ export namespace DateUnionPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "DateUnionPropertiesClass" as const },
@@ -56082,6 +54501,11 @@ export namespace DateUnionPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -57599,16 +56023,16 @@ export namespace DateUnionPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["DateUnionPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       dateOrDateTimeProperty: {
         kind: "Shacl" as const,
@@ -57793,10 +56217,10 @@ export namespace DateUnionPropertiesClass {
  */
 
 export class ConvertibleTypePropertiesClass {
-  readonly $identifier: () => ConvertibleTypePropertiesClass.$Identifier;
-
   readonly $type: "ConvertibleTypePropertiesClass" =
     "ConvertibleTypePropertiesClass" as const;
+
+  readonly $identifier: () => ConvertibleTypePropertiesClass.$Identifier;
 
   readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
 
@@ -58168,17 +56592,6 @@ export class ConvertibleTypePropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $arrayEquals(left, right, $booleanEquals))(
           this.convertibleIriNonEmptySetProperty,
           other.convertibleIriNonEmptySetProperty,
@@ -58326,8 +56739,8 @@ export class ConvertibleTypePropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -58390,11 +56803,11 @@ export class ConvertibleTypePropertiesClass {
   $toJson(): ConvertibleTypePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         convertibleIriNonEmptySetProperty:
           this.convertibleIriNonEmptySetProperty.map((item) => ({
             "@id": item.value,
@@ -58640,8 +57053,8 @@ export namespace ConvertibleTypePropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ConvertibleTypePropertiesClass";
+    readonly "@id": string;
     readonly convertibleIriNonEmptySetProperty: readonly {
       readonly "@id": string;
     }[];
@@ -58716,8 +57129,8 @@ export namespace ConvertibleTypePropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ConvertibleTypePropertiesClass"),
+          "@id": z.string().min(1),
           convertibleIriNonEmptySetProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
@@ -58871,11 +57284,6 @@ export namespace ConvertibleTypePropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ConvertibleTypePropertiesClass" as const },
@@ -58884,6 +57292,11 @@ export namespace ConvertibleTypePropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -60074,16 +58487,16 @@ export namespace ConvertibleTypePropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ConvertibleTypePropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       convertibleIriNonEmptySetProperty: {
         kind: "Shacl" as const,
@@ -60298,12 +58711,12 @@ export namespace ConvertibleTypePropertiesClass {
  */
 
 export interface BaseInterfaceWithProperties {
-  readonly $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
   readonly $type:
     | "BaseInterfaceWithProperties"
     | "BaseInterfaceWithoutProperties"
     | "ConcreteChildInterface"
     | "ConcreteParentInterface";
+  readonly $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
   readonly baseInterfaceWithPropertiesProperty: string;
 }
 
@@ -60315,6 +58728,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       | string;
     readonly baseInterfaceWithPropertiesProperty: string;
   }): BaseInterfaceWithProperties {
+    const $type = "BaseInterfaceWithProperties" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseInterfaceWithPropertiesStatic.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -60329,10 +58743,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
       parameters.baseInterfaceWithPropertiesProperty;
-    return { $identifier, $type, baseInterfaceWithPropertiesProperty };
+    return { $type, $identifier, baseInterfaceWithPropertiesProperty };
   }
 
   export function $equals(
@@ -60347,17 +58760,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           left.baseInterfaceWithPropertiesProperty,
@@ -60380,8 +58782,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
       _baseInterfaceWithProperties,
       _hasher,
     );
-    _hasher.update(_baseInterfaceWithProperties.$identifier().value);
     _hasher.update(_baseInterfaceWithProperties.$type);
+    _hasher.update(_baseInterfaceWithProperties.$identifier().value);
     return _hasher;
   }
 
@@ -60403,12 +58805,12 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type:
       | "BaseInterfaceWithProperties"
       | "BaseInterfaceWithoutProperties"
       | "ConcreteChildInterface"
       | "ConcreteParentInterface";
+    readonly "@id": string;
     readonly baseInterfaceWithPropertiesProperty: string;
   };
 
@@ -60424,13 +58826,13 @@ export namespace BaseInterfaceWithPropertiesStatic {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.enum([
             "BaseInterfaceWithProperties",
             "BaseInterfaceWithoutProperties",
             "ConcreteChildInterface",
             "ConcreteParentInterface",
           ]),
+          "@id": z.string().min(1),
           baseInterfaceWithPropertiesProperty: z
             .string()
             .meta({ id: "baseInterfaceWithPropertiesProperty" }),
@@ -60446,11 +58848,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "BaseInterfaceWithProperties" as const },
@@ -60459,6 +58856,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -60690,30 +59092,30 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $propertiesFromJson(
     $json: BaseInterfaceWithPropertiesStatic.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type:
       | "BaseInterfaceWithProperties"
       | "BaseInterfaceWithoutProperties"
       | "ConcreteChildInterface"
       | "ConcreteParentInterface";
+    $identifier: BlankNode | NamedNode;
     baseInterfaceWithPropertiesProperty: string;
   } {
+    const $type = "BaseInterfaceWithProperties" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "BaseInterfaceWithProperties" as const;
     const baseInterfaceWithPropertiesProperty =
       $json["baseInterfaceWithPropertiesProperty"];
-    return { $identifier, $type, baseInterfaceWithPropertiesProperty };
+    return { $type, $identifier, baseInterfaceWithPropertiesProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type:
       | "BaseInterfaceWithProperties"
       | "BaseInterfaceWithoutProperties"
       | "ConcreteChildInterface"
       | "ConcreteParentInterface";
+    $identifier: BlankNode | NamedNode;
     baseInterfaceWithPropertiesProperty: string;
   }> = ($resource, _$options) => {
     return (
@@ -60749,20 +59151,20 @@ export namespace BaseInterfaceWithPropertiesStatic {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"BaseInterfaceWithProperties">(
-            "BaseInterfaceWithProperties" as const,
-          ).chain(($type) =>
+      Right<"BaseInterfaceWithProperties">(
+        "BaseInterfaceWithProperties" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
@@ -60780,21 +59182,17 @@ export namespace BaseInterfaceWithPropertiesStatic {
                     values.chainMap((value) => value.toString()),
                   ),
             }).map((baseInterfaceWithPropertiesProperty) => ({
-              $identifier,
               $type,
+              $identifier,
               baseInterfaceWithPropertiesProperty,
             })),
           ),
-        ),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
@@ -60806,6 +59204,10 @@ export namespace BaseInterfaceWithPropertiesStatic {
           kind: "TypeDiscriminant" as const,
           ownValues: ["BaseInterfaceWithProperties"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       baseInterfaceWithPropertiesProperty: {
         kind: "Shacl" as const,
@@ -60882,11 +59284,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
   ): BaseInterfaceWithPropertiesStatic.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _baseInterfaceWithProperties.$type,
         "@id":
           _baseInterfaceWithProperties.$identifier().termType === "BlankNode"
             ? `_:${_baseInterfaceWithProperties.$identifier().value}`
             : _baseInterfaceWithProperties.$identifier().value,
-        $type: _baseInterfaceWithProperties.$type,
         baseInterfaceWithPropertiesProperty:
           _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
       } satisfies BaseInterfaceWithPropertiesStatic.$Json),
@@ -60987,11 +59389,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
 export interface BaseInterfaceWithoutProperties
   extends BaseInterfaceWithProperties {
-  readonly $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
   readonly $type:
     | "BaseInterfaceWithoutProperties"
     | "ConcreteChildInterface"
     | "ConcreteParentInterface";
+  readonly $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
 }
 
 export namespace BaseInterfaceWithoutPropertiesStatic {
@@ -61003,6 +59405,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         | string;
     } & Parameters<typeof BaseInterfaceWithPropertiesStatic.$create>[0],
   ): BaseInterfaceWithoutProperties {
+    const $type = "BaseInterfaceWithoutProperties" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseInterfaceWithoutPropertiesStatic.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -61017,11 +59420,10 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "BaseInterfaceWithoutProperties" as const;
     return {
       ...BaseInterfaceWithPropertiesStatic.$create(parameters),
-      $identifier,
       $type,
+      $identifier,
     };
   }
 
@@ -61029,7 +59431,17 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     left: BaseInterfaceWithoutProperties,
     right: BaseInterfaceWithoutProperties,
   ): $EqualsResult {
-    return BaseInterfaceWithPropertiesStatic.$equals(left, right);
+    return BaseInterfaceWithPropertiesStatic.$equals(left, right).chain(() =>
+      $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+        (propertyValuesUnequal) => ({
+          left: left,
+          right: right,
+          propertyName: "$identifier",
+          propertyValuesUnequal,
+          type: "property" as const,
+        }),
+      ),
+    );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -61040,6 +59452,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       _baseInterfaceWithoutProperties,
       _hasher,
     );
+    _hasher.update(_baseInterfaceWithoutProperties.$identifier().value);
     return _hasher;
   }
 
@@ -61061,7 +59474,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = BaseInterfaceWithPropertiesStatic.$Json;
+  export type $Json = {
+    readonly "@id": string;
+  } & BaseInterfaceWithPropertiesStatic.$Json;
 
   export namespace $Json {
     export function parse(json: unknown): Either<Error, $Json> {
@@ -61077,11 +59492,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         .object({
           ...BaseInterfaceWithPropertiesStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.enum([
-            "BaseInterfaceWithoutProperties",
-            "ConcreteChildInterface",
-            "ConcreteParentInterface",
-          ]),
         })
         .meta({
           id: "BaseInterfaceWithoutProperties",
@@ -61095,6 +59505,11 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       return {
         elements: [
           BaseInterfaceWithPropertiesStatic.$Json.uiSchema({ scopePrefix }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
         ],
         label: "BaseInterfaceWithoutProperties",
         type: "Group",
@@ -61107,6 +59522,12 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     value: BaseInterfaceWithoutProperties,
   ): boolean {
     if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
       return false;
     }
     return true;
@@ -61215,6 +59636,20 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         },
       );
     }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            BaseInterfaceWithoutPropertiesStatic.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
     return patterns;
   };
 
@@ -61287,30 +59722,30 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $propertiesFromJson(
     $json: BaseInterfaceWithoutPropertiesStatic.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type:
       | "BaseInterfaceWithoutProperties"
       | "ConcreteChildInterface"
       | "ConcreteParentInterface";
+    $identifier: BlankNode | NamedNode;
   } & ReturnType<typeof BaseInterfaceWithPropertiesStatic.$propertiesFromJson> {
+    const $type = "BaseInterfaceWithoutProperties" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "BaseInterfaceWithoutProperties" as const;
     return {
       ...BaseInterfaceWithPropertiesStatic.$propertiesFromJson($json),
-      $identifier,
       $type,
+      $identifier,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
     {
-      $identifier: BlankNode | NamedNode;
       $type:
         | "BaseInterfaceWithoutProperties"
         | "ConcreteChildInterface"
         | "ConcreteParentInterface";
+      $identifier: BlankNode | NamedNode;
     } & $UnwrapR<
       ReturnType<
         typeof BaseInterfaceWithPropertiesStatic.$propertiesFromRdfResource
@@ -61355,31 +59790,44 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"BaseInterfaceWithoutProperties">(
-              "BaseInterfaceWithoutProperties" as const,
-            ).map(($type) => ({
-              ...$super0,
-              $identifier,
-              $type,
-            })),
-          ),
+        Right<"BaseInterfaceWithoutProperties">(
+          "BaseInterfaceWithoutProperties" as const,
+        ).chain(($type) =>
+          Right(
+            new Resource.Value({
+              dataFactory: dataFactory,
+              focusResource: $resource,
+              propertyPath: $RdfVocabularies.rdf.subject,
+              term: $resource.identifier,
+            }).toValues(),
+          )
+            .chain((values) => values.chainMap((value) => value.toIdentifier()))
+            .chain((values) => values.head())
+            .map(($identifier) => ({ ...$super0, $type, $identifier })),
+        ),
       ),
     );
   };
 
   export const $schema = {
-    properties: { ...BaseInterfaceWithPropertiesStatic.$schema.properties },
+    properties: {
+      ...BaseInterfaceWithPropertiesStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: [
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["BaseInterfaceWithoutProperties"],
+        }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+    },
   } as const;
 
   export function $sparqlConstructQuery({
@@ -61450,6 +59898,10 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         ...BaseInterfaceWithPropertiesStatic.$toJson(
           _baseInterfaceWithoutProperties,
         ),
+        "@id":
+          _baseInterfaceWithoutProperties.$identifier().termType === "BlankNode"
+            ? `_:${_baseInterfaceWithoutProperties.$identifier().value}`
+            : _baseInterfaceWithoutProperties.$identifier().value,
       } satisfies BaseInterfaceWithoutPropertiesStatic.$Json),
     );
   }
@@ -61493,6 +59945,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ...BaseInterfaceWithPropertiesStatic.$propertiesToStrings(
         _baseInterfaceWithoutProperties,
       ),
+      $identifier: _baseInterfaceWithoutProperties.$identifier.toString(),
     });
   }
 
@@ -61546,8 +59999,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
 export interface ConcreteParentInterface
   extends BaseInterfaceWithoutProperties {
-  readonly $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
   readonly $type: "ConcreteParentInterface" | "ConcreteChildInterface";
+  readonly $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
   readonly concreteParentInterfaceProperty: string;
 }
 
@@ -61561,6 +60014,7 @@ export namespace ConcreteParentInterfaceStatic {
       readonly concreteParentInterfaceProperty: string;
     } & Parameters<typeof BaseInterfaceWithoutPropertiesStatic.$create>[0],
   ): ConcreteParentInterface {
+    const $type = "ConcreteParentInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => ConcreteParentInterfaceStatic.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -61575,13 +60029,12 @@ export namespace ConcreteParentInterfaceStatic {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       parameters.concreteParentInterfaceProperty;
     return {
       ...BaseInterfaceWithoutPropertiesStatic.$create(parameters),
-      $identifier,
       $type,
+      $identifier,
       concreteParentInterfaceProperty,
     };
   }
@@ -61590,18 +60043,30 @@ export namespace ConcreteParentInterfaceStatic {
     left: ConcreteParentInterface,
     right: ConcreteParentInterface,
   ): $EqualsResult {
-    return BaseInterfaceWithoutPropertiesStatic.$equals(left, right).chain(() =>
-      $strictEquals(
-        left.concreteParentInterfaceProperty,
-        right.concreteParentInterfaceProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
-        propertyName: "concreteParentInterfaceProperty",
-        propertyValuesUnequal,
-        type: "property" as const,
-      })),
-    );
+    return BaseInterfaceWithoutPropertiesStatic.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.concreteParentInterfaceProperty,
+          right.concreteParentInterfaceProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: left,
+          right: right,
+          propertyName: "concreteParentInterfaceProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -61612,6 +60077,7 @@ export namespace ConcreteParentInterfaceStatic {
       _concreteParentInterface,
       _hasher,
     );
+    _hasher.update(_concreteParentInterface.$identifier().value);
     return _hasher;
   }
 
@@ -61635,6 +60101,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export type $Json = {
+    readonly "@id": string;
     readonly concreteParentInterfaceProperty: string;
   } & BaseInterfaceWithoutPropertiesStatic.$Json;
 
@@ -61652,7 +60119,6 @@ export namespace ConcreteParentInterfaceStatic {
         .object({
           ...BaseInterfaceWithoutPropertiesStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentInterface", "ConcreteChildInterface"]),
           concreteParentInterfaceProperty: z
             .string()
             .meta({ id: "concreteParentInterfaceProperty" }),
@@ -61670,6 +60136,11 @@ export namespace ConcreteParentInterfaceStatic {
         elements: [
           BaseInterfaceWithoutPropertiesStatic.$Json.uiSchema({ scopePrefix }),
           {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
             scope: `${scopePrefix}/properties/concreteParentInterfaceProperty`,
             type: "Control",
           },
@@ -61685,6 +60156,12 @@ export namespace ConcreteParentInterfaceStatic {
     value: ConcreteParentInterface,
   ): boolean {
     if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
       return false;
     }
     if (
@@ -61813,6 +60290,20 @@ export namespace ConcreteParentInterfaceStatic {
         },
       );
     }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ConcreteParentInterfaceStatic.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.concreteParentInterfaceProperty,
@@ -61888,30 +60379,30 @@ export namespace ConcreteParentInterfaceStatic {
   export function $propertiesFromJson(
     $json: ConcreteParentInterfaceStatic.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "ConcreteParentInterface" | "ConcreteChildInterface";
+    $identifier: BlankNode | NamedNode;
     concreteParentInterfaceProperty: string;
   } & ReturnType<
     typeof BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson
   > {
+    const $type = "ConcreteParentInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       $json["concreteParentInterfaceProperty"];
     return {
       ...BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson($json),
-      $identifier,
       $type,
+      $identifier,
       concreteParentInterfaceProperty,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
     {
-      $identifier: BlankNode | NamedNode;
       $type: "ConcreteParentInterface" | "ConcreteChildInterface";
+      $identifier: BlankNode | NamedNode;
       concreteParentInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<
@@ -61956,20 +60447,20 @@ export namespace ConcreteParentInterfaceStatic {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"ConcreteParentInterface">(
-              "ConcreteParentInterface" as const,
-            ).chain(($type) =>
+        Right<"ConcreteParentInterface">(
+          "ConcreteParentInterface" as const,
+        ).chain(($type) =>
+          Right(
+            new Resource.Value({
+              dataFactory: dataFactory,
+              focusResource: $resource,
+              propertyPath: $RdfVocabularies.rdf.subject,
+              term: $resource.identifier,
+            }).toValues(),
+          )
+            .chain((values) => values.chainMap((value) => value.toIdentifier()))
+            .chain((values) => values.head())
+            .chain(($identifier) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
@@ -61988,12 +60479,12 @@ export namespace ConcreteParentInterfaceStatic {
                     ),
               }).map((concreteParentInterfaceProperty) => ({
                 ...$super0,
-                $identifier,
                 $type,
+                $identifier,
                 concreteParentInterfaceProperty,
               })),
             ),
-          ),
+        ),
       ),
     );
   };
@@ -62001,6 +60492,18 @@ export namespace ConcreteParentInterfaceStatic {
   export const $schema = {
     properties: {
       ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ConcreteChildInterface"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ConcreteParentInterface"],
+        }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
       concreteParentInterfaceProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -62079,6 +60582,10 @@ export namespace ConcreteParentInterfaceStatic {
         ...BaseInterfaceWithoutPropertiesStatic.$toJson(
           _concreteParentInterface,
         ),
+        "@id":
+          _concreteParentInterface.$identifier().termType === "BlankNode"
+            ? `_:${_concreteParentInterface.$identifier().value}`
+            : _concreteParentInterface.$identifier().value,
         concreteParentInterfaceProperty:
           _concreteParentInterface.concreteParentInterfaceProperty,
       } satisfies ConcreteParentInterfaceStatic.$Json),
@@ -62131,6 +60638,7 @@ export namespace ConcreteParentInterfaceStatic {
       ...BaseInterfaceWithoutPropertiesStatic.$propertiesToStrings(
         _concreteParentInterface,
       ),
+      $identifier: _concreteParentInterface.$identifier.toString(),
     });
   }
 
@@ -62181,8 +60689,8 @@ export namespace ConcreteParentInterfaceStatic {
  */
 
 export interface ConcreteChildInterface extends ConcreteParentInterface {
-  readonly $identifier: () => ConcreteChildInterface.$Identifier;
   readonly $type: "ConcreteChildInterface";
+  readonly $identifier: () => ConcreteChildInterface.$Identifier;
   readonly concreteChildInterfaceProperty: string;
 }
 
@@ -62196,6 +60704,7 @@ export namespace ConcreteChildInterface {
       readonly concreteChildInterfaceProperty: string;
     } & Parameters<typeof ConcreteParentInterfaceStatic.$create>[0],
   ): ConcreteChildInterface {
+    const $type = "ConcreteChildInterface" as const;
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => ConcreteChildInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -62210,13 +60719,12 @@ export namespace ConcreteChildInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       parameters.concreteChildInterfaceProperty;
     return {
       ...ConcreteParentInterfaceStatic.$create(parameters),
-      $identifier,
       $type,
+      $identifier,
       concreteChildInterfaceProperty,
     };
   }
@@ -62225,18 +60733,30 @@ export namespace ConcreteChildInterface {
     left: ConcreteChildInterface,
     right: ConcreteChildInterface,
   ): $EqualsResult {
-    return ConcreteParentInterfaceStatic.$equals(left, right).chain(() =>
-      $strictEquals(
-        left.concreteChildInterfaceProperty,
-        right.concreteChildInterfaceProperty,
-      ).mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
-        propertyName: "concreteChildInterfaceProperty",
-        propertyValuesUnequal,
-        type: "property" as const,
-      })),
-    );
+    return ConcreteParentInterfaceStatic.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.concreteChildInterfaceProperty,
+          right.concreteChildInterfaceProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: left,
+          right: right,
+          propertyName: "concreteChildInterfaceProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -62247,6 +60767,7 @@ export namespace ConcreteChildInterface {
       _concreteChildInterface,
       _hasher,
     );
+    _hasher.update(_concreteChildInterface.$identifier().value);
     return _hasher;
   }
 
@@ -62270,6 +60791,7 @@ export namespace ConcreteChildInterface {
   }
 
   export type $Json = {
+    readonly "@id": string;
     readonly concreteChildInterfaceProperty: string;
   } & ConcreteParentInterfaceStatic.$Json;
 
@@ -62287,7 +60809,6 @@ export namespace ConcreteChildInterface {
         .object({
           ...ConcreteParentInterfaceStatic.$Json.schema().shape,
           "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildInterface"),
           concreteChildInterfaceProperty: z
             .string()
             .meta({ id: "concreteChildInterfaceProperty" }),
@@ -62305,6 +60826,11 @@ export namespace ConcreteChildInterface {
         elements: [
           ConcreteParentInterfaceStatic.$Json.uiSchema({ scopePrefix }),
           {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
             scope: `${scopePrefix}/properties/concreteChildInterfaceProperty`,
             type: "Control",
           },
@@ -62320,6 +60846,12 @@ export namespace ConcreteChildInterface {
     value: ConcreteChildInterface,
   ): boolean {
     if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
       return false;
     }
     if (
@@ -62434,6 +60966,19 @@ export namespace ConcreteChildInterface {
         },
       );
     }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ConcreteChildInterface.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
     patterns = patterns.concat(
       $shaclPropertySparqlWherePatterns({
         filter: parameters.filter?.concreteChildInterfaceProperty,
@@ -62506,28 +61051,28 @@ export namespace ConcreteChildInterface {
   }
 
   export function $propertiesFromJson($json: ConcreteChildInterface.$Json): {
-    $identifier: BlankNode | NamedNode;
     $type: "ConcreteChildInterface";
+    $identifier: BlankNode | NamedNode;
     concreteChildInterfaceProperty: string;
   } & ReturnType<typeof ConcreteParentInterfaceStatic.$propertiesFromJson> {
+    const $type = "ConcreteChildInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       $json["concreteChildInterfaceProperty"];
     return {
       ...ConcreteParentInterfaceStatic.$propertiesFromJson($json),
-      $identifier,
       $type,
+      $identifier,
       concreteChildInterfaceProperty,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
     {
-      $identifier: BlankNode | NamedNode;
       $type: "ConcreteChildInterface";
+      $identifier: BlankNode | NamedNode;
       concreteChildInterfaceProperty: string;
     } & $UnwrapR<
       ReturnType<
@@ -62567,20 +61112,20 @@ export namespace ConcreteChildInterface {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"ConcreteChildInterface">(
-              "ConcreteChildInterface" as const,
-            ).chain(($type) =>
+        Right<"ConcreteChildInterface">(
+          "ConcreteChildInterface" as const,
+        ).chain(($type) =>
+          Right(
+            new Resource.Value({
+              dataFactory: dataFactory,
+              focusResource: $resource,
+              propertyPath: $RdfVocabularies.rdf.subject,
+              term: $resource.identifier,
+            }).toValues(),
+          )
+            .chain((values) => values.chainMap((value) => value.toIdentifier()))
+            .chain((values) => values.head())
+            .chain(($identifier) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
@@ -62599,12 +61144,12 @@ export namespace ConcreteChildInterface {
                     ),
               }).map((concreteChildInterfaceProperty) => ({
                 ...$super0,
-                $identifier,
                 $type,
+                $identifier,
                 concreteChildInterfaceProperty,
               })),
             ),
-          ),
+        ),
       ),
     );
   };
@@ -62612,6 +61157,17 @@ export namespace ConcreteChildInterface {
   export const $schema = {
     properties: {
       ...ConcreteParentInterfaceStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ConcreteChildInterface"],
+        }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
       concreteChildInterfaceProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -62688,6 +61244,10 @@ export namespace ConcreteChildInterface {
     return JSON.parse(
       JSON.stringify({
         ...ConcreteParentInterfaceStatic.$toJson(_concreteChildInterface),
+        "@id":
+          _concreteChildInterface.$identifier().termType === "BlankNode"
+            ? `_:${_concreteChildInterface.$identifier().value}`
+            : _concreteChildInterface.$identifier().value,
         concreteChildInterfaceProperty:
           _concreteChildInterface.concreteChildInterfaceProperty,
       } satisfies ConcreteChildInterface.$Json),
@@ -62740,6 +61300,7 @@ export namespace ConcreteChildInterface {
       ...ConcreteParentInterfaceStatic.$propertiesToStrings(
         _concreteChildInterface,
       ),
+      $identifier: _concreteChildInterface.$identifier.toString(),
     });
   }
 
@@ -62790,15 +61351,32 @@ export namespace ConcreteChildInterface {
  */
 
 export abstract class AbstractBaseClassWithProperties {
-  abstract readonly $identifier: () => AbstractBaseClassWithPropertiesStatic.$Identifier;
-
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
+
+  readonly $identifier: () => AbstractBaseClassWithPropertiesStatic.$Identifier;
 
   readonly abstractBaseClassWithPropertiesProperty: string;
 
   constructor(parameters: {
+    readonly $identifier?:
+      | (() => AbstractBaseClassWithPropertiesStatic.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
+    } else {
+      this.$identifier = $identifierParameter satisfies never;
+    }
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
   }
@@ -62812,17 +61390,6 @@ export abstract class AbstractBaseClassWithProperties {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           this.abstractBaseClassWithPropertiesProperty,
@@ -62839,8 +61406,8 @@ export abstract class AbstractBaseClassWithProperties {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -62854,11 +61421,11 @@ export abstract class AbstractBaseClassWithProperties {
   $toJson(): AbstractBaseClassWithPropertiesStatic.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         abstractBaseClassWithPropertiesProperty:
           this.abstractBaseClassWithPropertiesProperty,
       } satisfies AbstractBaseClassWithPropertiesStatic.$Json),
@@ -62905,8 +61472,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
+    readonly "@id": string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   };
 
@@ -62914,8 +61481,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
+          "@id": z.string().min(1),
           abstractBaseClassWithPropertiesProperty: z
             .string()
             .meta({ id: "abstractBaseClassWithPropertiesProperty" }),
@@ -62932,11 +61499,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "AbstractBaseClassWithProperties" as const },
@@ -62945,6 +61507,11 @@ export namespace AbstractBaseClassWithPropertiesStatic {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -63102,16 +61669,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           descendantValues: ["ConcreteChildClass", "ConcreteParentClass"],
           kind: "TypeDiscriminant" as const,
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       abstractBaseClassWithPropertiesProperty: {
         kind: "Shacl" as const,
@@ -63232,6 +61799,18 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     super(parameters);
   }
 
+  override $equals(other: AbstractBaseClassWithoutProperties): $EqualsResult {
+    return super.$equals(other);
+  }
+
+  override $toJson(): AbstractBaseClassWithoutPropertiesStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...super.$toJson(),
+      } satisfies AbstractBaseClassWithoutPropertiesStatic.$Json),
+    );
+  }
+
   override $toRdfResource(
     options?: Parameters<
       $ToRdfResourceFunction<AbstractBaseClassWithoutProperties>
@@ -63268,15 +61847,13 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
+  export type $Json = {} & AbstractBaseClassWithPropertiesStatic.$Json;
 
   export namespace $Json {
     export function schema() {
       return z
         .object({
           ...AbstractBaseClassWithPropertiesStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteChildClass", "ConcreteParentClass"]),
         })
         .meta({
           id: "AbstractBaseClassWithoutProperties",
@@ -63307,9 +61884,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return true;
   }
 
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & AbstractBaseClassWithPropertiesStatic.$Filter;
+  export type $Filter = AbstractBaseClassWithPropertiesStatic.$Filter;
 
   export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
     AbstractBaseClassWithoutPropertiesStatic.$Filter
@@ -63356,20 +61931,16 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
   export function $propertiesFromJson(
     $json: AbstractBaseClassWithoutPropertiesStatic.$Json,
-  ): { $identifier: BlankNode | NamedNode } & ReturnType<
+  ): ReturnType<
     typeof AbstractBaseClassWithPropertiesStatic.$propertiesFromJson
   > {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
     return {
       ...AbstractBaseClassWithPropertiesStatic.$propertiesFromJson($json),
-      $identifier,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: BlankNode | NamedNode } & $UnwrapR<
+    $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithPropertiesStatic.$propertiesFromRdfResource
       >
@@ -63381,23 +61952,20 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         ..._$options,
         ignoreRdfType: true,
       },
-    ).chain(($super0) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .map(($identifier) => ({ ...$super0, $identifier })),
-    );
+    ).map(($super0) => ({ ...$super0 }));
   };
 
   export const $schema = {
-    properties: { ...AbstractBaseClassWithPropertiesStatic.$schema.properties },
+    properties: {
+      ...AbstractBaseClassWithPropertiesStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ConcreteChildClass", "ConcreteParentClass"],
+          kind: "TypeDiscriminant" as const,
+        }),
+      },
+    },
   } as const;
 
   export function $sparqlConstructQuery({
@@ -63505,10 +62073,6 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 
   constructor(
     parameters: {
-      readonly $identifier?:
-        | (() => ConcreteParentClassStatic.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
       readonly concreteParentClassProperty: string;
     } & ConstructorParameters<typeof AbstractBaseClassWithoutProperties>[0],
   ) {
@@ -63616,8 +62180,6 @@ export namespace ConcreteParentClassStatic {
       return z
         .object({
           ...AbstractBaseClassWithoutPropertiesStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.enum(["ConcreteParentClass", "ConcreteChildClass"]),
           concreteParentClassProperty: z
             .string()
             .meta({ id: "concreteParentClassProperty" }),
@@ -63667,7 +62229,6 @@ export namespace ConcreteParentClassStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
     readonly concreteParentClassProperty?: $StringFilter;
   } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
 
@@ -63852,28 +62413,20 @@ export namespace ConcreteParentClassStatic {
     }
   }
 
-  export function $propertiesFromJson($json: ConcreteParentClassStatic.$Json): {
-    $identifier: BlankNode | NamedNode;
-    concreteParentClassProperty: string;
-  } & ReturnType<
+  export function $propertiesFromJson(
+    $json: ConcreteParentClassStatic.$Json,
+  ): { concreteParentClassProperty: string } & ReturnType<
     typeof AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson
   > {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
     const concreteParentClassProperty = $json["concreteParentClassProperty"];
     return {
       ...AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson($json),
-      $identifier,
       concreteParentClassProperty,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      concreteParentClassProperty: string;
-    } & $UnwrapR<
+    { concreteParentClassProperty: string } & $UnwrapR<
       ReturnType<
         typeof AbstractBaseClassWithoutPropertiesStatic.$propertiesFromRdfResource
       >
@@ -63915,38 +62468,23 @@ export namespace ConcreteParentClassStatic {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: $schema.properties.concreteParentClassProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages(
-                      values,
-                      _$options.preferredLanguages,
-                    ),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((concreteParentClassProperty) => ({
-              ...$super0,
-              $identifier,
-              concreteParentClassProperty,
-            })),
-          ),
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: $schema.properties.concreteParentClassProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((concreteParentClassProperty) => ({
+          ...$super0,
+          concreteParentClassProperty,
+        })),
       ),
     );
   };
@@ -63954,6 +62492,14 @@ export namespace ConcreteParentClassStatic {
   export const $schema = {
     properties: {
       ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ConcreteChildClass"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ConcreteParentClass"],
+        }),
+      },
       concreteParentClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -64064,10 +62610,6 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
   constructor(
     parameters: {
-      readonly $identifier?:
-        | (() => ConcreteChildClass.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
       readonly concreteChildClassProperty: string;
     } & ConstructorParameters<typeof ConcreteParentClass>[0],
   ) {
@@ -64175,8 +62717,6 @@ export namespace ConcreteChildClass {
       return z
         .object({
           ...ConcreteParentClassStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("ConcreteChildClass"),
           concreteChildClassProperty: z
             .string()
             .meta({ id: "concreteChildClassProperty" }),
@@ -64224,7 +62764,6 @@ export namespace ConcreteChildClass {
   }
 
   export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
     readonly concreteChildClassProperty?: $StringFilter;
   } & ConcreteParentClassStatic.$Filter;
 
@@ -64394,26 +62933,20 @@ export namespace ConcreteChildClass {
     }
   }
 
-  export function $propertiesFromJson($json: ConcreteChildClass.$Json): {
-    $identifier: BlankNode | NamedNode;
-    concreteChildClassProperty: string;
-  } & ReturnType<typeof ConcreteParentClassStatic.$propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
+  export function $propertiesFromJson(
+    $json: ConcreteChildClass.$Json,
+  ): { concreteChildClassProperty: string } & ReturnType<
+    typeof ConcreteParentClassStatic.$propertiesFromJson
+  > {
     const concreteChildClassProperty = $json["concreteChildClassProperty"];
     return {
       ...ConcreteParentClassStatic.$propertiesFromJson($json),
-      $identifier,
       concreteChildClassProperty,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      concreteChildClassProperty: string;
-    } & $UnwrapR<
+    { concreteChildClassProperty: string } & $UnwrapR<
       ReturnType<typeof ConcreteParentClassStatic.$propertiesFromRdfResource>
     >
   > = ($resource, _$options) => {
@@ -64449,38 +62982,23 @@ export namespace ConcreteChildClass {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: $schema.properties.concreteChildClassProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages(
-                      values,
-                      _$options.preferredLanguages,
-                    ),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((concreteChildClassProperty) => ({
-              ...$super0,
-              $identifier,
-              concreteChildClassProperty,
-            })),
-          ),
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: $schema.properties.concreteChildClassProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((concreteChildClassProperty) => ({
+          ...$super0,
+          concreteChildClassProperty,
+        })),
       ),
     );
   };
@@ -64488,6 +63006,13 @@ export namespace ConcreteChildClass {
   export const $schema = {
     properties: {
       ...ConcreteParentClassStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ConcreteChildClass"],
+        }),
+      },
       concreteChildClassProperty: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -64587,15 +63112,32 @@ export namespace ConcreteChildClass {
     );
 }
 export abstract class ClassUnionMemberCommonParent {
-  abstract readonly $identifier: () => ClassUnionMemberCommonParentStatic.$Identifier;
-
   abstract readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
+
+  readonly $identifier: () => ClassUnionMemberCommonParentStatic.$Identifier;
 
   readonly classUnionMemberCommonParentProperty: string;
 
   constructor(parameters: {
+    readonly $identifier?:
+      | (() => ClassUnionMemberCommonParentStatic.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
     readonly classUnionMemberCommonParentProperty: string;
   }) {
+    const $identifierParameter = parameters.$identifier;
+    if (typeof $identifierParameter === "function") {
+      this.$identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      this.$identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      this.$identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      this.$identifier = () => $eagerIdentifier;
+    } else {
+      this.$identifier = $identifierParameter satisfies never;
+    }
     this.classUnionMemberCommonParentProperty =
       parameters.classUnionMemberCommonParentProperty;
   }
@@ -64609,17 +63151,6 @@ export abstract class ClassUnionMemberCommonParent {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         $strictEquals(
           this.classUnionMemberCommonParentProperty,
@@ -64636,8 +63167,8 @@ export abstract class ClassUnionMemberCommonParent {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -64651,11 +63182,11 @@ export abstract class ClassUnionMemberCommonParent {
   $toJson(): ClassUnionMemberCommonParentStatic.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         classUnionMemberCommonParentProperty:
           this.classUnionMemberCommonParentProperty,
       } satisfies ClassUnionMemberCommonParentStatic.$Json),
@@ -64702,8 +63233,8 @@ export namespace ClassUnionMemberCommonParentStatic {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
+    readonly "@id": string;
     readonly classUnionMemberCommonParentProperty: string;
   };
 
@@ -64711,8 +63242,8 @@ export namespace ClassUnionMemberCommonParentStatic {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.enum(["ClassUnionMember1", "ClassUnionMember2"]),
+          "@id": z.string().min(1),
           classUnionMemberCommonParentProperty: z
             .string()
             .meta({ id: "classUnionMemberCommonParentProperty" }),
@@ -64727,11 +63258,6 @@ export namespace ClassUnionMemberCommonParentStatic {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ClassUnionMemberCommonParent" as const },
@@ -64740,6 +63266,11 @@ export namespace ClassUnionMemberCommonParentStatic {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -64895,16 +63426,16 @@ export namespace ClassUnionMemberCommonParentStatic {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           descendantValues: ["ClassUnionMember1", "ClassUnionMember2"],
           kind: "TypeDiscriminant" as const,
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       classUnionMemberCommonParentProperty: {
         kind: "Shacl" as const,
@@ -65015,10 +63546,6 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
   constructor(
     parameters: {
-      readonly $identifier?:
-        | (() => ClassUnionMember2.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
       readonly classUnionMember2Property: string;
     } & ConstructorParameters<typeof ClassUnionMemberCommonParent>[0],
   ) {
@@ -65126,8 +63653,6 @@ export namespace ClassUnionMember2 {
       return z
         .object({
           ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember2"),
           classUnionMember2Property: z
             .string()
             .meta({ id: "classUnionMember2Property" }),
@@ -65171,7 +63696,6 @@ export namespace ClassUnionMember2 {
   }
 
   export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
     readonly classUnionMember2Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
@@ -65340,28 +63864,20 @@ export namespace ClassUnionMember2 {
     }
   }
 
-  export function $propertiesFromJson($json: ClassUnionMember2.$Json): {
-    $identifier: BlankNode | NamedNode;
-    classUnionMember2Property: string;
-  } & ReturnType<
+  export function $propertiesFromJson(
+    $json: ClassUnionMember2.$Json,
+  ): { classUnionMember2Property: string } & ReturnType<
     typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson
   > {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
     const classUnionMember2Property = $json["classUnionMember2Property"];
     return {
       ...ClassUnionMemberCommonParentStatic.$propertiesFromJson($json),
-      $identifier,
       classUnionMember2Property,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      classUnionMember2Property: string;
-    } & $UnwrapR<
+    { classUnionMember2Property: string } & $UnwrapR<
       ReturnType<
         typeof ClassUnionMemberCommonParentStatic.$propertiesFromRdfResource
       >
@@ -65402,38 +63918,23 @@ export namespace ClassUnionMember2 {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: $schema.properties.classUnionMember2Property,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages(
-                      values,
-                      _$options.preferredLanguages,
-                    ),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((classUnionMember2Property) => ({
-              ...$super0,
-              $identifier,
-              classUnionMember2Property,
-            })),
-          ),
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: $schema.properties.classUnionMember2Property,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((classUnionMember2Property) => ({
+          ...$super0,
+          classUnionMember2Property,
+        })),
       ),
     );
   };
@@ -65441,6 +63942,13 @@ export namespace ClassUnionMember2 {
   export const $schema = {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassUnionMember2"],
+        }),
+      },
       classUnionMember2Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -65546,10 +64054,6 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
   constructor(
     parameters: {
-      readonly $identifier?:
-        | (() => ClassUnionMember1.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
       readonly classUnionMember1Property: string;
     } & ConstructorParameters<typeof ClassUnionMemberCommonParent>[0],
   ) {
@@ -65657,8 +64161,6 @@ export namespace ClassUnionMember1 {
       return z
         .object({
           ...ClassUnionMemberCommonParentStatic.$Json.schema().shape,
-          "@id": z.string().min(1),
-          $type: z.literal("ClassUnionMember1"),
           classUnionMember1Property: z
             .string()
             .meta({ id: "classUnionMember1Property" }),
@@ -65702,7 +64204,6 @@ export namespace ClassUnionMember1 {
   }
 
   export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
     readonly classUnionMember1Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
@@ -65871,28 +64372,20 @@ export namespace ClassUnionMember1 {
     }
   }
 
-  export function $propertiesFromJson($json: ClassUnionMember1.$Json): {
-    $identifier: BlankNode | NamedNode;
-    classUnionMember1Property: string;
-  } & ReturnType<
+  export function $propertiesFromJson(
+    $json: ClassUnionMember1.$Json,
+  ): { classUnionMember1Property: string } & ReturnType<
     typeof ClassUnionMemberCommonParentStatic.$propertiesFromJson
   > {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
     const classUnionMember1Property = $json["classUnionMember1Property"];
     return {
       ...ClassUnionMemberCommonParentStatic.$propertiesFromJson($json),
-      $identifier,
       classUnionMember1Property,
     };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      classUnionMember1Property: string;
-    } & $UnwrapR<
+    { classUnionMember1Property: string } & $UnwrapR<
       ReturnType<
         typeof ClassUnionMemberCommonParentStatic.$propertiesFromRdfResource
       >
@@ -65933,38 +64426,23 @@ export namespace ClassUnionMember1 {
             })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: $schema.properties.classUnionMember1Property,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages(
-                      values,
-                      _$options.preferredLanguages,
-                    ),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).map((classUnionMember1Property) => ({
-              ...$super0,
-              $identifier,
-              classUnionMember1Property,
-            })),
-          ),
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: $schema.properties.classUnionMember1Property,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((classUnionMember1Property) => ({
+          ...$super0,
+          classUnionMember1Property,
+        })),
       ),
     );
   };
@@ -65972,6 +64450,13 @@ export namespace ClassUnionMember1 {
   export const $schema = {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassUnionMember1"],
+        }),
+      },
       classUnionMember1Property: {
         kind: "Shacl" as const,
         type: () => ({ kind: "String" as const }),
@@ -66074,9 +64559,9 @@ export namespace ClassUnionMember1 {
  */
 
 export class PartialClass {
-  readonly $identifier: () => PartialClass.$Identifier;
-
   readonly $type: "PartialClass" = "PartialClass" as const;
+
+  readonly $identifier: () => PartialClass.$Identifier;
 
   readonly lazilyResolvedStringProperty: string;
 
@@ -66113,17 +64598,6 @@ export class PartialClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           this.lazilyResolvedStringProperty,
           other.lazilyResolvedStringProperty,
@@ -66139,8 +64613,8 @@ export class PartialClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -66154,11 +64628,11 @@ export class PartialClass {
   $toJson(): PartialClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         lazilyResolvedStringProperty: this.lazilyResolvedStringProperty,
       } satisfies PartialClass.$Json),
     );
@@ -66200,8 +64674,8 @@ export namespace PartialClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "PartialClass";
+    readonly "@id": string;
     readonly lazilyResolvedStringProperty: string;
   };
 
@@ -66217,8 +64691,8 @@ export namespace PartialClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("PartialClass"),
+          "@id": z.string().min(1),
           lazilyResolvedStringProperty: z
             .string()
             .meta({ id: "lazilyResolvedStringProperty" }),
@@ -66234,11 +64708,6 @@ export namespace PartialClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "PartialClass" as const },
@@ -66247,6 +64716,11 @@ export namespace PartialClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -66434,16 +64908,16 @@ export namespace PartialClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["PartialClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       lazilyResolvedStringProperty: {
         kind: "Shacl" as const,
@@ -66547,9 +65021,9 @@ export namespace PartialClass {
  */
 
 export class NonClass {
-  readonly $identifier: () => NonClass.$Identifier;
-
   readonly $type: "NonClass" = "NonClass" as const;
+
+  readonly $identifier: () => NonClass.$Identifier;
 
   readonly nonClassProperty: string;
 
@@ -66586,17 +65060,6 @@ export class NonClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(this.nonClassProperty, other.nonClassProperty).mapLeft(
           (propertyValuesUnequal) => ({
             left: this,
@@ -66611,8 +65074,8 @@ export class NonClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -66626,11 +65089,11 @@ export class NonClass {
   $toJson(): NonClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         nonClassProperty: this.nonClassProperty,
       } satisfies NonClass.$Json),
     );
@@ -66672,8 +65135,8 @@ export namespace NonClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "NonClass";
+    readonly "@id": string;
     readonly nonClassProperty: string;
   };
 
@@ -66689,8 +65152,8 @@ export namespace NonClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("NonClass"),
+          "@id": z.string().min(1),
           nonClassProperty: z.string().meta({ id: "nonClassProperty" }),
         })
         .meta({
@@ -66704,11 +65167,6 @@ export namespace NonClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "NonClass" as const },
@@ -66717,6 +65175,11 @@ export namespace NonClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -66893,16 +65356,16 @@ export namespace NonClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["NonClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       nonClassProperty: {
         kind: "Shacl" as const,
@@ -67004,9 +65467,9 @@ export namespace NonClass {
  */
 
 export class ClassPropertiesClass {
-  readonly $identifier: () => ClassPropertiesClass.$Identifier;
-
   readonly $type: "ClassPropertiesClass" = "ClassPropertiesClass" as const;
+
+  readonly $identifier: () => ClassPropertiesClass.$Identifier;
 
   /**
    * Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI
@@ -67139,17 +65602,6 @@ export class ClassPropertiesClass {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $booleanEquals))(
           this.iriClassProperty,
           other.iriClassProperty,
@@ -67215,8 +65667,8 @@ export class ClassPropertiesClass {
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -67247,11 +65699,11 @@ export class ClassPropertiesClass {
   $toJson(): ClassPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
         iriClassProperty: this.iriClassProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
@@ -67352,8 +65804,8 @@ export namespace ClassPropertiesClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "ClassPropertiesClass";
+    readonly "@id": string;
     readonly iriClassProperty?: { readonly "@id": string };
     readonly multiClassProperty?: { readonly "@id": string };
     readonly nodeClassProperty1?: NonClass.$Json;
@@ -67373,8 +65825,8 @@ export namespace ClassPropertiesClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("ClassPropertiesClass"),
+          "@id": z.string().min(1),
           iriClassProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
@@ -67421,11 +65873,6 @@ export namespace ClassPropertiesClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "ClassPropertiesClass" as const },
@@ -67434,6 +65881,11 @@ export namespace ClassPropertiesClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
           {
@@ -68038,16 +66490,16 @@ export namespace ClassPropertiesClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["ClassPropertiesClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
       iriClassProperty: {
         kind: "Shacl" as const,
@@ -68183,8 +66635,8 @@ export namespace ClassPropertiesClass {
  */
 
 export interface BlankNodeOrIriIdentifierInterface {
-  readonly $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
   readonly $type: "BlankNodeOrIriIdentifierInterface";
+  readonly $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
 }
 
 export namespace BlankNodeOrIriIdentifierInterface {
@@ -68194,6 +66646,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       | (BlankNode | NamedNode)
       | string;
   }): BlankNodeOrIriIdentifierInterface {
+    const $type = "BlankNodeOrIriIdentifierInterface" as const;
     const $identifierParameter = parameters?.$identifier;
     let $identifier: () => BlankNodeOrIriIdentifierInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -68208,33 +66661,22 @@ export namespace BlankNodeOrIriIdentifierInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "BlankNodeOrIriIdentifierInterface" as const;
-    return { $identifier, $type };
+    return { $type, $identifier };
   }
 
   export function $equals(
     left: BlankNodeOrIriIdentifierInterface,
     right: BlankNodeOrIriIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: left,
         right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -68245,8 +66687,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
       _blankNodeOrIriIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_blankNodeOrIriIdentifierInterface.$identifier().value);
     _hasher.update(_blankNodeOrIriIdentifierInterface.$type);
+    _hasher.update(_blankNodeOrIriIdentifierInterface.$identifier().value);
     return _hasher;
   }
 
@@ -68265,8 +66707,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeOrIriIdentifierInterface";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -68281,8 +66723,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeOrIriIdentifierInterface"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "BlankNodeOrIriIdentifierInterface",
@@ -68296,11 +66738,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "BlankNodeOrIriIdentifierInterface" as const },
@@ -68309,6 +66746,11 @@ export namespace BlankNodeOrIriIdentifierInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -68482,19 +66924,19 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export function $propertiesFromJson(
     $json: BlankNodeOrIriIdentifierInterface.$Json,
   ): {
-    $identifier: BlankNode | NamedNode;
     $type: "BlankNodeOrIriIdentifierInterface";
+    $identifier: BlankNode | NamedNode;
   } {
+    const $type = "BlankNodeOrIriIdentifierInterface" as const;
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "BlankNodeOrIriIdentifierInterface" as const;
-    return { $identifier, $type };
+    return { $type, $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
     $type: "BlankNodeOrIriIdentifierInterface";
+    $identifier: BlankNode | NamedNode;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -68526,39 +66968,36 @@ export namespace BlankNodeOrIriIdentifierInterface {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"BlankNodeOrIriIdentifierInterface">(
-            "BlankNodeOrIriIdentifierInterface" as const,
-          ).map(($type) => ({
-            $identifier,
-            $type,
-          })),
-        ),
+      Right<"BlankNodeOrIriIdentifierInterface">(
+        "BlankNodeOrIriIdentifierInterface" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .map(($identifier) => ({ $type, $identifier })),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["BlankNodeOrIriIdentifierInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
     },
   } as const;
@@ -68628,12 +67067,12 @@ export namespace BlankNodeOrIriIdentifierInterface {
   ): BlankNodeOrIriIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: _blankNodeOrIriIdentifierInterface.$type,
         "@id":
           _blankNodeOrIriIdentifierInterface.$identifier().termType ===
           "BlankNode"
             ? `_:${_blankNodeOrIriIdentifierInterface.$identifier().value}`
             : _blankNodeOrIriIdentifierInterface.$identifier().value,
-        $type: _blankNodeOrIriIdentifierInterface.$type,
       } satisfies BlankNodeOrIriIdentifierInterface.$Json),
     );
   }
@@ -68722,10 +67161,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
  */
 
 export class BlankNodeOrIriIdentifierClass {
-  readonly $identifier: () => BlankNodeOrIriIdentifierClass.$Identifier;
-
   readonly $type: "BlankNodeOrIriIdentifierClass" =
     "BlankNodeOrIriIdentifierClass" as const;
+
+  readonly $identifier: () => BlankNodeOrIriIdentifierClass.$Identifier;
 
   constructor(parameters?: {
     readonly $identifier?:
@@ -68749,31 +67188,21 @@ export class BlankNodeOrIriIdentifierClass {
   }
 
   $equals(other: BlankNodeOrIriIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -68786,11 +67215,11 @@ export class BlankNodeOrIriIdentifierClass {
   $toJson(): BlankNodeOrIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
+        $type: this.$type,
         "@id":
           this.$identifier().termType === "BlankNode"
             ? `_:${this.$identifier().value}`
             : this.$identifier().value,
-        $type: this.$type,
       } satisfies BlankNodeOrIriIdentifierClass.$Json),
     );
   }
@@ -68837,8 +67266,8 @@ export namespace BlankNodeOrIriIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeOrIriIdentifierClass";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -68853,8 +67282,8 @@ export namespace BlankNodeOrIriIdentifierClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeOrIriIdentifierClass"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "BlankNodeOrIriIdentifierClass",
@@ -68868,11 +67297,6 @@ export namespace BlankNodeOrIriIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "BlankNodeOrIriIdentifierClass" as const },
@@ -68881,6 +67305,11 @@ export namespace BlankNodeOrIriIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -69103,16 +67532,16 @@ export namespace BlankNodeOrIriIdentifierClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["BlankNodeOrIriIdentifierClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
       },
     },
   } as const;
@@ -69213,8 +67642,8 @@ export namespace BlankNodeOrIriIdentifierClass {
  */
 
 export interface BlankNodeIdentifierInterface {
-  readonly $identifier: () => BlankNodeIdentifierInterface.$Identifier;
   readonly $type: "BlankNodeIdentifierInterface";
+  readonly $identifier: () => BlankNodeIdentifierInterface.$Identifier;
 }
 
 export namespace BlankNodeIdentifierInterface {
@@ -69223,6 +67652,7 @@ export namespace BlankNodeIdentifierInterface {
       | (() => BlankNodeIdentifierInterface.$Identifier)
       | BlankNode;
   }): BlankNodeIdentifierInterface {
+    const $type = "BlankNodeIdentifierInterface" as const;
     const $identifierParameter = parameters?.$identifier;
     let $identifier: () => BlankNodeIdentifierInterface.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -69235,33 +67665,22 @@ export namespace BlankNodeIdentifierInterface {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "BlankNodeIdentifierInterface" as const;
-    return { $identifier, $type };
+    return { $type, $identifier };
   }
 
   export function $equals(
     left: BlankNodeIdentifierInterface,
     right: BlankNodeIdentifierInterface,
   ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: left,
         right: right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   export function $hash<HasherT extends $Hasher>(
@@ -69272,8 +67691,8 @@ export namespace BlankNodeIdentifierInterface {
       _blankNodeIdentifierInterface,
       _hasher,
     );
-    _hasher.update(_blankNodeIdentifierInterface.$identifier().value);
     _hasher.update(_blankNodeIdentifierInterface.$type);
+    _hasher.update(_blankNodeIdentifierInterface.$identifier().value);
     return _hasher;
   }
 
@@ -69292,8 +67711,8 @@ export namespace BlankNodeIdentifierInterface {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeIdentifierInterface";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -69308,8 +67727,8 @@ export namespace BlankNodeIdentifierInterface {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeIdentifierInterface"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "BlankNodeIdentifierInterface",
@@ -69323,11 +67742,6 @@ export namespace BlankNodeIdentifierInterface {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "BlankNodeIdentifierInterface" as const },
@@ -69336,6 +67750,11 @@ export namespace BlankNodeIdentifierInterface {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -69502,15 +67921,15 @@ export namespace BlankNodeIdentifierInterface {
 
   export function $propertiesFromJson(
     $json: BlankNodeIdentifierInterface.$Json,
-  ): { $identifier: BlankNode; $type: "BlankNodeIdentifierInterface" } {
-    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
+  ): { $type: "BlankNodeIdentifierInterface"; $identifier: BlankNode } {
     const $type = "BlankNodeIdentifierInterface" as const;
-    return { $identifier, $type };
+    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
+    return { $type, $identifier };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode;
     $type: "BlankNodeIdentifierInterface";
+    $identifier: BlankNode;
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -69542,39 +67961,36 @@ export namespace BlankNodeIdentifierInterface {
             })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toBlankNode()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"BlankNodeIdentifierInterface">(
-            "BlankNodeIdentifierInterface" as const,
-          ).map(($type) => ({
-            $identifier,
-            $type,
-          })),
-        ),
+      Right<"BlankNodeIdentifierInterface">(
+        "BlankNodeIdentifierInterface" as const,
+      ).chain(($type) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toBlankNode()))
+          .chain((values) => values.head())
+          .map(($identifier) => ({ $type, $identifier })),
+      ),
     );
   };
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "BlankNode" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["BlankNodeIdentifierInterface"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "BlankNode" as const }),
       },
     },
   } as const;
@@ -69644,8 +68060,8 @@ export namespace BlankNodeIdentifierInterface {
   ): BlankNodeIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": `_:${_blankNodeIdentifierInterface.$identifier().value}`,
         $type: _blankNodeIdentifierInterface.$type,
+        "@id": `_:${_blankNodeIdentifierInterface.$identifier().value}`,
       } satisfies BlankNodeIdentifierInterface.$Json),
     );
   }
@@ -69734,10 +68150,10 @@ export namespace BlankNodeIdentifierInterface {
  */
 
 export class BlankNodeIdentifierClass {
-  readonly $identifier: () => BlankNodeIdentifierClass.$Identifier;
-
   readonly $type: "BlankNodeIdentifierClass" =
     "BlankNodeIdentifierClass" as const;
+
+  readonly $identifier: () => BlankNodeIdentifierClass.$Identifier;
 
   constructor(parameters?: {
     readonly $identifier?:
@@ -69758,31 +68174,21 @@ export class BlankNodeIdentifierClass {
   }
 
   $equals(other: BlankNodeIdentifierClass): $EqualsResult {
-    return $booleanEquals(this.$identifier(), other.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
+    return $booleanEquals(this.$identifier(), other.$identifier()).mapLeft(
+      (propertyValuesUnequal) => ({
         left: this,
         right: other,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
+      }),
+    );
   }
 
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
-    _hasher.update(this.$identifier().value);
     _hasher.update(this.$type);
+    _hasher.update(this.$identifier().value);
     return _hasher;
   }
 
@@ -69795,8 +68201,8 @@ export class BlankNodeIdentifierClass {
   $toJson(): BlankNodeIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id": `_:${this.$identifier().value}`,
         $type: this.$type,
+        "@id": `_:${this.$identifier().value}`,
       } satisfies BlankNodeIdentifierClass.$Json),
     );
   }
@@ -69839,8 +68245,8 @@ export namespace BlankNodeIdentifierClass {
   }
 
   export type $Json = {
-    readonly "@id": string;
     readonly $type: "BlankNodeIdentifierClass";
+    readonly "@id": string;
   };
 
   export namespace $Json {
@@ -69855,8 +68261,8 @@ export namespace BlankNodeIdentifierClass {
     export function schema() {
       return z
         .object({
-          "@id": z.string().min(1),
           $type: z.literal("BlankNodeIdentifierClass"),
+          "@id": z.string().min(1),
         })
         .meta({
           id: "BlankNodeIdentifierClass",
@@ -69870,11 +68276,6 @@ export namespace BlankNodeIdentifierClass {
       return {
         elements: [
           {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
             rule: {
               condition: {
                 schema: { const: "BlankNodeIdentifierClass" as const },
@@ -69883,6 +68284,11 @@ export namespace BlankNodeIdentifierClass {
               effect: "HIDE",
             },
             scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
             type: "Control",
           },
         ],
@@ -70102,16 +68508,16 @@ export namespace BlankNodeIdentifierClass {
 
   export const $schema = {
     properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "BlankNode" as const }),
-      },
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
           ownValues: ["BlankNodeIdentifierClass"],
         }),
+      },
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "BlankNode" as const }),
       },
     },
   } as const;
@@ -74787,9 +73193,6 @@ export type $Object =
   | ExternClassPropertyClass
   | FlattenClassUnionMember3
   | HasValuePropertiesClass
-  | IdentifierOverride3Class
-  | IdentifierOverride2Class
-  | IdentifierOverride1Class
   | InIdentifierClass
   | InPropertiesClass
   | IndirectRecursiveClass
@@ -75068,15 +73471,6 @@ export namespace $Object {
       return ((left, right) => left.$equals(right))(
         left as HasValuePropertiesClass,
         right as HasValuePropertiesClass,
-      );
-    }
-    if (
-      IdentifierOverride3Class.isIdentifierOverride3Class(left) &&
-      IdentifierOverride3Class.isIdentifierOverride3Class(right)
-    ) {
-      return ((left, right) => left.$equals(right))(
-        left as IdentifierOverride3Class,
-        right as IdentifierOverride3Class,
       );
     }
     if (
@@ -75823,19 +74217,6 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["IdentifierOverride3Class"] !== undefined &&
-      IdentifierOverride3Class.isIdentifierOverride3Class(value)
-    ) {
-      if (
-        !IdentifierOverride3Class.$filter(
-          filter.on["IdentifierOverride3Class"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
       filter.on?.["InIdentifierClass"] !== undefined &&
       InIdentifierClass.isInIdentifierClass(value)
     ) {
@@ -76410,7 +74791,6 @@ export namespace $Object {
       readonly ExternClassPropertyClass?: ExternClassPropertyClass.$Filter;
       readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
       readonly HasValuePropertiesClass?: HasValuePropertiesClass.$Filter;
-      readonly IdentifierOverride3Class?: IdentifierOverride3Class.$Filter;
       readonly InIdentifierClass?: InIdentifierClass.$Filter;
       readonly InPropertiesClass?: InPropertiesClass.$Filter;
       readonly IndirectRecursiveClass?: IndirectRecursiveClass.$Filter;
@@ -76620,12 +75000,6 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
-      }).concat(),
-      ...IdentifierOverride3Class.$focusSparqlConstructTriples({
-        filter: filter?.on?.IdentifierOverride3Class,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
       }).concat(),
       ...InIdentifierClass.$focusSparqlConstructTriples({
         filter: filter?.on?.InIdentifierClass,
@@ -77194,16 +75568,6 @@ export namespace $Object {
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}HasValuePropertiesClass`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: IdentifierOverride3Class.$focusSparqlWherePatterns({
-            filter: filter?.on?.IdentifierOverride3Class,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}IdentifierOverride3Class`,
           }).concat(),
           type: "group",
         },
@@ -77803,11 +76167,6 @@ export namespace $Object {
         value as HasValuePropertiesClass.$Json,
       );
     }
-    if (value.$type === "IdentifierOverride3Class") {
-      return IdentifierOverride3Class.$fromJson(
-        value as IdentifierOverride3Class.$Json,
-      );
-    }
     if (value.$type === "InIdentifierClass") {
       return InIdentifierClass.$fromJson(value as InIdentifierClass.$Json);
     }
@@ -78188,13 +76547,6 @@ export namespace $Object {
       .altLazy(
         () =>
           HasValuePropertiesClass.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride3Class.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -78853,18 +77205,6 @@ export namespace $Object {
             .altLazy(
               () =>
                 HasValuePropertiesClass.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                IdentifierOverride3Class.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -79581,9 +77921,6 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       value.$hash(hasher);
     }
-    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
-      value.$hash(hasher);
-    }
     if (InIdentifierClass.isInIdentifierClass(value)) {
       value.$hash(hasher);
     }
@@ -79783,7 +78120,6 @@ export namespace $Object {
     | ExternClassPropertyClass.$Json
     | FlattenClassUnionMember3.$Json
     | HasValuePropertiesClass.$Json
-    | IdentifierOverride3Class.$Json
     | InIdentifierClass.$Json
     | InPropertiesClass.$Json
     | IndirectRecursiveClass.$Json
@@ -79860,7 +78196,6 @@ export namespace $Object {
           ExternClassPropertyClass.$Json.schema(),
           FlattenClassUnionMember3.$Json.schema(),
           HasValuePropertiesClass.$Json.schema(),
-          IdentifierOverride3Class.$Json.schema(),
           InIdentifierClass.$Json.schema(),
           InPropertiesClass.$Json.schema(),
           IndirectRecursiveClass.$Json.schema(),
@@ -80019,10 +78354,6 @@ export namespace $Object {
       HasValuePropertiesClass: {
         discriminantValues: ["HasValuePropertiesClass"],
         type: HasValuePropertiesClass.$schema,
-      },
-      IdentifierOverride3Class: {
-        discriminantValues: ["IdentifierOverride3Class"],
-        type: IdentifierOverride3Class.$schema,
       },
       InIdentifierClass: {
         discriminantValues: ["InIdentifierClass"],
@@ -80353,9 +78684,6 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       return value.$toJson();
     }
-    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
-      return value.$toJson();
-    }
     if (InIdentifierClass.isInIdentifierClass(value)) {
       return value.$toJson();
     }
@@ -80616,9 +78944,6 @@ export namespace $Object {
       return value.$toRdfResource(options);
     }
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return value.$toRdfResource(options);
-    }
-    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return value.$toRdfResource(options);
     }
     if (InIdentifierClass.isInIdentifierClass(value)) {
@@ -81003,14 +79328,6 @@ export namespace $Object {
       ];
     }
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return [
-        value.$toRdfResource({
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
       return [
         value.$toRdfResource({
           graph: _options.graph,
@@ -81504,9 +79821,6 @@ export namespace $Object {
     if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
       return value.toString();
     }
-    if (IdentifierOverride3Class.isIdentifierOverride3Class(value)) {
-      return value.toString();
-    }
     if (InIdentifierClass.isInIdentifierClass(value)) {
       return value.toString();
     }
@@ -81879,14 +80193,6 @@ export namespace $Object {
         filter: filter?.on?.["HasValuePropertiesClass"],
         ignoreRdfType: false,
         schema: schema.members["HasValuePropertiesClass"].type,
-      }),
-    );
-    triples = triples.concat(
-      IdentifierOverride3Class.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride3Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride3Class"].type,
       }),
     );
     triples = triples.concat(
@@ -82498,15 +80804,6 @@ export namespace $Object {
         filter: filter?.on?.["HasValuePropertiesClass"],
         ignoreRdfType: false,
         schema: schema.members["HasValuePropertiesClass"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: IdentifierOverride3Class.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["IdentifierOverride3Class"],
-        ignoreRdfType: false,
-        schema: schema.members["IdentifierOverride3Class"].type,
       }).concat(),
       type: "group",
     });
@@ -83624,35 +81921,6 @@ export interface $ObjectSet {
       HasValuePropertiesClass.$Identifier
     >,
   ): Promise<Either<Error, readonly HasValuePropertiesClass[]>>;
-
-  identifierOverride3Class(
-    identifier: IdentifierOverride3Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride3Class>>;
-
-  identifierOverride3ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride3Class.$Filter,
-        IdentifierOverride3Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  identifierOverride3ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>>;
-
-  identifierOverride3Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class[]>>;
 
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
@@ -87425,98 +85693,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: HasValuePropertiesClass.$filter,
         $fromRdfResource: HasValuePropertiesClass.$fromRdfResource,
         $fromRdfTypes: [],
-      },
-      query,
-    );
-  }
-
-  async identifierOverride3Class(
-    identifier: IdentifierOverride3Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride3Class>> {
-    return this.identifierOverride3ClassSync(identifier, options);
-  }
-
-  identifierOverride3ClassSync(
-    identifier: IdentifierOverride3Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, IdentifierOverride3Class> {
-    return this.identifierOverride3ClassesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async identifierOverride3ClassCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride3Class.$Filter,
-        IdentifierOverride3Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.identifierOverride3ClassCountSync(query);
-  }
-
-  identifierOverride3ClassCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        IdentifierOverride3Class.$Filter,
-        IdentifierOverride3Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.identifierOverride3ClassesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async identifierOverride3ClassIdentifiers(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>> {
-    return this.identifierOverride3ClassIdentifiersSync(query);
-  }
-
-  identifierOverride3ClassIdentifiersSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride3Class.$Identifier[]> {
-    return this.identifierOverride3ClassesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async identifierOverride3Classes(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
-    return this.identifierOverride3ClassesSync(query);
-  }
-
-  identifierOverride3ClassesSync(
-    query?: $ObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Either<Error, readonly IdentifierOverride3Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride3Class,
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >(
-      {
-        $filter: IdentifierOverride3Class.$filter,
-        $fromRdfResource: IdentifierOverride3Class.$fromRdfResource,
-        $fromRdfTypes: [IdentifierOverride3Class.$fromRdfType],
       },
       query,
     );
@@ -92764,11 +90940,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: IdentifierOverride3Class.$fromRdfResource,
-          $fromRdfTypes: [IdentifierOverride3Class.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdfResource: InIdentifierClass.$fromRdfResource,
           $fromRdfTypes: [InIdentifierClass.$fromRdfType],
         },
@@ -94524,58 +92695,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       HasValuePropertiesClass.$Filter,
       HasValuePropertiesClass.$Identifier
     >(HasValuePropertiesClass, query);
-  }
-
-  async identifierOverride3Class(
-    identifier: IdentifierOverride3Class.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, IdentifierOverride3Class>> {
-    return (
-      await this.identifierOverride3Classes({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async identifierOverride3ClassCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        IdentifierOverride3Class.$Filter,
-        IdentifierOverride3Class.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >(IdentifierOverride3Class, query);
-  }
-
-  async identifierOverride3ClassIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >(IdentifierOverride3Class, query);
-  }
-
-  async identifierOverride3Classes(
-    query?: $SparqlObjectSet.Query<
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >,
-  ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
-    return this.$objects<
-      IdentifierOverride3Class,
-      IdentifierOverride3Class.$Filter,
-      IdentifierOverride3Class.$Identifier
-    >(IdentifierOverride3Class, query);
   }
 
   async indirectRecursiveClass(

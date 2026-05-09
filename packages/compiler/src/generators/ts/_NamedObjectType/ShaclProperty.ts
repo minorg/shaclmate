@@ -92,11 +92,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get equalsFunction(): Code {
-    return this.type.equalsFunction;
-  }
-
-  @Memoize()
   override get filterProperty() {
     if (this.visibility !== "public") {
       return Maybe.empty();

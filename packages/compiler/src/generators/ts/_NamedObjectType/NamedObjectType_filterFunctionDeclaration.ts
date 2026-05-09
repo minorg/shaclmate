@@ -12,8 +12,8 @@ export function NamedObjectType_filterFunctionDeclaration(
     );
   }
 
-  if (this.ownProperties.length > 0) {
-    for (const ownProperty of this.ownProperties) {
+  if (this.properties.length > 0) {
+    for (const ownProperty of this.properties) {
       ownProperty.filterProperty.ifJust(({ name }) => {
         statements.push(
           code`if (filter.${name} !== undefined && !${ownProperty.type.filterFunction}(filter.${name}, ${ownProperty.accessExpression({ variables: { object: code`value` } })})) { return false; }`,

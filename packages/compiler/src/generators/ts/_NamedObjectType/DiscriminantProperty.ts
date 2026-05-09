@@ -43,6 +43,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of({
       key: this.name,
       schema:
@@ -54,6 +58,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
@@ -102,6 +110,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
+    if (this.override) {
+      return [];
+    }
+
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
@@ -110,6 +122,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
@@ -131,6 +147,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<Code> {
+    if (this.override) {
+      return Maybe.empty();
+    }
+
     return Maybe.of(code`${this.name}: ${variables.value}`);
   }
 

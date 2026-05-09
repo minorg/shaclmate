@@ -43,7 +43,7 @@ if (!parameters?.ignoreRdfType) {
 }`);
   }
 
-  for (const property of this.ownProperties) {
+  for (const property of this.properties) {
     if (property.recursive) {
       continue;
     }

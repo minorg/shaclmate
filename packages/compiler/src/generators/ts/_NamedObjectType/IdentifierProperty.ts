@@ -65,11 +65,6 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  get equalsFunction(): Code {
-    return this.type.equalsFunction;
-  }
-
-  @Memoize()
   override get filterProperty() {
     return Maybe.of({
       name: this.name,

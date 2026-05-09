@@ -25,7 +25,7 @@ export function NamedObjectType_toStringFunctionOrMethodDeclarations(
       }
     }
   }
-  for (const ownProperty of this.ownProperties) {
+  for (const ownProperty of this.properties) {
     ownProperty
       .toStringExpression({
         variables: { value: code`${this.thisVariable}.${ownProperty.name}` },

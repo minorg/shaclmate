@@ -18,7 +18,7 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
   let rightVariable: Code;
   switch (this.declarationType) {
     case "class":
-      if (this.ownProperties.length === 0) {
+      if (this.properties.length === 0) {
         // If there's a parent class and no properties in this class, can skip overriding equals
         return Maybe.empty();
       }
@@ -46,7 +46,11 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
       rightVariable = code`right`;
   }
 
-  for (const property of this.ownProperties) {
+  for (const property of this.properties) {
+    if (property.kind === "DiscriminantProperty") {
+      continue;
+    }
+
     chain.push(
       code`(${property.equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
     );
