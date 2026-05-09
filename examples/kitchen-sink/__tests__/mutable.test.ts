@@ -1,11 +1,20 @@
 import { Maybe } from "purify-ts";
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
+import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { sha256 } from "js-sha256";
+
+function $identifier(this: kitchenSink.MutablePropertiesClass) {
+  return dataFactory.namedNode(
+    `urn:shaclmate:MutablePropertiesClass:${this.$hashShaclProperties(sha256.create())}`,
+  );
+}
 
 describe("mutable", () => {
   it("mutable list", ({ expect }) => {
     const instance = new kitchenSink.MutablePropertiesClass({
+      $identifier,
       mutableListProperty: ["test1", "test2"],
     });
     expect(instance.mutableListProperty.unsafeCoerce()).toStrictEqual([
@@ -24,6 +33,7 @@ describe("mutable", () => {
 
   it("mutable property", ({ expect }) => {
     const instance = new kitchenSink.MutablePropertiesClass({
+      $identifier,
       mutableStringProperty: "test",
     });
     expect(instance.mutableStringProperty.unsafeCoerce()).toStrictEqual("test");
@@ -39,6 +49,7 @@ describe("mutable", () => {
 
   it("mutable set", ({ expect }) => {
     const instance = new kitchenSink.MutablePropertiesClass({
+      $identifier,
       mutableSetProperty: ["test1", "test2"],
     });
     expect(instance.mutableSetProperty).toStrictEqual(["test1", "test2"]);
