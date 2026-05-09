@@ -389,6 +389,7 @@ const workspaces = {
   } satisfies Record<PackageName, Workspace>,
 } as const;
 
+// @ts-expect-error: this script will never be built into CommonJS, can ignore this error
 const myDirPath = path.dirname(url.fileURLToPath(import.meta.url));
 
 for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
