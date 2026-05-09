@@ -19,7 +19,9 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
             depth: 0,
             variables: {
               hasher: hasherVariable,
-              value: code`${this.thisVariable}.${property.name}`,
+              value: property.accessExpression({
+                variables: { object: this.thisVariable },
+              }),
             },
           })
         : [],

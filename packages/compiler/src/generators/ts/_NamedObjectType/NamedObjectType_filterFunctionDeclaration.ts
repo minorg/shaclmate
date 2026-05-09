@@ -13,10 +13,10 @@ export function NamedObjectType_filterFunctionDeclaration(
   }
 
   if (this.properties.length > 0) {
-    for (const ownProperty of this.properties) {
-      ownProperty.filterProperty.ifJust(({ name }) => {
+    for (const property of this.properties) {
+      property.filterProperty.ifJust(({ name }) => {
         statements.push(
-          code`if (filter.${name} !== undefined && !${ownProperty.type.filterFunction}(filter.${name}, ${ownProperty.accessExpression({ variables: { object: code`value` } })})) { return false; }`,
+          code`if (filter.${name} !== undefined && !${property.type.filterFunction}(filter.${name}, ${property.accessExpression({ variables: { object: code`value` } })})) { return false; }`,
         );
       });
     }

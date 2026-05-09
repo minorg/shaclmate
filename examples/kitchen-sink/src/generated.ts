@@ -3327,7 +3327,7 @@ export class $NamedDefaultPartial {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -3696,7 +3696,7 @@ export class $DefaultPartial {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -5722,7 +5722,7 @@ export class UnionDiscriminantsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -11475,7 +11475,7 @@ export class TermPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -12830,7 +12830,7 @@ export class RecursiveClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -13430,7 +13430,7 @@ export class RecursiveClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -14036,7 +14036,7 @@ export class PropertyVisibilitiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -14676,7 +14676,7 @@ export class PropertyPathsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -15454,7 +15454,7 @@ export class PropertyNamesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -16394,7 +16394,7 @@ export class PropertyCardinalitiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -17621,7 +17621,7 @@ export namespace PartialInterfaceUnionMember2 {
     _partialInterfaceUnionMember2: PartialInterfaceUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _partialInterfaceUnionMember2.$identifier.toString(),
+      $identifier: _partialInterfaceUnionMember2.$identifier().toString(),
     });
   }
 
@@ -18234,7 +18234,7 @@ export namespace PartialInterfaceUnionMember1 {
     _partialInterfaceUnionMember1: PartialInterfaceUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _partialInterfaceUnionMember1.$identifier.toString(),
+      $identifier: _partialInterfaceUnionMember1.$identifier().toString(),
     });
   }
 
@@ -18390,7 +18390,7 @@ export class PartialClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -18954,7 +18954,7 @@ export class PartialClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -19498,7 +19498,7 @@ export class NewName2Class {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -19963,7 +19963,7 @@ export class NewName1Class {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -20485,7 +20485,7 @@ export class OrderedPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -21745,7 +21745,7 @@ export class NumericPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -24021,7 +24021,7 @@ export class NodeKindsClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -25023,7 +25023,7 @@ export class NoRdfTypeClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -25495,7 +25495,7 @@ export class NoRdfTypeClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -26013,7 +26013,7 @@ export class NamedUnionPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -26821,7 +26821,7 @@ export class MutablePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -27886,7 +27886,7 @@ export class ListPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -29104,7 +29104,7 @@ export namespace PartialInterface {
     _partialInterface: PartialInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _partialInterface.$identifier.toString(),
+      $identifier: _partialInterface.$identifier().toString(),
     });
   }
 
@@ -32301,7 +32301,7 @@ export namespace LazyPropertiesInterface {
     _lazyPropertiesInterface: LazyPropertiesInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _lazyPropertiesInterface.$identifier.toString(),
+      $identifier: _lazyPropertiesInterface.$identifier().toString(),
     });
   }
 
@@ -33452,7 +33452,7 @@ export class LazyPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -35804,7 +35804,9 @@ export namespace LazilyResolvedIriIdentifierInterface {
     _lazilyResolvedIriIdentifierInterface: LazilyResolvedIriIdentifierInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _lazilyResolvedIriIdentifierInterface.$identifier.toString(),
+      $identifier: _lazilyResolvedIriIdentifierInterface
+        .$identifier()
+        .toString(),
     });
   }
 
@@ -35952,7 +35954,7 @@ export class LazilyResolvedIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -36902,7 +36904,9 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     _lazilyResolvedInterfaceUnionMember2: LazilyResolvedInterfaceUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _lazilyResolvedInterfaceUnionMember2.$identifier.toString(),
+      $identifier: _lazilyResolvedInterfaceUnionMember2
+        .$identifier()
+        .toString(),
     });
   }
 
@@ -37530,7 +37534,9 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     _lazilyResolvedInterfaceUnionMember1: LazilyResolvedInterfaceUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _lazilyResolvedInterfaceUnionMember1.$identifier.toString(),
+      $identifier: _lazilyResolvedInterfaceUnionMember1
+        .$identifier()
+        .toString(),
     });
   }
 
@@ -37690,7 +37696,7 @@ export class LazilyResolvedClassUnionMember2 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -38266,7 +38272,7 @@ export class LazilyResolvedClassUnionMember1 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -39326,8 +39332,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     _lazilyResolvedBlankNodeOrIriIdentifierInterface: LazilyResolvedBlankNodeOrIriIdentifierInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier:
-        _lazilyResolvedBlankNodeOrIriIdentifierInterface.$identifier.toString(),
+      $identifier: _lazilyResolvedBlankNodeOrIriIdentifierInterface
+        .$identifier()
+        .toString(),
     });
   }
 
@@ -39498,7 +39505,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -40100,7 +40107,7 @@ export class LanguageInPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -40723,7 +40730,7 @@ export class JsPrimitiveUnionPropertyClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -41943,7 +41950,7 @@ export namespace IriIdentifierInterface {
     _iriIdentifierInterface: IriIdentifierInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _iriIdentifierInterface.$identifier.toString(),
+      $identifier: _iriIdentifierInterface.$identifier().toString(),
     });
   }
 
@@ -42071,7 +42078,7 @@ export class IriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -42867,7 +42874,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     _interfaceUnionMemberCommonParent: InterfaceUnionMemberCommonParent,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _interfaceUnionMemberCommonParent.$identifier.toString(),
+      $identifier: _interfaceUnionMemberCommonParent.$identifier().toString(),
     });
   }
 
@@ -43528,7 +43535,7 @@ export namespace InterfaceUnionMember2 {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember2,
       ),
-      $identifier: _interfaceUnionMember2.$identifier.toString(),
+      $identifier: _interfaceUnionMember2.$identifier().toString(),
     });
   }
 
@@ -44187,7 +44194,7 @@ export namespace InterfaceUnionMember1 {
       ...InterfaceUnionMemberCommonParentStatic.$propertiesToStrings(
         _interfaceUnionMember1,
       ),
-      $identifier: _interfaceUnionMember1.$identifier.toString(),
+      $identifier: _interfaceUnionMember1.$identifier().toString(),
     });
   }
 
@@ -44664,7 +44671,7 @@ export namespace Interface {
   export function $propertiesToStrings(
     _interface: Interface,
   ): Record<string, string> {
-    return $compactRecord({ $identifier: _interface.$identifier.toString() });
+    return $compactRecord({ $identifier: _interface.$identifier().toString() });
   }
 
   export function $toString(this: Interface): string;
@@ -44845,7 +44852,7 @@ export class IndirectRecursiveHelperClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -45438,7 +45445,7 @@ export class IndirectRecursiveClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -46234,7 +46241,7 @@ export class InPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -47310,7 +47317,7 @@ export class InIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -47967,7 +47974,7 @@ export class HasValuePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -48522,7 +48529,7 @@ export class FlattenClassUnionMember3 {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -49112,7 +49119,7 @@ export class ExternClassPropertyClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -49701,7 +49708,7 @@ export abstract class AbstractBaseClassForExternClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -50140,7 +50147,7 @@ export class ExplicitRdfTypeClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -50721,7 +50728,7 @@ export class ExplicitFromToRdfTypesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -51351,7 +51358,7 @@ export class DisplayPropertiesClass {
 
   protected $propertiesToStrings(): Record<string, string> {
     return $compactRecord({
-      $identifier: this.$identifier.toString(),
+      $identifier: this.$identifier().toString(),
       explicitTrueDisplayProperty: this.explicitTrueDisplayProperty.toString(),
     });
   }
@@ -52091,7 +52098,7 @@ export class DirectRecursiveClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -52868,7 +52875,7 @@ export class DefaultValuePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -54395,7 +54402,7 @@ export class DateUnionPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -57036,7 +57043,7 @@ export class ConvertibleTypePropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -59335,7 +59342,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     _baseInterfaceWithProperties: BaseInterfaceWithProperties,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _baseInterfaceWithProperties.$identifier.toString(),
+      $identifier: _baseInterfaceWithProperties.$identifier().toString(),
     });
   }
 
@@ -59945,7 +59952,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ...BaseInterfaceWithPropertiesStatic.$propertiesToStrings(
         _baseInterfaceWithoutProperties,
       ),
-      $identifier: _baseInterfaceWithoutProperties.$identifier.toString(),
+      $identifier: _baseInterfaceWithoutProperties.$identifier().toString(),
     });
   }
 
@@ -60638,7 +60645,7 @@ export namespace ConcreteParentInterfaceStatic {
       ...BaseInterfaceWithoutPropertiesStatic.$propertiesToStrings(
         _concreteParentInterface,
       ),
-      $identifier: _concreteParentInterface.$identifier.toString(),
+      $identifier: _concreteParentInterface.$identifier().toString(),
     });
   }
 
@@ -61300,7 +61307,7 @@ export namespace ConcreteChildInterface {
       ...ConcreteParentInterfaceStatic.$propertiesToStrings(
         _concreteChildInterface,
       ),
-      $identifier: _concreteChildInterface.$identifier.toString(),
+      $identifier: _concreteChildInterface.$identifier().toString(),
     });
   }
 
@@ -61455,7 +61462,7 @@ export abstract class AbstractBaseClassWithProperties {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -63216,7 +63223,7 @@ export abstract class ClassUnionMemberCommonParent {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -64657,7 +64664,7 @@ export class PartialClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -65118,7 +65125,7 @@ export class NonClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -65787,7 +65794,7 @@ export class ClassPropertiesClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -67108,7 +67115,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
     _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _blankNodeOrIriIdentifierInterface.$identifier.toString(),
+      $identifier: _blankNodeOrIriIdentifierInterface.$identifier().toString(),
     });
   }
 
@@ -67249,7 +67256,7 @@ export class BlankNodeOrIriIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {
@@ -68097,7 +68104,7 @@ export namespace BlankNodeIdentifierInterface {
     _blankNodeIdentifierInterface: BlankNodeIdentifierInterface,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _blankNodeIdentifierInterface.$identifier.toString(),
+      $identifier: _blankNodeIdentifierInterface.$identifier().toString(),
     });
   }
 
@@ -68228,7 +68235,7 @@ export class BlankNodeIdentifierClass {
   }
 
   protected $propertiesToStrings(): Record<string, string> {
-    return $compactRecord({ $identifier: this.$identifier.toString() });
+    return $compactRecord({ $identifier: this.$identifier().toString() });
   }
 
   toString(): string {

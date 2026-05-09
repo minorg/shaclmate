@@ -71,7 +71,9 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
           graph: code`options?.${variables.graph}`,
           resource: variables.resource,
           resourceSet: variables.resourceSet,
-          value: code`${this.thisVariable}.${property.name}`,
+          value: property.accessExpression({
+            variables: { object: this.thisVariable },
+          }),
         },
       }),
     );

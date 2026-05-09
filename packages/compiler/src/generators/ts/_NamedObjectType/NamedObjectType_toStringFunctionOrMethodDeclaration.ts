@@ -25,14 +25,18 @@ export function NamedObjectType_toStringFunctionOrMethodDeclarations(
       }
     }
   }
-  for (const ownProperty of this.properties) {
-    ownProperty
+  for (const property of this.properties) {
+    property
       .toStringExpression({
-        variables: { value: code`${this.thisVariable}.${ownProperty.name}` },
+        variables: {
+          value: property.accessExpression({
+            variables: { object: this.thisVariable },
+          }),
+        },
       })
-      .ifJust((ownPropertyToStringExpression) => {
+      .ifJust((propertyToStringExpression) => {
         propertiesToStringRecordProperties.push(
-          code`${literalOf(ownProperty.name)}: ${ownPropertyToStringExpression}`,
+          code`${literalOf(property.name)}: ${propertyToStringExpression}`,
         );
       });
   }
