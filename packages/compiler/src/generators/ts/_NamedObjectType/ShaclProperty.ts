@@ -123,7 +123,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
 
     const meta: Record<string, string> = {
-      id: this.name,
+      id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
     };
     this.comment.alt(this.description).ifJust((description) => {
       meta["description"] = description;
