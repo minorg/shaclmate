@@ -40,7 +40,7 @@ describe("PropertyShape", () => {
     ).groups.map((_) => shapesGraph.propertyGroup(_).unsafeCoerce());
     expect(groups).toHaveLength(1);
     expect(
-      groups[0].$identifier.equals(dash.ScriptAPIGenerationRules),
+      groups[0].$identifier().equals(dash.ScriptAPIGenerationRules),
     ).toStrictEqual(true);
   });
 

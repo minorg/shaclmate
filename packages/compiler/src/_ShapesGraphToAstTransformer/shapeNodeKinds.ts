@@ -21,7 +21,7 @@ function nodeShapeNodeKinds(
   // Recurse into parents
   const parentNodeKinds = new Set<NodeKind>();
   for (const parentNodeShape of this.relatedNodeShapesByIdentifier.get(
-    nodeShape.$identifier,
+    nodeShape.$identifier(),
   )!.parents) {
     nodeShapeNodeKinds
       .call(this, parentNodeShape)

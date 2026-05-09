@@ -69,19 +69,18 @@ function propertyName(
 
   // Pick up the common pattern of a property shape identifier being the node shape's identifier -localName,
   // like ex:NodeShape-property
+  const propertyShapeIdentifier = propertyShape.$identifier();
   if (
-    propertyShape.$identifier.termType === "NamedNode" &&
+    propertyShapeIdentifier.termType === "NamedNode" &&
     objectType.shapeIdentifier.termType === "NamedNode"
   ) {
     const propertyShapeIdentifierPrefix = `${objectType.shapeIdentifier.value}-`;
     if (
-      propertyShape.$identifier.value.startsWith(
-        propertyShapeIdentifierPrefix,
-      ) &&
-      propertyShape.$identifier.value.length >
+      propertyShapeIdentifier.value.startsWith(propertyShapeIdentifierPrefix) &&
+      propertyShapeIdentifier.value.length >
         propertyShapeIdentifierPrefix.length
     ) {
-      return propertyShape.$identifier.value.substring(
+      return propertyShapeIdentifier.value.substring(
         propertyShapeIdentifierPrefix.length,
       );
     }
@@ -93,13 +92,13 @@ function propertyName(
   }
 
   // Shape identifier CURIE reference
-  if (propertyShape.$identifier instanceof Curie) {
-    return propertyShape.$identifier.reference;
+  if (propertyShapeIdentifier instanceof Curie) {
+    return propertyShapeIdentifier.reference;
   }
 
   // Shape identifier IRI
-  if (propertyShape.$identifier.termType === "NamedNode") {
-    return propertyShape.$identifier.value;
+  if (propertyShapeIdentifier.termType === "NamedNode") {
+    return propertyShapeIdentifier.value;
   }
 
   // sh:path IRI
@@ -308,7 +307,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         comment: Maybe.empty(),
         label: Maybe.empty(),
         name: Maybe.empty(),
-        shapeIdentifier: propertyShape.$identifier,
+        shapeIdentifier: propertyShape.$identifier(),
       };
 
       switch (astType.kind) {
@@ -376,7 +375,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         objectType,
         order: propertyShape.order.orDefault(0),
         path: propertyShape.path,
-        shapeIdentifier: propertyShape.$identifier,
+        shapeIdentifier: propertyShape.$identifier(),
         type: astType,
         visibility: propertyShape.visibility
           .map(Visibility.fromIri)

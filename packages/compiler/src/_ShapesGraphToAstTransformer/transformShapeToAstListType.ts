@@ -75,11 +75,14 @@ export function transformShapeToAstListType(
         label: nodeShape.label,
         mutable: nodeShape.mutable.orDefault(false),
         name: shapeAstTypeName(nodeShape),
-        shapeIdentifier: nodeShape.$identifier,
+        shapeIdentifier: nodeShape.$identifier(),
         toRdfTypes: nodeShape.toRdfTypes,
       });
 
-      this.cachedAstTypesByShapeIdentifier.set(nodeShape.$identifier, listType);
+      this.cachedAstTypesByShapeIdentifier.set(
+        nodeShape.$identifier(),
+        listType,
+      );
 
       return (() => {
         let emptyListShape: input.Shape | undefined;
@@ -175,7 +178,7 @@ export function transformShapeToAstListType(
                   if (
                     restProperty.type.kind !== "ListType" ||
                     !restProperty.type.shapeIdentifier.equals(
-                      nodeShape.$identifier,
+                      nodeShape.$identifier(),
                     )
                   ) {
                     return Left(
@@ -192,7 +195,7 @@ export function transformShapeToAstListType(
             });
         });
       })().ifLeft(() => {
-        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier);
+        this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier());
       });
     });
   } finally {

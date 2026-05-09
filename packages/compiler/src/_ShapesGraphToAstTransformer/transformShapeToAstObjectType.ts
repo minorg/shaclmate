@@ -154,7 +154,7 @@ export function transformShapeToAstObjectType(
           comment: Maybe.empty(),
           label: Maybe.empty(),
           name: Maybe.empty(),
-          shapeIdentifier: nodeShape.$identifier,
+          shapeIdentifier: nodeShape.$identifier(),
         };
         if (nodeKinds.size === 2) {
           invariant(nodeShape.in_.isNothing());
@@ -192,7 +192,7 @@ export function transformShapeToAstObjectType(
           label: nodeShape.label,
           identifierType,
           name: shapeAstTypeName(nodeShape),
-          shapeIdentifier: nodeShape.$identifier,
+          shapeIdentifier: nodeShape.$identifier(),
           synthetic: false,
           toRdfTypes,
           tsFeatures,
@@ -201,7 +201,7 @@ export function transformShapeToAstObjectType(
         });
 
         this.cachedAstTypesByShapeIdentifier.set(
-          nodeShape.$identifier,
+          nodeShape.$identifier(),
           objectType,
         );
 
@@ -264,7 +264,7 @@ export function transformShapeToAstObjectType(
 
           return Either.of<Error, Maybe<ast.ObjectType>>(Maybe.of(objectType));
         })().ifLeft(() => {
-          this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier);
+          this.cachedAstTypesByShapeIdentifier.delete(nodeShape.$identifier());
         });
       },
     );
