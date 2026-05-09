@@ -4,13 +4,11 @@ import { Memoize } from "typescript-memoize";
 
 import { imports } from "../imports.js";
 import { removeUndefined } from "../removeUndefined.js";
-import { snippets } from "../snippets.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
   override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
-  override readonly equalsFunction = code`${snippets.strictEquals}`;
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =

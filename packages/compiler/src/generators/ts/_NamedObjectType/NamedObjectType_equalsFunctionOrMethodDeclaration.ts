@@ -52,7 +52,7 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
     }
 
     chain.push(
-      code`(${property.equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
+      code`(${property.type.equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
     );
   }
 
