@@ -1,7 +1,31 @@
 {
   "compilerOptions": {
-    "types": ["node"]
+    "exactOptionalPropertyTypes": false,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "noUncheckedIndexedAccess": false,
+    "types": [
+      "node"
+    ]
   },
-  "extends": ["@tsconfig/node20/tsconfig.json", "@tsconfig/strictest/tsconfig.json"],
-  "include": ["*.ts"]
+  "extends": [
+    "@tsconfig/node20/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
+  ],
+  "include": [
+    "*.ts",
+    "apps/cli/src/**/*.ts*",
+    "examples/api/src/**/*.ts*",
+    "examples/forms/src/**/*.ts*",
+    "examples/graphql/src/**/*.ts*",
+    "examples/graphql/__tests__/**/*.ts",
+    "examples/kitchen-sink/src/**/*.ts*",
+    "examples/kitchen-sink/__tests__/**/*.ts",
+    "packages/compiler/src/**/*.ts*",
+    "packages/compiler/__tests__/**/*.ts",
+    "packages/shacl-ast/src/**/*.ts*",
+    "packages/shacl-ast/__tests__/**/*.ts"
+  ]
 }

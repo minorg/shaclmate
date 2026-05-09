@@ -518,11 +518,9 @@ for (const [workspacesDirectoryAny, workspaces_] of Object.entries(
             ...(testsDirectoryPath !== null
               ? {
                   "dev:tests": "tsc -p __tests__ -w --preserveWatchOutput",
+                  test: `cd ../.. && vitest run ${packageDirectoryPath}/__tests__`,
                 }
               : {}),
-            test: fs.existsSync(path.join(packageDirectoryPath, "__tests__"))
-              ? `cd ../.. && vitest run ${packageDirectoryPath}/__tests__`
-              : undefined,
             typecheck: "tsc --noEmit",
             "typecheck:watch": "tsc --noEmit -w --preserveWatchOutput",
             ...workspace.scripts,
@@ -622,8 +620,8 @@ fs.writeFileSync(
         test: "vitest run",
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest watch",
-        typecheck: "turbo run typecheck",
-        "typecheck:watch": "turbo run --concurrency 12 dev:noEmit dev:tests",
+        typecheck: "tsc",
+        "typecheck:watch": "tsc -w --preserveWatchOutput",
       },
       workspaces: Object.entries(workspaces).flatMap(
         ([workspacesDirectoryName, workspaces_]) =>
@@ -635,4 +633,52 @@ fs.writeFileSync(
     undefined,
     2,
   ),
+);
+
+// Root tsconfig.json
+// Only used for type checking
+fs.writeFileSync(
+  path.join(myDirPath, "tsconfig.json"),
+  `${JSON.stringify(
+    {
+      compilerOptions: {
+        exactOptionalPropertyTypes: false,
+        experimentalDecorators: true,
+        forceConsistentCasingInFileNames: true,
+        jsx: "react-jsx",
+        noEmit: true,
+        noUncheckedIndexedAccess: false,
+        types: ["node"],
+      },
+      extends: [
+        "@tsconfig/node20/tsconfig.json",
+        "@tsconfig/strictest/tsconfig.json",
+      ],
+      include: ["*.ts"].concat(
+        Object.entries(workspaces).flatMap(
+          ([workspacesDirectoryName, workspaces]) =>
+            Object.keys(workspaces).flatMap((workspaceName) => {
+              const workspaceDirectoryPath = path.join(
+                workspacesDirectoryName,
+                workspaceName,
+              );
+
+              const paths: string[] = [
+                path.join(workspaceDirectoryPath, "src", "**", "*.ts*"),
+              ];
+              if (
+                fs.existsSync(path.join(workspaceDirectoryPath, "__tests__"))
+              ) {
+                paths.push(
+                  path.join(workspaceDirectoryPath, "__tests__", "**", "*.ts"),
+                );
+              }
+              return paths;
+            }),
+        ),
+      ),
+    },
+    undefined,
+    2,
+  )}\n`,
 );
