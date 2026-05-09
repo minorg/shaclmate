@@ -644,17 +644,6 @@ export namespace NestedNodeShape {
         type: "property" as const,
       }))
       .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
         $strictEquals(
           left.requiredStringProperty,
           right.requiredStringProperty,
@@ -945,7 +934,7 @@ export namespace NestedNodeShape {
     _nestedNodeShape: NestedNodeShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _nestedNodeShape.$identifier.toString(),
+      $identifier: _nestedNodeShape.$identifier().toString(),
     });
   }
 
@@ -1066,17 +1055,6 @@ export namespace FormNodeShape {
         propertyValuesUnequal,
         type: "property" as const,
       }))
-      .chain(() =>
-        $strictEquals(left.$type, right.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: left,
-            right: right,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
       .chain(() =>
         ((left, right) => $arrayEquals(left, right, $strictEquals))(
           left.emptyStringSetProperty,
@@ -1789,7 +1767,7 @@ export namespace FormNodeShape {
     _formNodeShape: FormNodeShape,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _formNodeShape.$identifier.toString(),
+      $identifier: _formNodeShape.$identifier().toString(),
     });
   }
 
