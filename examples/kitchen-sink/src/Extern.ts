@@ -22,19 +22,21 @@ export namespace Extern {
   export type $Json = BaseForExternStatic.$Json;
   export const $Json = BaseForExternStatic.$Json;
 
-  // Called by interface functions
+  export function $create(
+    parameters: Parameters<typeof BaseForExternStatic.$create>[0],
+  ): Extern {
+    return {
+      ...BaseForExternStatic.$create(parameters),
+      $type: "Extern",
+    };
+  }
+
   export function $equals(left: Extern, right: Extern) {
     return BaseForExternStatic.$equals(left, right);
   }
 
   export function $fromJson(json: $Json): Extern {
-    const { $identifier, ...otherProperties } =
-      BaseForExternStatic.$propertiesFromJson(json);
-    return {
-      $identifier: () => $identifier,
-      $type: "Extern",
-      ...otherProperties,
-    };
+    return $create(BaseForExternStatic.$propertiesFromJson(json));
   }
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -80,11 +82,7 @@ export namespace Extern {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    }).map((properties) => ({
-      ...properties,
-      $identifier: () => properties.$identifier,
-      $type: "Extern",
-    }));
+    }).map($create);
   };
 
   // Called by interface functions
