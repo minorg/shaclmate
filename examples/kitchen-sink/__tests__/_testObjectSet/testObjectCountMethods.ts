@@ -6,36 +6,25 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectCountMethods(createObjectSet: ObjectSetFactory) {
   describe("object count methods", () => {
     it("class", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.concreteChildClasses),
-      );
+      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
       expect(
-        (await objectSet.concreteChildClassCount()).unsafeCoerce(),
-      ).toStrictEqual(data.concreteChildClasses.length);
+        (await objectSet.concreteChildCount()).unsafeCoerce(),
+      ).toStrictEqual(data.concreteChildren.length);
     });
 
     describe("union", () => {
-      it("class with fromRdfTypes", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.classUnions));
-        expect(
-          (await objectSet.classUnionCount()).unsafeCoerce(),
-        ).toStrictEqual(data.classUnions.length);
-      });
-
-      it("class without fromRdfTypes", async ({ expect }) => {
-        const objectSet = createObjectSet(
-          objectDataset(data.noRdfTypeClassUnions),
+      it("with fromRdfTypes", async ({ expect }) => {
+        const objectSet = createObjectSet(objectDataset(data.unions));
+        expect((await objectSet.unionCount()).unsafeCoerce()).toStrictEqual(
+          data.unions.length,
         );
-        expect(
-          (await objectSet.noRdfTypeClassUnionCount()).unsafeCoerce(),
-        ).toStrictEqual(data.noRdfTypeClassUnions.length);
       });
 
-      it("interface", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.interfaceUnions));
+      it("without fromRdfTypes", async ({ expect }) => {
+        const objectSet = createObjectSet(objectDataset(data.noRdfTypeUnions));
         expect(
-          (await objectSet.interfaceUnionCount()).unsafeCoerce(),
-        ).toStrictEqual(data.interfaceUnions.length);
+          (await objectSet.noRdfTypeUnionCount()).unsafeCoerce(),
+        ).toStrictEqual(data.noRdfTypeUnions.length);
       });
     });
   });

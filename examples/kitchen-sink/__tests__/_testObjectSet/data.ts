@@ -2,108 +2,79 @@ import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
 export const data = {
-  blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
-    (_, i) =>
-      new kitchenSink.BlankNodeOrIriIdentifierClass({
-        $identifier:
-          i % 2 === 0
-            ? dataFactory.blankNode()
-            : dataFactory.namedNode(
-                `http://example.com/blankNodeOrIriIdentifierClass${i}`,
-              ),
-      }),
-  ) satisfies readonly kitchenSink.BlankNodeOrIriIdentifierClass[],
+  blankNodeOrIriIdentifieres: [...new Array(4)].map((_, i) =>
+    kitchenSink.BlankNodeOrIriIdentifier.$create({
+      $identifier:
+        i % 2 === 0
+          ? dataFactory.blankNode()
+          : dataFactory.namedNode(
+              `http://example.com/blankNodeOrIriIdentifier${i}`,
+            ),
+    }),
+  ) satisfies readonly kitchenSink.BlankNodeOrIriIdentifier[],
 
-  classUnions: [...new Array(4)].map((_, i) => {
-    switch (i % 2) {
-      case 0:
-        return new kitchenSink.ClassUnionMember1({
-          $identifier: dataFactory.namedNode(
-            `http://example.com/classUnion${i}`,
-          ),
-          classUnionMemberCommonParentProperty: `common parent ${i}`,
-          classUnionMember1Property: `member ${i}`,
-        });
-      case 1:
-        return new kitchenSink.ClassUnionMember2({
-          $identifier: dataFactory.namedNode(
-            `http://example.com/classUnion${i}`,
-          ),
-          classUnionMemberCommonParentProperty: `common parent ${i}`,
-          classUnionMember2Property: `member ${i}`,
-        });
-      default:
-        throw new RangeError(i.toString());
-    }
-  }) as readonly kitchenSink.ClassUnion[],
+  concreteChildren: [...new Array(4)].map((_, i) =>
+    kitchenSink.ConcreteChild.$create({
+      baseWithPropertiesProperty: `ABC string ${i}`,
+      concreteChildProperty: `child string ${i}`,
+      concreteParentProperty: `parent string ${i}`,
+      $identifier: dataFactory.namedNode(
+        `http://example.com/concreteChild${i}`,
+      ),
+    }),
+  ) satisfies readonly kitchenSink.ConcreteChild[],
 
-  concreteChildClasses: [...new Array(4)].map(
-    (_, i) =>
-      new kitchenSink.ConcreteChildClass({
-        abstractBaseClassWithPropertiesProperty: `ABC string ${i}`,
-        concreteChildClassProperty: `child string ${i}`,
-        concreteParentClassProperty: `parent string ${i}`,
-        $identifier: dataFactory.namedNode(
-          `http://example.com/concreteChildClass${i}`,
-        ),
-      }),
-  ) satisfies readonly kitchenSink.ConcreteChildClass[],
-
-  // directRecursiveClasses: [...new Array(4)].map(
+  // directRecursivees: [...new Array(4)].map(
   //   (_, i) =>
-  //     new kitchenSink.DirectRecursiveClass({
-  //       directRecursiveProperty: new kitchenSink.DirectRecursiveClass({
+  //     kitchenSink.DirectRecursive.$create({
+  //       directRecursiveProperty: kitchenSink.DirectRecursive.$create({
   //         $identifier: dataFactory.namedNode(
-  //           `http://example.com/directRecursiveClass${i}/directRecursiveProperty/value`,
+  //           `http://example.com/directRecursive${i}/directRecursiveProperty/value`,
   //         ),
   //       }),
   //       $identifier: dataFactory.namedNode(
-  //         `http://example.com/directRecursiveClass${i}`,
+  //         `http://example.com/directRecursive${i}`,
   //       ),
   //     }),
-  // ) satisfies readonly kitchenSink.DirectRecursiveClass[],
+  // ) satisfies readonly kitchenSink.DirectRecursive[],
 
-  interfaceUnions: [...new Array(4)].map((_, i) => {
+  noRdfTypeUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
-        return kitchenSink.InterfaceUnionMember1.$create({
+        return kitchenSink.NoRdfTypeUnionMember1.$create({
           $identifier: dataFactory.namedNode(
-            `http://example.com/interfaceUnion${i}`,
+            `http://example.com/noRdfTypeUnion${i}`,
           ),
-          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
-          interfaceUnionMember1Property: `string ${i}`,
-        }) satisfies kitchenSink.InterfaceUnion;
-      case 1:
-        return kitchenSink.InterfaceUnionMember2.$create({
-          $identifier: dataFactory.namedNode(
-            `http://example.com/interfaceUnion${i}`,
-          ),
-          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
-          interfaceUnionMember2Property: `string ${i}`,
-        }) satisfies kitchenSink.InterfaceUnion;
-      default:
-        throw new RangeError(i.toString());
-    }
-  }) as kitchenSink.InterfaceUnion[],
-
-  noRdfTypeClassUnions: [...new Array(4)].map((_, i) => {
-    switch (i % 2) {
-      case 0:
-        return new kitchenSink.NoRdfTypeClassUnionMember1({
-          $identifier: dataFactory.namedNode(
-            `http://example.com/noRdfTypeClassUnion${i}`,
-          ),
-          noRdfTypeClassUnionMember1Property: `member ${i}`,
+          noRdfTypeUnionMember1Property: `member ${i}`,
         });
       case 1:
-        return new kitchenSink.NoRdfTypeClassUnionMember2({
+        return kitchenSink.NoRdfTypeUnionMember2.$create({
           $identifier: dataFactory.namedNode(
-            `http://example.com/noRdfTypeClassUnion${i}`,
+            `http://example.com/noRdfTypeUnion${i}`,
           ),
-          noRdfTypeClassUnionMember2Property: `member ${i}`,
+          noRdfTypeUnionMember2Property: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());
     }
-  }) as readonly kitchenSink.NoRdfTypeClassUnion[],
+  }) as readonly kitchenSink.NoRdfTypeUnion[],
+
+  unions: [...new Array(4)].map((_, i) => {
+    switch (i % 2) {
+      case 0:
+        return kitchenSink.UnionMember1.$create({
+          $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+          unionMemberCommonParentProperty: `common parent ${i}`,
+          unionMember1Property: `member ${i}`,
+        });
+      case 1:
+        return kitchenSink.UnionMember2.$create({
+          $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+          unionMemberCommonParentProperty: `common parent ${i}`,
+          unionMember2Property: `member ${i}`,
+        });
+      default:
+        throw new RangeError(i.toString());
+    }
+  }) as readonly kitchenSink.Union[],
 };
