@@ -153,7 +153,7 @@ export class NamedObjectType extends AbstractType {
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof ${this.name}`,
+          code`typeof ${value} === "object"`,
         sourceTypeName: this.name,
         sourceTypeof: "object",
       },
