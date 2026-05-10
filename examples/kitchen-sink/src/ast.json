@@ -9,6 +9,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/BaseForExtern"
       },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "BaseForExtern",
+        "termType": "NamedNode",
+        "value": "http://example.com/BaseForExtern"
+      },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -22,6 +28,14 @@
           "IRI"
         ]
       },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "BaseForExtern",
+          "termType": "NamedNode",
+          "value": "http://example.com/BaseForExtern"
+        }
+      ],
       "properties": [
         {
           "name": "baseForExternProperty",
@@ -57,6 +71,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/BaseWithProperties"
       },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "BaseWithProperties",
+        "termType": "NamedNode",
+        "value": "http://example.com/BaseWithProperties"
+      },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -70,6 +90,14 @@
           "IRI"
         ]
       },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "BaseWithProperties",
+          "termType": "NamedNode",
+          "value": "http://example.com/BaseWithProperties"
+        }
+      ],
       "properties": [
         {
           "name": "baseWithPropertiesProperty",
@@ -105,6 +133,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/BaseWithoutProperties"
       },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "BaseWithoutProperties",
+        "termType": "NamedNode",
+        "value": "http://example.com/BaseWithoutProperties"
+      },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -120,6 +154,14 @@
       },
       "parentObjectTypes": [
         "BaseWithProperties"
+      ],
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "BaseWithoutProperties",
+          "termType": "NamedNode",
+          "value": "http://example.com/BaseWithoutProperties"
+        }
       ],
       "properties": []
     },
@@ -5847,6 +5889,12 @@
         "termType": "NamedNode",
         "value": "http://example.com/UnionMemberCommonParent"
       },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "UnionMemberCommonParent",
+        "termType": "NamedNode",
+        "value": "http://example.com/UnionMemberCommonParent"
+      },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
@@ -5860,6 +5908,14 @@
           "IRI"
         ]
       },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "UnionMemberCommonParent",
+          "termType": "NamedNode",
+          "value": "http://example.com/UnionMemberCommonParent"
+        }
+      ],
       "properties": [
         {
           "name": "unionMemberCommonParentProperty",

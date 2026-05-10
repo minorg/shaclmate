@@ -16683,7 +16683,7 @@ export namespace PropertyCardinalities {
 }
 export interface UnionMemberCommonParent {
   readonly $identifier: () => UnionMemberCommonParent.$Identifier;
-  readonly $type: "UnionMember1" | "UnionMember2";
+  readonly $type: "UnionMemberCommonParent" | "UnionMember1" | "UnionMember2";
   readonly unionMemberCommonParentProperty: string;
 }
 
@@ -16694,7 +16694,7 @@ export namespace UnionMemberCommonParent {
       | (BlankNode | NamedNode)
       | string;
     readonly unionMemberCommonParentProperty: string;
-  }): Omit<UnionMemberCommonParent, "$type"> {
+  }): UnionMemberCommonParent {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => UnionMemberCommonParent.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -16709,9 +16709,10 @@ export namespace UnionMemberCommonParent {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
+    const $type = "UnionMemberCommonParent" as const;
     const unionMemberCommonParentProperty =
       parameters.unionMemberCommonParentProperty;
-    return { $identifier, unionMemberCommonParentProperty };
+    return { $identifier, $type, unionMemberCommonParentProperty };
   }
 
   export function $equals(
@@ -16770,16 +16771,28 @@ export namespace UnionMemberCommonParent {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "UnionMember1" | "UnionMember2";
+    readonly $type: "UnionMemberCommonParent" | "UnionMember1" | "UnionMember2";
     readonly unionMemberCommonParentProperty: string;
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export function schema() {
       return z
         .object({
           "@id": z.string().min(1),
-          $type: z.enum(["UnionMember1", "UnionMember2"]),
+          $type: z.enum([
+            "UnionMemberCommonParent",
+            "UnionMember1",
+            "UnionMember2",
+          ]),
           unionMemberCommonParentProperty: z.string().meta({
             id: "UnionMemberCommonParent-unionMemberCommonParentProperty",
           }),
@@ -16849,6 +16862,20 @@ export namespace UnionMemberCommonParent {
     UnionMemberCommonParent.$Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.unionMemberCommonParentProperty,
@@ -16867,6 +16894,63 @@ export namespace UnionMemberCommonParent {
     UnionMemberCommonParent.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            UnionMemberCommonParent.$fromRdfType,
+            UnionMember1.$fromRdfType,
+            UnionMember2.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -16895,12 +16979,58 @@ export namespace UnionMemberCommonParent {
     return patterns;
   };
 
+  export function $fromJson(
+    json: UnionMemberCommonParent.$Json,
+  ): UnionMemberCommonParent {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    UnionMemberCommonParent
+  > = (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return UnionMemberCommonParent.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    UnionMemberCommonParent
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            UnionMemberCommonParent.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/UnionMemberCommonParent",
+  );
+
   export function isUnionMemberCommonParent(
     object: $Object,
   ): object is UnionMemberCommonParent {
     switch (object.$type) {
       case "UnionMember1":
       case "UnionMember2":
+      case "UnionMemberCommonParent":
         return true;
       default:
         return false;
@@ -16909,49 +17039,92 @@ export namespace UnionMemberCommonParent {
 
   export function $propertiesFromJson($json: UnionMemberCommonParent.$Json): {
     $identifier: BlankNode | NamedNode;
+    $type: "UnionMemberCommonParent" | "UnionMember1" | "UnionMember2";
     unionMemberCommonParentProperty: string;
   } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
+    const $type = "UnionMemberCommonParent" as const;
     const unionMemberCommonParentProperty =
       $json["unionMemberCommonParentProperty"];
-    return { $identifier, unionMemberCommonParentProperty };
+    return { $identifier, $type, unionMemberCommonParentProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
+    $type: "UnionMemberCommonParent" | "UnionMember1" | "UnionMember2";
     unionMemberCommonParentProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.unionMemberCommonParentProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/UnionMemberCommonParent":
+                case "http://example.com/UnionMember1":
+                case "http://example.com/UnionMember2":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(UnionMemberCommonParent.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMemberCommonParent)`,
                 ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((unionMemberCommonParentProperty) => ({
-          $identifier,
-          unionMemberCommonParentProperty,
-        })),
-      );
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"UnionMemberCommonParent">(
+            "UnionMemberCommonParent" as const,
+          ).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema:
+                $schema.properties.unionMemberCommonParentProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      _$options.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((unionMemberCommonParentProperty) => ({
+              $identifier,
+              $type,
+              unionMemberCommonParentProperty,
+            })),
+          ),
+        ),
+    );
   };
 
   export const $schema = {
@@ -16965,6 +17138,7 @@ export namespace UnionMemberCommonParent {
         type: () => ({
           descendantValues: ["UnionMember1", "UnionMember2"],
           kind: "TypeDiscriminant" as const,
+          ownValues: ["UnionMemberCommonParent"],
         }),
       },
       unionMemberCommonParentProperty: {
@@ -17066,6 +17240,13 @@ export namespace UnionMemberCommonParent {
     const resource = resourceSet.resource(
       _unionMemberCommonParent.$identifier(),
     );
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/UnionMemberCommonParent"),
+        options?.graph,
+      );
+    }
     resource.add(
       dataFactory.namedNode(
         "http://example.com/unionMemberCommonParentProperty",
@@ -41709,7 +41890,7 @@ export namespace ExternProperty {
 }
 export interface BaseForExtern {
   readonly $identifier: () => BaseForExtern.$Identifier;
-  readonly $type: "Extern";
+  readonly $type: "BaseForExtern" | "Extern";
   readonly baseForExternProperty: string;
 }
 
@@ -41720,7 +41901,7 @@ export namespace BaseForExtern {
       | (BlankNode | NamedNode)
       | string;
     readonly baseForExternProperty: string;
-  }): Omit<BaseForExtern, "$type"> {
+  }): BaseForExtern {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseForExtern.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -41735,8 +41916,9 @@ export namespace BaseForExtern {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
+    const $type = "BaseForExtern" as const;
     const baseForExternProperty = parameters.baseForExternProperty;
-    return { $identifier, baseForExternProperty };
+    return { $identifier, $type, baseForExternProperty };
   }
 
   export function $equals(
@@ -41792,16 +41974,24 @@ export namespace BaseForExtern {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "Extern";
+    readonly $type: "BaseForExtern" | "Extern";
     readonly baseForExternProperty: string;
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export function schema() {
       return z
         .object({
           "@id": z.string().min(1),
-          $type: z.literal("Extern"),
+          $type: z.enum(["BaseForExtern", "Extern"]),
           baseForExternProperty: z
             .string()
             .meta({ id: "BaseForExtern-baseForExternProperty" }),
@@ -41868,6 +42058,20 @@ export namespace BaseForExtern {
     BaseForExtern.$Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.baseForExternProperty,
@@ -41886,6 +42090,61 @@ export namespace BaseForExtern {
     BaseForExtern.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [BaseForExtern.$fromRdfType, Extern.$fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+                identifier as NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -41914,9 +42173,54 @@ export namespace BaseForExtern {
     return patterns;
   };
 
+  export function $fromJson(json: BaseForExtern.$Json): BaseForExtern {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<BaseForExtern> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BaseForExtern.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BaseForExtern
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            BaseForExtern.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseForExtern",
+  );
+
   export function isBaseForExtern(object: $Object): object is BaseForExtern {
     switch (object.$type) {
       case "Extern":
+      case "BaseForExtern":
         return true;
       default:
         return false;
@@ -41925,48 +42229,87 @@ export namespace BaseForExtern {
 
   export function $propertiesFromJson($json: BaseForExtern.$Json): {
     $identifier: BlankNode | NamedNode;
+    $type: "BaseForExtern" | "Extern";
     baseForExternProperty: string;
   } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
+    const $type = "BaseForExtern" as const;
     const baseForExternProperty = $json["baseForExternProperty"];
-    return { $identifier, baseForExternProperty };
+    return { $identifier, $type, baseForExternProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
+    $type: "BaseForExtern" | "Extern";
     baseForExternProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.baseForExternProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/BaseForExtern":
+                case "http://example.com/Extern":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(BaseForExtern.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseForExtern)`,
                 ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((baseForExternProperty) => ({
-          $identifier,
-          baseForExternProperty,
-        })),
-      );
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"BaseForExtern">("BaseForExtern" as const).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema: $schema.properties.baseForExternProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      _$options.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((baseForExternProperty) => ({
+              $identifier,
+              $type,
+              baseForExternProperty,
+            })),
+          ),
+        ),
+    );
   };
 
   export const $schema = {
@@ -41980,6 +42323,7 @@ export namespace BaseForExtern {
         type: () => ({
           descendantValues: ["Extern"],
           kind: "TypeDiscriminant" as const,
+          ownValues: ["BaseForExtern"],
         }),
       },
       baseForExternProperty: {
@@ -42070,6 +42414,13 @@ export namespace BaseForExtern {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(_baseForExtern.$identifier());
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/BaseForExtern"),
+        options?.graph,
+      );
+    }
     resource.add(
       dataFactory.namedNode("http://example.com/baseForExternProperty"),
       [$literalFactory.string(_baseForExtern.baseForExternProperty)],
@@ -51154,7 +51505,11 @@ export namespace ConvertibleTypeProperties {
 }
 export interface BaseWithProperties {
   readonly $identifier: () => BaseWithProperties.$Identifier;
-  readonly $type: "ConcreteChild" | "ConcreteParent";
+  readonly $type:
+    | "BaseWithProperties"
+    | "BaseWithoutProperties"
+    | "ConcreteChild"
+    | "ConcreteParent";
   readonly baseWithPropertiesProperty: string;
 }
 
@@ -51165,7 +51520,7 @@ export namespace BaseWithProperties {
       | (BlankNode | NamedNode)
       | string;
     readonly baseWithPropertiesProperty: string;
-  }): Omit<BaseWithProperties, "$type"> {
+  }): BaseWithProperties {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseWithProperties.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -51180,8 +51535,9 @@ export namespace BaseWithProperties {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
+    const $type = "BaseWithProperties" as const;
     const baseWithPropertiesProperty = parameters.baseWithPropertiesProperty;
-    return { $identifier, baseWithPropertiesProperty };
+    return { $identifier, $type, baseWithPropertiesProperty };
   }
 
   export function $equals(
@@ -51237,16 +51593,33 @@ export namespace BaseWithProperties {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "ConcreteChild" | "ConcreteParent";
+    readonly $type:
+      | "BaseWithProperties"
+      | "BaseWithoutProperties"
+      | "ConcreteChild"
+      | "ConcreteParent";
     readonly baseWithPropertiesProperty: string;
   };
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export function schema() {
       return z
         .object({
           "@id": z.string().min(1),
-          $type: z.enum(["ConcreteChild", "ConcreteParent"]),
+          $type: z.enum([
+            "BaseWithProperties",
+            "BaseWithoutProperties",
+            "ConcreteChild",
+            "ConcreteParent",
+          ]),
           baseWithPropertiesProperty: z
             .string()
             .meta({ id: "BaseWithProperties-baseWithPropertiesProperty" }),
@@ -51316,6 +51689,20 @@ export namespace BaseWithProperties {
     BaseWithProperties.$Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
     triples = triples.concat(
       $shaclPropertySparqlConstructTriples({
         filter: parameters.filter?.baseWithPropertiesProperty,
@@ -51334,6 +51721,64 @@ export namespace BaseWithProperties {
     BaseWithProperties.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            BaseWithProperties.$fromRdfType,
+            BaseWithoutProperties.$fromRdfType,
+            ConcreteParent.$fromRdfType,
+            ConcreteChild.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -51362,12 +51807,59 @@ export namespace BaseWithProperties {
     return patterns;
   };
 
+  export function $fromJson(
+    json: BaseWithProperties.$Json,
+  ): BaseWithProperties {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    BaseWithProperties
+  > = (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BaseWithProperties.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BaseWithProperties
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            BaseWithProperties.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseWithProperties",
+  );
+
   export function isBaseWithProperties(
     object: $Object,
   ): object is BaseWithProperties {
     switch (object.$type) {
+      case "BaseWithoutProperties":
       case "ConcreteChild":
       case "ConcreteParent":
+      case "BaseWithProperties":
         return true;
       default:
         return false;
@@ -51376,48 +51868,98 @@ export namespace BaseWithProperties {
 
   export function $propertiesFromJson($json: BaseWithProperties.$Json): {
     $identifier: BlankNode | NamedNode;
+    $type:
+      | "BaseWithProperties"
+      | "BaseWithoutProperties"
+      | "ConcreteChild"
+      | "ConcreteParent";
     baseWithPropertiesProperty: string;
   } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
+    const $type = "BaseWithProperties" as const;
     const baseWithPropertiesProperty = $json["baseWithPropertiesProperty"];
-    return { $identifier, baseWithPropertiesProperty };
+    return { $identifier, $type, baseWithPropertiesProperty };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
+    $type:
+      | "BaseWithProperties"
+      | "BaseWithoutProperties"
+      | "ConcreteChild"
+      | "ConcreteParent";
     baseWithPropertiesProperty: string;
   }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: $schema.properties.baseWithPropertiesProperty,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/BaseWithProperties":
+                case "http://example.com/BaseWithoutProperties":
+                case "http://example.com/ConcreteParent":
+                case "http://example.com/ConcreteChild":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(BaseWithProperties.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseWithProperties)`,
                 ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-        }).map((baseWithPropertiesProperty) => ({
-          $identifier,
-          baseWithPropertiesProperty,
-        })),
-      );
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"BaseWithProperties">("BaseWithProperties" as const).chain(
+            ($type) =>
+              $shaclPropertyFromRdf({
+                graph: _$options.graph,
+                resource: $resource,
+                propertySchema: $schema.properties.baseWithPropertiesProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((baseWithPropertiesProperty) => ({
+                $identifier,
+                $type,
+                baseWithPropertiesProperty,
+              })),
+          ),
+        ),
+    );
   };
 
   export const $schema = {
@@ -51429,8 +51971,13 @@ export namespace BaseWithProperties {
       $type: {
         kind: "Discriminant" as const,
         type: () => ({
-          descendantValues: ["ConcreteChild", "ConcreteParent"],
+          descendantValues: [
+            "BaseWithoutProperties",
+            "ConcreteChild",
+            "ConcreteParent",
+          ],
           kind: "TypeDiscriminant" as const,
+          ownValues: ["BaseWithProperties"],
         }),
       },
       baseWithPropertiesProperty: {
@@ -51526,6 +52073,13 @@ export namespace BaseWithProperties {
         dataset: datasetFactory.dataset(),
       });
     const resource = resourceSet.resource(_baseWithProperties.$identifier());
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/BaseWithProperties"),
+        options?.graph,
+      );
+    }
     resource.add(
       dataFactory.namedNode("http://example.com/baseWithPropertiesProperty"),
       [$literalFactory.string(_baseWithProperties.baseWithPropertiesProperty)],
@@ -51585,7 +52139,7 @@ export namespace BaseWithProperties {
 }
 export interface BaseWithoutProperties extends BaseWithProperties {
   readonly $identifier: () => BaseWithoutProperties.$Identifier;
-  readonly $type: "ConcreteChild" | "ConcreteParent";
+  readonly $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
 }
 
 export namespace BaseWithoutProperties {
@@ -51596,7 +52150,7 @@ export namespace BaseWithoutProperties {
         | (BlankNode | NamedNode)
         | string;
     } & Parameters<typeof BaseWithProperties.$create>[0],
-  ): Omit<BaseWithoutProperties, "$type"> {
+  ): BaseWithoutProperties {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => BaseWithoutProperties.$Identifier;
     if (typeof $identifierParameter === "function") {
@@ -51611,7 +52165,8 @@ export namespace BaseWithoutProperties {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    return { ...BaseWithProperties.$create(parameters), $identifier };
+    const $type = "BaseWithoutProperties" as const;
+    return { ...BaseWithProperties.$create(parameters), $identifier, $type };
   }
 
   export function $equals(
@@ -51658,6 +52213,14 @@ export namespace BaseWithoutProperties {
   export type $Json = { readonly "@id": string } & BaseWithProperties.$Json;
 
   export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
     export function schema() {
       return z
         .object({
@@ -51718,6 +52281,20 @@ export namespace BaseWithoutProperties {
         variablePrefix: parameters.variablePrefix,
       }),
     );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
     return triples;
   };
 
@@ -51734,6 +52311,63 @@ export namespace BaseWithoutProperties {
         variablePrefix: parameters.variablePrefix,
       }),
     );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            BaseWithoutProperties.$fromRdfType,
+            ConcreteParent.$fromRdfType,
+            ConcreteChild.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
     if (parameters.focusIdentifier.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -51750,31 +52384,84 @@ export namespace BaseWithoutProperties {
     return patterns;
   };
 
+  export function $fromJson(
+    json: BaseWithoutProperties.$Json,
+  ): BaseWithoutProperties {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<
+    BaseWithoutProperties
+  > = (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return BaseWithoutProperties.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    BaseWithoutProperties
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            BaseWithoutProperties.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BaseWithoutProperties",
+  );
+
   export function isBaseWithoutProperties(
     object: $Object,
   ): object is BaseWithoutProperties {
     switch (object.$type) {
       case "ConcreteChild":
       case "ConcreteParent":
+      case "BaseWithoutProperties":
         return true;
       default:
         return false;
     }
   }
 
-  export function $propertiesFromJson(
-    $json: BaseWithoutProperties.$Json,
-  ): { $identifier: BlankNode | NamedNode } & ReturnType<
-    typeof BaseWithProperties.$propertiesFromJson
-  > {
+  export function $propertiesFromJson($json: BaseWithoutProperties.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
+  } & ReturnType<typeof BaseWithProperties.$propertiesFromJson> {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    return { ...BaseWithProperties.$propertiesFromJson($json), $identifier };
+    const $type = "BaseWithoutProperties" as const;
+    return {
+      ...BaseWithProperties.$propertiesFromJson($json),
+      $identifier,
+      $type,
+    };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    { $identifier: BlankNode | NamedNode } & $UnwrapR<
+    {
+      $identifier: BlankNode | NamedNode;
+      $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
+    } & $UnwrapR<
       ReturnType<typeof BaseWithProperties.$propertiesFromRdfResource>
     >
   > = ($resource, _$options) => {
@@ -51782,17 +52469,56 @@ export namespace BaseWithoutProperties {
       ..._$options,
       ignoreRdfType: true,
     }).chain(($super0) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .map(($identifier) => ({ ...$super0, $identifier })),
+      (!_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/BaseWithoutProperties":
+                case "http://example.com/ConcreteParent":
+                case "http://example.com/ConcreteChild":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(BaseWithoutProperties.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseWithoutProperties)`,
+                ),
+              );
+            })
+        : Right(true as const)
+      ).chain((_rdfTypeCheck) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"BaseWithoutProperties">(
+              "BaseWithoutProperties" as const,
+            ).map(($type) => ({
+              ...$super0,
+              $identifier,
+              $type,
+            })),
+          ),
+      ),
     );
   };
 
@@ -51808,6 +52534,7 @@ export namespace BaseWithoutProperties {
         type: () => ({
           descendantValues: ["ConcreteChild", "ConcreteParent"],
           kind: "TypeDiscriminant" as const,
+          ownValues: ["BaseWithoutProperties"],
         }),
       },
     },
@@ -51900,6 +52627,13 @@ export namespace BaseWithoutProperties {
       graph: options?.graph,
       resourceSet,
     });
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/BaseWithoutProperties"),
+        options?.graph,
+      );
+    }
     return resource;
   }
 
@@ -59379,6 +60113,24 @@ export namespace $Object {
       );
     }
     if (
+      BaseWithoutProperties.isBaseWithoutProperties(left) &&
+      BaseWithoutProperties.isBaseWithoutProperties(right)
+    ) {
+      return BaseWithoutProperties.$equals(
+        left as BaseWithoutProperties,
+        right as BaseWithoutProperties,
+      );
+    }
+    if (
+      BaseWithProperties.isBaseWithProperties(left) &&
+      BaseWithProperties.isBaseWithProperties(right)
+    ) {
+      return BaseWithProperties.$equals(
+        left as BaseWithProperties,
+        right as BaseWithProperties,
+      );
+    }
+    if (
       ConvertibleTypeProperties.isConvertibleTypeProperties(left) &&
       ConvertibleTypeProperties.isConvertibleTypeProperties(right)
     ) {
@@ -59439,6 +60191,15 @@ export namespace $Object {
       return ExplicitRdfType.$equals(
         left as ExplicitRdfType,
         right as ExplicitRdfType,
+      );
+    }
+    if (
+      BaseForExtern.isBaseForExtern(left) &&
+      BaseForExtern.isBaseForExtern(right)
+    ) {
+      return BaseForExtern.$equals(
+        left as BaseForExtern,
+        right as BaseForExtern,
       );
     }
     if (
@@ -59677,6 +60438,15 @@ export namespace $Object {
       return UnionMember2.$equals(left as UnionMember2, right as UnionMember2);
     }
     if (
+      UnionMemberCommonParent.isUnionMemberCommonParent(left) &&
+      UnionMemberCommonParent.isUnionMemberCommonParent(right)
+    ) {
+      return UnionMemberCommonParent.$equals(
+        left as UnionMemberCommonParent,
+        right as UnionMemberCommonParent,
+      );
+    }
+    if (
       PropertyCardinalities.isPropertyCardinalities(left) &&
       PropertyCardinalities.isPropertyCardinalities(right)
     ) {
@@ -59836,6 +60606,27 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["BaseWithoutProperties"] !== undefined &&
+      BaseWithoutProperties.isBaseWithoutProperties(value)
+    ) {
+      if (
+        !BaseWithoutProperties.$filter(
+          filter.on["BaseWithoutProperties"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["BaseWithProperties"] !== undefined &&
+      BaseWithProperties.isBaseWithProperties(value)
+    ) {
+      if (!BaseWithProperties.$filter(filter.on["BaseWithProperties"], value)) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["ConvertibleTypeProperties"] !== undefined &&
       ConvertibleTypeProperties.isConvertibleTypeProperties(value)
     ) {
@@ -59905,6 +60696,14 @@ export namespace $Object {
       ExplicitRdfType.isExplicitRdfType(value)
     ) {
       if (!ExplicitRdfType.$filter(filter.on["ExplicitRdfType"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["BaseForExtern"] !== undefined &&
+      BaseForExtern.isBaseForExtern(value)
+    ) {
+      if (!BaseForExtern.$filter(filter.on["BaseForExtern"], value)) {
         return false;
       }
     }
@@ -60187,6 +60986,19 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["UnionMemberCommonParent"] !== undefined &&
+      UnionMemberCommonParent.isUnionMemberCommonParent(value)
+    ) {
+      if (
+        !UnionMemberCommonParent.$filter(
+          filter.on["UnionMemberCommonParent"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["PropertyCardinalities"] !== undefined &&
       PropertyCardinalities.isPropertyCardinalities(value)
     ) {
@@ -60289,6 +61101,8 @@ export namespace $Object {
       readonly Partial?: Partial.$Filter;
       readonly ConcreteChild?: ConcreteChild.$Filter;
       readonly ConcreteParent?: ConcreteParent.$Filter;
+      readonly BaseWithoutProperties?: BaseWithoutProperties.$Filter;
+      readonly BaseWithProperties?: BaseWithProperties.$Filter;
       readonly ConvertibleTypeProperties?: ConvertibleTypeProperties.$Filter;
       readonly DateUnionProperties?: DateUnionProperties.$Filter;
       readonly DefaultValueProperties?: DefaultValueProperties.$Filter;
@@ -60296,6 +61110,7 @@ export namespace $Object {
       readonly DisplayProperties?: DisplayProperties.$Filter;
       readonly ExplicitFromToRdfTypes?: ExplicitFromToRdfTypes.$Filter;
       readonly ExplicitRdfType?: ExplicitRdfType.$Filter;
+      readonly BaseForExtern?: BaseForExtern.$Filter;
       readonly ExternProperty?: ExternProperty.$Filter;
       readonly FlattenUnionMember3?: FlattenUnionMember3.$Filter;
       readonly HasValueProperties?: HasValueProperties.$Filter;
@@ -60325,6 +61140,7 @@ export namespace $Object {
       readonly UnionMember1?: UnionMember1.$Filter;
       readonly PartialUnionMember2?: PartialUnionMember2.$Filter;
       readonly UnionMember2?: UnionMember2.$Filter;
+      readonly UnionMemberCommonParent?: UnionMemberCommonParent.$Filter;
       readonly PropertyCardinalities?: PropertyCardinalities.$Filter;
       readonly PropertyNames?: PropertyNames.$Filter;
       readonly PropertyPaths?: PropertyPaths.$Filter;
@@ -60390,6 +61206,18 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}ConcreteParent`,
       }).concat(),
+      ...BaseWithoutProperties.$focusSparqlConstructTriples({
+        filter: filter?.on?.BaseWithoutProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseWithoutProperties`,
+      }).concat(),
+      ...BaseWithProperties.$focusSparqlConstructTriples({
+        filter: filter?.on?.BaseWithProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseWithProperties`,
+      }).concat(),
       ...ConvertibleTypeProperties.$focusSparqlConstructTriples({
         filter: filter?.on?.ConvertibleTypeProperties,
         focusIdentifier,
@@ -60431,6 +61259,12 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}ExplicitRdfType`,
+      }).concat(),
+      ...BaseForExtern.$focusSparqlConstructTriples({
+        filter: filter?.on?.BaseForExtern,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseForExtern`,
       }).concat(),
       ...ExternProperty.$focusSparqlConstructTriples({
         filter: filter?.on?.ExternProperty,
@@ -60606,6 +61440,12 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}UnionMember2`,
       }).concat(),
+      ...UnionMemberCommonParent.$focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMemberCommonParent,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMemberCommonParent`,
+      }).concat(),
       ...PropertyCardinalities.$focusSparqlConstructTriples({
         filter: filter?.on?.PropertyCardinalities,
         focusIdentifier,
@@ -60766,6 +61606,26 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: BaseWithoutProperties.$focusSparqlWherePatterns({
+            filter: filter?.on?.BaseWithoutProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BaseWithoutProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseWithProperties.$focusSparqlWherePatterns({
+            filter: filter?.on?.BaseWithProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BaseWithProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: ConvertibleTypeProperties.$focusSparqlWherePatterns({
             filter: filter?.on?.ConvertibleTypeProperties,
             focusIdentifier,
@@ -60832,6 +61692,16 @@ export namespace $Object {
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}ExplicitRdfType`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseForExtern.$focusSparqlWherePatterns({
+            filter: filter?.on?.BaseForExtern,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BaseForExtern`,
           }).concat(),
           type: "group",
         },
@@ -61127,6 +61997,16 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: UnionMemberCommonParent.$focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMemberCommonParent,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMemberCommonParent`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: PropertyCardinalities.$focusSparqlWherePatterns({
             filter: filter?.on?.PropertyCardinalities,
             focusIdentifier,
@@ -61250,6 +62130,14 @@ export namespace $Object {
     if (value.$type === "ConcreteParent") {
       return ConcreteParent.$fromJson(value as ConcreteParent.$Json);
     }
+    if (value.$type === "BaseWithoutProperties") {
+      return BaseWithoutProperties.$fromJson(
+        value as BaseWithoutProperties.$Json,
+      );
+    }
+    if (value.$type === "BaseWithProperties") {
+      return BaseWithProperties.$fromJson(value as BaseWithProperties.$Json);
+    }
     if (value.$type === "ConvertibleTypeProperties") {
       return ConvertibleTypeProperties.$fromJson(
         value as ConvertibleTypeProperties.$Json,
@@ -61276,6 +62164,9 @@ export namespace $Object {
     }
     if (value.$type === "ExplicitRdfType") {
       return ExplicitRdfType.$fromJson(value as ExplicitRdfType.$Json);
+    }
+    if (value.$type === "BaseForExtern" || value.$type === "Extern") {
+      return BaseForExtern.$fromJson(value as BaseForExtern.$Json);
     }
     if (value.$type === "ExternProperty") {
       return ExternProperty.$fromJson(value as ExternProperty.$Json);
@@ -61384,6 +62275,11 @@ export namespace $Object {
     if (value.$type === "UnionMember2") {
       return UnionMember2.$fromJson(value as UnionMember2.$Json);
     }
+    if (value.$type === "UnionMemberCommonParent") {
+      return UnionMemberCommonParent.$fromJson(
+        value as UnionMemberCommonParent.$Json,
+      );
+    }
     if (value.$type === "PropertyCardinalities") {
       return PropertyCardinalities.$fromJson(
         value as PropertyCardinalities.$Json,
@@ -61477,6 +62373,20 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          BaseWithoutProperties.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          BaseWithProperties.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           ConvertibleTypeProperties.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
@@ -61520,6 +62430,13 @@ export namespace $Object {
       .altLazy(
         () =>
           ExplicitRdfType.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          BaseForExtern.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -61729,6 +62646,13 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          UnionMemberCommonParent.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           PropertyCardinalities.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
@@ -61881,6 +62805,30 @@ export namespace $Object {
             )
             .altLazy(
               () =>
+                BaseWithoutProperties.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                BaseWithProperties.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
                 ConvertibleTypeProperties.$fromRdfResourceValues(
                   valueAsValues,
                   {
@@ -61957,6 +62905,18 @@ export namespace $Object {
             .altLazy(
               () =>
                 ExplicitRdfType.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                BaseForExtern.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -62328,6 +63288,18 @@ export namespace $Object {
             )
             .altLazy(
               () =>
+                UnionMemberCommonParent.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
                 PropertyCardinalities.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -62463,6 +63435,12 @@ export namespace $Object {
     if (ConcreteParent.isConcreteParent(value)) {
       ConcreteParent.$hash(value, hasher);
     }
+    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
+      BaseWithoutProperties.$hash(value, hasher);
+    }
+    if (BaseWithProperties.isBaseWithProperties(value)) {
+      BaseWithProperties.$hash(value, hasher);
+    }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       ConvertibleTypeProperties.$hash(value, hasher);
     }
@@ -62483,6 +63461,9 @@ export namespace $Object {
     }
     if (ExplicitRdfType.isExplicitRdfType(value)) {
       ExplicitRdfType.$hash(value, hasher);
+    }
+    if (BaseForExtern.isBaseForExtern(value)) {
+      BaseForExtern.$hash(value, hasher);
     }
     if (ExternProperty.isExternProperty(value)) {
       ExternProperty.$hash(value, hasher);
@@ -62575,6 +63556,9 @@ export namespace $Object {
     if (UnionMember2.isUnionMember2(value)) {
       UnionMember2.$hash(value, hasher);
     }
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
+      UnionMemberCommonParent.$hash(value, hasher);
+    }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       PropertyCardinalities.$hash(value, hasher);
     }
@@ -62619,6 +63603,8 @@ export namespace $Object {
     | Partial.$Json
     | ConcreteChild.$Json
     | ConcreteParent.$Json
+    | BaseWithoutProperties.$Json
+    | BaseWithProperties.$Json
     | ConvertibleTypeProperties.$Json
     | DateUnionProperties.$Json
     | DefaultValueProperties.$Json
@@ -62626,6 +63612,7 @@ export namespace $Object {
     | DisplayProperties.$Json
     | ExplicitFromToRdfTypes.$Json
     | ExplicitRdfType.$Json
+    | BaseForExtern.$Json
     | ExternProperty.$Json
     | FlattenUnionMember3.$Json
     | HasValueProperties.$Json
@@ -62655,6 +63642,7 @@ export namespace $Object {
     | UnionMember1.$Json
     | PartialUnionMember2.$Json
     | UnionMember2.$Json
+    | UnionMemberCommonParent.$Json
     | PropertyCardinalities.$Json
     | PropertyNames.$Json
     | PropertyPaths.$Json
@@ -62676,6 +63664,8 @@ export namespace $Object {
           Partial.$Json.schema(),
           ConcreteChild.$Json.schema(),
           ConcreteParent.$Json.schema(),
+          BaseWithoutProperties.$Json.schema(),
+          BaseWithProperties.$Json.schema(),
           ConvertibleTypeProperties.$Json.schema(),
           DateUnionProperties.$Json.schema(),
           DefaultValueProperties.$Json.schema(),
@@ -62683,6 +63673,7 @@ export namespace $Object {
           DisplayProperties.$Json.schema(),
           ExplicitFromToRdfTypes.$Json.schema(),
           ExplicitRdfType.$Json.schema(),
+          BaseForExtern.$Json.schema(),
           ExternProperty.$Json.schema(),
           FlattenUnionMember3.$Json.schema(),
           HasValueProperties.$Json.schema(),
@@ -62712,6 +63703,7 @@ export namespace $Object {
           UnionMember1.$Json.schema(),
           PartialUnionMember2.$Json.schema(),
           UnionMember2.$Json.schema(),
+          UnionMemberCommonParent.$Json.schema(),
           PropertyCardinalities.$Json.schema(),
           PropertyNames.$Json.schema(),
           PropertyPaths.$Json.schema(),
@@ -62759,6 +63751,14 @@ export namespace $Object {
         discriminantValues: ["ConcreteParent"],
         type: ConcreteParent.$schema,
       },
+      BaseWithoutProperties: {
+        discriminantValues: ["BaseWithoutProperties"],
+        type: BaseWithoutProperties.$schema,
+      },
+      BaseWithProperties: {
+        discriminantValues: ["BaseWithProperties"],
+        type: BaseWithProperties.$schema,
+      },
       ConvertibleTypeProperties: {
         discriminantValues: ["ConvertibleTypeProperties"],
         type: ConvertibleTypeProperties.$schema,
@@ -62786,6 +63786,10 @@ export namespace $Object {
       ExplicitRdfType: {
         discriminantValues: ["ExplicitRdfType"],
         type: ExplicitRdfType.$schema,
+      },
+      BaseForExtern: {
+        discriminantValues: ["BaseForExtern", "Extern"],
+        type: BaseForExtern.$schema,
       },
       ExternProperty: {
         discriminantValues: ["ExternProperty"],
@@ -62893,6 +63897,10 @@ export namespace $Object {
       UnionMember2: {
         discriminantValues: ["UnionMember2"],
         type: UnionMember2.$schema,
+      },
+      UnionMemberCommonParent: {
+        discriminantValues: ["UnionMemberCommonParent"],
+        type: UnionMemberCommonParent.$schema,
       },
       PropertyCardinalities: {
         discriminantValues: ["PropertyCardinalities"],
@@ -63012,6 +64020,12 @@ export namespace $Object {
     if (ConcreteParent.isConcreteParent(value)) {
       return ConcreteParent.$toJson(value);
     }
+    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
+      return BaseWithoutProperties.$toJson(value);
+    }
+    if (BaseWithProperties.isBaseWithProperties(value)) {
+      return BaseWithProperties.$toJson(value);
+    }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toJson(value);
     }
@@ -63032,6 +64046,9 @@ export namespace $Object {
     }
     if (ExplicitRdfType.isExplicitRdfType(value)) {
       return ExplicitRdfType.$toJson(value);
+    }
+    if (BaseForExtern.isBaseForExtern(value)) {
+      return BaseForExtern.$toJson(value);
     }
     if (ExternProperty.isExternProperty(value)) {
       return ExternProperty.$toJson(value);
@@ -63124,6 +64141,9 @@ export namespace $Object {
     if (UnionMember2.isUnionMember2(value)) {
       return UnionMember2.$toJson(value);
     }
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
+      return UnionMemberCommonParent.$toJson(value);
+    }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.$toJson(value);
     }
@@ -63180,6 +64200,12 @@ export namespace $Object {
     if (ConcreteParent.isConcreteParent(value)) {
       return ConcreteParent.$toRdfResource(value, options);
     }
+    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
+      return BaseWithoutProperties.$toRdfResource(value, options);
+    }
+    if (BaseWithProperties.isBaseWithProperties(value)) {
+      return BaseWithProperties.$toRdfResource(value, options);
+    }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toRdfResource(value, options);
     }
@@ -63200,6 +64226,9 @@ export namespace $Object {
     }
     if (ExplicitRdfType.isExplicitRdfType(value)) {
       return ExplicitRdfType.$toRdfResource(value, options);
+    }
+    if (BaseForExtern.isBaseForExtern(value)) {
+      return BaseForExtern.$toRdfResource(value, options);
     }
     if (ExternProperty.isExternProperty(value)) {
       return ExternProperty.$toRdfResource(value, options);
@@ -63295,6 +64324,9 @@ export namespace $Object {
     if (UnionMember2.isUnionMember2(value)) {
       return UnionMember2.$toRdfResource(value, options);
     }
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
+      return UnionMemberCommonParent.$toRdfResource(value, options);
+    }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.$toRdfResource(value, options);
     }
@@ -63385,6 +64417,22 @@ export namespace $Object {
         }).identifier,
       ];
     }
+    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
+      return [
+        BaseWithoutProperties.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (BaseWithProperties.isBaseWithProperties(value)) {
+      return [
+        BaseWithProperties.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return [
         ConvertibleTypeProperties.$toRdfResource(value, {
@@ -63436,6 +64484,14 @@ export namespace $Object {
     if (ExplicitRdfType.isExplicitRdfType(value)) {
       return [
         ExplicitRdfType.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (BaseForExtern.isBaseForExtern(value)) {
+      return [
+        BaseForExtern.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -63677,6 +64733,14 @@ export namespace $Object {
         }).identifier,
       ];
     }
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
+      return [
+        UnionMemberCommonParent.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return [
         PropertyCardinalities.$toRdfResource(value, {
@@ -63775,6 +64839,12 @@ export namespace $Object {
     if (ConcreteParent.isConcreteParent(value)) {
       return ConcreteParent.$toString(value);
     }
+    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
+      return BaseWithoutProperties.$toString(value);
+    }
+    if (BaseWithProperties.isBaseWithProperties(value)) {
+      return BaseWithProperties.$toString(value);
+    }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toString(value);
     }
@@ -63795,6 +64865,9 @@ export namespace $Object {
     }
     if (ExplicitRdfType.isExplicitRdfType(value)) {
       return ExplicitRdfType.$toString(value);
+    }
+    if (BaseForExtern.isBaseForExtern(value)) {
+      return BaseForExtern.$toString(value);
     }
     if (ExternProperty.isExternProperty(value)) {
       return ExternProperty.$toString(value);
@@ -63886,6 +64959,9 @@ export namespace $Object {
     }
     if (UnionMember2.isUnionMember2(value)) {
       return UnionMember2.$toString(value);
+    }
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
+      return UnionMemberCommonParent.$toString(value);
     }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
       return PropertyCardinalities.$toString(value);
@@ -63981,6 +65057,22 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
+      BaseWithoutProperties.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BaseWithoutProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseWithoutProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      BaseWithProperties.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BaseWithProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseWithProperties"].type,
+      }),
+    );
+    triples = triples.concat(
       ConvertibleTypeProperties.$valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["ConvertibleTypeProperties"],
@@ -64034,6 +65126,14 @@ export namespace $Object {
         filter: filter?.on?.["ExplicitRdfType"],
         ignoreRdfType: false,
         schema: schema.members["ExplicitRdfType"].type,
+      }),
+    );
+    triples = triples.concat(
+      BaseForExtern.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BaseForExtern"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseForExtern"].type,
       }),
     );
     triples = triples.concat(
@@ -64269,6 +65369,14 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
+      UnionMemberCommonParent.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMemberCommonParent"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMemberCommonParent"].type,
+      }),
+    );
+    triples = triples.concat(
       PropertyCardinalities.$valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["PropertyCardinalities"],
@@ -64417,6 +65525,24 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
+      patterns: BaseWithoutProperties.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BaseWithoutProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseWithoutProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: BaseWithProperties.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BaseWithProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseWithProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
       patterns: ConvertibleTypeProperties.$valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["ConvertibleTypeProperties"],
@@ -64476,6 +65602,15 @@ export namespace $Object {
         filter: filter?.on?.["ExplicitRdfType"],
         ignoreRdfType: false,
         schema: schema.members["ExplicitRdfType"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: BaseForExtern.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BaseForExtern"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseForExtern"].type,
       }).concat(),
       type: "group",
     });
@@ -64742,6 +65877,15 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
+      patterns: UnionMemberCommonParent.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMemberCommonParent"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMemberCommonParent"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
       patterns: PropertyCardinalities.$valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["PropertyCardinalities"],
@@ -64834,6 +65978,84 @@ export namespace $Object {
   >;
 }
 export interface $ObjectSet {
+  baseForExtern(
+    identifier: BaseForExtern.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseForExtern>>;
+
+  baseForExternCount(
+    query?: Pick<
+      $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  baseForExternIdentifiers(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Promise<Either<Error, readonly BaseForExtern.$Identifier[]>>;
+
+  baseForExterns(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Promise<Either<Error, readonly BaseForExtern[]>>;
+
+  baseWithoutProperties(
+    identifier: BaseWithoutProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithoutProperties>>;
+
+  baseWithoutPropertiesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithoutProperties.$Filter,
+        BaseWithoutProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  baseWithoutPropertiesIdentifiers(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>>;
+
+  baseWithoutPropertieses(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties[]>>;
+
+  baseWithProperties(
+    identifier: BaseWithProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithProperties>>;
+
+  baseWithPropertiesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithProperties.$Filter,
+        BaseWithProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  baseWithPropertiesIdentifiers(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>>;
+
+  baseWithPropertieses(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties[]>>;
+
   blankNodeIdentifier(
     identifier: BlankNodeIdentifier.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -66145,6 +67367,35 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<UnionMember2.$Filter, UnionMember2.$Identifier>,
   ): Promise<Either<Error, readonly UnionMember2[]>>;
 
+  unionMemberCommonParent(
+    identifier: UnionMemberCommonParent.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMemberCommonParent>>;
+
+  unionMemberCommonParentCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        UnionMemberCommonParent.$Filter,
+        UnionMemberCommonParent.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  unionMemberCommonParentIdentifiers(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent.$Identifier[]>>;
+
+  unionMemberCommonParents(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent[]>>;
+
   flattenUnion(
     identifier: FlattenUnion.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -66341,6 +67592,271 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       dataFactory: dataFactory,
       dataset: this.$dataset(),
     });
+  }
+
+  async baseForExtern(
+    identifier: BaseForExtern.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseForExtern>> {
+    return this.baseForExternSync(identifier, options);
+  }
+
+  baseForExternSync(
+    identifier: BaseForExtern.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, BaseForExtern> {
+    return this.baseForExternsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async baseForExternCount(
+    query?: Pick<
+      $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.baseForExternCountSync(query);
+  }
+
+  baseForExternCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.baseForExternsSync(query).map((objects) => objects.length);
+  }
+
+  async baseForExternIdentifiers(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Promise<Either<Error, readonly BaseForExtern.$Identifier[]>> {
+    return this.baseForExternIdentifiersSync(query);
+  }
+
+  baseForExternIdentifiersSync(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Either<Error, readonly BaseForExtern.$Identifier[]> {
+    return this.baseForExternsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async baseForExterns(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Promise<Either<Error, readonly BaseForExtern[]>> {
+    return this.baseForExternsSync(query);
+  }
+
+  baseForExternsSync(
+    query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+  ): Either<Error, readonly BaseForExtern[]> {
+    return this.$objectsSync<
+      BaseForExtern,
+      BaseForExtern.$Filter,
+      BaseForExtern.$Identifier
+    >(
+      {
+        $filter: BaseForExtern.$filter,
+        $fromRdfResource: BaseForExtern.$fromRdfResource,
+        $fromRdfTypes: [BaseForExtern.$fromRdfType, Extern.$fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async baseWithoutProperties(
+    identifier: BaseWithoutProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithoutProperties>> {
+    return this.baseWithoutPropertiesSync(identifier, options);
+  }
+
+  baseWithoutPropertiesSync(
+    identifier: BaseWithoutProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, BaseWithoutProperties> {
+    return this.baseWithoutPropertiesesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async baseWithoutPropertiesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithoutProperties.$Filter,
+        BaseWithoutProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.baseWithoutPropertiesCountSync(query);
+  }
+
+  baseWithoutPropertiesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithoutProperties.$Filter,
+        BaseWithoutProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.baseWithoutPropertiesesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async baseWithoutPropertiesIdentifiers(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>> {
+    return this.baseWithoutPropertiesIdentifiersSync(query);
+  }
+
+  baseWithoutPropertiesIdentifiersSync(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Either<Error, readonly BaseWithoutProperties.$Identifier[]> {
+    return this.baseWithoutPropertiesesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async baseWithoutPropertieses(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties[]>> {
+    return this.baseWithoutPropertiesesSync(query);
+  }
+
+  baseWithoutPropertiesesSync(
+    query?: $ObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Either<Error, readonly BaseWithoutProperties[]> {
+    return this.$objectsSync<
+      BaseWithoutProperties,
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >(
+      {
+        $filter: BaseWithoutProperties.$filter,
+        $fromRdfResource: BaseWithoutProperties.$fromRdfResource,
+        $fromRdfTypes: [
+          BaseWithoutProperties.$fromRdfType,
+          ConcreteParent.$fromRdfType,
+          ConcreteChild.$fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
+  async baseWithProperties(
+    identifier: BaseWithProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithProperties>> {
+    return this.baseWithPropertiesSync(identifier, options);
+  }
+
+  baseWithPropertiesSync(
+    identifier: BaseWithProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, BaseWithProperties> {
+    return this.baseWithPropertiesesSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async baseWithPropertiesCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithProperties.$Filter,
+        BaseWithProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.baseWithPropertiesCountSync(query);
+  }
+
+  baseWithPropertiesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        BaseWithProperties.$Filter,
+        BaseWithProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.baseWithPropertiesesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async baseWithPropertiesIdentifiers(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>> {
+    return this.baseWithPropertiesIdentifiersSync(query);
+  }
+
+  baseWithPropertiesIdentifiersSync(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Either<Error, readonly BaseWithProperties.$Identifier[]> {
+    return this.baseWithPropertiesesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async baseWithPropertieses(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties[]>> {
+    return this.baseWithPropertiesesSync(query);
+  }
+
+  baseWithPropertiesesSync(
+    query?: $ObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Either<Error, readonly BaseWithProperties[]> {
+    return this.$objectsSync<
+      BaseWithProperties,
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >(
+      {
+        $filter: BaseWithProperties.$filter,
+        $fromRdfResource: BaseWithProperties.$fromRdfResource,
+        $fromRdfTypes: [
+          BaseWithProperties.$fromRdfType,
+          BaseWithoutProperties.$fromRdfType,
+          ConcreteParent.$fromRdfType,
+          ConcreteChild.$fromRdfType,
+        ],
+      },
+      query,
+    );
   }
 
   async blankNodeIdentifier(
@@ -70604,6 +72120,102 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async unionMemberCommonParent(
+    identifier: UnionMemberCommonParent.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMemberCommonParent>> {
+    return this.unionMemberCommonParentSync(identifier, options);
+  }
+
+  unionMemberCommonParentSync(
+    identifier: UnionMemberCommonParent.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, UnionMemberCommonParent> {
+    return this.unionMemberCommonParentsSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async unionMemberCommonParentCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        UnionMemberCommonParent.$Filter,
+        UnionMemberCommonParent.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.unionMemberCommonParentCountSync(query);
+  }
+
+  unionMemberCommonParentCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        UnionMemberCommonParent.$Filter,
+        UnionMemberCommonParent.$Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.unionMemberCommonParentsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async unionMemberCommonParentIdentifiers(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent.$Identifier[]>> {
+    return this.unionMemberCommonParentIdentifiersSync(query);
+  }
+
+  unionMemberCommonParentIdentifiersSync(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Either<Error, readonly UnionMemberCommonParent.$Identifier[]> {
+    return this.unionMemberCommonParentsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async unionMemberCommonParents(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent[]>> {
+    return this.unionMemberCommonParentsSync(query);
+  }
+
+  unionMemberCommonParentsSync(
+    query?: $ObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Either<Error, readonly UnionMemberCommonParent[]> {
+    return this.$objectsSync<
+      UnionMemberCommonParent,
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >(
+      {
+        $filter: UnionMemberCommonParent.$filter,
+        $fromRdfResource: UnionMemberCommonParent.$fromRdfResource,
+        $fromRdfTypes: [
+          UnionMemberCommonParent.$fromRdfType,
+          UnionMember1.$fromRdfType,
+          UnionMember2.$fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
   async flattenUnion(
     identifier: FlattenUnion.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -71221,6 +72833,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
+          $fromRdfResource: BaseWithoutProperties.$fromRdfResource,
+          $fromRdfTypes: [
+            BaseWithoutProperties.$fromRdfType,
+            ConcreteParent.$fromRdfType,
+            ConcreteChild.$fromRdfType,
+          ],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: BaseWithProperties.$fromRdfResource,
+          $fromRdfTypes: [
+            BaseWithProperties.$fromRdfType,
+            BaseWithoutProperties.$fromRdfType,
+            ConcreteParent.$fromRdfType,
+            ConcreteChild.$fromRdfType,
+          ],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdfResource: ConvertibleTypeProperties.$fromRdfResource,
           $fromRdfTypes: [ConvertibleTypeProperties.$fromRdfType],
         },
@@ -71253,6 +72884,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdfResource: ExplicitRdfType.$fromRdfResource,
           $fromRdfTypes: [ExplicitRdfType.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: BaseForExtern.$fromRdfResource,
+          $fromRdfTypes: [BaseForExtern.$fromRdfType, Extern.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -71399,6 +73035,15 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdfResource: UnionMember2.$fromRdfResource,
           $fromRdfTypes: [UnionMember2.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: UnionMemberCommonParent.$fromRdfResource,
+          $fromRdfTypes: [
+            UnionMemberCommonParent.$fromRdfType,
+            UnionMember1.$fromRdfType,
+            UnionMember2.$fromRdfType,
+          ],
         },
         {
           $filter: $Object.$filter,
@@ -71749,6 +73394,159 @@ export class $SparqlObjectSet implements $ObjectSet {
     options?: { graph?: Exclude<Quad_Graph, Variable> },
   ) {
     this.graph = options?.graph;
+  }
+
+  async baseForExtern(
+    identifier: BaseForExtern.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseForExtern>> {
+    return (
+      await this.baseForExterns({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async baseForExternCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<BaseForExtern.$Filter, BaseForExtern.$Identifier>(
+      BaseForExtern,
+      query,
+    );
+  }
+
+  async baseForExternIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BaseForExtern.$Filter,
+      BaseForExtern.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseForExtern.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      BaseForExtern.$Filter,
+      BaseForExtern.$Identifier
+    >(BaseForExtern, query);
+  }
+
+  async baseForExterns(
+    query?: $SparqlObjectSet.Query<
+      BaseForExtern.$Filter,
+      BaseForExtern.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseForExtern[]>> {
+    return this.$objects<
+      BaseForExtern,
+      BaseForExtern.$Filter,
+      BaseForExtern.$Identifier
+    >(BaseForExtern, query);
+  }
+
+  async baseWithoutProperties(
+    identifier: BaseWithoutProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithoutProperties>> {
+    return (
+      await this.baseWithoutPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async baseWithoutPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        BaseWithoutProperties.$Filter,
+        BaseWithoutProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >(BaseWithoutProperties, query);
+  }
+
+  async baseWithoutPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >(BaseWithoutProperties, query);
+  }
+
+  async baseWithoutPropertieses(
+    query?: $SparqlObjectSet.Query<
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithoutProperties[]>> {
+    return this.$objects<
+      BaseWithoutProperties,
+      BaseWithoutProperties.$Filter,
+      BaseWithoutProperties.$Identifier
+    >(BaseWithoutProperties, query);
+  }
+
+  async baseWithProperties(
+    identifier: BaseWithProperties.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseWithProperties>> {
+    return (
+      await this.baseWithPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async baseWithPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        BaseWithProperties.$Filter,
+        BaseWithProperties.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >(BaseWithProperties, query);
+  }
+
+  async baseWithPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >(BaseWithProperties, query);
+  }
+
+  async baseWithPropertieses(
+    query?: $SparqlObjectSet.Query<
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseWithProperties[]>> {
+    return this.$objects<
+      BaseWithProperties,
+      BaseWithProperties.$Filter,
+      BaseWithProperties.$Identifier
+    >(BaseWithProperties, query);
   }
 
   async blankNodeIdentifier(
@@ -74279,6 +76077,58 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionMember2.$Filter,
       UnionMember2.$Identifier
     >(UnionMember2, query);
+  }
+
+  async unionMemberCommonParent(
+    identifier: UnionMemberCommonParent.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMemberCommonParent>> {
+    return (
+      await this.unionMemberCommonParents({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionMemberCommonParentCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        UnionMemberCommonParent.$Filter,
+        UnionMemberCommonParent.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >(UnionMemberCommonParent, query);
+  }
+
+  async unionMemberCommonParentIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >(UnionMemberCommonParent, query);
+  }
+
+  async unionMemberCommonParents(
+    query?: $SparqlObjectSet.Query<
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent[]>> {
+    return this.$objects<
+      UnionMemberCommonParent,
+      UnionMemberCommonParent.$Filter,
+      UnionMemberCommonParent.$Identifier
+    >(UnionMemberCommonParent, query);
   }
 
   async flattenUnion(
