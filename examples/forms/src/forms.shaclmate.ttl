@@ -6,10 +6,6 @@
 @prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://example.com/>
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Ontology .
-
 :FormNodeShape
     shaclmate:name "FormNodeShape" ;
     a sh:NodeShape ;
