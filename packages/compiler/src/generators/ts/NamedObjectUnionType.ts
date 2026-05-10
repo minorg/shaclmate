@@ -308,18 +308,10 @@ ${{
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
   this.concreteMembers
-    .map((member) => {
-      let returnExpression: Code;
-      switch (member.type.declarationType) {
-        case "class":
-          returnExpression = code`value.${syntheticNamePrefix}toRdfResource(options)`;
-          break;
-        case "interface":
-          returnExpression = code`${member.type.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options)`;
-          break;
-      }
-      return code`if (${member.type.staticModuleName}.is${member.type.name}(value)) { return ${returnExpression}; }`;
-    })
+    .map(
+      (member) =>
+        code`if (${member.type.staticModuleName}.is${member.type.name}(value)) { return ${member.type.staticModuleName}.${syntheticNamePrefix}toRdfResource(value, options); }`,
+    )
     .concat(code`throw new Error("unrecognized type");`),
 )}
 };`,
