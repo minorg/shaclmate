@@ -6,6 +6,7 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { snippets } from "./snippets.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 type Super = AbstractLazyObjectType<
@@ -54,7 +55,7 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as NamedObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).staticModuleName}.${syntheticNamePrefix}create), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${imports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${imports.Maybe}<${this.resolveType.itemType.name}>`,
@@ -62,7 +63,7 @@ export class LazyObjectOptionType extends Super {
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).newExpression({ parameters: value })}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).staticModuleName}.${syntheticNamePrefix}create(${value})), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>

@@ -83,8 +83,12 @@ export function nodeShapeTsFeatures(
       }
     }
 
-    if (tsFeatures.has("graphql")) {
+    if (tsFeatures.has("graphql") || tsFeatures.has("sparql")) {
       tsFeatures.add("rdf");
+    }
+
+    if (tsFeatures.has("json") || tsFeatures.has("rdf")) {
+      tsFeatures.add("create");
     }
 
     return Either.of(tsFeatures);

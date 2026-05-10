@@ -16,6 +16,6 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
 
   return Maybe.of(code`\
 export function ${syntheticNamePrefix}fromJson(json: ${this.jsonType().name}): ${this.name} {
-  return ${this.newExpression({ parameters: code`${syntheticNamePrefix}propertiesFromJson(json)` })};
+  return ${syntheticNamePrefix}create(${syntheticNamePrefix}propertiesFromJson(json));
 }`);
 }

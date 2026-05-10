@@ -441,10 +441,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     );
   }
 
-  newExpression({ parameters }: { parameters: Code }): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {

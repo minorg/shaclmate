@@ -3418,7 +3418,7 @@ export namespace $NamedDefaultPartial {
   export function $fromJson(
     json: $NamedDefaultPartial.$Json,
   ): $NamedDefaultPartial {
-    return $NamedDefaultPartial.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -3810,7 +3810,7 @@ export namespace $DefaultPartial {
   };
 
   export function $fromJson(json: $DefaultPartial.$Json): $DefaultPartial {
-    return $DefaultPartial.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<$DefaultPartial> = (
@@ -7850,7 +7850,7 @@ export namespace UnionDiscriminants {
   export function $fromJson(
     json: UnionDiscriminants.$Json,
   ): UnionDiscriminants {
-    return UnionDiscriminants.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -12054,7 +12054,7 @@ export namespace TermProperties {
   };
 
   export function $fromJson(json: TermProperties.$Json): TermProperties {
-    return TermProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<TermProperties> = (
@@ -13085,7 +13085,7 @@ export namespace RecursiveUnionMember2 {
   export function $fromJson(
     json: RecursiveUnionMember2.$Json,
   ): RecursiveUnionMember2 {
-    return RecursiveUnionMember2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -13706,7 +13706,7 @@ export namespace RecursiveUnionMember1 {
   export function $fromJson(
     json: RecursiveUnionMember1.$Json,
   ): RecursiveUnionMember1 {
-    return RecursiveUnionMember1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -14431,7 +14431,7 @@ export namespace PropertyPaths {
   };
 
   export function $fromJson(json: PropertyPaths.$Json): PropertyPaths {
-    return PropertyPaths.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<PropertyPaths> = (
@@ -15330,7 +15330,7 @@ export namespace PropertyNames {
   };
 
   export function $fromJson(json: PropertyNames.$Json): PropertyNames {
-    return PropertyNames.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<PropertyNames> = (
@@ -16243,7 +16243,7 @@ export namespace PropertyCardinalities {
   export function $fromJson(
     json: PropertyCardinalities.$Json,
   ): PropertyCardinalities {
-    return PropertyCardinalities.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -17427,7 +17427,7 @@ export namespace UnionMember2 {
   };
 
   export function $fromJson(json: UnionMember2.$Json): UnionMember2 {
-    return UnionMember2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<UnionMember2> = (
@@ -18032,7 +18032,7 @@ export namespace PartialUnionMember2 {
   export function $fromJson(
     json: PartialUnionMember2.$Json,
   ): PartialUnionMember2 {
-    return PartialUnionMember2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -18639,7 +18639,7 @@ export namespace UnionMember1 {
   };
 
   export function $fromJson(json: UnionMember1.$Json): UnionMember1 {
-    return UnionMember1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<UnionMember1> = (
@@ -19244,7 +19244,7 @@ export namespace PartialUnionMember1 {
   export function $fromJson(
     json: PartialUnionMember1.$Json,
   ): PartialUnionMember1 {
-    return PartialUnionMember1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -19772,7 +19772,7 @@ export namespace NewName2 {
   };
 
   export function $fromJson(json: NewName2.$Json): NewName2 {
-    return NewName2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NewName2> = (
@@ -20250,7 +20250,7 @@ export namespace NewName1 {
   };
 
   export function $fromJson(json: NewName1.$Json): NewName1 {
-    return NewName1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NewName1> = (
@@ -20850,7 +20850,7 @@ export namespace OrderedProperties {
   };
 
   export function $fromJson(json: OrderedProperties.$Json): OrderedProperties {
-    return OrderedProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<OrderedProperties> = (
@@ -22666,7 +22666,7 @@ export namespace NumericProperties {
   };
 
   export function $fromJson(json: NumericProperties.$Json): NumericProperties {
-    return NumericProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NumericProperties> = (
@@ -24627,7 +24627,7 @@ export namespace NodeKinds {
   };
 
   export function $fromJson(json: NodeKinds.$Json): NodeKinds {
-    return NodeKinds.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NodeKinds> = (
@@ -25439,7 +25439,7 @@ export namespace NoRdfTypeUnionMember2 {
   export function $fromJson(
     json: NoRdfTypeUnionMember2.$Json,
   ): NoRdfTypeUnionMember2 {
-    return NoRdfTypeUnionMember2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -25938,7 +25938,7 @@ export namespace NoRdfTypeUnionMember1 {
   export function $fromJson(
     json: NoRdfTypeUnionMember1.$Json,
   ): NoRdfTypeUnionMember1 {
-    return NoRdfTypeUnionMember1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -26556,7 +26556,7 @@ export namespace NamedUnionProperties {
   export function $fromJson(
     json: NamedUnionProperties.$Json,
   ): NamedUnionProperties {
-    return NamedUnionProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -27429,7 +27429,7 @@ export namespace MutableProperties {
   };
 
   export function $fromJson(json: MutableProperties.$Json): MutableProperties {
-    return MutableProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<MutableProperties> = (
@@ -28454,7 +28454,7 @@ export namespace ListProperties {
   };
 
   export function $fromJson(json: ListProperties.$Json): ListProperties {
-    return ListProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ListProperties> = (
@@ -29288,7 +29288,7 @@ export namespace LazyProperties {
         >({
           partial:
             parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.map(
-              (object) => $DefaultPartial.$create(object),
+              $DefaultPartial.$create,
             ),
           resolver: async () =>
             Right(
@@ -29358,7 +29358,7 @@ export namespace LazyProperties {
         LazilyResolvedIriIdentifier
       >({
         partial: parameters.optionalLazyToResolvedIriIdentifierProperty.map(
-          (object) => $NamedDefaultPartial.$create(object),
+          $NamedDefaultPartial.$create,
         ),
         resolver: async () =>
           Right(
@@ -29420,8 +29420,8 @@ export namespace LazyProperties {
         $DefaultPartial,
         LazilyResolvedUnion
       >({
-        partial: parameters.optionalLazyToResolvedUnionProperty.map((object) =>
-          $DefaultPartial.$create(object),
+        partial: parameters.optionalLazyToResolvedUnionProperty.map(
+          $DefaultPartial.$create,
         ),
         resolver: async () =>
           Right(
@@ -29489,7 +29489,7 @@ export namespace LazyProperties {
         >({
           partial:
             parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.map(
-              (object) => Partial.$create(object),
+              Partial.$create,
             ),
           resolver: async () =>
             Right(
@@ -29558,7 +29558,7 @@ export namespace LazyProperties {
         LazilyResolvedUnion
       >({
         partial: parameters.optionalPartialToResolvedUnionProperty.map(
-          (object) => Partial.$create(object),
+          Partial.$create,
         ),
         resolver: async () =>
           Right(
@@ -29777,7 +29777,7 @@ export namespace LazyProperties {
       >({
         partials:
           parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty.map(
-            (object) => $DefaultPartial.$create(object),
+            $DefaultPartial.$create,
           ),
         resolver: async () =>
           Right(
@@ -29825,7 +29825,7 @@ export namespace LazyProperties {
       >({
         partials:
           parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty.map(
-            (object) => Partial.$create(object),
+            Partial.$create,
           ),
         resolver: async () =>
           Right(
@@ -30907,7 +30907,7 @@ export namespace LazyProperties {
   };
 
   export function $fromJson(json: LazyProperties.$Json): LazyProperties {
-    return LazyProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<LazyProperties> = (
@@ -32482,7 +32482,7 @@ export namespace LazilyResolvedIriIdentifier {
   export function $fromJson(
     json: LazilyResolvedIriIdentifier.$Json,
   ): LazilyResolvedIriIdentifier {
-    return LazilyResolvedIriIdentifier.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -33046,7 +33046,7 @@ export namespace LazilyResolvedUnionMember2 {
   export function $fromJson(
     json: LazilyResolvedUnionMember2.$Json,
   ): LazilyResolvedUnionMember2 {
-    return LazilyResolvedUnionMember2.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -33655,7 +33655,7 @@ export namespace LazilyResolvedUnionMember1 {
   export function $fromJson(
     json: LazilyResolvedUnionMember1.$Json,
   ): LazilyResolvedUnionMember1 {
-    return LazilyResolvedUnionMember1.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -34274,9 +34274,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function $fromJson(
     json: LazilyResolvedBlankNodeOrIriIdentifier.$Json,
   ): LazilyResolvedBlankNodeOrIriIdentifier {
-    return LazilyResolvedBlankNodeOrIriIdentifier.$create(
-      $propertiesFromJson(json),
-    );
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -34874,7 +34872,7 @@ export namespace LanguageInProperties {
   export function $fromJson(
     json: LanguageInProperties.$Json,
   ): LanguageInProperties {
-    return LanguageInProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -35736,7 +35734,7 @@ export namespace JsPrimitiveUnionProperty {
   export function $fromJson(
     json: JsPrimitiveUnionProperty.$Json,
   ): JsPrimitiveUnionProperty {
-    return JsPrimitiveUnionProperty.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -36401,7 +36399,7 @@ export namespace IriIdentifier {
   };
 
   export function $fromJson(json: IriIdentifier.$Json): IriIdentifier {
-    return IriIdentifier.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<IriIdentifier> = (
@@ -36941,7 +36939,7 @@ export namespace IndirectRecursiveHelper {
   export function $fromJson(
     json: IndirectRecursiveHelper.$Json,
   ): IndirectRecursiveHelper {
-    return IndirectRecursiveHelper.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -37561,7 +37559,7 @@ export namespace IndirectRecursive {
   };
 
   export function $fromJson(json: IndirectRecursive.$Json): IndirectRecursive {
-    return IndirectRecursive.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<IndirectRecursive> = (
@@ -38631,7 +38629,7 @@ export namespace InProperties {
   };
 
   export function $fromJson(json: InProperties.$Json): InProperties {
-    return InProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<InProperties> = (
@@ -39571,7 +39569,7 @@ export namespace InIdentifier {
   };
 
   export function $fromJson(json: InIdentifier.$Json): InIdentifier {
-    return InIdentifier.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<InIdentifier> = (
@@ -40198,7 +40196,7 @@ export namespace HasValueProperties {
   export function $fromJson(
     json: HasValueProperties.$Json,
   ): HasValueProperties {
-    return HasValueProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -40788,7 +40786,7 @@ export namespace FlattenUnionMember3 {
   export function $fromJson(
     json: FlattenUnionMember3.$Json,
   ): FlattenUnionMember3 {
-    return FlattenUnionMember3.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -41401,7 +41399,7 @@ export namespace ExternProperty {
   };
 
   export function $fromJson(json: ExternProperty.$Json): ExternProperty {
-    return ExternProperty.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ExternProperty> = (
@@ -42433,7 +42431,7 @@ export namespace ExplicitRdfType {
   };
 
   export function $fromJson(json: ExplicitRdfType.$Json): ExplicitRdfType {
-    return ExplicitRdfType.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ExplicitRdfType> = (
@@ -43032,7 +43030,7 @@ export namespace ExplicitFromToRdfTypes {
   export function $fromJson(
     json: ExplicitFromToRdfTypes.$Json,
   ): ExplicitFromToRdfTypes {
-    return ExplicitFromToRdfTypes.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -43778,7 +43776,7 @@ export namespace DisplayProperties {
   };
 
   export function $fromJson(json: DisplayProperties.$Json): DisplayProperties {
-    return DisplayProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<DisplayProperties> = (
@@ -44434,7 +44432,7 @@ export namespace DirectRecursive {
   };
 
   export function $fromJson(json: DirectRecursive.$Json): DirectRecursive {
-    return DirectRecursive.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<DirectRecursive> = (
@@ -45429,7 +45427,7 @@ export namespace DefaultValueProperties {
   export function $fromJson(
     json: DefaultValueProperties.$Json,
   ): DefaultValueProperties {
-    return DefaultValueProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -47456,7 +47454,7 @@ export namespace DateUnionProperties {
   export function $fromJson(
     json: DateUnionProperties.$Json,
   ): DateUnionProperties {
-    return DateUnionProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -50055,7 +50053,7 @@ export namespace ConvertibleTypeProperties {
   export function $fromJson(
     json: ConvertibleTypeProperties.$Json,
   ): ConvertibleTypeProperties {
-    return ConvertibleTypeProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -52309,7 +52307,7 @@ export namespace ConcreteParentStatic {
   };
 
   export function $fromJson(json: ConcreteParentStatic.$Json): ConcreteParent {
-    return ConcreteParentStatic.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ConcreteParent> = (
@@ -52942,7 +52940,7 @@ export namespace ConcreteChild {
   };
 
   export function $fromJson(json: ConcreteChild.$Json): ConcreteChild {
-    return ConcreteChild.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ConcreteChild> = (
@@ -53484,7 +53482,7 @@ export namespace Partial {
   };
 
   export function $fromJson(json: Partial.$Json): Partial {
-    return Partial.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<Partial> = (
@@ -53958,7 +53956,7 @@ export namespace NonClass {
   };
 
   export function $fromJson(json: NonClass.$Json): NonClass {
-    return NonClass.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NonClass> = (
@@ -54868,7 +54866,7 @@ export namespace ClassProperties {
   };
 
   export function $fromJson(json: ClassProperties.$Json): ClassProperties {
-    return ClassProperties.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<ClassProperties> = (
@@ -55634,7 +55632,7 @@ export namespace BlankNodeOrIriIdentifier {
   export function $fromJson(
     json: BlankNodeOrIriIdentifier.$Json,
   ): BlankNodeOrIriIdentifier {
-    return BlankNodeOrIriIdentifier.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
@@ -56138,7 +56136,7 @@ export namespace BlankNodeIdentifier {
   export function $fromJson(
     json: BlankNodeIdentifier.$Json,
   ): BlankNodeIdentifier {
-    return BlankNodeIdentifier.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<
