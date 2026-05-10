@@ -22,6 +22,16 @@ export class Harness<
           [_index: string]: any;
         },
       ) => Either<Error, T>;
+      $hash: <
+        HasherT extends {
+          update: (
+            message: string | number[] | ArrayBuffer | Uint8Array,
+          ) => void;
+        },
+      >(
+        value: T,
+        hasher: HasherT,
+      ) => HasherT;
       $sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;
       }) => string;
