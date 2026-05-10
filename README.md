@@ -32,28 +32,27 @@ See [`examples/kitchen-sink/package.json`](examples/kitchen-sink/package.json) a
 
 ## Features
 
-* Browser-, Node.js-, and React Native-compatible generated TypeScript
-* TypeScript class or interface generation
-* TypeScript [union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) generation from `sh:xone`
-* TypeScript [literal type](https://www.typescriptlang.org/docs/handbook/literal-types.html) generation from `sh:in`
-* RDF serialization and deserialization function/method generation
-* JSON serialization and deserialization function/method generation
-* SPARQL CONSTRUCT query generation
-* Deep equals function/method generation
-* Deep hash function/method generation
-* Instance identifier minting by deep hashing or UUID generation
+#### TypeScript generator
+
+* Browser-, Node.js-, and React Native-compatible
+* [Union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types) from `sh:xone`
+* [Literal type](https://www.typescriptlang.org/docs/handbook/literal-types.html) from `sh:in`
+* RDF serialization and deserialization functions
+* JSON serialization and deserialization functions
+* SPARQL CONSTRUCT queries
+* Deep equals functions
+* Deep hash functions
 * Recognition of RDF list-modeling shapes
 * Surrogate objects with lazy, asynchronous resolution
 * Runtime filtering of node properties (in memory and SPARQL)
 * Numeric types in generated code: floating point, fixed-width integers, arbitrary-precision decimals and integers
-* [Zod schema](https://zod.dev/) generation
-* [JSON Forms](https://jsonforms.io/) schema generation
-* GraphQL schema+resolver generation (for [GraphQL.js](https://www.graphql-js.org)-compatible servers)
+* [Zod schemas](https://zod.dev/)
+* [JSON Forms](https://jsonforms.io/) schema 
+* GraphQL schemas and resolvers for [GraphQL.js](https://www.graphql-js.org)-compatible servers
 * [purify-ts](https://gigobyte.github.io/purify/) [`Maybe`](https://gigobyte.github.io/purify/adts/Maybe) types instead of `null`/`undefined`
 * Support for using handwritten "extern" types from generated code
 * Built on [RDF/JS](https://rdf.js.org/) standards
 * Include/exclude generated code features at node shape or ontology level
-* Decoupled concrete syntax -> abstract syntax -> code generator architecture (for future support of non-TypeScript code generators)
 
 ## Examples
 
@@ -181,7 +180,7 @@ All other datatypes generate an RDF/JS [`Literal`](https://rdf.js.org/data-model
 
 #### [`sh:nodeKind`](https://www.w3.org/TR/shacl/#NodeKindConstraintComponent)
 
-Every generated class or interface in TypeScript includes an `$identifier` property that (uniquely) identifies an instance of the class/interface.
+Every generated interface in TypeScript includes an `$identifier` property that (uniquely) identifies an instance of the class/interface.
 
 On a node shape, `sh:nodeKind` determines the type of `$identifier`: a blank node, a named node (IRI), or either.
 
