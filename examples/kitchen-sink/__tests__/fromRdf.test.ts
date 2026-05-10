@@ -76,9 +76,6 @@ describe("fromRdf", () => {
           },
         )
         .unsafeCoerce() as any;
-      if (id === "namedUnionPropertiesClass1") {
-        console.log("test");
-      }
       expect(
         harness.staticSide
           .$equals(harness.instance as any, fromRdfInstance)
