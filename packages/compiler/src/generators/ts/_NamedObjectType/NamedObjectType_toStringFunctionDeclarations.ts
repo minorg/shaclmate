@@ -3,7 +3,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_toStringFunctionOrMethodDeclarations(
+export function NamedObjectType_toStringFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
   const propertiesToStringRecordProperties: Code[] = [];

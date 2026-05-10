@@ -3,7 +3,7 @@ import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
+export function NamedObjectType_toJsonFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("json")) {

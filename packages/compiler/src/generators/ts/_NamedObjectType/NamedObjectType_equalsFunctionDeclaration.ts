@@ -4,7 +4,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_equalsFunctionOrMethodDeclaration(
+export function NamedObjectType_equalsFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("equals")) {

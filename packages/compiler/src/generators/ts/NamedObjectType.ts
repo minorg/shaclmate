@@ -10,7 +10,7 @@ import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectTyp
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
 import { NamedObjectType_createFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_createFunctionDeclaration.js";
-import { NamedObjectType_equalsFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionOrMethodDeclaration.js";
+import { NamedObjectType_equalsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionDeclaration.js";
 import { NamedObjectType_filterFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_filterFunctionDeclaration.js";
 import { NamedObjectType_filterTypeDeclaration } from "./_NamedObjectType/NamedObjectType_filterTypeDeclaration.js";
 import { NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
@@ -20,7 +20,7 @@ import { NamedObjectType_fromRdfResourceFunctionDeclaration } from "./_NamedObje
 import { NamedObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { NamedObjectType_fromRdfTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_fromRdfTypeVariableStatement.js";
 import { NamedObjectType_graphqlTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_graphqlTypeVariableStatement.js";
-import { NamedObjectType_hashFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionOrMethodDeclarations.js";
+import { NamedObjectType_hashFunctionDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionDeclarations.js";
 import { NamedObjectType_interfaceDeclaration } from "./_NamedObjectType/NamedObjectType_interfaceDeclaration.js";
 import { NamedObjectType_isTypeFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_isTypeFunctionDeclaration.js";
 import { NamedObjectType_jsonParseFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonParseFunctionDeclaration.js";
@@ -33,9 +33,9 @@ import { NamedObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./
 import { NamedObjectType_schemaVariableStatement } from "./_NamedObjectType/NamedObjectType_schemaVariableStatement.js";
 import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
-import { NamedObjectType_toStringFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_toStringFunctionOrMethodDeclaration.js";
+import { NamedObjectType_toJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionDeclaration.js";
+import { NamedObjectType_toRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionDeclaration.js";
+import { NamedObjectType_toStringFunctionDeclarations } from "./_NamedObjectType/NamedObjectType_toStringFunctionDeclarations.js";
 import { NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
 import { NamedObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_NamedObjectType/Property.js";
@@ -173,10 +173,8 @@ export class NamedObjectType extends AbstractType {
       declarations.push(NamedObjectType_interfaceDeclaration.call(this));
       staticModuleDeclarations.push(
         ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
-        ...NamedObjectType_equalsFunctionOrMethodDeclaration.bind(
-          this,
-        )().toList(),
-        ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
+        ...NamedObjectType_equalsFunctionDeclaration.bind(this)().toList(),
+        ...NamedObjectType_hashFunctionDeclarations.call(this),
       );
 
       const jsonModuleDeclarations: Code[] = [
@@ -224,13 +222,9 @@ export class NamedObjectType extends AbstractType {
         ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...NamedObjectType_toJsonFunctionOrMethodDeclaration.call(
-          this,
-        ).toList(),
-        ...NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
-          this,
-        ).toList(),
-        ...NamedObjectType_toStringFunctionOrMethodDeclarations.call(this),
+        ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_toStringFunctionDeclarations.call(this),
         ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
