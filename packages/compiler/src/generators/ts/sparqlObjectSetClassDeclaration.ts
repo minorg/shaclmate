@@ -57,7 +57,7 @@ ${joinCode(
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
       });
 
-      const runtimeObjectType = namedObjectType.staticModuleName;
+      const runtimeObjectType = namedObjectType.name;
 
       return [
         code`\

@@ -21,7 +21,7 @@ export function NamedObjectType_createFunctionDeclaration(
   }
   for (const parentObjectType of this.parentObjectTypes) {
     parametersType.push(
-      code`Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
+      code`Parameters<typeof ${parentObjectType.name}.${syntheticNamePrefix}create>[0]`,
     );
   }
   if (parametersType.length === 0) {
@@ -33,7 +33,7 @@ export function NamedObjectType_createFunctionDeclaration(
   const propertyStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertyInitializers.push(
-      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}create(parameters)`,
+      `...${parentObjectType.name}.${syntheticNamePrefix}create(parameters)`,
     );
   }
   const parametersHasQuestionToken =

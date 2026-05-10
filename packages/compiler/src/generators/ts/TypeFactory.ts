@@ -110,8 +110,6 @@ export class TypeFactory {
     const name = tsName(astType.name.unsafeCoerce(), {
       synthetic: astType.synthetic,
     });
-    const staticModuleName = name;
-    // astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
     const namedObjectType = new NamedObjectType({
       abstract: astType.abstract,
@@ -196,7 +194,7 @@ export class TypeFactory {
             name: `${syntheticNamePrefix}identifier`,
             namedObjectType,
             type: identifierType,
-            typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+            typeAlias: code`${name}.${syntheticNamePrefix}Identifier`,
           }),
         );
 
@@ -205,7 +203,6 @@ export class TypeFactory {
       logger: this.logger,
       name,
       recursive: astType.recursive,
-      staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });

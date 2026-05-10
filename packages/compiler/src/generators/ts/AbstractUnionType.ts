@@ -123,7 +123,7 @@ export abstract class AbstractUnionType<
                 case "NamedObjectUnionType":
                 case "NamedUnionType":
                 case "NamedObjectType":
-                  return code`${member.type.staticModuleName}.is${member.type.name}(${instance})`;
+                  return code`${member.type.name}.is${member.type.name}(${instance})`;
               }
             }
 

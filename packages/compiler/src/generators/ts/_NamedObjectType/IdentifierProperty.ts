@@ -222,7 +222,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
+        schema: code`${this.namedObjectType.name}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

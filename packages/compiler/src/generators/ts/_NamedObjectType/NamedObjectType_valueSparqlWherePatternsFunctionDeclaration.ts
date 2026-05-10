@@ -14,6 +14,6 @@ export function NamedObjectType_valueSparqlWherePatternsFunctionDeclaration(
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }) =>
   (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(
-    ${this.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
+    ${this.name}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
   );`);
 }

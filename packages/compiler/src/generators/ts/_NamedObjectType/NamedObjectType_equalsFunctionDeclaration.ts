@@ -15,7 +15,7 @@ export function NamedObjectType_equalsFunctionDeclaration(
   // For every parent, find the nearest equals implementation
   for (const parentObjectType of this.parentObjectTypes) {
     chain.push(
-      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
+      code`${parentObjectType.name}.${syntheticNamePrefix}equals(left, right)`,
     );
   }
 

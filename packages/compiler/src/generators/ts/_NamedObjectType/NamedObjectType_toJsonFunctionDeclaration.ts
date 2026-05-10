@@ -13,7 +13,7 @@ export function NamedObjectType_toJsonFunctionDeclaration(
   const jsonObjectMembers: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     jsonObjectMembers.push(
-      code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
+      code`...${parentObjectType.name}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
     );
   }
 

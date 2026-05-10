@@ -41,7 +41,7 @@ export abstract class AbstractNamedUnionType<
     );
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
-export namespace ${def(this.staticModuleName)} {
+export namespace ${def(this.name)} {
 ${joinCode(
   staticModuleDeclarations
     .sort((left, right) => left[0].localeCompare(right[0]))
@@ -57,19 +57,19 @@ ${joinCode(
   @Memoize()
   override get equalsFunction(): Code {
     if (this.features.has("equals")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
+      return code`${this.name}.${syntheticNamePrefix}equals`;
     }
     return this.inlineEqualsFunction;
   }
 
   @Memoize()
   override get filterFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}filter`;
+    return code`${this.name}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
+    return code`${this.name}.${syntheticNamePrefix}Filter`;
   }
 
   get jsonSchemaFunctionDeclaration(): Code {
@@ -95,14 +95,10 @@ ${joinCode(
     return this._name;
   }
 
-  get staticModuleName(): string {
-    return this._name;
-  }
-
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
+      return code`${this.name}.${syntheticNamePrefix}valueSparqlConstructTriples`;
     }
     return this.inlineValueSparqlConstructTriplesFunction;
   }
@@ -110,7 +106,7 @@ ${joinCode(
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
     if (this.features.has("sparql")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
+      return code`${this.name}.${syntheticNamePrefix}valueSparqlWherePatterns`;
     }
     return this.inlineValueSparqlWherePatternsFunction;
   }
@@ -184,7 +180,7 @@ export namespace ${syntheticNamePrefix}Json {
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     if (this.features.has("json")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
+      return code`${this.name}.${syntheticNamePrefix}fromJson(${variables.value})`;
     }
     return code`${this.inlineFromJsonFunction}(${variables.value})`;
   }
@@ -195,7 +191,7 @@ export namespace ${syntheticNamePrefix}Json {
     const { resourceValues: resourceValuesVariable, ...otherVariables } =
       variables;
     if (this.features.has("rdf")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
+      return code`${this.name}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
     }
     return code`${this.inlineFromRdfResourceValuesFunction}(${resourceValuesVariable}, ${otherVariables})`;
   }
@@ -206,7 +202,7 @@ export namespace ${syntheticNamePrefix}Json {
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     if (this.features.has("hash")) {
       return [
-        code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+        code`${this.name}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
       ];
     }
     return this.inlineHashStatements({ depth, variables });
@@ -216,9 +212,9 @@ export namespace ${syntheticNamePrefix}Json {
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
     if (this.features.has("json")) {
-      const expression = code`${this.staticModuleName}.${syntheticNamePrefix}Json.schema()`;
+      const expression = code`${this.name}.${syntheticNamePrefix}Json.schema()`;
       if (context === "property" && this.recursive) {
-        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }
@@ -229,7 +225,7 @@ export namespace ${syntheticNamePrefix}Json {
   override jsonType(): AbstractType.JsonType {
     if (this.features.has("json")) {
       return new AbstractType.JsonType(
-        `${this.staticModuleName}.${syntheticNamePrefix}Json`,
+        `${this.name}.${syntheticNamePrefix}Json`,
       );
     }
     return this.inlineJsonType;
@@ -239,7 +235,7 @@ export namespace ${syntheticNamePrefix}Json {
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     if (this.features.has("json")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
+      return code`${this.name}.${syntheticNamePrefix}toJson(${variables.value})`;
     }
     return code`${this.inlineToJsonFunction}(${variables.value})`;
   }
@@ -249,7 +245,7 @@ export namespace ${syntheticNamePrefix}Json {
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
     if (this.features.has("rdf")) {
-      return code`${this.staticModuleName}.${syntheticNamePrefix}toRdfResourceValues(${valueVariable}, ${otherVariables})`;
+      return code`${this.name}.${syntheticNamePrefix}toRdfResourceValues(${valueVariable}, ${otherVariables})`;
     }
     return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
   }
@@ -257,6 +253,6 @@ export namespace ${syntheticNamePrefix}Json {
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 }

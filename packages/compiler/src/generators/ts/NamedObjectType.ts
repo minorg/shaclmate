@@ -63,7 +63,6 @@ export class NamedObjectType extends AbstractType {
   override readonly kind = "NamedObjectType";
   override readonly name: string;
   override readonly recursive: boolean;
-  readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
 
@@ -82,7 +81,6 @@ export class NamedObjectType extends AbstractType {
     lazyProperties,
     name,
     recursive,
-    staticModuleName,
     synthetic,
     toRdfTypes,
     ...superParameters
@@ -107,7 +105,6 @@ export class NamedObjectType extends AbstractType {
     ) => readonly NamedObjectType.Property[];
     name: string;
     recursive: boolean;
-    staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
@@ -127,7 +124,6 @@ export class NamedObjectType extends AbstractType {
     this.lazyProperties = lazyProperties;
     this.name = name;
     this.recursive = recursive;
-    this.staticModuleName = staticModuleName;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
   }
@@ -235,7 +231,7 @@ export class NamedObjectType extends AbstractType {
 
       if (staticModuleDeclarations.length > 0) {
         declarations.push(code`\
-export namespace ${def(this.staticModuleName)} {
+export namespace ${def(this.name)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
       }
@@ -279,36 +275,36 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
+    return code`${this.name}.${syntheticNamePrefix}equals`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}filter`;
+    return code`${this.name}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
+    return code`${this.name}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
-      () => code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfType`,
+      () => code`${this.name}.${syntheticNamePrefix}fromRdfType`,
     );
   }
 
   @Memoize()
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
-      code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+      code`${this.name}.${syntheticNamePrefix}GraphQL`,
     );
   }
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
+    return code`${this.name}.${syntheticNamePrefix}Identifier`;
   }
 
   @Memoize()
@@ -340,7 +336,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}schema`;
+    return code`${this.name}.${syntheticNamePrefix}schema`;
   }
 
   @Memoize()
@@ -364,12 +360,12 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
+    return code`${this.name}.${syntheticNamePrefix}valueSparqlConstructTriples`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
+    return code`${this.name}.${syntheticNamePrefix}valueSparqlWherePatterns`;
   }
 
   @Memoize()
@@ -381,14 +377,14 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}fromJson(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     const { resourceValues, ...options } = variables;
-    return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValues}, ${options})`;
+    return code`${this.name}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValues}, ${options})`;
   }
 
   override graphqlResolveExpression({
@@ -403,19 +399,19 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     return [
-      code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+      code`${this.name}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
     ];
   }
 
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`${this.staticModuleName}.${syntheticNamePrefix}Json.schema()`;
+    let expression = code`${this.name}.${syntheticNamePrefix}Json.schema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }
@@ -423,7 +419,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return new AbstractType.JsonType(
-      code`${this.staticModuleName}.${syntheticNamePrefix}Json`,
+      code`${this.name}.${syntheticNamePrefix}Json`,
     );
   }
 
@@ -431,26 +427,26 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      code`${this.name}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+    return code`[${this.name}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   private readonly lazyAncestorObjectTypes: () => readonly NamedObjectType[];

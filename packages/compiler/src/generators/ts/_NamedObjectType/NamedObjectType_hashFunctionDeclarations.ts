@@ -31,11 +31,11 @@ export function NamedObjectType_hashFunctionDeclarations(
   const hashStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     hashShaclPropertiesStatements.push(
-      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+      code`${parentObjectType.name}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
     );
   }
   hashStatements.push(
-    code`${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+    code`${this.name}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
   );
 
   hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);

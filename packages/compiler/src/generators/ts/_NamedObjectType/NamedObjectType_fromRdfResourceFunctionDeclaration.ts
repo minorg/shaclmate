@@ -20,7 +20,7 @@ export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFu
 ${joinCode([
   code`let { context, graph, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
   code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
-  code`return ${code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(${syntheticNamePrefix}create)`};`,
+  code`return ${code`${this.name}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(${syntheticNamePrefix}create)`};`,
 ])}
 };`);
 }

@@ -202,7 +202,7 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedNamedObjectUnionType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.staticModuleName}.${syntheticNamePrefix}create(${variables.resolvedObjectUnion});`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.name}.${syntheticNamePrefix}create(${variables.resolvedObjectUnion});`;
       },
     );
     caseBlocks.push(

@@ -10,7 +10,7 @@ export function NamedObjectType_toStringFunctionDeclarations(
   if (this.parentObjectTypes.length > 0) {
     for (const parentObjectType of this.parentObjectTypes) {
       propertiesToStringRecordProperties.push(
-        code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesToStrings(${this.thisVariable})`,
+        code`...${parentObjectType.name}.${syntheticNamePrefix}propertiesToStrings(${this.thisVariable})`,
       );
     }
   }

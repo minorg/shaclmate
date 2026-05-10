@@ -214,7 +214,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
+              propertyPath: code`${this.namedObjectType.name}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },

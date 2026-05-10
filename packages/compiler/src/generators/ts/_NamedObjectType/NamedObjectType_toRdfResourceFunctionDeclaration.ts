@@ -20,7 +20,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
 
   if (this.parentObjectTypes.length > 0) {
     statements.push(
-      code`const ${variables.resource} = ${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, { ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} });`,
+      code`const ${variables.resource} = ${this.parentObjectTypes[0].name}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, { ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} });`,
     );
   } else {
     statements.push(

@@ -19,7 +19,7 @@ export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
 export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
   values.chain(
     values => values.chainMap(
-      value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdfResource(resource, options))
+      value => value.toResource().chain(resource => ${this.name}.${syntheticNamePrefix}fromRdfResource(resource, options))
     )
   );`);
 }
