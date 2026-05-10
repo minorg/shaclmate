@@ -1,5 +1,4 @@
 import { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { imports } from "../imports.js";
@@ -24,7 +23,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     type: DiscriminantProperty.Type;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super({ ...superParameters, type });
-    invariant(this.visibility === "public");
   }
 
   override get declaration(): Code {

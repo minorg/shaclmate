@@ -3,7 +3,6 @@ import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
-import type { Visibility } from "../../../enums/Visibility.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";
@@ -89,29 +88,21 @@ export abstract class AbstractProperty<
 .   */
   readonly type: TypeT;
 
-  /**
-   * Property visibility: private, protected, public.
-   */
-  readonly visibility: Visibility;
-
   constructor({
     logger,
     name,
     namedObjectType,
     type,
-    visibility,
   }: {
     logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
     type: TypeT;
-    visibility: Visibility;
   }) {
     this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;
     this.type = type;
-    this.visibility = visibility;
   }
 
   /**

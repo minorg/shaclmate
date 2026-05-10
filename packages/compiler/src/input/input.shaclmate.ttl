@@ -47,7 +47,7 @@ shaclmate:Ontology
     sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
@@ -63,15 +63,6 @@ shaclmate:PropertyShape-resolve
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
-
-shaclmate:PropertyShape-visibility
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_Visibility_Private
-        shaclmate:_Visibility_Protected
-        shaclmate:_Visibility_Public
-    ) ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:visibility .
 
 shaclmate:Shape-mutable
     a sh:PropertyShape ;

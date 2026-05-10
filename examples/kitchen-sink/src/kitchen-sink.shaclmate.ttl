@@ -996,29 +996,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :predicatePathProperty
     ] .
 
-:PropertyVisibilities
-    a sh:NodeShape ;
-    rdfs:comment "Node shape with properties that have visibility modifiers (private, protected, public)" ;
-    sh:property [
-        shaclmate:visibility shaclmate:_Visibility_Protected ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :protectedProperty
-    ], [
-        shaclmate:visibility shaclmate:_Visibility_Private ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :privateProperty
-    ], [
-        shaclmate:visibility shaclmate:_Visibility_Public ;
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :publicProperty
-    ] .
-
 :RecursiveUnion
     a sh:NodeShape ;
     rdfs:comment "Node shape sh:xone's node shapes that have properties with the union's type" ;

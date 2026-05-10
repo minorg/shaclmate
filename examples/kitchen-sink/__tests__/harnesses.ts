@@ -583,15 +583,6 @@ export const harnesses = {
     }),
     kitchenSink.PropertyPaths,
   ),
-  propertyVisibilities: new Harness(
-    kitchenSink.PropertyVisibilities.$create({
-      $identifier,
-      privateProperty: "private",
-      protectedProperty: "protected",
-      publicProperty: "public",
-    }),
-    kitchenSink.PropertyVisibilities,
-  ),
   nonClass: new Harness(
     kitchenSink.NonClass.$create({
       $identifier,

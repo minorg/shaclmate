@@ -7,7 +7,6 @@ import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../enums/TsFeature.js";
-import type { Visibility } from "../enums/Visibility.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
@@ -288,11 +287,6 @@ export namespace ObjectType {
      */
     readonly type: Type;
 
-    /**
-     * Visibility: private, protected, public.
-     */
-    readonly visibility: Visibility;
-
     constructor({
       comment,
       description,
@@ -305,7 +299,6 @@ export namespace ObjectType {
       path,
       shapeIdentifier,
       type,
-      visibility,
     }: {
       comment: Maybe<string>;
       description: Maybe<string>;
@@ -318,7 +311,6 @@ export namespace ObjectType {
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
-      visibility: Visibility;
     }) {
       this.comment = comment;
       this.description = description;
@@ -331,7 +323,6 @@ export namespace ObjectType {
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
       this.type = type;
-      this.visibility = visibility;
     }
 
     equals(other: Property): boolean {
@@ -523,7 +514,6 @@ export namespace ObjectType {
         recursive: this.recursive ? true : undefined,
         shapeIdentifier: this.shapeIdentifier,
         type: this.type.toJSON(),
-        visibility: this.visibility,
       };
     }
 

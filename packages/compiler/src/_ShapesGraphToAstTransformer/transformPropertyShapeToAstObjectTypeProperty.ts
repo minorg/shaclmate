@@ -6,7 +6,6 @@ import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/TsFeature.js";
-import { Visibility } from "../enums/Visibility.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
@@ -376,9 +375,6 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier(),
         type: astType,
-        visibility: propertyShape.visibility
-          .map(Visibility.fromIri)
-          .orDefault("public"),
       }),
     );
   });

@@ -14048,667 +14048,6 @@ export namespace RecursiveUnionMember1 {
       }),
     );
 } /**
- * Node shape with properties that have visibility modifiers (private, protected, public)
- */
-
-export interface PropertyVisibilities {
-  readonly $identifier: () => PropertyVisibilities.$Identifier;
-  readonly $type: "PropertyVisibilities";
-  readonly privateProperty: string;
-  readonly protectedProperty: string;
-  readonly publicProperty: string;
-}
-
-export namespace PropertyVisibilities {
-  export function $create(parameters: {
-    readonly $identifier?:
-      | (() => PropertyVisibilities.$Identifier)
-      | (BlankNode | NamedNode)
-      | string;
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  }): PropertyVisibilities {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PropertyVisibilities.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyVisibilities" as const;
-    const privateProperty = parameters.privateProperty;
-    const protectedProperty = parameters.protectedProperty;
-    const publicProperty = parameters.publicProperty;
-    return {
-      $identifier,
-      $type,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
-    };
-  }
-
-  export function $equals(
-    left: PropertyVisibilities,
-    right: PropertyVisibilities,
-  ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(left.privateProperty, right.privateProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "privateProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(left.protectedProperty, right.protectedProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "protectedProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(left.publicProperty, right.publicProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "publicProperty",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _propertyVisibilities: PropertyVisibilities,
-    _hasher: HasherT,
-  ): HasherT {
-    PropertyVisibilities.$hashShaclProperties(_propertyVisibilities, _hasher);
-    _hasher.update(_propertyVisibilities.$identifier().value);
-    _hasher.update(_propertyVisibilities.$type);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _propertyVisibilities: PropertyVisibilities,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_propertyVisibilities.privateProperty);
-    _hasher.update(_propertyVisibilities.protectedProperty);
-    _hasher.update(_propertyVisibilities.publicProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "PropertyVisibilities";
-    readonly privateProperty: string;
-    readonly protectedProperty: string;
-    readonly publicProperty: string;
-  };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.literal("PropertyVisibilities"),
-          privateProperty: z
-            .string()
-            .meta({ id: "PropertyVisibilities-privateProperty" }),
-          protectedProperty: z
-            .string()
-            .meta({ id: "PropertyVisibilities-protectedProperty" }),
-          publicProperty: z
-            .string()
-            .meta({ id: "PropertyVisibilities-publicProperty" }),
-        })
-        .meta({
-          id: "PropertyVisibilities",
-          description:
-            "Node shape with properties that have visibility modifiers (private, protected, public)",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "PropertyVisibilities" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/privateProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/protectedProperty`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/publicProperty`,
-            type: "Control",
-          },
-        ],
-        label: "PropertyVisibilities",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: PropertyVisibilities.$Filter,
-    value: PropertyVisibilities,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.publicProperty !== undefined &&
-      !$filterString(filter.publicProperty, value.publicProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly publicProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    PropertyVisibilities.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: undefined,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "privateProperty",
-        propertySchema: $schema.properties.privateProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: undefined,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "protectedProperty",
-        propertySchema: $schema.properties.protectedProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.publicProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "publicProperty",
-        propertySchema: $schema.properties.publicProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    PropertyVisibilities.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: PropertyVisibilities.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: undefined,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "privateProperty",
-        propertySchema: $schema.properties.privateProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: undefined,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "protectedProperty",
-        propertySchema: $schema.properties.protectedProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.publicProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "publicProperty",
-        propertySchema: $schema.properties.publicProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: PropertyVisibilities.$Json,
-  ): PropertyVisibilities {
-    return PropertyVisibilities.$create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    PropertyVisibilities
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return PropertyVisibilities.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    PropertyVisibilities
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            PropertyVisibilities.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isPropertyVisibilities(
-    object: $Object,
-  ): object is PropertyVisibilities {
-    switch (object.$type) {
-      case "PropertyVisibilities":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: PropertyVisibilities.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PropertyVisibilities";
-    privateProperty: string;
-    protectedProperty: string;
-    publicProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PropertyVisibilities" as const;
-    const privateProperty = $json["privateProperty"];
-    const protectedProperty = $json["protectedProperty"];
-    const publicProperty = $json["publicProperty"];
-    return {
-      $identifier,
-      $type,
-      privateProperty,
-      protectedProperty,
-      publicProperty,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    $type: "PropertyVisibilities";
-    privateProperty: string;
-    protectedProperty: string;
-    publicProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"PropertyVisibilities">("PropertyVisibilities" as const).chain(
-          ($type) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: $schema.properties.privateProperty,
-              typeFromRdf: (resourceValues) =>
-                resourceValues
-                  .chain((values) =>
-                    $fromRdfPreferredLanguages(
-                      values,
-                      _$options.preferredLanguages,
-                    ),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toString()),
-                  ),
-            }).chain((privateProperty) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema: $schema.properties.protectedProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).chain((protectedProperty) =>
-                $shaclPropertyFromRdf({
-                  graph: _$options.graph,
-                  resource: $resource,
-                  propertySchema: $schema.properties.publicProperty,
-                  typeFromRdf: (resourceValues) =>
-                    resourceValues
-                      .chain((values) =>
-                        $fromRdfPreferredLanguages(
-                          values,
-                          _$options.preferredLanguages,
-                        ),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
-                      ),
-                }).map((publicProperty) => ({
-                  $identifier,
-                  $type,
-                  privateProperty,
-                  protectedProperty,
-                  publicProperty,
-                })),
-              ),
-            ),
-        ),
-      );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["PropertyVisibilities"],
-        }),
-      },
-      privateProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/privateProperty"),
-      },
-      protectedProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/protectedProperty"),
-      },
-      publicProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/publicProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: PropertyVisibilities.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "propertyVisibilities";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        PropertyVisibilities.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          PropertyVisibilities.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof PropertyVisibilities.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      PropertyVisibilities.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(
-    _propertyVisibilities: PropertyVisibilities,
-  ): PropertyVisibilities.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _propertyVisibilities.$identifier().termType === "BlankNode"
-            ? `_:${_propertyVisibilities.$identifier().value}`
-            : _propertyVisibilities.$identifier().value,
-        $type: _propertyVisibilities.$type,
-        privateProperty: _propertyVisibilities.privateProperty,
-        protectedProperty: _propertyVisibilities.protectedProperty,
-        publicProperty: _propertyVisibilities.publicProperty,
-      } satisfies PropertyVisibilities.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _propertyVisibilities: PropertyVisibilities,
-    options?: Parameters<$ToRdfResourceFunction<PropertyVisibilities>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_propertyVisibilities.$identifier());
-    resource.add(
-      dataFactory.namedNode("http://example.com/privateProperty"),
-      [$literalFactory.string(_propertyVisibilities.privateProperty)],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/protectedProperty"),
-      [$literalFactory.string(_propertyVisibilities.protectedProperty)],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/publicProperty"),
-      [$literalFactory.string(_propertyVisibilities.publicProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _propertyVisibilities: PropertyVisibilities,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _propertyVisibilities.$identifier().toString(),
-    });
-  }
-
-  export function $toString(this: PropertyVisibilities): string;
-  export function $toString(
-    _propertyVisibilities: PropertyVisibilities,
-  ): string;
-  export function $toString(
-    this: PropertyVisibilities | undefined,
-    _propertyVisibilities?: PropertyVisibilities,
-  ): string {
-    return `PropertyVisibilities(${JSON.stringify($propertiesToStrings((_propertyVisibilities ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    PropertyVisibilities.$Filter,
-    typeof PropertyVisibilities.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    PropertyVisibilities.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    PropertyVisibilities.$Filter,
-    typeof PropertyVisibilities.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      PropertyVisibilities.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
  * Node shape that uses different property path types in its properties
  */
 
@@ -60024,7 +59363,6 @@ export type $Object =
   | PropertyCardinalities
   | PropertyNames
   | PropertyPaths
-  | PropertyVisibilities
   | RecursiveUnionMember1
   | RecursiveUnionMember2
   | TermProperties
@@ -60408,15 +59746,6 @@ export namespace $Object {
       return PropertyPaths.$equals(
         left as PropertyPaths,
         right as PropertyPaths,
-      );
-    }
-    if (
-      PropertyVisibilities.isPropertyVisibilities(left) &&
-      PropertyVisibilities.isPropertyVisibilities(right)
-    ) {
-      return PropertyVisibilities.$equals(
-        left as PropertyVisibilities,
-        right as PropertyVisibilities,
       );
     }
     if (
@@ -60932,16 +60261,6 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["PropertyVisibilities"] !== undefined &&
-      PropertyVisibilities.isPropertyVisibilities(value)
-    ) {
-      if (
-        !PropertyVisibilities.$filter(filter.on["PropertyVisibilities"], value)
-      ) {
-        return false;
-      }
-    }
-    if (
       filter.on?.["RecursiveUnionMember1"] !== undefined &&
       RecursiveUnionMember1.isRecursiveUnionMember1(value)
     ) {
@@ -61054,7 +60373,6 @@ export namespace $Object {
       readonly PropertyCardinalities?: PropertyCardinalities.$Filter;
       readonly PropertyNames?: PropertyNames.$Filter;
       readonly PropertyPaths?: PropertyPaths.$Filter;
-      readonly PropertyVisibilities?: PropertyVisibilities.$Filter;
       readonly RecursiveUnionMember1?: RecursiveUnionMember1.$Filter;
       readonly RecursiveUnionMember2?: RecursiveUnionMember2.$Filter;
       readonly TermProperties?: TermProperties.$Filter;
@@ -61350,12 +60668,6 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}PropertyPaths`,
-      }).concat(),
-      ...PropertyVisibilities.$focusSparqlConstructTriples({
-        filter: filter?.on?.PropertyVisibilities,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}PropertyVisibilities`,
       }).concat(),
       ...RecursiveUnionMember1.$focusSparqlConstructTriples({
         filter: filter?.on?.RecursiveUnionMember1,
@@ -61890,16 +61202,6 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: PropertyVisibilities.$focusSparqlWherePatterns({
-            filter: filter?.on?.PropertyVisibilities,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}PropertyVisibilities`,
-          }).concat(),
-          type: "group",
-        },
-        {
           patterns: RecursiveUnionMember1.$focusSparqlWherePatterns({
             filter: filter?.on?.RecursiveUnionMember1,
             focusIdentifier,
@@ -62139,11 +61441,6 @@ export namespace $Object {
     }
     if (value.$type === "PropertyPaths") {
       return PropertyPaths.$fromJson(value as PropertyPaths.$Json);
-    }
-    if (value.$type === "PropertyVisibilities") {
-      return PropertyVisibilities.$fromJson(
-        value as PropertyVisibilities.$Json,
-      );
     }
     if (value.$type === "RecursiveUnionMember1") {
       return RecursiveUnionMember1.$fromJson(
@@ -62494,13 +61791,6 @@ export namespace $Object {
       .altLazy(
         () =>
           PropertyPaths.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          PropertyVisibilities.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -63121,18 +62411,6 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                PropertyVisibilities.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
                 RecursiveUnionMember1.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -63353,9 +62631,6 @@ export namespace $Object {
     if (PropertyPaths.isPropertyPaths(value)) {
       PropertyPaths.$hash(value, hasher);
     }
-    if (PropertyVisibilities.isPropertyVisibilities(value)) {
-      PropertyVisibilities.$hash(value, hasher);
-    }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       RecursiveUnionMember1.$hash(value, hasher);
     }
@@ -63430,7 +62705,6 @@ export namespace $Object {
     | PropertyCardinalities.$Json
     | PropertyNames.$Json
     | PropertyPaths.$Json
-    | PropertyVisibilities.$Json
     | RecursiveUnionMember1.$Json
     | RecursiveUnionMember2.$Json
     | TermProperties.$Json
@@ -63488,7 +62762,6 @@ export namespace $Object {
           PropertyCardinalities.$Json.schema(),
           PropertyNames.$Json.schema(),
           PropertyPaths.$Json.schema(),
-          PropertyVisibilities.$Json.schema(),
           RecursiveUnionMember1.$Json.schema(),
           RecursiveUnionMember2.$Json.schema(),
           TermProperties.$Json.schema(),
@@ -63679,10 +62952,6 @@ export namespace $Object {
       PropertyPaths: {
         discriminantValues: ["PropertyPaths"],
         type: PropertyPaths.$schema,
-      },
-      PropertyVisibilities: {
-        discriminantValues: ["PropertyVisibilities"],
-        type: PropertyVisibilities.$schema,
       },
       RecursiveUnionMember1: {
         discriminantValues: ["RecursiveUnionMember1"],
@@ -63911,9 +63180,6 @@ export namespace $Object {
     if (PropertyPaths.isPropertyPaths(value)) {
       return PropertyPaths.$toJson(value);
     }
-    if (PropertyVisibilities.isPropertyVisibilities(value)) {
-      return PropertyVisibilities.$toJson(value);
-    }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       return RecursiveUnionMember1.$toJson(value);
     }
@@ -64084,9 +63350,6 @@ export namespace $Object {
     }
     if (PropertyPaths.isPropertyPaths(value)) {
       return PropertyPaths.$toRdfResource(value, options);
-    }
-    if (PropertyVisibilities.isPropertyVisibilities(value)) {
-      return PropertyVisibilities.$toRdfResource(value, options);
     }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       return RecursiveUnionMember1.$toRdfResource(value, options);
@@ -64485,14 +63748,6 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (PropertyVisibilities.isPropertyVisibilities(value)) {
-      return [
-        PropertyVisibilities.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       return [
         RecursiveUnionMember1.$toRdfResource(value, {
@@ -64687,9 +63942,6 @@ export namespace $Object {
     }
     if (PropertyPaths.isPropertyPaths(value)) {
       return PropertyPaths.$toString(value);
-    }
-    if (PropertyVisibilities.isPropertyVisibilities(value)) {
-      return PropertyVisibilities.$toString(value);
     }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       return RecursiveUnionMember1.$toString(value);
@@ -65085,14 +64337,6 @@ export namespace $Object {
         filter: filter?.on?.["PropertyPaths"],
         ignoreRdfType: false,
         schema: schema.members["PropertyPaths"].type,
-      }),
-    );
-    triples = triples.concat(
-      PropertyVisibilities.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyVisibilities"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyVisibilities"].type,
       }),
     );
     triples = triples.concat(
@@ -65568,15 +64812,6 @@ export namespace $Object {
         filter: filter?.on?.["PropertyPaths"],
         ignoreRdfType: false,
         schema: schema.members["PropertyPaths"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: PropertyVisibilities.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["PropertyVisibilities"],
-        ignoreRdfType: false,
-        schema: schema.members["PropertyVisibilities"].type,
       }).concat(),
       type: "group",
     });
@@ -66806,35 +66041,6 @@ export interface $ObjectSet {
   propertyPathses(
     query?: $ObjectSet.Query<PropertyPaths.$Filter, PropertyPaths.$Identifier>,
   ): Promise<Either<Error, readonly PropertyPaths[]>>;
-
-  propertyVisibilities(
-    identifier: PropertyVisibilities.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyVisibilities>>;
-
-  propertyVisibilitiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        PropertyVisibilities.$Filter,
-        PropertyVisibilities.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  propertyVisibilitiesIdentifiers(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities.$Identifier[]>>;
-
-  propertyVisibilitieses(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities[]>>;
 
   recursiveUnionMember1(
     identifier: RecursiveUnionMember1.$Identifier,
@@ -70950,98 +70156,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async propertyVisibilities(
-    identifier: PropertyVisibilities.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyVisibilities>> {
-    return this.propertyVisibilitiesSync(identifier, options);
-  }
-
-  propertyVisibilitiesSync(
-    identifier: PropertyVisibilities.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, PropertyVisibilities> {
-    return this.propertyVisibilitiesesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async propertyVisibilitiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        PropertyVisibilities.$Filter,
-        PropertyVisibilities.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.propertyVisibilitiesCountSync(query);
-  }
-
-  propertyVisibilitiesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        PropertyVisibilities.$Filter,
-        PropertyVisibilities.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.propertyVisibilitiesesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async propertyVisibilitiesIdentifiers(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities.$Identifier[]>> {
-    return this.propertyVisibilitiesIdentifiersSync(query);
-  }
-
-  propertyVisibilitiesIdentifiersSync(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Either<Error, readonly PropertyVisibilities.$Identifier[]> {
-    return this.propertyVisibilitiesesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async propertyVisibilitieses(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities[]>> {
-    return this.propertyVisibilitiesesSync(query);
-  }
-
-  propertyVisibilitiesesSync(
-    query?: $ObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Either<Error, readonly PropertyVisibilities[]> {
-    return this.$objectsSync<
-      PropertyVisibilities,
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >(
-      {
-        $filter: PropertyVisibilities.$filter,
-        $fromRdfResource: PropertyVisibilities.$fromRdfResource,
-        $fromRdfTypes: [],
-      },
-      query,
-    );
-  }
-
   async recursiveUnionMember1(
     identifier: RecursiveUnionMember1.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -72356,11 +71470,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdfResource: PropertyPaths.$fromRdfResource,
           $fromRdfTypes: [PropertyPaths.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: PropertyVisibilities.$fromRdfResource,
-          $fromRdfTypes: [],
         },
         {
           $filter: $Object.$filter,
@@ -74920,58 +74029,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyPaths.$Filter,
       PropertyPaths.$Identifier
     >(PropertyPaths, query);
-  }
-
-  async propertyVisibilities(
-    identifier: PropertyVisibilities.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, PropertyVisibilities>> {
-    return (
-      await this.propertyVisibilitieses({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async propertyVisibilitiesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        PropertyVisibilities.$Filter,
-        PropertyVisibilities.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >(PropertyVisibilities, query);
-  }
-
-  async propertyVisibilitiesIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >(PropertyVisibilities, query);
-  }
-
-  async propertyVisibilitieses(
-    query?: $SparqlObjectSet.Query<
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >,
-  ): Promise<Either<Error, readonly PropertyVisibilities[]>> {
-    return this.$objects<
-      PropertyVisibilities,
-      PropertyVisibilities.$Filter,
-      PropertyVisibilities.$Identifier
-    >(PropertyVisibilities, query);
   }
 
   async recursiveUnionMember1(

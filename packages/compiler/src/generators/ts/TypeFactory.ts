@@ -157,7 +157,6 @@ export class TypeFactory {
             mutable: false,
             ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
           }),
-          visibility: "public",
         });
       },
       lazyParentObjectTypes: () =>
@@ -198,7 +197,6 @@ export class TypeFactory {
             namedObjectType,
             type: identifierType,
             typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-            visibility: "public",
           }),
         );
 
@@ -573,7 +571,6 @@ export class TypeFactory {
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
       type: this.createType(astObjectTypeProperty.type),
-      visibility: astObjectTypeProperty.visibility,
     });
 
     this.cachedObjectTypePropertiesByShapeIdentifier.set(

@@ -32,7 +32,6 @@ export class IdentifierProperty extends AbstractProperty<
     typeAlias: Code;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
-    invariant(this.visibility === "public");
     this.typeAlias = typeAlias;
   }
 
