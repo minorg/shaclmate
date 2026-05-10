@@ -770,7 +770,7 @@ export namespace NestedNodeShape {
   };
 
   export function $fromJson(json: NestedNodeShape.$Json): NestedNodeShape {
-    return NestedNodeShape.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
@@ -1366,7 +1366,7 @@ export namespace FormNodeShape {
   };
 
   export function $fromJson(json: FormNodeShape.$Json): FormNodeShape {
-    return FormNodeShape.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (

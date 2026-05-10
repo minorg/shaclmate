@@ -4,7 +4,7 @@ import { ResourceSet } from "@rdfx/resource";
 import {
   Child,
   Nested,
-  ParentStatic,
+  Parent,
   UnionMember1,
   UnionMember2,
 } from "./generated.js";
@@ -44,8 +44,8 @@ for (let i = 0; i < 4; i++) {
     { resourceSet },
   );
 
-  ParentStatic.$toRdfResource(
-    ParentStatic.$create({
+  Parent.$toRdfResource(
+    Parent.$create({
       $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
       parentStringProperty: "parent string",
     }),

@@ -1807,7 +1807,7 @@ export namespace Nested {
  */
 
 export interface Parent {
-  readonly $identifier: () => ParentStatic.$Identifier;
+  readonly $identifier: () => Parent.$Identifier;
   readonly $type: "Parent" | "Child" /**
    * Parent string property
    */;
@@ -1815,13 +1815,13 @@ export interface Parent {
   readonly parentStringProperty: Maybe<string>;
 }
 
-export namespace ParentStatic {
+export namespace Parent {
   export function $create(parameters: {
-    readonly $identifier: (() => ParentStatic.$Identifier) | NamedNode | string;
+    readonly $identifier: (() => Parent.$Identifier) | NamedNode | string;
     readonly parentStringProperty?: Maybe<string> | string;
   }): Parent {
     const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ParentStatic.$Identifier;
+    let $identifier: () => Parent.$Identifier;
     if (typeof $identifierParameter === "function") {
       $identifier = $identifierParameter;
     } else if (typeof $identifierParameter === "object") {
@@ -1855,8 +1855,7 @@ export namespace ParentStatic {
         args: undefined,
         description: undefined,
         name: "_identifier",
-        resolve: (source) =>
-          ParentStatic.$Identifier.stringify(source.$identifier()),
+        resolve: (source) => Parent.$Identifier.stringify(source.$identifier()),
         type: new GraphQLNonNull(GraphQLString),
       },
       parentStringProperty: {
@@ -1878,10 +1877,7 @@ export namespace ParentStatic {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export function $filter(
-    filter: ParentStatic.$Filter,
-    value: Parent,
-  ): boolean {
+  export function $filter(filter: Parent.$Filter, value: Parent): boolean {
     if (
       filter.$identifier !== undefined &&
       !$filterIri(filter.$identifier, value.$identifier())
@@ -1919,7 +1915,7 @@ export namespace ParentStatic {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return ParentStatic.$propertiesFromRdfResource(resource, {
+    return Parent.$propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
@@ -1935,9 +1931,7 @@ export namespace ParentStatic {
       values.chainMap((value) =>
         value
           .toResource()
-          .chain((resource) =>
-            ParentStatic.$fromRdfResource(resource, options),
-          ),
+          .chain((resource) => Parent.$fromRdfResource(resource, options)),
       ),
     );
 
@@ -1975,7 +1969,7 @@ export namespace ParentStatic {
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $resource.isInstanceOf(ParentStatic.$fromRdfType, {
+                $resource.isInstanceOf(Parent.$fromRdfType, {
                   graph: _$options.graph,
                 })
               ) {
@@ -2023,8 +2017,7 @@ export namespace ParentStatic {
                       : Resource.Values.fromValue<Maybe<string>>({
                           focusResource: $resource,
                           propertyPath:
-                            ParentStatic.$schema.properties.parentStringProperty
-                              .path,
+                            Parent.$schema.properties.parentStringProperty.path,
                           value: Maybe.empty(),
                         }),
                   ),
@@ -2161,7 +2154,7 @@ export namespace Child {
       readonly optionalObjectProperty?: Maybe<Nested> | Nested;
       readonly optionalStringProperty?: Maybe<string> | string;
       readonly requiredStringProperty: string;
-    } & Parameters<typeof ParentStatic.$create>[0],
+    } & Parameters<typeof Parent.$create>[0],
   ): Child {
     const $identifierParameter = parameters.$identifier;
     let $identifier: () => Child.$Identifier;
@@ -2201,9 +2194,7 @@ export namespace Child {
         $DefaultPartial,
         Nested
       >({
-        partials: parameters.lazyObjectSetProperty.map((object) =>
-          $DefaultPartial.$create(object),
-        ),
+        partials: parameters.lazyObjectSetProperty.map($DefaultPartial.$create),
         resolver: async () =>
           Right(parameters.lazyObjectSetProperty as readonly Nested[]),
       });
@@ -2237,8 +2228,8 @@ export namespace Child {
         $DefaultPartial,
         Nested
       >({
-        partial: parameters.optionalLazyObjectProperty.map((object) =>
-          $DefaultPartial.$create(object),
+        partial: parameters.optionalLazyObjectProperty.map(
+          $DefaultPartial.$create,
         ),
         resolver: async () =>
           Right(
@@ -2298,7 +2289,7 @@ export namespace Child {
     }
     const requiredStringProperty = parameters.requiredStringProperty;
     return {
-      ...ParentStatic.$create(parameters),
+      ...Parent.$create(parameters),
       $identifier,
       $type,
       childStringProperty,
@@ -2388,7 +2379,7 @@ export namespace Child {
   }
 
   export function $filter(filter: Child.$Filter, value: Child): boolean {
-    if (!ParentStatic.$filter(filter, value)) {
+    if (!Parent.$filter(filter, value)) {
       return false;
     }
     if (
@@ -2474,7 +2465,7 @@ export namespace Child {
     readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
-  } & ParentStatic.$Filter;
+  } & Parent.$Filter;
 
   export const $fromRdfResource: $FromRdfResourceFunction<Child> = (
     resource,
@@ -2542,9 +2533,9 @@ export namespace Child {
       optionalObjectProperty: Maybe<Nested>;
       optionalStringProperty: Maybe<string>;
       requiredStringProperty: string;
-    } & $UnwrapR<ReturnType<typeof ParentStatic.$propertiesFromRdfResource>>
+    } & $UnwrapR<ReturnType<typeof Parent.$propertiesFromRdfResource>>
   > = ($resource, _$options) => {
-    return ParentStatic.$propertiesFromRdfResource($resource, {
+    return Parent.$propertiesFromRdfResource($resource, {
       ..._$options,
       ignoreRdfType: true,
     }).chain(($super0) =>
@@ -2801,7 +2792,7 @@ export namespace Child {
 
   export const $schema = {
     properties: {
-      ...ParentStatic.$schema.properties,
+      ...Parent.$schema.properties,
       $identifier: {
         kind: "Identifier" as const,
         type: () => ({ kind: "Iri" as const }),
@@ -2882,7 +2873,7 @@ export namespace Child {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = ParentStatic.$toRdfResource(_child, {
+    const resource = Parent.$toRdfResource(_child, {
       ignoreRdfType: true,
       graph: options?.graph,
       resourceSet,
@@ -2948,7 +2939,7 @@ export namespace Child {
 
   export function $propertiesToStrings(_child: Child): Record<string, string> {
     return $compactRecord({
-      ...ParentStatic.$propertiesToStrings(_child),
+      ...Parent.$propertiesToStrings(_child),
       $identifier: _child.$identifier().toString(),
     });
   }
@@ -3149,8 +3140,8 @@ export namespace $Object {
         return false;
       }
     }
-    if (filter.on?.["Parent"] !== undefined && ParentStatic.isParent(value)) {
-      if (!ParentStatic.$filter(filter.on["Parent"], value)) {
+    if (filter.on?.["Parent"] !== undefined && Parent.isParent(value)) {
+      if (!Parent.$filter(filter.on["Parent"], value)) {
         return false;
       }
     }
@@ -3191,7 +3182,7 @@ export namespace $Object {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
       readonly Child?: Child.$Filter;
-      readonly Parent?: ParentStatic.$Filter;
+      readonly Parent?: Parent.$Filter;
       readonly Nested?: Nested.$Filter;
       readonly UnionMember1?: UnionMember1.$Filter;
       readonly UnionMember2?: UnionMember2.$Filter;
@@ -3211,7 +3202,7 @@ export namespace $Object {
     )
       .altLazy(
         () =>
-          ParentStatic.$fromRdfResource(resource, {
+          Parent.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -3263,7 +3254,7 @@ export namespace $Object {
           )
             .altLazy(
               () =>
-                ParentStatic.$fromRdfResourceValues(valueAsValues, {
+                Parent.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -3335,7 +3326,7 @@ export namespace $Object {
     kind: "NamedObjectUnion" as const,
     members: {
       Child: { discriminantValues: ["Child"], type: Child.$schema },
-      Parent: { discriminantValues: ["Parent"], type: ParentStatic.$schema },
+      Parent: { discriminantValues: ["Parent"], type: Parent.$schema },
       Nested: { discriminantValues: ["Nested"], type: Nested.$schema },
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -3360,8 +3351,8 @@ export namespace $Object {
     if (Child.isChild(value)) {
       return Child.$toRdfResource(value, options);
     }
-    if (ParentStatic.isParent(value)) {
-      return ParentStatic.$toRdfResource(value, options);
+    if (Parent.isParent(value)) {
+      return Parent.$toRdfResource(value, options);
     }
     if (Nested.isNested(value)) {
       return Nested.$toRdfResource(value, options);
@@ -3390,9 +3381,9 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (ParentStatic.isParent(value)) {
+    if (Parent.isParent(value)) {
       return [
-        ParentStatic.$toRdfResource(value, {
+        Parent.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -3438,8 +3429,8 @@ export namespace $Object {
     if (Child.isChild(value)) {
       return Child.$toString(value);
     }
-    if (ParentStatic.isParent(value)) {
-      return ParentStatic.$toString(value);
+    if (Parent.isParent(value)) {
+      return Parent.$toString(value);
     }
     if (Nested.isNested(value)) {
       return Nested.$toString(value);
@@ -3496,23 +3487,23 @@ export interface $ObjectSet {
   ): Promise<Either<Error, readonly Nested[]>>;
 
   parent(
-    identifier: ParentStatic.$Identifier,
+    identifier: Parent.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Parent>>;
 
   parentCount(
     query?: Pick<
-      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
   parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
-  ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>>;
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
+  ): Promise<Either<Error, readonly Parent.$Identifier[]>>;
 
   parents(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
   ): Promise<Either<Error, readonly Parent[]>>;
 
   unionMember1(
@@ -3763,14 +3754,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async parent(
-    identifier: ParentStatic.$Identifier,
+    identifier: Parent.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, Parent>> {
     return this.parentSync(identifier, options);
   }
 
   parentSync(
-    identifier: ParentStatic.$Identifier,
+    identifier: Parent.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, Parent> {
     return this.parentsSync({
@@ -3781,7 +3772,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async parentCount(
     query?: Pick<
-      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
@@ -3790,7 +3781,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   parentCountSync(
     query?: Pick<
-      $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+      $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
@@ -3798,37 +3789,33 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async parentIdentifiers(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
-  ): Promise<Either<Error, readonly ParentStatic.$Identifier[]>> {
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
+  ): Promise<Either<Error, readonly Parent.$Identifier[]>> {
     return this.parentIdentifiersSync(query);
   }
 
   parentIdentifiersSync(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
-  ): Either<Error, readonly ParentStatic.$Identifier[]> {
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
+  ): Either<Error, readonly Parent.$Identifier[]> {
     return this.parentsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
   async parents(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
   ): Promise<Either<Error, readonly Parent[]>> {
     return this.parentsSync(query);
   }
 
   parentsSync(
-    query?: $ObjectSet.Query<ParentStatic.$Filter, ParentStatic.$Identifier>,
+    query?: $ObjectSet.Query<Parent.$Filter, Parent.$Identifier>,
   ): Either<Error, readonly Parent[]> {
-    return this.$objectsSync<
-      Parent,
-      ParentStatic.$Filter,
-      ParentStatic.$Identifier
-    >(
+    return this.$objectsSync<Parent, Parent.$Filter, Parent.$Identifier>(
       {
-        $filter: ParentStatic.$filter,
-        $fromRdfResource: ParentStatic.$fromRdfResource,
-        $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+        $filter: Parent.$filter,
+        $fromRdfResource: Parent.$fromRdfResource,
+        $fromRdfTypes: [Parent.$fromRdfType, Child.$fromRdfType],
       },
       query,
     );
@@ -4118,8 +4105,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: ParentStatic.$fromRdfResource,
-          $fromRdfTypes: [ParentStatic.$fromRdfType, Child.$fromRdfType],
+          $fromRdfResource: Parent.$fromRdfResource,
+          $fromRdfTypes: [Parent.$fromRdfType, Child.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -4608,14 +4595,12 @@ export const graphqlSchema = new GraphQLSchema({
             await EitherAsync<Error, Parent>(async ({ liftEither }) =>
               liftEither(
                 await objectSet.parent(
-                  await liftEither(
-                    ParentStatic.$Identifier.parse(args.identifier),
-                  ),
+                  await liftEither(Parent.$Identifier.parse(args.identifier)),
                 ),
               ),
             )
           ).unsafeCoerce(),
-        type: new GraphQLNonNull(ParentStatic.$GraphQL),
+        type: new GraphQLNonNull(Parent.$GraphQL),
       },
       parentIdentifiers: {
         args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
@@ -4631,7 +4616,7 @@ export const graphqlSchema = new GraphQLSchema({
             })
           )
             .unsafeCoerce()
-            .map(ParentStatic.$Identifier.stringify),
+            .map(Parent.$Identifier.stringify),
         type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
       },
       parents: {
@@ -4652,14 +4637,12 @@ export const graphqlSchema = new GraphQLSchema({
           (
             await EitherAsync<Error, readonly Parent[]>(
               async ({ liftEither }) => {
-                let filter: ParentStatic.$Filter | undefined;
+                let filter: Parent.$Filter | undefined;
                 if (args.identifiers) {
-                  const identifiers: ParentStatic.$Identifier[] = [];
+                  const identifiers: Parent.$Identifier[] = [];
                   for (const identifierArg of args.identifiers) {
                     identifiers.push(
-                      await liftEither(
-                        ParentStatic.$Identifier.parse(identifierArg),
-                      ),
+                      await liftEither(Parent.$Identifier.parse(identifierArg)),
                     );
                   }
                   filter = { $identifier: { in: identifiers } };
@@ -4675,7 +4658,7 @@ export const graphqlSchema = new GraphQLSchema({
             )
           ).unsafeCoerce(),
         type: new GraphQLNonNull(
-          new GraphQLList(new GraphQLNonNull(ParentStatic.$GraphQL)),
+          new GraphQLList(new GraphQLNonNull(Parent.$GraphQL)),
         ),
       },
       parentCount: {
