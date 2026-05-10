@@ -13,13 +13,13 @@ describe("isType", () => {
     ).toStrictEqual(true);
 
     expect(
-      kitchenSink.ConcreteParentStatic.isConcreteParent(
+      kitchenSink.ConcreteParent.isConcreteParent(
         harnesses.concreteChild.instance as kitchenSink.BaseWithProperties,
       ),
     ).toStrictEqual(true);
 
     expect(
-      kitchenSink.BaseWithoutPropertiesStatic.isBaseWithoutProperties(
+      kitchenSink.BaseWithoutProperties.isBaseWithoutProperties(
         harnesses.concreteChild.instance as kitchenSink.BaseWithProperties,
       ),
     ).toStrictEqual(true);

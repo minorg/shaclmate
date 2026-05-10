@@ -85,7 +85,7 @@ describe("fromRdf", () => {
   }
 
   it("concrete parent fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ConcreteParentStatic.$fromRdfResource(
+    const fromRdfInstance = kitchenSink.ConcreteParent.$fromRdfResource(
       kitchenSink.ConcreteChild.$toRdfResource(
         harnesses.concreteChild.instance,
       ),
@@ -477,9 +477,7 @@ describe("fromRdf", () => {
     // Deserialize all of the superclasses of the child class
 
     const concreteParent =
-      kitchenSink.ConcreteParentStatic.$fromRdfResource(
-        childResource,
-      ).unsafeCoerce();
+      kitchenSink.ConcreteParent.$fromRdfResource(childResource).unsafeCoerce();
 
     expect(concreteParent.baseWithPropertiesProperty).toStrictEqual(
       concreteChild.baseWithPropertiesProperty,

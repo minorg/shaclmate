@@ -5,8 +5,7 @@ import {
   type $FromRdfResourceValuesFunction,
   type $Object,
   $RdfjsDatasetObjectSet,
-  type BaseForExtern,
-  BaseForExternStatic,
+  BaseForExtern,
 } from "./generated.js";
 
 /**
@@ -17,26 +16,26 @@ export interface Extern extends BaseForExtern {
 }
 
 export namespace Extern {
-  export type $Filter = BaseForExternStatic.$Filter;
-  export type $Identifier = BaseForExternStatic.$Identifier;
-  export type $Json = BaseForExternStatic.$Json;
-  export const $Json = BaseForExternStatic.$Json;
+  export type $Filter = BaseForExtern.$Filter;
+  export type $Identifier = BaseForExtern.$Identifier;
+  export type $Json = BaseForExtern.$Json;
+  export const $Json = BaseForExtern.$Json;
 
   export function $create(
-    parameters: Parameters<typeof BaseForExternStatic.$create>[0],
+    parameters: Parameters<typeof BaseForExtern.$create>[0],
   ): Extern {
     return {
-      ...BaseForExternStatic.$create(parameters),
+      ...BaseForExtern.$create(parameters),
       $type: "Extern",
     };
   }
 
   export function $equals(left: Extern, right: Extern) {
-    return BaseForExternStatic.$equals(left, right);
+    return BaseForExtern.$equals(left, right);
   }
 
   export function $fromJson(json: $Json): Extern {
-    return $create(BaseForExternStatic.$propertiesFromJson(json));
+    return $create(BaseForExtern.$propertiesFromJson(json));
   }
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -76,7 +75,7 @@ export namespace Extern {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return BaseForExternStatic.$propertiesFromRdfResource(resource, {
+    return BaseForExtern.$propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
@@ -91,7 +90,7 @@ export namespace Extern {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(instance: Extern, hasher: HasherT): HasherT {
-    BaseForExternStatic.$hash(instance, hasher);
+    BaseForExtern.$hash(instance, hasher);
     return hasher;
   }
 
@@ -99,24 +98,24 @@ export namespace Extern {
     return object.$type === "Extern";
   }
 
-  export const $filter = BaseForExternStatic.$filter;
+  export const $filter = BaseForExtern.$filter;
 
   export const $focusSparqlConstructTriples =
-    BaseForExternStatic.$focusSparqlConstructTriples;
+    BaseForExtern.$focusSparqlConstructTriples;
   export const $focusSparqlWherePatterns =
-    BaseForExternStatic.$focusSparqlWherePatterns;
+    BaseForExtern.$focusSparqlWherePatterns;
 
   export const $fromRdfType = dataFactory.namedNode(
     "http://example.com/Extern",
   );
 
-  export const $schema = BaseForExternStatic.$schema;
+  export const $schema = BaseForExtern.$schema;
 
-  export const $toJson = BaseForExternStatic.$toJson;
-  export const $toRdfResource = BaseForExternStatic.$toRdfResource;
+  export const $toJson = BaseForExtern.$toJson;
+  export const $toRdfResource = BaseForExtern.$toRdfResource;
 
   export const $valueSparqlConstructTriples =
-    BaseForExternStatic.$valueSparqlConstructTriples;
+    BaseForExtern.$valueSparqlConstructTriples;
   export const $valueSparqlWherePatterns =
-    BaseForExternStatic.$valueSparqlWherePatterns;
+    BaseForExtern.$valueSparqlWherePatterns;
 }

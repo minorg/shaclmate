@@ -15,7 +15,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         // parentClass may be an instance of the parent class rather than the child class, depending on the implementation
         expect(
           parentClasses.some((parentClass) =>
-            kitchenSink.ConcreteParentStatic.$equals(
+            kitchenSink.ConcreteParent.$equals(
               parentClass,
               childClass,
             ).isRight(),

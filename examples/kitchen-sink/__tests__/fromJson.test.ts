@@ -19,7 +19,7 @@ describe("fromJson", () => {
   }
 
   it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance = kitchenSink.ConcreteParentStatic.$fromJson(
+    const fromJsonInstance = kitchenSink.ConcreteParent.$fromJson(
       kitchenSink.ConcreteChild.$toJson(harnesses.concreteChild.instance),
     );
     expect(

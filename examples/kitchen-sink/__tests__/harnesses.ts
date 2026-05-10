@@ -77,12 +77,12 @@ export const harnesses = {
     kitchenSink.ConcreteChild,
   ),
   concreteParent: new Harness(
-    kitchenSink.ConcreteParentStatic.$create({
+    kitchenSink.ConcreteParent.$create({
       baseWithPropertiesProperty: "abc",
       concreteParentProperty: "parent",
       $identifier,
     }),
-    kitchenSink.ConcreteParentStatic,
+    kitchenSink.ConcreteParent,
   ),
   convertibleTypeProperties: new Harness(
     kitchenSink.ConvertibleTypeProperties.$create({

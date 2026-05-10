@@ -110,8 +110,8 @@ export class TypeFactory {
     const name = tsName(astType.name.unsafeCoerce(), {
       synthetic: astType.synthetic,
     });
-    const staticModuleName =
-      astType.childObjectTypes.length > 0 ? `${name}Static` : name;
+    const staticModuleName = name;
+    // astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
     const namedObjectType = new NamedObjectType({
       abstract: astType.abstract,
