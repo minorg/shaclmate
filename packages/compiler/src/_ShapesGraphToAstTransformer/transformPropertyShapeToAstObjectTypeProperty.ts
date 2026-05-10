@@ -46,7 +46,6 @@ function synthesizePartialAstObjectType({
     toRdfTypes: [],
     tsFeatures,
     tsImports: [],
-    tsObjectDeclarationType: "class",
   });
 }
 

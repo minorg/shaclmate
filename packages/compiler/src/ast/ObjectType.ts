@@ -113,11 +113,6 @@ export class ObjectType extends AbstractType {
    */
   readonly tsImports: readonly string[];
 
-  /**
-   * Whether to generate a TypeScript class or interface for this type.
-   */
-  readonly tsObjectDeclarationType: TsObjectDeclarationType;
-
   constructor({
     abstract,
     extern,
@@ -127,7 +122,6 @@ export class ObjectType extends AbstractType {
     toRdfTypes,
     tsFeatures,
     tsImports,
-    tsObjectDeclarationType,
     ...superParameters
   }: {
     abstract: boolean;
@@ -138,7 +132,6 @@ export class ObjectType extends AbstractType {
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
     tsImports: readonly string[];
-    tsObjectDeclarationType: TsObjectDeclarationType;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.abstract = abstract;
@@ -149,7 +142,6 @@ export class ObjectType extends AbstractType {
     this.toRdfTypes = toRdfTypes;
     this.tsFeatures = tsFeatures;
     this.tsImports = tsImports;
-    this.tsObjectDeclarationType = tsObjectDeclarationType;
   }
 
   get ancestorObjectTypes(): readonly ObjectType[] {

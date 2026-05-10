@@ -74,7 +74,7 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    return Eithers.chain4(
+    return Eithers.chain3(
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
         nodeShape.properties.map((propertyShapeIdentifier) =>
@@ -82,23 +82,8 @@ export function transformShapeToAstObjectType(
         ),
       ),
       nodeShapeTsFeatures.call(this, nodeShape),
-      nodeShape.tsObjectDeclarationType.isJust()
-        ? Either.of(
-            nodeShape.tsObjectDeclarationType.map(
-              TsObjectDeclarationType.fromIri,
-            ),
-          )
-        : shapeOntology
-            .call(this, nodeShape)
-            .map((ontology) =>
-              ontology.chain((ontology) =>
-                ontology.tsObjectDeclarationType.map(
-                  TsObjectDeclarationType.fromIri,
-                ),
-              ),
-            ),
     ).chain<Error, Maybe<ast.ObjectType>>(
-      ([nodeKinds, propertyShapes, tsFeatures, tsObjectDeclarationType]) => {
+      ([nodeKinds, propertyShapes, tsFeatures]) => {
         const abstract = nodeShape.abstract.orDefault(false);
 
         const nodeShapeIdentifier = nodeShape.$identifier();
@@ -197,7 +182,6 @@ export function transformShapeToAstObjectType(
           toRdfTypes,
           tsFeatures,
           tsImports: nodeShape.tsImports,
-          tsObjectDeclarationType: tsObjectDeclarationType.orDefault("class"),
         });
 
         this.cachedAstTypesByShapeIdentifier.set(

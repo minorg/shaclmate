@@ -27,7 +27,6 @@ const listPropertiesObjectType = new ast.ObjectType({
   name: Maybe.empty(),
   toRdfTypes: [],
   tsFeatures: new Set<TsFeature>([]),
-  tsObjectDeclarationType: "class",
   shapeIdentifier: dataFactory.blankNode(),
   synthetic: true,
   tsImports: [],
