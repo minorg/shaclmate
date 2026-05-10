@@ -13,11 +13,6 @@ export abstract class AbstractType {
   protected readonly logger: Logger;
 
   /**
-   * Is the type abstract?
-   */
-  abstract readonly abstract: boolean;
-
-  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;

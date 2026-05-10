@@ -53,10 +53,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
-  private get abstract(): boolean {
-    return this.namedObjectType.abstract;
-  }
-
   private get initializer(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
   }
@@ -66,24 +62,17 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override constructorStatements(): readonly Code[] {
-    if (this.abstract) {
-      return [];
-    }
     return [code`const ${this.name} = ${this.initializer};`];
   }
 
   override fromJsonStatements(): readonly Code[] {
-    return !this.abstract
-      ? [code`const ${this.name} = ${this.initializer};`]
-      : [];
+    return [code`const ${this.name} = ${this.initializer};`];
   }
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
-    return !this.abstract
-      ? Maybe.of(
-          code`${imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
-        )
-      : Maybe.empty();
+    return Maybe.of(
+      code`${imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
+    );
   }
 
   override hashStatements({

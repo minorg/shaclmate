@@ -10,10 +10,6 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
   return Maybe.of(code`\
 export function ${syntheticNamePrefix}fromJson(json: ${this.jsonType().name}): ${this.name} {
   return ${syntheticNamePrefix}create(${syntheticNamePrefix}propertiesFromJson(json));

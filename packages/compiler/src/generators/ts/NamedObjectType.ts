@@ -54,7 +54,6 @@ export class NamedObjectType extends AbstractType {
 
   protected readonly toRdfTypes: readonly NamedNode[];
 
-  readonly abstract: boolean;
   readonly extern: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
@@ -67,7 +66,6 @@ export class NamedObjectType extends AbstractType {
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
-    abstract,
     extern,
     features,
     fromRdfType,
@@ -85,7 +83,6 @@ export class NamedObjectType extends AbstractType {
     toRdfTypes,
     ...superParameters
   }: {
-    abstract: boolean;
     comment: Maybe<string>;
     extern: boolean;
     features: ReadonlySet<TsFeature>;
@@ -109,7 +106,6 @@ export class NamedObjectType extends AbstractType {
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.abstract = abstract;
     this.extern = extern;
     this.features = features;
     this.fromRdfType = fromRdfType;

@@ -11,10 +11,6 @@ export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
   values.chain(

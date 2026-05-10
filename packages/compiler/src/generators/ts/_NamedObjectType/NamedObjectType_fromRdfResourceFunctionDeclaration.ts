@@ -11,10 +11,6 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
 ${joinCode([

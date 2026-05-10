@@ -112,7 +112,6 @@ export class TypeFactory {
     });
 
     const namedObjectType = new NamedObjectType({
-      abstract: astType.abstract,
       comment: astType.comment,
       extern: astType.extern,
       features: astType.tsFeatures,
@@ -134,16 +133,11 @@ export class TypeFactory {
         ),
       lazyDiscriminantProperty: (namedObjectType: NamedObjectType) => {
         // Discriminant property
-        const discriminantOwnValue = !astType.abstract
-          ? namedObjectType.discriminantValue
-          : undefined;
         const discriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of namedObjectType.descendantObjectTypes) {
-          if (!descendantObjectType.abstract) {
-            discriminantDescendantValues.add(
-              descendantObjectType.discriminantValue,
-            );
-          }
+          discriminantDescendantValues.add(
+            descendantObjectType.discriminantValue,
+          );
         }
 
         return new NamedObjectType.DiscriminantProperty({
@@ -153,7 +147,7 @@ export class TypeFactory {
           type: new NamedObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
-            ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
+            ownValues: [namedObjectType.discriminantValue],
           }),
         });
       },
@@ -179,12 +173,7 @@ export class TypeFactory {
             }),
           );
 
-        if (
-          namedObjectType._discriminantProperty.type.ownValues.length > 0 ||
-          namedObjectType._discriminantProperty.type.descendantValues.length > 0
-        ) {
-          properties.splice(0, 0, namedObjectType._discriminantProperty);
-        }
+        properties.splice(0, 0, namedObjectType._discriminantProperty);
 
         properties.splice(
           0,

@@ -137,11 +137,9 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${namedObjectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
-      namedObjectType.members
-        .filter((member) => !member.type.abstract)
-        .map((member) =>
-          runtimeObjectType(namedObjectType.filterFunction, member.type),
-        ),
+      namedObjectType.members.map((member) =>
+        runtimeObjectType(namedObjectType.filterFunction, member.type),
+      ),
       { on: ", " },
     )}
   ], query);
