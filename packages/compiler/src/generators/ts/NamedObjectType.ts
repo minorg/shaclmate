@@ -463,14 +463,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
-  protected ensureAtMostOneSuperObjectType() {
-    if (this.parentObjectTypes.length > 1) {
-      throw new RangeError(
-        `object type '${this.name}' has multiple super object types`,
-      );
-    }
-  }
-
   private readonly lazyAncestorObjectTypes: () => readonly NamedObjectType[];
 
   private readonly lazyChildObjectTypes: () => readonly NamedObjectType[];

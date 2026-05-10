@@ -127,45 +127,34 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorStatements"]
   >[0]): readonly Code[] {
-    let lhs: string;
     const parameterVariable = code`${this.name}Parameter`;
     const statements: Code[] = [
       // Pull out the parameter so the function can capture it if necessary.
       code`const ${parameterVariable} = ${variables.parameter};`,
+      code`let ${this.name}: () => ${this.typeAlias};`,
     ];
     const typeConversions = this.type.conversions;
-    switch (this.namedObjectType.declarationType) {
-      case "class": {
-        lhs = `this.${this.name}`;
-        break;
-      }
-      case "interface":
-        lhs = this.name;
-        statements.push(code`let ${this.name}: () => ${this.typeAlias};`);
-        break;
-    }
-
     const conversionBranches: Code[] = [
-      code`if (typeof ${parameterVariable} === "function") { ${lhs} = ${parameterVariable}; }`,
+      code`if (typeof ${parameterVariable} === "function") { ${this.name} = ${parameterVariable}; }`,
     ];
     for (const conversion of typeConversions) {
       invariant(conversion.sourceTypeof !== "function");
       invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
-        code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${lhs} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
+        code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${this.name} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
       );
     }
     if (
       (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
     ) {
       conversionBranches.push(
-        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${imports.dataFactory}.blankNode(); ${lhs} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
+        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
       );
     }
 
     // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
     conversionBranches.push(
-      code`{ ${lhs} = (${parameterVariable}) satisfies never;\n }`,
+      code`{ ${this.name} = (${parameterVariable}) satisfies never;\n }`,
     );
     statements.push(joinCode(conversionBranches, { on: " else " }));
 

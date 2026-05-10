@@ -27,53 +27,16 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
         : [],
   );
 
-  if (
-    this.declarationType === "class" &&
-    this.parentObjectTypes.length > 0 &&
-    hashOwnShaclPropertiesStatements.length === 0
-  ) {
-    // If there's a parent class and no hash statements in this class, can skip overriding hash
-    return [];
-  }
-
   const hashShaclPropertiesStatements: Code[] = [];
   const hashStatements: Code[] = [];
-  const parameters: Code[] = []; // Same between the two functions
-  let hashPreamble: string = "";
-  let hashShaclPropertiesPreamble: string = "";
-  switch (this.declarationType) {
-    case "class": {
-      if (this.parentObjectTypes.length > 0) {
-        hashShaclPropertiesStatements.push(
-          code`super.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
-        );
-        hashShaclPropertiesPreamble = "override ";
-        hashPreamble = "override ";
-      }
-      hashShaclPropertiesPreamble = `protected ${hashShaclPropertiesPreamble}`;
-      hashStatements.push(
-        code`this.${syntheticNamePrefix}hashShaclProperties(${hasherVariable});`,
-      );
-
-      break;
-    }
-    case "interface": {
-      for (const parentObjectType of this.parentObjectTypes) {
-        hashShaclPropertiesStatements.push(
-          code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
-        );
-      }
-      parameters.push(code`${this.thisVariable}: ${this.name}`);
-      hashPreamble = hashShaclPropertiesPreamble = "export function ";
-      hashStatements.push(
-        code`${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
-      );
-      break;
-    }
+  for (const parentObjectType of this.parentObjectTypes) {
+    hashShaclPropertiesStatements.push(
+      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+    );
   }
-
-  parameters.push(code`${hasherVariable}: HasherT`);
-  const parametersCode = joinCode(parameters, { on: "," });
+  hashStatements.push(
+    code`${this.staticModuleName}.${syntheticNamePrefix}hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+  );
 
   hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
   hashShaclPropertiesStatements.push(code`return ${hasherVariable};`);
@@ -95,11 +58,11 @@ export function NamedObjectType_hashFunctionOrMethodDeclarations(
 
   return [
     code`\
-${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
+export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
+export function ${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

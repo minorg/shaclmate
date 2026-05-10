@@ -10,35 +10,11 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
     return Maybe.empty();
   }
 
-  if (
-    this.declarationType === "class" &&
-    this.properties.length === 0 &&
-    this.parentObjectTypes.length > 0
-  ) {
-    return Maybe.empty();
-  }
-
   const jsonObjectMembers: Code[] = [];
-  const parameters: Code[] = [];
-  let preamble: string;
-  switch (this.declarationType) {
-    case "class":
-      if (this.parentObjectTypes.length > 0) {
-        jsonObjectMembers.push(code`...super.${syntheticNamePrefix}toJson()`);
-        preamble = "override ";
-      } else {
-        preamble = "";
-      }
-      break;
-    case "interface":
-      for (const parentObjectType of this.parentObjectTypes) {
-        jsonObjectMembers.push(
-          code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
-        );
-      }
-      parameters.push(code`${this.thisVariable}: ${this.name}`);
-      preamble = "export function ";
-      break;
+  for (const parentObjectType of this.parentObjectTypes) {
+    jsonObjectMembers.push(
+      code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
+    );
   }
 
   if (this.properties.length > 0) {
@@ -72,7 +48,7 @@ export function NamedObjectType_toJsonFunctionOrMethodDeclaration(
   // }
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}toJson(${joinCode(parameters, { on: ", " })}): ${this.jsonType().name} {
+export function ${syntheticNamePrefix}toJson(${this.thisVariable}: ${this.name}): ${this.jsonType().name} {
   return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
 }`);
 }

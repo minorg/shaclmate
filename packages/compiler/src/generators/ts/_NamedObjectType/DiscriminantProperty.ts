@@ -28,15 +28,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override get declaration(): Code {
-    switch (this.namedObjectType.declarationType) {
-      case "class":
-        return code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`;
-      case "interface":
-        return code`readonly ${this.name}: ${this.type.name};`;
-      default:
-        this.namedObjectType.declarationType satisfies never;
-        throw new Error("should never reach this point");
-    }
+    return code`readonly ${this.name}: ${this.type.name};`;
   }
 
   @Memoize()
@@ -76,27 +68,20 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override constructorStatements(): readonly Code[] {
-    switch (this.namedObjectType.declarationType) {
-      case "class":
-        return [];
-      case "interface":
-        if (this.abstract) {
-          return [];
-        }
-        return [code`const ${this.name} = ${this.initializer};`];
+    if (this.abstract) {
+      return [];
     }
+    return [code`const ${this.name} = ${this.initializer};`];
   }
 
   override fromJsonStatements(): readonly Code[] {
-    return !this.abstract &&
-      this.namedObjectType.declarationType === "interface"
+    return !this.abstract
       ? [code`const ${this.name} = ${this.initializer};`]
       : [];
   }
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
-    return !this.abstract &&
-      this.namedObjectType.declarationType === "interface"
+    return !this.abstract
       ? Maybe.of(
           code`${imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
         )

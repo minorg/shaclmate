@@ -12,38 +12,11 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
   }
 
   const chain: Code[] = [];
-  let leftVariable: Code;
-  let parameters: Code;
-  let preamble: string;
-  let rightVariable: Code;
-  switch (this.declarationType) {
-    case "class":
-      if (this.properties.length === 0) {
-        // If there's a parent class and no properties in this class, can skip overriding equals
-        return Maybe.empty();
-      }
-
-      leftVariable = code`this`;
-      parameters = code`other: ${this.name}`;
-      if (this.parentObjectTypes.length > 0) {
-        chain.push(code`super.${syntheticNamePrefix}equals(other)`);
-        preamble = "override ";
-      } else {
-        preamble = "";
-      }
-      rightVariable = code`other`;
-      break;
-    case "interface":
-      // For every parent, find the nearest equals implementation
-      for (const parentObjectType of this.parentObjectTypes) {
-        chain.push(
-          code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
-        );
-      }
-      leftVariable = code`left`;
-      parameters = code`left: ${this.name}, right: ${this.name}`;
-      preamble = "export function ";
-      rightVariable = code`right`;
+  // For every parent, find the nearest equals implementation
+  for (const parentObjectType of this.parentObjectTypes) {
+    chain.push(
+      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}equals(left, right)`,
+    );
   }
 
   for (const property of this.properties) {
@@ -52,12 +25,12 @@ export function NamedObjectType_equalsFunctionOrMethodDeclaration(
     }
 
     chain.push(
-      code`(${property.type.equalsFunction})(${property.accessExpression({ variables: { object: leftVariable } })}, ${property.accessExpression({ variables: { object: rightVariable } })}).mapLeft(propertyValuesUnequal => ({ left: ${leftVariable}, right: ${rightVariable}, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
+      code`(${property.type.equalsFunction})(${property.accessExpression({ variables: { object: code`left` } })}, ${property.accessExpression({ variables: { object: code`right` } })}).mapLeft(propertyValuesUnequal => ({ left, right, propertyName: "${property.name}", propertyValuesUnequal, type: "property" as const }))`,
     );
   }
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}equals(${parameters}): ${snippets.EqualsResult} {
+export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${snippets.EqualsResult} {
   return ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,
