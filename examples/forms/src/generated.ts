@@ -637,8 +637,8 @@ export namespace NestedNodeShape {
   ): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
+        left,
+        right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
@@ -648,8 +648,8 @@ export namespace NestedNodeShape {
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1050,8 +1050,8 @@ export namespace FormNodeShape {
   ): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
+        left,
+        right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
@@ -1061,8 +1061,8 @@ export namespace FormNodeShape {
           left.emptyStringSetProperty,
           right.emptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "emptyStringSetProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1073,8 +1073,8 @@ export namespace FormNodeShape {
           left.nestedObjectProperty,
           right.nestedObjectProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "nestedObjectProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1085,8 +1085,8 @@ export namespace FormNodeShape {
           left.nonEmptyStringSetProperty,
           right.nonEmptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "nonEmptyStringSetProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1097,8 +1097,8 @@ export namespace FormNodeShape {
           left.optionalStringProperty,
           right.optionalStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "optionalStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1109,8 +1109,8 @@ export namespace FormNodeShape {
           left.requiredIntegerProperty,
           right.requiredIntegerProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredIntegerProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1121,8 +1121,8 @@ export namespace FormNodeShape {
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
