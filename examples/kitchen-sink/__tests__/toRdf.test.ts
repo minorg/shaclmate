@@ -29,11 +29,13 @@ describe("toRdf", async () => {
   );
 
   it("should populate a dataset", ({ expect }) => {
-    const resource = harnesses.concreteChildClass.toRdfResource();
+    const resource = kitchenSink.ConcreteChild.$toRdfResource(
+      harnesses.concreteChild.instance,
+    );
     expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChildClass.instance.$identifier(),
+        harnesses.concreteChild.instance.$identifier(),
       ),
     ).toStrictEqual(true);
     expect(
@@ -41,13 +43,13 @@ describe("toRdf", async () => {
         .value(rdf.type)
         .chain((value) => value.toIri())
         .unsafeCoerce()
-        .equals(kitchenSink.ConcreteChildClass.$fromRdfType),
+        .equals(kitchenSink.ConcreteChild.$fromRdfType),
     ).toStrictEqual(true);
     expect(
       resource
         .value(
-          kitchenSink.ConcreteChildClass.$schema.properties
-            .concreteChildClassProperty.path,
+          kitchenSink.ConcreteChild.$schema.properties.concreteChildProperty
+            .path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -55,7 +57,9 @@ describe("toRdf", async () => {
   });
 
   it("should produce serializable RDF", ({ expect }) => {
-    const resource = harnesses.nonClass.toRdfResource();
+    const resource = kitchenSink.NonClass.$toRdfResource(
+      harnesses.nonClass.instance,
+    );
     const ttl = new Writer({ format: "text/turtle" }).quadsToString([
       ...resource.dataset,
     ]);
@@ -63,7 +67,9 @@ describe("toRdf", async () => {
   });
 
   it("explicit rdfType", ({ expect }) => {
-    const resource = harnesses.explicitRdfTypeClass.toRdfResource();
+    const resource = kitchenSink.ExplicitRdfType.$toRdfResource(
+      harnesses.explicitRdfType.instance,
+    );
     expect(resource.dataset.size).toStrictEqual(2); // One rdf:type and the property
     expect(
       resource.isInstanceOf(
@@ -73,8 +79,8 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitRdfTypeClass.$schema.properties
-            .explicitRdfTypeProperty.path,
+          kitchenSink.ExplicitRdfType.$schema.properties.explicitRdfTypeProperty
+            .path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -82,7 +88,9 @@ describe("toRdf", async () => {
   });
 
   it("explicit toRdfType", ({ expect }) => {
-    const resource = harnesses.explicitFromToRdfTypesClass.toRdfResource();
+    const resource = kitchenSink.ExplicitFromToRdfTypes.$toRdfResource(
+      harnesses.explicitFromToRdfTypes.instance,
+    );
     expect(resource.dataset.size).toStrictEqual(3); // Two RDF types and the property
     expect(
       resource.isInstanceOf(
@@ -97,7 +105,7 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
+          kitchenSink.ExplicitFromToRdfTypes.$schema.properties
             .explicitFromToRdfTypesProperty.path,
         )
         .chain((value) => value.toString())
@@ -106,18 +114,21 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize default values", ({ expect }) => {
-    const resource = harnesses.defaultValuePropertiesClass.toRdfResource();
+    const resource = kitchenSink.DefaultValueProperties.$toRdfResource(
+      harnesses.defaultValueProperties.instance,
+    );
     expect(resource.dataset.size).toStrictEqual(1); // Only the rdf:type
   });
 
   it("should serialize non-default values", ({ expect }) => {
-    const resource =
-      harnesses.defaultValuePropertiesOverriddenDifferent.toRdfResource();
+    const resource = kitchenSink.DefaultValueProperties.$toRdfResource(
+      harnesses.defaultValuePropertiesOverriddenDifferent.instance,
+    );
     expect(resource.dataset.size).toStrictEqual(5); // Properties + the rdf:type
     expect(
       resource
         .value(
-          kitchenSink.DefaultValuePropertiesClass.$schema.properties
+          kitchenSink.DefaultValueProperties.$schema.properties
             .falseBooleanDefaultValueProperty.path,
         )
         .chain((value) => value.toBoolean())
@@ -126,12 +137,12 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize empty lists", ({ expect }) => {
-    const instance = new kitchenSink.ListPropertiesClass();
+    const instance = kitchenSink.ListProperties.$create();
     expect(instance.iriListProperty.extract()).toBeUndefined();
     expect(instance.objectListProperty.extract()).toBeUndefined();
     expect(instance.stringListProperty.extract()).toBeUndefined();
 
-    const resource = instance.$toRdfResource();
+    const resource = kitchenSink.ListProperties.$toRdfResource(instance);
     expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
   });
 
@@ -142,7 +153,9 @@ describe("toRdf", async () => {
     it(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
-      const dataResource = harness.toRdfResource();
+      const dataResource = harness.staticSide.$toRdfResource(
+        harness.instance as any,
+      );
       const dataGraph = dataResource.dataset;
 
       const shapeNode = dataFactory.namedNode(

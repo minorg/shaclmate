@@ -1,13 +1,16 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
     {
-      const jsonObject = harnesses.unionDiscriminantsClass1.instance.$toJson();
+      const jsonObject = kitchenSink.UnionDiscriminants.$toJson(
+        harnesses.unionDiscriminants1.instance,
+      );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
-      expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
         type: "ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
@@ -23,7 +26,7 @@ describe("toJson", () => {
       expect(jsonObject.optionalIriOrStringProperty).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
+      expect(jsonObject.requiredNodeOrNodeOrStringProperty).toStrictEqual({
         type: "ClassUnionMember1",
         value: {
           $type: "ClassUnionMember1",
@@ -39,15 +42,17 @@ describe("toJson", () => {
       expect(jsonObject.requiredIriOrStringProperty).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.setClassOrClassOrStringProperty).toHaveLength(0);
+      expect(jsonObject.setNodeOrNodeOrStringProperty).toHaveLength(0);
       expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
       expect(jsonObject.setIriOrStringProperty).toHaveLength(0);
     }
 
     {
-      const jsonObject = harnesses.unionDiscriminantsClass2.instance.$toJson();
+      const jsonObject = kitchenSink.UnionDiscriminants.$toJson(
+        harnesses.unionDiscriminants2.instance,
+      );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
+      expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
         type: "ClassUnionMember2",
         value: {
           $type: "ClassUnionMember2",
@@ -61,7 +66,7 @@ describe("toJson", () => {
         "@value": "test",
       });
       expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
+      expect(jsonObject.requiredNodeOrNodeOrStringProperty).toStrictEqual({
         type: "string",
         value: "test",
       });
@@ -70,7 +75,7 @@ describe("toJson", () => {
         "@value": "test",
       });
       expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.setClassOrClassOrStringProperty).toStrictEqual([
+      expect(jsonObject.setNodeOrNodeOrStringProperty).toStrictEqual([
         {
           type: "string",
           value: "test",
@@ -114,12 +119,12 @@ describe("toJson", () => {
   });
 
   it("child-parent", ({ expect }) => {
-    const jsonObject = harnesses.concreteChildClass.instance.$toJson();
-    expect(jsonObject.abstractBaseClassWithPropertiesProperty).toStrictEqual(
-      "abc",
+    const jsonObject = kitchenSink.ConcreteChild.$toJson(
+      harnesses.concreteChild.instance,
     );
-    expect(jsonObject.concreteChildClassProperty).toStrictEqual("child");
-    expect(jsonObject.concreteParentClassProperty).toStrictEqual("parent");
+    expect(jsonObject.baseWithPropertiesProperty).toStrictEqual("abc");
+    expect(jsonObject.concreteChildProperty).toStrictEqual("child");
+    expect(jsonObject.concreteParentProperty).toStrictEqual("parent");
     expect(jsonObject.$type).toStrictEqual("ConcreteChildClass");
   });
 

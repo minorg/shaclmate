@@ -21,17 +21,16 @@ describe("equals", () => {
     expect,
   }) => {
     expect(
-      kitchenSink.NonClass.$create({
-        $identifier: dataFactory.blankNode(),
-        nonClassProperty: "Test",
-      })
-        .$equals(
-          kitchenSink.NonClass.$create({
-            $identifier: dataFactory.blankNode(),
-            nonClassProperty: "Test2",
-          }),
-        )
-        .extract(),
+      kitchenSink.NonClass.$equals(
+        kitchenSink.NonClass.$create({
+          $identifier: dataFactory.blankNode(),
+          nonClassProperty: "Test",
+        }),
+        kitchenSink.NonClass.$create({
+          $identifier: dataFactory.blankNode(),
+          nonClassProperty: "Test2",
+        }),
+      ).extract(),
     ).not.toStrictEqual(true);
   });
 
