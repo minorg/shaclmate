@@ -584,7 +584,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :setLazyToResolvedBlankNodeOrIriIdentifierProperty
     ] .
 
-:ListPropertiesClass
+:ListProperties
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that uses the list shapes in properties." ;
     sh:property [

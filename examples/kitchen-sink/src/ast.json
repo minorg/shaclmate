@@ -4262,26 +4262,26 @@
     {
       "comment": "Node shape that uses the list shapes in properties.",
       "kind": "ObjectType",
-      "name": "ListPropertiesClass",
+      "name": "ListProperties",
       "shapeIdentifier": {
         "prefix": "",
-        "reference": "ListPropertiesClass",
+        "reference": "ListProperties",
         "termType": "NamedNode",
-        "value": "http://example.com/ListPropertiesClass"
+        "value": "http://example.com/ListProperties"
       },
       "fromRdfType": {
         "prefix": "",
-        "reference": "ListPropertiesClass",
+        "reference": "ListProperties",
         "termType": "NamedNode",
-        "value": "http://example.com/ListPropertiesClass"
+        "value": "http://example.com/ListProperties"
       },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
           "prefix": "",
-          "reference": "ListPropertiesClass",
+          "reference": "ListProperties",
           "termType": "NamedNode",
-          "value": "http://example.com/ListPropertiesClass"
+          "value": "http://example.com/ListProperties"
         },
         "nodeKinds": [
           "BlankNode",
@@ -4291,9 +4291,9 @@
       "toRdfTypes": [
         {
           "prefix": "",
-          "reference": "ListPropertiesClass",
+          "reference": "ListProperties",
           "termType": "NamedNode",
-          "value": "http://example.com/ListPropertiesClass"
+          "value": "http://example.com/ListProperties"
         }
       ],
       "properties": [

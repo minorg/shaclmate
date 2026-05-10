@@ -28600,18 +28600,18 @@ export namespace MutableProperties {
  * Node shape that uses the list shapes in properties.
  */
 
-export interface ListPropertiesClass {
-  readonly $identifier: () => ListPropertiesClass.$Identifier;
-  readonly $type: "ListPropertiesClass";
+export interface ListProperties {
+  readonly $identifier: () => ListProperties.$Identifier;
+  readonly $type: "ListProperties";
   readonly iriListProperty: Maybe<readonly NamedNode[]>;
   readonly objectListProperty: Maybe<readonly NonClass[]>;
   readonly stringListProperty: Maybe<readonly string[]>;
 }
 
-export namespace ListPropertiesClass {
+export namespace ListProperties {
   export function $create(parameters?: {
     readonly $identifier?:
-      | (() => ListPropertiesClass.$Identifier)
+      | (() => ListProperties.$Identifier)
       | (BlankNode | NamedNode)
       | string;
     readonly iriListProperty?:
@@ -28622,9 +28622,9 @@ export namespace ListPropertiesClass {
       | Maybe<readonly NonClass[]>
       | readonly NonClass[];
     readonly stringListProperty?: Maybe<readonly string[]> | readonly string[];
-  }): ListPropertiesClass {
+  }): ListProperties {
     const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => ListPropertiesClass.$Identifier;
+    let $identifier: () => ListProperties.$Identifier;
     if (typeof $identifierParameter === "function") {
       $identifier = $identifierParameter;
     } else if (typeof $identifierParameter === "object") {
@@ -28637,7 +28637,7 @@ export namespace ListPropertiesClass {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "ListPropertiesClass" as const;
+    const $type = "ListProperties" as const;
     let iriListProperty: Maybe<readonly NamedNode[]>;
     if (Maybe.isMaybe(parameters?.iriListProperty)) {
       iriListProperty = parameters?.iriListProperty;
@@ -28682,8 +28682,8 @@ export namespace ListPropertiesClass {
   }
 
   export function $equals(
-    left: ListPropertiesClass,
-    right: ListPropertiesClass,
+    left: ListProperties,
+    right: ListProperties,
   ): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
@@ -28738,31 +28738,31 @@ export namespace ListPropertiesClass {
   }
 
   export function $hash<HasherT extends $Hasher>(
-    _listPropertiesClass: ListPropertiesClass,
+    _listProperties: ListProperties,
     _hasher: HasherT,
   ): HasherT {
-    ListPropertiesClass.$hashShaclProperties(_listPropertiesClass, _hasher);
-    _hasher.update(_listPropertiesClass.$identifier().value);
-    _hasher.update(_listPropertiesClass.$type);
+    ListProperties.$hashShaclProperties(_listProperties, _hasher);
+    _hasher.update(_listProperties.$identifier().value);
+    _hasher.update(_listProperties.$type);
     return _hasher;
   }
 
   export function $hashShaclProperties<HasherT extends $Hasher>(
-    _listPropertiesClass: ListPropertiesClass,
+    _listProperties: ListProperties,
     _hasher: HasherT,
   ): HasherT {
-    _listPropertiesClass.iriListProperty.ifJust((value0) => {
+    _listProperties.iriListProperty.ifJust((value0) => {
       for (const item1 of value0) {
         _hasher.update(item1.termType);
         _hasher.update(item1.value);
       }
     });
-    _listPropertiesClass.objectListProperty.ifJust((value0) => {
+    _listProperties.objectListProperty.ifJust((value0) => {
       for (const item1 of value0) {
         NonClass.$hash(item1, _hasher);
       }
     });
-    _listPropertiesClass.stringListProperty.ifJust((value0) => {
+    _listProperties.stringListProperty.ifJust((value0) => {
       for (const item1 of value0) {
         _hasher.update(item1);
       }
@@ -28779,7 +28779,7 @@ export namespace ListPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "ListPropertiesClass";
+    readonly $type: "ListProperties";
     readonly iriListProperty?: readonly { readonly "@id": string }[];
     readonly objectListProperty?: readonly NonClass.$Json[];
     readonly stringListProperty?: readonly string[];
@@ -28798,7 +28798,7 @@ export namespace ListPropertiesClass {
       return z
         .object({
           "@id": z.string().min(1),
-          $type: z.literal("ListPropertiesClass"),
+          $type: z.literal("ListProperties"),
           iriListProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
@@ -28806,7 +28806,7 @@ export namespace ListPropertiesClass {
             .readonly()
             .optional()
             .meta({
-              id: "ListPropertiesClass-iriListProperty",
+              id: "ListProperties-iriListProperty",
             }),
           objectListProperty: NonClass.$Json
             .schema()
@@ -28815,7 +28815,7 @@ export namespace ListPropertiesClass {
             .readonly()
             .optional()
             .meta({
-              id: "ListPropertiesClass-objectListProperty",
+              id: "ListProperties-objectListProperty",
             }),
           stringListProperty: z
             .string()
@@ -28824,11 +28824,11 @@ export namespace ListPropertiesClass {
             .readonly()
             .optional()
             .meta({
-              id: "ListPropertiesClass-stringListProperty",
+              id: "ListProperties-stringListProperty",
             }),
         })
         .meta({
-          id: "ListPropertiesClass",
+          id: "ListProperties",
           description: "Node shape that uses the list shapes in properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -28845,7 +28845,7 @@ export namespace ListPropertiesClass {
           {
             rule: {
               condition: {
-                schema: { const: "ListPropertiesClass" as const },
+                schema: { const: "ListProperties" as const },
                 scope: `${scopePrefix}/properties/$type`,
               },
               effect: "HIDE",
@@ -28865,15 +28865,15 @@ export namespace ListPropertiesClass {
             type: "Control",
           },
         ],
-        label: "ListPropertiesClass",
+        label: "ListProperties",
         type: "Group",
       };
     }
   }
 
   export function $filter(
-    filter: ListPropertiesClass.$Filter,
-    value: ListPropertiesClass,
+    filter: ListProperties.$Filter,
+    value: ListProperties,
   ): boolean {
     if (
       filter.$identifier !== undefined &&
@@ -28920,7 +28920,7 @@ export namespace ListPropertiesClass {
   };
 
   export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    ListPropertiesClass.$Filter
+    ListProperties.$Filter
   > = (parameters) => {
     let triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
@@ -28996,7 +28996,7 @@ export namespace ListPropertiesClass {
   };
 
   export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    ListPropertiesClass.$Filter
+    ListProperties.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
     const rdfTypeVariable = dataFactory.variable!(
@@ -29005,7 +29005,7 @@ export namespace ListPropertiesClass {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: ListPropertiesClass.$fromRdfType,
+          rdfType: ListProperties.$fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -29048,7 +29048,7 @@ export namespace ListPropertiesClass {
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
-          schema: ListPropertiesClass.$schema.properties.$identifier.type(),
+          schema: ListProperties.$schema.properties.$identifier.type(),
           valueVariable: parameters.focusIdentifier,
           variablePrefix: parameters.variablePrefix,
         }),
@@ -29114,15 +29114,14 @@ export namespace ListPropertiesClass {
     return patterns;
   };
 
-  export function $fromJson(
-    json: ListPropertiesClass.$Json,
-  ): ListPropertiesClass {
-    return ListPropertiesClass.$create($propertiesFromJson(json));
+  export function $fromJson(json: ListProperties.$Json): ListProperties {
+    return ListProperties.$create($propertiesFromJson(json));
   }
 
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    ListPropertiesClass
-  > = (resource, options) => {
+  export const $fromRdfResource: $FromRdfResourceFunction<ListProperties> = (
+    resource,
+    options,
+  ) => {
     let {
       context,
       graph,
@@ -29133,7 +29132,7 @@ export namespace ListPropertiesClass {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return ListPropertiesClass.$propertiesFromRdfResource(resource, {
+    return ListProperties.$propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
@@ -29143,36 +29142,34 @@ export namespace ListPropertiesClass {
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ListPropertiesClass
+    ListProperties
   > = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
           .toResource()
           .chain((resource) =>
-            ListPropertiesClass.$fromRdfResource(resource, options),
+            ListProperties.$fromRdfResource(resource, options),
           ),
       ),
     );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ListPropertiesClass",
+    "http://example.com/ListProperties",
   );
 
-  export function isListPropertiesClass(
-    object: $Object,
-  ): object is ListPropertiesClass {
+  export function isListProperties(object: $Object): object is ListProperties {
     switch (object.$type) {
-      case "ListPropertiesClass":
+      case "ListProperties":
         return true;
       default:
         return false;
     }
   }
 
-  export function $propertiesFromJson($json: ListPropertiesClass.$Json): {
+  export function $propertiesFromJson($json: ListProperties.$Json): {
     $identifier: BlankNode | NamedNode;
-    $type: "ListPropertiesClass";
+    $type: "ListProperties";
     iriListProperty: Maybe<readonly NamedNode[]>;
     objectListProperty: Maybe<readonly NonClass[]>;
     stringListProperty: Maybe<readonly string[]>;
@@ -29180,7 +29177,7 @@ export namespace ListPropertiesClass {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "ListPropertiesClass" as const;
+    const $type = "ListProperties" as const;
     const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
       (item) => (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
     );
@@ -29201,7 +29198,7 @@ export namespace ListPropertiesClass {
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
-    $type: "ListPropertiesClass";
+    $type: "ListProperties";
     iriListProperty: Maybe<readonly NamedNode[]>;
     objectListProperty: Maybe<readonly NonClass[]>;
     stringListProperty: Maybe<readonly string[]>;
@@ -29214,13 +29211,13 @@ export namespace ListPropertiesClass {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/ListPropertiesClass":
+                case "http://example.com/ListProperties":
                   return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $resource.isInstanceOf(ListPropertiesClass.$fromRdfType, {
+                $resource.isInstanceOf(ListProperties.$fromRdfType, {
                   graph: _$options.graph,
                 })
               ) {
@@ -29229,7 +29226,7 @@ export namespace ListPropertiesClass {
 
               return Left(
                 new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListPropertiesClass)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListProperties)`,
                 ),
               );
             })
@@ -29246,12 +29243,52 @@ export namespace ListPropertiesClass {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Right<"ListPropertiesClass">("ListPropertiesClass" as const).chain(
-            ($type) =>
+          Right<"ListProperties">("ListProperties" as const).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema: $schema.properties.iriListProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toList({ graph: _$options.graph }),
+                    ),
+                  )
+                  .chain((valueLists) =>
+                    valueLists.chainMap((valueList) =>
+                      Right(
+                        Resource.Values.fromArray({
+                          focusResource: $resource,
+                          propertyPath:
+                            ListProperties.$schema.properties.iriListProperty
+                              .path,
+                          values: valueList.toArray(),
+                        }),
+                      ).chain((values) =>
+                        values.chainMap((value) => value.toIri()),
+                      ),
+                    ),
+                  )
+                  .map((valueLists) =>
+                    valueLists.map((valueList) => valueList.toArray()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => Maybe.of(value))
+                      : Resource.Values.fromValue<Maybe<readonly NamedNode[]>>({
+                          focusResource: $resource,
+                          propertyPath:
+                            ListProperties.$schema.properties.iriListProperty
+                              .path,
+                          value: Maybe.empty(),
+                        }),
+                  ),
+            }).chain((iriListProperty) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.iriListProperty,
+                propertySchema: $schema.properties.objectListProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -29261,16 +29298,27 @@ export namespace ListPropertiesClass {
                     )
                     .chain((valueLists) =>
                       valueLists.chainMap((valueList) =>
-                        Right(
-                          Resource.Values.fromArray({
-                            focusResource: $resource,
+                        NonClass.$fromRdfResourceValues(
+                          Right(
+                            Resource.Values.fromArray({
+                              focusResource: $resource,
+                              propertyPath:
+                                ListProperties.$schema.properties
+                                  .objectListProperty.path,
+                              values: valueList.toArray(),
+                            }),
+                          ),
+                          {
+                            context: _$options.context,
+                            graph: _$options.graph,
+                            preferredLanguages: _$options.preferredLanguages,
+                            objectSet: _$options.objectSet,
+                            resource: $resource,
+                            ignoreRdfType: true,
                             propertyPath:
-                              ListPropertiesClass.$schema.properties
-                                .iriListProperty.path,
-                            values: valueList.toArray(),
-                          }),
-                        ).chain((values) =>
-                          values.chainMap((value) => value.toIri()),
+                              ListProperties.$schema.properties
+                                .objectListProperty.path,
+                          },
                         ),
                       ),
                     )
@@ -29280,21 +29328,21 @@ export namespace ListPropertiesClass {
                     .map((values) =>
                       values.length > 0
                         ? values.map((value) => Maybe.of(value))
-                        : Resource.Values.fromValue<
-                            Maybe<readonly NamedNode[]>
-                          >({
-                            focusResource: $resource,
-                            propertyPath:
-                              ListPropertiesClass.$schema.properties
-                                .iriListProperty.path,
-                            value: Maybe.empty(),
-                          }),
+                        : Resource.Values.fromValue<Maybe<readonly NonClass[]>>(
+                            {
+                              focusResource: $resource,
+                              propertyPath:
+                                ListProperties.$schema.properties
+                                  .objectListProperty.path,
+                              value: Maybe.empty(),
+                            },
+                          ),
                     ),
-              }).chain((iriListProperty) =>
+              }).chain((objectListProperty) =>
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.objectListProperty,
+                  propertySchema: $schema.properties.stringListProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -29304,28 +29352,24 @@ export namespace ListPropertiesClass {
                       )
                       .chain((valueLists) =>
                         valueLists.chainMap((valueList) =>
-                          NonClass.$fromRdfResourceValues(
-                            Right(
-                              Resource.Values.fromArray({
-                                focusResource: $resource,
-                                propertyPath:
-                                  ListPropertiesClass.$schema.properties
-                                    .objectListProperty.path,
-                                values: valueList.toArray(),
-                              }),
-                            ),
-                            {
-                              context: _$options.context,
-                              graph: _$options.graph,
-                              preferredLanguages: _$options.preferredLanguages,
-                              objectSet: _$options.objectSet,
-                              resource: $resource,
-                              ignoreRdfType: true,
+                          Right(
+                            Resource.Values.fromArray({
+                              focusResource: $resource,
                               propertyPath:
-                                ListPropertiesClass.$schema.properties
-                                  .objectListProperty.path,
-                            },
-                          ),
+                                ListProperties.$schema.properties
+                                  .stringListProperty.path,
+                              values: valueList.toArray(),
+                            }),
+                          )
+                            .chain((values) =>
+                              $fromRdfPreferredLanguages(
+                                values,
+                                _$options.preferredLanguages,
+                              ),
+                            )
+                            .chain((values) =>
+                              values.chainMap((value) => value.toString()),
+                            ),
                         ),
                       )
                       .map((valueLists) =>
@@ -29334,75 +29378,25 @@ export namespace ListPropertiesClass {
                       .map((values) =>
                         values.length > 0
                           ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<
-                              Maybe<readonly NonClass[]>
-                            >({
-                              focusResource: $resource,
-                              propertyPath:
-                                ListPropertiesClass.$schema.properties
-                                  .objectListProperty.path,
-                              value: Maybe.empty(),
-                            }),
-                      ),
-                }).chain((objectListProperty) =>
-                  $shaclPropertyFromRdf({
-                    graph: _$options.graph,
-                    resource: $resource,
-                    propertySchema: $schema.properties.stringListProperty,
-                    typeFromRdf: (resourceValues) =>
-                      resourceValues
-                        .chain((values) =>
-                          values.chainMap((value) =>
-                            value.toList({ graph: _$options.graph }),
-                          ),
-                        )
-                        .chain((valueLists) =>
-                          valueLists.chainMap((valueList) =>
-                            Right(
-                              Resource.Values.fromArray({
+                          : Resource.Values.fromValue<Maybe<readonly string[]>>(
+                              {
                                 focusResource: $resource,
                                 propertyPath:
-                                  ListPropertiesClass.$schema.properties
-                                    .stringListProperty.path,
-                                values: valueList.toArray(),
-                              }),
-                            )
-                              .chain((values) =>
-                                $fromRdfPreferredLanguages(
-                                  values,
-                                  _$options.preferredLanguages,
-                                ),
-                              )
-                              .chain((values) =>
-                                values.chainMap((value) => value.toString()),
-                              ),
-                          ),
-                        )
-                        .map((valueLists) =>
-                          valueLists.map((valueList) => valueList.toArray()),
-                        )
-                        .map((values) =>
-                          values.length > 0
-                            ? values.map((value) => Maybe.of(value))
-                            : Resource.Values.fromValue<
-                                Maybe<readonly string[]>
-                              >({
-                                focusResource: $resource,
-                                propertyPath:
-                                  ListPropertiesClass.$schema.properties
+                                  ListProperties.$schema.properties
                                     .stringListProperty.path,
                                 value: Maybe.empty(),
-                              }),
-                        ),
-                  }).map((stringListProperty) => ({
-                    $identifier,
-                    $type,
-                    iriListProperty,
-                    objectListProperty,
-                    stringListProperty,
-                  })),
-                ),
+                              },
+                            ),
+                      ),
+                }).map((stringListProperty) => ({
+                  $identifier,
+                  $type,
+                  iriListProperty,
+                  objectListProperty,
+                  stringListProperty,
+                })),
               ),
+            ),
           ),
         ),
     );
@@ -29418,7 +29412,7 @@ export namespace ListPropertiesClass {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
-          ownValues: ["ListPropertiesClass"],
+          ownValues: ["ListProperties"],
         }),
       },
       iriListProperty: {
@@ -29462,7 +29456,7 @@ export namespace ListPropertiesClass {
     subject,
     ...queryParameters
   }: {
-    filter?: ListPropertiesClass.$Filter;
+    filter?: ListProperties.$Filter;
     ignoreRdfType?: boolean;
     prefixes?: { [prefix: string]: string };
     preferredLanguages?: readonly string[];
@@ -29472,14 +29466,14 @@ export namespace ListPropertiesClass {
     "prefixes" | "queryType" | "type"
   >): sparqljs.ConstructQuery {
     const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "listPropertiesClass";
+      subject.termType === "Variable" ? subject.value : "listProperties";
 
     return {
       ...queryParameters,
       prefixes: prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ListPropertiesClass.$focusSparqlConstructTriples({
+        ListProperties.$focusSparqlConstructTriples({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,
@@ -29489,7 +29483,7 @@ export namespace ListPropertiesClass {
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
-          ListPropertiesClass.$focusSparqlWherePatterns({
+          ListProperties.$focusSparqlWherePatterns({
             filter,
             focusIdentifier: subject,
             ignoreRdfType: !!ignoreRdfType,
@@ -29502,42 +29496,40 @@ export namespace ListPropertiesClass {
   }
 
   export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof ListPropertiesClass.$sparqlConstructQuery
-    >[0] &
+    parameters: Parameters<typeof ListProperties.$sparqlConstructQuery>[0] &
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      ListPropertiesClass.$sparqlConstructQuery(parameters),
+      ListProperties.$sparqlConstructQuery(parameters),
     );
   }
 
   export function $toJson(
-    _listPropertiesClass: ListPropertiesClass,
-  ): ListPropertiesClass.$Json {
+    _listProperties: ListProperties,
+  ): ListProperties.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _listPropertiesClass.$identifier().termType === "BlankNode"
-            ? `_:${_listPropertiesClass.$identifier().value}`
-            : _listPropertiesClass.$identifier().value,
-        $type: _listPropertiesClass.$type,
-        iriListProperty: _listPropertiesClass.iriListProperty
+          _listProperties.$identifier().termType === "BlankNode"
+            ? `_:${_listProperties.$identifier().value}`
+            : _listProperties.$identifier().value,
+        $type: _listProperties.$type,
+        iriListProperty: _listProperties.iriListProperty
           .map((item) => item.map((item) => ({ "@id": item.value })))
           .extract(),
-        objectListProperty: _listPropertiesClass.objectListProperty
+        objectListProperty: _listProperties.objectListProperty
           .map((item) => item.map((item) => NonClass.$toJson(item)))
           .extract(),
-        stringListProperty: _listPropertiesClass.stringListProperty
+        stringListProperty: _listProperties.stringListProperty
           .map((item) => item.map((item) => item))
           .extract(),
-      } satisfies ListPropertiesClass.$Json),
+      } satisfies ListProperties.$Json),
     );
   }
 
   export function $toRdfResource(
-    _listPropertiesClass: ListPropertiesClass,
-    options?: Parameters<$ToRdfResourceFunction<ListPropertiesClass>>[1],
+    _listProperties: ListProperties,
+    options?: Parameters<$ToRdfResourceFunction<ListProperties>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -29545,17 +29537,17 @@ export namespace ListPropertiesClass {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_listPropertiesClass.$identifier());
+    const resource = resourceSet.resource(_listProperties.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ListPropertiesClass"),
+        dataFactory.namedNode("http://example.com/ListProperties"),
         options?.graph,
       );
     }
     resource.add(
       dataFactory.namedNode("http://example.com/iriListProperty"),
-      _listPropertiesClass.iriListProperty.toList().flatMap((value) => [
+      _listProperties.iriListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -29610,7 +29602,7 @@ export namespace ListPropertiesClass {
     );
     resource.add(
       dataFactory.namedNode("http://example.com/objectListProperty"),
-      _listPropertiesClass.objectListProperty.toList().flatMap((value) => [
+      _listProperties.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -29670,7 +29662,7 @@ export namespace ListPropertiesClass {
     );
     resource.add(
       dataFactory.namedNode("http://example.com/stringListProperty"),
-      _listPropertiesClass.stringListProperty.toList().flatMap((value) => [
+      _listProperties.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -29727,27 +29719,27 @@ export namespace ListPropertiesClass {
   }
 
   export function $propertiesToStrings(
-    _listPropertiesClass: ListPropertiesClass,
+    _listProperties: ListProperties,
   ): Record<string, string> {
     return $compactRecord({
-      $identifier: _listPropertiesClass.$identifier().toString(),
+      $identifier: _listProperties.$identifier().toString(),
     });
   }
 
-  export function $toString(this: ListPropertiesClass): string;
-  export function $toString(_listPropertiesClass: ListPropertiesClass): string;
+  export function $toString(this: ListProperties): string;
+  export function $toString(_listProperties: ListProperties): string;
   export function $toString(
-    this: ListPropertiesClass | undefined,
-    _listPropertiesClass?: ListPropertiesClass,
+    this: ListProperties | undefined,
+    _listProperties?: ListProperties,
   ): string {
-    return `ListPropertiesClass(${JSON.stringify($propertiesToStrings((_listPropertiesClass ?? this)!))})`;
+    return `ListProperties(${JSON.stringify($propertiesToStrings((_listProperties ?? this)!))})`;
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    ListPropertiesClass.$Filter,
-    typeof ListPropertiesClass.$schema
+    ListProperties.$Filter,
+    typeof ListProperties.$schema
   > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    ListPropertiesClass.$focusSparqlConstructTriples({
+    ListProperties.$focusSparqlConstructTriples({
       filter,
       focusIdentifier: valueVariable,
       ignoreRdfType,
@@ -29755,8 +29747,8 @@ export namespace ListPropertiesClass {
     });
 
   export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    ListPropertiesClass.$Filter,
-    typeof ListPropertiesClass.$schema
+    ListProperties.$Filter,
+    typeof ListProperties.$schema
   > = ({
     filter,
     ignoreRdfType,
@@ -29766,7 +29758,7 @@ export namespace ListPropertiesClass {
     variablePrefix,
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
-      ListPropertiesClass.$focusSparqlWherePatterns({
+      ListProperties.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -60014,7 +60006,7 @@ export type $Object =
   | LazilyResolvedUnionMember2
   | LazilyResolvedIriIdentifier
   | LazyProperties
-  | ListPropertiesClass
+  | ListProperties
   | MutableProperties
   | NamedUnionProperties
   | NoRdfTypeUnionMember1
@@ -60290,12 +60282,12 @@ export namespace $Object {
       );
     }
     if (
-      ListPropertiesClass.isListPropertiesClass(left) &&
-      ListPropertiesClass.isListPropertiesClass(right)
+      ListProperties.isListProperties(left) &&
+      ListProperties.isListProperties(right)
     ) {
-      return ListPropertiesClass.$equals(
-        left as ListPropertiesClass,
-        right as ListPropertiesClass,
+      return ListProperties.$equals(
+        left as ListProperties,
+        right as ListProperties,
       );
     }
     if (
@@ -60789,12 +60781,10 @@ export namespace $Object {
       }
     }
     if (
-      filter.on?.["ListPropertiesClass"] !== undefined &&
-      ListPropertiesClass.isListPropertiesClass(value)
+      filter.on?.["ListProperties"] !== undefined &&
+      ListProperties.isListProperties(value)
     ) {
-      if (
-        !ListPropertiesClass.$filter(filter.on["ListPropertiesClass"], value)
-      ) {
+      if (!ListProperties.$filter(filter.on["ListProperties"], value)) {
         return false;
       }
     }
@@ -61047,7 +61037,7 @@ export namespace $Object {
       readonly LazilyResolvedUnionMember2?: LazilyResolvedUnionMember2.$Filter;
       readonly LazilyResolvedIriIdentifier?: LazilyResolvedIriIdentifier.$Filter;
       readonly LazyProperties?: LazyProperties.$Filter;
-      readonly ListPropertiesClass?: ListPropertiesClass.$Filter;
+      readonly ListProperties?: ListProperties.$Filter;
       readonly MutableProperties?: MutableProperties.$Filter;
       readonly NamedUnionProperties?: NamedUnionProperties.$Filter;
       readonly NoRdfTypeUnionMember1?: NoRdfTypeUnionMember1.$Filter;
@@ -61259,11 +61249,11 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}LazyProperties`,
       }).concat(),
-      ...ListPropertiesClass.$focusSparqlConstructTriples({
-        filter: filter?.on?.ListPropertiesClass,
+      ...ListProperties.$focusSparqlConstructTriples({
+        filter: filter?.on?.ListProperties,
         focusIdentifier,
         ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ListPropertiesClass`,
+        variablePrefix: `${variablePrefix}ListProperties`,
       }).concat(),
       ...MutableProperties.$focusSparqlConstructTriples({
         filter: filter?.on?.MutableProperties,
@@ -61730,12 +61720,12 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: ListPropertiesClass.$focusSparqlWherePatterns({
-            filter: filter?.on?.ListPropertiesClass,
+          patterns: ListProperties.$focusSparqlWherePatterns({
+            filter: filter?.on?.ListProperties,
             focusIdentifier,
             ignoreRdfType: false,
             preferredLanguages,
-            variablePrefix: `${variablePrefix}ListPropertiesClass`,
+            variablePrefix: `${variablePrefix}ListProperties`,
           }).concat(),
           type: "group",
         },
@@ -62091,8 +62081,8 @@ export namespace $Object {
     if (value.$type === "LazyProperties") {
       return LazyProperties.$fromJson(value as LazyProperties.$Json);
     }
-    if (value.$type === "ListPropertiesClass") {
-      return ListPropertiesClass.$fromJson(value as ListPropertiesClass.$Json);
+    if (value.$type === "ListProperties") {
+      return ListProperties.$fromJson(value as ListProperties.$Json);
     }
     if (value.$type === "MutableProperties") {
       return MutableProperties.$fromJson(value as MutableProperties.$Json);
@@ -62391,7 +62381,7 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          ListPropertiesClass.$fromRdfResource(resource, {
+          ListProperties.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -62927,7 +62917,7 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                ListPropertiesClass.$fromRdfResourceValues(valueAsValues, {
+                ListProperties.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -63312,8 +63302,8 @@ export namespace $Object {
     if (LazyProperties.isLazyProperties(value)) {
       LazyProperties.$hash(value, hasher);
     }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      ListPropertiesClass.$hash(value, hasher);
+    if (ListProperties.isListProperties(value)) {
+      ListProperties.$hash(value, hasher);
     }
     if (MutableProperties.isMutableProperties(value)) {
       MutableProperties.$hash(value, hasher);
@@ -63423,7 +63413,7 @@ export namespace $Object {
     | LazilyResolvedUnionMember2.$Json
     | LazilyResolvedIriIdentifier.$Json
     | LazyProperties.$Json
-    | ListPropertiesClass.$Json
+    | ListProperties.$Json
     | MutableProperties.$Json
     | NamedUnionProperties.$Json
     | NoRdfTypeUnionMember1.$Json
@@ -63481,7 +63471,7 @@ export namespace $Object {
           LazilyResolvedUnionMember2.$Json.schema(),
           LazilyResolvedIriIdentifier.$Json.schema(),
           LazyProperties.$Json.schema(),
-          ListPropertiesClass.$Json.schema(),
+          ListProperties.$Json.schema(),
           MutableProperties.$Json.schema(),
           NamedUnionProperties.$Json.schema(),
           NoRdfTypeUnionMember1.$Json.schema(),
@@ -63631,9 +63621,9 @@ export namespace $Object {
         discriminantValues: ["LazyProperties"],
         type: LazyProperties.$schema,
       },
-      ListPropertiesClass: {
-        discriminantValues: ["ListPropertiesClass"],
-        type: ListPropertiesClass.$schema,
+      ListProperties: {
+        discriminantValues: ["ListProperties"],
+        type: ListProperties.$schema,
       },
       MutableProperties: {
         discriminantValues: ["MutableProperties"],
@@ -63870,8 +63860,8 @@ export namespace $Object {
     if (LazyProperties.isLazyProperties(value)) {
       return LazyProperties.$toJson(value);
     }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return ListPropertiesClass.$toJson(value);
+    if (ListProperties.isListProperties(value)) {
+      return ListProperties.$toJson(value);
     }
     if (MutableProperties.isMutableProperties(value)) {
       return MutableProperties.$toJson(value);
@@ -64044,8 +64034,8 @@ export namespace $Object {
     if (LazyProperties.isLazyProperties(value)) {
       return LazyProperties.$toRdfResource(value, options);
     }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return ListPropertiesClass.$toRdfResource(value, options);
+    if (ListProperties.isListProperties(value)) {
+      return ListProperties.$toRdfResource(value, options);
     }
     if (MutableProperties.isMutableProperties(value)) {
       return MutableProperties.$toRdfResource(value, options);
@@ -64359,9 +64349,9 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
+    if (ListProperties.isListProperties(value)) {
       return [
-        ListPropertiesClass.$toRdfResource(value, {
+        ListProperties.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -64647,8 +64637,8 @@ export namespace $Object {
     if (LazyProperties.isLazyProperties(value)) {
       return LazyProperties.$toString(value);
     }
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return ListPropertiesClass.$toString(value);
+    if (ListProperties.isListProperties(value)) {
+      return ListProperties.$toString(value);
     }
     if (MutableProperties.isMutableProperties(value)) {
       return MutableProperties.$toString(value);
@@ -64962,11 +64952,11 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      ListPropertiesClass.$valueSparqlConstructTriples({
+      ListProperties.$valueSparqlConstructTriples({
         ...otherParameters,
-        filter: filter?.on?.["ListPropertiesClass"],
+        filter: filter?.on?.["ListProperties"],
         ignoreRdfType: false,
-        schema: schema.members["ListPropertiesClass"].type,
+        schema: schema.members["ListProperties"].type,
       }),
     );
     triples = triples.concat(
@@ -65429,11 +65419,11 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: ListPropertiesClass.$valueSparqlWherePatterns({
+      patterns: ListProperties.$valueSparqlWherePatterns({
         ...otherParameters,
-        filter: filter?.on?.["ListPropertiesClass"],
+        filter: filter?.on?.["ListProperties"],
         ignoreRdfType: false,
-        schema: schema.members["ListPropertiesClass"].type,
+        schema: schema.members["ListProperties"].type,
       }).concat(),
       type: "group",
     });
@@ -66390,34 +66380,31 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly LazyProperties[]>>;
 
-  listPropertiesClass(
-    identifier: ListPropertiesClass.$Identifier,
+  listProperties(
+    identifier: ListProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesClass>>;
+  ): Promise<Either<Error, ListProperties>>;
 
-  listPropertiesClassCount(
+  listPropertiesCount(
     query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesClass.$Filter,
-        ListPropertiesClass.$Identifier
-      >,
+      $ObjectSet.Query<ListProperties.$Filter, ListProperties.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  listPropertiesClassIdentifiers(
+  listPropertiesIdentifiers(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>>;
+  ): Promise<Either<Error, readonly ListProperties.$Identifier[]>>;
 
-  listPropertiesClasses(
+  listPropertieses(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass[]>>;
+  ): Promise<Either<Error, readonly ListProperties[]>>;
 
   mutableProperties(
     identifier: MutableProperties.$Identifier,
@@ -69569,93 +69556,85 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async listPropertiesClass(
-    identifier: ListPropertiesClass.$Identifier,
+  async listProperties(
+    identifier: ListProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesClass>> {
-    return this.listPropertiesClassSync(identifier, options);
+  ): Promise<Either<Error, ListProperties>> {
+    return this.listPropertiesSync(identifier, options);
   }
 
-  listPropertiesClassSync(
-    identifier: ListPropertiesClass.$Identifier,
+  listPropertiesSync(
+    identifier: ListProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ListPropertiesClass> {
-    return this.listPropertiesClassesSync({
+  ): Either<Error, ListProperties> {
+    return this.listPropertiesesSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async listPropertiesClassCount(
+  async listPropertiesCount(
     query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesClass.$Filter,
-        ListPropertiesClass.$Identifier
-      >,
+      $ObjectSet.Query<ListProperties.$Filter, ListProperties.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.listPropertiesClassCountSync(query);
+    return this.listPropertiesCountSync(query);
   }
 
-  listPropertiesClassCountSync(
+  listPropertiesCountSync(
     query?: Pick<
-      $ObjectSet.Query<
-        ListPropertiesClass.$Filter,
-        ListPropertiesClass.$Identifier
-      >,
+      $ObjectSet.Query<ListProperties.$Filter, ListProperties.$Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.listPropertiesClassesSync(query).map(
-      (objects) => objects.length,
-    );
+    return this.listPropertiesesSync(query).map((objects) => objects.length);
   }
 
-  async listPropertiesClassIdentifiers(
+  async listPropertiesIdentifiers(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
-    return this.listPropertiesClassIdentifiersSync(query);
+  ): Promise<Either<Error, readonly ListProperties.$Identifier[]>> {
+    return this.listPropertiesIdentifiersSync(query);
   }
 
-  listPropertiesClassIdentifiersSync(
+  listPropertiesIdentifiersSync(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Either<Error, readonly ListPropertiesClass.$Identifier[]> {
-    return this.listPropertiesClassesSync(query).map((objects) =>
+  ): Either<Error, readonly ListProperties.$Identifier[]> {
+    return this.listPropertiesesSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async listPropertiesClasses(
+  async listPropertieses(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass[]>> {
-    return this.listPropertiesClassesSync(query);
+  ): Promise<Either<Error, readonly ListProperties[]>> {
+    return this.listPropertiesesSync(query);
   }
 
-  listPropertiesClassesSync(
+  listPropertiesesSync(
     query?: $ObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Either<Error, readonly ListPropertiesClass[]> {
+  ): Either<Error, readonly ListProperties[]> {
     return this.$objectsSync<
-      ListPropertiesClass,
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties,
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >(
       {
-        $filter: ListPropertiesClass.$filter,
-        $fromRdfResource: ListPropertiesClass.$fromRdfResource,
-        $fromRdfTypes: [ListPropertiesClass.$fromRdfType],
+        $filter: ListProperties.$filter,
+        $fromRdfResource: ListProperties.$fromRdfResource,
+        $fromRdfTypes: [ListProperties.$fromRdfType],
       },
       query,
     );
@@ -72295,8 +72274,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: ListPropertiesClass.$fromRdfResource,
-          $fromRdfTypes: [ListPropertiesClass.$fromRdfType],
+          $fromRdfResource: ListProperties.$fromRdfResource,
+          $fromRdfTypes: [ListProperties.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -74115,56 +74094,56 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(LazyProperties, query);
   }
 
-  async listPropertiesClass(
-    identifier: ListPropertiesClass.$Identifier,
+  async listProperties(
+    identifier: ListProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ListPropertiesClass>> {
+  ): Promise<Either<Error, ListProperties>> {
     return (
-      await this.listPropertiesClasses({
+      await this.listPropertieses({
         identifiers: [identifier],
         preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
 
-  async listPropertiesClassCount(
+  async listPropertiesCount(
     query?: Pick<
       $SparqlObjectSet.Query<
-        ListPropertiesClass.$Filter,
-        ListPropertiesClass.$Identifier
+        ListProperties.$Filter,
+        ListProperties.$Identifier
       >,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
     return this.$objectCount<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
-    >(ListPropertiesClass, query);
+      ListProperties.$Filter,
+      ListProperties.$Identifier
+    >(ListProperties, query);
   }
 
-  async listPropertiesClassIdentifiers(
+  async listPropertiesIdentifiers(
     query?: $SparqlObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
+  ): Promise<Either<Error, readonly ListProperties.$Identifier[]>> {
     return this.$objectIdentifiers<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
-    >(ListPropertiesClass, query);
+      ListProperties.$Filter,
+      ListProperties.$Identifier
+    >(ListProperties, query);
   }
 
-  async listPropertiesClasses(
+  async listPropertieses(
     query?: $SparqlObjectSet.Query<
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
+      ListProperties.$Filter,
+      ListProperties.$Identifier
     >,
-  ): Promise<Either<Error, readonly ListPropertiesClass[]>> {
+  ): Promise<Either<Error, readonly ListProperties[]>> {
     return this.$objects<
-      ListPropertiesClass,
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
-    >(ListPropertiesClass, query);
+      ListProperties,
+      ListProperties.$Filter,
+      ListProperties.$Identifier
+    >(ListProperties, query);
   }
 
   async mutableProperties(
