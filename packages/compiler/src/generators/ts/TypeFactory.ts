@@ -116,7 +116,6 @@ export class TypeFactory {
     const namedObjectType = new NamedObjectType({
       abstract: astType.abstract,
       comment: astType.comment,
-      declarationType: astType.tsObjectDeclarationType,
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
@@ -190,23 +189,18 @@ export class TypeFactory {
           properties.splice(0, 0, namedObjectType._discriminantProperty);
         }
 
-        if (
-          namedObjectType.declarationType === "interface" ||
-          namedObjectType.parentObjectTypes.length === 0
-        ) {
-          properties.splice(
-            0,
-            0,
-            new NamedObjectType.IdentifierProperty({
-              logger: this.logger,
-              name: `${syntheticNamePrefix}identifier`,
-              namedObjectType,
-              type: identifierType,
-              typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-              visibility: "public",
-            }),
-          );
-        }
+        properties.splice(
+          0,
+          0,
+          new NamedObjectType.IdentifierProperty({
+            logger: this.logger,
+            name: `${syntheticNamePrefix}identifier`,
+            namedObjectType,
+            type: identifierType,
+            typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
+            visibility: "public",
+          }),
+        );
 
         return properties;
       },

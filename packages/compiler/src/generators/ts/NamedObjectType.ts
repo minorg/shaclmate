@@ -6,11 +6,9 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/TsFeature.js";
-import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
-import { NamedObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
 import { NamedObjectType_createFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_createFunctionDeclaration.js";
 import { NamedObjectType_equalsFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionOrMethodDeclaration.js";
 import { NamedObjectType_filterFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_filterFunctionDeclaration.js";
@@ -57,7 +55,6 @@ export class NamedObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly abstract: boolean;
-  readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
@@ -72,7 +69,6 @@ export class NamedObjectType extends AbstractType {
 
   constructor({
     abstract,
-    declarationType,
     extern,
     features,
     fromRdfType,
@@ -93,7 +89,6 @@ export class NamedObjectType extends AbstractType {
   }: {
     abstract: boolean;
     comment: Maybe<string>;
-    declarationType: TsObjectDeclarationType;
     extern: boolean;
     features: ReadonlySet<TsFeature>;
     fromRdfType: Maybe<NamedNode>;
@@ -118,7 +113,6 @@ export class NamedObjectType extends AbstractType {
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.abstract = abstract;
-    this.declarationType = declarationType;
     this.extern = extern;
     this.features = features;
     this.fromRdfType = fromRdfType;
@@ -176,23 +170,14 @@ export class NamedObjectType extends AbstractType {
     if (!this.extern) {
       const staticModuleDeclarations: Code[] = [];
 
-      switch (this.declarationType) {
-        case "class": {
-          declarations.push(NamedObjectType_classDeclaration.call(this));
-          break;
-        }
-        case "interface": {
-          declarations.push(NamedObjectType_interfaceDeclaration.call(this));
-          staticModuleDeclarations.push(
-            ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
-            ...NamedObjectType_equalsFunctionOrMethodDeclaration.bind(
-              this,
-            )().toList(),
-            ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
-          );
-          break;
-        }
-      }
+      declarations.push(NamedObjectType_interfaceDeclaration.call(this));
+      staticModuleDeclarations.push(
+        ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_equalsFunctionOrMethodDeclaration.bind(
+          this,
+        )().toList(),
+        ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
+      );
 
       const jsonModuleDeclarations: Code[] = [
         ...NamedObjectType_jsonParseFunctionDeclaration.call(this).toList(),
@@ -239,19 +224,13 @@ export class NamedObjectType extends AbstractType {
         ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toJsonFunctionOrMethodDeclaration.call(
-              this,
-            ).toList()
-          : []),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
-              this,
-            ).toList()
-          : []),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toStringFunctionOrMethodDeclarations.call(this)
-          : []),
+        ...NamedObjectType_toJsonFunctionOrMethodDeclaration.call(
+          this,
+        ).toList(),
+        ...NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
+          this,
+        ).toList(),
+        ...NamedObjectType_toStringFunctionOrMethodDeclarations.call(this),
         ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
@@ -306,14 +285,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get equalsFunction(): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`((left, right) => left.${syntheticNamePrefix}equals(right))`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
-      default:
-        throw new RangeError(this.declarationType);
-    }
+    return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
   }
 
   @Memoize()
@@ -408,14 +380,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   protected get thisVariable(): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`this`;
-      case "interface":
-        return code`_${camelCase(this.name)}`;
-      default:
-        throw new RangeError(this.declarationType);
-    }
+    return code`_${camelCase(this.name)}`;
   }
 
   override fromJsonExpression({
@@ -443,16 +408,9 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override hashStatements({
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    switch (this.declarationType) {
-      case "class":
-        return [
-          code`${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
-        ];
-      case "interface":
-        return [
-          code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
-        ];
-    }
+    return [
+      code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+    ];
   }
 
   override jsonSchema({
@@ -484,45 +442,25 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   newExpression({ parameters }: { parameters: Code }): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`new ${this.name}(${parameters})`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
-    }
+    return code`${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`${variables.value}.${syntheticNamePrefix}toJson()`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
-    }
+    return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`${variables.value}.toString()`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
-    }
+    return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`[${variables.value}.${syntheticNamePrefix}toRdfResource({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-      case "interface":
-        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-    }
+    return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   protected ensureAtMostOneSuperObjectType() {
