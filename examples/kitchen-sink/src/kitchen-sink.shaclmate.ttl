@@ -98,7 +98,7 @@
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :concreteParent
+        sh:path :concreteParentProperty
     ] .
 
 :ConvertibleTypeProperties
@@ -1146,7 +1146,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         rdfs:comment "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property)." ;
         sh:maxCount 1 ;
-        sh:path :optionalClassOrClassOrStringProperty ;
+        sh:path :optionalNodeOrNodeOrStringProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
@@ -1171,7 +1171,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ], [
         rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:maxCount 1 ;
-        sh:path :optionalClassOrLiteralProperty ;
+        sh:path :optionalNodeOrLiteralProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
@@ -1194,7 +1194,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredClassOrLiteralProperty ;
+        sh:path :requiredNodeOrLiteralProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
@@ -1206,7 +1206,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredClassOrClassOrStringProperty ;
+        sh:path :requiredNodeOrNodeOrStringProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
@@ -1219,7 +1219,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         rdfs:comment "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members." ;
-        sh:path :setClassOrLiteralProperty ;
+        sh:path :setNodeOrLiteralProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
@@ -1253,7 +1253,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         rdfs:comment "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property)." ;
-        sh:path :setClassOrClassOrStringProperty ;
+        sh:path :setNodeOrNodeOrStringProperty ;
         sh:xone ([
                 sh:node :UnionMember1
             ]
