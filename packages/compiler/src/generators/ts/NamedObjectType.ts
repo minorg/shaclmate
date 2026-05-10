@@ -4,8 +4,6 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "../../enums/TsFeature.js";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
@@ -46,6 +44,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 

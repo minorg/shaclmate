@@ -7,7 +7,7 @@ import type { Logger } from "ts-log";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
-import type { TsFeature } from "./enums/TsFeature.js";
+import type { TsFeature } from "./generators/ts/TsFeature.js";
 import type * as input from "./input/index.js";
 
 interface RelatedNodeShapes {

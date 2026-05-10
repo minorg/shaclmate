@@ -2,7 +2,7 @@ import type { NodeKind } from "@shaclmate/shacl-ast";
 
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../enums/TsFeature.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";

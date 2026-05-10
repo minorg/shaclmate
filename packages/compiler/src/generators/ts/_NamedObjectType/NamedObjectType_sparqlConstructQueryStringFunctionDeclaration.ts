@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
-import type { TsFeature } from "../../../enums/TsFeature.js";
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { TsFeature } from "../TsFeature.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {

@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
-import { TS_FEATURES, type TsFeature } from "../enums/TsFeature.js";
+import { TS_FEATURES, type TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { shapeOntology } from "./shapeOntology.js";

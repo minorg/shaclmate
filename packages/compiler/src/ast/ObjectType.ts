@@ -6,7 +6,7 @@ import type { Maybe } from "purify-ts";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../enums/TsFeature.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
