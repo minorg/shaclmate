@@ -14,7 +14,7 @@ describe("toString", () => {
   it("explicitly and implicitly exclude and include properties in toString()", ({
     expect,
   }) => {
-    expect(harnesses.displayPropertiesClass.toString()).toStrictEqual(
+    expect(harnesses.displayProperties.toString()).toStrictEqual(
       `DisplayPropertiesClass({"$identifier":"<http://example.com/instance>","explicitTrueDisplayProperty":"explicitTrueDisplayValue"})`,
     );
   });

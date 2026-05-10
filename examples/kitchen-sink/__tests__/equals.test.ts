@@ -2,7 +2,6 @@ import dataFactory from "@rdfx/data-factory";
 import { describe, it } from "vitest";
 import "./harnesses.js"; // Must be imported before kitchenSink
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import type { Harness } from "./Harness.js";
 import { harnesses } from "./harnesses.js";
 
 describe("equals", () => {
@@ -11,7 +10,9 @@ describe("equals", () => {
       expect,
     }) => {
       expect(
-        harness.equals((harness as Harness<any>).instance).extract(),
+        harness.staticSide
+          .$equals(harness.instance as any, harness.instance as any)
+          .extract(),
       ).toStrictEqual(true);
     });
   }
@@ -20,12 +21,12 @@ describe("equals", () => {
     expect,
   }) => {
     expect(
-      new kitchenSink.NonClass({
+      kitchenSink.NonClass.$create({
         $identifier: dataFactory.blankNode(),
         nonClassProperty: "Test",
       })
         .$equals(
-          new kitchenSink.NonClass({
+          kitchenSink.NonClass.$create({
             $identifier: dataFactory.blankNode(),
             nonClassProperty: "Test2",
           }),
@@ -37,200 +38,194 @@ describe("equals", () => {
   it("terms union type", ({ expect }) => {
     const $identifier = dataFactory.blankNode();
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty: "test",
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "string",
-              value: "test",
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.namedNode(
-              "http://example.com/term",
-            ),
-            requiredIriOrStringProperty: "test",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+      ).extract(),
     ).toStrictEqual(true);
 
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty: "test",
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "string",
-              value: "test",
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrStringProperty: "test",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrStringProperty: "test",
+        }),
+      ).extract(),
     ).not.toStrictEqual(true);
   });
 
   it("synthetic union type", ({ expect }) => {
     const $identifier = dataFactory.blankNode();
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty: "test",
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "string",
-              value: "test",
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.namedNode(
-              "http://example.com/term",
-            ),
-            requiredIriOrStringProperty: "test",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+      ).extract(),
     ).toStrictEqual(true);
 
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty: "test",
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "ClassUnionMember1",
-              value: new kitchenSink.ClassUnionMember1({
-                $identifier: dataFactory.namedNode(
-                  "http://example.com/classUnionMember1",
-                ),
-                classUnionMember1Property: "test",
-                classUnionMemberCommonParentProperty: "test",
-              }),
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.namedNode(
-              "http://example.com/term",
-            ),
-            requiredIriOrStringProperty: "test",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "UnionMember1",
+            value: kitchenSink.UnionMember1.$create({
+              $identifier: dataFactory.namedNode(
+                "http://example.com/unionMember1",
+              ),
+              unionMember1Property: "test",
+              unionMemberCommonParentProperty: "test",
+            }),
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+      ).extract(),
     ).not.toStrictEqual(true);
   });
 
   it("typeof union type", ({ expect }) => {
     const $identifier = dataFactory.blankNode();
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty: "test",
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "string",
-              value: "test",
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.namedNode(
-              "http://example.com/term",
-            ),
-            requiredIriOrStringProperty: "test",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "test",
+        }),
+      ).extract(),
     ).toStrictEqual(true);
 
     expect(
-      new kitchenSink.UnionDiscriminantsClass({
-        $identifier,
-        requiredClassOrClassOrStringProperty: {
-          type: "string",
-          value: "test",
-        },
-        requiredClassOrLiteralProperty: dataFactory.literal("test"),
-        requiredIriOrLiteralProperty: dataFactory.namedNode(
-          "http://example.com/term",
-        ),
-        requiredIriOrStringProperty:
-          dataFactory.namedNode("http://example.com"),
-      })
-        .$equals(
-          new kitchenSink.UnionDiscriminantsClass({
-            $identifier,
-            requiredClassOrClassOrStringProperty: {
-              type: "ClassUnionMember1",
-              value: new kitchenSink.ClassUnionMember1({
-                $identifier: dataFactory.namedNode(
-                  "http://example.com/classUnionMember1",
-                ),
-                classUnionMember1Property: "test",
-                classUnionMemberCommonParentProperty: "test",
-              }),
-            },
-            requiredClassOrLiteralProperty: dataFactory.literal("test"),
-            requiredIriOrLiteralProperty: dataFactory.namedNode(
-              "http://example.com/term",
-            ),
-            requiredIriOrStringProperty: "http://example.com",
-          }),
-        )
-        .extract(),
+      kitchenSink.UnionDiscriminants.$equals(
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "string",
+            value: "test",
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty:
+            dataFactory.namedNode("http://example.com"),
+        }),
+        kitchenSink.UnionDiscriminants.$create({
+          $identifier,
+          requiredNodeOrNodeOrStringProperty: {
+            type: "UnionMember1",
+            value: kitchenSink.UnionMember1.$create({
+              $identifier: dataFactory.namedNode(
+                "http://example.com/unionMember1",
+              ),
+              unionMember1Property: "test",
+              unionMemberCommonParentProperty: "test",
+            }),
+          },
+          requiredNodeOrLiteralProperty: dataFactory.literal("test"),
+          requiredIriOrLiteralProperty: dataFactory.namedNode(
+            "http://example.com/term",
+          ),
+          requiredIriOrStringProperty: "http://example.com",
+        }),
+      ).extract(),
     ).not.toStrictEqual(true);
   });
 });
