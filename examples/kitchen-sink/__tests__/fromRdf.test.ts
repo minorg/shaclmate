@@ -449,7 +449,6 @@ describe("fromRdf", () => {
     const result =
       kitchenSink.ListProperties.$fromRdfResource(instanceResource);
     expect(result).toBeLeft();
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
   it("reject mistyped set", ({ expect }) => {

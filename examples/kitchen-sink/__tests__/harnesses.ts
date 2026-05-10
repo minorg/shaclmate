@@ -245,7 +245,7 @@ export const harnesses = {
   hasValueProperties: new Harness(
     kitchenSink.HasValueProperties.$create({
       hasIriValueProperty: dataFactory.namedNode(
-        "http://example.com/HasValuePropertiesClassIri1",
+        "http://example.com/HasValuePropertiesIri1",
       ),
       hasLiteralValueProperty: "test",
       $identifier,
@@ -544,14 +544,14 @@ export const harnesses = {
       $identifier,
     }),
     kitchenSink.NewName1,
-    "OverrideName1Class",
+    "OverrideName1",
   ),
   overrideName2: new Harness(
     kitchenSink.NewName2.$create({
       $identifier,
     }),
     kitchenSink.NewName2,
-    "OverrideName2Class",
+    "OverrideName2",
   ),
   propertyCardinalities: new Harness(
     kitchenSink.PropertyCardinalities.$create({

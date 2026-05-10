@@ -9,14 +9,14 @@ describe("toJson", () => {
         harnesses.unionDiscriminants1.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
+      expect(jsonObject.$type).toStrictEqual("UnionDiscriminants");
       expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
-        type: "ClassUnionMember1",
+        type: "UnionMember1",
         value: {
-          $type: "ClassUnionMember1",
-          "@id": "http://example.com/classUnionMember1a",
-          classUnionMember1Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          $type: "UnionMember1",
+          "@id": "http://example.com/unionMember1a",
+          unionMember1Property: "test",
+          unionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -27,12 +27,12 @@ describe("toJson", () => {
         "@id": "http://example.com",
       });
       expect(jsonObject.requiredNodeOrNodeOrStringProperty).toStrictEqual({
-        type: "ClassUnionMember1",
+        type: "UnionMember1",
         value: {
-          $type: "ClassUnionMember1",
-          "@id": "http://example.com/classUnionMember1b",
-          classUnionMember1Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          $type: "UnionMember1",
+          "@id": "http://example.com/unionMember1b",
+          unionMember1Property: "test",
+          unionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
@@ -53,12 +53,12 @@ describe("toJson", () => {
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.optionalNodeOrNodeOrStringProperty).toStrictEqual({
-        type: "ClassUnionMember2",
+        type: "UnionMember2",
         value: {
-          $type: "ClassUnionMember2",
-          "@id": "http://example.com/classUnionMember2a",
-          classUnionMember2Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          $type: "UnionMember2",
+          "@id": "http://example.com/unionMember2a",
+          unionMember2Property: "test",
+          unionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -81,21 +81,21 @@ describe("toJson", () => {
           value: "test",
         },
         {
-          type: "ClassUnionMember2",
+          type: "UnionMember2",
           value: {
-            $type: "ClassUnionMember2",
-            "@id": "http://example.com/classUnionMember2b",
-            classUnionMember2Property: "test",
-            classUnionMemberCommonParentProperty: "test",
+            $type: "UnionMember2",
+            "@id": "http://example.com/unionMember2b",
+            unionMember2Property: "test",
+            unionMemberCommonParentProperty: "test",
           },
         },
         {
-          type: "ClassUnionMember1",
+          type: "UnionMember1",
           value: {
-            $type: "ClassUnionMember1",
-            "@id": "http://example.com/classUnionMember1b",
-            classUnionMember1Property: "test",
-            classUnionMemberCommonParentProperty: "test",
+            $type: "UnionMember1",
+            "@id": "http://example.com/unionMember1b",
+            unionMember1Property: "test",
+            unionMemberCommonParentProperty: "test",
           },
         },
       ]);
@@ -125,7 +125,7 @@ describe("toJson", () => {
     expect(jsonObject.baseWithPropertiesProperty).toStrictEqual("abc");
     expect(jsonObject.concreteChildProperty).toStrictEqual("child");
     expect(jsonObject.concreteParentProperty).toStrictEqual("parent");
-    expect(jsonObject.$type).toStrictEqual("ConcreteChildClass");
+    expect(jsonObject.$type).toStrictEqual("ConcreteChild");
   });
 
   // it("property order", ({ expect }) => {
