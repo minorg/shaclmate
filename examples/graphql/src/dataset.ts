@@ -4,7 +4,7 @@ import { ResourceSet } from "@rdfx/resource";
 import {
   Child,
   Nested,
-  Parent,
+  ParentStatic,
   UnionMember1,
   UnionMember2,
 } from "./generated.js";
@@ -15,44 +15,58 @@ const resourceSet = new ResourceSet({
   dataset,
 });
 for (let i = 0; i < 4; i++) {
-  const lazyObject = new Nested({
+  const lazyObject = Nested.$create({
     $identifier: dataFactory.namedNode(`http://example.com/child${i}/lazy`),
     optionalNumberProperty: 2,
     optionalStringProperty: "optional string (nested)",
     requiredStringProperty: "required string (nested)",
   });
-  lazyObject.$toRdfResource({ resourceSet });
+  Nested.$toRdfResource(lazyObject, { resourceSet });
 
-  new Child({
-    $identifier: dataFactory.namedNode(`http://example.com/child${i}`),
-    childStringProperty: "child string property",
-    lazyObjectSetProperty: [lazyObject],
-    optionalLazyObjectProperty: lazyObject,
-    optionalObjectProperty: new Nested({
-      $identifier: dataFactory.namedNode(`http://example.com/child${i}/nested`),
-      optionalNumberProperty: 2,
-      optionalStringProperty: "optional string (nested)",
-      requiredStringProperty: "required string (nested)",
+  Child.$toRdfResource(
+    Child.$create({
+      $identifier: dataFactory.namedNode(`http://example.com/child${i}`),
+      childStringProperty: "child string property",
+      lazyObjectSetProperty: [lazyObject],
+      optionalLazyObjectProperty: lazyObject,
+      optionalObjectProperty: Nested.$create({
+        $identifier: dataFactory.namedNode(
+          `http://example.com/child${i}/nested`,
+        ),
+        optionalNumberProperty: 2,
+        optionalStringProperty: "optional string (nested)",
+        requiredStringProperty: "required string (nested)",
+      }),
+      optionalStringProperty: "optional string (concrete child)",
+      parentStringProperty: "parent string (concrete child)",
+      requiredStringProperty: "required string (concrete child)",
     }),
-    optionalStringProperty: "optional string (concrete child)",
-    parentStringProperty: "parent string (concrete child)",
-    requiredStringProperty: "required string (concrete child)",
-  }).$toRdfResource({ resourceSet });
+    { resourceSet },
+  );
 
-  new Parent({
-    $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
-    parentStringProperty: "parent string",
-  }).$toRdfResource({ resourceSet });
+  ParentStatic.$toRdfResource(
+    ParentStatic.$create({
+      $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
+      parentStringProperty: "parent string",
+    }),
+    { resourceSet },
+  );
 
   if (i % 2 === 0) {
-    new UnionMember1({
-      $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-      optionalNumberProperty: 1,
-    }).$toRdfResource({ resourceSet });
+    UnionMember1.$toRdfResource(
+      UnionMember1.$create({
+        $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+        optionalNumberProperty: 1,
+      }),
+      { resourceSet },
+    );
   } else {
-    new UnionMember2({
-      $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
-      optionalStringProperty: "test",
-    }).$toRdfResource({ resourceSet });
+    UnionMember2.$toRdfResource(
+      UnionMember2.$create({
+        $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
+        optionalStringProperty: "test",
+      }),
+      { resourceSet },
+    );
   }
 }
