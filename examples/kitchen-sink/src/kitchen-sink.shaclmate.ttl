@@ -12,7 +12,6 @@
     a owl:Ontology .
 
 :BaseForExtern
-    shaclmate:abstract true ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
@@ -22,7 +21,6 @@
     ] .
 
 :BaseWithProperties
-    shaclmate:abstract true ;
     a owl:Class, sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [
@@ -33,7 +31,6 @@
     ] .
 
 :BaseWithoutProperties
-    shaclmate:abstract true ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf :BaseWithProperties .
 
@@ -1108,7 +1105,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :UnionMemberCommonParent
-    shaclmate:abstract true ;
     a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
