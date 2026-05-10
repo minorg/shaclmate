@@ -5,7 +5,7 @@ import { Decimal } from "decimal.js";
 import { NonEmptyList } from "purify-ts";
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
-import { InterfaceHarness } from "./InterfaceHarness.js";
+import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
@@ -32,13 +32,13 @@ export const harnesses = {
     new kitchenSink.BlankNodeIdentifierClass(),
     kitchenSink.BlankNodeIdentifierClass,
   ),
-  blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+  blankNodeIdentifierInterfaceWithExplicitIdentifier: new Harness(
     kitchenSink.BlankNodeIdentifierInterface.$create({
       $identifier: dataFactory.blankNode(),
     }),
     kitchenSink.BlankNodeIdentifierInterface,
   ),
-  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new Harness(
     kitchenSink.BlankNodeIdentifierInterface.$create(),
     kitchenSink.BlankNodeIdentifierInterface,
   ),
@@ -46,17 +46,16 @@ export const harnesses = {
     new kitchenSink.BlankNodeOrIriIdentifierClass(),
     kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
-  blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+  blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new Harness(
     kitchenSink.BlankNodeOrIriIdentifierInterface.$create({
       $identifier: dataFactory.blankNode(),
     }),
     kitchenSink.BlankNodeOrIriIdentifierInterface,
   ),
-  blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier:
-    new InterfaceHarness(
-      kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
-      kitchenSink.BlankNodeOrIriIdentifierInterface,
-    ),
+  blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier: new Harness(
+    kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
+    kitchenSink.BlankNodeOrIriIdentifierInterface,
+  ),
   // classPropertiesClass: new ClassHarness(
   //   new kitchenSink.ClassPropertiesClass({
   //     $identifier,
@@ -111,7 +110,7 @@ export const harnesses = {
     }),
     kitchenSink.ConcreteChildClass,
   ),
-  concreteChildInterface: new InterfaceHarness(
+  concreteChildInterface: new Harness(
     kitchenSink.ConcreteChildInterface.$create({
       baseInterfaceWithPropertiesProperty: "abc",
       concreteChildInterfaceProperty: "child",
@@ -128,7 +127,7 @@ export const harnesses = {
     }),
     kitchenSink.ConcreteParentClassStatic,
   ),
-  concreteParentInterface: new InterfaceHarness(
+  concreteParentInterface: new Harness(
     kitchenSink.ConcreteParentInterfaceStatic.$create({
       baseInterfaceWithPropertiesProperty: "abc",
       concreteParentInterfaceProperty: "parent",
@@ -323,14 +322,14 @@ export const harnesses = {
     }),
     kitchenSink.InPropertiesClass,
   ),
-  interfaceClass: new InterfaceHarness<kitchenSink.Interface>(
+  interfaceClass: new Harness<kitchenSink.Interface>(
     kitchenSink.Interface.$create({
       $identifier,
       interfaceProperty: "Test",
     }),
     kitchenSink.Interface,
   ),
-  interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
+  interfaceUnionMember1: new Harness<kitchenSink.InterfaceUnion>(
     kitchenSink.InterfaceUnionMember1.$create({
       $identifier,
       interfaceUnionMemberCommonParentProperty: "common parent",
@@ -339,7 +338,7 @@ export const harnesses = {
     kitchenSink.InterfaceUnion,
     "InterfaceUnion",
   ),
-  interfaceUnionMember2: new InterfaceHarness<kitchenSink.InterfaceUnion>(
+  interfaceUnionMember2: new Harness<kitchenSink.InterfaceUnion>(
     kitchenSink.InterfaceUnionMember2.$create({
       $identifier,
       interfaceUnionMemberCommonParentProperty: "common parent",
@@ -487,7 +486,7 @@ export const harnesses = {
     }),
     kitchenSink.LazyPropertiesClass,
   ),
-  lazyPropertiesInterfaceEmpty: new InterfaceHarness(
+  lazyPropertiesInterfaceEmpty: new Harness(
     kitchenSink.LazyPropertiesInterface.$create({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
@@ -503,7 +502,7 @@ export const harnesses = {
     }),
     kitchenSink.LazyPropertiesInterface,
   ),
-  lazyPropertiesInterfaceNonEmpty: new InterfaceHarness(
+  lazyPropertiesInterfaceNonEmpty: new Harness(
     kitchenSink.LazyPropertiesInterface.$create({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
