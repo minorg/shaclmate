@@ -109,7 +109,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       code`\
 export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
   return [${joinCode(
-    this.concreteMembers.map(
+    this.members.map(
       (member) =>
         code`...${member.type.name}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
     ),
@@ -146,7 +146,7 @@ if (focusIdentifier.termType === "Variable") {
   }));
 }`,
   code`patterns.push({ patterns: [${joinCode(
-    this.concreteMembers.map(
+    this.members.map(
       (member) =>
         code`${{
           patterns: code`${member.type.name}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
@@ -170,7 +170,7 @@ if (focusIdentifier.termType === "Variable") {
       `${syntheticNamePrefix}fromRdfResource`,
       code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
-  ${this.concreteMembers.reduce(
+  ${this.members.reduce(
     (expression, member) => {
       const memberTypeExpression = code`(${member.type.name}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
       return expression !== null
@@ -195,9 +195,7 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
         types: code`[${joinCode(
-          this.concreteMembers.map(
-            (member) => member.type.graphqlType.nullableName,
-          ),
+          this.members.map((member) => member.type.graphqlType.nullableName),
           { on: ", " },
         )}]`,
       }});`,
@@ -226,7 +224,7 @@ export namespace ${syntheticNamePrefix}Identifier {
       code`\
     export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
-        this.concreteMembers.map(
+        this.members.map(
           (member) => code`${member.type.name}.is${member.type.name}(object)`,
         ),
         { on: " || " },
@@ -244,7 +242,7 @@ export namespace ${syntheticNamePrefix}Identifier {
       }
     > = {};
 
-    this.concreteMembers.forEach((member, memberI) => {
+    this.members.forEach((member, memberI) => {
       for (const memberTypeProperty of member.type.properties.concat(
         member.type.ancestorObjectTypes.flatMap(
           (ancestorObjectType) => ancestorObjectType.properties,
@@ -266,7 +264,7 @@ export namespace ${syntheticNamePrefix}Identifier {
         } else {
           commonPropertiesByName[memberTypeProperty.name] = commonProperty = {
             memberTypesWithProperty: new Array<boolean>(
-              this.concreteMembers.length,
+              this.members.length,
             ).fill(false),
             property: memberTypeProperty,
           };
@@ -306,7 +304,7 @@ ${{
       code`\
 export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
-  this.concreteMembers
+  this.members
     .map(
       (member) =>
         code`if (${member.type.name}.is${member.type.name}(value)) { return ${member.type.name}.${syntheticNamePrefix}toRdfResource(value, options); }`,
