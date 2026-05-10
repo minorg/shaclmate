@@ -13,7 +13,6 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
-  abstract: false,
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),

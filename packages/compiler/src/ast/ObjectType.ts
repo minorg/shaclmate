@@ -51,13 +51,6 @@ export class ObjectType extends AbstractType {
   readonly #properties: ObjectType.Property[] = [];
 
   /**
-   * Classes generated from this type are abstract / cannot be instantiated themselves.
-   *
-   * Defaults to false.
-   */
-  readonly abstract: boolean;
-
-  /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
    *
    * Defaults to false.
@@ -112,7 +105,6 @@ export class ObjectType extends AbstractType {
   readonly tsImports: readonly string[];
 
   constructor({
-    abstract,
     extern,
     fromRdfType,
     identifierType,
@@ -122,7 +114,6 @@ export class ObjectType extends AbstractType {
     tsImports,
     ...superParameters
   }: {
-    abstract: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
@@ -132,7 +123,6 @@ export class ObjectType extends AbstractType {
     tsImports: readonly string[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.abstract = abstract;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;

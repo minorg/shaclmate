@@ -1,4 +1,3 @@
-import type { NamedNode } from "@rdfjs/types";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -82,8 +81,6 @@ export function transformShapeToAstObjectType(
       nodeShapeTsFeatures.call(this, nodeShape),
     ).chain<Error, Maybe<ast.ObjectType>>(
       ([nodeKinds, propertyShapes, tsFeatures]) => {
-        const abstract = nodeShape.abstract.orDefault(false);
-
         const nodeShapeIdentifier = nodeShape.$identifier();
         const {
           ancestors: ancestorNodeShapes,
@@ -99,29 +96,20 @@ export function transformShapeToAstObjectType(
             (type) => type.equals(owl.Class) || type.equals(rdfs.Class),
           );
 
-        let fromRdfType: Maybe<NamedNode>;
-        let toRdfTypes: NamedNode[];
-        if (!abstract) {
-          fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-          if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
-            fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
-          }
-          toRdfTypes = nodeShape.toRdfTypes.concat();
-          if (toRdfTypes.length === 0) {
-            toRdfTypes.push(...nodeShape.rdfType.toList());
-          }
-          // Ensure toRdfTypes has fromRdfType
-          fromRdfType.ifJust((fromRdfType) => {
-            if (
-              !toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))
-            ) {
-              toRdfTypes.push(fromRdfType);
-            }
-          });
-        } else {
-          fromRdfType = Maybe.empty();
-          toRdfTypes = [];
+        let fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
+        if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
+          fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
         }
+        const toRdfTypes = nodeShape.toRdfTypes.concat();
+        if (toRdfTypes.length === 0) {
+          toRdfTypes.push(...nodeShape.rdfType.toList());
+        }
+        // Ensure toRdfTypes has fromRdfType
+        fromRdfType.ifJust((fromRdfType) => {
+          if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
+            toRdfTypes.push(fromRdfType);
+          }
+        });
 
         if (nodeKinds.has("Literal")) {
           return Left(
@@ -168,7 +156,6 @@ export function transformShapeToAstObjectType(
         // If this node shape's properties (directly or indirectly) refer to the node shape itself,
         // we'll return this placeholder.
         const objectType = new ast.ObjectType({
-          abstract,
           comment: nodeShape.comment,
           extern: nodeShape.extern.orDefault(false),
           fromRdfType,
@@ -230,7 +217,6 @@ export function transformShapeToAstObjectType(
           }
 
           if (
-            !objectType.abstract &&
             !objectType.extern &&
             objectType.fromRdfType.isNothing() &&
             !objectType.properties.some(isObjectTypePropertyRequired)
