@@ -52,12 +52,22 @@ export function transformShapeToAstObjectType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, Maybe<ast.ObjectType>> {
+): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
   try {
+    if (shape.node.isJust()) {
+      return this.shapesGraph
+        .nodeShape(shape.node.unsafeCoerce())
+        .chain((nodeShape) =>
+          transformShapeToAstType.call(this, nodeShape, shapeStack),
+        )
+        .map(Maybe.of);
+    }
+
     if (shape.$type !== "NodeShape") {
       return Either.of(Maybe.empty());
     }
+
     const nodeShape = shape;
 
     if (

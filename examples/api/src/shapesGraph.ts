@@ -28,7 +28,7 @@ builder.nodeShape({
     builder
       .propertyShape({
         $identifier: ex("ExampleNodeShape-nodeProperty"),
-        nodes: [ExampleNodeShape1.$identifier()],
+        node: ExampleNodeShape1.$identifier(),
         maxCount: 1,
         minCount: 1,
         path: ex("nodeProperty"),
