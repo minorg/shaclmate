@@ -73,7 +73,7 @@ ${joinCode(
 
   get jsonSchemaFunctionDeclaration(): Code {
     const meta: Record<string, string> = {
-      id: this.name,
+      // id: this.name,
     };
     this.comment.ifJust((description) => {
       meta["description"] = description;

@@ -2823,7 +2823,6 @@ export namespace NamedUnion1 {
         .union([z.object({ "@id": z.string().min(1) }), z.string()])
         .readonly()
         .meta({
-          id: "NamedUnion1",
           description: "Named union of IRI and string",
         });
 
@@ -3098,10 +3097,7 @@ export namespace NamedUnion2 {
           z.object({ type: z.literal("dateTime"), value: z.iso.datetime() }),
         ])
         .readonly()
-        .meta({
-          id: "NamedUnion2",
-          description: "Named union of date and date-time",
-        });
+        .meta({ description: "Named union of date and date-time" });
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
@@ -3342,9 +3338,7 @@ export namespace $NamedDefaultPartial {
           "@id": z.string().min(1),
           $type: z.literal("$NamedDefaultPartial"),
         })
-        .meta({
-          id: "$NamedDefaultPartial",
-        }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -3736,9 +3730,7 @@ export namespace $DefaultPartial {
           "@id": z.string().min(1),
           $type: z.literal("$DefaultPartial"),
         })
-        .meta({
-          id: "$DefaultPartial",
-        }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -5195,7 +5187,6 @@ export namespace UnionDiscriminants {
             .readonly()
             .optional()
             .meta({
-              id: "UnionDiscriminants-optionalIriOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
@@ -5204,7 +5195,6 @@ export namespace UnionDiscriminants {
             .readonly()
             .optional()
             .meta({
-              id: "UnionDiscriminants-optionalIriOrStringProperty",
               description: "Union that can be discriminated by typeof.",
             }),
           optionalNodeOrLiteralProperty: z
@@ -5223,7 +5213,6 @@ export namespace UnionDiscriminants {
             .readonly()
             .optional()
             .meta({
-              id: "UnionDiscriminants-optionalNodeOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
@@ -5242,7 +5231,6 @@ export namespace UnionDiscriminants {
             .readonly()
             .optional()
             .meta({
-              id: "UnionDiscriminants-optionalNodeOrNodeOrStringProperty",
               description:
                 "Union with an extrinsic discriminant (multiple+duplicate typeofs, no intrinsic discriminant property).",
             }),
@@ -5261,7 +5249,6 @@ export namespace UnionDiscriminants {
             ])
             .readonly()
             .meta({
-              id: "UnionDiscriminants-requiredIriOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
@@ -5269,7 +5256,6 @@ export namespace UnionDiscriminants {
             .union([z.object({ "@id": z.string().min(1) }), z.string()])
             .readonly()
             .meta({
-              id: "UnionDiscriminants-requiredIriOrStringProperty",
               description: "Union that can be discriminated by typeof.",
             }),
           requiredNodeOrLiteralProperty: z
@@ -5287,7 +5273,6 @@ export namespace UnionDiscriminants {
             ])
             .readonly()
             .meta({
-              id: "UnionDiscriminants-requiredNodeOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
@@ -5305,7 +5290,6 @@ export namespace UnionDiscriminants {
             ])
             .readonly()
             .meta({
-              id: "UnionDiscriminants-requiredNodeOrNodeOrStringProperty",
               description:
                 "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
@@ -5327,7 +5311,6 @@ export namespace UnionDiscriminants {
             .optional()
             .readonly()
             .meta({
-              id: "UnionDiscriminants-setIriOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType).",
             }),
@@ -5338,7 +5321,6 @@ export namespace UnionDiscriminants {
             .optional()
             .readonly()
             .meta({
-              id: "UnionDiscriminants-setIriOrStringProperty",
               description: "Union that can be discriminated by typeof.",
             }),
           setNodeOrLiteralProperty: z
@@ -5359,7 +5341,6 @@ export namespace UnionDiscriminants {
             .optional()
             .readonly()
             .meta({
-              id: "UnionDiscriminants-setNodeOrLiteralProperty",
               description:
                 "Union that can be discriminated by an intrinsic discriminant property (termType) for RDF/JS term members and an extrinsic on termType for other members.",
             }),
@@ -5380,13 +5361,11 @@ export namespace UnionDiscriminants {
             .optional()
             .readonly()
             .meta({
-              id: "UnionDiscriminants-setNodeOrNodeOrStringProperty",
               description:
                 "Union with an extrinsic discriminant (multiple typeofs, no intrinsic discriminant property).",
             }),
         })
         .meta({
-          id: "UnionDiscriminants",
           description:
             "Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.",
         }) satisfies z.ZodType<$Json>;
@@ -11479,27 +11458,14 @@ export namespace TermProperties {
           blankNodeTermProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
-            .meta({
-              id: "TermProperties-blankNodeTermProperty",
-            }),
-          booleanTermProperty: z
-            .boolean()
-            .optional()
-            .meta({ id: "TermProperties-booleanTermProperty" }),
-          dateTermProperty: z.iso
-            .date()
-            .optional()
-            .meta({ id: "TermProperties-dateTermProperty" }),
-          dateTimeTermProperty: z.iso
-            .datetime()
-            .optional()
-            .meta({ id: "TermProperties-dateTimeTermProperty" }),
+            .meta({}),
+          booleanTermProperty: z.boolean().optional().meta({}),
+          dateTermProperty: z.iso.date().optional().meta({}),
+          dateTimeTermProperty: z.iso.datetime().optional().meta({}),
           iriTermProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
-            .meta({
-              id: "TermProperties-iriTermProperty",
-            }),
+            .meta({}),
           literalTermProperty: z
             .object({
               "@language": z.string().optional(),
@@ -11507,15 +11473,9 @@ export namespace TermProperties {
               "@value": z.string(),
             })
             .optional()
-            .meta({ id: "TermProperties-literalTermProperty" }),
-          numberTermProperty: z
-            .number()
-            .optional()
-            .meta({ id: "TermProperties-numberTermProperty" }),
-          stringTermProperty: z
-            .string()
-            .optional()
-            .meta({ id: "TermProperties-stringTermProperty" }),
+            .meta({}),
+          numberTermProperty: z.number().optional().meta({}),
+          stringTermProperty: z.string().optional().meta({}),
           termProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -11534,10 +11494,9 @@ export namespace TermProperties {
               }),
             ])
             .optional()
-            .meta({ id: "TermProperties-termProperty" }),
+            .meta({}),
         })
         .meta({
-          id: "TermProperties",
           description: "Node shape with properties that are not nested objects",
         }) satisfies z.ZodType<$Json>;
     }
@@ -12932,11 +12891,9 @@ export namespace RecursiveUnionMember2 {
                 RecursiveUnion.$Json.schema(),
             )
             .optional()
-            .meta({
-              id: "RecursiveUnionMember2-recursiveUnionMember2Property",
-            }),
+            .meta({}),
         })
-        .meta({ id: "RecursiveUnionMember2" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -13553,11 +13510,9 @@ export namespace RecursiveUnionMember1 {
                 RecursiveUnion.$Json.schema(),
             )
             .optional()
-            .meta({
-              id: "RecursiveUnionMember1-recursiveUnionMember1Property",
-            }),
+            .meta({}),
         })
-        .meta({ id: "RecursiveUnionMember1" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -14202,16 +14157,10 @@ export namespace PropertyPaths {
           inversePathProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
-            .meta({
-              id: "PropertyPaths-inversePathProperty",
-            }),
-          predicatePathProperty: z
-            .string()
-            .optional()
-            .meta({ id: "PropertyPaths-predicatePathProperty" }),
+            .meta({}),
+          predicatePathProperty: z.string().optional().meta({}),
         })
         .meta({
-          id: "PropertyPaths",
           description:
             "Node shape that uses different property path types in its properties",
         }) satisfies z.ZodType<$Json>;
@@ -14999,32 +14948,26 @@ export namespace PropertyNames {
           "@id": z.string().min(1),
           $type: z.literal("PropertyNames"),
           actualPropertyName1: z.string().meta({
-            id: "PropertyNames-actualPropertyName1",
             description: "sh:path: overrides property shape identifier",
           }),
           actualPropertyName2: z.string().meta({
-            id: "PropertyNames-actualPropertyName2",
             description: "sh:name: overrides sh:path and rdfs:label",
             title: "ignorePropertyName2",
           }),
           actualPropertyName3: z.string().meta({
-            id: "PropertyNames-actualPropertyName3",
             description:
               "shaclmate:name: overrides sh:name, sh:path, and rdfs:label",
           }),
           actualPropertyName4: z.string().meta({
-            id: "PropertyNames-actualPropertyName4",
             description: "rdfs:label: overrides sh:path",
             title: "actualPropertyName4",
           }),
           actualPropertyName5: z.string().meta({
-            id: "PropertyNames-actualPropertyName5",
             description:
               "IRI shape identifier whose prefix is a node shape identifier IRI: overrides sh:path",
           }),
         })
         .meta({
-          id: "PropertyNames",
           description:
             "Node shape that uses different methods to name properties",
         }) satisfies z.ZodType<$Json>;
@@ -15974,7 +15917,6 @@ export namespace PropertyCardinalities {
             .optional()
             .readonly()
             .meta({
-              id: "PropertyCardinalities-emptyStringSetProperty",
               description: "Set: minCount implicitly=0, no maxCount",
             }),
           nonEmptyStringSetProperty: z
@@ -15984,20 +15926,17 @@ export namespace PropertyCardinalities {
             .min(1)
             .readonly()
             .meta({
-              id: "PropertyCardinalities-nonEmptyStringSetProperty",
               description: "Set: minCount=1, no maxCount",
             }),
-          optionalStringProperty: z.string().optional().meta({
-            id: "PropertyCardinalities-optionalStringProperty",
-            description: "Option: maxCount=1, minCount=0",
-          }),
-          requiredStringProperty: z.string().meta({
-            id: "PropertyCardinalities-requiredStringProperty",
-            description: "Required: maxCount=minCount=1",
-          }),
+          optionalStringProperty: z
+            .string()
+            .optional()
+            .meta({ description: "Option: maxCount=1, minCount=0" }),
+          requiredStringProperty: z
+            .string()
+            .meta({ description: "Required: maxCount=minCount=1" }),
         })
         .meta({
-          id: "PropertyCardinalities",
           description:
             "Node shape that has properties with different cardinalities",
         }) satisfies z.ZodType<$Json>;
@@ -16793,11 +16732,9 @@ export namespace UnionMemberCommonParent {
             "UnionMember1",
             "UnionMember2",
           ]),
-          unionMemberCommonParentProperty: z.string().meta({
-            id: "UnionMemberCommonParent-unionMemberCommonParentProperty",
-          }),
+          unionMemberCommonParentProperty: z.string().meta({}),
         })
-        .meta({ id: "UnionMemberCommonParent" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -17426,11 +17363,9 @@ export namespace UnionMember2 {
         .object({
           ...UnionMemberCommonParent.$Json.schema().shape,
           "@id": z.string().min(1),
-          unionMember2Property: z
-            .string()
-            .meta({ id: "UnionMember2-unionMember2Property" }),
+          unionMember2Property: z.string().meta({}),
         })
-        .meta({ id: "UnionMember2" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -18031,11 +17966,9 @@ export namespace PartialUnionMember2 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("PartialUnionMember2"),
-          lazilyResolvedStringProperty: z
-            .string()
-            .meta({ id: "PartialUnionMember2-lazilyResolvedStringProperty" }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
-        .meta({ id: "PartialUnionMember2" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -18633,11 +18566,9 @@ export namespace UnionMember1 {
         .object({
           ...UnionMemberCommonParent.$Json.schema().shape,
           "@id": z.string().min(1),
-          unionMember1Property: z
-            .string()
-            .meta({ id: "UnionMember1-unionMember1Property" }),
+          unionMember1Property: z.string().meta({}),
         })
-        .meta({ id: "UnionMember1" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -19238,11 +19169,9 @@ export namespace PartialUnionMember1 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("PartialUnionMember1"),
-          lazilyResolvedStringProperty: z
-            .string()
-            .meta({ id: "PartialUnionMember1-lazilyResolvedStringProperty" }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
-        .meta({ id: "PartialUnionMember1" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -19810,7 +19739,6 @@ export namespace NewName2 {
       return z
         .object({ "@id": z.string().min(1), $type: z.literal("NewName2") })
         .meta({
-          id: "NewName2",
           description:
             "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes",
           title: "NewName2",
@@ -20289,7 +20217,6 @@ export namespace NewName1 {
       return z
         .object({ "@id": z.string().min(1), $type: z.literal("NewName1") })
         .meta({
-          id: "NewName1",
           description:
             "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
         }) satisfies z.ZodType<$Json>;
@@ -20827,18 +20754,11 @@ export namespace OrderedProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("OrderedProperties"),
-          orderedPropertyC: z
-            .string()
-            .meta({ id: "OrderedProperties-orderedPropertyC" }),
-          orderedPropertyB: z
-            .string()
-            .meta({ id: "OrderedProperties-orderedPropertyB" }),
-          orderedPropertyA: z
-            .string()
-            .meta({ id: "OrderedProperties-orderedPropertyA" }),
+          orderedPropertyC: z.string().meta({}),
+          orderedPropertyB: z.string().meta({}),
+          orderedPropertyA: z.string().meta({}),
         })
         .meta({
-          id: "OrderedProperties",
           description:
             "Node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
         }) satisfies z.ZodType<$Json>;
@@ -21944,65 +21864,24 @@ export namespace NumericProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NumericProperties"),
-          byteNumericProperty: z
-            .number()
-            .optional()
-            .meta({ id: "NumericProperties-byteNumericProperty" }),
-          decimalNumericProperty: z
-            .string()
-            .optional()
-            .meta({ id: "NumericProperties-decimalNumericProperty" }),
-          doubleNumericProperty: z
-            .number()
-            .optional()
-            .meta({ id: "NumericProperties-doubleNumericProperty" }),
-          floatNumericProperty: z
-            .number()
-            .optional()
-            .meta({ id: "NumericProperties-floatNumericProperty" }),
-          integerNumericProperty: z
-            .string()
-            .optional()
-            .meta({ id: "NumericProperties-integerNumericProperty" }),
-          intNumericProperty: z
-            .number()
-            .optional()
-            .meta({ id: "NumericProperties-intNumericProperty" }),
-          longNumericProperty: z
-            .string()
-            .optional()
-            .meta({ id: "NumericProperties-longNumericProperty" }),
-          negativeIntegerNumericProperty: z.string().optional().meta({
-            id: "NumericProperties-negativeIntegerNumericProperty",
-          }),
-          nonNegativeIntegerNumericProperty: z.string().optional().meta({
-            id: "NumericProperties-nonNegativeIntegerNumericProperty",
-          }),
-          nonPositiveIntegerNumericProperty: z.string().optional().meta({
-            id: "NumericProperties-nonPositiveIntegerNumericProperty",
-          }),
-          positiveIntegerNumericProperty: z.string().optional().meta({
-            id: "NumericProperties-positiveIntegerNumericProperty",
-          }),
-          shortNumericProperty: z
-            .number()
-            .optional()
-            .meta({ id: "NumericProperties-shortNumericProperty" }),
-          unsignedByteNumericProperty: z.number().optional().meta({
-            id: "NumericProperties-unsignedByteNumericProperty",
-          }),
-          unsignedIntNumericProperty: z.number().optional().meta({
-            id: "NumericProperties-unsignedIntNumericProperty",
-          }),
-          unsignedLongNumericProperty: z.string().optional().meta({
-            id: "NumericProperties-unsignedLongNumericProperty",
-          }),
-          unsignedShortNumericProperty: z.number().optional().meta({
-            id: "NumericProperties-unsignedShortNumericProperty",
-          }),
+          byteNumericProperty: z.number().optional().meta({}),
+          decimalNumericProperty: z.string().optional().meta({}),
+          doubleNumericProperty: z.number().optional().meta({}),
+          floatNumericProperty: z.number().optional().meta({}),
+          integerNumericProperty: z.string().optional().meta({}),
+          intNumericProperty: z.number().optional().meta({}),
+          longNumericProperty: z.string().optional().meta({}),
+          negativeIntegerNumericProperty: z.string().optional().meta({}),
+          nonNegativeIntegerNumericProperty: z.string().optional().meta({}),
+          nonPositiveIntegerNumericProperty: z.string().optional().meta({}),
+          positiveIntegerNumericProperty: z.string().optional().meta({}),
+          shortNumericProperty: z.number().optional().meta({}),
+          unsignedByteNumericProperty: z.number().optional().meta({}),
+          unsignedIntNumericProperty: z.number().optional().meta({}),
+          unsignedLongNumericProperty: z.string().optional().meta({}),
+          unsignedShortNumericProperty: z.number().optional().meta({}),
         })
         .meta({
-          id: "NumericProperties",
           description:
             "Node shape with properties that have numeric sh:datatype's",
         }) satisfies z.ZodType<$Json>;
@@ -24394,14 +24273,12 @@ export namespace NodeKinds {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NodeKinds"),
-          blankNodeKindProperty: z.object({ "@id": z.string().min(1) }).meta({
-            id: "NodeKinds-blankNodeKindProperty",
-          }),
+          blankNodeKindProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({}),
           blankNodeOrIriNodeKindProperty: z
             .object({ "@id": z.string().min(1) })
-            .meta({
-              id: "NodeKinds-blankNodeOrIriNodeKindProperty",
-            }),
+            .meta({}),
           blankNodeOrLiteralNodeKindProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -24415,10 +24292,8 @@ export namespace NodeKinds {
                 termType: z.literal("Literal"),
               }),
             ])
-            .meta({ id: "NodeKinds-blankNodeOrLiteralNodeKindProperty" }),
-          iriNodeKindProperty: z
-            .object({ "@id": z.string().min(1) })
-            .meta({ id: "NodeKinds-iriNodeKindProperty" }),
+            .meta({}),
+          iriNodeKindProperty: z.object({ "@id": z.string().min(1) }).meta({}),
           iriOrLiteralNodeKindProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -24432,17 +24307,16 @@ export namespace NodeKinds {
                 termType: z.literal("Literal"),
               }),
             ])
-            .meta({ id: "NodeKinds-iriOrLiteralNodeKindProperty" }),
+            .meta({}),
           literalNodeKindProperty: z
             .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
             })
-            .meta({ id: "NodeKinds-literalNodeKindProperty" }),
+            .meta({}),
         })
         .meta({
-          id: "NodeKinds",
           description:
             "Node shape that has properties with different sh:nodeKind combinations",
         }) satisfies z.ZodType<$Json>;
@@ -25489,11 +25363,9 @@ export namespace NoRdfTypeUnionMember2 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NoRdfTypeUnionMember2"),
-          noRdfTypeUnionMember2Property: z.string().meta({
-            id: "NoRdfTypeUnionMember2-noRdfTypeUnionMember2Property",
-          }),
+          noRdfTypeUnionMember2Property: z.string().meta({}),
         })
-        .meta({ id: "NoRdfTypeUnionMember2" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -25988,11 +25860,9 @@ export namespace NoRdfTypeUnionMember1 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NoRdfTypeUnionMember1"),
-          noRdfTypeUnionMember1Property: z.string().meta({
-            id: "NoRdfTypeUnionMember1-noRdfTypeUnionMember1Property",
-          }),
+          noRdfTypeUnionMember1Property: z.string().meta({}),
         })
-        .meta({ id: "NoRdfTypeUnionMember1" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -26510,14 +26380,10 @@ export namespace NamedUnionProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NamedUnionProperties"),
-          namedUnion1Property: NamedUnion1.$Json
-            .schema()
-            .meta({ id: "NamedUnionProperties-namedUnion1Property" }),
-          namedUnion2Property: NamedUnion2.$Json
-            .schema()
-            .meta({ id: "NamedUnionProperties-namedUnion2Property" }),
+          namedUnion1Property: NamedUnion1.$Json.schema().meta({}),
+          namedUnion2Property: NamedUnion2.$Json.schema().meta({}),
         })
-        .meta({ id: "NamedUnionProperties" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -27311,22 +27177,18 @@ export namespace MutableProperties {
           "@id": z.string().min(1),
           $type: z.literal("MutableProperties"),
           mutableListProperty: z.string().array().optional().optional().meta({
-            id: "MutableProperties-mutableListProperty",
             description:
               "List-valued property that can't be reassigned but whose value can be mutated",
           }),
           mutableSetProperty: z.string().array().optional().meta({
-            id: "MutableProperties-mutableSetProperty",
             description:
               "Set-valued property that can't be reassigned but whose value can be mutated",
           }),
           mutableStringProperty: z.string().optional().meta({
-            id: "MutableProperties-mutableStringProperty",
             description: "String-valued property that can be re-assigned",
           }),
         })
         .meta({
-          id: "MutableProperties",
           description: "Node shape with shaclmate:mutable properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -28312,30 +28174,23 @@ export namespace ListProperties {
             .optional()
             .readonly()
             .optional()
-            .meta({
-              id: "ListProperties-iriListProperty",
-            }),
+            .meta({}),
           objectListProperty: NonClass.$Json
             .schema()
             .array()
             .optional()
             .readonly()
             .optional()
-            .meta({
-              id: "ListProperties-objectListProperty",
-            }),
+            .meta({}),
           stringListProperty: z
             .string()
             .array()
             .optional()
             .readonly()
             .optional()
-            .meta({
-              id: "ListProperties-stringListProperty",
-            }),
+            .meta({}),
         })
         .meta({
-          id: "ListProperties",
           description: "Node shape that uses the list shapes in properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -30307,58 +30162,42 @@ export namespace LazyProperties {
           "@id": z.string().min(1),
           $type: z.literal("LazyProperties"),
           optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
-            $DefaultPartial.$Json.schema().optional().meta({
-              id: "LazyProperties-optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            $DefaultPartial.$Json.schema().optional().meta({}),
           optionalLazyToResolvedIriIdentifierProperty:
-            $NamedDefaultPartial.$Json.schema().optional().meta({
-              id: "LazyProperties-optionalLazyToResolvedIriIdentifierProperty",
-            }),
+            $NamedDefaultPartial.$Json.schema().optional().meta({}),
           optionalLazyToResolvedUnionProperty: $DefaultPartial.$Json
             .schema()
             .optional()
-            .meta({
-              id: "LazyProperties-optionalLazyToResolvedUnionProperty",
-            }),
+            .meta({}),
           optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
-            Partial.$Json.schema().optional().meta({
-              id: "LazyProperties-optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            Partial.$Json.schema().optional().meta({}),
           optionalPartialToResolvedUnionProperty: Partial.$Json
             .schema()
             .optional()
-            .meta({
-              id: "LazyProperties-optionalPartialToResolvedUnionProperty",
-            }),
+            .meta({}),
           optionalPartialUnionToResolvedUnionProperty: PartialUnion.$Json
             .schema()
             .optional()
-            .meta({
-              id: "LazyProperties-optionalPartialUnionToResolvedUnionProperty",
-            }),
+            .meta({}),
           requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-            $DefaultPartial.$Json.schema().meta({
-              id: "LazyProperties-requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            $DefaultPartial.$Json.schema().meta({}),
           requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-            Partial.$Json.schema().meta({
-              id: "LazyProperties-requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            Partial.$Json.schema().meta({}),
           setLazyToResolvedBlankNodeOrIriIdentifierProperty:
-            $DefaultPartial.$Json.schema().array().optional().readonly().meta({
-              id: "LazyProperties-setLazyToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            $DefaultPartial.$Json
+              .schema()
+              .array()
+              .optional()
+              .readonly()
+              .meta({}),
           setPartialToResolvedBlankNodeOrIriIdentifierProperty: Partial.$Json
             .schema()
             .array()
             .optional()
             .readonly()
-            .meta({
-              id: "LazyProperties-setPartialToResolvedBlankNodeOrIriIdentifierProperty",
-            }),
+            .meta({}),
         })
         .meta({
-          id: "LazyProperties",
           description: "Node shape that has lazy properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -32528,12 +32367,9 @@ export namespace LazilyResolvedIriIdentifier {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedIriIdentifier"),
-          lazilyResolvedStringProperty: z.string().meta({
-            id: "LazilyResolvedIriIdentifier-lazilyResolvedStringProperty",
-          }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
         .meta({
-          id: "LazilyResolvedIriIdentifier",
           description: "Node shape resolved by LazyProperties",
         }) satisfies z.ZodType<$Json>;
     }
@@ -33039,11 +32875,9 @@ export namespace LazilyResolvedUnionMember2 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedUnionMember2"),
-          lazilyResolvedStringProperty: z.string().meta({
-            id: "LazilyResolvedUnionMember2-lazilyResolvedStringProperty",
-          }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
-        .meta({ id: "LazilyResolvedUnionMember2" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -33648,11 +33482,9 @@ export namespace LazilyResolvedUnionMember1 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedUnionMember1"),
-          lazilyResolvedStringProperty: z.string().meta({
-            id: "LazilyResolvedUnionMember1-lazilyResolvedStringProperty",
-          }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
-        .meta({ id: "LazilyResolvedUnionMember1" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -34262,12 +34094,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("LazilyResolvedBlankNodeOrIriIdentifier"),
-          lazilyResolvedStringProperty: z.string().meta({
-            id: "LazilyResolvedBlankNodeOrIriIdentifier-lazilyResolvedStringProperty",
-          }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
         .meta({
-          id: "LazilyResolvedBlankNodeOrIriIdentifier",
           description: "Node shape resolved by LazyProperties",
         }) satisfies z.ZodType<$Json>;
     }
@@ -34912,13 +34741,9 @@ export namespace LanguageInProperties {
             .nonempty()
             .min(1)
             .readonly()
-            .meta({
-              id: "LanguageInProperties-languageInLiteralProperty",
-              description: "literal property for testing languageIn",
-            }),
+            .meta({ description: "literal property for testing languageIn" }),
         })
         .meta({
-          id: "LanguageInProperties",
           description: "Node shape that uses the StringList in a property.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -35514,10 +35339,9 @@ export namespace JsPrimitiveUnionProperty {
             .array()
             .optional()
             .readonly()
-            .meta({ id: "JsPrimitiveUnionProperty-jsPrimitiveUnionProperty" }),
+            .meta({}),
         })
         .meta({
-          id: "JsPrimitiveUnionProperty",
           description:
             "Node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.",
         }) satisfies z.ZodType<$Json>;
@@ -36436,7 +36260,6 @@ export namespace IriIdentifier {
       return z
         .object({ "@id": z.string().min(1), $type: z.literal("IriIdentifier") })
         .meta({
-          id: "IriIdentifier",
           description: "A node shape that only allows IRI identifiers.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -36960,9 +36783,9 @@ export namespace IndirectRecursiveHelper {
                 IndirectRecursive.$Json.schema(),
             )
             .optional()
-            .meta({ id: "IndirectRecursiveHelper-indirectRecursiveProperty" }),
+            .meta({}),
         })
-        .meta({ id: "IndirectRecursiveHelper" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -37579,9 +37402,9 @@ export namespace IndirectRecursive {
                 IndirectRecursiveHelper.$Json.schema(),
             )
             .optional()
-            .meta({ id: "IndirectRecursive-indirectRecursiveHelperProperty" }),
+            .meta({}),
         })
-        .meta({ id: "IndirectRecursive" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -38370,24 +38193,13 @@ export namespace InProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("InProperties"),
-          inBooleansProperty: z
-            .literal(true)
-            .optional()
-            .meta({ id: "InProperties-inBooleansProperty" }),
-          inDateTimesProperty: z.iso
-            .datetime()
-            .optional()
-            .meta({ id: "InProperties-inDateTimesProperty" }),
+          inBooleansProperty: z.literal(true).optional().meta({}),
+          inDateTimesProperty: z.iso.datetime().optional().meta({}),
           inDoublesProperty: z
             .union([z.literal(1), z.literal(2)])
             .optional()
-            .meta({
-              id: "InProperties-inDoublesProperty",
-            }),
-          inIntegersProperty: z
-            .enum(["1", "2"])
-            .optional()
-            .meta({ id: "InProperties-inIntegersProperty" }),
+            .meta({}),
+          inIntegersProperty: z.enum(["1", "2"]).optional().meta({}),
           inIrisProperty: z
             .object({
               "@id": z.enum([
@@ -38396,14 +38208,10 @@ export namespace InProperties {
               ]),
             })
             .optional()
-            .meta({ id: "InProperties-inIrisProperty" }),
-          inStringsProperty: z
-            .enum(["text", "html"])
-            .optional()
-            .meta({ id: "InProperties-inStringsProperty" }),
+            .meta({}),
+          inStringsProperty: z.enum(["text", "html"]).optional().meta({}),
         })
         .meta({
-          id: "InProperties",
           description: "Node shape with sh:in properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -39555,13 +39363,9 @@ export namespace InIdentifier {
             "http://example.com/InIdentifierInstance2",
           ]),
           $type: z.literal("InIdentifier"),
-          inIdentifierProperty: z
-            .string()
-            .optional()
-            .meta({ id: "InIdentifier-inIdentifierProperty" }),
+          inIdentifierProperty: z.string().optional().meta({}),
         })
         .meta({
-          id: "InIdentifier",
           description: "Node shape with sh:in constraining its identifier.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -40206,15 +40010,10 @@ export namespace HasValueProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("HasValueProperties"),
-          hasIriValueProperty: z.object({ "@id": z.string().min(1) }).meta({
-            id: "HasValueProperties-hasIriValueProperty",
-          }),
-          hasLiteralValueProperty: z
-            .string()
-            .meta({ id: "HasValueProperties-hasLiteralValueProperty" }),
+          hasIriValueProperty: z.object({ "@id": z.string().min(1) }).meta({}),
+          hasLiteralValueProperty: z.string().meta({}),
         })
         .meta({
-          id: "HasValueProperties",
           description: "Node shape with sh:hasValue properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -40780,11 +40579,9 @@ export namespace FlattenUnionMember3 {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("FlattenUnionMember3"),
-          flattenUnionMember3Property: z
-            .string()
-            .meta({ id: "FlattenUnionMember3-flattenUnionMember3Property" }),
+          flattenUnionMember3Property: z.string().meta({}),
         })
-        .meta({ id: "FlattenUnionMember3" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -41386,13 +41183,9 @@ export namespace ExternProperty {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("ExternProperty"),
-          externProperty: Extern.$Json
-            .schema()
-            .optional()
-            .meta({ id: "ExternProperty-externProperty" }),
+          externProperty: Extern.$Json.schema().optional().meta({}),
         })
         .meta({
-          id: "ExternProperty",
           description: "Node shape that references the Extern in a property.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -41992,11 +41785,9 @@ export namespace BaseForExtern {
         .object({
           "@id": z.string().min(1),
           $type: z.enum(["BaseForExtern", "Extern"]),
-          baseForExternProperty: z
-            .string()
-            .meta({ id: "BaseForExtern-baseForExternProperty" }),
+          baseForExternProperty: z.string().meta({}),
         })
-        .meta({ id: "BaseForExtern" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -42589,12 +42380,9 @@ export namespace ExplicitRdfType {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("ExplicitRdfType"),
-          explicitRdfTypeProperty: z
-            .string()
-            .meta({ id: "ExplicitRdfType-explicitRdfTypeProperty" }),
+          explicitRdfTypeProperty: z.string().meta({}),
         })
         .meta({
-          id: "ExplicitRdfType",
           description:
             "Node shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
         }) satisfies z.ZodType<$Json>;
@@ -43186,12 +42974,9 @@ export namespace ExplicitFromToRdfTypes {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("ExplicitFromToRdfTypes"),
-          explicitFromToRdfTypesProperty: z.string().meta({
-            id: "ExplicitFromToRdfTypes-explicitFromToRdfTypesProperty",
-          }),
+          explicitFromToRdfTypesProperty: z.string().meta({}),
         })
         .meta({
-          id: "ExplicitFromToRdfTypes",
           description:
             "Node shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
         }) satisfies z.ZodType<$Json>;
@@ -43851,21 +43636,17 @@ export namespace DisplayProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("DisplayProperties"),
-          explicitFalseDisplayProperty: z.string().meta({
-            id: "DisplayProperties-explicitFalseDisplayProperty",
-            description: "Explicity exclude from the display",
-          }),
-          explicitTrueDisplayProperty: z.string().meta({
-            id: "DisplayProperties-explicitTrueDisplayProperty",
-            description: "Explicity include in the display",
-          }),
-          implicitFalseDisplayProperty: z.string().meta({
-            id: "DisplayProperties-implicitFalseDisplayProperty",
-            description: "Implicitly exclude from the display",
-          }),
+          explicitFalseDisplayProperty: z
+            .string()
+            .meta({ description: "Explicity exclude from the display" }),
+          explicitTrueDisplayProperty: z
+            .string()
+            .meta({ description: "Explicity include in the display" }),
+          implicitFalseDisplayProperty: z
+            .string()
+            .meta({ description: "Implicitly exclude from the display" }),
         })
         .meta({
-          id: "DisplayProperties",
           description:
             "Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations",
         }) satisfies z.ZodType<$Json>;
@@ -44621,9 +44402,9 @@ export namespace DirectRecursive {
                 DirectRecursive.$Json.schema(),
             )
             .optional()
-            .meta({ id: "DirectRecursive-directRecursiveProperty" }),
+            .meta({}),
         })
-        .meta({ id: "DirectRecursive" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -45366,27 +45147,14 @@ export namespace DefaultValueProperties {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("DefaultValueProperties"),
-          dateDefaultValueProperty: z.iso
-            .date()
-            .meta({ id: "DefaultValueProperties-dateDefaultValueProperty" }),
-          dateTimeDefaultValueProperty: z.iso.datetime().meta({
-            id: "DefaultValueProperties-dateTimeDefaultValueProperty",
-          }),
-          falseBooleanDefaultValueProperty: z.boolean().meta({
-            id: "DefaultValueProperties-falseBooleanDefaultValueProperty",
-          }),
-          numberDefaultValueProperty: z
-            .number()
-            .meta({ id: "DefaultValueProperties-numberDefaultValueProperty" }),
-          stringDefaultValueProperty: z
-            .string()
-            .meta({ id: "DefaultValueProperties-stringDefaultValueProperty" }),
-          trueBooleanDefaultValueProperty: z.boolean().meta({
-            id: "DefaultValueProperties-trueBooleanDefaultValueProperty",
-          }),
+          dateDefaultValueProperty: z.iso.date().meta({}),
+          dateTimeDefaultValueProperty: z.iso.datetime().meta({}),
+          falseBooleanDefaultValueProperty: z.boolean().meta({}),
+          numberDefaultValueProperty: z.number().meta({}),
+          stringDefaultValueProperty: z.string().meta({}),
+          trueBooleanDefaultValueProperty: z.boolean().meta({}),
         })
         .meta({
-          id: "DefaultValueProperties",
           description: "Node shape with sh:defaultValue properties.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -46832,7 +46600,7 @@ export namespace DateUnionProperties {
             ])
             .readonly()
             .optional()
-            .meta({ id: "DateUnionProperties-dateOrDateTimeProperty" }),
+            .meta({}),
           dateOrStringProperty: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("date"), value: z.iso.date() }),
@@ -46840,7 +46608,7 @@ export namespace DateUnionProperties {
             ])
             .readonly()
             .optional()
-            .meta({ id: "DateUnionProperties-dateOrStringProperty" }),
+            .meta({}),
           dateTimeOrDateProperty: z
             .discriminatedUnion("type", [
               z.object({
@@ -46851,7 +46619,7 @@ export namespace DateUnionProperties {
             ])
             .readonly()
             .optional()
-            .meta({ id: "DateUnionProperties-dateTimeOrDateProperty" }),
+            .meta({}),
           stringOrDateProperty: z
             .discriminatedUnion("type", [
               z.object({ type: z.literal("string"), value: z.string() }),
@@ -46859,10 +46627,9 @@ export namespace DateUnionProperties {
             ])
             .readonly()
             .optional()
-            .meta({ id: "DateUnionProperties-stringOrDateProperty" }),
+            .meta({}),
         })
         .meta({
-          id: "DateUnionProperties",
           description:
             "Node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
         }) satisfies z.ZodType<$Json>;
@@ -49601,26 +49368,20 @@ export namespace ConvertibleTypeProperties {
             .nonempty()
             .min(1)
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleIriNonEmptySetProperty",
-            }),
+            .meta({}),
           convertibleIriOptionProperty: z
             .object({ "@id": z.string().min(1) })
             .optional()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleIriOptionProperty",
-            }),
-          convertibleIriProperty: z.object({ "@id": z.string().min(1) }).meta({
-            id: "ConvertibleTypeProperties-convertibleIriProperty",
-          }),
+            .meta({}),
+          convertibleIriProperty: z
+            .object({ "@id": z.string().min(1) })
+            .meta({}),
           convertibleIriSetProperty: z
             .object({ "@id": z.string().min(1) })
             .array()
             .optional()
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleIriSetProperty",
-            }),
+            .meta({}),
           convertibleLiteralNonEmptySetProperty: z
             .object({
               "@language": z.string().optional(),
@@ -49631,9 +49392,7 @@ export namespace ConvertibleTypeProperties {
             .nonempty()
             .min(1)
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleLiteralNonEmptySetProperty",
-            }),
+            .meta({}),
           convertibleLiteralOptionProperty: z
             .object({
               "@language": z.string().optional(),
@@ -49641,18 +49400,14 @@ export namespace ConvertibleTypeProperties {
               "@value": z.string(),
             })
             .optional()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleLiteralOptionProperty",
-            }),
+            .meta({}),
           convertibleLiteralProperty: z
             .object({
               "@language": z.string().optional(),
               "@type": z.string().optional(),
               "@value": z.string(),
             })
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleLiteralProperty",
-            }),
+            .meta({}),
           convertibleLiteralSetProperty: z
             .object({
               "@language": z.string().optional(),
@@ -49662,9 +49417,7 @@ export namespace ConvertibleTypeProperties {
             .array()
             .optional()
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleLiteralSetProperty",
-            }),
+            .meta({}),
           convertibleTermNonEmptySetProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -49686,9 +49439,7 @@ export namespace ConvertibleTypeProperties {
             .nonempty()
             .min(1)
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleTermNonEmptySetProperty",
-            }),
+            .meta({}),
           convertibleTermOptionProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -49707,9 +49458,7 @@ export namespace ConvertibleTypeProperties {
               }),
             ])
             .optional()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleTermOptionProperty",
-            }),
+            .meta({}),
           convertibleTermProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -49727,7 +49476,7 @@ export namespace ConvertibleTypeProperties {
                 termType: z.literal("Literal"),
               }),
             ])
-            .meta({ id: "ConvertibleTypeProperties-convertibleTermProperty" }),
+            .meta({}),
           convertibleTermSetProperty: z
             .discriminatedUnion("termType", [
               z.object({
@@ -49748,12 +49497,9 @@ export namespace ConvertibleTypeProperties {
             .array()
             .optional()
             .readonly()
-            .meta({
-              id: "ConvertibleTypeProperties-convertibleTermSetProperty",
-            }),
+            .meta({}),
         })
         .meta({
-          id: "ConvertibleTypeProperties",
           description:
             "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
         }) satisfies z.ZodType<$Json>;
@@ -51620,11 +51366,9 @@ export namespace BaseWithProperties {
             "ConcreteChild",
             "ConcreteParent",
           ]),
-          baseWithPropertiesProperty: z
-            .string()
-            .meta({ id: "BaseWithProperties-baseWithPropertiesProperty" }),
+          baseWithPropertiesProperty: z.string().meta({}),
         })
-        .meta({ id: "BaseWithProperties" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -52227,9 +51971,7 @@ export namespace BaseWithoutProperties {
           ...BaseWithProperties.$Json.schema().shape,
           "@id": z.string().min(1),
         })
-        .meta({
-          id: "BaseWithoutProperties",
-        }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -52806,12 +52548,9 @@ export namespace ConcreteParent {
         .object({
           ...BaseWithoutProperties.$Json.schema().shape,
           "@id": z.string().min(1),
-          concreteParentProperty: z
-            .string()
-            .meta({ id: "ConcreteParent-concreteParentProperty" }),
+          concreteParentProperty: z.string().meta({}),
         })
         .meta({
-          id: "ConcreteParent",
           description:
             "Node shape that inherits a base node shape and is the parent of the ConcreteChild.",
         }) satisfies z.ZodType<$Json>;
@@ -53450,12 +53189,9 @@ export namespace ConcreteChild {
         .object({
           ...ConcreteParent.$Json.schema().shape,
           "@id": z.string().min(1),
-          concreteChildProperty: z
-            .string()
-            .meta({ id: "ConcreteChild-concreteChildProperty" }),
+          concreteChildProperty: z.string().meta({}),
         })
         .meta({
-          id: "ConcreteChild",
           description:
             "Child of ConcreteParent. Should inherit properties and node kinds.",
         }) satisfies z.ZodType<$Json>;
@@ -54057,12 +53793,9 @@ export namespace Partial {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("Partial"),
-          lazilyResolvedStringProperty: z
-            .string()
-            .meta({ id: "Partial-lazilyResolvedStringProperty" }),
+          lazilyResolvedStringProperty: z.string().meta({}),
         })
         .meta({
-          id: "Partial",
           description: "Node shape used as a partial by LazyProperties",
         }) satisfies z.ZodType<$Json>;
     }
@@ -54534,12 +54267,9 @@ export namespace NonClass {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NonClass"),
-          nonClassProperty: z
-            .string()
-            .meta({ id: "NonClass-nonClassProperty" }),
+          nonClassProperty: z.string().meta({}),
         })
         .meta({
-          id: "NonClass",
           description: "Node shape that isn't an rdfs:Class.",
         }) satisfies z.ZodType<$Json>;
     }
@@ -55181,7 +54911,6 @@ export namespace ClassProperties {
             .object({ "@id": z.string().min(1) })
             .optional()
             .meta({
-              id: "ClassProperties-iriClassProperty",
               description:
                 "Property where sh:class refers to an undefined :Class sh:nodeKind is an IRI",
             }),
@@ -55189,17 +54918,14 @@ export namespace ClassProperties {
             .object({ "@id": z.string().min(1) })
             .optional()
             .meta({
-              id: "ClassProperties-multiClassProperty",
               description:
                 "Property where sh:class refers to multiple undefined classes; sh:nodeKind is implicit sh:BlankNodeOrIRI",
             }),
           nodeClassProperty1: NonClass.$Json.schema().optional().meta({
-            id: "ClassProperties-nodeClassProperty1",
             description:
               "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that's not an implicit class target",
           }),
           nodeClassProperty2: Partial.$Json.schema().optional().meta({
-            id: "ClassProperties-nodeClassProperty2",
             description:
               "Property where sh:class refers to an undefined :Class and sh:node refers to a node shape that is an implicit class target",
           }),
@@ -55207,13 +54933,11 @@ export namespace ClassProperties {
             .object({ "@id": z.string().min(1) })
             .optional()
             .meta({
-              id: "ClassProperties-singleClassProperty",
               description:
                 "Property where sh:class refers to a single undefined :UndefinedClass; sh:nodeKind is implicit sh:BlankNodeOrIRI",
             }),
         })
         .meta({
-          id: "ClassProperties",
           description: "Node shape with sh:class properties",
         }) satisfies z.ZodType<$Json>;
     }
@@ -56188,7 +55912,6 @@ export namespace BlankNodeOrIriIdentifier {
           $type: z.literal("BlankNodeOrIriIdentifier"),
         })
         .meta({
-          id: "BlankNodeOrIriIdentifier",
           description:
             "Node shape that can have a blank node or IRI as an identifier",
         }) satisfies z.ZodType<$Json>;
@@ -56693,7 +56416,6 @@ export namespace BlankNodeIdentifier {
           $type: z.literal("BlankNodeIdentifier"),
         })
         .meta({
-          id: "BlankNodeIdentifier",
           description:
             "Node shape that can only have a blank node as an identifier",
         }) satisfies z.ZodType<$Json>;
@@ -57399,7 +57121,6 @@ export namespace FlattenUnion {
         ])
         .readonly()
         .meta({
-          id: "FlattenUnion",
           description:
             "Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.",
         });
@@ -57884,7 +57605,6 @@ export namespace Union {
         ])
         .readonly()
         .meta({
-          id: "Union",
           description:
             "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
         });
@@ -58371,7 +58091,6 @@ export namespace LazilyResolvedUnion {
         ])
         .readonly()
         .meta({
-          id: "LazilyResolvedUnion",
           description:
             "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
         });
@@ -58844,7 +58563,6 @@ export namespace PartialUnion {
         ])
         .readonly()
         .meta({
-          id: "PartialUnion",
           description:
             "Counterpart of Union for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
         });
@@ -59321,7 +59039,6 @@ export namespace NoRdfTypeUnion {
         ])
         .readonly()
         .meta({
-          id: "NoRdfTypeUnion",
           description:
             "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's",
         });
@@ -59790,7 +59507,6 @@ export namespace RecursiveUnion {
         ])
         .readonly()
         .meta({
-          id: "RecursiveUnion",
           description:
             "Node shape sh:xone's node shapes that have properties with the union's type",
         });
@@ -63715,7 +63431,7 @@ export namespace $Object {
           $NamedDefaultPartial.$Json.schema(),
         ])
         .readonly()
-        .meta({ id: "$Object" });
+        .meta({});
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);
