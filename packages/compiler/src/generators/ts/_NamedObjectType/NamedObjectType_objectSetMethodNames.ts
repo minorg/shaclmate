@@ -1,13 +1,19 @@
 import { camelCase, trainCase } from "change-case";
 import plur from "plur";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function NamedObjectType_objectSetMethodNames(this: {
   readonly name: string;
 }) {
-  const prefixSingular = camelCase(this.name);
-  const thisNameParts = trainCase(this.name).split("-");
+  const prefixSingular = camelCase(this.name, {
+    prefixCharacters: syntheticNamePrefix,
+  });
+  const thisNameParts = trainCase(this.name, {
+    prefixCharacters: syntheticNamePrefix,
+  }).split("-");
   let prefixPlural = camelCase(
     `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
+    { prefixCharacters: syntheticNamePrefix },
   );
   if (prefixPlural === prefixSingular) {
     // Happens with singular-s nouns like "series"
