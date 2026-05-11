@@ -41680,7 +41680,10 @@ export namespace ExternProperty {
         variablePrefix,
       }),
     );
-}
+} /**
+ * Base type for :Extern to reuse
+ */
+
 export interface BaseForExtern {
   readonly $identifier: () => BaseForExtern.$Identifier;
   readonly $type: "BaseForExtern" | "Extern";
@@ -41787,7 +41790,9 @@ export namespace BaseForExtern {
           $type: z.enum(["BaseForExtern", "Extern"]),
           baseForExternProperty: z.string().meta({}),
         })
-        .meta({}) satisfies z.ZodType<$Json>;
+        .meta({
+          description: "Base type for :Extern to reuse",
+        }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -51248,2445 +51253,6 @@ export namespace ConvertibleTypeProperties {
         variablePrefix,
       }),
     );
-}
-export interface BaseWithProperties {
-  readonly $identifier: () => BaseWithProperties.$Identifier;
-  readonly $type:
-    | "BaseWithProperties"
-    | "BaseWithoutProperties"
-    | "ConcreteChild"
-    | "ConcreteParent";
-  readonly baseWithPropertiesProperty: string;
-}
-
-export namespace BaseWithProperties {
-  export function $create(parameters: {
-    readonly $identifier?:
-      | (() => BaseWithProperties.$Identifier)
-      | (BlankNode | NamedNode)
-      | string;
-    readonly baseWithPropertiesProperty: string;
-  }): BaseWithProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => BaseWithProperties.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "BaseWithProperties" as const;
-    const baseWithPropertiesProperty = parameters.baseWithPropertiesProperty;
-    return { $identifier, $type, baseWithPropertiesProperty };
-  }
-
-  export function $equals(
-    left: BaseWithProperties,
-    right: BaseWithProperties,
-  ): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier())
-      .mapLeft((propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(
-          left.baseWithPropertiesProperty,
-          right.baseWithPropertiesProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "baseWithPropertiesProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _baseWithProperties: BaseWithProperties,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseWithProperties.$hashShaclProperties(_baseWithProperties, _hasher);
-    _hasher.update(_baseWithProperties.$identifier().value);
-    _hasher.update(_baseWithProperties.$type);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _baseWithProperties: BaseWithProperties,
-    _hasher: HasherT,
-  ): HasherT {
-    _hasher.update(_baseWithProperties.baseWithPropertiesProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type:
-      | "BaseWithProperties"
-      | "BaseWithoutProperties"
-      | "ConcreteChild"
-      | "ConcreteParent";
-    readonly baseWithPropertiesProperty: string;
-  };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          "@id": z.string().min(1),
-          $type: z.enum([
-            "BaseWithProperties",
-            "BaseWithoutProperties",
-            "ConcreteChild",
-            "ConcreteParent",
-          ]),
-          baseWithPropertiesProperty: z.string().meta({}),
-        })
-        .meta({}) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "BaseWithProperties" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/baseWithPropertiesProperty`,
-            type: "Control",
-          },
-        ],
-        label: "BaseWithProperties",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: BaseWithProperties.$Filter,
-    value: BaseWithProperties,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.baseWithPropertiesProperty !== undefined &&
-      !$filterString(
-        filter.baseWithPropertiesProperty,
-        value.baseWithPropertiesProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly baseWithPropertiesProperty?: $StringFilter;
-  };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    BaseWithProperties.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.baseWithPropertiesProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "baseWithPropertiesProperty",
-        propertySchema: $schema.properties.baseWithPropertiesProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    BaseWithProperties.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        {
-          type: "values" as const,
-          values: [
-            BaseWithProperties.$fromRdfType,
-            BaseWithoutProperties.$fromRdfType,
-            ConcreteParent.$fromRdfType,
-            ConcreteChild.$fromRdfType,
-          ].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
-              identifier as NamedNode;
-            return valuePatternRow;
-          }),
-        },
-        $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(
-            `${parameters.variablePrefix}FromRdfType`,
-          ),
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: BaseWithProperties.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.baseWithPropertiesProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "baseWithPropertiesProperty",
-        propertySchema: $schema.properties.baseWithPropertiesProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: BaseWithProperties.$Json,
-  ): BaseWithProperties {
-    return $create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    BaseWithProperties
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BaseWithProperties.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    BaseWithProperties
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            BaseWithProperties.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseWithProperties",
-  );
-
-  export function isBaseWithProperties(
-    object: $Object,
-  ): object is BaseWithProperties {
-    switch (object.$type) {
-      case "BaseWithoutProperties":
-      case "ConcreteChild":
-      case "ConcreteParent":
-      case "BaseWithProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: BaseWithProperties.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type:
-      | "BaseWithProperties"
-      | "BaseWithoutProperties"
-      | "ConcreteChild"
-      | "ConcreteParent";
-    baseWithPropertiesProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "BaseWithProperties" as const;
-    const baseWithPropertiesProperty = $json["baseWithPropertiesProperty"];
-    return { $identifier, $type, baseWithPropertiesProperty };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    $type:
-      | "BaseWithProperties"
-      | "BaseWithoutProperties"
-      | "ConcreteChild"
-      | "ConcreteParent";
-    baseWithPropertiesProperty: string;
-  }> = ($resource, _$options) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/BaseWithProperties":
-                case "http://example.com/BaseWithoutProperties":
-                case "http://example.com/ConcreteParent":
-                case "http://example.com/ConcreteChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(BaseWithProperties.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseWithProperties)`,
-                ),
-              );
-            })
-        : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"BaseWithProperties">("BaseWithProperties" as const).chain(
-            ($type) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema: $schema.properties.baseWithPropertiesProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).map((baseWithPropertiesProperty) => ({
-                $identifier,
-                $type,
-                baseWithPropertiesProperty,
-              })),
-          ),
-        ),
-    );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          descendantValues: [
-            "BaseWithoutProperties",
-            "ConcreteChild",
-            "ConcreteParent",
-          ],
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BaseWithProperties"],
-        }),
-      },
-      baseWithPropertiesProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/baseWithPropertiesProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: BaseWithProperties.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "baseWithProperties";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        BaseWithProperties.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          BaseWithProperties.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof BaseWithProperties.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      BaseWithProperties.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(
-    _baseWithProperties: BaseWithProperties,
-  ): BaseWithProperties.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _baseWithProperties.$identifier().termType === "BlankNode"
-            ? `_:${_baseWithProperties.$identifier().value}`
-            : _baseWithProperties.$identifier().value,
-        $type: _baseWithProperties.$type,
-        baseWithPropertiesProperty:
-          _baseWithProperties.baseWithPropertiesProperty,
-      } satisfies BaseWithProperties.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _baseWithProperties: BaseWithProperties,
-    options?: Parameters<$ToRdfResourceFunction<BaseWithProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_baseWithProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/BaseWithProperties"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/baseWithPropertiesProperty"),
-      [$literalFactory.string(_baseWithProperties.baseWithPropertiesProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _baseWithProperties: BaseWithProperties,
-  ): Record<string, string> {
-    return $compactRecord({
-      $identifier: _baseWithProperties.$identifier().toString(),
-    });
-  }
-
-  export function $toString(this: BaseWithProperties): string;
-  export function $toString(_baseWithProperties: BaseWithProperties): string;
-  export function $toString(
-    this: BaseWithProperties | undefined,
-    _baseWithProperties?: BaseWithProperties,
-  ): string {
-    return `BaseWithProperties(${JSON.stringify($propertiesToStrings((_baseWithProperties ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    BaseWithProperties.$Filter,
-    typeof BaseWithProperties.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    BaseWithProperties.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    BaseWithProperties.$Filter,
-    typeof BaseWithProperties.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      BaseWithProperties.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-}
-export interface BaseWithoutProperties extends BaseWithProperties {
-  readonly $identifier: () => BaseWithoutProperties.$Identifier;
-  readonly $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
-}
-
-export namespace BaseWithoutProperties {
-  export function $create(
-    parameters: {
-      readonly $identifier?:
-        | (() => BaseWithoutProperties.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
-    } & Parameters<typeof BaseWithProperties.$create>[0],
-  ): BaseWithoutProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => BaseWithoutProperties.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "BaseWithoutProperties" as const;
-    return { ...BaseWithProperties.$create(parameters), $identifier, $type };
-  }
-
-  export function $equals(
-    left: BaseWithoutProperties,
-    right: BaseWithoutProperties,
-  ): $EqualsResult {
-    return BaseWithProperties.$equals(left, right).chain(() =>
-      $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-        (propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "$identifier",
-          propertyValuesUnequal,
-          type: "property" as const,
-        }),
-      ),
-    );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _baseWithoutProperties: BaseWithoutProperties,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseWithoutProperties.$hashShaclProperties(_baseWithoutProperties, _hasher);
-    _hasher.update(_baseWithoutProperties.$identifier().value);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _baseWithoutProperties: BaseWithoutProperties,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseWithProperties.$hashShaclProperties(_baseWithoutProperties, _hasher);
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = { readonly "@id": string } & BaseWithProperties.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...BaseWithProperties.$Json.schema().shape,
-          "@id": z.string().min(1),
-        })
-        .meta({}) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          BaseWithProperties.$Json.uiSchema({ scopePrefix }),
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-        ],
-        label: "BaseWithoutProperties",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: BaseWithoutProperties.$Filter,
-    value: BaseWithoutProperties,
-  ): boolean {
-    if (!BaseWithProperties.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-  } & BaseWithProperties.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    BaseWithoutProperties.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      BaseWithProperties.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    BaseWithoutProperties.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      BaseWithProperties.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        {
-          type: "values" as const,
-          values: [
-            BaseWithoutProperties.$fromRdfType,
-            ConcreteParent.$fromRdfType,
-            ConcreteChild.$fromRdfType,
-          ].map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
-              identifier as NamedNode;
-            return valuePatternRow;
-          }),
-        },
-        $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(
-            `${parameters.variablePrefix}FromRdfType`,
-          ),
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: BaseWithoutProperties.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    return patterns;
-  };
-
-  export function $fromJson(
-    json: BaseWithoutProperties.$Json,
-  ): BaseWithoutProperties {
-    return $create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<
-    BaseWithoutProperties
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return BaseWithoutProperties.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    BaseWithoutProperties
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            BaseWithoutProperties.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/BaseWithoutProperties",
-  );
-
-  export function isBaseWithoutProperties(
-    object: $Object,
-  ): object is BaseWithoutProperties {
-    switch (object.$type) {
-      case "ConcreteChild":
-      case "ConcreteParent":
-      case "BaseWithoutProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: BaseWithoutProperties.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
-  } & ReturnType<typeof BaseWithProperties.$propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "BaseWithoutProperties" as const;
-    return {
-      ...BaseWithProperties.$propertiesFromJson($json),
-      $identifier,
-      $type,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "BaseWithoutProperties" | "ConcreteChild" | "ConcreteParent";
-    } & $UnwrapR<
-      ReturnType<typeof BaseWithProperties.$propertiesFromRdfResource>
-    >
-  > = ($resource, _$options) => {
-    return BaseWithProperties.$propertiesFromRdfResource($resource, {
-      ..._$options,
-      ignoreRdfType: true,
-    }).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/BaseWithoutProperties":
-                case "http://example.com/ConcreteParent":
-                case "http://example.com/ConcreteChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(BaseWithoutProperties.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseWithoutProperties)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"BaseWithoutProperties">(
-              "BaseWithoutProperties" as const,
-            ).map(($type) => ({
-              ...$super0,
-              $identifier,
-              $type,
-            })),
-          ),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: {
-      ...BaseWithProperties.$schema.properties,
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          descendantValues: ["ConcreteChild", "ConcreteParent"],
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["BaseWithoutProperties"],
-        }),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: BaseWithoutProperties.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "baseWithoutProperties";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        BaseWithoutProperties.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          BaseWithoutProperties.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<
-      typeof BaseWithoutProperties.$sparqlConstructQuery
-    >[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      BaseWithoutProperties.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(
-    _baseWithoutProperties: BaseWithoutProperties,
-  ): BaseWithoutProperties.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseWithProperties.$toJson(_baseWithoutProperties),
-        "@id":
-          _baseWithoutProperties.$identifier().termType === "BlankNode"
-            ? `_:${_baseWithoutProperties.$identifier().value}`
-            : _baseWithoutProperties.$identifier().value,
-      } satisfies BaseWithoutProperties.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _baseWithoutProperties: BaseWithoutProperties,
-    options?: Parameters<$ToRdfResourceFunction<BaseWithoutProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = BaseWithProperties.$toRdfResource(_baseWithoutProperties, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/BaseWithoutProperties"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _baseWithoutProperties: BaseWithoutProperties,
-  ): Record<string, string> {
-    return $compactRecord({
-      ...BaseWithProperties.$propertiesToStrings(_baseWithoutProperties),
-      $identifier: _baseWithoutProperties.$identifier().toString(),
-    });
-  }
-
-  export function $toString(this: BaseWithoutProperties): string;
-  export function $toString(
-    _baseWithoutProperties: BaseWithoutProperties,
-  ): string;
-  export function $toString(
-    this: BaseWithoutProperties | undefined,
-    _baseWithoutProperties?: BaseWithoutProperties,
-  ): string {
-    return `BaseWithoutProperties(${JSON.stringify($propertiesToStrings((_baseWithoutProperties ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    BaseWithoutProperties.$Filter,
-    typeof BaseWithoutProperties.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    BaseWithoutProperties.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    BaseWithoutProperties.$Filter,
-    typeof BaseWithoutProperties.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      BaseWithoutProperties.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Node shape that inherits a base node shape and is the parent of the ConcreteChild.
- */
-
-export interface ConcreteParent extends BaseWithoutProperties {
-  readonly $identifier: () => ConcreteParent.$Identifier;
-  readonly $type: "ConcreteParent" | "ConcreteChild";
-  readonly concreteParentProperty: string;
-}
-
-export namespace ConcreteParent {
-  export function $create(
-    parameters: {
-      readonly $identifier?:
-        | (() => ConcreteParent.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
-      readonly concreteParentProperty: string;
-    } & Parameters<typeof BaseWithoutProperties.$create>[0],
-  ): ConcreteParent {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ConcreteParent.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ConcreteParent" as const;
-    const concreteParentProperty = parameters.concreteParentProperty;
-    return {
-      ...BaseWithoutProperties.$create(parameters),
-      $identifier,
-      $type,
-      concreteParentProperty,
-    };
-  }
-
-  export function $equals(
-    left: ConcreteParent,
-    right: ConcreteParent,
-  ): $EqualsResult {
-    return BaseWithoutProperties.$equals(left, right)
-      .chain(() =>
-        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "$identifier",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          left.concreteParentProperty,
-          right.concreteParentProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "concreteParentProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _concreteParent: ConcreteParent,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteParent.$hashShaclProperties(_concreteParent, _hasher);
-    _hasher.update(_concreteParent.$identifier().value);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _concreteParent: ConcreteParent,
-    _hasher: HasherT,
-  ): HasherT {
-    BaseWithoutProperties.$hashShaclProperties(_concreteParent, _hasher);
-    _hasher.update(_concreteParent.concreteParentProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly concreteParentProperty: string;
-  } & BaseWithoutProperties.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...BaseWithoutProperties.$Json.schema().shape,
-          "@id": z.string().min(1),
-          concreteParentProperty: z.string().meta({}),
-        })
-        .meta({
-          description:
-            "Node shape that inherits a base node shape and is the parent of the ConcreteChild.",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          BaseWithoutProperties.$Json.uiSchema({ scopePrefix }),
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/concreteParentProperty`,
-            type: "Control",
-          },
-        ],
-        label: "ConcreteParent",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: ConcreteParent.$Filter,
-    value: ConcreteParent,
-  ): boolean {
-    if (!BaseWithoutProperties.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.concreteParentProperty !== undefined &&
-      !$filterString(
-        filter.concreteParentProperty,
-        value.concreteParentProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteParentProperty?: $StringFilter;
-  } & BaseWithoutProperties.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    ConcreteParent.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      BaseWithoutProperties.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.concreteParentProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "concreteParentProperty",
-        propertySchema: $schema.properties.concreteParentProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    ConcreteParent.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      BaseWithoutProperties.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        {
-          type: "values" as const,
-          values: [ConcreteParent.$fromRdfType, ConcreteChild.$fromRdfType].map(
-            (identifier) => {
-              const valuePatternRow: sparqljs.ValuePatternRow = {};
-              valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
-                identifier as NamedNode;
-              return valuePatternRow;
-            },
-          ),
-        },
-        $sparqlInstancesOfPattern({
-          rdfType: dataFactory.variable!(
-            `${parameters.variablePrefix}FromRdfType`,
-          ),
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: ConcreteParent.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.concreteParentProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "concreteParentProperty",
-        propertySchema: $schema.properties.concreteParentProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(json: ConcreteParent.$Json): ConcreteParent {
-    return $create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<ConcreteParent> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConcreteParent.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ConcreteParent
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            ConcreteParent.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteParent",
-  );
-
-  export function isConcreteParent(object: $Object): object is ConcreteParent {
-    switch (object.$type) {
-      case "ConcreteChild":
-      case "ConcreteParent":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: ConcreteParent.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ConcreteParent" | "ConcreteChild";
-    concreteParentProperty: string;
-  } & ReturnType<typeof BaseWithoutProperties.$propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ConcreteParent" as const;
-    const concreteParentProperty = $json["concreteParentProperty"];
-    return {
-      ...BaseWithoutProperties.$propertiesFromJson($json),
-      $identifier,
-      $type,
-      concreteParentProperty,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "ConcreteParent" | "ConcreteChild";
-      concreteParentProperty: string;
-    } & $UnwrapR<
-      ReturnType<typeof BaseWithoutProperties.$propertiesFromRdfResource>
-    >
-  > = ($resource, _$options) => {
-    return BaseWithoutProperties.$propertiesFromRdfResource($resource, {
-      ..._$options,
-      ignoreRdfType: true,
-    }).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ConcreteParent":
-                case "http://example.com/ConcreteChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ConcreteParent.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParent)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"ConcreteParent">("ConcreteParent" as const).chain(($type) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema: $schema.properties.concreteParentProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).map((concreteParentProperty) => ({
-                ...$super0,
-                $identifier,
-                $type,
-                concreteParentProperty,
-              })),
-            ),
-          ),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: {
-      ...BaseWithoutProperties.$schema.properties,
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          descendantValues: ["ConcreteChild"],
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ConcreteParent"],
-        }),
-      },
-      concreteParentProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode(
-          "http://example.com/concreteParentProperty",
-        ),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: ConcreteParent.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "concreteParent";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ConcreteParent.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          ConcreteParent.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof ConcreteParent.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ConcreteParent.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(
-    _concreteParent: ConcreteParent,
-  ): ConcreteParent.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...BaseWithoutProperties.$toJson(_concreteParent),
-        "@id":
-          _concreteParent.$identifier().termType === "BlankNode"
-            ? `_:${_concreteParent.$identifier().value}`
-            : _concreteParent.$identifier().value,
-        concreteParentProperty: _concreteParent.concreteParentProperty,
-      } satisfies ConcreteParent.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _concreteParent: ConcreteParent,
-    options?: Parameters<$ToRdfResourceFunction<ConcreteParent>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = BaseWithoutProperties.$toRdfResource(_concreteParent, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ConcreteParent"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/concreteParentProperty"),
-      [$literalFactory.string(_concreteParent.concreteParentProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _concreteParent: ConcreteParent,
-  ): Record<string, string> {
-    return $compactRecord({
-      ...BaseWithoutProperties.$propertiesToStrings(_concreteParent),
-      $identifier: _concreteParent.$identifier().toString(),
-    });
-  }
-
-  export function $toString(this: ConcreteParent): string;
-  export function $toString(_concreteParent: ConcreteParent): string;
-  export function $toString(
-    this: ConcreteParent | undefined,
-    _concreteParent?: ConcreteParent,
-  ): string {
-    return `ConcreteParent(${JSON.stringify($propertiesToStrings((_concreteParent ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    ConcreteParent.$Filter,
-    typeof ConcreteParent.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    ConcreteParent.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    ConcreteParent.$Filter,
-    typeof ConcreteParent.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      ConcreteParent.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
- * Child of ConcreteParent. Should inherit properties and node kinds.
- */
-
-export interface ConcreteChild extends ConcreteParent {
-  readonly $identifier: () => ConcreteChild.$Identifier;
-  readonly $type: "ConcreteChild";
-  readonly concreteChildProperty: string;
-}
-
-export namespace ConcreteChild {
-  export function $create(
-    parameters: {
-      readonly $identifier?:
-        | (() => ConcreteChild.$Identifier)
-        | (BlankNode | NamedNode)
-        | string;
-      readonly concreteChildProperty: string;
-    } & Parameters<typeof ConcreteParent.$create>[0],
-  ): ConcreteChild {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ConcreteChild.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ConcreteChild" as const;
-    const concreteChildProperty = parameters.concreteChildProperty;
-    return {
-      ...ConcreteParent.$create(parameters),
-      $identifier,
-      $type,
-      concreteChildProperty,
-    };
-  }
-
-  export function $equals(
-    left: ConcreteChild,
-    right: ConcreteChild,
-  ): $EqualsResult {
-    return ConcreteParent.$equals(left, right)
-      .chain(() =>
-        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-          (propertyValuesUnequal) => ({
-            left,
-            right,
-            propertyName: "$identifier",
-            propertyValuesUnequal,
-            type: "property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          left.concreteChildProperty,
-          right.concreteChildProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left,
-          right,
-          propertyName: "concreteChildProperty",
-          propertyValuesUnequal,
-          type: "property" as const,
-        })),
-      );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _concreteChild: ConcreteChild,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteChild.$hashShaclProperties(_concreteChild, _hasher);
-    _hasher.update(_concreteChild.$identifier().value);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _concreteChild: ConcreteChild,
-    _hasher: HasherT,
-  ): HasherT {
-    ConcreteParent.$hashShaclProperties(_concreteChild, _hasher);
-    _hasher.update(_concreteChild.concreteChildProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly concreteChildProperty: string;
-  } & ConcreteParent.$Json;
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({
-          ...ConcreteParent.$Json.schema().shape,
-          "@id": z.string().min(1),
-          concreteChildProperty: z.string().meta({}),
-        })
-        .meta({
-          description:
-            "Child of ConcreteParent. Should inherit properties and node kinds.",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          ConcreteParent.$Json.uiSchema({ scopePrefix }),
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            scope: `${scopePrefix}/properties/concreteChildProperty`,
-            type: "Control",
-          },
-        ],
-        label: "ConcreteChild",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(
-    filter: ConcreteChild.$Filter,
-    value: ConcreteChild,
-  ): boolean {
-    if (!ConcreteParent.$filter(filter, value)) {
-      return false;
-    }
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.concreteChildProperty !== undefined &&
-      !$filterString(filter.concreteChildProperty, value.concreteChildProperty)
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly concreteChildProperty?: $StringFilter;
-  } & ConcreteParent.$Filter;
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    ConcreteChild.$Filter
-  > = (parameters) => {
-    let triples: sparqljs.Triple[] = [];
-    triples = triples.concat(
-      ConcreteParent.$focusSparqlConstructTriples({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    triples = triples.concat(
-      $shaclPropertySparqlConstructTriples({
-        filter: parameters.filter?.concreteChildProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        propertyName: "concreteChildProperty",
-        propertySchema: $schema.properties.concreteChildProperty,
-        typeSparqlConstructTriples: (_: object) => [],
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    ConcreteChild.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    patterns = patterns.concat(
-      ConcreteParent.$focusSparqlWherePatterns({
-        filter: parameters.filter,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: ConcreteChild.$fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: ConcreteChild.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    patterns = patterns.concat(
-      $shaclPropertySparqlWherePatterns({
-        filter: parameters.filter?.concreteChildProperty,
-        focusIdentifier: parameters.focusIdentifier,
-        ignoreRdfType: true,
-        preferredLanguages: parameters.preferredLanguages,
-        propertyName: "concreteChildProperty",
-        propertySchema: $schema.properties.concreteChildProperty,
-        typeSparqlWherePatterns: $stringSparqlWherePatterns,
-        variablePrefix: parameters.variablePrefix,
-      }),
-    );
-    return patterns;
-  };
-
-  export function $fromJson(json: ConcreteChild.$Json): ConcreteChild {
-    return $create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<ConcreteChild> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConcreteChild.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ConcreteChild
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            ConcreteChild.$fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConcreteChild",
-  );
-
-  export function isConcreteChild(object: $Object): object is ConcreteChild {
-    switch (object.$type) {
-      case "ConcreteChild":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: ConcreteChild.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ConcreteChild";
-    concreteChildProperty: string;
-  } & ReturnType<typeof ConcreteParent.$propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ConcreteChild" as const;
-    const concreteChildProperty = $json["concreteChildProperty"];
-    return {
-      ...ConcreteParent.$propertiesFromJson($json),
-      $identifier,
-      $type,
-      concreteChildProperty,
-    };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
-    {
-      $identifier: BlankNode | NamedNode;
-      $type: "ConcreteChild";
-      concreteChildProperty: string;
-    } & $UnwrapR<ReturnType<typeof ConcreteParent.$propertiesFromRdfResource>>
-  > = ($resource, _$options) => {
-    return ConcreteParent.$propertiesFromRdfResource($resource, {
-      ..._$options,
-      ignoreRdfType: true,
-    }).chain(($super0) =>
-      (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ConcreteChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ConcreteChild.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChild)`,
-                ),
-              );
-            })
-        : Right(true as const)
-      ).chain((_rdfTypeCheck) =>
-        Right(
-          new Resource.Value({
-            dataFactory: dataFactory,
-            focusResource: $resource,
-            propertyPath: $RdfVocabularies.rdf.subject,
-            term: $resource.identifier,
-          }).toValues(),
-        )
-          .chain((values) => values.chainMap((value) => value.toIdentifier()))
-          .chain((values) => values.head())
-          .chain(($identifier) =>
-            Right<"ConcreteChild">("ConcreteChild" as const).chain(($type) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema: $schema.properties.concreteChildProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    ),
-              }).map((concreteChildProperty) => ({
-                ...$super0,
-                $identifier,
-                $type,
-                concreteChildProperty,
-              })),
-            ),
-          ),
-      ),
-    );
-  };
-
-  export const $schema = {
-    properties: {
-      ...ConcreteParent.$schema.properties,
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["ConcreteChild"],
-        }),
-      },
-      concreteChildProperty: {
-        kind: "Shacl" as const,
-        type: () => ({ kind: "String" as const }),
-        path: dataFactory.namedNode("http://example.com/concreteChildProperty"),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: ConcreteChild.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "concreteChild";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        ConcreteChild.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          ConcreteChild.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof ConcreteChild.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      ConcreteChild.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(_concreteChild: ConcreteChild): ConcreteChild.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...ConcreteParent.$toJson(_concreteChild),
-        "@id":
-          _concreteChild.$identifier().termType === "BlankNode"
-            ? `_:${_concreteChild.$identifier().value}`
-            : _concreteChild.$identifier().value,
-        concreteChildProperty: _concreteChild.concreteChildProperty,
-      } satisfies ConcreteChild.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _concreteChild: ConcreteChild,
-    options?: Parameters<$ToRdfResourceFunction<ConcreteChild>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = ConcreteParent.$toRdfResource(_concreteChild, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/ConcreteChild"),
-        options?.graph,
-      );
-    }
-    resource.add(
-      dataFactory.namedNode("http://example.com/concreteChildProperty"),
-      [$literalFactory.string(_concreteChild.concreteChildProperty)],
-      options?.graph,
-    );
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _concreteChild: ConcreteChild,
-  ): Record<string, string> {
-    return $compactRecord({
-      ...ConcreteParent.$propertiesToStrings(_concreteChild),
-      $identifier: _concreteChild.$identifier().toString(),
-    });
-  }
-
-  export function $toString(this: ConcreteChild): string;
-  export function $toString(_concreteChild: ConcreteChild): string;
-  export function $toString(
-    this: ConcreteChild | undefined,
-    _concreteChild?: ConcreteChild,
-  ): string {
-    return `ConcreteChild(${JSON.stringify($propertiesToStrings((_concreteChild ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    ConcreteChild.$Filter,
-    typeof ConcreteChild.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    ConcreteChild.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    ConcreteChild.$Filter,
-    typeof ConcreteChild.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      ConcreteChild.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
 } /**
  * Node shape used as a partial by LazyProperties
  */
@@ -55808,6 +53374,2440 @@ export namespace ClassProperties {
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
       ClassProperties.$focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+} /**
+ * Root (level 0) of a class hierarchy
+ */
+
+export interface ClassHierarchy0 {
+  readonly $identifier: () => ClassHierarchy0.$Identifier;
+  readonly $type:
+    | "ClassHierarchy0"
+    | "ClassHierarchy1"
+    | "ClassHierarchy2"
+    | "ClassHierarchy3";
+  readonly classHierarchy0Property: string;
+}
+
+export namespace ClassHierarchy0 {
+  export function $create(parameters: {
+    readonly $identifier?:
+      | (() => ClassHierarchy0.$Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly classHierarchy0Property: string;
+  }): ClassHierarchy0 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassHierarchy0.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassHierarchy0" as const;
+    const classHierarchy0Property = parameters.classHierarchy0Property;
+    return { $identifier, $type, classHierarchy0Property };
+  }
+
+  export function $equals(
+    left: ClassHierarchy0,
+    right: ClassHierarchy0,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(
+          left.classHierarchy0Property,
+          right.classHierarchy0Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classHierarchy0Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function $hash<HasherT extends $Hasher>(
+    _classHierarchy0: ClassHierarchy0,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy0.$hashShaclProperties(_classHierarchy0, _hasher);
+    _hasher.update(_classHierarchy0.$identifier().value);
+    _hasher.update(_classHierarchy0.$type);
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<HasherT extends $Hasher>(
+    _classHierarchy0: ClassHierarchy0,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_classHierarchy0.classHierarchy0Property);
+    return _hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "ClassHierarchy0"
+      | "ClassHierarchy1"
+      | "ClassHierarchy2"
+      | "ClassHierarchy3";
+    readonly classHierarchy0Property: string;
+  };
+
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "ClassHierarchy0",
+            "ClassHierarchy1",
+            "ClassHierarchy2",
+            "ClassHierarchy3",
+          ]),
+          classHierarchy0Property: z.string().meta({}),
+        })
+        .meta({
+          description: "Root (level 0) of a class hierarchy",
+        }) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ClassHierarchy0" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classHierarchy0Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassHierarchy0",
+        type: "Group",
+      };
+    }
+  }
+
+  export function $filter(
+    filter: ClassHierarchy0.$Filter,
+    value: ClassHierarchy0,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classHierarchy0Property !== undefined &&
+      !$filterString(
+        filter.classHierarchy0Property,
+        value.classHierarchy0Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classHierarchy0Property?: $StringFilter;
+  };
+
+  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy0.$Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy0Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy0Property",
+        propertySchema: $schema.properties.classHierarchy0Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy0.$Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy0.$fromRdfType,
+            ClassHierarchy1.$fromRdfType,
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy0.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy0Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy0Property",
+        propertySchema: $schema.properties.classHierarchy0Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function $fromJson(json: ClassHierarchy0.$Json): ClassHierarchy0 {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ClassHierarchy0> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassHierarchy0.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassHierarchy0
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassHierarchy0.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassHierarchy0",
+  );
+
+  export function isClassHierarchy0(
+    object: $Object,
+  ): object is ClassHierarchy0 {
+    switch (object.$type) {
+      case "ClassHierarchy1":
+      case "ClassHierarchy2":
+      case "ClassHierarchy3":
+      case "ClassHierarchy0":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $propertiesFromJson($json: ClassHierarchy0.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type:
+      | "ClassHierarchy0"
+      | "ClassHierarchy1"
+      | "ClassHierarchy2"
+      | "ClassHierarchy3";
+    classHierarchy0Property: string;
+  } {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const $type = "ClassHierarchy0" as const;
+    const classHierarchy0Property = $json["classHierarchy0Property"];
+    return { $identifier, $type, classHierarchy0Property };
+  }
+
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+    $identifier: BlankNode | NamedNode;
+    $type:
+      | "ClassHierarchy0"
+      | "ClassHierarchy1"
+      | "ClassHierarchy2"
+      | "ClassHierarchy3";
+    classHierarchy0Property: string;
+  }> = ($resource, _$options) => {
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassHierarchy0":
+                case "http://example.com/ClassHierarchy1":
+                case "http://example.com/ClassHierarchy2":
+                case "http://example.com/ClassHierarchy3":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(ClassHierarchy0.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy0)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          Right<"ClassHierarchy0">("ClassHierarchy0" as const).chain(($type) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema: $schema.properties.classHierarchy0Property,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      _$options.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ),
+            }).map((classHierarchy0Property) => ({
+              $identifier,
+              $type,
+              classHierarchy0Property,
+            })),
+          ),
+        ),
+    );
+  };
+
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: [
+            "ClassHierarchy1",
+            "ClassHierarchy2",
+            "ClassHierarchy3",
+          ],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassHierarchy0"],
+        }),
+      },
+      classHierarchy0Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classHierarchy0Property",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy0.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy0";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy0.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy0.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy0.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy0.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $toJson(
+    _classHierarchy0: ClassHierarchy0,
+  ): ClassHierarchy0.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _classHierarchy0.$identifier().termType === "BlankNode"
+            ? `_:${_classHierarchy0.$identifier().value}`
+            : _classHierarchy0.$identifier().value,
+        $type: _classHierarchy0.$type,
+        classHierarchy0Property: _classHierarchy0.classHierarchy0Property,
+      } satisfies ClassHierarchy0.$Json),
+    );
+  }
+
+  export function $toRdfResource(
+    _classHierarchy0: ClassHierarchy0,
+    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy0>>[1],
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.resource(_classHierarchy0.$identifier());
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ClassHierarchy0"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/classHierarchy0Property"),
+      [$literalFactory.string(_classHierarchy0.classHierarchy0Property)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  export function $propertiesToStrings(
+    _classHierarchy0: ClassHierarchy0,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _classHierarchy0.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassHierarchy0): string;
+  export function $toString(_classHierarchy0: ClassHierarchy0): string;
+  export function $toString(
+    this: ClassHierarchy0 | undefined,
+    _classHierarchy0?: ClassHierarchy0,
+  ): string {
+    return `ClassHierarchy0(${JSON.stringify($propertiesToStrings((_classHierarchy0 ?? this)!))})`;
+  }
+
+  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy0.$Filter,
+    typeof ClassHierarchy0.$schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy0.$focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy0.$Filter,
+    typeof ClassHierarchy0.$schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy0.$focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+export interface ClassHierarchy1 extends ClassHierarchy0 {
+  readonly $identifier: () => ClassHierarchy1.$Identifier;
+  readonly $type: "ClassHierarchy1" | "ClassHierarchy2" | "ClassHierarchy3";
+}
+
+export namespace ClassHierarchy1 {
+  export function $create(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy1.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
+    } & Parameters<typeof ClassHierarchy0.$create>[0],
+  ): ClassHierarchy1 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassHierarchy1.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassHierarchy1" as const;
+    return { ...ClassHierarchy0.$create(parameters), $identifier, $type };
+  }
+
+  export function $equals(
+    left: ClassHierarchy1,
+    right: ClassHierarchy1,
+  ): $EqualsResult {
+    return ClassHierarchy0.$equals(left, right).chain(() =>
+      $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+        (propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "$identifier",
+          propertyValuesUnequal,
+          type: "property" as const,
+        }),
+      ),
+    );
+  }
+
+  export function $hash<HasherT extends $Hasher>(
+    _classHierarchy1: ClassHierarchy1,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy1.$hashShaclProperties(_classHierarchy1, _hasher);
+    _hasher.update(_classHierarchy1.$identifier().value);
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<HasherT extends $Hasher>(
+    _classHierarchy1: ClassHierarchy1,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy0.$hashShaclProperties(_classHierarchy1, _hasher);
+    return _hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type $Json = { readonly "@id": string } & ClassHierarchy0.$Json;
+
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          ...ClassHierarchy0.$Json.schema().shape,
+          "@id": z.string().min(1),
+        })
+        .meta({}) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassHierarchy0.$Json.uiSchema({ scopePrefix }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+        ],
+        label: "ClassHierarchy1",
+        type: "Group",
+      };
+    }
+  }
+
+  export function $filter(
+    filter: ClassHierarchy1.$Filter,
+    value: ClassHierarchy1,
+  ): boolean {
+    if (!ClassHierarchy0.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & ClassHierarchy0.$Filter;
+
+  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy1.$Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy0.$focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy1.$Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy0.$focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy1.$fromRdfType,
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy1.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
+  export function $fromJson(json: ClassHierarchy1.$Json): ClassHierarchy1 {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ClassHierarchy1> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassHierarchy1.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassHierarchy1
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassHierarchy1.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassHierarchy1",
+  );
+
+  export function isClassHierarchy1(
+    object: $Object,
+  ): object is ClassHierarchy1 {
+    switch (object.$type) {
+      case "ClassHierarchy2":
+      case "ClassHierarchy3":
+      case "ClassHierarchy1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $propertiesFromJson($json: ClassHierarchy1.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "ClassHierarchy1" | "ClassHierarchy2" | "ClassHierarchy3";
+  } & ReturnType<typeof ClassHierarchy0.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const $type = "ClassHierarchy1" as const;
+    return {
+      ...ClassHierarchy0.$propertiesFromJson($json),
+      $identifier,
+      $type,
+    };
+  }
+
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
+    {
+      $identifier: BlankNode | NamedNode;
+      $type: "ClassHierarchy1" | "ClassHierarchy2" | "ClassHierarchy3";
+    } & $UnwrapR<ReturnType<typeof ClassHierarchy0.$propertiesFromRdfResource>>
+  > = ($resource, _$options) => {
+    return ClassHierarchy0.$propertiesFromRdfResource($resource, {
+      ..._$options,
+      ignoreRdfType: true,
+    }).chain(($super0) =>
+      (!_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassHierarchy1":
+                case "http://example.com/ClassHierarchy2":
+                case "http://example.com/ClassHierarchy3":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(ClassHierarchy1.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy1)`,
+                ),
+              );
+            })
+        : Right(true as const)
+      ).chain((_rdfTypeCheck) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ClassHierarchy1">("ClassHierarchy1" as const).map(
+              ($type) => ({
+                ...$super0,
+                $identifier,
+                $type,
+              }),
+            ),
+          ),
+      ),
+    );
+  };
+
+  export const $schema = {
+    properties: {
+      ...ClassHierarchy0.$schema.properties,
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ClassHierarchy2", "ClassHierarchy3"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassHierarchy1"],
+        }),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy1.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy1.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy1.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy1.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy1.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $toJson(
+    _classHierarchy1: ClassHierarchy1,
+  ): ClassHierarchy1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ClassHierarchy0.$toJson(_classHierarchy1),
+        "@id":
+          _classHierarchy1.$identifier().termType === "BlankNode"
+            ? `_:${_classHierarchy1.$identifier().value}`
+            : _classHierarchy1.$identifier().value,
+      } satisfies ClassHierarchy1.$Json),
+    );
+  }
+
+  export function $toRdfResource(
+    _classHierarchy1: ClassHierarchy1,
+    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy1>>[1],
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = ClassHierarchy0.$toRdfResource(_classHierarchy1, {
+      ignoreRdfType: true,
+      graph: options?.graph,
+      resourceSet,
+    });
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ClassHierarchy1"),
+        options?.graph,
+      );
+    }
+    return resource;
+  }
+
+  export function $propertiesToStrings(
+    _classHierarchy1: ClassHierarchy1,
+  ): Record<string, string> {
+    return $compactRecord({
+      ...ClassHierarchy0.$propertiesToStrings(_classHierarchy1),
+      $identifier: _classHierarchy1.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassHierarchy1): string;
+  export function $toString(_classHierarchy1: ClassHierarchy1): string;
+  export function $toString(
+    this: ClassHierarchy1 | undefined,
+    _classHierarchy1?: ClassHierarchy1,
+  ): string {
+    return `ClassHierarchy1(${JSON.stringify($propertiesToStrings((_classHierarchy1 ?? this)!))})`;
+  }
+
+  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy1.$Filter,
+    typeof ClassHierarchy1.$schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy1.$focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy1.$Filter,
+    typeof ClassHierarchy1.$schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy1.$focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+export interface ClassHierarchy2 extends ClassHierarchy1 {
+  readonly $identifier: () => ClassHierarchy2.$Identifier;
+  readonly $type: "ClassHierarchy2" | "ClassHierarchy3";
+  readonly classHierarchy2Property: string;
+}
+
+export namespace ClassHierarchy2 {
+  export function $create(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy2.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
+      readonly classHierarchy2Property: string;
+    } & Parameters<typeof ClassHierarchy1.$create>[0],
+  ): ClassHierarchy2 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassHierarchy2.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassHierarchy2" as const;
+    const classHierarchy2Property = parameters.classHierarchy2Property;
+    return {
+      ...ClassHierarchy1.$create(parameters),
+      $identifier,
+      $type,
+      classHierarchy2Property,
+    };
+  }
+
+  export function $equals(
+    left: ClassHierarchy2,
+    right: ClassHierarchy2,
+  ): $EqualsResult {
+    return ClassHierarchy1.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.classHierarchy2Property,
+          right.classHierarchy2Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classHierarchy2Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function $hash<HasherT extends $Hasher>(
+    _classHierarchy2: ClassHierarchy2,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy2.$hashShaclProperties(_classHierarchy2, _hasher);
+    _hasher.update(_classHierarchy2.$identifier().value);
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<HasherT extends $Hasher>(
+    _classHierarchy2: ClassHierarchy2,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy1.$hashShaclProperties(_classHierarchy2, _hasher);
+    _hasher.update(_classHierarchy2.classHierarchy2Property);
+    return _hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly classHierarchy2Property: string;
+  } & ClassHierarchy1.$Json;
+
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          ...ClassHierarchy1.$Json.schema().shape,
+          "@id": z.string().min(1),
+          classHierarchy2Property: z.string().meta({}),
+        })
+        .meta({}) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassHierarchy1.$Json.uiSchema({ scopePrefix }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classHierarchy2Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassHierarchy2",
+        type: "Group",
+      };
+    }
+  }
+
+  export function $filter(
+    filter: ClassHierarchy2.$Filter,
+    value: ClassHierarchy2,
+  ): boolean {
+    if (!ClassHierarchy1.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classHierarchy2Property !== undefined &&
+      !$filterString(
+        filter.classHierarchy2Property,
+        value.classHierarchy2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classHierarchy2Property?: $StringFilter;
+  } & ClassHierarchy1.$Filter;
+
+  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy2.$Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy1.$focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy2Property",
+        propertySchema: $schema.properties.classHierarchy2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy2.$Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy1.$focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy2.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy2Property",
+        propertySchema: $schema.properties.classHierarchy2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function $fromJson(json: ClassHierarchy2.$Json): ClassHierarchy2 {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ClassHierarchy2> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassHierarchy2.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassHierarchy2
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassHierarchy2.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassHierarchy2",
+  );
+
+  export function isClassHierarchy2(
+    object: $Object,
+  ): object is ClassHierarchy2 {
+    switch (object.$type) {
+      case "ClassHierarchy3":
+      case "ClassHierarchy2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $propertiesFromJson($json: ClassHierarchy2.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "ClassHierarchy2" | "ClassHierarchy3";
+    classHierarchy2Property: string;
+  } & ReturnType<typeof ClassHierarchy1.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const $type = "ClassHierarchy2" as const;
+    const classHierarchy2Property = $json["classHierarchy2Property"];
+    return {
+      ...ClassHierarchy1.$propertiesFromJson($json),
+      $identifier,
+      $type,
+      classHierarchy2Property,
+    };
+  }
+
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
+    {
+      $identifier: BlankNode | NamedNode;
+      $type: "ClassHierarchy2" | "ClassHierarchy3";
+      classHierarchy2Property: string;
+    } & $UnwrapR<ReturnType<typeof ClassHierarchy1.$propertiesFromRdfResource>>
+  > = ($resource, _$options) => {
+    return ClassHierarchy1.$propertiesFromRdfResource($resource, {
+      ..._$options,
+      ignoreRdfType: true,
+    }).chain(($super0) =>
+      (!_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassHierarchy2":
+                case "http://example.com/ClassHierarchy3":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(ClassHierarchy2.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy2)`,
+                ),
+              );
+            })
+        : Right(true as const)
+      ).chain((_rdfTypeCheck) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ClassHierarchy2">("ClassHierarchy2" as const).chain(
+              ($type) =>
+                $shaclPropertyFromRdf({
+                  graph: _$options.graph,
+                  resource: $resource,
+                  propertySchema: $schema.properties.classHierarchy2Property,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages(
+                          values,
+                          _$options.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
+                      ),
+                }).map((classHierarchy2Property) => ({
+                  ...$super0,
+                  $identifier,
+                  $type,
+                  classHierarchy2Property,
+                })),
+            ),
+          ),
+      ),
+    );
+  };
+
+  export const $schema = {
+    properties: {
+      ...ClassHierarchy1.$schema.properties,
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ClassHierarchy3"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassHierarchy2"],
+        }),
+      },
+      classHierarchy2Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classHierarchy2Property",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy2.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy2.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy2.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy2.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy2.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $toJson(
+    _classHierarchy2: ClassHierarchy2,
+  ): ClassHierarchy2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ClassHierarchy1.$toJson(_classHierarchy2),
+        "@id":
+          _classHierarchy2.$identifier().termType === "BlankNode"
+            ? `_:${_classHierarchy2.$identifier().value}`
+            : _classHierarchy2.$identifier().value,
+        classHierarchy2Property: _classHierarchy2.classHierarchy2Property,
+      } satisfies ClassHierarchy2.$Json),
+    );
+  }
+
+  export function $toRdfResource(
+    _classHierarchy2: ClassHierarchy2,
+    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy2>>[1],
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = ClassHierarchy1.$toRdfResource(_classHierarchy2, {
+      ignoreRdfType: true,
+      graph: options?.graph,
+      resourceSet,
+    });
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ClassHierarchy2"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/classHierarchy2Property"),
+      [$literalFactory.string(_classHierarchy2.classHierarchy2Property)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  export function $propertiesToStrings(
+    _classHierarchy2: ClassHierarchy2,
+  ): Record<string, string> {
+    return $compactRecord({
+      ...ClassHierarchy1.$propertiesToStrings(_classHierarchy2),
+      $identifier: _classHierarchy2.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassHierarchy2): string;
+  export function $toString(_classHierarchy2: ClassHierarchy2): string;
+  export function $toString(
+    this: ClassHierarchy2 | undefined,
+    _classHierarchy2?: ClassHierarchy2,
+  ): string {
+    return `ClassHierarchy2(${JSON.stringify($propertiesToStrings((_classHierarchy2 ?? this)!))})`;
+  }
+
+  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy2.$Filter,
+    typeof ClassHierarchy2.$schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy2.$focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy2.$Filter,
+    typeof ClassHierarchy2.$schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy2.$focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+export interface ClassHierarchy3 extends ClassHierarchy2 {
+  readonly $identifier: () => ClassHierarchy3.$Identifier;
+  readonly $type: "ClassHierarchy3";
+  readonly classHierarchy3Property: string;
+}
+
+export namespace ClassHierarchy3 {
+  export function $create(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy3.$Identifier)
+        | (BlankNode | NamedNode)
+        | string;
+      readonly classHierarchy3Property: string;
+    } & Parameters<typeof ClassHierarchy2.$create>[0],
+  ): ClassHierarchy3 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassHierarchy3.$Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassHierarchy3" as const;
+    const classHierarchy3Property = parameters.classHierarchy3Property;
+    return {
+      ...ClassHierarchy2.$create(parameters),
+      $identifier,
+      $type,
+      classHierarchy3Property,
+    };
+  }
+
+  export function $equals(
+    left: ClassHierarchy3,
+    right: ClassHierarchy3,
+  ): $EqualsResult {
+    return ClassHierarchy2.$equals(left, right)
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.classHierarchy3Property,
+          right.classHierarchy3Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classHierarchy3Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function $hash<HasherT extends $Hasher>(
+    _classHierarchy3: ClassHierarchy3,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy3.$hashShaclProperties(_classHierarchy3, _hasher);
+    _hasher.update(_classHierarchy3.$identifier().value);
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<HasherT extends $Hasher>(
+    _classHierarchy3: ClassHierarchy3,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassHierarchy2.$hashShaclProperties(_classHierarchy3, _hasher);
+    _hasher.update(_classHierarchy3.classHierarchy3Property);
+    return _hasher;
+  }
+
+  export type $Identifier = BlankNode | NamedNode;
+
+  export namespace $Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly classHierarchy3Property: string;
+  } & ClassHierarchy2.$Json;
+
+  export namespace $Json {
+    export function parse(json: unknown): Either<Error, $Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          ...ClassHierarchy2.$Json.schema().shape,
+          "@id": z.string().min(1),
+          classHierarchy3Property: z.string().meta({}),
+        })
+        .meta({}) satisfies z.ZodType<$Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassHierarchy2.$Json.uiSchema({ scopePrefix }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classHierarchy3Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassHierarchy3",
+        type: "Group",
+      };
+    }
+  }
+
+  export function $filter(
+    filter: ClassHierarchy3.$Filter,
+    value: ClassHierarchy3,
+  ): boolean {
+    if (!ClassHierarchy2.$filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classHierarchy3Property !== undefined &&
+      !$filterString(
+        filter.classHierarchy3Property,
+        value.classHierarchy3Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classHierarchy3Property?: $StringFilter;
+  } & ClassHierarchy2.$Filter;
+
+  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy3.$Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy2.$focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy3Property",
+        propertySchema: $schema.properties.classHierarchy3Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy3.$Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy2.$focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassHierarchy3.$fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy3.$schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy3Property",
+        propertySchema: $schema.properties.classHierarchy3Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function $fromJson(json: ClassHierarchy3.$Json): ClassHierarchy3 {
+    return $create($propertiesFromJson(json));
+  }
+
+  export const $fromRdfResource: $FromRdfResourceFunction<ClassHierarchy3> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ClassHierarchy3.$propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map($create);
+  };
+
+  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassHierarchy3
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassHierarchy3.$fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassHierarchy3",
+  );
+
+  export function isClassHierarchy3(
+    object: $Object,
+  ): object is ClassHierarchy3 {
+    switch (object.$type) {
+      case "ClassHierarchy3":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export function $propertiesFromJson($json: ClassHierarchy3.$Json): {
+    $identifier: BlankNode | NamedNode;
+    $type: "ClassHierarchy3";
+    classHierarchy3Property: string;
+  } & ReturnType<typeof ClassHierarchy2.$propertiesFromJson> {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const $type = "ClassHierarchy3" as const;
+    const classHierarchy3Property = $json["classHierarchy3Property"];
+    return {
+      ...ClassHierarchy2.$propertiesFromJson($json),
+      $identifier,
+      $type,
+      classHierarchy3Property,
+    };
+  }
+
+  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
+    {
+      $identifier: BlankNode | NamedNode;
+      $type: "ClassHierarchy3";
+      classHierarchy3Property: string;
+    } & $UnwrapR<ReturnType<typeof ClassHierarchy2.$propertiesFromRdfResource>>
+  > = ($resource, _$options) => {
+    return ClassHierarchy2.$propertiesFromRdfResource($resource, {
+      ..._$options,
+      ignoreRdfType: true,
+    }).chain(($super0) =>
+      (!_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassHierarchy3":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(ClassHierarchy3.$fromRdfType, {
+                  graph: _$options.graph,
+                })
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy3)`,
+                ),
+              );
+            })
+        : Right(true as const)
+      ).chain((_rdfTypeCheck) =>
+        Right(
+          new Resource.Value({
+            dataFactory: dataFactory,
+            focusResource: $resource,
+            propertyPath: $RdfVocabularies.rdf.subject,
+            term: $resource.identifier,
+          }).toValues(),
+        )
+          .chain((values) => values.chainMap((value) => value.toIdentifier()))
+          .chain((values) => values.head())
+          .chain(($identifier) =>
+            Right<"ClassHierarchy3">("ClassHierarchy3" as const).chain(
+              ($type) =>
+                $shaclPropertyFromRdf({
+                  graph: _$options.graph,
+                  resource: $resource,
+                  propertySchema: $schema.properties.classHierarchy3Property,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages(
+                          values,
+                          _$options.preferredLanguages,
+                        ),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
+                      ),
+                }).map((classHierarchy3Property) => ({
+                  ...$super0,
+                  $identifier,
+                  $type,
+                  classHierarchy3Property,
+                })),
+            ),
+          ),
+      ),
+    );
+  };
+
+  export const $schema = {
+    properties: {
+      ...ClassHierarchy2.$schema.properties,
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassHierarchy3"],
+        }),
+      },
+      classHierarchy3Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classHierarchy3Property",
+        ),
+      },
+    },
+  } as const;
+
+  export function $sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy3.$Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy3";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy3.$focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy3.$focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy3.$sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy3.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $toJson(
+    _classHierarchy3: ClassHierarchy3,
+  ): ClassHierarchy3.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ClassHierarchy2.$toJson(_classHierarchy3),
+        "@id":
+          _classHierarchy3.$identifier().termType === "BlankNode"
+            ? `_:${_classHierarchy3.$identifier().value}`
+            : _classHierarchy3.$identifier().value,
+        classHierarchy3Property: _classHierarchy3.classHierarchy3Property,
+      } satisfies ClassHierarchy3.$Json),
+    );
+  }
+
+  export function $toRdfResource(
+    _classHierarchy3: ClassHierarchy3,
+    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy3>>[1],
+  ): Resource {
+    const resourceSet =
+      options?.resourceSet ??
+      new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = ClassHierarchy2.$toRdfResource(_classHierarchy3, {
+      ignoreRdfType: true,
+      graph: options?.graph,
+      resourceSet,
+    });
+    if (!options?.ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode("http://example.com/ClassHierarchy3"),
+        options?.graph,
+      );
+    }
+    resource.add(
+      dataFactory.namedNode("http://example.com/classHierarchy3Property"),
+      [$literalFactory.string(_classHierarchy3.classHierarchy3Property)],
+      options?.graph,
+    );
+    return resource;
+  }
+
+  export function $propertiesToStrings(
+    _classHierarchy3: ClassHierarchy3,
+  ): Record<string, string> {
+    return $compactRecord({
+      ...ClassHierarchy2.$propertiesToStrings(_classHierarchy3),
+      $identifier: _classHierarchy3.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassHierarchy3): string;
+  export function $toString(_classHierarchy3: ClassHierarchy3): string;
+  export function $toString(
+    this: ClassHierarchy3 | undefined,
+    _classHierarchy3?: ClassHierarchy3,
+  ): string {
+    return `ClassHierarchy3(${JSON.stringify($propertiesToStrings((_classHierarchy3 ?? this)!))})`;
+  }
+
+  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy3.$Filter,
+    typeof ClassHierarchy3.$schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy3.$focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy3.$Filter,
+    typeof ClassHierarchy3.$schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy3.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -59720,13 +59720,13 @@ export namespace RecursiveUnion {
 export type $Object =
   | BlankNodeIdentifier
   | BlankNodeOrIriIdentifier
+  | ClassHierarchy3
+  | ClassHierarchy2
+  | ClassHierarchy1
+  | ClassHierarchy0
   | ClassProperties
   | NonClass
   | Partial
-  | ConcreteChild
-  | ConcreteParent
-  | BaseWithoutProperties
-  | BaseWithProperties
   | ConvertibleTypeProperties
   | DateUnionProperties
   | DefaultValueProperties
@@ -59796,6 +59796,42 @@ export namespace $Object {
       );
     }
     if (
+      ClassHierarchy3.isClassHierarchy3(left) &&
+      ClassHierarchy3.isClassHierarchy3(right)
+    ) {
+      return ClassHierarchy3.$equals(
+        left as ClassHierarchy3,
+        right as ClassHierarchy3,
+      );
+    }
+    if (
+      ClassHierarchy2.isClassHierarchy2(left) &&
+      ClassHierarchy2.isClassHierarchy2(right)
+    ) {
+      return ClassHierarchy2.$equals(
+        left as ClassHierarchy2,
+        right as ClassHierarchy2,
+      );
+    }
+    if (
+      ClassHierarchy1.isClassHierarchy1(left) &&
+      ClassHierarchy1.isClassHierarchy1(right)
+    ) {
+      return ClassHierarchy1.$equals(
+        left as ClassHierarchy1,
+        right as ClassHierarchy1,
+      );
+    }
+    if (
+      ClassHierarchy0.isClassHierarchy0(left) &&
+      ClassHierarchy0.isClassHierarchy0(right)
+    ) {
+      return ClassHierarchy0.$equals(
+        left as ClassHierarchy0,
+        right as ClassHierarchy0,
+      );
+    }
+    if (
       ClassProperties.isClassProperties(left) &&
       ClassProperties.isClassProperties(right)
     ) {
@@ -59809,42 +59845,6 @@ export namespace $Object {
     }
     if (Partial.isPartial(left) && Partial.isPartial(right)) {
       return Partial.$equals(left as Partial, right as Partial);
-    }
-    if (
-      ConcreteChild.isConcreteChild(left) &&
-      ConcreteChild.isConcreteChild(right)
-    ) {
-      return ConcreteChild.$equals(
-        left as ConcreteChild,
-        right as ConcreteChild,
-      );
-    }
-    if (
-      ConcreteParent.isConcreteParent(left) &&
-      ConcreteParent.isConcreteParent(right)
-    ) {
-      return ConcreteParent.$equals(
-        left as ConcreteParent,
-        right as ConcreteParent,
-      );
-    }
-    if (
-      BaseWithoutProperties.isBaseWithoutProperties(left) &&
-      BaseWithoutProperties.isBaseWithoutProperties(right)
-    ) {
-      return BaseWithoutProperties.$equals(
-        left as BaseWithoutProperties,
-        right as BaseWithoutProperties,
-      );
-    }
-    if (
-      BaseWithProperties.isBaseWithProperties(left) &&
-      BaseWithProperties.isBaseWithProperties(right)
-    ) {
-      return BaseWithProperties.$equals(
-        left as BaseWithProperties,
-        right as BaseWithProperties,
-      );
     }
     if (
       ConvertibleTypeProperties.isConvertibleTypeProperties(left) &&
@@ -60288,6 +60288,38 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["ClassHierarchy3"] !== undefined &&
+      ClassHierarchy3.isClassHierarchy3(value)
+    ) {
+      if (!ClassHierarchy3.$filter(filter.on["ClassHierarchy3"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ClassHierarchy2"] !== undefined &&
+      ClassHierarchy2.isClassHierarchy2(value)
+    ) {
+      if (!ClassHierarchy2.$filter(filter.on["ClassHierarchy2"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ClassHierarchy1"] !== undefined &&
+      ClassHierarchy1.isClassHierarchy1(value)
+    ) {
+      if (!ClassHierarchy1.$filter(filter.on["ClassHierarchy1"], value)) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ClassHierarchy0"] !== undefined &&
+      ClassHierarchy0.isClassHierarchy0(value)
+    ) {
+      if (!ClassHierarchy0.$filter(filter.on["ClassHierarchy0"], value)) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["ClassProperties"] !== undefined &&
       ClassProperties.isClassProperties(value)
     ) {
@@ -60302,43 +60334,6 @@ export namespace $Object {
     }
     if (filter.on?.["Partial"] !== undefined && Partial.isPartial(value)) {
       if (!Partial.$filter(filter.on["Partial"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ConcreteChild"] !== undefined &&
-      ConcreteChild.isConcreteChild(value)
-    ) {
-      if (!ConcreteChild.$filter(filter.on["ConcreteChild"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["ConcreteParent"] !== undefined &&
-      ConcreteParent.isConcreteParent(value)
-    ) {
-      if (!ConcreteParent.$filter(filter.on["ConcreteParent"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["BaseWithoutProperties"] !== undefined &&
-      BaseWithoutProperties.isBaseWithoutProperties(value)
-    ) {
-      if (
-        !BaseWithoutProperties.$filter(
-          filter.on["BaseWithoutProperties"],
-          value,
-        )
-      ) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["BaseWithProperties"] !== undefined &&
-      BaseWithProperties.isBaseWithProperties(value)
-    ) {
-      if (!BaseWithProperties.$filter(filter.on["BaseWithProperties"], value)) {
         return false;
       }
     }
@@ -60812,13 +60807,13 @@ export namespace $Object {
     readonly on?: {
       readonly BlankNodeIdentifier?: BlankNodeIdentifier.$Filter;
       readonly BlankNodeOrIriIdentifier?: BlankNodeOrIriIdentifier.$Filter;
+      readonly ClassHierarchy3?: ClassHierarchy3.$Filter;
+      readonly ClassHierarchy2?: ClassHierarchy2.$Filter;
+      readonly ClassHierarchy1?: ClassHierarchy1.$Filter;
+      readonly ClassHierarchy0?: ClassHierarchy0.$Filter;
       readonly ClassProperties?: ClassProperties.$Filter;
       readonly NonClass?: NonClass.$Filter;
       readonly Partial?: Partial.$Filter;
-      readonly ConcreteChild?: ConcreteChild.$Filter;
-      readonly ConcreteParent?: ConcreteParent.$Filter;
-      readonly BaseWithoutProperties?: BaseWithoutProperties.$Filter;
-      readonly BaseWithProperties?: BaseWithProperties.$Filter;
       readonly ConvertibleTypeProperties?: ConvertibleTypeProperties.$Filter;
       readonly DateUnionProperties?: DateUnionProperties.$Filter;
       readonly DefaultValueProperties?: DefaultValueProperties.$Filter;
@@ -60892,6 +60887,30 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifier`,
       }).concat(),
+      ...ClassHierarchy3.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy3`,
+      }).concat(),
+      ...ClassHierarchy2.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy2`,
+      }).concat(),
+      ...ClassHierarchy1.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy1`,
+      }).concat(),
+      ...ClassHierarchy0.$focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy0,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy0`,
+      }).concat(),
       ...ClassProperties.$focusSparqlConstructTriples({
         filter: filter?.on?.ClassProperties,
         focusIdentifier,
@@ -60909,30 +60928,6 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}Partial`,
-      }).concat(),
-      ...ConcreteChild.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteChild,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteChild`,
-      }).concat(),
-      ...ConcreteParent.$focusSparqlConstructTriples({
-        filter: filter?.on?.ConcreteParent,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}ConcreteParent`,
-      }).concat(),
-      ...BaseWithoutProperties.$focusSparqlConstructTriples({
-        filter: filter?.on?.BaseWithoutProperties,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BaseWithoutProperties`,
-      }).concat(),
-      ...BaseWithProperties.$focusSparqlConstructTriples({
-        filter: filter?.on?.BaseWithProperties,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}BaseWithProperties`,
       }).concat(),
       ...ConvertibleTypeProperties.$focusSparqlConstructTriples({
         filter: filter?.on?.ConvertibleTypeProperties,
@@ -61272,6 +61267,46 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: ClassHierarchy3.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy3`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy2.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy1.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy0.$focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy0,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy0`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: ClassProperties.$focusSparqlWherePatterns({
             filter: filter?.on?.ClassProperties,
             focusIdentifier,
@@ -61298,46 +61333,6 @@ export namespace $Object {
             ignoreRdfType: false,
             preferredLanguages,
             variablePrefix: `${variablePrefix}Partial`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteChild.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteChild,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteChild`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ConcreteParent.$focusSparqlWherePatterns({
-            filter: filter?.on?.ConcreteParent,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}ConcreteParent`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BaseWithoutProperties.$focusSparqlWherePatterns({
-            filter: filter?.on?.BaseWithoutProperties,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BaseWithoutProperties`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: BaseWithProperties.$focusSparqlWherePatterns({
-            filter: filter?.on?.BaseWithProperties,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}BaseWithProperties`,
           }).concat(),
           type: "group",
         },
@@ -61831,6 +61826,18 @@ export namespace $Object {
         value as BlankNodeOrIriIdentifier.$Json,
       );
     }
+    if (value.$type === "ClassHierarchy3") {
+      return ClassHierarchy3.$fromJson(value as ClassHierarchy3.$Json);
+    }
+    if (value.$type === "ClassHierarchy2") {
+      return ClassHierarchy2.$fromJson(value as ClassHierarchy2.$Json);
+    }
+    if (value.$type === "ClassHierarchy1") {
+      return ClassHierarchy1.$fromJson(value as ClassHierarchy1.$Json);
+    }
+    if (value.$type === "ClassHierarchy0") {
+      return ClassHierarchy0.$fromJson(value as ClassHierarchy0.$Json);
+    }
     if (value.$type === "ClassProperties") {
       return ClassProperties.$fromJson(value as ClassProperties.$Json);
     }
@@ -61839,20 +61846,6 @@ export namespace $Object {
     }
     if (value.$type === "Partial") {
       return Partial.$fromJson(value as Partial.$Json);
-    }
-    if (value.$type === "ConcreteChild") {
-      return ConcreteChild.$fromJson(value as ConcreteChild.$Json);
-    }
-    if (value.$type === "ConcreteParent") {
-      return ConcreteParent.$fromJson(value as ConcreteParent.$Json);
-    }
-    if (value.$type === "BaseWithoutProperties") {
-      return BaseWithoutProperties.$fromJson(
-        value as BaseWithoutProperties.$Json,
-      );
-    }
-    if (value.$type === "BaseWithProperties") {
-      return BaseWithProperties.$fromJson(value as BaseWithProperties.$Json);
     }
     if (value.$type === "ConvertibleTypeProperties") {
       return ConvertibleTypeProperties.$fromJson(
@@ -62054,6 +62047,34 @@ export namespace $Object {
       )
       .altLazy(
         () =>
+          ClassHierarchy3.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassHierarchy2.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassHierarchy1.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassHierarchy0.$fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
           ClassProperties.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
@@ -62069,34 +62090,6 @@ export namespace $Object {
       .altLazy(
         () =>
           Partial.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteChild.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          ConcreteParent.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BaseWithoutProperties.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          BaseWithProperties.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -62461,6 +62454,54 @@ export namespace $Object {
             )
             .altLazy(
               () =>
+                ClassHierarchy3.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                ClassHierarchy2.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                ClassHierarchy1.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                ClassHierarchy0.$fromRdfResourceValues(valueAsValues, {
+                  context: _options.context,
+                  graph: _options.graph,
+                  ignoreRdfType: false,
+                  objectSet: _options.objectSet,
+                  preferredLanguages: _options.preferredLanguages,
+                  propertyPath: _options.propertyPath,
+                  resource: _options.resource,
+                }) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
                 ClassProperties.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -62486,54 +62527,6 @@ export namespace $Object {
             .altLazy(
               () =>
                 Partial.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                ConcreteChild.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                ConcreteParent.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                BaseWithoutProperties.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                BaseWithProperties.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -63136,6 +63129,18 @@ export namespace $Object {
     if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
       BlankNodeOrIriIdentifier.$hash(value, hasher);
     }
+    if (ClassHierarchy3.isClassHierarchy3(value)) {
+      ClassHierarchy3.$hash(value, hasher);
+    }
+    if (ClassHierarchy2.isClassHierarchy2(value)) {
+      ClassHierarchy2.$hash(value, hasher);
+    }
+    if (ClassHierarchy1.isClassHierarchy1(value)) {
+      ClassHierarchy1.$hash(value, hasher);
+    }
+    if (ClassHierarchy0.isClassHierarchy0(value)) {
+      ClassHierarchy0.$hash(value, hasher);
+    }
     if (ClassProperties.isClassProperties(value)) {
       ClassProperties.$hash(value, hasher);
     }
@@ -63144,18 +63149,6 @@ export namespace $Object {
     }
     if (Partial.isPartial(value)) {
       Partial.$hash(value, hasher);
-    }
-    if (ConcreteChild.isConcreteChild(value)) {
-      ConcreteChild.$hash(value, hasher);
-    }
-    if (ConcreteParent.isConcreteParent(value)) {
-      ConcreteParent.$hash(value, hasher);
-    }
-    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
-      BaseWithoutProperties.$hash(value, hasher);
-    }
-    if (BaseWithProperties.isBaseWithProperties(value)) {
-      BaseWithProperties.$hash(value, hasher);
     }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       ConvertibleTypeProperties.$hash(value, hasher);
@@ -63314,13 +63307,13 @@ export namespace $Object {
   export type $Json =
     | BlankNodeIdentifier.$Json
     | BlankNodeOrIriIdentifier.$Json
+    | ClassHierarchy3.$Json
+    | ClassHierarchy2.$Json
+    | ClassHierarchy1.$Json
+    | ClassHierarchy0.$Json
     | ClassProperties.$Json
     | NonClass.$Json
     | Partial.$Json
-    | ConcreteChild.$Json
-    | ConcreteParent.$Json
-    | BaseWithoutProperties.$Json
-    | BaseWithProperties.$Json
     | ConvertibleTypeProperties.$Json
     | DateUnionProperties.$Json
     | DefaultValueProperties.$Json
@@ -63375,13 +63368,13 @@ export namespace $Object {
         .discriminatedUnion("$type", [
           BlankNodeIdentifier.$Json.schema(),
           BlankNodeOrIriIdentifier.$Json.schema(),
+          ClassHierarchy3.$Json.schema(),
+          ClassHierarchy2.$Json.schema(),
+          ClassHierarchy1.$Json.schema(),
+          ClassHierarchy0.$Json.schema(),
           ClassProperties.$Json.schema(),
           NonClass.$Json.schema(),
           Partial.$Json.schema(),
-          ConcreteChild.$Json.schema(),
-          ConcreteParent.$Json.schema(),
-          BaseWithoutProperties.$Json.schema(),
-          BaseWithProperties.$Json.schema(),
           ConvertibleTypeProperties.$Json.schema(),
           DateUnionProperties.$Json.schema(),
           DefaultValueProperties.$Json.schema(),
@@ -63453,28 +63446,28 @@ export namespace $Object {
         discriminantValues: ["BlankNodeOrIriIdentifier"],
         type: BlankNodeOrIriIdentifier.$schema,
       },
+      ClassHierarchy3: {
+        discriminantValues: ["ClassHierarchy3"],
+        type: ClassHierarchy3.$schema,
+      },
+      ClassHierarchy2: {
+        discriminantValues: ["ClassHierarchy2"],
+        type: ClassHierarchy2.$schema,
+      },
+      ClassHierarchy1: {
+        discriminantValues: ["ClassHierarchy1"],
+        type: ClassHierarchy1.$schema,
+      },
+      ClassHierarchy0: {
+        discriminantValues: ["ClassHierarchy0"],
+        type: ClassHierarchy0.$schema,
+      },
       ClassProperties: {
         discriminantValues: ["ClassProperties"],
         type: ClassProperties.$schema,
       },
       NonClass: { discriminantValues: ["NonClass"], type: NonClass.$schema },
       Partial: { discriminantValues: ["Partial"], type: Partial.$schema },
-      ConcreteChild: {
-        discriminantValues: ["ConcreteChild"],
-        type: ConcreteChild.$schema,
-      },
-      ConcreteParent: {
-        discriminantValues: ["ConcreteParent"],
-        type: ConcreteParent.$schema,
-      },
-      BaseWithoutProperties: {
-        discriminantValues: ["BaseWithoutProperties"],
-        type: BaseWithoutProperties.$schema,
-      },
-      BaseWithProperties: {
-        discriminantValues: ["BaseWithProperties"],
-        type: BaseWithProperties.$schema,
-      },
       ConvertibleTypeProperties: {
         discriminantValues: ["ConvertibleTypeProperties"],
         type: ConvertibleTypeProperties.$schema,
@@ -63721,6 +63714,18 @@ export namespace $Object {
     if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
       return BlankNodeOrIriIdentifier.$toJson(value);
     }
+    if (ClassHierarchy3.isClassHierarchy3(value)) {
+      return ClassHierarchy3.$toJson(value);
+    }
+    if (ClassHierarchy2.isClassHierarchy2(value)) {
+      return ClassHierarchy2.$toJson(value);
+    }
+    if (ClassHierarchy1.isClassHierarchy1(value)) {
+      return ClassHierarchy1.$toJson(value);
+    }
+    if (ClassHierarchy0.isClassHierarchy0(value)) {
+      return ClassHierarchy0.$toJson(value);
+    }
     if (ClassProperties.isClassProperties(value)) {
       return ClassProperties.$toJson(value);
     }
@@ -63729,18 +63734,6 @@ export namespace $Object {
     }
     if (Partial.isPartial(value)) {
       return Partial.$toJson(value);
-    }
-    if (ConcreteChild.isConcreteChild(value)) {
-      return ConcreteChild.$toJson(value);
-    }
-    if (ConcreteParent.isConcreteParent(value)) {
-      return ConcreteParent.$toJson(value);
-    }
-    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
-      return BaseWithoutProperties.$toJson(value);
-    }
-    if (BaseWithProperties.isBaseWithProperties(value)) {
-      return BaseWithProperties.$toJson(value);
     }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toJson(value);
@@ -63901,6 +63894,18 @@ export namespace $Object {
     if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
       return BlankNodeOrIriIdentifier.$toRdfResource(value, options);
     }
+    if (ClassHierarchy3.isClassHierarchy3(value)) {
+      return ClassHierarchy3.$toRdfResource(value, options);
+    }
+    if (ClassHierarchy2.isClassHierarchy2(value)) {
+      return ClassHierarchy2.$toRdfResource(value, options);
+    }
+    if (ClassHierarchy1.isClassHierarchy1(value)) {
+      return ClassHierarchy1.$toRdfResource(value, options);
+    }
+    if (ClassHierarchy0.isClassHierarchy0(value)) {
+      return ClassHierarchy0.$toRdfResource(value, options);
+    }
     if (ClassProperties.isClassProperties(value)) {
       return ClassProperties.$toRdfResource(value, options);
     }
@@ -63909,18 +63914,6 @@ export namespace $Object {
     }
     if (Partial.isPartial(value)) {
       return Partial.$toRdfResource(value, options);
-    }
-    if (ConcreteChild.isConcreteChild(value)) {
-      return ConcreteChild.$toRdfResource(value, options);
-    }
-    if (ConcreteParent.isConcreteParent(value)) {
-      return ConcreteParent.$toRdfResource(value, options);
-    }
-    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
-      return BaseWithoutProperties.$toRdfResource(value, options);
-    }
-    if (BaseWithProperties.isBaseWithProperties(value)) {
-      return BaseWithProperties.$toRdfResource(value, options);
     }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toRdfResource(value, options);
@@ -64093,6 +64086,38 @@ export namespace $Object {
         }).identifier,
       ];
     }
+    if (ClassHierarchy3.isClassHierarchy3(value)) {
+      return [
+        ClassHierarchy3.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassHierarchy2.isClassHierarchy2(value)) {
+      return [
+        ClassHierarchy2.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassHierarchy1.isClassHierarchy1(value)) {
+      return [
+        ClassHierarchy1.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassHierarchy0.isClassHierarchy0(value)) {
+      return [
+        ClassHierarchy0.$toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
     if (ClassProperties.isClassProperties(value)) {
       return [
         ClassProperties.$toRdfResource(value, {
@@ -64112,38 +64137,6 @@ export namespace $Object {
     if (Partial.isPartial(value)) {
       return [
         Partial.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ConcreteChild.isConcreteChild(value)) {
-      return [
-        ConcreteChild.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (ConcreteParent.isConcreteParent(value)) {
-      return [
-        ConcreteParent.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
-      return [
-        BaseWithoutProperties.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (BaseWithProperties.isBaseWithProperties(value)) {
-      return [
-        BaseWithProperties.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -64540,6 +64533,18 @@ export namespace $Object {
     if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
       return BlankNodeOrIriIdentifier.$toString(value);
     }
+    if (ClassHierarchy3.isClassHierarchy3(value)) {
+      return ClassHierarchy3.$toString(value);
+    }
+    if (ClassHierarchy2.isClassHierarchy2(value)) {
+      return ClassHierarchy2.$toString(value);
+    }
+    if (ClassHierarchy1.isClassHierarchy1(value)) {
+      return ClassHierarchy1.$toString(value);
+    }
+    if (ClassHierarchy0.isClassHierarchy0(value)) {
+      return ClassHierarchy0.$toString(value);
+    }
     if (ClassProperties.isClassProperties(value)) {
       return ClassProperties.$toString(value);
     }
@@ -64548,18 +64553,6 @@ export namespace $Object {
     }
     if (Partial.isPartial(value)) {
       return Partial.$toString(value);
-    }
-    if (ConcreteChild.isConcreteChild(value)) {
-      return ConcreteChild.$toString(value);
-    }
-    if (ConcreteParent.isConcreteParent(value)) {
-      return ConcreteParent.$toString(value);
-    }
-    if (BaseWithoutProperties.isBaseWithoutProperties(value)) {
-      return BaseWithoutProperties.$toString(value);
-    }
-    if (BaseWithProperties.isBaseWithProperties(value)) {
-      return BaseWithProperties.$toString(value);
     }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
       return ConvertibleTypeProperties.$toString(value);
@@ -64733,6 +64726,38 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
+      ClassHierarchy3.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy3"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy3"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy2.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy2"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy1.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy1"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy0.$valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy0"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy0"].type,
+      }),
+    );
+    triples = triples.concat(
       ClassProperties.$valueSparqlConstructTriples({
         ...otherParameters,
         filter: filter?.on?.["ClassProperties"],
@@ -64754,38 +64779,6 @@ export namespace $Object {
         filter: filter?.on?.["Partial"],
         ignoreRdfType: false,
         schema: schema.members["Partial"].type,
-      }),
-    );
-    triples = triples.concat(
-      ConcreteChild.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ConcreteChild"],
-        ignoreRdfType: false,
-        schema: schema.members["ConcreteChild"].type,
-      }),
-    );
-    triples = triples.concat(
-      ConcreteParent.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["ConcreteParent"],
-        ignoreRdfType: false,
-        schema: schema.members["ConcreteParent"].type,
-      }),
-    );
-    triples = triples.concat(
-      BaseWithoutProperties.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["BaseWithoutProperties"],
-        ignoreRdfType: false,
-        schema: schema.members["BaseWithoutProperties"].type,
-      }),
-    );
-    triples = triples.concat(
-      BaseWithProperties.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["BaseWithProperties"],
-        ignoreRdfType: false,
-        schema: schema.members["BaseWithProperties"].type,
       }),
     );
     triples = triples.concat(
@@ -65196,6 +65189,42 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
+      patterns: ClassHierarchy3.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy3"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy3"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy2.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy1.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy0.$valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy0"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy0"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
       patterns: ClassProperties.$valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["ClassProperties"],
@@ -65219,42 +65248,6 @@ export namespace $Object {
         filter: filter?.on?.["Partial"],
         ignoreRdfType: false,
         schema: schema.members["Partial"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ConcreteChild.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ConcreteChild"],
-        ignoreRdfType: false,
-        schema: schema.members["ConcreteChild"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: ConcreteParent.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["ConcreteParent"],
-        ignoreRdfType: false,
-        schema: schema.members["ConcreteParent"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: BaseWithoutProperties.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["BaseWithoutProperties"],
-        ignoreRdfType: false,
-        schema: schema.members["BaseWithoutProperties"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: BaseWithProperties.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["BaseWithProperties"],
-        ignoreRdfType: false,
-        schema: schema.members["BaseWithProperties"].type,
       }).concat(),
       type: "group",
     });
@@ -65714,64 +65707,6 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<BaseForExtern.$Filter, BaseForExtern.$Identifier>,
   ): Promise<Either<Error, readonly BaseForExtern[]>>;
 
-  baseWithoutProperties(
-    identifier: BaseWithoutProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithoutProperties>>;
-
-  baseWithoutPropertiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithoutProperties.$Filter,
-        BaseWithoutProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  baseWithoutPropertiesIdentifiers(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>>;
-
-  baseWithoutPropertieses(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties[]>>;
-
-  baseWithProperties(
-    identifier: BaseWithProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithProperties>>;
-
-  baseWithPropertiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithProperties.$Filter,
-        BaseWithProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  baseWithPropertiesIdentifiers(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>>;
-
-  baseWithPropertieses(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties[]>>;
-
   blankNodeIdentifier(
     identifier: BlankNodeIdentifier.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -65830,6 +65765,110 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifier[]>>;
 
+  classHierarchy0(
+    identifier: ClassHierarchy0.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy0>>;
+
+  classHierarchy0Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy0.$Filter, ClassHierarchy0.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classHierarchy0Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0.$Identifier[]>>;
+
+  classHierarchy0s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0[]>>;
+
+  classHierarchy1(
+    identifier: ClassHierarchy1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy1>>;
+
+  classHierarchy1Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy1.$Filter, ClassHierarchy1.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classHierarchy1Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1.$Identifier[]>>;
+
+  classHierarchy1s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1[]>>;
+
+  classHierarchy2(
+    identifier: ClassHierarchy2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy2>>;
+
+  classHierarchy2Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy2.$Filter, ClassHierarchy2.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classHierarchy2Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2.$Identifier[]>>;
+
+  classHierarchy2s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2[]>>;
+
+  classHierarchy3(
+    identifier: ClassHierarchy3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy3>>;
+
+  classHierarchy3Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy3.$Filter, ClassHierarchy3.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classHierarchy3Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3.$Identifier[]>>;
+
+  classHierarchy3s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3[]>>;
+
   classProperties(
     identifier: ClassProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -65855,52 +65894,6 @@ export interface $ObjectSet {
       ClassProperties.$Identifier
     >,
   ): Promise<Either<Error, readonly ClassProperties[]>>;
-
-  concreteChild(
-    identifier: ConcreteChild.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteChild>>;
-
-  concreteChildCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Promise<Either<Error, readonly ConcreteChild.$Identifier[]>>;
-
-  concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Promise<Either<Error, readonly ConcreteChild[]>>;
-
-  concreteParent(
-    identifier: ConcreteParent.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteParent>>;
-
-  concreteParentCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParent.$Filter, ConcreteParent.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  concreteParentIdentifiers(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent.$Identifier[]>>;
-
-  concreteParents(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent[]>>;
 
   convertibleTypeProperties(
     identifier: ConvertibleTypeProperties.$Identifier,
@@ -67382,199 +67375,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async baseWithoutProperties(
-    identifier: BaseWithoutProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithoutProperties>> {
-    return this.baseWithoutPropertiesSync(identifier, options);
-  }
-
-  baseWithoutPropertiesSync(
-    identifier: BaseWithoutProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, BaseWithoutProperties> {
-    return this.baseWithoutPropertiesesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async baseWithoutPropertiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithoutProperties.$Filter,
-        BaseWithoutProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.baseWithoutPropertiesCountSync(query);
-  }
-
-  baseWithoutPropertiesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithoutProperties.$Filter,
-        BaseWithoutProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.baseWithoutPropertiesesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async baseWithoutPropertiesIdentifiers(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>> {
-    return this.baseWithoutPropertiesIdentifiersSync(query);
-  }
-
-  baseWithoutPropertiesIdentifiersSync(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Either<Error, readonly BaseWithoutProperties.$Identifier[]> {
-    return this.baseWithoutPropertiesesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async baseWithoutPropertieses(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties[]>> {
-    return this.baseWithoutPropertiesesSync(query);
-  }
-
-  baseWithoutPropertiesesSync(
-    query?: $ObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Either<Error, readonly BaseWithoutProperties[]> {
-    return this.$objectsSync<
-      BaseWithoutProperties,
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >(
-      {
-        $filter: BaseWithoutProperties.$filter,
-        $fromRdfResource: BaseWithoutProperties.$fromRdfResource,
-        $fromRdfTypes: [
-          BaseWithoutProperties.$fromRdfType,
-          ConcreteParent.$fromRdfType,
-          ConcreteChild.$fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
-  async baseWithProperties(
-    identifier: BaseWithProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithProperties>> {
-    return this.baseWithPropertiesSync(identifier, options);
-  }
-
-  baseWithPropertiesSync(
-    identifier: BaseWithProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, BaseWithProperties> {
-    return this.baseWithPropertiesesSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async baseWithPropertiesCount(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithProperties.$Filter,
-        BaseWithProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.baseWithPropertiesCountSync(query);
-  }
-
-  baseWithPropertiesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<
-        BaseWithProperties.$Filter,
-        BaseWithProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.baseWithPropertiesesSync(query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  async baseWithPropertiesIdentifiers(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>> {
-    return this.baseWithPropertiesIdentifiersSync(query);
-  }
-
-  baseWithPropertiesIdentifiersSync(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Either<Error, readonly BaseWithProperties.$Identifier[]> {
-    return this.baseWithPropertiesesSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async baseWithPropertieses(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties[]>> {
-    return this.baseWithPropertiesesSync(query);
-  }
-
-  baseWithPropertiesesSync(
-    query?: $ObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Either<Error, readonly BaseWithProperties[]> {
-    return this.$objectsSync<
-      BaseWithProperties,
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >(
-      {
-        $filter: BaseWithProperties.$filter,
-        $fromRdfResource: BaseWithProperties.$fromRdfResource,
-        $fromRdfTypes: [
-          BaseWithProperties.$fromRdfType,
-          BaseWithoutProperties.$fromRdfType,
-          ConcreteParent.$fromRdfType,
-          ConcreteChild.$fromRdfType,
-        ],
-      },
-      query,
-    );
-  }
-
   async blankNodeIdentifier(
     identifier: BlankNodeIdentifier.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -67759,6 +67559,354 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async classHierarchy0(
+    identifier: ClassHierarchy0.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy0>> {
+    return this.classHierarchy0Sync(identifier, options);
+  }
+
+  classHierarchy0Sync(
+    identifier: ClassHierarchy0.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassHierarchy0> {
+    return this.classHierarchy0sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classHierarchy0Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy0.$Filter, ClassHierarchy0.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classHierarchy0CountSync(query);
+  }
+
+  classHierarchy0CountSync(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy0.$Filter, ClassHierarchy0.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classHierarchy0sSync(query).map((objects) => objects.length);
+  }
+
+  async classHierarchy0Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0.$Identifier[]>> {
+    return this.classHierarchy0IdentifiersSync(query);
+  }
+
+  classHierarchy0IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy0.$Identifier[]> {
+    return this.classHierarchy0sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classHierarchy0s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0[]>> {
+    return this.classHierarchy0sSync(query);
+  }
+
+  classHierarchy0sSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy0[]> {
+    return this.$objectsSync<
+      ClassHierarchy0,
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >(
+      {
+        $filter: ClassHierarchy0.$filter,
+        $fromRdfResource: ClassHierarchy0.$fromRdfResource,
+        $fromRdfTypes: [
+          ClassHierarchy0.$fromRdfType,
+          ClassHierarchy1.$fromRdfType,
+          ClassHierarchy2.$fromRdfType,
+          ClassHierarchy3.$fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
+  async classHierarchy1(
+    identifier: ClassHierarchy1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy1>> {
+    return this.classHierarchy1Sync(identifier, options);
+  }
+
+  classHierarchy1Sync(
+    identifier: ClassHierarchy1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassHierarchy1> {
+    return this.classHierarchy1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classHierarchy1Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy1.$Filter, ClassHierarchy1.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classHierarchy1CountSync(query);
+  }
+
+  classHierarchy1CountSync(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy1.$Filter, ClassHierarchy1.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classHierarchy1sSync(query).map((objects) => objects.length);
+  }
+
+  async classHierarchy1Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1.$Identifier[]>> {
+    return this.classHierarchy1IdentifiersSync(query);
+  }
+
+  classHierarchy1IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy1.$Identifier[]> {
+    return this.classHierarchy1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classHierarchy1s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1[]>> {
+    return this.classHierarchy1sSync(query);
+  }
+
+  classHierarchy1sSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy1[]> {
+    return this.$objectsSync<
+      ClassHierarchy1,
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >(
+      {
+        $filter: ClassHierarchy1.$filter,
+        $fromRdfResource: ClassHierarchy1.$fromRdfResource,
+        $fromRdfTypes: [
+          ClassHierarchy1.$fromRdfType,
+          ClassHierarchy2.$fromRdfType,
+          ClassHierarchy3.$fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
+  async classHierarchy2(
+    identifier: ClassHierarchy2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy2>> {
+    return this.classHierarchy2Sync(identifier, options);
+  }
+
+  classHierarchy2Sync(
+    identifier: ClassHierarchy2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassHierarchy2> {
+    return this.classHierarchy2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classHierarchy2Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy2.$Filter, ClassHierarchy2.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classHierarchy2CountSync(query);
+  }
+
+  classHierarchy2CountSync(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy2.$Filter, ClassHierarchy2.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classHierarchy2sSync(query).map((objects) => objects.length);
+  }
+
+  async classHierarchy2Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2.$Identifier[]>> {
+    return this.classHierarchy2IdentifiersSync(query);
+  }
+
+  classHierarchy2IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy2.$Identifier[]> {
+    return this.classHierarchy2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classHierarchy2s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2[]>> {
+    return this.classHierarchy2sSync(query);
+  }
+
+  classHierarchy2sSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy2[]> {
+    return this.$objectsSync<
+      ClassHierarchy2,
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >(
+      {
+        $filter: ClassHierarchy2.$filter,
+        $fromRdfResource: ClassHierarchy2.$fromRdfResource,
+        $fromRdfTypes: [
+          ClassHierarchy2.$fromRdfType,
+          ClassHierarchy3.$fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
+  async classHierarchy3(
+    identifier: ClassHierarchy3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy3>> {
+    return this.classHierarchy3Sync(identifier, options);
+  }
+
+  classHierarchy3Sync(
+    identifier: ClassHierarchy3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassHierarchy3> {
+    return this.classHierarchy3sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classHierarchy3Count(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy3.$Filter, ClassHierarchy3.$Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classHierarchy3CountSync(query);
+  }
+
+  classHierarchy3CountSync(
+    query?: Pick<
+      $ObjectSet.Query<ClassHierarchy3.$Filter, ClassHierarchy3.$Identifier>,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classHierarchy3sSync(query).map((objects) => objects.length);
+  }
+
+  async classHierarchy3Identifiers(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3.$Identifier[]>> {
+    return this.classHierarchy3IdentifiersSync(query);
+  }
+
+  classHierarchy3IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy3.$Identifier[]> {
+    return this.classHierarchy3sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classHierarchy3s(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3[]>> {
+    return this.classHierarchy3sSync(query);
+  }
+
+  classHierarchy3sSync(
+    query?: $ObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Either<Error, readonly ClassHierarchy3[]> {
+    return this.$objectsSync<
+      ClassHierarchy3,
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >(
+      {
+        $filter: ClassHierarchy3.$filter,
+        $fromRdfResource: ClassHierarchy3.$fromRdfResource,
+        $fromRdfTypes: [ClassHierarchy3.$fromRdfType],
+      },
+      query,
+    );
+  }
+
   async classProperties(
     identifier: ClassProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -67838,165 +67986,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $filter: ClassProperties.$filter,
         $fromRdfResource: ClassProperties.$fromRdfResource,
         $fromRdfTypes: [ClassProperties.$fromRdfType],
-      },
-      query,
-    );
-  }
-
-  async concreteChild(
-    identifier: ConcreteChild.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteChild>> {
-    return this.concreteChildSync(identifier, options);
-  }
-
-  concreteChildSync(
-    identifier: ConcreteChild.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ConcreteChild> {
-    return this.concreteChildrenSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async concreteChildCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.concreteChildCountSync(query);
-  }
-
-  concreteChildCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.concreteChildrenSync(query).map((objects) => objects.length);
-  }
-
-  async concreteChildIdentifiers(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Promise<Either<Error, readonly ConcreteChild.$Identifier[]>> {
-    return this.concreteChildIdentifiersSync(query);
-  }
-
-  concreteChildIdentifiersSync(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Either<Error, readonly ConcreteChild.$Identifier[]> {
-    return this.concreteChildrenSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async concreteChildren(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Promise<Either<Error, readonly ConcreteChild[]>> {
-    return this.concreteChildrenSync(query);
-  }
-
-  concreteChildrenSync(
-    query?: $ObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-  ): Either<Error, readonly ConcreteChild[]> {
-    return this.$objectsSync<
-      ConcreteChild,
-      ConcreteChild.$Filter,
-      ConcreteChild.$Identifier
-    >(
-      {
-        $filter: ConcreteChild.$filter,
-        $fromRdfResource: ConcreteChild.$fromRdfResource,
-        $fromRdfTypes: [ConcreteChild.$fromRdfType],
-      },
-      query,
-    );
-  }
-
-  async concreteParent(
-    identifier: ConcreteParent.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteParent>> {
-    return this.concreteParentSync(identifier, options);
-  }
-
-  concreteParentSync(
-    identifier: ConcreteParent.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, ConcreteParent> {
-    return this.concreteParentsSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async concreteParentCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParent.$Filter, ConcreteParent.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.concreteParentCountSync(query);
-  }
-
-  concreteParentCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParent.$Filter, ConcreteParent.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.concreteParentsSync(query).map((objects) => objects.length);
-  }
-
-  async concreteParentIdentifiers(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent.$Identifier[]>> {
-    return this.concreteParentIdentifiersSync(query);
-  }
-
-  concreteParentIdentifiersSync(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Either<Error, readonly ConcreteParent.$Identifier[]> {
-    return this.concreteParentsSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async concreteParents(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent[]>> {
-    return this.concreteParentsSync(query);
-  }
-
-  concreteParentsSync(
-    query?: $ObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Either<Error, readonly ConcreteParent[]> {
-    return this.$objectsSync<
-      ConcreteParent,
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >(
-      {
-        $filter: ConcreteParent.$filter,
-        $fromRdfResource: ConcreteParent.$fromRdfResource,
-        $fromRdfTypes: [
-          ConcreteParent.$fromRdfType,
-          ConcreteChild.$fromRdfType,
-        ],
       },
       query,
     );
@@ -72521,6 +72510,38 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
+          $fromRdfResource: ClassHierarchy3.$fromRdfResource,
+          $fromRdfTypes: [ClassHierarchy3.$fromRdfType],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: ClassHierarchy2.$fromRdfResource,
+          $fromRdfTypes: [
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: ClassHierarchy1.$fromRdfResource,
+          $fromRdfTypes: [
+            ClassHierarchy1.$fromRdfType,
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ],
+        },
+        {
+          $filter: $Object.$filter,
+          $fromRdfResource: ClassHierarchy0.$fromRdfResource,
+          $fromRdfTypes: [
+            ClassHierarchy0.$fromRdfType,
+            ClassHierarchy1.$fromRdfType,
+            ClassHierarchy2.$fromRdfType,
+            ClassHierarchy3.$fromRdfType,
+          ],
+        },
+        {
+          $filter: $Object.$filter,
           $fromRdfResource: ClassProperties.$fromRdfResource,
           $fromRdfTypes: [ClassProperties.$fromRdfType],
         },
@@ -72533,38 +72554,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdfResource: Partial.$fromRdfResource,
           $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: ConcreteChild.$fromRdfResource,
-          $fromRdfTypes: [ConcreteChild.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: ConcreteParent.$fromRdfResource,
-          $fromRdfTypes: [
-            ConcreteParent.$fromRdfType,
-            ConcreteChild.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: BaseWithoutProperties.$fromRdfResource,
-          $fromRdfTypes: [
-            BaseWithoutProperties.$fromRdfType,
-            ConcreteParent.$fromRdfType,
-            ConcreteChild.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: BaseWithProperties.$fromRdfResource,
-          $fromRdfTypes: [
-            BaseWithProperties.$fromRdfType,
-            BaseWithoutProperties.$fromRdfType,
-            ConcreteParent.$fromRdfType,
-            ConcreteChild.$fromRdfType,
-          ],
         },
         {
           $filter: $Object.$filter,
@@ -73161,110 +73150,6 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(BaseForExtern, query);
   }
 
-  async baseWithoutProperties(
-    identifier: BaseWithoutProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithoutProperties>> {
-    return (
-      await this.baseWithoutPropertieses({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async baseWithoutPropertiesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        BaseWithoutProperties.$Filter,
-        BaseWithoutProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >(BaseWithoutProperties, query);
-  }
-
-  async baseWithoutPropertiesIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >(BaseWithoutProperties, query);
-  }
-
-  async baseWithoutPropertieses(
-    query?: $SparqlObjectSet.Query<
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithoutProperties[]>> {
-    return this.$objects<
-      BaseWithoutProperties,
-      BaseWithoutProperties.$Filter,
-      BaseWithoutProperties.$Identifier
-    >(BaseWithoutProperties, query);
-  }
-
-  async baseWithProperties(
-    identifier: BaseWithProperties.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, BaseWithProperties>> {
-    return (
-      await this.baseWithPropertieses({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async baseWithPropertiesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        BaseWithProperties.$Filter,
-        BaseWithProperties.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >(BaseWithProperties, query);
-  }
-
-  async baseWithPropertiesIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >(BaseWithProperties, query);
-  }
-
-  async baseWithPropertieses(
-    query?: $SparqlObjectSet.Query<
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >,
-  ): Promise<Either<Error, readonly BaseWithProperties[]>> {
-    return this.$objects<
-      BaseWithProperties,
-      BaseWithProperties.$Filter,
-      BaseWithProperties.$Identifier
-    >(BaseWithProperties, query);
-  }
-
   async blankNodeIdentifier(
     identifier: BlankNodeIdentifier.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -73369,6 +73254,214 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(BlankNodeOrIriIdentifier, query);
   }
 
+  async classHierarchy0(
+    identifier: ClassHierarchy0.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy0>> {
+    return (
+      await this.classHierarchy0s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy0Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy0.$Filter,
+        ClassHierarchy0.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy0Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy0s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0[]>> {
+    return this.$objects<
+      ClassHierarchy0,
+      ClassHierarchy0.$Filter,
+      ClassHierarchy0.$Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy1(
+    identifier: ClassHierarchy1.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy1>> {
+    return (
+      await this.classHierarchy1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy1.$Filter,
+        ClassHierarchy1.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy1s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1[]>> {
+    return this.$objects<
+      ClassHierarchy1,
+      ClassHierarchy1.$Filter,
+      ClassHierarchy1.$Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy2(
+    identifier: ClassHierarchy2.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy2>> {
+    return (
+      await this.classHierarchy2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy2.$Filter,
+        ClassHierarchy2.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy2s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2[]>> {
+    return this.$objects<
+      ClassHierarchy2,
+      ClassHierarchy2.$Filter,
+      ClassHierarchy2.$Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy3(
+    identifier: ClassHierarchy3.$Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy3>> {
+    return (
+      await this.classHierarchy3s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy3Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy3.$Filter,
+        ClassHierarchy3.$Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.$objectCount<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >(ClassHierarchy3, query);
+  }
+
+  async classHierarchy3Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3.$Identifier[]>> {
+    return this.$objectIdentifiers<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >(ClassHierarchy3, query);
+  }
+
+  async classHierarchy3s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3[]>> {
+    return this.$objects<
+      ClassHierarchy3,
+      ClassHierarchy3.$Filter,
+      ClassHierarchy3.$Identifier
+    >(ClassHierarchy3, query);
+  }
+
   async classProperties(
     identifier: ClassProperties.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
@@ -73419,107 +73512,6 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassProperties.$Filter,
       ClassProperties.$Identifier
     >(ClassProperties, query);
-  }
-
-  async concreteChild(
-    identifier: ConcreteChild.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteChild>> {
-    return (
-      await this.concreteChildren({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async concreteChildCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ConcreteChild.$Filter, ConcreteChild.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<ConcreteChild.$Filter, ConcreteChild.$Identifier>(
-      ConcreteChild,
-      query,
-    );
-  }
-
-  async concreteChildIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      ConcreteChild.$Filter,
-      ConcreteChild.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteChild.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      ConcreteChild.$Filter,
-      ConcreteChild.$Identifier
-    >(ConcreteChild, query);
-  }
-
-  async concreteChildren(
-    query?: $SparqlObjectSet.Query<
-      ConcreteChild.$Filter,
-      ConcreteChild.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteChild[]>> {
-    return this.$objects<
-      ConcreteChild,
-      ConcreteChild.$Filter,
-      ConcreteChild.$Identifier
-    >(ConcreteChild, query);
-  }
-
-  async concreteParent(
-    identifier: ConcreteParent.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, ConcreteParent>> {
-    return (
-      await this.concreteParents({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async concreteParentCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<
-        ConcreteParent.$Filter,
-        ConcreteParent.$Identifier
-      >,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.$objectCount<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >(ConcreteParent, query);
-  }
-
-  async concreteParentIdentifiers(
-    query?: $SparqlObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent.$Identifier[]>> {
-    return this.$objectIdentifiers<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >(ConcreteParent, query);
-  }
-
-  async concreteParents(
-    query?: $SparqlObjectSet.Query<
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >,
-  ): Promise<Either<Error, readonly ConcreteParent[]>> {
-    return this.$objects<
-      ConcreteParent,
-      ConcreteParent.$Filter,
-      ConcreteParent.$Identifier
-    >(ConcreteParent, query);
   }
 
   async convertibleTypeProperties(

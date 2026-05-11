@@ -8,37 +8,37 @@ import { objectDataset } from "./objectDataset.js";
 export function testObjectMethods(createObjectSet: ObjectSetFactory) {
   describe("object methods", () => {
     it("concrete child", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
+      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
       expect(
-        kitchenSink.ConcreteChild.$equals(
+        kitchenSink.ClassHierarchy3.$equals(
           (
-            await objectSet.concreteChild(
-              data.concreteChildren[0].$identifier(),
+            await objectSet.classHierarchy3(
+              data.classHierarchy3s[0].$identifier(),
             )
           ).unsafeCoerce(),
-          data.concreteChildren[0],
+          data.classHierarchy3s[0],
         ).unsafeCoerce(),
       ).toBe(true);
     });
 
     it("concrete parent", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
-      const expectedObject = data.concreteChildren[0];
+      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
+      const expectedObject = data.classHierarchy3s[0];
       const actualObject = (
-        await objectSet.concreteParent(expectedObject.$identifier())
+        await objectSet.classHierarchy2(expectedObject.$identifier())
       ).unsafeCoerce();
-      expect(actualObject.baseWithPropertiesProperty).toStrictEqual(
-        expectedObject.baseWithPropertiesProperty,
+      expect(actualObject.classHierarchy0Property).toStrictEqual(
+        expectedObject.classHierarchy0Property,
       );
-      expect(actualObject.concreteParentProperty).toStrictEqual(
-        expectedObject.concreteParentProperty,
+      expect(actualObject.classHierarchy2Property).toStrictEqual(
+        expectedObject.classHierarchy2Property,
       );
     });
 
     it("missing", async ({ expect }) => {
-      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
+      const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
       expect(
-        await objectSet.concreteChild(
+        await objectSet.classHierarchy3(
           dataFactory.namedNode("http://example.com/nonextant"),
         ),
       ).toBeLeft();

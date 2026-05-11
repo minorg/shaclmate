@@ -462,11 +462,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.ConcreteChild.$create({
-              baseWithPropertiesProperty: `test${i}`,
+            kitchenSink.ClassHierarchy3.$create({
+              classHierarchy0Property: `test${i}`,
               $identifier: identifiers[i],
-              concreteChildProperty: `test${i}`,
-              concreteParentProperty: `test${i}`,
+              classHierarchy3Property: `test${i}`,
+              classHierarchy2Property: `test${i}`,
             }),
           ),
           kitchenSink.TermProperties.$create({
@@ -478,7 +478,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
 
       for (const [id, [filter, expected]] of Object.entries({
         childProperty: [
-          { concreteChildProperty: { in: ["test1"] } },
+          { classHierarchy3Property: { in: ["test1"] } },
           [identifiers[1]],
         ],
         identifier: [
@@ -486,16 +486,16 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           [identifiers[1]],
         ],
         parentProperty: [
-          { concreteParentProperty: { in: ["test0"] } },
+          { classHierarchy2Property: { in: ["test0"] } },
           [identifiers[0]],
         ],
       } satisfies Record<
         string,
-        [kitchenSink.ConcreteChild.$Filter, readonly NamedNode[]]
+        [kitchenSink.ClassHierarchy3.$Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
-            await objectSet.concreteChildIdentifiers({
+            await objectSet.classHierarchy3Identifiers({
               filter,
             })
           ).unsafeCoerce();

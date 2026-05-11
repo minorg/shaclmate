@@ -19,16 +19,16 @@ describe("fromJson", () => {
   }
 
   it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance = kitchenSink.ConcreteParent.$fromJson(
-      kitchenSink.ConcreteChild.$toJson(harnesses.concreteChild.instance),
+    const fromJsonInstance = kitchenSink.ClassHierarchy2.$fromJson(
+      kitchenSink.ClassHierarchy3.$toJson(harnesses.classHierarchy3.instance),
     );
     expect(
       fromJsonInstance
         .$identifier()
-        .equals(harnesses.concreteChild.instance.$identifier()),
+        .equals(harnesses.classHierarchy3.instance.$identifier()),
     );
-    expect(fromJsonInstance.concreteParentProperty).toStrictEqual(
-      harnesses.concreteChild.instance.concreteParentProperty,
+    expect(fromJsonInstance.classHierarchy2Property).toStrictEqual(
+      harnesses.classHierarchy3.instance.classHierarchy2Property,
     );
   });
 });

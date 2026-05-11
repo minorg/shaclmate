@@ -7,32 +7,20 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.com/>
+    rdfs:Comment "An ontology can be used to configure the generator for all node and property shapes whose IRIs start with the ontology's IRIs. Here we include all TypeScript features then exclude GraphQL." ;
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Graphql ;
     shaclmate:tsFeatureInclude shaclmate:_TsFeatures_All ;
     a owl:Ontology .
 
 :BaseForExtern
     a owl:Class, sh:NodeShape ;
+    rdfs:comment "Base type for :Extern to reuse" ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :baseForExternProperty
     ] .
-
-:BaseWithProperties
-    a owl:Class, sh:NodeShape ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :baseWithPropertiesProperty
-    ] .
-
-:BaseWithoutProperties
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :BaseWithProperties .
 
 :BlankNodeIdentifier
     a owl:Class, sh:NodeShape ;
@@ -42,6 +30,41 @@
 :BlankNodeOrIriIdentifier
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+
+:ClassHierarchy0
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Root (level 0) of a class hierarchy" ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classHierarchy0Property
+    ] .
+
+:ClassHierarchy1
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassHierarchy0 .
+
+:ClassHierarchy2
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassHierarchy1 ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classHierarchy2Property
+    ] .
+
+:ClassHierarchy3
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassHierarchy2 ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classHierarchy3Property
+    ] .
 
 :ClassProperties
     a owl:Class, sh:NodeShape ;
@@ -76,27 +99,6 @@
         sh:path :singleClassProperty
     ] .
 
-:ConcreteChild
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Child of ConcreteParent. Should inherit properties and node kinds." ;
-    rdfs:subClassOf :ConcreteParent ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :concreteChildProperty
-    ] .
-
-:ConcreteParent
-    a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that inherits a base node shape and is the parent of the ConcreteChild." ;
-    rdfs:subClassOf :BaseWithoutProperties ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :concreteParentProperty
-    ] .
 
 :ConvertibleTypeProperties
     a owl:Class, sh:NodeShape ;

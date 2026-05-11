@@ -85,13 +85,13 @@ describe("fromRdf", () => {
   }
 
   it("concrete parent fromRdf", ({ expect }) => {
-    const fromRdfInstance = kitchenSink.ConcreteParent.$fromRdfResource(
-      kitchenSink.ConcreteChild.$toRdfResource(
-        harnesses.concreteChild.instance,
+    const fromRdfInstance = kitchenSink.ClassHierarchy2.$fromRdfResource(
+      kitchenSink.ClassHierarchy3.$toRdfResource(
+        harnesses.classHierarchy3.instance,
       ),
     ).unsafeCoerce();
-    expect(fromRdfInstance.concreteParentProperty).toStrictEqual(
-      harnesses.concreteChild.instance.concreteParentProperty,
+    expect(fromRdfInstance.classHierarchy2Property).toStrictEqual(
+      harnesses.classHierarchy3.instance.classHierarchy2Property,
     );
   });
 
@@ -136,10 +136,10 @@ describe("fromRdf", () => {
   });
 
   it("ignore extraneous RDF type", ({ expect }) => {
-    const expectedInstance = harnesses.concreteChild.instance;
+    const expectedInstance = harnesses.classHierarchy3.instance;
     const actualResource =
-      harnesses.concreteChild.staticSide.$toRdfResource(expectedInstance);
-    expect(kitchenSink.ConcreteChild.$fromRdfType.value).not.toStrictEqual(
+      harnesses.classHierarchy3.staticSide.$toRdfResource(expectedInstance);
+    expect(kitchenSink.ClassHierarchy3.$fromRdfType.value).not.toStrictEqual(
       "http://example.com/ExtraneousRdfType",
     );
     const actualRdfTypeQuads = [
@@ -153,9 +153,9 @@ describe("fromRdf", () => {
       actualRdfTypeQuads[0].object.equals(extraneousRdfType),
     ).toStrictEqual(false);
     expect(
-      kitchenSink.ConcreteChild.$equals(
+      kitchenSink.ClassHierarchy3.$equals(
         expectedInstance,
-        kitchenSink.ConcreteChild.$fromRdfResource(
+        kitchenSink.ClassHierarchy3.$fromRdfResource(
           actualResource,
         ).unsafeCoerce(),
       ).isRight(),
@@ -167,9 +167,9 @@ describe("fromRdf", () => {
       ...actualResource.dataset.match(actualResource.identifier, rdf.type),
     ]).toHaveLength(2);
     expect(
-      kitchenSink.ConcreteChild.$equals(
+      kitchenSink.ClassHierarchy3.$equals(
         expectedInstance,
-        kitchenSink.ConcreteChild.$fromRdfResource(
+        kitchenSink.ClassHierarchy3.$fromRdfResource(
           actualResource,
         ).unsafeCoerce(),
       ).isRight(),
@@ -466,35 +466,37 @@ describe("fromRdf", () => {
   });
 
   it("accept known child type", ({ expect }) => {
-    const concreteChild = kitchenSink.ConcreteChild.$create({
-      baseWithPropertiesProperty: "abcWith",
-      concreteChildProperty: "child",
-      concreteParentProperty: "parent",
+    const classHierarchy3 = kitchenSink.ClassHierarchy3.$create({
+      classHierarchy0Property: "abcWith",
+      classHierarchy3Property: "child",
+      classHierarchy2Property: "parent",
     });
     const childResource =
-      kitchenSink.ConcreteChild.$toRdfResource(concreteChild);
+      kitchenSink.ClassHierarchy3.$toRdfResource(classHierarchy3);
 
     // Deserialize all of the superclasses of the child class
 
-    const concreteParent =
-      kitchenSink.ConcreteParent.$fromRdfResource(childResource).unsafeCoerce();
+    const classHierarchy2 =
+      kitchenSink.ClassHierarchy2.$fromRdfResource(
+        childResource,
+      ).unsafeCoerce();
 
-    expect(concreteParent.baseWithPropertiesProperty).toStrictEqual(
-      concreteChild.baseWithPropertiesProperty,
+    expect(classHierarchy2.classHierarchy0Property).toStrictEqual(
+      classHierarchy3.classHierarchy0Property,
     );
-    expect(concreteParent.concreteParentProperty).toStrictEqual(
-      concreteChild.concreteParentProperty,
+    expect(classHierarchy2.classHierarchy2Property).toStrictEqual(
+      classHierarchy3.classHierarchy2Property,
     );
   });
 
   it("accept unknown child type", ({ expect }) => {
-    const child = kitchenSink.ConcreteChild.$create({
-      baseWithPropertiesProperty: "abcWith",
-      concreteChildProperty: "child",
-      concreteParentProperty: "parent",
+    const child = kitchenSink.ClassHierarchy3.$create({
+      classHierarchy0Property: "abcWith",
+      classHierarchy3Property: "child",
+      classHierarchy2Property: "parent",
     });
     const dataset = datasetFactory.dataset();
-    for (const quad of kitchenSink.ConcreteChild.$toRdfResource(child)
+    for (const quad of kitchenSink.ClassHierarchy3.$toRdfResource(child)
       .dataset) {
       if (!quad.predicate.equals(rdf.type)) {
         dataset.add(quad);
@@ -505,7 +507,7 @@ describe("fromRdf", () => {
     );
     // Deserialization shouldn't work since there's no rdf:type statement
     expect(
-      kitchenSink.ConcreteChild.$fromRdfResource(childResource),
+      kitchenSink.ClassHierarchy3.$fromRdfResource(childResource),
     ).toBeLeft();
     // Add rdf:type <subclass> statement
     dataset.add(
@@ -520,14 +522,14 @@ describe("fromRdf", () => {
       dataFactory.quad(
         dataFactory.namedNode("http://example.com/newSubType"),
         rdfs.subClassOf,
-        kitchenSink.ConcreteChild.$fromRdfType,
+        kitchenSink.ClassHierarchy3.$fromRdfType,
       ),
     );
 
     expect(
-      kitchenSink.ConcreteChild.$equals(
+      kitchenSink.ClassHierarchy3.$equals(
         child,
-        kitchenSink.ConcreteChild.$fromRdfResource(
+        kitchenSink.ClassHierarchy3.$fromRdfResource(
           childResource,
         ).unsafeCoerce(),
       ).unsafeCoerce(),
