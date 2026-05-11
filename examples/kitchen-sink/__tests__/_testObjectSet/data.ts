@@ -13,16 +13,16 @@ export const data = {
     }),
   ) satisfies readonly kitchenSink.BlankNodeOrIriIdentifier[],
 
-  concreteChildren: [...new Array(4)].map((_, i) =>
-    kitchenSink.ConcreteChild.$create({
-      baseWithPropertiesProperty: `ABC string ${i}`,
-      concreteChildProperty: `child string ${i}`,
-      concreteParentProperty: `parent string ${i}`,
+  classHierarchy3s: [...new Array(4)].map((_, i) =>
+    kitchenSink.ClassHierarchy3.$create({
+      classHierarchy0Property: `ABC string ${i}`,
+      classHierarchy3Property: `child string ${i}`,
+      classHierarchy2Property: `parent string ${i}`,
       $identifier: dataFactory.namedNode(
-        `http://example.com/concreteChild${i}`,
+        `http://example.com/classHierarchy3${i}`,
       ),
     }),
-  ) satisfies readonly kitchenSink.ConcreteChild[],
+  ) satisfies readonly kitchenSink.ClassHierarchy3[],
 
   // directRecursivees: [...new Array(4)].map(
   //   (_, i) =>

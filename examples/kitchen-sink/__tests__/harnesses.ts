@@ -67,22 +67,37 @@ export const harnesses = {
   //   }),
   //   kitchenSink.ClassProperties,
   // ),
-  concreteChild: new Harness(
-    kitchenSink.ConcreteChild.$create({
-      baseWithPropertiesProperty: "abc",
-      concreteChildProperty: "child",
-      concreteParentProperty: "parent",
+  classHierarchy0: new Harness(
+    kitchenSink.ClassHierarchy0.$create({
+      classHierarchy0Property: "0",
       $identifier,
     }),
-    kitchenSink.ConcreteChild,
+    kitchenSink.ClassHierarchy0,
   ),
-  concreteParent: new Harness(
-    kitchenSink.ConcreteParent.$create({
-      baseWithPropertiesProperty: "abc",
-      concreteParentProperty: "parent",
+  classHierarchy1: new Harness(
+    kitchenSink.ClassHierarchy1.$create({
+      classHierarchy0Property: "0",
+      // Doesn't have any own properties
       $identifier,
     }),
-    kitchenSink.ConcreteParent,
+    kitchenSink.ClassHierarchy1,
+  ),
+  classHierarchy2: new Harness(
+    kitchenSink.ClassHierarchy2.$create({
+      classHierarchy0Property: "0",
+      classHierarchy2Property: "2",
+      $identifier,
+    }),
+    kitchenSink.ClassHierarchy2,
+  ),
+  classHierarchy3: new Harness(
+    kitchenSink.ClassHierarchy3.$create({
+      classHierarchy0Property: "0",
+      classHierarchy2Property: "2",
+      classHierarchy3Property: "3",
+      $identifier,
+    }),
+    kitchenSink.ClassHierarchy3,
   ),
   convertibleTypeProperties: new Harness(
     kitchenSink.ConvertibleTypeProperties.$create({

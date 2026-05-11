@@ -118,14 +118,14 @@ describe("toJson", () => {
     }
   });
 
-  it("child-parent", ({ expect }) => {
-    const jsonObject = kitchenSink.ConcreteChild.$toJson(
-      harnesses.concreteChild.instance,
+  it("class hierarchy", ({ expect }) => {
+    const jsonObject = kitchenSink.ClassHierarchy3.$toJson(
+      harnesses.classHierarchy3.instance,
     );
-    expect(jsonObject.baseWithPropertiesProperty).toStrictEqual("abc");
-    expect(jsonObject.concreteChildProperty).toStrictEqual("child");
-    expect(jsonObject.concreteParentProperty).toStrictEqual("parent");
-    expect(jsonObject.$type).toStrictEqual("ConcreteChild");
+    expect(jsonObject.classHierarchy0Property).toStrictEqual("0");
+    expect(jsonObject.classHierarchy2Property).toStrictEqual("2");
+    expect(jsonObject.classHierarchy3Property).toStrictEqual("3");
+    expect(jsonObject.$type).toStrictEqual("ClassHierarchy3");
   });
 
   // it("property order", ({ expect }) => {

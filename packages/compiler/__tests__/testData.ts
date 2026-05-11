@@ -162,6 +162,22 @@ export const testData = {
         );
       },
 
+      get nodeShapeNameConflicts() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "node-shape-name-conflicts.ttl"),
+        );
+      },
+
+      get propertyShapeNameConflicts() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "property-shape-name-conflicts.ttl",
+          ),
+        );
+      },
+
       get shaclAst() {
         return parseShapesGraph(
           path.join(

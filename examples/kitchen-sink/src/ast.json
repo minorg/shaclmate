@@ -1,6 +1,7 @@
 {
   "objectTypes": [
     {
+      "comment": "Base type for :Extern to reuse",
       "kind": "ObjectType",
       "name": "BaseForExtern",
       "shapeIdentifier": {
@@ -61,109 +62,6 @@
           }
         }
       ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": "BaseWithProperties",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "BaseWithProperties",
-        "termType": "NamedNode",
-        "value": "http://example.com/BaseWithProperties"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "BaseWithProperties",
-        "termType": "NamedNode",
-        "value": "http://example.com/BaseWithProperties"
-      },
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "BaseWithProperties",
-          "termType": "NamedNode",
-          "value": "http://example.com/BaseWithProperties"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "BaseWithProperties",
-          "termType": "NamedNode",
-          "value": "http://example.com/BaseWithProperties"
-        }
-      ],
-      "properties": [
-        {
-          "name": "baseWithPropertiesProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/baseWithPropertiesProperty)",
-          "shapeIdentifier": {
-            "value": "b2"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b2"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "kind": "ObjectType",
-      "name": "BaseWithoutProperties",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "BaseWithoutProperties",
-        "termType": "NamedNode",
-        "value": "http://example.com/BaseWithoutProperties"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "BaseWithoutProperties",
-        "termType": "NamedNode",
-        "value": "http://example.com/BaseWithoutProperties"
-      },
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "BaseWithoutProperties",
-          "termType": "NamedNode",
-          "value": "http://example.com/BaseWithoutProperties"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "BaseWithProperties"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "BaseWithoutProperties",
-          "termType": "NamedNode",
-          "value": "http://example.com/BaseWithoutProperties"
-        }
-      ],
-      "properties": []
     },
     {
       "comment": "Node shape that can only have a blank node as an identifier",
@@ -243,6 +141,240 @@
       "properties": []
     },
     {
+      "comment": "Root (level 0) of a class hierarchy",
+      "kind": "ObjectType",
+      "name": "ClassHierarchy0",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "ClassHierarchy0",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy0"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ClassHierarchy0",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy0"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "ClassHierarchy0",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy0"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ClassHierarchy0",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "classHierarchy0Property",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/classHierarchy0Property)",
+          "shapeIdentifier": {
+            "value": "b2"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b2"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": "ClassHierarchy1",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "ClassHierarchy1",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy1"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ClassHierarchy1",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy1"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "ClassHierarchy1",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy1"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "parentObjectTypes": [
+        "ClassHierarchy0"
+      ],
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ClassHierarchy1",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy1"
+        }
+      ],
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "name": "ClassHierarchy2",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "ClassHierarchy2",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy2"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ClassHierarchy2",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy2"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "ClassHierarchy2",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy2"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "parentObjectTypes": [
+        "ClassHierarchy1"
+      ],
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ClassHierarchy2",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy2"
+        }
+      ],
+      "properties": [
+        {
+          "name": "classHierarchy2Property",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/classHierarchy2Property)",
+          "shapeIdentifier": {
+            "value": "b3"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b3"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "name": "ClassHierarchy3",
+      "shapeIdentifier": {
+        "prefix": "",
+        "reference": "ClassHierarchy3",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy3"
+      },
+      "fromRdfType": {
+        "prefix": "",
+        "reference": "ClassHierarchy3",
+        "termType": "NamedNode",
+        "value": "http://example.com/ClassHierarchy3"
+      },
+      "identifierType": {
+        "kind": "IdentifierType",
+        "shapeIdentifier": {
+          "prefix": "",
+          "reference": "ClassHierarchy3",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy3"
+        },
+        "nodeKinds": [
+          "BlankNode",
+          "IRI"
+        ]
+      },
+      "parentObjectTypes": [
+        "ClassHierarchy2"
+      ],
+      "toRdfTypes": [
+        {
+          "prefix": "",
+          "reference": "ClassHierarchy3",
+          "termType": "NamedNode",
+          "value": "http://example.com/ClassHierarchy3"
+        }
+      ],
+      "properties": [
+        {
+          "name": "classHierarchy3Property",
+          "order": 0,
+          "path": "PredicatePath(http://example.com/classHierarchy3Property)",
+          "shapeIdentifier": {
+            "value": "b4"
+          },
+          "type": {
+            "kind": "LiteralType",
+            "shapeIdentifier": {
+              "value": "b4"
+            },
+            "nodeKinds": [
+              "Literal"
+            ],
+            "datatype": {
+              "prefix": "xsd",
+              "reference": "string",
+              "termType": "NamedNode",
+              "value": "http://www.w3.org/2001/XMLSchema#string"
+            }
+          }
+        }
+      ]
+    },
+    {
       "comment": "Node shape with sh:class properties",
       "kind": "ObjectType",
       "name": "ClassProperties",
@@ -286,17 +418,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/multiClassProperty)",
           "shapeIdentifier": {
-            "value": "b3"
+            "value": "b5"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b3"
+              "value": "b5"
             },
             "itemType": {
               "kind": "IdentifierType",
               "shapeIdentifier": {
-                "value": "b3"
+                "value": "b5"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -311,17 +443,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/iriClassProperty)",
           "shapeIdentifier": {
-            "value": "b4"
+            "value": "b6"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b4"
+              "value": "b6"
             },
             "itemType": {
               "kind": "IriType",
               "shapeIdentifier": {
-                "value": "b4"
+                "value": "b6"
               },
               "nodeKinds": [
                 "IRI"
@@ -335,7 +467,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nodeClassProperty1)",
           "shapeIdentifier": {
-            "value": "b5"
+            "value": "b7"
           },
           "type": {
             "comment": "Node shape that isn't an rdfs:Class.",
@@ -379,7 +511,7 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/nodeClassProperty2)",
           "shapeIdentifier": {
-            "value": "b6"
+            "value": "b8"
           },
           "type": {
             "comment": "Node shape used as a partial by LazyProperties",
@@ -423,17 +555,17 @@
           "order": 0,
           "path": "PredicatePath(http://example.com/singleClassProperty)",
           "shapeIdentifier": {
-            "value": "b7"
+            "value": "b9"
           },
           "type": {
             "kind": "OptionType",
             "shapeIdentifier": {
-              "value": "b7"
+              "value": "b9"
             },
             "itemType": {
               "kind": "IdentifierType",
               "shapeIdentifier": {
-                "value": "b7"
+                "value": "b9"
               },
               "nodeKinds": [
                 "BlankNode",
@@ -528,138 +660,6 @@
             "kind": "LiteralType",
             "shapeIdentifier": {
               "value": "b177"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "comment": "Child of ConcreteParent. Should inherit properties and node kinds.",
-      "kind": "ObjectType",
-      "name": "ConcreteChild",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "ConcreteChild",
-        "termType": "NamedNode",
-        "value": "http://example.com/ConcreteChild"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "ConcreteChild",
-        "termType": "NamedNode",
-        "value": "http://example.com/ConcreteChild"
-      },
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ConcreteChild",
-          "termType": "NamedNode",
-          "value": "http://example.com/ConcreteChild"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "ConcreteParent"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "ConcreteChild",
-          "termType": "NamedNode",
-          "value": "http://example.com/ConcreteChild"
-        }
-      ],
-      "properties": [
-        {
-          "name": "concreteChildProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/concreteChildProperty)",
-          "shapeIdentifier": {
-            "value": "b8"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b8"
-            },
-            "nodeKinds": [
-              "Literal"
-            ],
-            "datatype": {
-              "prefix": "xsd",
-              "reference": "string",
-              "termType": "NamedNode",
-              "value": "http://www.w3.org/2001/XMLSchema#string"
-            }
-          }
-        }
-      ]
-    },
-    {
-      "comment": "Node shape that inherits a base node shape and is the parent of the ConcreteChild.",
-      "kind": "ObjectType",
-      "name": "ConcreteParent",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "ConcreteParent",
-        "termType": "NamedNode",
-        "value": "http://example.com/ConcreteParent"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "ConcreteParent",
-        "termType": "NamedNode",
-        "value": "http://example.com/ConcreteParent"
-      },
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "ConcreteParent",
-          "termType": "NamedNode",
-          "value": "http://example.com/ConcreteParent"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "parentObjectTypes": [
-        "BaseWithoutProperties"
-      ],
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "ConcreteParent",
-          "termType": "NamedNode",
-          "value": "http://example.com/ConcreteParent"
-        }
-      ],
-      "properties": [
-        {
-          "name": "concreteParentProperty",
-          "order": 0,
-          "path": "PredicatePath(http://example.com/concreteParentProperty)",
-          "shapeIdentifier": {
-            "value": "b9"
-          },
-          "type": {
-            "kind": "LiteralType",
-            "shapeIdentifier": {
-              "value": "b9"
             },
             "nodeKinds": [
               "Literal"

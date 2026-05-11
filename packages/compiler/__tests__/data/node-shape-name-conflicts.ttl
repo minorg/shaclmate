@@ -1,0 +1,17 @@
+@prefix : <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix shaclmate: <http://purl.org/shaclmate/ontology#> .
+
+:Object
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Conflict with the $Object synthetic union; should be no conflict because of the $ prefix" .
+
+:ObjectSet
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Conflict with the $ObjectSet interface; should be no conflict because of the $ prefix" .
+
+:Resource
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:comment "Conflict with the Resource@@rdfx/resource import; the latter should be renamed" .
+

@@ -5,23 +5,23 @@ describe("schema", () => {
   describe("properties", () => {
     it("should have an own property", ({ expect }) => {
       expect(
-        kitchenSink.ConcreteChild.$schema.properties.concreteChildProperty.path
-          .value,
-      ).toStrictEqual("http://example.com/concreteChildProperty");
+        kitchenSink.ClassHierarchy3.$schema.properties.classHierarchy3Property
+          .path.value,
+      ).toStrictEqual("http://example.com/classHierarchy3Property");
     });
 
     it("should have a parent property", ({ expect }) => {
       expect(
-        kitchenSink.ConcreteChild.$schema.properties.concreteParentProperty.path
-          .value,
-      ).toStrictEqual("http://example.com/concreteParentProperty");
+        kitchenSink.ClassHierarchy3.$schema.properties.classHierarchy2Property
+          .path.value,
+      ).toStrictEqual("http://example.com/classHierarchy2Property");
     });
 
     it("should have an ancestor property", ({ expect }) => {
       expect(
-        kitchenSink.ConcreteChild.$schema.properties.baseWithPropertiesProperty
+        kitchenSink.ClassHierarchy3.$schema.properties.classHierarchy0Property
           .path.value,
-      ).toStrictEqual("http://example.com/baseWithPropertiesProperty");
+      ).toStrictEqual("http://example.com/classHierarchy0Property");
     });
 
     it("union properties should have a common parent property", ({

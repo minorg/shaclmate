@@ -29,13 +29,13 @@ describe("toRdf", async () => {
   );
 
   it("should populate a dataset", ({ expect }) => {
-    const resource = kitchenSink.ConcreteChild.$toRdfResource(
-      harnesses.concreteChild.instance,
+    const resource = kitchenSink.ClassHierarchy3.$toRdfResource(
+      harnesses.classHierarchy3.instance,
     );
     expect(resource.dataset.size).toStrictEqual(4);
     expect(
       resource.identifier.equals(
-        harnesses.concreteChild.instance.$identifier(),
+        harnesses.classHierarchy3.instance.$identifier(),
       ),
     ).toStrictEqual(true);
     expect(
@@ -43,17 +43,17 @@ describe("toRdf", async () => {
         .value(rdf.type)
         .chain((value) => value.toIri())
         .unsafeCoerce()
-        .equals(kitchenSink.ConcreteChild.$fromRdfType),
+        .equals(kitchenSink.ClassHierarchy3.$fromRdfType),
     ).toStrictEqual(true);
     expect(
       resource
         .value(
-          kitchenSink.ConcreteChild.$schema.properties.concreteChildProperty
+          kitchenSink.ClassHierarchy3.$schema.properties.classHierarchy3Property
             .path,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
-    ).toStrictEqual("child");
+    ).toStrictEqual("3");
   });
 
   it("should produce serializable RDF", ({ expect }) => {
