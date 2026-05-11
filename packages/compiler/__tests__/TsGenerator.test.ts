@@ -74,7 +74,7 @@ describe("TsGenerator", () => {
   }
 
   /**
-   * Have to skip this normally since ts-poet can't be "reset" between runs.
+   * Have to skip this normally since ts-poet conditionalOutput.ifUsed and imp state can't be "reset" across runs.
    */
   it.skip("node shape name conflicts", () => {
     const diagnostics = compileTs(
