@@ -147,6 +147,12 @@ export const testData = {
       //     .extractNullable();
       // },
 
+      get nodeShapeNameConflicts() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "node-shape-name-conflicts.ttl"),
+        );
+      },
+
       get kitchenSink() {
         return parseShapesGraph(
           path.join(
