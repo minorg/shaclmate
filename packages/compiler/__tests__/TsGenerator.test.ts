@@ -74,12 +74,24 @@ describe("TsGenerator", () => {
   }
 
   /**
-   * Have to skip this normally since ts-poet conditionalOutput.ifUsed and imp state can't be "reset" across runs.
+   * Have to skip this pending resolution of #480.
    */
   it.skip("node shape name conflicts", () => {
     const diagnostics = compileTs(
       generate(
         testData.shapesGraphs.wellFormed.nodeShapeNameConflicts.unsafeCoerce(),
+      ),
+    );
+    expect(diagnostics).toHaveLength(0);
+  });
+
+  /**
+   * Have to skip this pending resolution of #480.
+   */
+  it.skip("property shape name conflicts", () => {
+    const diagnostics = compileTs(
+      generate(
+        testData.shapesGraphs.wellFormed.propertyShapeNameConflicts.unsafeCoerce(),
       ),
     );
     expect(diagnostics).toHaveLength(0);

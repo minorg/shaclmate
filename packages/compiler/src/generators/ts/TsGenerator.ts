@@ -5,6 +5,7 @@ import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { snippets } from "./snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -58,15 +59,24 @@ export class TsGenerator implements Generator {
         left.name.localeCompare(right.name),
       );
 
-    if (namedObjectTypesToposorted.length > 0) {
-      const uberObjectUnionType = synthesizeUberObjectUnionType({
-        logger: this.logger,
-        namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-      });
-      declarations = declarations.concat(
-        uberObjectUnionType.declaration.toList(),
-      );
-      namedObjectUnionTypesNameSorted.push(uberObjectUnionType);
+    switch (namedObjectTypesNameSorted.length) {
+      case 0:
+        break;
+      case 1:
+        declarations.push(
+          code`type ${syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
+        );
+        break;
+      default: {
+        const uberObjectUnionType = synthesizeUberObjectUnionType({
+          logger: this.logger,
+          namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+        });
+        declarations = declarations.concat(
+          uberObjectUnionType.declaration.toList(),
+        );
+        namedObjectUnionTypesNameSorted.push(uberObjectUnionType);
+      }
     }
 
     declarations.push(

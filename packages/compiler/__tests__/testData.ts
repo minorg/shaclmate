@@ -147,12 +147,6 @@ export const testData = {
       //     .extractNullable();
       // },
 
-      get nodeShapeNameConflicts() {
-        return parseShapesGraph(
-          path.join(thisDirectoryPath, "data", "node-shape-name-conflicts.ttl"),
-        );
-      },
-
       get kitchenSink() {
         return parseShapesGraph(
           path.join(
@@ -164,6 +158,22 @@ export const testData = {
             "kitchen-sink",
             "src",
             "kitchen-sink.shaclmate.ttl",
+          ),
+        );
+      },
+
+      get nodeShapeNameConflicts() {
+        return parseShapesGraph(
+          path.join(thisDirectoryPath, "data", "node-shape-name-conflicts.ttl"),
+        );
+      },
+
+      get propertyShapeNameConflicts() {
+        return parseShapesGraph(
+          path.join(
+            thisDirectoryPath,
+            "data",
+            "property-shape-name-conflicts.ttl",
           ),
         );
       },
