@@ -25,7 +25,7 @@ export class ZodGenerator implements Generator {
       this.typeFactory.createNamedObjectType(astObjectType),
     )) {
       declarations.push(code`\
-export namespace ${namedObjectType.staticModuleName} {
+export namespace ${namedObjectType.name} {
   ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
 
   export namespace ${syntheticNamePrefix}Json {
@@ -40,7 +40,7 @@ export namespace ${namedObjectType.staticModuleName} {
     )) {
       invariant(astNamedUnionType.kind !== "AnonymousUnionType");
       declarations.push(code`\
-export namespace ${astNamedUnionType.staticModuleName} {
+export namespace ${astNamedUnionType.name} {
   ${astNamedUnionType.jsonTypeAliasDeclaration}
   export namespace ${syntheticNamePrefix}Json {
     ${astNamedUnionType.jsonSchemaFunctionDeclaration}

@@ -3,7 +3,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import type { TsFeature } from "../enums/TsFeature.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
@@ -13,7 +13,6 @@ import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
-  abstract: false,
   extern: false,
   comment: Maybe.empty(),
   label: Maybe.empty(),
@@ -27,7 +26,6 @@ const listPropertiesObjectType = new ast.ObjectType({
   name: Maybe.empty(),
   toRdfTypes: [],
   tsFeatures: new Set<TsFeature>([]),
-  tsObjectDeclarationType: "class",
   shapeIdentifier: dataFactory.blankNode(),
   synthetic: true,
   tsImports: [],

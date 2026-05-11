@@ -13,10 +13,7 @@ export function objectSetDeclarations({
   namedObjectUnionTypes: readonly NamedObjectUnionType[];
 }): readonly Code[] {
   const namedObjectTypes = parameters.namedObjectTypes.filter(
-    (namedObjectType) =>
-      !namedObjectType.abstract &&
-      !namedObjectType.extern &&
-      !namedObjectType.synthetic,
+    (namedObjectType) => !namedObjectType.extern && !namedObjectType.synthetic,
   );
   let namedObjectTypesWithRdfFeatureCount = 0;
   let namedObjectTypesWithSparqlFeatureCount = 0;

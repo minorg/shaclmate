@@ -6,13 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-abstract, shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
-
-shaclmate:NodeShape-abstract
-    a sh:PropertyShape ;
-    sh:datatype xsd:boolean ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:abstract .
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports .
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
@@ -44,10 +38,10 @@ shaclmate:NodeShape-toRdfTypes
     sh:path shaclmate:toRdfType .
 
 shaclmate:Ontology
-    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports, shaclmate:tsObjectDeclarationType .
+    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports .
 
 shaclmate:PropertyShape
-    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:PropertyShape-visibility, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
+    sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:PropertyShape-display
     a sh:PropertyShape ;
@@ -63,15 +57,6 @@ shaclmate:PropertyShape-resolve
     sh:name "resolve" ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:path shaclmate:resolve .
-
-shaclmate:PropertyShape-visibility
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_Visibility_Private
-        shaclmate:_Visibility_Protected
-        shaclmate:_Visibility_Public
-    ) ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:visibility .
 
 shaclmate:Shape-mutable
     a sh:PropertyShape ;
@@ -124,12 +109,4 @@ shaclmate:tsImports
     sh:datatype xsd:string ;
     sh:name "tsImports" ;
     sh:path shaclmate:tsImport .
-
-shaclmate:tsObjectDeclarationType
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_TsObjectDeclarationType_Class
-        shaclmate:_TsObjectDeclarationType_Interface
-    ) ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:tsObjectDeclarationType .
 

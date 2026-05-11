@@ -13,5 +13,5 @@ export function NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration(
 
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-  ${this.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier: valueVariable, ignoreRdfType, variablePrefix });`);
+  ${this.name}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier: valueVariable, ignoreRdfType, variablePrefix });`);
 }

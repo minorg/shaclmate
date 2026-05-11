@@ -26,7 +26,7 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
   }
 
   const meta: Record<string, string> = {
-    id: this.name,
+    // id: this.name,
   };
   this.comment.ifJust((description) => {
     meta["description"] = description;

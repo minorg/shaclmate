@@ -637,8 +637,8 @@ export namespace NestedNodeShape {
   ): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
+        left,
+        right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
@@ -648,8 +648,8 @@ export namespace NestedNodeShape {
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -702,12 +702,9 @@ export namespace NestedNodeShape {
         .object({
           "@id": z.string().min(1),
           $type: z.literal("NestedNodeShape"),
-          requiredStringProperty: z.string().meta({
-            id: "NestedNodeShape-requiredStringProperty",
-            title: "Required string",
-          }),
+          requiredStringProperty: z.string().meta({ title: "Required string" }),
         })
-        .meta({ id: "NestedNodeShape" }) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -770,7 +767,7 @@ export namespace NestedNodeShape {
   };
 
   export function $fromJson(json: NestedNodeShape.$Json): NestedNodeShape {
-    return NestedNodeShape.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
@@ -1050,8 +1047,8 @@ export namespace FormNodeShape {
   ): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier())
       .mapLeft((propertyValuesUnequal) => ({
-        left: left,
-        right: right,
+        left,
+        right,
         propertyName: "$identifier",
         propertyValuesUnequal,
         type: "property" as const,
@@ -1061,8 +1058,8 @@ export namespace FormNodeShape {
           left.emptyStringSetProperty,
           right.emptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "emptyStringSetProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1073,8 +1070,8 @@ export namespace FormNodeShape {
           left.nestedObjectProperty,
           right.nestedObjectProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "nestedObjectProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1085,8 +1082,8 @@ export namespace FormNodeShape {
           left.nonEmptyStringSetProperty,
           right.nonEmptyStringSetProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "nonEmptyStringSetProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1097,8 +1094,8 @@ export namespace FormNodeShape {
           left.optionalStringProperty,
           right.optionalStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "optionalStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1109,8 +1106,8 @@ export namespace FormNodeShape {
           left.requiredIntegerProperty,
           right.requiredIntegerProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredIntegerProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1121,8 +1118,8 @@ export namespace FormNodeShape {
           left.requiredStringProperty,
           right.requiredStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
+          left,
+          right,
           propertyName: "requiredStringProperty",
           propertyValuesUnequal,
           type: "property" as const,
@@ -1196,14 +1193,10 @@ export namespace FormNodeShape {
             .array()
             .optional()
             .readonly()
-            .meta({
-              id: "FormNodeShape-emptyStringSetProperty",
-              title: "Empty string set",
-            }),
-          nestedObjectProperty: NestedNodeShape.$Json.schema().meta({
-            id: "FormNodeShape-nestedObjectProperty",
-            title: "Nested object",
-          }),
+            .meta({ title: "Empty string set" }),
+          nestedObjectProperty: NestedNodeShape.$Json
+            .schema()
+            .meta({ title: "Nested object" }),
           nonEmptyStringSetProperty: z
             .string()
             .array()
@@ -1211,26 +1204,18 @@ export namespace FormNodeShape {
             .min(1)
             .readonly()
             .meta({
-              id: "FormNodeShape-nonEmptyStringSetProperty",
               title: "Non-empty string set",
             }),
-          optionalStringProperty: z.string().optional().meta({
-            id: "FormNodeShape-optionalStringProperty",
-            title: "Optional string",
-          }),
-          requiredIntegerProperty: z.number().meta({
-            id: "FormNodeShape-requiredIntegerProperty",
-            title: "Required integer",
-          }),
-          requiredStringProperty: z.string().meta({
-            id: "FormNodeShape-requiredStringProperty",
-            title: "Required string",
-          }),
+          optionalStringProperty: z
+            .string()
+            .optional()
+            .meta({ title: "Optional string" }),
+          requiredIntegerProperty: z
+            .number()
+            .meta({ title: "Required integer" }),
+          requiredStringProperty: z.string().meta({ title: "Required string" }),
         })
-        .meta({
-          id: "FormNodeShape",
-          title: "Form",
-        }) satisfies z.ZodType<$Json>;
+        .meta({ title: "Form" }) satisfies z.ZodType<$Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1366,7 +1351,7 @@ export namespace FormNodeShape {
   };
 
   export function $fromJson(json: FormNodeShape.$Json): FormNodeShape {
-    return FormNodeShape.$create($propertiesFromJson(json));
+    return $create($propertiesFromJson(json));
   }
 
   export const $fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
@@ -1943,9 +1928,7 @@ export namespace $Object {
           NestedNodeShape.$Json.schema(),
         ])
         .readonly()
-        .meta({
-          id: "$Object",
-        });
+        .meta({});
 
     export function parse(json: unknown): Either<Error, $Json> {
       const jsonSafeParseResult = schema().safeParse(json);

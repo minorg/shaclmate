@@ -7,7 +7,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://example.com/>
-    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Graphql ;
+    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Create, shaclmate:_TsFeature_Graphql ;
     a owl:Ontology .
 
 :Child

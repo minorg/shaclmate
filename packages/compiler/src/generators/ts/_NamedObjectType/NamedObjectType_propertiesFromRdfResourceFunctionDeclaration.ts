@@ -32,12 +32,12 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
+      expression: code`${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
+      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
     );
   });
 

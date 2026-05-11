@@ -25,9 +25,7 @@ export function NamedObjectType_filterTypeDeclaration(
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(
-      code`${parentObjectType.staticModuleName}.${syntheticNamePrefix}Filter`,
-    );
+    members.push(code`${parentObjectType.name}.${syntheticNamePrefix}Filter`);
   }
 
   return code`\

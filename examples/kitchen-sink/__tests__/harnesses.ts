@@ -3,9 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
 import { NonEmptyList } from "purify-ts";
-import { ClassHarness } from "./ClassHarness.js";
-import { ClassUnionHarness } from "./ClassUnionHarness.js";
-import { InterfaceHarness } from "./InterfaceHarness.js";
+import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
@@ -22,43 +20,28 @@ const permute = <T>(arr: T[]): T[][] =>
       );
 
 export const harnesses = {
-  blankNodeOrIriIdentifierClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeOrIriIdentifierClass({
+  blankNodeOrIriIdentifierWithExplicitBlankNodeIdentifier: new Harness(
+    kitchenSink.BlankNodeOrIriIdentifier.$create({
       $identifier: dataFactory.blankNode(),
     }),
-    kitchenSink.BlankNodeOrIriIdentifierClass,
+    kitchenSink.BlankNodeOrIriIdentifier,
   ),
-  blankNodeIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeIdentifierClass(),
-    kitchenSink.BlankNodeIdentifierClass,
-  ),
-  blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankNodeIdentifierInterface.$create({
-      $identifier: dataFactory.blankNode(),
+  blankNodeOrIriIdentifierWithExplicitIriIdentifier: new Harness(
+    kitchenSink.BlankNodeOrIriIdentifier.$create({
+      $identifier,
     }),
-    kitchenSink.BlankNodeIdentifierInterface,
+    kitchenSink.BlankNodeOrIriIdentifier,
   ),
-  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankNodeIdentifierInterface.$create(),
-    kitchenSink.BlankNodeIdentifierInterface,
+  blankNodeIdentifierWithoutExplicitIdentifier: new Harness(
+    kitchenSink.BlankNodeIdentifier.$create({}),
+    kitchenSink.BlankNodeIdentifier,
   ),
-  blankNodeOrIriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeOrIriIdentifierClass(),
-    kitchenSink.BlankNodeOrIriIdentifierClass,
+  blankNodeOrIriIdentifierWithoutExplicitIdentifier: new Harness(
+    kitchenSink.BlankNodeOrIriIdentifier.$create(),
+    kitchenSink.BlankNodeOrIriIdentifier,
   ),
-  blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankNodeOrIriIdentifierInterface.$create({
-      $identifier: dataFactory.blankNode(),
-    }),
-    kitchenSink.BlankNodeOrIriIdentifierInterface,
-  ),
-  blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier:
-    new InterfaceHarness(
-      kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
-      kitchenSink.BlankNodeOrIriIdentifierInterface,
-    ),
-  // classPropertiesClass: new ClassHarness(
-  //   new kitchenSink.ClassPropertiesClass({
+  // classProperties: new Harness(
+  //   kitchenSink.ClassPropertiesClass.$create({
   //     $identifier,
   //     iriClassProperty: dataFactory.namedNode(
   //       "http://example.com/iriClassPropertyInstance",
@@ -66,13 +49,13 @@ export const harnesses = {
   //     multiClassProperty: dataFactory.namedNode(
   //       "http://example.com/multiClassPropertyInstance",
   //     ),
-  //     nodeClassProperty1: new kitchenSink.NonClass({
+  //     nodeClassProperty1: kitchenSink.Non.$create({
   //       $identifier: dataFactory.namedNode(
   //         "http://example.com/nodeClassProperty1Instance",
   //       ),
   //       nonClassProperty: "test",
   //     }),
-  //     nodeClassProperty2: new kitchenSink.PartialClass({
+  //     nodeClassProperty2: kitchenSink.Partial.$create({
   //       $identifier: dataFactory.namedNode(
   //         "http://example.com/nodeClassProperty1Instance",
   //       ),
@@ -82,62 +65,27 @@ export const harnesses = {
   //       "http://example.com/singleClassPropertyInstance",
   //     ),
   //   }),
-  //   kitchenSink.ClassPropertiesClass,
+  //   kitchenSink.ClassProperties,
   // ),
-  classUnionMember1: new ClassUnionHarness(
-    new kitchenSink.ClassUnionMember1({
-      $identifier,
-      classUnionMemberCommonParentProperty: "test common parent",
-      classUnionMember1Property: "test",
-    }),
-    kitchenSink.ClassUnion,
-    "ClassUnion",
-  ),
-  classUnionMember2: new ClassUnionHarness(
-    new kitchenSink.ClassUnionMember2({
-      $identifier,
-      classUnionMemberCommonParentProperty: "test common parent",
-      classUnionMember2Property: "test",
-    }),
-    kitchenSink.ClassUnion,
-    "ClassUnion",
-  ),
-  concreteChildClass: new ClassHarness(
-    new kitchenSink.ConcreteChildClass({
-      abstractBaseClassWithPropertiesProperty: "abc",
-      concreteChildClassProperty: "child",
-      concreteParentClassProperty: "parent",
+  concreteChild: new Harness(
+    kitchenSink.ConcreteChild.$create({
+      baseWithPropertiesProperty: "abc",
+      concreteChildProperty: "child",
+      concreteParentProperty: "parent",
       $identifier,
     }),
-    kitchenSink.ConcreteChildClass,
+    kitchenSink.ConcreteChild,
   ),
-  concreteChildInterface: new InterfaceHarness(
-    kitchenSink.ConcreteChildInterface.$create({
-      baseInterfaceWithPropertiesProperty: "abc",
-      concreteChildInterfaceProperty: "child",
-      concreteParentInterfaceProperty: "parent",
+  concreteParent: new Harness(
+    kitchenSink.ConcreteParent.$create({
+      baseWithPropertiesProperty: "abc",
+      concreteParentProperty: "parent",
       $identifier,
     }),
-    kitchenSink.ConcreteChildInterface,
+    kitchenSink.ConcreteParent,
   ),
-  concreteParentClass: new ClassHarness(
-    new kitchenSink.ConcreteParentClass({
-      abstractBaseClassWithPropertiesProperty: "abc",
-      concreteParentClassProperty: "parent",
-      $identifier,
-    }),
-    kitchenSink.ConcreteParentClassStatic,
-  ),
-  concreteParentInterface: new InterfaceHarness(
-    kitchenSink.ConcreteParentInterfaceStatic.$create({
-      baseInterfaceWithPropertiesProperty: "abc",
-      concreteParentInterfaceProperty: "parent",
-      $identifier,
-    }),
-    kitchenSink.ConcreteParentInterfaceStatic,
-  ),
-  convertibleTypePropertiesClass: new ClassHarness(
-    new kitchenSink.ConvertibleTypePropertiesClass({
+  convertibleTypeProperties: new Harness(
+    kitchenSink.ConvertibleTypeProperties.$create({
       convertibleIriNonEmptySetProperty: NonEmptyList([
         dataFactory.namedNode("http://example.com"),
       ]),
@@ -157,10 +105,10 @@ export const harnesses = {
       ]),
       convertibleTermSetProperty: [true],
     }),
-    kitchenSink.ConvertibleTypePropertiesClass,
+    kitchenSink.ConvertibleTypeProperties,
   ),
-  dateUnionProperties1: new ClassHarness(
-    new kitchenSink.DateUnionPropertiesClass({
+  dateUnionProperties1: new Harness(
+    kitchenSink.DateUnionProperties.$create({
       $identifier,
       dateOrDateTimeProperty: { type: "date", value: new Date("2025-12-08") },
       dateTimeOrDateProperty: {
@@ -170,10 +118,10 @@ export const harnesses = {
       dateOrStringProperty: { type: "date", value: new Date("2025-12-08") },
       stringOrDateProperty: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
     }),
-    kitchenSink.DateUnionPropertiesClass,
+    kitchenSink.DateUnionProperties,
   ),
-  dateUnionProperties2: new ClassHarness(
-    new kitchenSink.DateUnionPropertiesClass({
+  dateUnionProperties2: new Harness(
+    kitchenSink.DateUnionProperties.$create({
       $identifier,
       dateOrDateTimeProperty: {
         type: "dateTime",
@@ -183,26 +131,26 @@ export const harnesses = {
       dateOrStringProperty: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
       stringOrDateProperty: { type: "date", value: new Date("2025-12-08") },
     }),
-    kitchenSink.DateUnionPropertiesClass,
+    kitchenSink.DateUnionProperties,
   ),
-  defaultValuePropertiesClass: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesClass({
+  defaultValueProperties: new Harness(
+    kitchenSink.DefaultValueProperties.$create({
       $identifier,
     }),
-    kitchenSink.DefaultValuePropertiesClass,
+    kitchenSink.DefaultValueProperties,
   ),
-  defaultValuePropertiesOverriddenDifferent: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesClass({
+  defaultValuePropertiesOverriddenDifferent: new Harness(
+    kitchenSink.DefaultValueProperties.$create({
       falseBooleanDefaultValueProperty: true,
       $identifier,
       numberDefaultValueProperty: 1,
       stringDefaultValueProperty: "test",
       trueBooleanDefaultValueProperty: false,
     }),
-    kitchenSink.DefaultValuePropertiesClass,
+    kitchenSink.DefaultValueProperties,
   ),
-  defaultValuePropertiesOverriddenSame: new ClassHarness(
-    new kitchenSink.DefaultValuePropertiesClass({
+  defaultValuePropertiesOverriddenSame: new Harness(
+    kitchenSink.DefaultValueProperties.$create({
       falseBooleanDefaultValueProperty: false,
       dateDefaultValueProperty: new Date("2025-03-06"),
       dateTimeDefaultValueProperty: new Date(1523268000000),
@@ -211,107 +159,110 @@ export const harnesses = {
       stringDefaultValueProperty: "",
       trueBooleanDefaultValueProperty: true,
     }),
-    kitchenSink.DefaultValuePropertiesClass,
+    kitchenSink.DefaultValueProperties,
   ),
-  directRecursive: new ClassHarness(
-    new kitchenSink.DirectRecursiveClass({
-      directRecursiveProperty: new kitchenSink.DirectRecursiveClass({}),
+  directRecursive: new Harness(
+    kitchenSink.DirectRecursive.$create({
+      directRecursiveProperty: kitchenSink.DirectRecursive.$create({}),
     }),
-    kitchenSink.DirectRecursiveClass,
+    kitchenSink.DirectRecursive,
   ),
-  displayPropertiesClass: new ClassHarness(
-    new kitchenSink.DisplayPropertiesClass({
+  displayProperties: new Harness(
+    kitchenSink.DisplayProperties.$create({
       $identifier,
       explicitFalseDisplayProperty: "explicitFalseDisplayValue",
       explicitTrueDisplayProperty: "explicitTrueDisplayValue",
       implicitFalseDisplayProperty: "implicitFalseDisplayValue",
     }),
-    kitchenSink.DisplayPropertiesClass,
+    kitchenSink.DisplayProperties,
   ),
-  emptyListPropertiesClass: new ClassHarness(
-    new kitchenSink.ListPropertiesClass({
+  emptyListProperties: new Harness(
+    kitchenSink.ListProperties.$create({
       $identifier,
       stringListProperty: [],
     }),
-    kitchenSink.ListPropertiesClass,
+    kitchenSink.ListProperties,
   ),
-  explicitFromToRdfTypesClass: new ClassHarness(
-    new kitchenSink.ExplicitFromToRdfTypesClass({
+  explicitFromToRdfTypes: new Harness(
+    kitchenSink.ExplicitFromToRdfTypes.$create({
       explicitFromToRdfTypesProperty: "test",
       $identifier,
     }),
-    kitchenSink.ExplicitFromToRdfTypesClass,
+    kitchenSink.ExplicitFromToRdfTypes,
   ),
-  explicitRdfTypeClass: new ClassHarness(
-    new kitchenSink.ExplicitRdfTypeClass({
+  explicitRdfType: new Harness(
+    kitchenSink.ExplicitRdfType.$create({
       explicitRdfTypeProperty: "test",
       $identifier,
     }),
-    kitchenSink.ExplicitRdfTypeClass,
+    kitchenSink.ExplicitRdfType,
   ),
-  externClassPropertyClass: new ClassHarness(
-    new kitchenSink.ExternClassPropertyClass({
-      externClassProperty: new kitchenSink.ExternClass(dataFactory.blankNode()),
+  externProperty: new Harness(
+    kitchenSink.ExternProperty.$create({
+      externProperty: kitchenSink.Extern.$create({
+        $identifier: dataFactory.blankNode(),
+        baseForExternProperty: "baseForExternPropertyValue",
+      }),
       $identifier,
     }),
-    kitchenSink.ExternClassPropertyClass,
+    kitchenSink.ExternProperty,
   ),
-  flattenClassUnionMember1: new ClassUnionHarness(
-    new kitchenSink.ClassUnionMember1({
+  flattenUnionMember1: new Harness(
+    kitchenSink.UnionMember1.$create({
       $identifier,
-      classUnionMemberCommonParentProperty: "test common parent",
-      classUnionMember1Property: "test member 1",
+      unionMemberCommonParentProperty: "test common parent",
+      unionMember1Property: "test member 1",
     }),
-    kitchenSink.FlattenClassUnion,
-    "FlattenClassUnion",
+    kitchenSink.FlattenUnion,
+    "FlattenUnion",
   ),
-  flattenClassUnionMember2: new ClassUnionHarness(
-    new kitchenSink.ClassUnionMember2({
+  flattenUnionMember2: new Harness(
+    kitchenSink.UnionMember2.$create({
       $identifier,
-      classUnionMemberCommonParentProperty: "test common parent",
-      classUnionMember2Property: "test member 2",
+      unionMemberCommonParentProperty: "test common parent",
+      unionMember2Property: "test member 2",
     }),
-    kitchenSink.FlattenClassUnion,
-    "FlattenClassUnion",
+    kitchenSink.FlattenUnion,
+    "FlattenUnion",
   ),
-  flattenClassUnionMember3: new ClassUnionHarness(
-    new kitchenSink.FlattenClassUnionMember3({
+  flattenUnionMember3: new Harness(
+    kitchenSink.FlattenUnionMember3.$create({
       $identifier,
-      flattenClassUnionMember3Property: "test",
+      flattenUnionMember3Property: "test",
     }),
-    kitchenSink.FlattenClassUnion,
-    "FlattenClassUnion",
+    kitchenSink.FlattenUnion,
+    "FlattenUnion",
   ),
-  indirectRecursive: new ClassHarness(
-    new kitchenSink.IndirectRecursiveClass({
+  indirectRecursive: new Harness(
+    kitchenSink.IndirectRecursive.$create({
       indirectRecursiveHelperProperty:
-        new kitchenSink.IndirectRecursiveHelperClass({
-          indirectRecursiveProperty: new kitchenSink.IndirectRecursiveClass({}),
+        kitchenSink.IndirectRecursiveHelper.$create({
+          indirectRecursiveProperty: kitchenSink.IndirectRecursive.$create({}),
         }),
     }),
-    kitchenSink.IndirectRecursiveClass,
+    kitchenSink.IndirectRecursive,
   ),
-  hasValuePropertiesClass: new ClassHarness(
-    new kitchenSink.HasValuePropertiesClass({
+  hasValueProperties: new Harness(
+    kitchenSink.HasValueProperties.$create({
       hasIriValueProperty: dataFactory.namedNode(
-        "http://example.com/HasValuePropertiesClassIri1",
+        "http://example.com/HasValuePropertiesIri1",
       ),
       hasLiteralValueProperty: "test",
       $identifier,
     }),
-    kitchenSink.HasValuePropertiesClass,
+    kitchenSink.HasValueProperties,
   ),
-  inIdentifierClass: new ClassHarness(
-    new kitchenSink.InIdentifierClass({
+  inIdentifier: new Harness(
+    kitchenSink.InIdentifier.$create({
       $identifier: dataFactory.namedNode(
         "http://example.com/InIdentifierInstance1",
       ),
       inIdentifierProperty: "doesn't matter",
     }),
-    kitchenSink.InIdentifierClass,
+    kitchenSink.InIdentifier,
   ),
-  inPropertiesClass: new ClassHarness(
-    new kitchenSink.InPropertiesClass({
+  inProperties: new Harness(
+    kitchenSink.InProperties.$create({
       $identifier,
       inBooleansProperty: true,
       inDateTimesProperty: new Date("2018-04-09T10:00:00.000Z"),
@@ -321,41 +272,16 @@ export const harnesses = {
       ),
       inStringsProperty: "text",
     }),
-    kitchenSink.InPropertiesClass,
+    kitchenSink.InProperties,
   ),
-  interfaceClass: new InterfaceHarness<kitchenSink.Interface>(
-    kitchenSink.Interface.$create({
-      $identifier,
-      interfaceProperty: "Test",
-    }),
-    kitchenSink.Interface,
-  ),
-  interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
-    kitchenSink.InterfaceUnionMember1.$create({
-      $identifier,
-      interfaceUnionMemberCommonParentProperty: "common parent",
-      interfaceUnionMember1Property: "Test1",
-    }),
-    kitchenSink.InterfaceUnion,
-    "InterfaceUnion",
-  ),
-  interfaceUnionMember2: new InterfaceHarness<kitchenSink.InterfaceUnion>(
-    kitchenSink.InterfaceUnionMember2.$create({
-      $identifier,
-      interfaceUnionMemberCommonParentProperty: "common parent",
-      interfaceUnionMember2Property: "Test2",
-    }),
-    kitchenSink.InterfaceUnion,
-    "InterfaceUnion",
-  ),
-  iriIdentifierClass: new ClassHarness(
-    new kitchenSink.IriIdentifierClass({
+  iriIdentifier: new Harness(
+    kitchenSink.IriIdentifier.$create({
       $identifier,
     }),
-    kitchenSink.IriIdentifierClass,
+    kitchenSink.IriIdentifier,
   ),
-  iriListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesClass({
+  iriListProperty: new Harness(
+    kitchenSink.ListProperties.$create({
       $identifier,
       iriListProperty: [
         // The constructor will convert these to NamedNode's
@@ -363,225 +289,151 @@ export const harnesses = {
         "http://example.com/example2",
       ],
     }),
-    kitchenSink.ListPropertiesClass,
+    kitchenSink.ListProperties,
   ),
   // ...permute(jsPrimitiveValues).reduce(
   //   (harnesses, jsPrimitiveValues, i) => {
-  //     harnesses[`jsPrimitiveUnionProperty${i}`] = new ClassHarness(
-  //       new kitchenSink.JsPrimitiveUnionPropertyClass({
+  //     harnesses[`jsPrimitiveUnionProperty${i}`] = new Harness(
+  //       kitchenSink.JsPrimitiveUnionProperty.$create({
   //         $identifier,
   //         jsPrimitiveUnionProperty: jsPrimitiveValues,
   //       }),
-  //       kitchenSink.JsPrimitiveUnionPropertyClass,
+  //       kitchenSink.JsPrimitiveUnionProperty,
   //     );
   //     return harnesses;
   //   },
   //   {} as Record<
   //     string,
-  //     ClassHarness<kitchenSink.JsPrimitiveUnionPropertyClass>
+  //     Harness<kitchenSink.JsPrimitiveUnionPropertyClass>
   //   >,
   // ),
-  jsPrimitiveUnionProperty: new ClassHarness(
-    new kitchenSink.JsPrimitiveUnionPropertyClass({
+  jsPrimitiveUnionProperty: new Harness(
+    kitchenSink.JsPrimitiveUnionProperty.$create({
       $identifier,
       jsPrimitiveUnionProperty: jsPrimitiveValues,
     }),
-    kitchenSink.JsPrimitiveUnionPropertyClass,
+    kitchenSink.JsPrimitiveUnionProperty,
   ),
-  languageInPropertiesClass: new ClassHarness(
-    new kitchenSink.LanguageInPropertiesClass({
+  languageInProperties: new Harness(
+    kitchenSink.LanguageInProperties.$create({
       $identifier,
       languageInLiteralProperty: NonEmptyList([
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
       ]),
     }),
-    kitchenSink.LanguageInPropertiesClass,
+    kitchenSink.LanguageInProperties,
   ),
-  lazyPropertiesClassEmpty: new ClassHarness(
-    new kitchenSink.LazyPropertiesClass({
+  lazyPropertiesEmpty: new Harness(
+    kitchenSink.LazyProperties.$create({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      requiredLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance1",
+            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance1",
           ),
           lazilyResolvedStringProperty: "test required empty",
         }),
-      requiredPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierClassInstance2",
+            "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance2",
           ),
           lazilyResolvedStringProperty: "test required empty",
         }),
     }),
-    kitchenSink.LazyPropertiesClass,
+    kitchenSink.LazyProperties,
   ),
-  lazyPropertiesClassNonEmpty: new ClassHarness(
-    new kitchenSink.LazyPropertiesClass({
+  lazyPropertiesNonEmpty: new Harness(
+    kitchenSink.LazyProperties.$create({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      optionalLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance1"),
-          lazilyResolvedStringProperty: "optionalLazyToResolvedClassProperty",
-        }),
-      optionalLazyToResolvedClassUnionProperty:
-        new kitchenSink.LazilyResolvedClassUnionMember1({
-          $identifier: dataFactory.namedNode("http://example.com/instance2"),
           lazilyResolvedStringProperty:
-            "optionalLazyToResolvedClassUnionProperty",
+            "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
-      optionalLazyToResolvedIriIdentifierClassProperty:
-        new kitchenSink.LazilyResolvedIriIdentifierClass({
+      optionalLazyToResolvedUnionProperty:
+        kitchenSink.LazilyResolvedUnionMember1.$create({
+          $identifier: dataFactory.namedNode("http://example.com/instance2"),
+          lazilyResolvedStringProperty: "optionalLazyToResolvedUnionProperty",
+        }),
+      optionalLazyToResolvedIriIdentifierProperty:
+        kitchenSink.LazilyResolvedIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance3"),
           lazilyResolvedStringProperty:
-            "optionalLazyToResolvedIriIdentifierClassProperty",
+            "optionalLazyToResolvedIriIdentifierProperty",
         }),
-      optionalPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance4"),
           lazilyResolvedStringProperty:
-            "optionalPartialClassToResolvedClassProperty",
+            "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
-      optionalPartialClassToResolvedClassUnionProperty:
-        new kitchenSink.LazilyResolvedClassUnionMember1({
+      optionalPartialToResolvedUnionProperty:
+        kitchenSink.LazilyResolvedUnionMember1.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance5"),
           lazilyResolvedStringProperty:
-            "optionalPartialClassToResolvedClassUnionProperty",
+            "optionalPartialToResolvedUnionProperty",
         }),
-      optionalPartialClassUnionToResolvedClassUnionProperty:
-        new kitchenSink.LazilyResolvedClassUnionMember1({
+      optionalPartialUnionToResolvedUnionProperty:
+        kitchenSink.LazilyResolvedUnionMember1.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance6"),
           lazilyResolvedStringProperty:
-            "optionalPartialClassUnionToResolvedClassUnionProperty",
+            "optionalPartialUnionToResolvedUnionProperty",
         }),
-      requiredLazyToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance7"),
-          lazilyResolvedStringProperty: "requiredLazyToResolvedClassProperty",
+          lazilyResolvedStringProperty:
+            "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
-      requiredPartialClassToResolvedClassProperty:
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance8"),
           lazilyResolvedStringProperty:
-            "requiredPartialClassToResolvedClassProperty",
+            "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
-      setLazyToResolvedClassProperty: [
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      setLazyToResolvedBlankNodeOrIriIdentifierProperty: [
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance9"),
-          lazilyResolvedStringProperty: "setLazyToResolvedClassProperty",
+          lazilyResolvedStringProperty:
+            "setLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       ],
-      setPartialClassToResolvedClassProperty: [
-        new kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierClass({
+      setPartialToResolvedBlankNodeOrIriIdentifierProperty: [
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.$create({
           $identifier: dataFactory.namedNode("http://example.com/instance10"),
           lazilyResolvedStringProperty:
-            "setPartialClassToResolvedClassProperty",
+            "setPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       ],
     }),
-    kitchenSink.LazyPropertiesClass,
+    kitchenSink.LazyProperties,
   ),
-  lazyPropertiesInterfaceEmpty: new InterfaceHarness(
-    kitchenSink.LazyPropertiesInterface.$create({
-      $identifier,
-      // These nested objects won't be resolvable since they're not serialized with $toRdf.
-      // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      requiredLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty: "test required empty",
-        }),
-      requiredPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty: "test required empty",
-        }),
-    }),
-    kitchenSink.LazyPropertiesInterface,
-  ),
-  lazyPropertiesInterfaceNonEmpty: new InterfaceHarness(
-    kitchenSink.LazyPropertiesInterface.$create({
-      $identifier,
-      // These nested objects won't be resolvable since they're not serialized with $toRdf.
-      // This harness is just intended to test the deserialization/deserialization of the identifiers.
-      optionalLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty:
-            "optionalLazyToResolvedInterfaceProperty",
-        }),
-      optionalLazyToResolvedInterfaceUnionProperty:
-        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
-          lazilyResolvedStringProperty:
-            "optionalLazyToResolvedInterfaceUnionProperty",
-        }),
-      optionalLazyToResolvedIriIdentifierInterfaceProperty:
-        kitchenSink.LazilyResolvedIriIdentifierInterface.$create({
-          $identifier: dataFactory.namedNode("http://example.com/resolved"),
-          lazilyResolvedStringProperty:
-            "optionalLazyToResolvedIriIdentifierInterfaceProperty",
-        }),
-      optionalPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty:
-            "optionalPartialInterfaceToResolvedInterfaceProperty",
-        }),
-      optionalPartialInterfaceToResolvedInterfaceUnionProperty:
-        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
-          lazilyResolvedStringProperty:
-            "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
-        }),
-      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty:
-        kitchenSink.LazilyResolvedInterfaceUnionMember1.$create({
-          lazilyResolvedStringProperty:
-            "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
-        }),
-      requiredLazyToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty:
-            "requiredLazyToResolvedInterfaceProperty",
-        }),
-      requiredPartialInterfaceToResolvedInterfaceProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty:
-            "requiredPartialInterfaceToResolvedInterfaceProperty",
-        }),
-      setLazyToResolvedInterfaceProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty: "setLazyToResolvedInterfaceProperty",
-        }),
-      ],
-      setPartialInterfaceToResolvedInterfaceProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifierInterface.$create({
-          lazilyResolvedStringProperty:
-            "setPartialInterfaceToResolvedInterfaceProperty",
-        }),
-      ],
-    }),
-    kitchenSink.LazyPropertiesInterface,
-  ),
-  mutablePropertiesClass: new ClassHarness(
-    new kitchenSink.MutablePropertiesClass({
+  mutableProperties: new Harness(
+    kitchenSink.MutableProperties.$create({
       $identifier,
       mutableListProperty: ["test1", "test2"],
       mutableStringProperty: "test",
       mutableSetProperty: ["test1", "test2"],
     }),
-    kitchenSink.MutablePropertiesClass,
+    kitchenSink.MutableProperties,
   ),
-  namedUnionPropertiesClass1: new ClassHarness(
-    new kitchenSink.NamedUnionPropertiesClass({
+  namedUnionProperties1: new Harness(
+    kitchenSink.NamedUnionProperties.$create({
       $identifier,
       namedUnion1Property: "test",
       namedUnion2Property: { type: "date", value: new Date("2025-12-08") },
     }),
-    kitchenSink.NamedUnionPropertiesClass,
+    kitchenSink.NamedUnionProperties,
   ),
-  namedUnionPropertiesClass2: new ClassHarness(
-    new kitchenSink.NamedUnionPropertiesClass({
+  namedUnionProperties2: new Harness(
+    kitchenSink.NamedUnionProperties.$create({
       $identifier,
       namedUnion1Property: dataFactory.namedNode("http://example.com"),
       namedUnion2Property: {
@@ -589,11 +441,11 @@ export const harnesses = {
         value: new Date("2025-12-08T21:17:27+00:00"),
       },
     }),
-    kitchenSink.NamedUnionPropertiesClass,
+    kitchenSink.NamedUnionProperties,
   ),
-  // nodeKindsClass1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
-  nodeKindsClass1: new ClassHarness(
-    new kitchenSink.NodeKindsClass({
+  // nodeKinds1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
+  nodeKinds1: new Harness(
+    kitchenSink.NodeKinds.$create({
       $identifier,
       blankNodeKindProperty: dataFactory.blankNode(),
       blankNodeOrIriNodeKindProperty: dataFactory.blankNode(),
@@ -606,10 +458,10 @@ export const harnesses = {
       ),
       literalNodeKindProperty: dataFactory.literal("literalNodeKindValue"),
     }),
-    kitchenSink.NodeKindsClass,
+    kitchenSink.NodeKinds,
   ),
-  nodeKindsClass2: new ClassHarness(
-    new kitchenSink.NodeKindsClass({
+  nodeKinds2: new Harness(
+    kitchenSink.NodeKinds.$create({
       $identifier,
       blankNodeKindProperty: dataFactory.blankNode(),
       blankNodeOrIriNodeKindProperty: dataFactory.namedNode(
@@ -628,26 +480,26 @@ export const harnesses = {
         "literalNodeKindPropertyValue",
       ),
     }),
-    kitchenSink.NodeKindsClass,
+    kitchenSink.NodeKinds,
   ),
-  noRdfTypeClassUnionMember1: new ClassUnionHarness(
-    new kitchenSink.NoRdfTypeClassUnionMember1({
+  noRdfTypeUnionMember1: new Harness(
+    kitchenSink.NoRdfTypeUnionMember1.$create({
       $identifier,
-      noRdfTypeClassUnionMember1Property: "test",
+      noRdfTypeUnionMember1Property: "test",
     }),
-    kitchenSink.NoRdfTypeClassUnion,
-    "NoRdfTypeClassUnion",
+    kitchenSink.NoRdfTypeUnion,
+    "NoRdfTypeUnion",
   ),
-  noRdfTypeClassUnionMember2: new ClassUnionHarness(
-    new kitchenSink.NoRdfTypeClassUnionMember2({
+  noRdfTypeUnionMember2: new Harness(
+    kitchenSink.NoRdfTypeUnionMember2.$create({
       $identifier,
-      noRdfTypeClassUnionMember2Property: "test",
+      noRdfTypeUnionMember2Property: "test",
     }),
-    kitchenSink.NoRdfTypeClassUnion,
-    "NoRdfTypeClassUnion",
+    kitchenSink.NoRdfTypeUnion,
+    "NoRdfTypeUnion",
   ),
-  numericPropertiesClass: new ClassHarness(
-    new kitchenSink.NumericPropertiesClass({
+  numericProperties: new Harness(
+    kitchenSink.NumericProperties.$create({
       $identifier,
       byteNumericProperty: -1,
       decimalNumericProperty: new Decimal(1.0),
@@ -666,53 +518,53 @@ export const harnesses = {
       unsignedLongNumericProperty: 1n,
       unsignedShortNumericProperty: 1,
     }),
-    kitchenSink.NumericPropertiesClass,
+    kitchenSink.NumericProperties,
   ),
-  objectListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesClass({
+  objectListProperty: new Harness(
+    kitchenSink.ListProperties.$create({
       $identifier,
       objectListProperty: [
-        new kitchenSink.NonClass({ nonClassProperty: "Test1" }),
-        new kitchenSink.NonClass({ nonClassProperty: "Test2" }),
+        kitchenSink.NonClass.$create({ nonClassProperty: "Test1" }),
+        kitchenSink.NonClass.$create({ nonClassProperty: "Test2" }),
       ],
     }),
-    kitchenSink.ListPropertiesClass,
+    kitchenSink.ListProperties,
   ),
-  orderedPropertiesClass: new ClassHarness(
-    new kitchenSink.OrderedPropertiesClass({
+  orderedProperties: new Harness(
+    kitchenSink.OrderedProperties.$create({
       $identifier,
       orderedPropertyA: "testA",
       orderedPropertyB: "testB",
       orderedPropertyC: "testC",
     }),
-    kitchenSink.OrderedPropertiesClass,
+    kitchenSink.OrderedProperties,
   ),
-  overrideName1Class: new ClassHarness(
-    new kitchenSink.NewName1Class({
+  overrideName1: new Harness(
+    kitchenSink.NewName1.$create({
       $identifier,
     }),
-    kitchenSink.NewName1Class,
-    "OverrideName1Class",
+    kitchenSink.NewName1,
+    "OverrideName1",
   ),
-  overrideName2Class: new ClassHarness(
-    new kitchenSink.NewName2Class({
+  overrideName2: new Harness(
+    kitchenSink.NewName2.$create({
       $identifier,
     }),
-    kitchenSink.NewName2Class,
-    "OverrideName2Class",
+    kitchenSink.NewName2,
+    "OverrideName2",
   ),
-  propertyCardinalitiesClass: new ClassHarness(
-    new kitchenSink.PropertyCardinalitiesClass({
+  propertyCardinalities: new Harness(
+    kitchenSink.PropertyCardinalities.$create({
       $identifier,
       emptyStringSetProperty: undefined,
       nonEmptyStringSetProperty: NonEmptyList(["test1"]),
       optionalStringProperty: undefined,
       requiredStringProperty: "test",
     }),
-    kitchenSink.PropertyCardinalitiesClass,
+    kitchenSink.PropertyCardinalities,
   ),
-  propertyNamesClass: new ClassHarness(
-    new kitchenSink.PropertyNamesClass({
+  propertyNames: new Harness(
+    kitchenSink.PropertyNames.$create({
       $identifier,
       // Should all be actualProperty*
       actualPropertyName1: "actualPropertyValue1",
@@ -721,41 +573,32 @@ export const harnesses = {
       actualPropertyName4: "actualPropertyValue4",
       actualPropertyName5: "actualPropertyValue5",
     }),
-    kitchenSink.PropertyNamesClass,
+    kitchenSink.PropertyNames,
   ),
-  propertyPathsClass: new ClassHarness(
-    new kitchenSink.PropertyPathsClass({
+  propertyPaths: new Harness(
+    kitchenSink.PropertyPaths.$create({
       $identifier,
       inversePathProperty: "http://example.com/inversePathPropertyValue",
       predicatePathProperty: "predicatePathPropertyValue",
     }),
-    kitchenSink.PropertyPathsClass,
+    kitchenSink.PropertyPaths,
   ),
-  propertyVisibilitiesClass: new ClassHarness(
-    new kitchenSink.PropertyVisibilitiesClass({
-      $identifier,
-      privateProperty: "private",
-      protectedProperty: "protected",
-      publicProperty: "public",
-    }),
-    kitchenSink.PropertyVisibilitiesClass,
-  ),
-  nonClass: new ClassHarness(
-    new kitchenSink.NonClass({
+  nonClass: new Harness(
+    kitchenSink.NonClass.$create({
       $identifier,
       nonClassProperty: "Test",
     }),
     kitchenSink.NonClass,
   ),
-  stringListProperty: new ClassHarness(
-    new kitchenSink.ListPropertiesClass({
+  stringListProperty: new Harness(
+    kitchenSink.ListProperties.$create({
       $identifier,
       stringListProperty: ["Test1", "Test2"],
     }),
-    kitchenSink.ListPropertiesClass,
+    kitchenSink.ListProperties,
   ),
-  termPropertiesClass: new ClassHarness(
-    new kitchenSink.TermPropertiesClass({
+  termProperties: new Harness(
+    kitchenSink.TermProperties.$create({
       blankNodeTermProperty: dataFactory.blankNode(),
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
@@ -767,110 +610,110 @@ export const harnesses = {
       stringTermProperty: "test",
       termProperty: dataFactory.literal("1", xsd.decimal), // Use a literal instead of a number to avoid an issue with Oxigraph literal normalization (https://github.com/oxigraph/oxigraph/issues/526)
     }),
-    kitchenSink.TermPropertiesClass,
+    kitchenSink.TermProperties,
   ),
-  unionDiscriminantsClass1: new ClassHarness(
-    new kitchenSink.UnionDiscriminantsClass({
+  unionDiscriminants1: new Harness(
+    kitchenSink.UnionDiscriminants.$create({
       $identifier,
-      optionalClassOrClassOrStringProperty: {
-        type: "ClassUnionMember1",
-        value: new kitchenSink.ClassUnionMember1({
+      optionalNodeOrNodeOrStringProperty: {
+        type: "UnionMember1",
+        value: kitchenSink.UnionMember1.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1a",
+            "http://example.com/unionMember1a",
           ),
-          classUnionMember1Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          unionMember1Property: "test",
+          unionMemberCommonParentProperty: "test",
         }),
       },
       optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
       optionalIriOrStringProperty: dataFactory.namedNode("http://example.com"),
-      requiredClassOrClassOrStringProperty: {
-        type: "ClassUnionMember1",
-        value: new kitchenSink.ClassUnionMember1({
+      requiredNodeOrNodeOrStringProperty: {
+        type: "UnionMember1",
+        value: kitchenSink.UnionMember1.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1b",
+            "http://example.com/unionMember1b",
           ),
-          classUnionMember1Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          unionMember1Property: "test",
+          unionMemberCommonParentProperty: "test",
         }),
       },
-      requiredClassOrLiteralProperty: {
-        termType: "ClassUnionMember1",
-        value: new kitchenSink.ClassUnionMember1({
+      requiredNodeOrLiteralProperty: {
+        termType: "UnionMember1",
+        value: kitchenSink.UnionMember1.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember1c",
+            "http://example.com/unionMember1c",
           ),
-          classUnionMember1Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          unionMember1Property: "test",
+          unionMemberCommonParentProperty: "test",
         }),
       },
       requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
       requiredIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       // Don't specify the set properties to test undefined
     }),
-    kitchenSink.UnionDiscriminantsClass,
+    kitchenSink.UnionDiscriminants,
   ),
-  unionDiscriminantsClass2: new ClassHarness(
-    new kitchenSink.UnionDiscriminantsClass({
+  unionDiscriminants2: new Harness(
+    kitchenSink.UnionDiscriminants.$create({
       $identifier,
-      optionalClassOrClassOrStringProperty: {
-        type: "ClassUnionMember2",
-        value: new kitchenSink.ClassUnionMember2({
+      optionalNodeOrNodeOrStringProperty: {
+        type: "UnionMember2",
+        value: kitchenSink.UnionMember2.$create({
           $identifier: dataFactory.namedNode(
-            "http://example.com/classUnionMember2a",
+            "http://example.com/unionMember2a",
           ),
-          classUnionMember2Property: "test",
-          classUnionMemberCommonParentProperty: "test",
+          unionMember2Property: "test",
+          unionMemberCommonParentProperty: "test",
         }),
       },
-      optionalClassOrLiteralProperty: dataFactory.literal("test"),
+      optionalNodeOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrStringProperty: "test",
-      requiredClassOrClassOrStringProperty: {
+      requiredNodeOrNodeOrStringProperty: {
         type: "string",
         value: "test",
       },
-      requiredClassOrLiteralProperty: dataFactory.literal("test"),
+      requiredNodeOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrStringProperty: "test",
-      setClassOrClassOrStringProperty: [
+      setNodeOrNodeOrStringProperty: [
         // Opposite order
         {
           type: "string",
           value: "test",
         },
         {
-          type: "ClassUnionMember2",
-          value: new kitchenSink.ClassUnionMember2({
+          type: "UnionMember2",
+          value: kitchenSink.UnionMember2.$create({
             $identifier: dataFactory.namedNode(
-              "http://example.com/classUnionMember2b",
+              "http://example.com/unionMember2b",
             ),
-            classUnionMember2Property: "test",
-            classUnionMemberCommonParentProperty: "test",
+            unionMember2Property: "test",
+            unionMemberCommonParentProperty: "test",
           }),
         },
         {
-          type: "ClassUnionMember1",
-          value: new kitchenSink.ClassUnionMember1({
+          type: "UnionMember1",
+          value: kitchenSink.UnionMember1.$create({
             $identifier: dataFactory.namedNode(
-              "http://example.com/classUnionMember1b",
+              "http://example.com/unionMember1b",
             ),
-            classUnionMember1Property: "test",
-            classUnionMemberCommonParentProperty: "test",
+            unionMember1Property: "test",
+            unionMemberCommonParentProperty: "test",
           }),
         },
       ],
-      setClassOrLiteralProperty: [
+      setNodeOrLiteralProperty: [
         // Opposite order
         dataFactory.literal("test"),
         {
-          termType: "ClassUnionMember1",
-          value: new kitchenSink.ClassUnionMember1({
+          termType: "UnionMember1",
+          value: kitchenSink.UnionMember1.$create({
             $identifier: dataFactory.namedNode(
-              "http://example.com/classUnionMember1c",
+              "http://example.com/unionMember1c",
             ),
-            classUnionMember1Property: "test",
-            classUnionMemberCommonParentProperty: "test",
+            unionMember1Property: "test",
+            unionMemberCommonParentProperty: "test",
           }),
         },
       ],
@@ -883,6 +726,24 @@ export const harnesses = {
         dataFactory.namedNode("http://example.com"),
       ],
     }),
-    kitchenSink.UnionDiscriminantsClass,
+    kitchenSink.UnionDiscriminants,
+  ),
+  unionMember1: new Harness(
+    kitchenSink.UnionMember1.$create({
+      $identifier,
+      unionMemberCommonParentProperty: "test common parent",
+      unionMember1Property: "test",
+    }),
+    kitchenSink.Union,
+    "Union",
+  ),
+  unionMember2: new Harness(
+    kitchenSink.UnionMember2.$create({
+      $identifier,
+      unionMemberCommonParentProperty: "test common parent",
+      unionMember2Property: "test",
+    }),
+    kitchenSink.Union,
+    "Union",
   ),
 };

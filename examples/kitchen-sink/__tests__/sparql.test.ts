@@ -17,7 +17,7 @@ describe("sparql", () => {
     const languageInSubject = oxigraph.blankNode();
     for (const language of ["", "ar", "en", "fr"]) {
       for (const property of Object.values(
-        kitchenSink.LanguageInPropertiesClass.$schema.properties,
+        kitchenSink.LanguageInProperties.$schema.properties,
       )) {
         if (property.kind !== "Shacl") {
           continue;
@@ -64,7 +64,9 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      const toRdfDataset = harness.toRdfResource().dataset;
+      const toRdfDataset = harness.staticSide.$toRdfResource(
+        harness.instance as any,
+      ).dataset;
       const toRdfQuads: Quad[] = [];
 
       const oxigraphStore = new oxigraph.Store();
@@ -73,15 +75,16 @@ describe("sparql", () => {
         toRdfQuads.push(quad);
       }
 
-      const constructQueryString = harness.sparqlConstructQueryString({
-        subject: dataFactory.variable("subject"),
-      });
+      const constructQueryString =
+        harness.staticSide.$sparqlConstructQueryString({
+          subject: dataFactory.variable("subject"),
+        });
 
       // Add to a Dataset to deduplicate the quads
       const constructResultDataset = datasetFactory.dataset(
         oxigraphStore.query(constructQueryString) as Quad[],
       );
-      const constructInstanceEither = harness.fromRdfResource(
+      const constructInstanceEither = harness.staticSide.$fromRdfResource(
         new ResourceSet({
           dataFactory,
           dataset: constructResultDataset,
@@ -94,7 +97,9 @@ describe("sparql", () => {
       );
       if (constructInstanceEither.isRight()) {
         const constructInstance = constructInstanceEither.unsafeCoerce();
-        const equalsResult = harness.equals(constructInstance as any).extract();
+        const equalsResult = harness.staticSide
+          .$equals(harness.instance as any, constructInstance as any)
+          .extract();
         expect(equalsResult).toStrictEqual(true);
         return;
       }
@@ -113,7 +118,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: unspecified", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
         subject: dataFactory.variable("object"),
       }),
     );
@@ -122,7 +127,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: []", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
         preferredLanguages: [],
         subject: dataFactory.variable("object"),
       }),
@@ -132,7 +137,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: ['en']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
         preferredLanguages: ["en"],
         subject: dataFactory.variable("object"),
       }),

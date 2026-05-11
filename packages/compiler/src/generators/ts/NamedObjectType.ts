@@ -4,15 +4,11 @@ import { NodeKind } from "@shaclmate/shacl-ast";
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
-import type { TsFeature } from "../../enums/TsFeature.js";
-import type { TsObjectDeclarationType } from "../../enums/TsObjectDeclarationType.js";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_NamedObjectType/identifierTypeDeclarations.js";
-import { NamedObjectType_classDeclaration } from "./_NamedObjectType/NamedObjectType_classDeclaration.js";
 import { NamedObjectType_createFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_createFunctionDeclaration.js";
-import { NamedObjectType_equalsFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionOrMethodDeclaration.js";
+import { NamedObjectType_equalsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_equalsFunctionDeclaration.js";
 import { NamedObjectType_filterFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_filterFunctionDeclaration.js";
 import { NamedObjectType_filterTypeDeclaration } from "./_NamedObjectType/NamedObjectType_filterTypeDeclaration.js";
 import { NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
@@ -22,7 +18,7 @@ import { NamedObjectType_fromRdfResourceFunctionDeclaration } from "./_NamedObje
 import { NamedObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_fromRdfResourceValuesFunctionDeclaration.js";
 import { NamedObjectType_fromRdfTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_fromRdfTypeVariableStatement.js";
 import { NamedObjectType_graphqlTypeVariableStatement } from "./_NamedObjectType/NamedObjectType_graphqlTypeVariableStatement.js";
-import { NamedObjectType_hashFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionOrMethodDeclarations.js";
+import { NamedObjectType_hashFunctionDeclarations } from "./_NamedObjectType/NamedObjectType_hashFunctionDeclarations.js";
 import { NamedObjectType_interfaceDeclaration } from "./_NamedObjectType/NamedObjectType_interfaceDeclaration.js";
 import { NamedObjectType_isTypeFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_isTypeFunctionDeclaration.js";
 import { NamedObjectType_jsonParseFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonParseFunctionDeclaration.js";
@@ -35,9 +31,9 @@ import { NamedObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./
 import { NamedObjectType_schemaVariableStatement } from "./_NamedObjectType/NamedObjectType_schemaVariableStatement.js";
 import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { NamedObjectType_toJsonFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionOrMethodDeclaration.js";
-import { NamedObjectType_toRdfResourceFunctionOrMethodDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.js";
-import { NamedObjectType_toStringFunctionOrMethodDeclarations } from "./_NamedObjectType/NamedObjectType_toStringFunctionOrMethodDeclaration.js";
+import { NamedObjectType_toJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_toJsonFunctionDeclaration.js";
+import { NamedObjectType_toRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_toRdfResourceFunctionDeclaration.js";
+import { NamedObjectType_toStringFunctionDeclarations } from "./_NamedObjectType/NamedObjectType_toStringFunctionDeclarations.js";
 import { NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
 import { NamedObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
 import type { Property as _Property } from "./_NamedObjectType/Property.js";
@@ -48,6 +44,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
 import { imports } from "./imports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
@@ -56,8 +53,6 @@ export class NamedObjectType extends AbstractType {
 
   protected readonly toRdfTypes: readonly NamedNode[];
 
-  readonly abstract: boolean;
-  readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
@@ -66,13 +61,10 @@ export class NamedObjectType extends AbstractType {
   override readonly kind = "NamedObjectType";
   override readonly name: string;
   override readonly recursive: boolean;
-  readonly staticModuleName: string;
   readonly synthetic: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
-    abstract,
-    declarationType,
     extern,
     features,
     fromRdfType,
@@ -86,14 +78,11 @@ export class NamedObjectType extends AbstractType {
     lazyProperties,
     name,
     recursive,
-    staticModuleName,
     synthetic,
     toRdfTypes,
     ...superParameters
   }: {
-    abstract: boolean;
     comment: Maybe<string>;
-    declarationType: TsObjectDeclarationType;
     extern: boolean;
     features: ReadonlySet<TsFeature>;
     fromRdfType: Maybe<NamedNode>;
@@ -112,13 +101,10 @@ export class NamedObjectType extends AbstractType {
     ) => readonly NamedObjectType.Property[];
     name: string;
     recursive: boolean;
-    staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.abstract = abstract;
-    this.declarationType = declarationType;
     this.extern = extern;
     this.features = features;
     this.fromRdfType = fromRdfType;
@@ -133,7 +119,6 @@ export class NamedObjectType extends AbstractType {
     this.lazyProperties = lazyProperties;
     this.name = name;
     this.recursive = recursive;
-    this.staticModuleName = staticModuleName;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
   }
@@ -159,7 +144,7 @@ export class NamedObjectType extends AbstractType {
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof ${this.name}`,
+          code`typeof ${value} === "object"`,
         sourceTypeName: this.name,
         sourceTypeof: "object",
       },
@@ -176,23 +161,12 @@ export class NamedObjectType extends AbstractType {
     if (!this.extern) {
       const staticModuleDeclarations: Code[] = [];
 
-      switch (this.declarationType) {
-        case "class": {
-          declarations.push(NamedObjectType_classDeclaration.call(this));
-          break;
-        }
-        case "interface": {
-          declarations.push(NamedObjectType_interfaceDeclaration.call(this));
-          staticModuleDeclarations.push(
-            ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
-            ...NamedObjectType_equalsFunctionOrMethodDeclaration.bind(
-              this,
-            )().toList(),
-            ...NamedObjectType_hashFunctionOrMethodDeclarations.call(this),
-          );
-          break;
-        }
-      }
+      declarations.push(NamedObjectType_interfaceDeclaration.call(this));
+      staticModuleDeclarations.push(
+        ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_equalsFunctionDeclaration.bind(this)().toList(),
+        ...NamedObjectType_hashFunctionDeclarations.call(this),
+      );
 
       const jsonModuleDeclarations: Code[] = [
         ...NamedObjectType_jsonParseFunctionDeclaration.call(this).toList(),
@@ -239,19 +213,9 @@ export class NamedObjectType extends AbstractType {
         ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
           this,
         )().toList(),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toJsonFunctionOrMethodDeclaration.call(
-              this,
-            ).toList()
-          : []),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toRdfResourceFunctionOrMethodDeclaration.call(
-              this,
-            ).toList()
-          : []),
-        ...(this.declarationType === "interface"
-          ? NamedObjectType_toStringFunctionOrMethodDeclarations.call(this)
-          : []),
+        ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_toStringFunctionDeclarations.call(this),
         ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
           this,
         )().toList(),
@@ -262,7 +226,7 @@ export class NamedObjectType extends AbstractType {
 
       if (staticModuleDeclarations.length > 0) {
         declarations.push(code`\
-export namespace ${def(this.staticModuleName)} {
+export namespace ${def(this.name)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
       }
@@ -306,43 +270,36 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get equalsFunction(): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`((left, right) => left.${syntheticNamePrefix}equals(right))`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}equals`;
-      default:
-        throw new RangeError(this.declarationType);
-    }
+    return code`${this.name}.${syntheticNamePrefix}equals`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}filter`;
+    return code`${this.name}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}Filter`;
+    return code`${this.name}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
   get fromRdfTypeVariable(): Maybe<Code> {
     return this.fromRdfType.map(
-      () => code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfType`,
+      () => code`${this.name}.${syntheticNamePrefix}fromRdfType`,
     );
   }
 
   @Memoize()
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
-      code`${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
+      code`${this.name}.${syntheticNamePrefix}GraphQL`,
     );
   }
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}Identifier`;
+    return code`${this.name}.${syntheticNamePrefix}Identifier`;
   }
 
   @Memoize()
@@ -374,7 +331,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}schema`;
+    return code`${this.name}.${syntheticNamePrefix}schema`;
   }
 
   @Memoize()
@@ -398,38 +355,31 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlConstructTriples`;
+    return code`${this.name}.${syntheticNamePrefix}valueSparqlConstructTriples`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}valueSparqlWherePatterns`;
+    return code`${this.name}.${syntheticNamePrefix}valueSparqlWherePatterns`;
   }
 
   @Memoize()
   protected get thisVariable(): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`this`;
-      case "interface":
-        return code`_${camelCase(this.name)}`;
-      default:
-        throw new RangeError(this.declarationType);
-    }
+    return code`_${camelCase(this.name)}`;
   }
 
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     // Assumes the JSON object has been recursively validated already.
-    return code`${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}fromJson(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     const { resourceValues, ...options } = variables;
-    return code`${this.staticModuleName}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValues}, ${options})`;
+    return code`${this.name}.${syntheticNamePrefix}fromRdfResourceValues(${resourceValues}, ${options})`;
   }
 
   override graphqlResolveExpression({
@@ -443,27 +393,20 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override hashStatements({
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    switch (this.declarationType) {
-      case "class":
-        return [
-          code`${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
-        ];
-      case "interface":
-        return [
-          code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
-        ];
-    }
+    return [
+      code`${this.name}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+    ];
   }
 
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    let expression = code`${this.staticModuleName}.${syntheticNamePrefix}Json.schema()`;
+    let expression = code`${this.name}.${syntheticNamePrefix}Json.schema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }
@@ -471,7 +414,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   override jsonType(): AbstractType.JsonType {
     return new AbstractType.JsonType(
-      code`${this.staticModuleName}.${syntheticNamePrefix}Json`,
+      code`${this.name}.${syntheticNamePrefix}Json`,
     );
   }
 
@@ -479,58 +422,26 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     variables,
   }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.staticModuleName}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+      code`${this.name}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
-  }
-
-  newExpression({ parameters }: { parameters: Code }): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`new ${this.name}(${parameters})`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
-    }
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`${variables.value}.${syntheticNamePrefix}toJson()`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
-    }
+    return code`${this.name}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`${variables.value}.toString()`;
-      case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}toString(${variables.value})`;
-    }
+    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
-    switch (this.declarationType) {
-      case "class":
-        return code`[${variables.value}.${syntheticNamePrefix}toRdfResource({ graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-      case "interface":
-        return code`[${this.staticModuleName}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
-    }
-  }
-
-  protected ensureAtMostOneSuperObjectType() {
-    if (this.parentObjectTypes.length > 1) {
-      throw new RangeError(
-        `object type '${this.name}' has multiple super object types`,
-      );
-    }
+    return code`[${this.name}.${syntheticNamePrefix}toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
   }
 
   private readonly lazyAncestorObjectTypes: () => readonly NamedObjectType[];

@@ -11,16 +11,12 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
 ${joinCode([
   code`let { context, graph, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
   code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
-  code`return ${code`${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(${this.declarationType === "interface" ? code`${syntheticNamePrefix}create` : code`properties => ${this.newExpression({ parameters: code`properties` })}`})`};`,
+  code`return ${code`${this.name}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(${syntheticNamePrefix}create)`};`,
 ])}
 };`);
 }

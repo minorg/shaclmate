@@ -6,6 +6,7 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { snippets } from "./snippets.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
@@ -54,7 +55,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as NamedObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,

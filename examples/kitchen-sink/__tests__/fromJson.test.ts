@@ -6,9 +6,11 @@ import { harnesses } from "./harnesses.js";
 describe("fromJson", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
-      const jsonObject = harness.toJson();
-      const fromJsonInstance: any = harness.fromJson(jsonObject);
-      const equalsResult = harness.equals(fromJsonInstance).extract();
+      const jsonObject = harness.staticSide.$toJson(harness.instance as any);
+      const fromJsonInstance: any = harness.staticSide.$fromJson(jsonObject);
+      const equalsResult = harness.staticSide
+        .$equals(harness.instance as any, fromJsonInstance as any)
+        .extract();
       if (equalsResult !== true) {
         console.log("not equal");
       }
@@ -17,17 +19,16 @@ describe("fromJson", () => {
   }
 
   it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance = kitchenSink.ConcreteParentClassStatic.$fromJson(
-      harnesses.concreteChildClass.toJson(),
+    const fromJsonInstance = kitchenSink.ConcreteParent.$fromJson(
+      kitchenSink.ConcreteChild.$toJson(harnesses.concreteChild.instance),
     );
-    expect(fromJsonInstance).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
     expect(
       fromJsonInstance
         .$identifier()
-        .equals(harnesses.concreteChildClass.instance.$identifier()),
+        .equals(harnesses.concreteChild.instance.$identifier()),
     );
-    expect(fromJsonInstance.concreteParentClassProperty).toStrictEqual(
-      harnesses.concreteChildClass.instance.concreteParentClassProperty,
+    expect(fromJsonInstance.concreteParentProperty).toStrictEqual(
+      harnesses.concreteChild.instance.concreteParentProperty,
     );
   });
 });

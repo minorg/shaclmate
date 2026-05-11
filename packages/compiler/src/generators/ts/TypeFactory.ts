@@ -110,13 +110,9 @@ export class TypeFactory {
     const name = tsName(astType.name.unsafeCoerce(), {
       synthetic: astType.synthetic,
     });
-    const staticModuleName =
-      astType.childObjectTypes.length > 0 ? `${name}Static` : name;
 
     const namedObjectType = new NamedObjectType({
-      abstract: astType.abstract,
       comment: astType.comment,
-      declarationType: astType.tsObjectDeclarationType,
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
@@ -137,16 +133,11 @@ export class TypeFactory {
         ),
       lazyDiscriminantProperty: (namedObjectType: NamedObjectType) => {
         // Discriminant property
-        const discriminantOwnValue = !astType.abstract
-          ? namedObjectType.discriminantValue
-          : undefined;
         const discriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of namedObjectType.descendantObjectTypes) {
-          if (!descendantObjectType.abstract) {
-            discriminantDescendantValues.add(
-              descendantObjectType.discriminantValue,
-            );
-          }
+          discriminantDescendantValues.add(
+            descendantObjectType.discriminantValue,
+          );
         }
 
         return new NamedObjectType.DiscriminantProperty({
@@ -156,9 +147,8 @@ export class TypeFactory {
           type: new NamedObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
-            ownValues: discriminantOwnValue ? [discriminantOwnValue] : [],
+            ownValues: [namedObjectType.discriminantValue],
           }),
-          visibility: "public",
         });
       },
       lazyParentObjectTypes: () =>
@@ -183,37 +173,25 @@ export class TypeFactory {
             }),
           );
 
-        if (
-          namedObjectType._discriminantProperty.type.ownValues.length > 0 ||
-          namedObjectType._discriminantProperty.type.descendantValues.length > 0
-        ) {
-          properties.splice(0, 0, namedObjectType._discriminantProperty);
-        }
+        properties.splice(0, 0, namedObjectType._discriminantProperty);
 
-        if (
-          namedObjectType.declarationType === "interface" ||
-          namedObjectType.parentObjectTypes.length === 0
-        ) {
-          properties.splice(
-            0,
-            0,
-            new NamedObjectType.IdentifierProperty({
-              logger: this.logger,
-              name: `${syntheticNamePrefix}identifier`,
-              namedObjectType,
-              type: identifierType,
-              typeAlias: code`${staticModuleName}.${syntheticNamePrefix}Identifier`,
-              visibility: "public",
-            }),
-          );
-        }
+        properties.splice(
+          0,
+          0,
+          new NamedObjectType.IdentifierProperty({
+            logger: this.logger,
+            name: `${syntheticNamePrefix}identifier`,
+            namedObjectType,
+            type: identifierType,
+            typeAlias: code`${name}.${syntheticNamePrefix}Identifier`,
+          }),
+        );
 
         return properties;
       },
       logger: this.logger,
       name,
       recursive: astType.recursive,
-      staticModuleName,
       synthetic: astType.synthetic,
       toRdfTypes: astType.toRdfTypes,
     });
@@ -579,7 +557,6 @@ export class TypeFactory {
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
       type: this.createType(astObjectTypeProperty.type),
-      visibility: astObjectTypeProperty.visibility,
     });
 
     this.cachedObjectTypePropertiesByShapeIdentifier.set(

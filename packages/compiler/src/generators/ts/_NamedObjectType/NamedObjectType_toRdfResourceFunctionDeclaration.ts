@@ -7,45 +7,21 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
+export function NamedObjectType_toRdfResourceFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
   if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
 
-  this.ensureAtMostOneSuperObjectType();
-
-  let preamble: string = "";
-  if (this.declarationType === "interface") {
-    preamble = "export function ";
-  }
-
-  const parameters: Code[] = [];
-  if (this.declarationType === "interface") {
-    parameters.push(code`${this.thisVariable}: ${this.name}`);
-  }
-  parameters.push(
-    code`options?: Parameters<${snippets.ToRdfResourceFunction}<${this.name}>>[1]`,
-  );
-
   const statements: Code[] = [
     code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.ResourceSet}({ dataFactory: ${imports.dataFactory}, dataset: ${imports.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
-    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} }`;
-    let superToRdfCall: Code;
-    switch (this.declarationType) {
-      case "class":
-        preamble = "override ";
-        superToRdfCall = code`super.${syntheticNamePrefix}toRdfResource(${superToRdfOptions})`;
-        break;
-      case "interface":
-        superToRdfCall = code`${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, ${superToRdfOptions})`;
-        break;
-    }
-    statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
+    statements.push(
+      code`const ${variables.resource} = ${this.parentObjectTypes[0].name}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, { ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} });`,
+    );
   } else {
     statements.push(
       code`const ${variables.resource} = ${variables.resourceSet}.resource(${this.thisVariable}.${syntheticNamePrefix}identifier());`,
@@ -82,7 +58,7 @@ export function NamedObjectType_toRdfResourceFunctionOrMethodDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}toRdfResource(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {
+export function ${syntheticNamePrefix}toRdfResource(${this.thisVariable}: ${this.name}, options?: Parameters<${snippets.ToRdfResourceFunction}<${this.name}>>[1]): ${this.toRdfjsResourceType} {
   ${joinCode(statements)}
 }`);
 }

@@ -115,14 +115,14 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             filterFunction: Code,
             namedObjectType: {
               descendantFromRdfTypeVariables: readonly Code[];
-              staticModuleName: string;
+              name: string;
               fromRdfTypeVariable: Maybe<Code>;
             },
           ): Code => {
             const fromRdfTypes = namedObjectType.fromRdfTypeVariable
               .toList()
               .concat(namedObjectType.descendantFromRdfTypeVariables);
-            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdfResource: ${namedObjectType.staticModuleName}.${syntheticNamePrefix}fromRdfResource, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdfResource: ${namedObjectType.name}.${syntheticNamePrefix}fromRdfResource, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
           };
 
           switch (namedObjectType.kind) {
@@ -137,11 +137,9 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${namedObjectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
-      namedObjectType.members
-        .filter((member) => !member.type.abstract)
-        .map((member) =>
-          runtimeObjectType(namedObjectType.filterFunction, member.type),
-        ),
+      namedObjectType.members.map((member) =>
+        runtimeObjectType(namedObjectType.filterFunction, member.type),
+      ),
       { on: ", " },
     )}
   ], query);

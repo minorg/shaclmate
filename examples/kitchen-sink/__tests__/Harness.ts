@@ -3,46 +3,50 @@ import type { Resource, ResourceSet } from "@rdfx/resource";
 import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 
-export abstract class Harness<
-  T extends { readonly $identifier: () => Resource.Identifier },
+export class Harness<
+  T extends {
+    readonly $identifier: () => Resource.Identifier;
+    readonly $type: string;
+  },
 > {
-  readonly fromJson: (json: any) => T;
-  readonly fromRdfResource: (
-    resource: Resource,
-    parameters: {
-      [_index: string]: any;
-    },
-  ) => Either<Error, T>;
-  readonly sparqlConstructQueryString: (parameters: {
-    subject: NamedNode | Variable;
-  }) => string;
+  readonly shapeName: string;
 
   constructor(
     readonly instance: T,
-    {
-      $fromJson,
-      $fromRdfResource,
-      $sparqlConstructQueryString,
-    }: {
-      $fromJson: Harness<T>["fromJson"];
-      $fromRdfResource: Harness<T>["fromRdfResource"];
-      $sparqlConstructQueryString: Harness<T>["sparqlConstructQueryString"];
-    },
-    readonly shapeName: string,
+    readonly staticSide: Readonly<{
+      $equals: (left: T, right: T) => $EqualsResult;
+      $fromJson: (json: any) => T;
+      $fromRdfResource: (
+        resource: Resource,
+        parameters: {
+          [_index: string]: any;
+        },
+      ) => Either<Error, T>;
+      $hash: <
+        HasherT extends {
+          update: (
+            message: string | number[] | ArrayBuffer | Uint8Array,
+          ) => void;
+        },
+      >(
+        value: T,
+        hasher: HasherT,
+      ) => HasherT;
+      $sparqlConstructQueryString: (parameters: {
+        subject: NamedNode | Variable;
+      }) => string;
+      $toJson: (instance: T) => any;
+      $toRdfResource: (
+        instance: T,
+        options?: {
+          graph?: Exclude<Quad_Graph, Variable>;
+          resourceSet?: ResourceSet;
+        },
+      ) => Resource;
+      $toString: (instance: T) => string;
+    }>,
+    shapeName?: string,
   ) {
-    this.fromJson = $fromJson;
-    this.fromRdfResource = $fromRdfResource;
-    this.sparqlConstructQueryString = $sparqlConstructQueryString;
+    this.shapeName = shapeName ?? instance.$type;
   }
-
-  abstract equals(other: T): $EqualsResult;
-
-  abstract toJson(): any;
-
-  abstract toRdfResource(kwds: {
-    graph?: Exclude<Quad_Graph, Variable>;
-    resourceSet?: ResourceSet;
-  }): Resource;
-
-  abstract toString(): string;
 }

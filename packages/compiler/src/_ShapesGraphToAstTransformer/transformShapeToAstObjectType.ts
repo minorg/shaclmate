@@ -1,10 +1,8 @@
-import type { NamedNode } from "@rdfjs/types";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { defaultNodeShapeNodeKinds } from "./defaultNodeShapeNodeKinds.js";
@@ -12,7 +10,6 @@ import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
-import { shapeOntology } from "./shapeOntology.js";
 import { transformPropertyShapeToAstObjectTypeProperty } from "./transformPropertyShapeToAstObjectTypeProperty.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
@@ -74,7 +71,7 @@ export function transformShapeToAstObjectType(
       return Either.of(Maybe.empty());
     }
 
-    return Eithers.chain4(
+    return Eithers.chain3(
       shapeNodeKinds.call(this, nodeShape, { defaultNodeShapeNodeKinds }),
       Either.sequence(
         nodeShape.properties.map((propertyShapeIdentifier) =>
@@ -82,25 +79,8 @@ export function transformShapeToAstObjectType(
         ),
       ),
       nodeShapeTsFeatures.call(this, nodeShape),
-      nodeShape.tsObjectDeclarationType.isJust()
-        ? Either.of(
-            nodeShape.tsObjectDeclarationType.map(
-              TsObjectDeclarationType.fromIri,
-            ),
-          )
-        : shapeOntology
-            .call(this, nodeShape)
-            .map((ontology) =>
-              ontology.chain((ontology) =>
-                ontology.tsObjectDeclarationType.map(
-                  TsObjectDeclarationType.fromIri,
-                ),
-              ),
-            ),
     ).chain<Error, Maybe<ast.ObjectType>>(
-      ([nodeKinds, propertyShapes, tsFeatures, tsObjectDeclarationType]) => {
-        const abstract = nodeShape.abstract.orDefault(false);
-
+      ([nodeKinds, propertyShapes, tsFeatures]) => {
         const nodeShapeIdentifier = nodeShape.$identifier();
         const {
           ancestors: ancestorNodeShapes,
@@ -116,29 +96,20 @@ export function transformShapeToAstObjectType(
             (type) => type.equals(owl.Class) || type.equals(rdfs.Class),
           );
 
-        let fromRdfType: Maybe<NamedNode>;
-        let toRdfTypes: NamedNode[];
-        if (!abstract) {
-          fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-          if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
-            fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
-          }
-          toRdfTypes = nodeShape.toRdfTypes.concat();
-          if (toRdfTypes.length === 0) {
-            toRdfTypes.push(...nodeShape.rdfType.toList());
-          }
-          // Ensure toRdfTypes has fromRdfType
-          fromRdfType.ifJust((fromRdfType) => {
-            if (
-              !toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))
-            ) {
-              toRdfTypes.push(fromRdfType);
-            }
-          });
-        } else {
-          fromRdfType = Maybe.empty();
-          toRdfTypes = [];
+        let fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
+        if (isClass && nodeShapeIdentifier.termType === "NamedNode") {
+          fromRdfType = fromRdfType.alt(Maybe.of(nodeShapeIdentifier));
         }
+        const toRdfTypes = nodeShape.toRdfTypes.concat();
+        if (toRdfTypes.length === 0) {
+          toRdfTypes.push(...nodeShape.rdfType.toList());
+        }
+        // Ensure toRdfTypes has fromRdfType
+        fromRdfType.ifJust((fromRdfType) => {
+          if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
+            toRdfTypes.push(fromRdfType);
+          }
+        });
 
         if (nodeKinds.has("Literal")) {
           return Left(
@@ -185,7 +156,6 @@ export function transformShapeToAstObjectType(
         // If this node shape's properties (directly or indirectly) refer to the node shape itself,
         // we'll return this placeholder.
         const objectType = new ast.ObjectType({
-          abstract,
           comment: nodeShape.comment,
           extern: nodeShape.extern.orDefault(false),
           fromRdfType,
@@ -197,7 +167,6 @@ export function transformShapeToAstObjectType(
           toRdfTypes,
           tsFeatures,
           tsImports: nodeShape.tsImports,
-          tsObjectDeclarationType: tsObjectDeclarationType.orDefault("class"),
         });
 
         this.cachedAstTypesByShapeIdentifier.set(
@@ -248,7 +217,6 @@ export function transformShapeToAstObjectType(
           }
 
           if (
-            !objectType.abstract &&
             !objectType.extern &&
             objectType.fromRdfType.isNothing() &&
             !objectType.properties.some(isObjectTypePropertyRequired)

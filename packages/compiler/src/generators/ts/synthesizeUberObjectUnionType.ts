@@ -2,13 +2,13 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
-import type { TsFeature } from "../../enums/TsFeature.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsFeature } from "./TsFeature.js";
 
 /**
  * Synthesize the $Object union.

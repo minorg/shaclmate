@@ -22,7 +22,6 @@ export abstract class AbstractUnionType<
     BlankNodeType | IdentifierType | IriType
   >;
 
-  override readonly abstract = false;
   override readonly recursive: boolean;
 
   constructor({
@@ -45,10 +44,6 @@ export abstract class AbstractUnionType<
 
     this.lazyMembers = () =>
       members.map((member, memberI) => {
-        if (member.type.abstract) {
-          return { abstract: true, discriminantValues: [], type: member.type };
-        }
-
         let discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
         invariant(this.discriminant.memberValues.length === members.length);
         switch (this.discriminant.kind) {
@@ -99,9 +94,7 @@ export abstract class AbstractUnionType<
             throw this.discriminant satisfies never;
         }
 
-        if (discriminantValues.length === 0) {
-          return { abstract: true, discriminantValues: [], type: member.type };
-        }
+        invariant(discriminantValues.length > 0);
 
         const typeCheck =
           (json: boolean) =>
@@ -123,7 +116,7 @@ export abstract class AbstractUnionType<
                 case "NamedObjectUnionType":
                 case "NamedUnionType":
                 case "NamedObjectType":
-                  return code`${member.type.staticModuleName}.is${member.type.name}(${instance})`;
+                  return code`${member.type.name}.is${member.type.name}(${instance})`;
               }
             }
 
@@ -137,7 +130,6 @@ export abstract class AbstractUnionType<
           };
 
         return {
-          abstract: false,
           discriminantValues,
           jsonType: member.type.jsonType({
             includeDiscriminantProperty:
@@ -205,7 +197,7 @@ export abstract class AbstractUnionType<
           },
         ];
       case "typeof":
-        return this.concreteMembers.map(
+        return this.members.map(
           ({ primaryDiscriminantValue, type, typeCheck }) => ({
             conversionExpression: (value) => value,
             sourceTypeCheckExpression: (value) => typeCheck(value),
@@ -272,7 +264,7 @@ export abstract class AbstractUnionType<
       // },
       kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))}`,
       members: code`{ ${joinCode(
-        this.concreteMembers.map(
+        this.members.map(
           ({ type, primaryDiscriminantValue }) =>
             code`readonly ${literalOf(primaryDiscriminantValue)}: ${{
               discriminantValues: code`readonly (number | string)[]`,
@@ -298,13 +290,8 @@ export abstract class AbstractUnionType<
   @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
     return NonEmptyList.fromArray(
-      this.concreteMembers.flatMap((member) => member.type.typeofs),
+      this.members.flatMap((member) => member.type.typeofs),
     ).unsafeCoerce();
-  }
-
-  @Memoize()
-  protected get concreteMembers(): readonly AbstractUnionType.ConcreteMember<MemberTypeT>[] {
-    return this.members.filter((member) => !member.abstract);
   }
 
   @Memoize()
@@ -312,7 +299,7 @@ export abstract class AbstractUnionType<
     return code`\
 ((left: ${this.name}, right: ${this.name}) => {
 ${joinCode(
-  this.concreteMembers.map(
+  this.members.map(
     ({ type, typeCheck, unwrap }) =>
       code`if (${typeCheck(code`left`)} && ${typeCheck(code`right`)}) {
   return ${type.equalsFunction}(${unwrap(code`left`)} as ${type.name}, ${unwrap(code`right`)} as ${type.name});
@@ -337,7 +324,7 @@ if (filter.${syntheticNamePrefix}identifier !== undefined && !${identifierType.f
 }`,
     )
     .toList(),
-  ...this.concreteMembers.map(
+  ...this.members.map(
     ({ primaryDiscriminantValue, type, typeCheck, unwrap }) => code`\
 if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeCheck(code`value`)}) {
   if (!${type.filterFunction}(filter.on[${literalOf(primaryDiscriminantValue)}], ${unwrap(code`value`)})) {
@@ -357,7 +344,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
   {
    ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}
    readonly on?: { ${joinCode(
-     this.concreteMembers.map(
+     this.members.map(
        ({ type, primaryDiscriminantValue }) =>
          code`readonly ${literalOf(primaryDiscriminantValue)}?: ${type.filterType}`,
      ),
@@ -370,7 +357,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
     return code`\
 ((value: ${this.jsonType().name}): ${this.name} => {
 ${joinCode(
-  this.concreteMembers.map(
+  this.members.map(
     ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
       code`if (${jsonTypeCheck(code`value`)}) { return ${wrap(
         type.fromJsonExpression({
@@ -406,7 +393,7 @@ ${joinCode(
 (((values, _options) =>
     values.chain(values => values.chainMap(value => {
       const valueAsValues = ${imports.Right}(value.toValues());
-      return ${this.concreteMembers.reduce(
+      return ${this.members.reduce(
         (expression, { type, primaryDiscriminantValue }, memberI) => {
           let typeExpression: Code = type.fromRdfResourceValuesExpression({
             variables: {
@@ -443,7 +430,7 @@ ${joinCode(
     switch (discriminant.kind) {
       case "extrinsic":
         return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
-          this.concreteMembers.map(
+          this.members.map(
             ({ type, primaryDiscriminantValue }) =>
               code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
           ),
@@ -452,27 +439,25 @@ ${joinCode(
 
       case "hybrid":
         return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
-          this.concreteMembers.map(
-            ({ primaryDiscriminantValue, type }, memberI) => {
-              switch (discriminant.memberValues[memberI].kind) {
-                case "extrinsic":
-                  return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
-                case "intrinsic":
-                  return type.jsonSchema({
-                    includeDiscriminantProperty: true,
-                    context: "type",
-                  });
-                default:
-                  throw new Error();
-              }
-            },
-          ),
+          this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
+            switch (discriminant.memberValues[memberI].kind) {
+              case "extrinsic":
+                return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
+              case "intrinsic":
+                return type.jsonSchema({
+                  includeDiscriminantProperty: true,
+                  context: "type",
+                });
+              default:
+                throw new Error();
+            }
+          }),
           { on: "," },
         )}]).readonly()`;
 
       case "intrinsic":
         return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
-          this.concreteMembers.map(({ type }) =>
+          this.members.map(({ type }) =>
             type.jsonSchema({
               includeDiscriminantProperty: true,
               context: "type",
@@ -483,9 +468,7 @@ ${joinCode(
 
       case "typeof":
         return code`${imports.z}.union([${joinCode(
-          this.concreteMembers.map(({ type }) =>
-            type.jsonSchema({ context: "type" }),
-          ),
+          this.members.map(({ type }) => type.jsonSchema({ context: "type" })),
           { on: "," },
         )}]).readonly()`;
 
@@ -501,7 +484,7 @@ ${joinCode(
       case "extrinsic":
         return new AbstractType.JsonType(
           code`(${joinCode(
-            this.concreteMembers.map(
+            this.members.map(
               ({ jsonType, primaryDiscriminantValue }) =>
                 code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${jsonType} }`,
             ),
@@ -512,7 +495,7 @@ ${joinCode(
       case "hybrid":
         return new AbstractType.JsonType(
           code`(${joinCode(
-            this.concreteMembers.map(
+            this.members.map(
               ({ jsonType, primaryDiscriminantValue }, memberI) => {
                 switch (discriminant.memberValues[memberI].kind) {
                   case "extrinsic":
@@ -532,7 +515,7 @@ ${joinCode(
       case "typeof":
         return new AbstractType.JsonType(
           joinCode(
-            this.concreteMembers.map(({ jsonType }) => code`${jsonType}`),
+            this.members.map(({ jsonType }) => code`${jsonType}`),
             { on: "|" },
           ),
         );
@@ -547,7 +530,7 @@ ${joinCode(
     switch (discriminant.kind) {
       case "extrinsic":
         return code`(${joinCode(
-          this.concreteMembers.map(
+          this.members.map(
             ({ type, primaryDiscriminantValue }) =>
               code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`,
           ),
@@ -555,18 +538,16 @@ ${joinCode(
         )})`;
       case "hybrid":
         return code`(${joinCode(
-          this.concreteMembers.map(
-            ({ primaryDiscriminantValue, type }, memberI) => {
-              switch (discriminant.memberValues[memberI].kind) {
-                case "extrinsic":
-                  return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`;
-                case "intrinsic":
-                  return code`${type.name}`;
-                default:
-                  throw new Error();
-              }
-            },
-          ),
+          this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
+            switch (discriminant.memberValues[memberI].kind) {
+              case "extrinsic":
+                return code`{ ${discriminant.name}: ${literalOf(primaryDiscriminantValue)}, value: ${type.name} }`;
+              case "intrinsic":
+                return code`${type.name}`;
+              default:
+                throw new Error();
+            }
+          }),
           { on: "|" },
         )})`;
       case "intrinsic":
@@ -593,7 +574,7 @@ ${joinCode(
     return code`\
 ((value: ${this.name}): ${this.jsonType().name} => {
 ${joinCode(
-  this.concreteMembers.map(
+  this.members.map(
     ({ typeCheck, typeToJsonExpression, unwrap, wrap }) =>
       code`if (${typeCheck(code`value`)}) { return ${wrap(
         typeToJsonExpression(unwrap(code`value`)),
@@ -624,7 +605,7 @@ ${joinCode(
       { on: " | " },
     )})[] => {
 ${joinCode(
-  this.concreteMembers.map(
+  this.members.map(
     ({ type, unwrap, typeCheck }) =>
       code`if (${typeCheck(code`value`)}) { return ${type.toRdfResourceValuesExpression(
         {
@@ -648,7 +629,7 @@ ${joinCode(
     return code`\
 ((value: ${this.name}): string => {
 ${joinCode(
-  this.concreteMembers.map(
+  this.members.map(
     ({ type, typeCheck, unwrap }) =>
       code`if (${typeCheck(code`value`)}) { return ${type.toStringExpression({
         variables: { value: unwrap(code`value`) },
@@ -667,7 +648,7 @@ ${joinCode(
   let triples: ${imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
-    this.concreteMembers.map(
+    this.members.map(
       ({ type, primaryDiscriminantValue }) => code`\
 triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }));`,
     ),
@@ -684,7 +665,7 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
-    this.concreteMembers.map(
+    this.members.map(
       ({ type, primaryDiscriminantValue }) => code`\
 unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...otherParameters, filter: filter?.on?.[${literalOf(primaryDiscriminantValue)}], ignoreRdfType: false, schema: schema.members[${literalOf(primaryDiscriminantValue)}].type }).concat(), type: "group" });`,
     ),
@@ -701,7 +682,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return {
       ...super.schemaObject,
       members: code`{ ${joinCode(
-        this.concreteMembers.map(
+        this.members.map(
           ({ discriminantValues, type, primaryDiscriminantValue }) =>
             code`${literalOf(primaryDiscriminantValue)}: ${{
               discriminantValues: discriminantValues,
@@ -721,7 +702,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     depth,
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return this.concreteMembers.map(
+    return this.members.map(
       ({ type, unwrap, typeCheck }) =>
         code`if (${typeCheck(variables.value)}) { ${joinCode(
           type
@@ -946,14 +927,7 @@ export namespace Discriminant {
 }
 
 export namespace AbstractUnionType {
-  export interface AbstractMember<TypeT extends Type> {
-    readonly abstract: true;
-    readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
-    readonly type: TypeT;
-  }
-
-  export interface ConcreteMember<TypeT extends Type> {
-    readonly abstract: false;
+  export interface Member<TypeT extends Type> {
     readonly discriminantValues: readonly AbstractType.DiscriminantProperty.Value[];
     readonly jsonType: Code | string;
     readonly jsonTypeCheck: (instance: Code) => Code;
@@ -964,8 +938,4 @@ export namespace AbstractUnionType {
     readonly unwrap: (instance: Code) => Code;
     readonly wrap: (instance: Code) => Code;
   }
-
-  export type Member<TypeT extends Type> =
-    | AbstractMember<TypeT>
-    | ConcreteMember<TypeT>;
 }

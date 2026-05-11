@@ -11,10 +11,6 @@ export function NamedObjectType_jsonParseFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.abstract) {
-    return Maybe.empty();
-  }
-
   return Maybe.of(code`\
 export function parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
   const jsonSafeParseResult = schema().safeParse(json);

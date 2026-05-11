@@ -29,7 +29,7 @@ export function NamedObjectType_focusSparqlWherePatternsFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(code`\
-patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
+patterns = patterns.concat(${parentObjectType.name}.${syntheticNamePrefix}focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 

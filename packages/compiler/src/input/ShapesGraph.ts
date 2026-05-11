@@ -3,8 +3,8 @@ import type { Either } from "purify-ts";
 import type { Logger } from "ts-log";
 import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
-import type { TsFeature } from "../enums/TsFeature.js";
 import type { Generator } from "../generators/Generator.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as generated from "./generated.js";
 

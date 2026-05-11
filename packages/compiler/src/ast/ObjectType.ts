@@ -6,9 +6,7 @@ import type { Maybe } from "purify-ts";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../enums/TsFeature.js";
-import type { TsObjectDeclarationType } from "../enums/TsObjectDeclarationType.js";
-import type { Visibility } from "../enums/Visibility.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
@@ -51,13 +49,6 @@ export class ObjectType extends AbstractType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #properties: ObjectType.Property[] = [];
-
-  /**
-   * Classes generated from this type are abstract / cannot be instantiated themselves.
-   *
-   * Defaults to false.
-   */
-  readonly abstract: boolean;
 
   /**
    * If true, the code for this ObjectType is defined externally and should not be generated.
@@ -113,13 +104,7 @@ export class ObjectType extends AbstractType {
    */
   readonly tsImports: readonly string[];
 
-  /**
-   * Whether to generate a TypeScript class or interface for this type.
-   */
-  readonly tsObjectDeclarationType: TsObjectDeclarationType;
-
   constructor({
-    abstract,
     extern,
     fromRdfType,
     identifierType,
@@ -127,10 +112,8 @@ export class ObjectType extends AbstractType {
     toRdfTypes,
     tsFeatures,
     tsImports,
-    tsObjectDeclarationType,
     ...superParameters
   }: {
-    abstract: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
@@ -138,10 +121,8 @@ export class ObjectType extends AbstractType {
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
     tsImports: readonly string[];
-    tsObjectDeclarationType: TsObjectDeclarationType;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.abstract = abstract;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
@@ -149,7 +130,6 @@ export class ObjectType extends AbstractType {
     this.toRdfTypes = toRdfTypes;
     this.tsFeatures = tsFeatures;
     this.tsImports = tsImports;
-    this.tsObjectDeclarationType = tsObjectDeclarationType;
   }
 
   get ancestorObjectTypes(): readonly ObjectType[] {
@@ -297,11 +277,6 @@ export namespace ObjectType {
      */
     readonly type: Type;
 
-    /**
-     * Visibility: private, protected, public.
-     */
-    readonly visibility: Visibility;
-
     constructor({
       comment,
       description,
@@ -314,7 +289,6 @@ export namespace ObjectType {
       path,
       shapeIdentifier,
       type,
-      visibility,
     }: {
       comment: Maybe<string>;
       description: Maybe<string>;
@@ -327,7 +301,6 @@ export namespace ObjectType {
       path: PropertyPath;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
-      visibility: Visibility;
     }) {
       this.comment = comment;
       this.description = description;
@@ -340,7 +313,6 @@ export namespace ObjectType {
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
       this.type = type;
-      this.visibility = visibility;
     }
 
     equals(other: Property): boolean {
@@ -532,7 +504,6 @@ export namespace ObjectType {
         recursive: this.recursive ? true : undefined,
         shapeIdentifier: this.shapeIdentifier,
         type: this.type.toJSON(),
-        visibility: this.visibility,
       };
     }
 

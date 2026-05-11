@@ -44,7 +44,7 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform object types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.namedObjectTypes).toHaveLength(77);
+          expect(ast.namedObjectTypes).toHaveLength(57);
         } else {
           expect(ast.namedObjectTypes).not.toHaveLength(0);
         }
@@ -56,27 +56,27 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
 
       it("should transform named union types", ({ expect }) => {
         if (id === "kitchenSink") {
-          expect(ast.namedUnionTypes).toHaveLength(11);
+          expect(ast.namedUnionTypes).toHaveLength(8);
         }
       });
 
       if (id === "kitchenSink") {
         for (const [classIri, recursivePropertyIri] of [
           [
-            "http://example.com/DirectRecursiveClass",
+            "http://example.com/DirectRecursive",
             "http://example.com/directRecursiveProperty",
           ],
           [
-            "http://example.com/IndirectRecursiveClass",
+            "http://example.com/IndirectRecursive",
             "http://example.com/indirectRecursiveHelperProperty",
           ],
           [
-            "http://example.com/RecursiveClassUnionMember1",
-            "http://example.com/recursiveClassUnionMember1Property",
+            "http://example.com/RecursiveUnionMember1",
+            "http://example.com/recursiveUnionMember1Property",
           ],
           [
-            "http://example.com/RecursiveClassUnionMember2",
-            "http://example.com/recursiveClassUnionMember2Property",
+            "http://example.com/RecursiveUnionMember2",
+            "http://example.com/recursiveUnionMember2Property",
           ],
         ]) {
           it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({

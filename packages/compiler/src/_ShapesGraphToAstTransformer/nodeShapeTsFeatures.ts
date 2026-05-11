@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { Either } from "purify-ts";
-import { TS_FEATURES, type TsFeature } from "../enums/TsFeature.js";
+import { TS_FEATURES, type TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { shapeOntology } from "./shapeOntology.js";
@@ -83,8 +83,12 @@ export function nodeShapeTsFeatures(
       }
     }
 
-    if (tsFeatures.has("graphql")) {
+    if (tsFeatures.has("graphql") || tsFeatures.has("sparql")) {
       tsFeatures.add("rdf");
+    }
+
+    if (tsFeatures.has("json") || tsFeatures.has("rdf")) {
+      tsFeatures.add("create");
     }
 
     return Either.of(tsFeatures);

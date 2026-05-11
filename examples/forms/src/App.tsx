@@ -9,6 +9,7 @@ import { NonEmptyList } from "purify-ts";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./generated.js";
 import { Writer } from "n3";
+import { z } from "zod";
 
 const classes = {
   container: {
@@ -49,7 +50,7 @@ const initialData = generated.FormNodeShape.$toJson(
   }),
 );
 
-const jsonSchema = generated.FormNodeShape.$Json.schema();
+const jsonSchema = z.toJSONSchema(generated.FormNodeShape.$Json.schema(), {target: "draft-7"});
 const jsonSchemaString = JSON.stringify(jsonSchema, null, 2);
 const jsonUiSchema = generated.FormNodeShape.$Json.uiSchema();
 const jsonUiSchemaString = JSON.stringify(jsonUiSchema, null, 2);

@@ -74,12 +74,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   @Memoize()
   override get declaration(): Code {
     const lhs: Code[] = [];
-    if (
-      this.namedObjectType.declarationType === "class" &&
-      this.visibility !== "public"
-    ) {
-      lhs.push(code`${this.visibility}`);
-    }
     if (!this.mutable) {
       lhs.push(code`readonly`);
     }
@@ -93,10 +87,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get filterProperty() {
-    if (this.visibility !== "public") {
-      return Maybe.empty();
-    }
-
     return Maybe.of({
       name: this.name,
       type: this.type.filterType,
@@ -123,7 +113,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
 
     const meta: Record<string, string> = {
-      id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
+      // id: `${this.namedObjectType.name}-${this.name}`, // id's must be unique
     };
     this.comment.alt(this.description).ifJust((description) => {
       meta["description"] = description;
@@ -172,35 +162,22 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   >[0]): readonly Code[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
-      switch (this.namedObjectType.declarationType) {
-        case "class":
-          return [code`this.${this.name} = ${variables.parameter};`];
-        case "interface":
-          return [code`const ${this.name} = ${variables.parameter};`];
-      }
+      return [code`const ${this.name} = ${variables.parameter};`];
     }
 
-    let lhs: string;
-    const statements: Code[] = [];
-    switch (this.namedObjectType.declarationType) {
-      case "class":
-        lhs = `this.${this.name}`;
-        break;
-      case "interface":
-        lhs = `${this.name}`;
-        statements.push(code`let ${this.name}: ${this.type.name};`);
-        break;
-    }
+    const statements: Code[] = [code`let ${this.name}: ${this.type.name};`];
 
     statements.push(
       joinCode(
         typeConversions
           .map(
             (conversion) =>
-              code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+              code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${this.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
           )
           // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-          .concat(code`{ ${lhs} = (${variables.parameter}) satisfies never; }`),
+          .concat(
+            code`{ ${this.name} = (${variables.parameter}) satisfies never; }`,
+          ),
         { on: " else " },
       ),
     );
@@ -237,7 +214,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.namedObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
+              propertyPath: code`${this.namedObjectType.name}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },

@@ -5,8 +5,7 @@ import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import type { TsFeature } from "../enums/TsFeature.js";
-import { Visibility } from "../enums/Visibility.js";
+import type { TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
@@ -32,7 +31,6 @@ function synthesizePartialAstObjectType({
   }
 
   return new ast.ObjectType({
-    abstract: false,
     comment: Maybe.empty(),
     extern: false,
     fromRdfType: Maybe.empty(),
@@ -46,7 +44,6 @@ function synthesizePartialAstObjectType({
     toRdfTypes: [],
     tsFeatures,
     tsImports: [],
-    tsObjectDeclarationType: "class",
   });
 }
 
@@ -377,9 +374,6 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         path: propertyShape.path,
         shapeIdentifier: propertyShape.$identifier(),
         type: astType,
-        visibility: propertyShape.visibility
-          .map(Visibility.fromIri)
-          .orDefault("public"),
       }),
     );
   });

@@ -28,7 +28,7 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(
-      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
+      code`triples = triples.concat(${parentObjectType.name}.${syntheticNamePrefix}focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
   }

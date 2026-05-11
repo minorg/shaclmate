@@ -21,10 +21,10 @@ export function NamedObjectType_propertiesFromJsonFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType) => {
     initializers.push(
-      code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
+      code`...${parentObjectType.name}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
     );
     returnType.push(
-      code`ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>`,
+      code`ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromJson>`,
     );
   });
 

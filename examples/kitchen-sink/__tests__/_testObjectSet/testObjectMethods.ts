@@ -7,91 +7,67 @@ import { objectDataset } from "./objectDataset.js";
 
 export function testObjectMethods(createObjectSet: ObjectSetFactory) {
   describe("object methods", () => {
-    it("concrete child class", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.concreteChildClasses),
-      );
+    it("concrete child", async ({ expect }) => {
+      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
       expect(
-        (
-          await objectSet.concreteChildClass(
-            data.concreteChildClasses[0].$identifier(),
-          )
-        )
-          .unsafeCoerce()
-          .$equals(data.concreteChildClasses[0])
-          .unsafeCoerce(),
+        kitchenSink.ConcreteChild.$equals(
+          (
+            await objectSet.concreteChild(
+              data.concreteChildren[0].$identifier(),
+            )
+          ).unsafeCoerce(),
+          data.concreteChildren[0],
+        ).unsafeCoerce(),
       ).toBe(true);
     });
 
-    it("concrete parent class", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.concreteChildClasses),
-      );
-      const expectedObject = data.concreteChildClasses[0];
+    it("concrete parent", async ({ expect }) => {
+      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
+      const expectedObject = data.concreteChildren[0];
       const actualObject = (
-        await objectSet.concreteParentClass(expectedObject.$identifier())
+        await objectSet.concreteParent(expectedObject.$identifier())
       ).unsafeCoerce();
-      expect(actualObject).toBeInstanceOf(kitchenSink.ConcreteParentClass);
-      expect(actualObject).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
-      expect(
-        actualObject.abstractBaseClassWithPropertiesProperty,
-      ).toStrictEqual(expectedObject.abstractBaseClassWithPropertiesProperty);
-      expect(actualObject.concreteParentClassProperty).toStrictEqual(
-        expectedObject.concreteParentClassProperty,
+      expect(actualObject.baseWithPropertiesProperty).toStrictEqual(
+        expectedObject.baseWithPropertiesProperty,
+      );
+      expect(actualObject.concreteParentProperty).toStrictEqual(
+        expectedObject.concreteParentProperty,
       );
     });
 
     it("missing", async ({ expect }) => {
-      const objectSet = createObjectSet(
-        objectDataset(data.concreteChildClasses),
-      );
+      const objectSet = createObjectSet(objectDataset(data.concreteChildren));
       expect(
-        await objectSet.concreteChildClass(
+        await objectSet.concreteChild(
           dataFactory.namedNode("http://example.com/nonextant"),
         ),
       ).toBeLeft();
     });
 
     describe("union", () => {
-      it("class with fromRdfType", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.classUnions));
-        for (const expectedClassUnion of data.classUnions) {
+      it("with fromRdfType", async ({ expect }) => {
+        const objectSet = createObjectSet(objectDataset(data.unions));
+        for (const expectedUnion of data.unions) {
           expect(
-            (await objectSet.classUnion(expectedClassUnion.$identifier()))
-              .unsafeCoerce()
-              .$equals(expectedClassUnion as any)
-              .unsafeCoerce(),
+            kitchenSink.Union.$equals(
+              (
+                await objectSet.union(expectedUnion.$identifier())
+              ).unsafeCoerce(),
+              expectedUnion as any,
+            ).unsafeCoerce(),
           ).toBe(true);
         }
       });
 
-      it("class without fromRdfType", async ({ expect }) => {
-        const objectSet = createObjectSet(
-          objectDataset(data.noRdfTypeClassUnions),
-        );
-        for (const expectedClassUnion of data.noRdfTypeClassUnions) {
-          const actualClassUnion = (
-            await objectSet.noRdfTypeClassUnion(
-              expectedClassUnion.$identifier(),
-            )
+      it("without fromRdfType", async ({ expect }) => {
+        const objectSet = createObjectSet(objectDataset(data.noRdfTypeUnions));
+        for (const expectedUnion of data.noRdfTypeUnions) {
+          const actualUnion = (
+            await objectSet.noRdfTypeUnion(expectedUnion.$identifier())
           ).unsafeCoerce();
-          const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
-            expectedClassUnion,
-            actualClassUnion,
-          );
-          expect(equalsResult.unsafeCoerce()).toBe(true);
-        }
-      });
-
-      it("interface", async ({ expect }) => {
-        const objectSet = createObjectSet(objectDataset(data.interfaceUnions));
-        for (const expectedInterfaceUnion of data.interfaceUnions) {
-          const actualClassUnion = (
-            await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier())
-          ).unsafeCoerce();
-          const equalsResult = kitchenSink.InterfaceUnion.$equals(
-            expectedInterfaceUnion,
-            actualClassUnion,
+          const equalsResult = kitchenSink.NoRdfTypeUnion.$equals(
+            expectedUnion,
+            actualUnion,
           );
           expect(equalsResult.unsafeCoerce()).toBe(true);
         }
