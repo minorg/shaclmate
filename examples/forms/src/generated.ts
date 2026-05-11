@@ -98,7 +98,7 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
 function $compactRecord<KeyT extends string, ValueT extends {}>(
   record: Record<KeyT, ValueT | undefined>,
 ): Record<KeyT, ValueT> {
-  return Object.entries(record).reduce(
+  return globalThis.Object.entries(record).reduce(
     (definedProperties, [propertyName, propertyValue]) => {
       if (propertyValue !== undefined) {
         definedProperties[propertyName as KeyT] = propertyValue as ValueT;
@@ -2068,23 +2068,23 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>>;
 
-  object(
+  $object(
     identifier: $Object.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>>;
 
-  objectCount(
+  $objectCount(
     query?: Pick<
       $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  objectIdentifiers(
+  $objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
 
-  objects(
+  $objects(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
 }
@@ -2186,7 +2186,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   formNodeShapesSync(
     query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
   ): Either<Error, readonly FormNodeShape[]> {
-    return this.$objectsSync<
+    return this.#objectsSync<
       FormNodeShape,
       FormNodeShape.$Filter,
       FormNodeShape.$Identifier
@@ -2270,7 +2270,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NestedNodeShape.$Identifier
     >,
   ): Either<Error, readonly NestedNodeShape[]> {
-    return this.$objectsSync<
+    return this.#objectsSync<
       NestedNodeShape,
       NestedNodeShape.$Filter,
       NestedNodeShape.$Identifier
@@ -2284,65 +2284,65 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async object(
+  async $object(
     identifier: $Object.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>> {
-    return this.objectSync(identifier, options);
+    return this.$objectSync(identifier, options);
   }
 
-  objectSync(
+  $objectSync(
     identifier: $Object.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, $Object> {
-    return this.objectsSync({
+    return this.$objectsSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async objectCount(
+  async $objectCount(
     query?: Pick<
       $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.objectCountSync(query);
+    return this.$objectCountSync(query);
   }
 
-  objectCountSync(
+  $objectCountSync(
     query?: Pick<
       $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.objectsSync(query).map((objects) => objects.length);
+    return this.$objectsSync(query).map((objects) => objects.length);
   }
 
-  async objectIdentifiers(
+  async $objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
-    return this.objectIdentifiersSync(query);
+    return this.$objectIdentifiersSync(query);
   }
 
-  objectIdentifiersSync(
+  $objectIdentifiersSync(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object.$Identifier[]> {
-    return this.objectsSync(query).map((objects) =>
+    return this.$objectsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async objects(
+  async $objects(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
-    return this.objectsSync(query);
+    return this.$objectsSync(query);
   }
 
-  objectsSync(
+  $objectsSync(
     query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
   ): Either<Error, readonly $Object[]> {
-    return this.$objectUnionsSync<
+    return this.#objectUnionsSync<
       $Object,
       $Object.$Filter,
       $Object.$Identifier
@@ -2363,7 +2363,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  protected $objectsSync<
+  #objectsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,
@@ -2485,7 +2485,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return Right(objects);
   }
 
-  protected $objectUnionsSync<
+  #objectUnionsSync<
     ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
     ObjectFilterT,
     ObjectIdentifierT extends BlankNode | NamedNode,

@@ -63,9 +63,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "nodeShapeNameConflicts") {
-        return;
-      }
+      // if (id !== "nodeShapeNameConflicts") {
+      //   return;
+      // }
 
       const diagnostics = compileTs(
         generate(shapesGraphEither.unsafeCoerce()),

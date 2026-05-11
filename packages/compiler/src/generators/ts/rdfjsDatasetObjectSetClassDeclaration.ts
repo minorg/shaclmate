@@ -129,13 +129,13 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             case "NamedObjectType": {
               return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${namedObjectType.name}[]> {
-  return this.${syntheticNamePrefix}objectsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
+  return this.#objectsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
 }`);
             }
             case "NamedObjectUnionType":
               return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${namedObjectType.name}[]> {
-  return this.${syntheticNamePrefix}objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
+  return this.#objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
         runtimeObjectType(namedObjectType.filterFunction, member.type),
@@ -154,7 +154,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       ...(namedObjectTypes.length > 0
         ? [
             code`\
-protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
+#objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
@@ -247,7 +247,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
       ...(namedObjectUnionTypes.length > 0
         ? [
             code`\
-protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
+#objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${imports.Either}<Error, readonly ObjectT[]> {
   const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
