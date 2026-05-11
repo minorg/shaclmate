@@ -55,9 +55,17 @@ export function transformShapeToAstObjectType(
 ): Either<Error, Maybe<ast.ObjectType>> {
   shapeStack.push(shape);
   try {
-    if (shape.$type !== "NodeShape") {
+    if (shape.$type === "PropertyShape") {
+      if (shape.node.isJust()) {
+        return this.shapesGraph
+          .nodeShape(shape.node.unsafeCoerce())
+          .chain((nodeShape) =>
+            transformShapeToAstObjectType.call(this, nodeShape, shapeStack),
+          );
+      }
       return Either.of(Maybe.empty());
     }
+
     const nodeShape = shape;
 
     if (

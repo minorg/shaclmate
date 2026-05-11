@@ -173,10 +173,9 @@ describe("Shape", () => {
   });
 
   it("constraints: should have an sh:node", ({ expect }) => {
-    const nodeShapes = findPropertyShape(
-      schema.Vehicle,
-      schema.fuelConsumption,
-    ).nodes.map((_) => shapesGraph.nodeShape(_).unsafeCoerce());
+    const nodeShapes = findPropertyShape(schema.Vehicle, schema.fuelConsumption)
+      .node.map((_) => shapesGraph.nodeShape(_).unsafeCoerce())
+      .toList();
     expect(nodeShapes).toHaveLength(1);
   });
 
