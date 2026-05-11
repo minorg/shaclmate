@@ -9,7 +9,7 @@ export const snippets_compactRecord = conditionalOutput(
  */  
 function ${syntheticNamePrefix}compactRecord<KeyT extends string, ValueT extends {}>(record: Record<KeyT, ValueT | undefined>): Record<KeyT, ValueT> {
   return \
-    Object.entries(record).reduce((definedProperties, [propertyName, propertyValue]) => {
+    globalThis.Object.entries(record).reduce((definedProperties, [propertyName, propertyValue]) => {
       if (propertyValue !== undefined) {
         definedProperties[propertyName as KeyT] = propertyValue as ValueT;
       }
