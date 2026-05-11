@@ -52,6 +52,8 @@ describe("TsGenerator", () => {
             "src",
           );
           break;
+        case "nodeShapeNameConflicts":
+          return;
         case "shaclAst":
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -63,10 +65,6 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "nodeShapeNameConflicts") {
-      //   return;
-      // }
-
       const diagnostics = compileTs(
         generate(shapesGraphEither.unsafeCoerce()),
         sourceDirectoryPath,
@@ -74,6 +72,18 @@ describe("TsGenerator", () => {
       expect(diagnostics).toHaveLength(0);
     }, 60000);
   }
+
+  /**
+   * Have to skip this normally since ts-poet can't be "reset" between runs.
+   */
+  it.skip("node shape name conflicts", () => {
+    const diagnostics = compileTs(
+      generate(
+        testData.shapesGraphs.wellFormed.nodeShapeNameConflicts.unsafeCoerce(),
+      ),
+    );
+    expect(diagnostics).toHaveLength(0);
+  });
 
   describe.skip("TsFeature combinations", () => {
     const shapesGraph =
