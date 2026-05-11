@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@shaclmate/shacl-ast": "4.0.24",
+    "@shaclmate/shacl-ast": "4.0.25",
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/term-map": "~2.0.2",
@@ -37,8 +37,6 @@
     "dist/_ShapesGraphToAstTransformer/*.js",
     "dist/ast/*.d.ts",
     "dist/ast/*.js",
-    "dist/enums/*.d.ts",
-    "dist/enums/*.js",
     "dist/generators/*.d.ts",
     "dist/generators/*.js",
     "dist/generators/ts/*.d.ts",
@@ -70,5 +68,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "4.0.24"
+  "version": "4.0.25"
 }
