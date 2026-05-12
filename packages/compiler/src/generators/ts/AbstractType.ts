@@ -2,7 +2,9 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-import { imports } from "./imports.js";
+
+import type { Reusables } from "./Reusables.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -11,6 +13,10 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  */
 export abstract class AbstractType {
   protected readonly logger: Logger;
+  protected readonly reusables: Reusables;
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 
   /**
    * Comment from rdfs:comment.
@@ -142,10 +148,22 @@ export abstract class AbstractType {
     comment,
     label,
     logger,
-  }: { comment: Maybe<string>; label: Maybe<string>; logger: Logger }) {
+    reusables,
+  }: {
+    comment: Maybe<string>;
+    label: Maybe<string>;
+    logger: Logger;
+    reusables: Reusables;
+  }) {
     this.comment = comment;
     this.label = label;
     this.logger = logger;
+    this.reusables = reusables;
+    this.rdfjsTermExpression = rdfjsTermExpression.bind({
+      imports: this.reusables.imports,
+      logger: this.logger,
+      snippets: this.reusables.snippets,
+    });
   }
 
   /**
@@ -320,16 +338,23 @@ export namespace AbstractType {
      */
     readonly nullableName: Code;
 
-    constructor(nullableName: Code, parameters?: { nullable: boolean }) {
-      this.nullable = !!parameters?.nullable;
+    private readonly reusables: Reusables;
+
+    constructor(
+      nullableName: Code,
+      reusables: Reusables,
+      options?: { nullable: boolean },
+    ) {
+      this.nullable = !!options?.nullable;
       this.nullableName = nullableName;
+      this.reusables = reusables;
     }
 
     @Memoize()
     get name(): Code {
       return this.nullable
         ? this.nullableName
-        : code`new ${imports.GraphQLNonNull}(${this.nullableName})`;
+        : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableName})`;
     }
   }
 

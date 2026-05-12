@@ -1,15 +1,18 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 
-export const snippets_sparqlPropertyPath = conditionalOutput(
-  `${syntheticNamePrefix}sparqlPropertyPath`,
-  code`\
+export const snippets_sparqlPropertyPath: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}sparqlPropertyPath`,
+    code`\
 /**
- * Convert a ${snippets_PropertyPath} to a ${imports.sparqljs}.PropertyPath.
+ * Convert a ${snippets.PropertyPath} to a ${imports.sparqljs}.PropertyPath.
  */  
-function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets_PropertyPath}): ${imports.NamedNode} | ${imports.sparqljs}.PropertyPath {
+function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets.PropertyPath}): ${imports.NamedNode} | ${imports.sparqljs}.PropertyPath {
   switch (propertyPath.termType) {
     case "AlternativePath":
       return {
@@ -62,4 +65,4 @@ function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets_Prope
     }
   }
 }`,
-);
+  );

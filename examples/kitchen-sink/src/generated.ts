@@ -2715,6 +2715,8 @@ type $ValueSparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: {
   valueVariable: Variable;
   variablePrefix: string;
 }) => readonly $SparqlPattern[];
+
+import { Extern } from "./Extern.js";
 export type NamedUnion1 = NamedNode | string;
 
 export namespace NamedUnion1 {
@@ -41831,9 +41833,7 @@ export namespace BaseForExtern {
         variablePrefix,
       }),
     );
-}
-
-import { Extern } from "./Extern.js"; /**
+} /**
  * Node shape with custom rdf:type's.
  *
  * The shaclmate:rdfType is expected on deserialization and added on serialization.

@@ -6,9 +6,9 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { imports } from "./imports.js";
+
 import { removeUndefined } from "./removeUndefined.js";
-import { snippets } from "./snippets.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
@@ -307,7 +307,7 @@ ${joinCode(
   ),
 )}
 
-  return ${imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
+  return ${this.reusables.imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "boolean" as const }, type: "property" as const });
 })`;
   }
 
@@ -392,7 +392,7 @@ ${joinCode(
     return code`\
 (((values, _options) =>
     values.chain(values => values.chainMap(value => {
-      const valueAsValues = ${imports.Right}(value.toValues());
+      const valueAsValues = ${this.reusables.imports.Right}(value.toValues());
       return ${this.members.reduce(
         (expression, { type, primaryDiscriminantValue }, memberI) => {
           let typeExpression: Code = type.fromRdfResourceValuesExpression({
@@ -414,7 +414,7 @@ ${joinCode(
           ) {
             typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: ${literalOf(primaryDiscriminantValue)} as const, value }) as (${this.name})))`;
           }
-          typeExpression = code`(${typeExpression} as ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>>)`;
+          typeExpression = code`(${typeExpression} as ${this.reusables.imports.Either}<Error, ${this.reusables.imports.Resource}.Values<${this.name}>>)`;
           return expression !== null
             ? code`${expression}.altLazy(() => ${typeExpression})`
             : typeExpression;
@@ -422,27 +422,27 @@ ${joinCode(
         null as Code | null,
       )!}.chain(values => values.head());
     }))
-) satisfies ${snippets.FromRdfResourceValuesFunction}<${this.name}>)`;
+) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected get inlineJsonSchema(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
       case "extrinsic":
-        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
+        return code`${this.reusables.imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.members.map(
             ({ type, primaryDiscriminantValue }) =>
-              code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
+              code`${this.reusables.imports.z}.object({ ${discriminant.name}: ${this.reusables.imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`,
           ),
           { on: "," },
         )}]).readonly()`;
 
       case "hybrid":
-        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
+        return code`${this.reusables.imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.members.map(({ primaryDiscriminantValue, type }, memberI) => {
             switch (discriminant.memberValues[memberI].kind) {
               case "extrinsic":
-                return code`${imports.z}.object({ ${discriminant.name}: ${imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
+                return code`${this.reusables.imports.z}.object({ ${discriminant.name}: ${this.reusables.imports.z}.literal(${literalOf(primaryDiscriminantValue)}), value: ${type.jsonSchema({ context: "type" })} })`;
               case "intrinsic":
                 return type.jsonSchema({
                   includeDiscriminantProperty: true,
@@ -456,7 +456,7 @@ ${joinCode(
         )}]).readonly()`;
 
       case "intrinsic":
-        return code`${imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
+        return code`${this.reusables.imports.z}.discriminatedUnion("${discriminant.name}", [${joinCode(
           this.members.map(({ type }) =>
             type.jsonSchema({
               includeDiscriminantProperty: true,
@@ -467,7 +467,7 @@ ${joinCode(
         )}]).readonly()`;
 
       case "typeof":
-        return code`${imports.z}.union([${joinCode(
+        return code`${this.reusables.imports.z}.union([${joinCode(
           this.members.map(({ type }) => type.jsonSchema({ context: "type" })),
           { on: "," },
         )}]).readonly()`;
@@ -592,11 +592,11 @@ ${joinCode(
       [...this.toRdfResourceValueTypes].map((toRdfResourceValueType) => {
         switch (toRdfResourceValueType) {
           case "BlankNode":
-            return code`${imports.BlankNode}`;
+            return code`${this.reusables.imports.BlankNode}`;
           case "Literal":
-            return code`${imports.Literal}`;
+            return code`${this.reusables.imports.Literal}`;
           case "NamedNode":
-            return code`${imports.NamedNode}`;
+            return code`${this.reusables.imports.NamedNode}`;
           default:
             toRdfResourceValueType satisfies never;
             throw new Error();
@@ -622,7 +622,7 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to RDF");
-}) satisfies ${snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
+}) satisfies ${this.reusables.snippets.ToRdfResourceValuesFunction}<${this.name}>)`;
   }
 
   protected get inlineToStringFunction(): Code {
@@ -645,7 +645,7 @@ ${joinCode(
   protected get inlineValueSparqlConstructTriplesFunction(): Code {
     return code`\
 ((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
-  let triples: ${imports.sparqljs}.Triple[] = [];
+  let triples: ${this.reusables.imports.sparqljs}.Triple[] = [];
 
   ${joinCode(
     this.members.map(
@@ -655,14 +655,14 @@ triples = triples.concat(${type.valueSparqlConstructTriplesFunction}({ ...otherP
   )}
   
   return triples;
-}) satisfies ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
+}) satisfies ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
   @Memoize()
   protected get inlineValueSparqlWherePatternsFunction(): Code {
     return code`\
 ((({ filter, schema, ...otherParameters }) => {
-  const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
+  const unionPatterns: ${this.reusables.imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
     this.members.map(
@@ -672,7 +672,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
   )}
   
   return [{ patterns: unionPatterns, type: "union" }];
-}) satisfies ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
+}) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
   protected override get schemaObject(): {

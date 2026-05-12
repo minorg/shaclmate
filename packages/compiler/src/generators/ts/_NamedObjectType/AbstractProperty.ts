@@ -2,8 +2,9 @@ import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-
 import type { NamedObjectType } from "../NamedObjectType.js";
+import type { Reusables } from "../Reusables.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { removeUndefined } from "../removeUndefined.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
@@ -13,6 +14,10 @@ export abstract class AbstractProperty<
 > {
   protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
+  protected readonly reusables: Reusables;
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 
   /**
    * Optional property to include in the parameters object of a class constructor.
@@ -92,17 +97,25 @@ export abstract class AbstractProperty<
     logger,
     name,
     namedObjectType,
+    reusables,
     type,
   }: {
     logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
+    reusables: Reusables;
     type: TypeT;
   }) {
     this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;
+    this.reusables = reusables;
     this.type = type;
+    this.rdfjsTermExpression = rdfjsTermExpression.bind({
+      imports: this.reusables.imports,
+      logger: this.logger,
+      snippets: this.reusables.snippets,
+    });
   }
 
   /**

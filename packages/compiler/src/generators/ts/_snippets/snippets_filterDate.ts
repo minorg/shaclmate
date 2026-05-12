@@ -1,11 +1,14 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_DateFilter } from "./snippets_DateFilter.js";
 
-export const snippets_filterDate = conditionalOutput(
-  `${syntheticNamePrefix}filterDate`,
-  code`\
-function ${syntheticNamePrefix}filterDate(filter: ${snippets_DateFilter}, value: Date) {
+export const snippets_filterDate: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterDate`,
+    code`\
+function ${syntheticNamePrefix}filterDate(filter: ${snippets.DateFilter}, value: Date) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.getTime() === value.getTime())) {
     return false;
   }
@@ -28,4 +31,4 @@ function ${syntheticNamePrefix}filterDate(filter: ${snippets_DateFilter}, value:
 
   return true;
 }`,
-);
+  );

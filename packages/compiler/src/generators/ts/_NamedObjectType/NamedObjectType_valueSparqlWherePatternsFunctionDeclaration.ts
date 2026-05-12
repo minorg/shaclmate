@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
@@ -12,8 +11,8 @@ export function NamedObjectType_valueSparqlWherePatternsFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }) =>
-  (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(
+export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ({ filter, ignoreRdfType, preferredLanguages, propertyPatterns, valueVariable, variablePrefix }) =>
+  (propertyPatterns as readonly ${this.reusables.snippets.SparqlPattern}[]).concat(
     ${this.name}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier: valueVariable, ignoreRdfType, preferredLanguages, variablePrefix })
   );`);
 }

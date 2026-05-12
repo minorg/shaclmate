@@ -1,19 +1,20 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
-import { snippets_TermFilter } from "./snippets_TermFilter.js";
 
-export const snippets_termFilterSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}termFilterSparqlPatterns`,
-  code`\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets_TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets_SparqlFilterPattern}[] {
+export const snippets_termFilterSparqlPatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}termFilterSparqlPatterns`,
+    code`\
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets.TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets.SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }
 
-  const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+  const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
   if (
     filter.datatypeIn !== undefined &&
@@ -34,7 +35,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   }
 
   if (filter.in !== undefined && filter.in.length > 0) {
-    filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+    filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
   }
 
   if (
@@ -98,4 +99,4 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
 
   return filterPatterns;
 }`,
-);
+  );

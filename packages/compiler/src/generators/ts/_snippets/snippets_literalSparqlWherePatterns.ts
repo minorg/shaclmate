@@ -1,13 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_LiteralFilter } from "./snippets_LiteralFilter.js";
-import { snippets_LiteralSchema } from "./snippets_LiteralSchema.js";
-import { snippets_termFilterSparqlPatterns } from "./snippets_termFilterSparqlPatterns.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_literalSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}literalSparqlWherePatterns`,
-  code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_LiteralFilter}, ${snippets_LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets_termFilterSparqlPatterns}(parameters), ...parameters });`,
-);
+export const snippets_literalSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}literalSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.LiteralFilter}, ${snippets.LiteralSchema}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+  );

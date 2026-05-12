@@ -1,23 +1,20 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_literalFactory } from "./snippets_literalFactory.js";
-import { snippets_literalSchemaSparqlPatterns } from "./snippets_literalSchemaSparqlPatterns.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_StringFilter } from "./snippets_StringFilter.js";
-import { snippets_StringSchema } from "./snippets_StringSchema.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_stringSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}stringSparqlWherePatterns`,
-  code`\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_StringFilter}, ${snippets_StringSchema}> =
+export const snippets_stringSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}stringSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.StringFilter}, ${snippets.StringSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (filter.in !== undefined && filter.in.length > 0) {
-        filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (filter.maxLength !== undefined) {
@@ -25,7 +22,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_ValueSparqlWhe
           expression: {
             type: "operation",
             operator: "<=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets_literalFactory}.number(filter.maxLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.literalFactory}.number(filter.maxLength)],
           },
           lift: true,
           type: "filter",
@@ -37,7 +34,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_ValueSparqlWhe
           expression: {
             type: "operation",
             operator: ">=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets_literalFactory}.number(filter.minLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.literalFactory}.number(filter.minLength)],
           },
           lift: true,
           type: "filter",
@@ -45,6 +42,6 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets_ValueSparqlWhe
       }
     }
 
-    return ${snippets_literalSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${snippets.literalSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   }`,
-);
+  );

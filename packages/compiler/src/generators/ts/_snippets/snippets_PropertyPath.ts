@@ -1,16 +1,17 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_FromRdfResourceFunction } from "./snippets_FromRdfResourceFunction.js";
-import { snippets_FromRdfResourceValuesFunction } from "./snippets_FromRdfResourceValuesFunction.js";
-import { snippets_ToRdfResourceFunction } from "./snippets_ToRdfResourceFunction.js";
 
 /**
  * Adapter between generated code and the rdfjs-resource PropertyPath.
  */
-export const snippets_PropertyPath = conditionalOutput(
-  `${syntheticNamePrefix}PropertyPath`,
-  code`\
+export const snippets_PropertyPath: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}PropertyPath`,
+    code`\
 export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
@@ -20,9 +21,9 @@ export namespace ${syntheticNamePrefix}PropertyPath {
     return true;
   }
 
-  export const ${syntheticNamePrefix}fromRdfResource: ${snippets_FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
+  export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
 
-  export const $fromRdfResourceValues: ${snippets_FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
+  export const $fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
@@ -33,8 +34,8 @@ export namespace ${syntheticNamePrefix}PropertyPath {
 
   export const $schema: Readonly<object> = {};
 
-  export const ${syntheticNamePrefix}toRdfResource: ${snippets_ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
+  export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
 
   export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
-);
+  );

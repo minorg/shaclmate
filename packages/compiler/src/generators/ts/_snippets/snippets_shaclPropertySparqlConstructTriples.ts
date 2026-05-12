@@ -1,26 +1,27 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
-import { snippets_ShaclPropertySchema } from "./snippets_ShaclPropertySchema.js";
-import { snippets_ValueSparqlConstructTriplesFunction } from "./snippets_ValueSparqlConstructTriplesFunction.js";
 
-export const snippets_shaclPropertySparqlConstructTriples = conditionalOutput(
-  `${syntheticNamePrefix}shaclPropertySparqlConstructTriples`,
-  code`\
+export const snippets_shaclPropertySparqlConstructTriples: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}shaclPropertySparqlConstructTriples`,
+    code`\
 function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, propertyName, propertySchema, typeSparqlConstructTriples, variablePrefix }: {
   filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
   ignoreRdfType: boolean;
-  propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
+  propertySchema: ${snippets.ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlConstructTriples: ${snippets_ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
+  typeSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${imports.sparqljs}.Triple[] {
   const propertyPathSparqlConstructTriples = ({ end, propertyPath, start, variableCounter }: {
     variableCounter: { value: number };
     end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${snippets_PropertyPath};
+    propertyPath: ${snippets.PropertyPath};
     start: ${imports.NamedNode} | ${imports.Variable};
   }): readonly ${imports.sparqljs}.Triple[] => {
     switch (propertyPath.termType) {
@@ -95,4 +96,4 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
       variablePrefix: valueString
     }));
 }`,
-);
+  );

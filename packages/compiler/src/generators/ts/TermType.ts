@@ -4,9 +4,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { imports } from "./imports.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
@@ -16,13 +14,14 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
-  override readonly filterFunction = code`${snippets.filterTerm}`;
-  override readonly filterType = code`${snippets.TermFilter}`;
+  override readonly filterFunction =
+    code`${this.reusables.snippets.filterTerm}`;
+  override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
   override readonly kind = "TermType";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
-  override readonly schemaType = code`${snippets.TermSchema}`;
+  override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.termSparqlWherePatterns}`;
+    code`${this.reusables.snippets.termSparqlWherePatterns}`;
 
   constructor({
     nodeKinds,
@@ -52,11 +51,11 @@ export class TermType<
         .map((nodeKind) => {
           switch (nodeKind) {
             case "BlankNode":
-              return imports.BlankNode;
+              return this.reusables.imports.BlankNode;
             case "IRI":
-              return imports.NamedNode;
+              return this.reusables.imports.NamedNode;
             case "Literal":
-              return imports.Literal;
+              return this.reusables.imports.Literal;
             default:
               nodeKind satisfies never;
               throw new RangeError(nodeKind);
@@ -72,9 +71,7 @@ export class TermType<
       ...super.schemaObject,
       in:
         this.in_.length > 0
-          ? this.in_.map((in_) =>
-              rdfjsTermExpression(in_, { logger: this.logger }),
-            )
+          ? this.in_.map((in_) => this.rdfjsTermExpression(in_))
           : undefined,
     };
   }
@@ -87,13 +84,13 @@ export class TermType<
         let valueToNodeKind: Code;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            valueToNodeKind = code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
             break;
           case "IRI":
-            valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            valueToNodeKind = code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           case "Literal":
-            valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
+            valueToNodeKind = code`${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined))`;
             break;
           default:
             throw new RangeError(nodeKind);
@@ -127,14 +124,14 @@ export class TermType<
   override jsonSchema(
     _parameters: Parameters<AbstractTermType["jsonSchema"]>[0],
   ): Code {
-    return code`${imports.z}.discriminatedUnion("termType", [${joinCode(
+    return code`${this.reusables.imports.z}.discriminatedUnion("termType", [${joinCode(
       [...this.nodeKinds].map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "IRI":
-            return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1), termType: ${imports.z}.literal("${NodeKind.toTermType(nodeKind)}") })`;
+            return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1), termType: ${this.reusables.imports.z}.literal("${NodeKind.toTermType(nodeKind)}") })`;
           case "Literal":
-            return code`${imports.z}.object({ "@language": ${imports.z}.string().optional(), "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string(), termType: ${imports.z}.literal("Literal") })`;
+            return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional(), "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string(), termType: ${this.reusables.imports.z}.literal("Literal") })`;
           default:
             throw new RangeError(nodeKind);
         }

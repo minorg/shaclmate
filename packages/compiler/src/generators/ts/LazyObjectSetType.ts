@@ -1,11 +1,10 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import { imports } from "./imports.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { SetType } from "./SetType.js";
-import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -15,38 +14,13 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.of({
     limit: {
-      type: code`${imports.GraphQLInt}`,
+      type: code`${this.reusables.imports.GraphQLInt}`,
     },
     offset: {
-      type: code`${imports.GraphQLInt}`,
+      type: code`${this.reusables.imports.GraphQLInt}`,
     },
   });
   override readonly kind = "LazyObjectSetType";
-
-  constructor({
-    partialType,
-    resolveType,
-    ...superParameters
-  }: Omit<
-    ConstructorParameters<
-      typeof AbstractLazyObjectType<
-        SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
-        SetType<AbstractLazyObjectType.ObjectTypeConstraint>
-      >
-    >[0],
-    "runtimeClass"
-  >) {
-    super({
-      ...superParameters,
-      partialType,
-      resolveType,
-      runtimeClass: {
-        name: code`${snippets.LazyObjectSet}<${resolveType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolveType.itemType.name}>`,
-        partialPropertyName: "partials",
-        rawName: code`${snippets.LazyObjectSet}`,
-      },
-    });
-  }
 
   @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
@@ -55,7 +29,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
@@ -69,7 +43,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
@@ -88,10 +62,18 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     return conversions;
   }
 
+  protected override get runtimeClass() {
+    return {
+      name: code`${this.reusables.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      partialPropertyName: "partials",
+      rawName: code`${this.reusables.snippets.LazyObjectSet}`,
+    };
+  }
+
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
   }
 
   override fromRdfResourceValuesExpression(

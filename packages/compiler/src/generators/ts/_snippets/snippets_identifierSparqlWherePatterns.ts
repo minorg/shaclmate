@@ -1,23 +1,22 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_IdentifierFilter } from "./snippets_IdentifierFilter.js";
-import { snippets_IdentifierSchema } from "./snippets_IdentifierSchema.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_identifierSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}identifierSparqlWherePatterns`,
-  code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_IdentifierFilter}, ${snippets_IdentifierSchema}> =
+export const snippets_identifierSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}identifierSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IdentifierFilter}, ${snippets.IdentifierSchema}> =
   ({ filter, propertyPatterns, valueVariable }) => {
-    const patterns: ${snippets_SparqlPattern}[] = propertyPatterns.concat();
+    const patterns: ${snippets.SparqlPattern}[] = propertyPatterns.concat();
 
     if (filter) {
       if (filter.in !== undefined) {
         const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
         if (valueIn.length > 0) {
-          patterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
+          patterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
         }
       }
 
@@ -36,4 +35,4 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets_ValueSparq
 
     return patterns;
   }`,
-);
+  );

@@ -1,8 +1,9 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_MaybeFilter = conditionalOutput(
-  `${syntheticNamePrefix}MaybeFilter`,
-  code`\
+export const snippets_MaybeFilter: SnippetFactory = ({ syntheticNamePrefix }) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}MaybeFilter`,
+    code`\
 type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
-);
+  );

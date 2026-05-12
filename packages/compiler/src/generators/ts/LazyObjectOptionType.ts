@@ -1,11 +1,10 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import { imports } from "./imports.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,39 +12,15 @@ type Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
 >;
+
 const Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
 >;
 
 export class LazyObjectOptionType extends Super {
-  override readonly kind = "LazyObjectOptionType";
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-
-  constructor({
-    partialType,
-    resolveType,
-    ...superParameters
-  }: Omit<
-    ConstructorParameters<
-      typeof AbstractLazyObjectType<
-        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
-        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
-      >
-    >[0],
-    "runtimeClass"
-  >) {
-    super({
-      ...superParameters,
-      partialType,
-      resolveType,
-      runtimeClass: {
-        name: code`${snippets.LazyObjectOption}<${resolveType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolveType.itemType.name}>`,
-        partialPropertyName: "partial",
-        rawName: code`${snippets.LazyObjectOption}`,
-      },
-    });
-  }
+  override readonly kind = "LazyObjectOptionType";
 
   @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
@@ -55,15 +30,15 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
-            code`${imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${imports.Maybe}<${this.resolveType.itemType.name}>`,
+            code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
+          sourceTypeName: code`${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>`,
           sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create(${value})), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create(${value})), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
@@ -83,15 +58,15 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${imports.Right}((${value} as ${imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
-            code`${imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${imports.Maybe}<${this.resolveType.itemType.name}>`,
+            code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
+          sourceTypeName: code`${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>`,
           sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>
@@ -104,7 +79,7 @@ export class LazyObjectOptionType extends Super {
 
     conversions.push({
       conversionExpression: () =>
-        code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${imports.Maybe}.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
+        code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
       sourceTypeCheckExpression: (value) => code`${value} === undefined`,
       sourceTypeName: code`undefined`,
       sourceTypeof: "undefined",
@@ -113,10 +88,19 @@ export class LazyObjectOptionType extends Super {
     return conversions;
   }
 
+  @Memoize()
+  protected override get runtimeClass() {
+    return {
+      name: code`${this.reusables.snippets.LazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      partialPropertyName: "partial",
+      rawName: code`${this.reusables.snippets.LazyObjectOption}`,
+    };
+  }
+
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${imports.Left}(new Error(\`unable to resolve identifier \${identifier} deserialized from JSON\`))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${this.reusables.imports.Left}(new Error(\`unable to resolve identifier \${identifier} deserialized from JSON\`))) })`;
   }
 
   override fromRdfResourceValuesExpression(

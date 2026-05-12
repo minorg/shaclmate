@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_EqualsResult = conditionalOutput(
-  `${syntheticNamePrefix}EqualsResult`,
-  code`\
+export const snippets_EqualsResult: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}EqualsResult`,
+    code`\
 export type ${syntheticNamePrefix}EqualsResult = ${imports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
@@ -65,4 +68,4 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     readonly type: "right-null";
   };
 }`,
-);
+  );

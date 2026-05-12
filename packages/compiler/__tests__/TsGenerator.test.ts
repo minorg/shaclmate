@@ -52,8 +52,6 @@ describe("TsGenerator", () => {
             "src",
           );
           break;
-        case "nodeShapeNameConflicts":
-          return;
         case "shaclAst":
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -77,31 +75,7 @@ describe("TsGenerator", () => {
     }, 60000);
   }
 
-  /**
-   * Have to skip this pending resolution of #480.
-   */
-  it.skip("node shape name conflicts", () => {
-    const diagnostics = compileTs(
-      generate(
-        testData.shapesGraphs.wellFormed.nodeShapeNameConflicts.unsafeCoerce(),
-      ),
-    );
-    expect(diagnostics).toHaveLength(0);
-  });
-
-  /**
-   * Have to skip this pending resolution of #480.
-   */
-  it.skip("property shape name conflicts", () => {
-    const diagnostics = compileTs(
-      generate(
-        testData.shapesGraphs.wellFormed.propertyShapeNameConflicts.unsafeCoerce(),
-      ),
-    );
-    expect(diagnostics).toHaveLength(0);
-  });
-
-  describe.skip("TsFeature combinations", () => {
+  describe("TsFeature combinations", () => {
     const shapesGraph =
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);

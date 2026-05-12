@@ -1,19 +1,22 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_EqualsResult } from "./snippets_EqualsResult.js";
 
-export const snippets_arrayEquals = conditionalOutput(
-  `${syntheticNamePrefix}arrayEquals`,
-  code`\
+export const snippets_arrayEquals: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}arrayEquals`,
+    code`\
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */  
 function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | ${snippets_EqualsResult},
-): ${snippets_EqualsResult} {
+  elementEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftArray.length !== rightArray.length) {
     return ${imports.Left}({
       left: leftArray,
@@ -29,7 +32,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: ${snippets_EqualsResult}.Unequal[] = [];
+    const rightUnequals: ${snippets.EqualsResult}.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -38,7 +41,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        ${snippets_EqualsResult}.fromBooleanEqualsResult(
+        ${snippets.EqualsResult}.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -47,7 +50,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as ${snippets_EqualsResult}.Unequal,
+        leftElementEqualsRightElement.extract() as ${snippets.EqualsResult}.Unequal,
       );
     }
 
@@ -69,6 +72,6 @@ function ${syntheticNamePrefix}arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return ${snippets_EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
-);
+  );

@@ -17,7 +17,7 @@ export abstract class AbstractLazyObjectType<
 > extends AbstractType {
   protected readonly partialType: PartialTypeT;
   protected readonly resolveType: ResolveTypeT;
-  protected readonly runtimeClass: {
+  protected abstract readonly runtimeClass: {
     readonly name: Code;
     readonly partialPropertyName: string;
     readonly rawName: Code;
@@ -32,20 +32,14 @@ export abstract class AbstractLazyObjectType<
   constructor({
     partialType,
     resolveType,
-    runtimeClass,
     ...superParameters
   }: {
     partialType: PartialTypeT;
     resolveType: ResolveTypeT;
-    runtimeClass: AbstractLazyObjectType<
-      ResolveTypeT,
-      PartialTypeT
-    >["runtimeClass"];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.partialType = partialType;
     this.resolveType = resolveType;
-    this.runtimeClass = runtimeClass;
   }
 
   override get conversions(): readonly AbstractType.Conversion[] {

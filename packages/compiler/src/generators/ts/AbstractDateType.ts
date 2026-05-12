@@ -1,20 +1,21 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
-  override readonly equalsFunction = code`${snippets.dateEquals}`;
-  override readonly filterFunction = code`${snippets.filterDate}`;
-  override readonly filterType = code`${snippets.DateFilter}`;
+  override readonly equalsFunction =
+    code`${this.reusables.snippets.dateEquals}`;
+  override readonly filterFunction =
+    code`${this.reusables.snippets.filterDate}`;
+  override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
   abstract override readonly kind: "DateTimeType" | "DateType";
   override readonly mutable = false;
   override readonly name = "Date";
-  override readonly schemaType = code`${snippets.DateSchema}`;
+  override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.dateSparqlWherePatterns}`;
+    code`${this.reusables.snippets.dateSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
@@ -68,7 +69,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   }: Parameters<
     AbstractPrimitiveType<Date>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.literalFactory}.date(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
+    return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

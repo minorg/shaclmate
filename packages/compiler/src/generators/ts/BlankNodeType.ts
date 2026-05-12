@@ -2,20 +2,19 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
-  readonly filterFunction = code`${snippets.filterBlankNode}`;
-  readonly filterType = code`${snippets.BlankNodeFilter}`;
-  readonly parseFunction = code`${snippets.parseBlankNode};`;
+  readonly filterFunction = code`${this.reusables.snippets.filterBlankNode}`;
+  readonly filterType = code`${this.reusables.snippets.BlankNodeFilter}`;
+  readonly parseFunction = code`${this.reusables.snippets.parseBlankNode};`;
   override readonly kind = "BlankNodeType";
-  readonly name = code`${imports.BlankNode}`;
+  readonly name = code`${this.reusables.imports.BlankNode}`;
   override readonly nodeKinds = nodeKinds;
-  readonly schemaType = code`${snippets.BlankNodeSchema}`;
+  readonly schemaType = code`${this.reusables.snippets.BlankNodeSchema}`;
   readonly valueSparqlWherePatternsFunction =
-    code`${snippets.blankNodeSparqlWherePatterns}`;
+    code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
     superParameters: Omit<
@@ -35,7 +34,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+    return code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
   }
 
   @Memoize()
@@ -57,10 +56,10 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${imports.z}.literal("BlankNode")`
+      ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
       : "";
 
-    return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
+    return code`${this.reusables.imports.z}.object({ "@id": ${this.reusables.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

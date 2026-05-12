@@ -1,16 +1,19 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
-export const snippets_deduplicateSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}deduplicateSparqlPatterns`,
-  code`\
-function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${snippets_SparqlPattern}[]): readonly ${snippets_SparqlPattern}[] {
+export const snippets_deduplicateSparqlPatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}deduplicateSparqlPatterns`,
+    code`\
+function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
   if (patterns.length === 0) {
     return patterns;
   }
 
-  const deduplicatedPatterns: ${snippets_SparqlPattern}[] = [];
+  const deduplicatedPatterns: ${snippets.SparqlPattern}[] = [];
   const deduplicatePatternStrings = new Set<string>();
   for (const pattern of patterns) {
     const patternString = JSON.stringify(pattern);
@@ -21,4 +24,4 @@ function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${sn
   }
   return deduplicatedPatterns;
 }`,
-);
+  );

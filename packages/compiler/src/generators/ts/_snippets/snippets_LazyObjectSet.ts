@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_LazyObjectSet = conditionalOutput(
-  `${syntheticNamePrefix}LazyObjectSet`,
-  code`\
+export const snippets_LazyObjectSet: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}LazyObjectSet`,
+    code`\
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -42,4 +45,4 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imp
     return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier()), { preferredLanguages: options?.preferredLanguages });
   }
 }`,
-);
+  );

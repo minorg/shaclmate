@@ -1,12 +1,15 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 
-export const snippets_filterBigDecimal = conditionalOutput(
-  `${syntheticNamePrefix}filterBigDecimal`,
-  code`\
-function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets_NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
+export const snippets_filterBigDecimal: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterBigDecimal`,
+    code`\
+function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets.NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
@@ -29,4 +32,4 @@ function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets_NumericFilter
 
   return true;
 }`,
-);
+  );

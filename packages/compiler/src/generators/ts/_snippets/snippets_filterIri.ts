@@ -1,16 +1,19 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_IriFilter } from "./snippets_IriFilter.js";
 
-export const snippets_filterIri = conditionalOutput(
-  `${syntheticNamePrefix}filterIri`,
-  code`\
-function ${syntheticNamePrefix}filterIri(filter: ${snippets_IriFilter}, value: ${imports.NamedNode}) {
+export const snippets_filterIri: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterIri`,
+    code`\
+function ${syntheticNamePrefix}filterIri(filter: ${snippets.IriFilter}, value: ${imports.NamedNode}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 
   return true;
 }`,
-);
+  );

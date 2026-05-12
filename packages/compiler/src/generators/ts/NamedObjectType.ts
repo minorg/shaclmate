@@ -42,15 +42,13 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { imports } from "./imports.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
 export class NamedObjectType extends AbstractType {
-  private readonly imports: readonly string[];
-
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly extern: boolean;
@@ -69,7 +67,6 @@ export class NamedObjectType extends AbstractType {
     features,
     fromRdfType,
     identifierType,
-    imports,
     lazyAncestorObjectTypes,
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
@@ -87,7 +84,6 @@ export class NamedObjectType extends AbstractType {
     features: ReadonlySet<TsFeature>;
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
-    imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly NamedObjectType[];
     lazyChildObjectTypes: () => readonly NamedObjectType[];
@@ -109,7 +105,6 @@ export class NamedObjectType extends AbstractType {
     this.features = features;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
-    this.imports = imports;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
     this.lazyChildObjectTypes = lazyChildObjectTypes;
@@ -153,10 +148,6 @@ export class NamedObjectType extends AbstractType {
 
   override get declaration(): Maybe<Code> {
     const declarations: Code[] = [];
-
-    for (const import_ of this.imports) {
-      declarations.push(code`${import_}`);
-    }
 
     if (!this.extern) {
       const staticModuleDeclarations: Code[] = [];
@@ -207,12 +198,18 @@ export class NamedObjectType extends AbstractType {
           this,
         )().toList(),
         NamedObjectType_schemaVariableStatement.call(this),
-        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind(
-          this,
-        )().toList(),
-        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
-          this,
-        )().toList(),
+        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind({
+          features: this.features,
+          filterType: this.filterType,
+          name: this.name,
+          reusables: this.reusables,
+        })().toList(),
+        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind({
+          features: this.features,
+          filterType: this.filterType,
+          name: this.name,
+          reusables: this.reusables,
+        })().toList(),
         ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toStringFunctionDeclarations.call(this),
@@ -294,6 +291,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
       code`${this.name}.${syntheticNamePrefix}GraphQL`,
+      this.reusables,
     );
   }
 
@@ -350,7 +348,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.Resource}${this.identifierType.kind === "IriType" ? code`<${imports.NamedNode}>` : ""}`;
+    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()
@@ -406,7 +404,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

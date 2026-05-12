@@ -1,9 +1,10 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_DateFilter = conditionalOutput(
-  `${syntheticNamePrefix}DateFilter`,
-  code`\
+export const snippets_DateFilter: SnippetFactory = ({ syntheticNamePrefix }) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}DateFilter`,
+    code`\
 interface ${syntheticNamePrefix}DateFilter {
   readonly in?: readonly Date[];
   readonly maxExclusive?: Date;
@@ -11,4 +12,4 @@ interface ${syntheticNamePrefix}DateFilter {
   readonly minExclusive?: Date;
   readonly minInclusive?: Date;
 }`,
-);
+  );

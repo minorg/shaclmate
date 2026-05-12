@@ -1,19 +1,22 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_EqualsResult } from "./snippets_EqualsResult.js";
 
-export const snippets_maybeEquals = conditionalOutput(
-  `${syntheticNamePrefix}maybeEquals`,
-  code`\
+export const snippets_maybeEquals: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}maybeEquals`,
+    code`\
 function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: ${imports.Maybe}<T>,
   rightMaybe: ${imports.Maybe}<T>,
-  valueEquals: (left: T, right: T) => boolean | ${snippets_EqualsResult},
-): ${snippets_EqualsResult} {
+  valueEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return ${snippets_EqualsResult}.fromBooleanEqualsResult(
+      return ${snippets.EqualsResult}.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -32,6 +35,6 @@ function ${syntheticNamePrefix}maybeEquals<T>(
     });
   }
 
-  return ${snippets_EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
-);
+  );

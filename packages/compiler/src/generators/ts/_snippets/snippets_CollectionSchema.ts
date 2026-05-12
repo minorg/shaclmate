@@ -1,12 +1,15 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_CollectionSchema = conditionalOutput(
-  `${syntheticNamePrefix}CollectionSchema`,
-  code`\
+export const snippets_CollectionSchema: SnippetFactory = ({
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}CollectionSchema`,
+    code`\
 interface ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> {
   readonly item: () => ItemSchemaT;
   readonly kind: "List" | "Set";
   readonly minCount?: number;
 }`,
-);
+  );

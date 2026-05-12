@@ -1,25 +1,46 @@
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+
+import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
+import { BlankNodeType } from "./BlankNodeType.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+import { IdentifierType } from "./IdentifierType.js";
+import { IriType } from "./IriType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-import { snippets } from "./snippets.js";
-import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
+import { Reusables } from "./Reusables.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsFeature } from "./TsFeature.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
-  private readonly logger: Logger;
   private readonly typeFactory: TypeFactory;
+
+  protected readonly logger: Logger;
+  protected readonly reusables: Reusables;
 
   constructor({ logger }: { logger: Logger }) {
     this.logger = logger;
-    this.typeFactory = new TypeFactory({ logger });
+    this.reusables = new Reusables({ logger });
+    this.typeFactory = new TypeFactory({
+      logger,
+      reusables: this.reusables,
+    });
   }
 
   generate(ast_: ast.Ast): string {
     let declarations: Code[] = [];
+
+    for (const namedObjectType of ast_.namedObjectTypes) {
+      for (const tsImport of namedObjectType.tsImports) {
+        declarations.push(code`${tsImport}`);
+      }
+    }
 
     for (const astNamedUnionType of ast_.namedUnionTypes) {
       if (astNamedUnionType.isObjectUnionType()) {
@@ -68,10 +89,9 @@ export class TsGenerator implements Generator {
         );
         break;
       default: {
-        const uberObjectUnionType = synthesizeUberObjectUnionType({
-          logger: this.logger,
-          namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-        });
+        const uberObjectUnionType = this.synthesizeUberObjectUnionType(
+          namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+        );
         declarations = declarations.concat(
           uberObjectUnionType.declaration.toList(),
         );
@@ -80,32 +100,102 @@ export class TsGenerator implements Generator {
     }
 
     declarations.push(
-      ...objectSetDeclarations({
+      ...objectSetDeclarations.call(this, {
         namedObjectTypes: namedObjectTypesNameSorted,
         namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
       }),
     );
 
     declarations.push(
-      ...graphqlSchemaVariableStatement({
-        namedObjectTypes: namedObjectTypesNameSorted,
-        namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
-      }).toList(),
+      ...graphqlSchemaVariableStatement
+        .call(this, {
+          namedObjectTypes: namedObjectTypesNameSorted,
+          namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
+        })
+        .toList(),
     );
 
     declarations.splice(
       0,
       0,
-      joinCode(
-        Object.values(snippets)
-          .sort((left, right) =>
-            left.usageSiteName.localeCompare(right.usageSiteName),
-          )
-          .map((snippet) => code`${snippet.ifUsed}`),
-        { on: "\n\n" },
-      ),
+      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations).toString({});
+  }
+
+  /**
+   * Synthesize the $Object union.
+   */
+  private synthesizeUberObjectUnionType(
+    namedObjectTypes: readonly NamedObjectType[],
+  ): NamedObjectUnionType {
+    const filteredNamedObjectTypes = namedObjectTypes.filter(
+      (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
+    );
+    invariant(filteredNamedObjectTypes.length > 0);
+
+    const nodeKinds = filteredNamedObjectTypes.reduce(
+      (nodeKinds, namedObjectType) => {
+        for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
+          nodeKinds.add(nodeKind);
+        }
+        return nodeKinds;
+      },
+      new Set<IdentifierNodeKind>(),
+    );
+
+    let identifierType: BlankNodeType | IdentifierType | IriType;
+    if (nodeKinds.size === 2) {
+      identifierType = new IdentifierType({
+        comment: Maybe.empty(),
+        label: Maybe.empty(),
+        logger: this.logger,
+        reusables: this.reusables,
+      });
+    } else {
+      switch ([...nodeKinds][0]) {
+        case "BlankNode":
+          identifierType = new BlankNodeType({
+            comment: Maybe.empty(),
+            label: Maybe.empty(),
+            logger: this.logger,
+            reusables: this.reusables,
+          });
+          break;
+        case "IRI":
+          identifierType = new IriType({
+            comment: Maybe.empty(),
+            hasValues: [],
+            in_: [],
+            label: Maybe.empty(),
+            logger: this.logger,
+            reusables: this.reusables,
+          });
+          break;
+      }
+    }
+
+    return new NamedObjectUnionType({
+      comment: Maybe.empty(),
+      features: filteredNamedObjectTypes.reduce((features, namedObjectType) => {
+        for (const feature of namedObjectType.features) {
+          features.add(feature);
+        }
+        features.delete("graphql");
+        return features;
+      }, new Set<TsFeature>()),
+      identifierType,
+
+      label: Maybe.empty(),
+      logger: this.logger,
+      members: filteredNamedObjectTypes.map((namedObjectType) => ({
+        discriminantValue: Maybe.empty(),
+        type: namedObjectType,
+      })),
+      name: `${syntheticNamePrefix}Object`,
+      recursive: false,
+      reusables: this.reusables,
+    });
   }
 }

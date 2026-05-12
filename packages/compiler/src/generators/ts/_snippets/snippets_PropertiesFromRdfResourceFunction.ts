@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_PropertiesFromRdfResourceFunction = conditionalOutput(
-  `${syntheticNamePrefix}PropertiesFromRdfResourceFunction`,
-  code`\
+export const snippets_PropertiesFromRdfResourceFunction: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}PropertiesFromRdfResourceFunction`,
+    code`\
 type ${syntheticNamePrefix}PropertiesFromRdfResourceFunction<T> = (
   resource: ${imports.Resource},
   options: {
@@ -15,4 +18,4 @@ type ${syntheticNamePrefix}PropertiesFromRdfResourceFunction<T> = (
     preferredLanguages?: readonly string[];
   }
 ) => ${imports.Either}<Error, T>;`,
-);
+  );

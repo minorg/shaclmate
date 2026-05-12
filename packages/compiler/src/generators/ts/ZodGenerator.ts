@@ -4,16 +4,21 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
 import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
-import { snippets } from "./snippets.js";
+import { Reusables } from "./Reusables.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ZodGenerator implements Generator {
+  private readonly reusables: Reusables;
   private readonly typeFactory: TypeFactory;
 
   constructor({ logger }: { logger: Logger }) {
-    this.typeFactory = new TypeFactory({ logger });
+    this.reusables = new Reusables({ logger });
+    this.typeFactory = new TypeFactory({
+      logger,
+      reusables: this.reusables,
+    });
   }
 
   generate(ast_: ast.Ast): string {
@@ -51,14 +56,7 @@ export namespace ${astNamedUnionType.name} {
     declarations.splice(
       0,
       0,
-      joinCode(
-        Object.values(snippets)
-          .sort((left, right) =>
-            left.usageSiteName.localeCompare(right.usageSiteName),
-          )
-          .map((snippet) => code`${snippet.ifUsed}`),
-        { on: "\n\n" },
-      ),
+      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations, { on: "\n\n" }).toString({});

@@ -1,14 +1,17 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
-export const snippets_sortSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}sortSparqlPatterns`,
-  code`\
-function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets_SparqlPattern}[]): readonly ${snippets_SparqlPattern}[] {
-  const filterPatterns: ${snippets_SparqlPattern}[] = [];
-  const otherPatterns: ${snippets_SparqlPattern}[] = [];
-  const valuesPatterns: ${snippets_SparqlPattern}[] = [];
+export const snippets_sortSparqlPatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}sortSparqlPatterns`,
+    code`\
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
+  const filterPatterns: ${snippets.SparqlPattern}[] = [];
+  const otherPatterns: ${snippets.SparqlPattern}[] = [];
+  const valuesPatterns: ${snippets.SparqlPattern}[] = [];
 
   for (const pattern of patterns) {
     switch (pattern.type) {
@@ -26,4 +29,4 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets_
 
   return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }`,
-);
+  );

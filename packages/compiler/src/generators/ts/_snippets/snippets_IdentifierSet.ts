@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_IdentifierSet = conditionalOutput(
-  `${syntheticNamePrefix}IdentifierSet`,
-  code`\
+export const snippets_IdentifierSet: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}IdentifierSet`,
+    code`\
 class ${syntheticNamePrefix}IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -29,4 +32,4 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 }`,
-);
+  );
