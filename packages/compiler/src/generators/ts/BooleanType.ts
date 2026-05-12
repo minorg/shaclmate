@@ -1,21 +1,21 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { imports } from "./imports.js";
+
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  override readonly filterFunction = code`${snippets.filterBoolean}`;
-  override readonly filterType = code`${snippets.BooleanFilter}`;
+  override readonly filterFunction = code`${this.snippets.filterBoolean}`;
+  override readonly filterType = code`${this.snippets.BooleanFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
-    code`${imports.GraphQLBoolean}`,
+    code`${this.imports.GraphQLBoolean}`,
   );
   override readonly kind = "BooleanType";
-  override readonly schemaType = code`${snippets.BooleanSchema}`;
+  override readonly schemaType = code`${this.snippets.BooleanSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.booleanSparqlWherePatterns}`;
+    code`${this.snippets.booleanSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -37,9 +37,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     _parameters: Parameters<AbstractPrimitiveType<number>["jsonSchema"]>[0],
   ): Code {
     if (this.primitiveIn.length === 1) {
-      return code`${imports.z}.literal(${this.primitiveIn[0]})`;
+      return code`${this.imports.z}.literal(${this.primitiveIn[0]})`;
     }
-    return code`${imports.z}.boolean()`;
+    return code`${this.imports.z}.boolean()`;
   }
 
   override toRdfResourceValuesExpression({
@@ -47,7 +47,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   }: Parameters<
     AbstractPrimitiveType<boolean>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
+    return code`[${this.snippets.literalFactory}.boolean(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
   }
 
   protected override fromRdfExpressionChain({

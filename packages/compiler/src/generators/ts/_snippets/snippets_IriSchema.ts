@@ -9,7 +9,7 @@ export const snippets_IriSchema: SnippetFactory = ({
     `${syntheticNamePrefix}IriSchema`,
     code`\
 interface ${syntheticNamePrefix}IriSchema {
-  readonly in?: readonly ${imports.NamedNode}[];
+  readonly in?: readonly ${this.imports.NamedNode}[];
   readonly kind: "Iri";
 }`,
   );

@@ -2,8 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class SetType<
@@ -29,12 +28,12 @@ export class SetType<
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+    return code`${this.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   override fromRdfResourceValuesExpression(
@@ -52,11 +51,11 @@ export class SetType<
       );
     } else {
       chain.push(
-        code`chain(values => ${imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
+        code`chain(values => ${this.imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
       );
     }
     chain.push(
-      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
+      code`map(valuesArray => ${this.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
     );
     return joinCode(chain, { on: "." });
   }

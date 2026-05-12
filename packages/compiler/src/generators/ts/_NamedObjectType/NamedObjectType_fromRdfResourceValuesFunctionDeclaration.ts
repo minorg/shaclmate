@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { snippets } from "../this.snippets.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
@@ -12,7 +12,7 @@ export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
+export const ${syntheticNamePrefix}fromRdfResourceValues: ${this.snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
   values.chain(
     values => values.chainMap(
       value => value.toResource().chain(resource => ${this.name}.${syntheticNamePrefix}fromRdfResource(resource, options))

@@ -2,12 +2,12 @@ import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import { imports } from "./imports.js";
+
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly graphqlType = new AbstractNumericType.GraphqlType(
-    code`${imports.GraphQLBigInt}`,
+    code`${this.imports.GraphQLBigInt}`,
   );
   override readonly kind = "BigIntType";
   override readonly typeofs = NonEmptyList(["bigint" as const]);
@@ -40,11 +40,11 @@ export class BigIntType extends AbstractNumericType<bigint> {
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${imports.z}.string()`;
+        return code`${this.imports.z}.string()`;
       case 1:
-        return code`${imports.z}.literal(${literalOf(this.primitiveIn[0].toString())})`;
+        return code`${this.imports.z}.literal(${literalOf(this.primitiveIn[0].toString())})`;
       default:
-        return code`${imports.z}.enum([${joinCode(
+        return code`${this.imports.z}.enum([${joinCode(
           this.primitiveIn.map((value) => code`${literalOf(value.toString())}`),
           { on: "," },
         )}])`;

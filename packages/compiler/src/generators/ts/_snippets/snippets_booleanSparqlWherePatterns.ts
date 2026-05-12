@@ -8,16 +8,16 @@ export const snippets_booleanSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}booleanSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BooleanFilter}, ${snippets.BooleanSchema}> =
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.BooleanFilter}, ${this.snippets.BooleanSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${this.snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (filter.value !== undefined) {
-        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
+        filterPatterns.push(${this.snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
       }
     }
 
-    return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${this.snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   }`,
   );

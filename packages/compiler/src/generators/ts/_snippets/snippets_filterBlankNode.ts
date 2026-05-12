@@ -9,7 +9,7 @@ export const snippets_filterBlankNode: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterBlankNode`,
     code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${snippets.BlankNodeFilter}, _value: ${imports.BlankNode}) {
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${this.snippets.BlankNodeFilter}, _value: ${this.imports.BlankNode}) {
   return true;
 }`,
   );

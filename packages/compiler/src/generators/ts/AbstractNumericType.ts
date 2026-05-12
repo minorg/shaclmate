@@ -1,9 +1,9 @@
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { imports } from "./imports.js";
+
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -16,12 +16,12 @@ export abstract class AbstractNumericType<
 
   @Memoize()
   override get filterFunction(): Code {
-    return code`${snippets.filterNumeric}<${this.typeofs[0]}>`;
+    return code`${this.snippets.filterNumeric}<${this.typeofs[0]}>`;
   }
 
   @Memoize()
   override get filterType(): Code {
-    return code`${snippets.NumericFilter}<${this.typeofs[0]}>`;
+    return code`${this.snippets.NumericFilter}<${this.typeofs[0]}>`;
   }
 
   @Memoize()
@@ -34,12 +34,12 @@ export abstract class AbstractNumericType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${snippets.NumericSchema}<${this.typeofs[0]}>`;
+    return code`${this.snippets.NumericSchema}<${this.typeofs[0]}>`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
+    return code`${this.snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
   }
 
   protected override get schemaObject() {
@@ -57,13 +57,14 @@ export abstract class AbstractNumericType<
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${imports.z}.${this.typeofs[0]}()`;
+        return code`${this.imports.z}.${this.typeofs[0]}()`;
       case 1:
-        return code`${imports.z}.literal(${this.literalOf(this.primitiveIn[0])})`;
+        return code`${this.imports.z}.literal(${this.literalOf(this.primitiveIn[0])})`;
       default:
-        return code`${imports.z}.union([${joinCode(
+        return code`${this.imports.z}.union([${joinCode(
           this.primitiveIn.map(
-            (value) => code`${imports.z}.literal(${this.literalOf(value)})`,
+            (value) =>
+              code`${this.imports.z}.literal(${this.literalOf(value)})`,
           ),
           { on: "," },
         )}])`;
@@ -75,7 +76,7 @@ export abstract class AbstractNumericType<
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
+    return code`[${this.snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
   }
 
   protected override fromRdfExpressionChain({

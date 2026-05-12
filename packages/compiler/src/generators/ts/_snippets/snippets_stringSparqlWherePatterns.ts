@@ -8,13 +8,13 @@ export const snippets_stringSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}stringSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.StringFilter}, ${snippets.StringSchema}> =
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.StringFilter}, ${this.snippets.StringSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${this.snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (filter.in !== undefined && filter.in.length > 0) {
-        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+        filterPatterns.push(${this.snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (filter.maxLength !== undefined) {
@@ -22,7 +22,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWhe
           expression: {
             type: "operation",
             operator: "<=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.literalFactory}.number(filter.maxLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${this.snippets.literalFactory}.number(filter.maxLength)],
           },
           lift: true,
           type: "filter",
@@ -34,7 +34,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWhe
           expression: {
             type: "operation",
             operator: ">=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.literalFactory}.number(filter.minLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${this.snippets.literalFactory}.number(filter.minLength)],
           },
           lift: true,
           type: "filter",
@@ -42,6 +42,6 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWhe
       }
     }
 
-    return ${snippets.literalSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${this.snippets.literalSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   }`,
   );

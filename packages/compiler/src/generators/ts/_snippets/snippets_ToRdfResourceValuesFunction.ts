@@ -1,8 +1,8 @@
-import { imports } from "../imports.js";
 import type { SnippetFactory } from "../SnippetFactory.js";
+import { imports } from "../this.imports.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-const ReturnT = code`${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}`;
+const ReturnT = code`${this.imports.BlankNode} | ${this.imports.Literal} | ${this.imports.NamedNode}`;
 
 export const snippets_ToRdfResourceValuesFunction: SnippetFactory = ({
   imports,
@@ -15,11 +15,11 @@ export const snippets_ToRdfResourceValuesFunction: SnippetFactory = ({
 export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<ValueT, ReturnT extends ${ReturnT} = ${ReturnT}> =
   (value: ValueT,
    options: {
-     graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
+     graph?: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}>;
      ignoreRdfType?: boolean;
-     propertyPath: ${snippets.PropertyPath};
-     resource: ${imports.Resource};
-     resourceSet: ${imports.ResourceSet};
+     propertyPath: ${this.snippets.PropertyPath};
+     resource: ${this.imports.Resource};
+     resourceSet: ${this.imports.ResourceSet};
    }
   ) => ReturnT[];`,
   );

@@ -9,7 +9,7 @@ export const snippets_LiteralSchema: SnippetFactory = ({
     `${syntheticNamePrefix}LiteralSchema`,
     code`\
 interface ${syntheticNamePrefix}LiteralSchema {
-  readonly in?: readonly ${imports.Literal}[];
+  readonly in?: readonly ${this.imports.Literal}[];
   readonly kind: "Literal";
   readonly languageIn?: readonly string[];
 }`,

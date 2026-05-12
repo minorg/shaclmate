@@ -11,20 +11,20 @@ export const snippets_shaclPropertySparqlWherePatterns: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, preferredLanguages, propertyName, propertySchema, typeSparqlWherePatterns, variablePrefix }: {
   filter: FilterT | undefined;
-  focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
+  focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable},
   ignoreRdfType: boolean;
   preferredLanguages: readonly string[] | undefined;
-  propertySchema: ${snippets.ShaclPropertySchema}<TypeSchemaT>;
+  propertySchema: ${this.snippets.ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
+  typeSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
-}): readonly ${snippets.SparqlPattern}[] {
+}): readonly ${this.snippets.SparqlPattern}[] {
   const propertyPathSparqlWherePatterns = ({ end, propertyPath, start, variableCounter }: {
-    end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${snippets.PropertyPath};
-    start: ${imports.NamedNode} | ${imports.Variable};
+    end: ${this.imports.Literal} | ${this.imports.NamedNode} | ${this.imports.Variable};
+    propertyPath: ${this.snippets.PropertyPath};
+    start: ${this.imports.NamedNode} | ${this.imports.Variable};
     variableCounter: { value: number };
-  }): ${snippets.SparqlPattern}[] => {
+  }): ${this.snippets.SparqlPattern}[] => {
     switch (propertyPath.termType) {
       case "AlternativePath": {
         return [{
@@ -42,7 +42,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
       case "ZeroOrMorePath":
       case "ZeroOrOnePath": {
         return [{
-          triples: [{ subject: start, predicate: ${snippets.sparqlPropertyPath}(propertyPath), object: end }],
+          triples: [{ subject: start, predicate: ${this.snippets.sparqlPropertyPath}(propertyPath), object: end }],
           type: "bgp"
         }];
       }
@@ -56,14 +56,14 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
           return propertyPathSparqlWherePatterns({ end, propertyPath: propertyPath.members[0], start, variableCounter });
         }
 
-        let patterns: ${snippets.SparqlPattern}[] = [];
-        let current: ${imports.NamedNode} | ${imports.Variable} = start;
+        let patterns: ${this.snippets.SparqlPattern}[] = [];
+        let current: ${this.imports.NamedNode} | ${this.imports.Variable} = start;
         for (let memberI = 0; memberI < propertyPath.members.length; memberI++) {
-          const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = memberI === propertyPath.members.length - 1
+          const next: ${this.imports.NamedNode} | ${this.imports.Literal} | ${this.imports.Variable} = memberI === propertyPath.members.length - 1
             ? end
-            : ${imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
+            : ${this.imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
           patterns = patterns.concat(propertyPathSparqlWherePatterns({ end: next, propertyPath: propertyPath.members[memberI], start: current, variableCounter }));
-          current = next as ${imports.NamedNode} | ${imports.Variable};
+          current = next as ${this.imports.NamedNode} | ${this.imports.Variable};
         }
 
         return patterns;
@@ -77,7 +77,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
   }
 
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
-  const valueVariable = ${imports.dataFactory}.variable!(valueString);
+  const valueVariable = ${this.imports.dataFactory}.variable!(valueString);
 
   const variableCounter = { value: 0 };
   const propertyPatterns = propertyPathSparqlWherePatterns({ end: valueVariable, propertyPath: propertySchema.path, start: focusIdentifier, variableCounter });

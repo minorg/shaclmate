@@ -10,11 +10,11 @@ export const snippets_shaclPropertyFromRdf: SnippetFactory = ({
     `${syntheticNamePrefix}shaclPropertyFromRdf`,
     code`\
 function ${syntheticNamePrefix}shaclPropertyFromRdf<T>({ graph, propertySchema, resource, typeFromRdf }: {
-  graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
-  propertySchema: ${snippets.ShaclPropertySchema};
-  resource: ${imports.Resource};
-  typeFromRdf: (resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>) => ${imports.Either}<Error, ${imports.Resource}.Values<T>>;
-}): ${imports.Either}<Error, T> {
-  return typeFromRdf(${imports.Right}(resource.values(propertySchema.path, { graph, unique: true }))).chain(values => values.head());
+  graph?: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}>;
+  propertySchema: ${this.snippets.ShaclPropertySchema};
+  resource: ${this.imports.Resource};
+  typeFromRdf: (resourceValues: ${this.imports.Either}<Error, ${this.imports.Resource}.Values>) => ${this.imports.Either}<Error, ${this.imports.Resource}.Values<T>>;
+}): ${this.imports.Either}<Error, T> {
+  return typeFromRdf(${this.imports.Right}(resource.values(propertySchema.path, { graph, unique: true }))).chain(values => values.head());
 }`,
   );

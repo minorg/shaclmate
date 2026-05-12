@@ -1,11 +1,11 @@
 import { NonEmptyList } from "purify-ts";
 import { AbstractNumericType } from "./AbstractNumericType.js";
-import { imports } from "./imports.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
   override readonly graphqlType = new AbstractNumericType.GraphqlType(
-    code`${imports.GraphQLInt}`,
+    code`${this.imports.GraphQLInt}`,
   );
   override readonly kind = "IntType";
   override readonly typeofs = NonEmptyList(["number" as const]);

@@ -3,7 +3,7 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-import { snippets } from "./snippets.js";
+
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";

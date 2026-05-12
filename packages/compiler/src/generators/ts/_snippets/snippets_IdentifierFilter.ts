@@ -9,7 +9,7 @@ export const snippets_IdentifierFilter: SnippetFactory = ({
     `${syntheticNamePrefix}IdentifierFilter`,
     code`\
 interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[];
+  readonly in?: readonly (${this.imports.BlankNode} | ${this.imports.NamedNode})[];
   readonly type?: "BlankNode" | "NamedNode";
 }`,
   );

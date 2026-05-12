@@ -13,7 +13,7 @@ type ${syntheticNamePrefix}ValueSparqlConstructTriplesFunction<FilterT, SchemaT>
     filter: FilterT | undefined;
     ignoreRdfType: boolean;
     schema: SchemaT;
-    valueVariable: ${imports.Variable};
+    valueVariable: ${this.imports.Variable};
     variablePrefix: string;
-  }) => readonly ${imports.sparqljs}.Triple[];`,
+  }) => readonly ${this.imports.sparqljs}.Triple[];`,
   );

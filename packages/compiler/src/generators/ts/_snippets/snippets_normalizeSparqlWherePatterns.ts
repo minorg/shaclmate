@@ -8,14 +8,14 @@ export const snippets_normalizeSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
     code`\
-function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
-  function normalizePatternsRecursive(patternsRecursive: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
+function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${this.snippets.SparqlPattern}[]): readonly ${this.snippets.SparqlPattern}[] {
+  function normalizePatternsRecursive(patternsRecursive: readonly ${this.snippets.SparqlPattern}[]): readonly ${this.snippets.SparqlPattern}[] {
     if (patternsRecursive.length === 0) {
       return patternsRecursive;
     }
 
-    const compactedPatterns: ${snippets.SparqlPattern}[] = [];
-    for (const pattern of ${snippets.deduplicateSparqlPatterns}(patternsRecursive)) {
+    const compactedPatterns: ${this.snippets.SparqlPattern}[] = [];
+    for (const pattern of ${this.snippets.deduplicateSparqlPatterns}(patternsRecursive)) {
       switch (pattern.type) {
         case "bgp": {
           if (pattern.triples.length === 0) {
@@ -51,7 +51,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
           break;
         }
         case "union": {
-          const unionPatterns = ${snippets.deduplicateSparqlPatterns}(pattern.patterns.flatMap(pattern => {
+          const unionPatterns = ${this.snippets.deduplicateSparqlPatterns}(pattern.patterns.flatMap(pattern => {
             switch (pattern.type) {
               case "group":
                 // Don't flatten the groups in a union
@@ -63,7 +63,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
                 if (patterns_.length > 0) {
                   return [{ ...pattern, patterns: patterns_.concat() }];
                 }
-                return [] as ${snippets.SparqlPattern}[];
+                return [] as ${this.snippets.SparqlPattern}[];
               }
               default:
                 return [pattern];
@@ -87,11 +87,11 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
       }
     }
 
-    return ${snippets.sortSparqlPatterns}(${snippets.deduplicateSparqlPatterns}(compactedPatterns));
+    return ${this.snippets.sortSparqlPatterns}(${this.snippets.deduplicateSparqlPatterns}(compactedPatterns));
   }
 
   const normalizedPatterns = normalizePatternsRecursive(patterns);
-  if (!normalizedPatterns.some(${snippets.SparqlPattern_isSolutionGenerating})) {
+  if (!normalizedPatterns.some(${this.snippets.SparqlPattern_isSolutionGenerating})) {
     throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
   }
 

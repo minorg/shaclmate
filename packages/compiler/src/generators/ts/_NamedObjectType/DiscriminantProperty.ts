@@ -1,8 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
-import { imports } from "../imports.js";
 import { removeUndefined } from "../removeUndefined.js";
+import { imports } from "../this.imports.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -39,8 +38,8 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
       key: this.name,
       schema:
         this.type.values.length > 1
-          ? code`${imports.z}.enum(${arrayOf(...this.type.values)})`
-          : code`${imports.z}.literal(${literalOf(this.type.values[0])})`,
+          ? code`${this.imports.z}.enum(${arrayOf(...this.type.values)})`
+          : code`${this.imports.z}.literal(${literalOf(this.type.values[0])})`,
     });
   }
 
@@ -71,7 +70,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
     return Maybe.of(
-      code`${imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
+      code`${this.imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
     );
   }
 

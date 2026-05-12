@@ -12,7 +12,7 @@ class ${syntheticNamePrefix}IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
 
-  add(identifier: ${imports.BlankNode} | ${imports.NamedNode}): this {
+  add(identifier: ${this.imports.BlankNode} | ${this.imports.NamedNode}): this {
     switch (identifier.termType) {
       case "BlankNode":
         this.blankNodeValues.add(identifier.value);
@@ -23,7 +23,7 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 
-  has(identifier: ${imports.BlankNode} | ${imports.NamedNode}): boolean {
+  has(identifier: ${this.imports.BlankNode} | ${this.imports.NamedNode}): boolean {
     switch (identifier.termType) {
       case "BlankNode":
         return this.blankNodeValues.has(identifier.value);

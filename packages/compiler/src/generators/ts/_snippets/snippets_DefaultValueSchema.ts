@@ -9,7 +9,7 @@ export const snippets_DefaultValueSchema: SnippetFactory = ({
     `${syntheticNamePrefix}DefaultValueSchema`,
     code`\
 interface ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> {
-  readonly defaultValue: ${imports.Literal} | ${imports.NamedNode};
+  readonly defaultValue: ${this.imports.Literal} | ${this.imports.NamedNode};
   readonly item: () => ItemSchemaT;
   readonly kind: "DefaultValue";
 }`,

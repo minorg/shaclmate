@@ -11,23 +11,23 @@ export const snippets_LazyObjectOption: SnippetFactory = ({
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
-  readonly partial: ${imports.Maybe}<PartialObjectT>;
-  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
+export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${this.imports.BlankNode} | ${this.imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
+  readonly partial: ${this.imports.Maybe}<PartialObjectT>;
+  private readonly resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${this.imports.Either}<Error, ResolvedObjectT>>;
 
   constructor({ partial, resolver }: {
-    partial: ${imports.Maybe}<PartialObjectT>
-    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
+    partial: ${this.imports.Maybe}<PartialObjectT>
+    resolver: (identifier: ObjectIdentifierT, options?: { preferredLanguages?: readonly string[] }) => Promise<${this.imports.Either}<Error, ResolvedObjectT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
+  async resolve(options?: { preferredLanguages?: readonly string[] }): Promise<${this.imports.Either}<Error, ${this.imports.Maybe}<ResolvedObjectT>>> {
     if (this.partial.isNothing()) {
-      return ${imports.Right}(${imports.Maybe}.empty());
+      return ${this.imports.Right}(${this.imports.Maybe}.empty());
     }
-    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier(), options)).map(${imports.Maybe}.of);
+    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier(), options)).map(${this.imports.Maybe}.of);
   }
 }`,
   );

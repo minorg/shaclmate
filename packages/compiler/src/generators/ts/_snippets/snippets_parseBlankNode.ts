@@ -9,10 +9,10 @@ export const snippets_parseBlankNode: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}parseBlankNode`,
     code`\
-export function ${syntheticNamePrefix}parseBlankNode(identifier: string): ${imports.Either}<Error, ${imports.BlankNode}> {
+export function ${syntheticNamePrefix}parseBlankNode(identifier: string): ${this.imports.Either}<Error, ${this.imports.BlankNode}> {
   return \
-    ${snippets.parseIdentifier}(identifier)\
-      .chain((identifier) => (identifier.termType === "BlankNode") ? ${imports.Right}(identifier) : ${imports.Left}(new Error("expected identifier to be BlankNode"))) \
-    as ${imports.Either}<Error, ${imports.BlankNode}>;
+    ${this.snippets.parseIdentifier}(identifier)\
+      .chain((identifier) => (identifier.termType === "BlankNode") ? ${this.imports.Right}(identifier) : ${this.imports.Left}(new Error("expected identifier to be BlankNode"))) \
+    as ${this.imports.Either}<Error, ${this.imports.BlankNode}>;
 }`,
   );

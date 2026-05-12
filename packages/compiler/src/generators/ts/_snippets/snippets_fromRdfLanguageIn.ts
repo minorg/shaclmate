@@ -8,11 +8,11 @@ export const snippets_fromRdfLanguageIn: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}fromRdfLanguageIn`,
     code`\
-function ${syntheticNamePrefix}fromRdfLanguageIn(values: ${imports.Resource}.Values, languageIn: readonly string[]): ${imports.Either}<Error, ${imports.Resource}.Values> {
+function ${syntheticNamePrefix}fromRdfLanguageIn(values: ${this.imports.Resource}.Values, languageIn: readonly string[]): ${this.imports.Either}<Error, ${this.imports.Resource}.Values> {
   return values.chainMap(value => value.toLiteral().chain(literal =>
     languageIn.includes(literal.language) ?
-      ${imports.Right}(value) :
-      ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{
+      ${this.imports.Right}(value) :
+      ${this.imports.Left}(new ${this.imports.Resource}.MistypedTermValueError(${{
         actualValue: code`literal`,
         expectedValueType: "Literal",
         focusResource: code`value.focusResource`,

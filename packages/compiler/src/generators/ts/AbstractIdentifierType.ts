@@ -4,14 +4,14 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { imports } from "./imports.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
 > extends AbstractTermType<NamedNode, IdentifierT> {
   override readonly graphqlType = new AbstractTermType.GraphqlType(
-    code`${imports.GraphQLString}`,
+    code`${this.imports.GraphQLString}`,
   );
   abstract override readonly kind:
     | "BlankNodeType"
@@ -19,7 +19,7 @@ export abstract class AbstractIdentifierType<
     | "IriType";
   abstract override readonly nodeKinds: ReadonlySet<IdentifierNodeKind>;
   abstract readonly parseFunction: Code;
-  readonly stringifyFunction = code`${imports.NTriplesTerm}.stringify`;
+  readonly stringifyFunction = code`${this.imports.NTriplesTerm}.stringify`;
 
   @Memoize()
   override get conversions(): readonly AbstractTermType.Conversion[] {
@@ -27,7 +27,7 @@ export abstract class AbstractIdentifierType<
     if (this.nodeKinds.has("IRI")) {
       conversions.push({
         conversionExpression: (value) =>
-          code`${imports.dataFactory}.namedNode(${value})`,
+          code`${this.imports.dataFactory}.namedNode(${value})`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "string"`,
         sourceTypeName:
@@ -43,6 +43,6 @@ export abstract class AbstractIdentifierType<
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
-    return code`${imports.NTriplesTerm}.stringify(${value})`;
+    return code`${this.imports.NTriplesTerm}.stringify(${value})`;
   }
 }

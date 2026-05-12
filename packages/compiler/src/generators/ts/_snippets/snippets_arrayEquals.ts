@@ -15,10 +15,10 @@ export const snippets_arrayEquals: SnippetFactory = ({
 function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
-): ${snippets.EqualsResult} {
+  elementEquals: (left: T, right: T) => boolean | ${this.snippets.EqualsResult},
+): ${this.snippets.EqualsResult} {
   if (leftArray.length !== rightArray.length) {
-    return ${imports.Left}({
+    return ${this.imports.Left}({
       left: leftArray,
       right: rightArray,
       type: "array-length",
@@ -32,7 +32,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: ${snippets.EqualsResult}.Unequal[] = [];
+    const rightUnequals: ${this.snippets.EqualsResult}.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -41,7 +41,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        ${snippets.EqualsResult}.fromBooleanEqualsResult(
+        ${this.snippets.EqualsResult}.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -50,13 +50,13 @@ function ${syntheticNamePrefix}arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as ${snippets.EqualsResult}.Unequal,
+        leftElementEqualsRightElement.extract() as ${this.snippets.EqualsResult}.Unequal,
       );
     }
 
     if (rightUnequals.length === rightArray.length) {
       // All right elements were unequal to the left element
-      return ${imports.Left}({
+      return ${this.imports.Left}({
         left: {
           array: leftArray,
           element: leftElement,
@@ -72,6 +72,6 @@ function ${syntheticNamePrefix}arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return ${snippets.EqualsResult}.Equal;
+  return ${this.snippets.EqualsResult}.Equal;
 }`,
   );

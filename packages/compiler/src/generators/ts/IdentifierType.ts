@@ -3,22 +3,22 @@ import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
+
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  override readonly filterFunction = code`${snippets.filterIdentifier}`;
-  override readonly filterType = code`${snippets.IdentifierFilter}`;
-  override readonly parseFunction = code`${snippets.parseIdentifier};`;
+  override readonly filterFunction = code`${this.snippets.filterIdentifier}`;
+  override readonly filterType = code`${this.snippets.IdentifierFilter}`;
+  override readonly parseFunction = code`${this.snippets.parseIdentifier};`;
   override readonly kind = "IdentifierType";
-  override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
+  override readonly name =
+    code`(${this.imports.BlankNode} | ${this.imports.NamedNode})`;
   override readonly nodeKinds = nodeKinds;
-  override readonly schemaType = code`${snippets.IdentifierSchema}`;
+  override readonly schemaType = code`${this.snippets.IdentifierSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.identifierSparqlWherePatterns}`;
+    code`${this.snippets.identifierSparqlWherePatterns}`;
 
   constructor(
     parameters: Omit<
@@ -40,7 +40,7 @@ export class IdentifierType extends AbstractIdentifierType<
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`(${variables.value}["@id"].startsWith("_:") ? ${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
+    return code`(${variables.value}["@id"].startsWith("_:") ? ${this.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
   }
 
   @Memoize()
@@ -62,10 +62,10 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${imports.z}.enum(${arrayOf(...this.nodeKinds)})`
+      ? code`, termType: ${this.imports.z}.enum(${arrayOf(...this.nodeKinds)})`
       : "";
 
-    return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
+    return code`${this.imports.z}.object({ "@id": ${this.imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

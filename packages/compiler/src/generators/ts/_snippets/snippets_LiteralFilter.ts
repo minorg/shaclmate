@@ -9,7 +9,7 @@ export const snippets_LiteralFilter: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}LiteralFilter`,
     code`\
-interface ${syntheticNamePrefix}LiteralFilter extends Omit<${snippets.TermFilter}, "in" | "type"> {
-  readonly in?: readonly ${imports.Literal}[];
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${this.snippets.TermFilter}, "in" | "type"> {
+  readonly in?: readonly ${this.imports.Literal}[];
 }`,
   );

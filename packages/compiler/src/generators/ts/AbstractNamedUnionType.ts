@@ -2,8 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
-import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
@@ -125,7 +124,7 @@ ${joinCode(
 
     if (this.features.has("hash")) {
       staticModuleDeclarations[`${syntheticNamePrefix}hash`] =
-        code`export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
+        code`export function ${syntheticNamePrefix}hash<HasherT extends ${this.snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
     }
 
     if (this.features.has("json")) {
@@ -135,10 +134,10 @@ ${this.jsonTypeAliasDeclaration}
 export namespace ${syntheticNamePrefix}Json {
   ${this.jsonSchemaFunctionDeclaration}
 
-  export function parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
+  export function parse(json: unknown): ${this.imports.Either}<Error, ${syntheticNamePrefix}Json> {
     const jsonSafeParseResult = schema().safeParse(json);
-    if (!jsonSafeParseResult.success) { return ${imports.Left}(jsonSafeParseResult.error); }
-    return ${imports.Right}(jsonSafeParseResult.data);
+    if (!jsonSafeParseResult.success) { return ${this.imports.Left}(jsonSafeParseResult.error); }
+    return ${this.imports.Right}(jsonSafeParseResult.data);
   }
 }`;
 
@@ -151,7 +150,7 @@ export namespace ${syntheticNamePrefix}Json {
 
     if (this.features.has("rdf")) {
       staticModuleDeclarations[`${syntheticNamePrefix}fromRdfResourceValues`] =
-        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
+        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${this.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
 
       staticModuleDeclarations[`${syntheticNamePrefix}toRdfResourceValues`] =
         code`export const ${syntheticNamePrefix}toRdfResourceValues = ${this.inlineToRdfResourceValuesFunction};`;
@@ -161,12 +160,12 @@ export namespace ${syntheticNamePrefix}Json {
       staticModuleDeclarations[
         `${syntheticNamePrefix}valueSparqlConstructTriples`
       ] =
-        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
+        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${this.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
 
       staticModuleDeclarations[
         `${syntheticNamePrefix}valueSparqlWherePatterns`
       ] =
-        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
+        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
     staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
@@ -213,7 +212,7 @@ export namespace ${syntheticNamePrefix}Json {
     if (this.features.has("json")) {
       const expression = code`${this.name}.${syntheticNamePrefix}Json.schema()`;
       if (context === "property" && this.recursive) {
-        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${this.imports.z}.lazy((): ${this.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }

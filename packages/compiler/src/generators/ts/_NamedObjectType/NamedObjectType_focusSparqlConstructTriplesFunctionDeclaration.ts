@@ -1,10 +1,10 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { imports } from "../this.imports.js";
+import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
@@ -20,8 +20,8 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const rdfClassVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+  const rdfClassVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+  const rdfTypeVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   let triplesVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
@@ -59,11 +59,11 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${this.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
-        code`${triplesVariableDeclarationKeyword} triples: ${imports.sparqljs}.Triple[] = [];`,
+        code`${triplesVariableDeclarationKeyword} triples: ${this.imports.sparqljs}.Triple[] = [];`,
         ...statements,
         code`return triples;`,
       ])

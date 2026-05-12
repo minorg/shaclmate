@@ -5,10 +5,10 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { imports } from "./imports.js";
+
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { removeUndefined } from "./removeUndefined.js";
-import { snippets } from "./snippets.js";
+
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -28,7 +28,7 @@ export abstract class AbstractTermType<
     | NamedNode,
 > extends AbstractType {
   override readonly declaration: Maybe<Code> = Maybe.empty();
-  readonly equalsFunction = code`${snippets.booleanEquals}`;
+  readonly equalsFunction = code`${this.snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -64,7 +64,7 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.bigint(${value})`,
+            code`${this.snippets.literalFactory}.bigint(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "bigint"`,
           sourceTypeName: code`bigint`,
@@ -72,7 +72,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.boolean(${value})`,
+            code`${this.snippets.literalFactory}.boolean(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "boolean"`,
           sourceTypeName: code`boolean`,
@@ -80,7 +80,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.date(${value})`,
+            code`${this.snippets.literalFactory}.date(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: code`Date`,
@@ -88,7 +88,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.number(${value})`,
+            code`${this.snippets.literalFactory}.number(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "number"`,
           sourceTypeName: code`number`,
@@ -96,7 +96,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${snippets.literalFactory}.string(${value})`,
+            code`${this.snippets.literalFactory}.string(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "string"`,
           sourceTypeName: code`string`,
@@ -222,8 +222,8 @@ export abstract class AbstractTermType<
       const eitherTypeParameters = code`<Error, ${this.name}>`;
       valueToExpression = code`value.toTerm().chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
-  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.propertyPath }}));
+  ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${this.imports.Either}.of${eitherTypeParameters}(term);
+  default: return ${this.imports.Left}${eitherTypeParameters}(new ${this.imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.propertyPath }}));
   }})`;
     } else {
       valueToExpression = code`value.toTerm()`;
@@ -233,7 +233,7 @@ export abstract class AbstractTermType<
       hasValues:
         this.hasValues.length > 0
           ? code`\
-chain(values => ${imports.Either}.sequence([${joinCode(
+chain(values => ${this.imports.Either}.sequence([${joinCode(
               this.hasValues.map((hasValue) =>
                 rdfjsTermExpression(hasValue, { logger: this.logger }),
               ),

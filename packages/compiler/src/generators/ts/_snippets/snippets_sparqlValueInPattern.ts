@@ -9,7 +9,7 @@ export const snippets_sparqlValueInPattern: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}sparqlValueInPattern`,
     code`\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (bigint | boolean | Date | number | string | ${imports.Literal} | ${imports.NamedNode})[], valueVariable: ${imports.Variable}}): ${snippets.SparqlFilterPattern} {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (bigint | boolean | Date | number | string | ${this.imports.Literal} | ${this.imports.NamedNode})[], valueVariable: ${this.imports.Variable}}): ${this.snippets.SparqlFilterPattern} {
   if (valueIn.length === 0) {
     throw new RangeError("expected valueIn not to be empty");
   }
@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
     expression: {
       args: [valueVariable, valueIn.map(inValue => {
         if (typeof inValue !== "object" || inValue instanceof Date) {
-          return ${snippets.literalFactory}.primitive(inValue);
+          return ${this.snippets.literalFactory}.primitive(inValue);
         }
         return inValue;
       })],

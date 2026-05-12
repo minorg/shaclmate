@@ -2,14 +2,14 @@ import type { NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
-  override readonly equalsFunction = code`${snippets.strictEquals}`;
+  override readonly equalsFunction = code`${this.snippets.strictEquals}`;
   abstract override readonly kind:
     | "BigIntType"
     | "BooleanType"

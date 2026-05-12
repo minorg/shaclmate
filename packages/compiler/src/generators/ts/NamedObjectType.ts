@@ -42,7 +42,7 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { imports } from "./imports.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
@@ -350,7 +350,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.Resource}${this.identifierType.kind === "IriType" ? code`<${imports.NamedNode}>` : ""}`;
+    return code`${this.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()
@@ -406,7 +406,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${this.imports.z}.lazy((): ${this.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

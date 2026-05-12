@@ -1,4 +1,3 @@
-import { imports } from "./imports.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -14,7 +13,7 @@ function unsupportedObjectSetMethodDeclaration({
 }) {
   return code`\
 async ${name}(${parameters}): ${returnType} {
-  return ${imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
+  return ${this.imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
 }`;
 }
 

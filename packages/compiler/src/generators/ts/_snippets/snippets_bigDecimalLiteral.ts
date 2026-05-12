@@ -12,7 +12,7 @@ export const snippets_bigDecimalLiteral: SnippetFactory = ({
 /**
  * Create a Literal from a BigDecimal.
  */  
-function ${syntheticNamePrefix}bigDecimalLiteral(value: ${imports.BigDecimal}): ${imports.Literal} {
-  return ${imports.dataFactory}.literal(value.toFixed(), ${snippets.RdfVocabularies}.xsd.decimal);
+function ${syntheticNamePrefix}bigDecimalLiteral(value: ${this.imports.BigDecimal}): ${this.imports.Literal} {
+  return ${this.imports.dataFactory}.literal(value.toFixed(), ${this.snippets.RdfVocabularies}.xsd.decimal);
 }`,
   );

@@ -10,10 +10,10 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { imports } from "./imports.js";
+
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-import { snippets } from "./snippets.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -107,7 +107,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
     return singleEntryRecord(
       `${syntheticNamePrefix}focusSparqlConstructTriples`,
       code`\
-export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${imports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${this.imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.members.map(
       (member) =>
@@ -130,9 +130,9 @@ export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focu
     return singleEntryRecord(
       `${syntheticNamePrefix}focusSparqlWherePatterns`,
       code`\
-export function ${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${imports.NamedNode} | ${imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${snippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${this.snippets.SparqlPattern}[] {
 ${joinCode([
-  code`let patterns: ${snippets.SparqlPattern}[] = [];`,
+  code`let patterns: ${this.snippets.SparqlPattern}[] = [];`,
   code`\
 if (focusIdentifier.termType === "Variable") {
   patterns = patterns.concat(${this.#identifierType.valueSparqlWherePatternsFunction}({
@@ -169,10 +169,10 @@ if (focusIdentifier.termType === "Variable") {
     return singleEntryRecord(
       `${syntheticNamePrefix}fromRdfResource`,
       code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
+export const ${syntheticNamePrefix}fromRdfResource: ${this.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
   ${this.members.reduce(
     (expression, member) => {
-      const memberTypeExpression = code`(${member.type.name}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
+      const memberTypeExpression = code`(${member.type.name}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${this.imports.Either}<Error, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -190,7 +190,7 @@ export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFu
     return singleEntryRecord(
       `${syntheticNamePrefix}GraphQL`,
       code`\
-export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
+export const ${syntheticNamePrefix}GraphQL = new ${this.imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
@@ -302,7 +302,7 @@ ${{
     return singleEntryRecord(
       `${syntheticNamePrefix}toRdfResource`,
       code`\
-export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
+export const ${syntheticNamePrefix}toRdfResource: ${this.snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
   this.members
     .map(

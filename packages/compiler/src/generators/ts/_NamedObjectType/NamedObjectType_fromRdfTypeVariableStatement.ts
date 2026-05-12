@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { imports } from "../this.imports.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_fromRdfTypeVariableStatement(
@@ -14,6 +14,6 @@ export function NamedObjectType_fromRdfTypeVariableStatement(
 
   return this.fromRdfType.map(
     (fromRdfType) => code`\
-export const ${syntheticNamePrefix}fromRdfType: ${imports.NamedNode}<string> = ${rdfjsTermExpression(fromRdfType, { logger: this.logger })};`,
+export const ${syntheticNamePrefix}fromRdfType: ${this.imports.NamedNode}<string> = ${rdfjsTermExpression(fromRdfType, { logger: this.logger })};`,
   );
 }

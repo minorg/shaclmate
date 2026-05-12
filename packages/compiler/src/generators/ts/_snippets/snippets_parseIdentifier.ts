@@ -8,5 +8,5 @@ export const snippets_parseIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}parseIdentifier`,
     code`\
-const ${syntheticNamePrefix}parseIdentifier = ${imports.NTriplesIdentifier}.parser(${imports.dataFactory});`,
+const ${syntheticNamePrefix}parseIdentifier = ${this.imports.NTriplesIdentifier}.parser(${this.imports.dataFactory});`,
   );

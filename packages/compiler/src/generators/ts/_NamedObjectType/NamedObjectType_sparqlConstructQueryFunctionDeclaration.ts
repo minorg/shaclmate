@@ -1,9 +1,9 @@
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { TsFeature } from "../TsFeature.js";
+import { imports } from "../this.imports.js";
+import { snippets } from "../this.snippets.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_sparqlConstructQueryFunctionDeclaration(this: {
@@ -16,7 +16,7 @@ export function NamedObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${imports.NamedNode} | ${imports.Variable} } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
+export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${this.imports.NamedNode} | ${this.imports.Variable} } & Omit<${this.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${this.imports.sparqljs}.ConstructQuery {
   const variablePrefix = subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}";
 
   return {
@@ -33,7 +33,7 @@ export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfTy
     ),
     type: "query",
     where: (queryParameters.where ?? []).concat(
-      ${snippets.normalizeSparqlWherePatterns}(
+      ${this.snippets.normalizeSparqlWherePatterns}(
         ${this.name}.${syntheticNamePrefix}focusSparqlWherePatterns({
           filter,
           focusIdentifier: subject,

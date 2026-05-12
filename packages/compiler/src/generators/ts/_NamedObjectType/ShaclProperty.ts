@@ -4,9 +4,9 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
+import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -205,7 +205,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     // subject of any statements.
 
     return Maybe.of(
-      code`${snippets.shaclPropertyFromRdf}(${{
+      code`${this.snippets.shaclPropertyFromRdf}(${{
         graph: variables.graph,
         resource: variables.resource,
         propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
@@ -250,7 +250,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["sparqlConstructTriplesExpression"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${snippets.shaclPropertySparqlConstructTriples}(${{
+      code`${this.snippets.shaclPropertySparqlConstructTriples}(${{
         filter: this.filterProperty
           .map(({ name }) => code`${variables.filter}?.${name}`)
           .extract(),
@@ -271,7 +271,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["sparqlWherePatternsExpression"]
   >[0]): ReturnType<AbstractProperty<TypeT>["sparqlWherePatternsExpression"]> {
     return Maybe.of({
-      patterns: code`${snippets.shaclPropertySparqlWherePatterns}(${{
+      patterns: code`${this.snippets.shaclPropertySparqlWherePatterns}(${{
         filter: this.filterProperty
           .map(({ name }) => code`${variables.filter}?.${name}`)
           .extract(),

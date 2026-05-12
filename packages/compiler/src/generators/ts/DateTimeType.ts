@@ -1,17 +1,17 @@
 import { AbstractDateType } from "./AbstractDateType.js";
-import { imports } from "./imports.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
   override readonly graphqlType = new AbstractDateType.GraphqlType(
-    code`${imports.GraphQLDateTime}`,
+    code`${this.imports.GraphQLDateTime}`,
   );
   override readonly kind = "DateTimeType";
 
   override jsonSchema(
     _parameters: Parameters<AbstractDateType["jsonSchema"]>[0],
   ): Code {
-    return code`${imports.z}.iso.datetime()`;
+    return code`${this.imports.z}.iso.datetime()`;
   }
 
   override toJsonExpression({

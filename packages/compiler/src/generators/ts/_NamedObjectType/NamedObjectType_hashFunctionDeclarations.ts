@@ -1,6 +1,6 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const hasherVariable = code`_hasher`;
@@ -58,11 +58,11 @@ export function NamedObjectType_hashFunctionDeclarations(
 
   return [
     code`\
-export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function ${syntheticNamePrefix}hash<HasherT extends ${this.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-export function ${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function ${syntheticNamePrefix}hashShaclProperties<HasherT extends ${this.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

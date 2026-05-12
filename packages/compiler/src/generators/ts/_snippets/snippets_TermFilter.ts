@@ -9,8 +9,8 @@ export const snippets_TermFilter: SnippetFactory = ({
     `${syntheticNamePrefix}TermFilter`,
     code`\
 interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly ${imports.NamedNode}[];
-  readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
+  readonly datatypeIn?: readonly ${this.imports.NamedNode}[];
+  readonly in?: readonly (${this.imports.Literal} | ${this.imports.NamedNode})[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }`,

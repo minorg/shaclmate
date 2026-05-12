@@ -1,6 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { snippets } from "./snippets.js";
+
 import { code, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
@@ -43,9 +43,9 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? code`chain(values => ${snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`
+          ? code`chain(values => ${this.snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`
           : undefined,
-      preferredLanguages: code`chain(values => ${snippets.fromRdfPreferredLanguages}(values, ${variables.preferredLanguages}))`,
+      preferredLanguages: code`chain(values => ${this.snippets.fromRdfPreferredLanguages}(values, ${variables.preferredLanguages}))`,
       valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
     };
   }

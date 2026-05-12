@@ -8,15 +8,15 @@ export const snippets_identifierSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}identifierSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IdentifierFilter}, ${snippets.IdentifierSchema}> =
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.IdentifierFilter}, ${this.snippets.IdentifierSchema}> =
   ({ filter, propertyPatterns, valueVariable }) => {
-    const patterns: ${snippets.SparqlPattern}[] = propertyPatterns.concat();
+    const patterns: ${this.snippets.SparqlPattern}[] = propertyPatterns.concat();
 
     if (filter) {
       if (filter.in !== undefined) {
         const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
         if (valueIn.length > 0) {
-          patterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
+          patterns.push(${this.snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
         }
       }
 

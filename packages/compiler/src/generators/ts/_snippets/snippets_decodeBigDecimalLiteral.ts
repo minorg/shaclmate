@@ -11,7 +11,7 @@ export const snippets_decodeBigDecimalLiteral: SnippetFactory = ({
 /**
  * Decidoe a BigDecimal from a Literal.
  */  
-function ${syntheticNamePrefix}decodeBigDecimalLiteral(literal: ${imports.Literal}): ${imports.Either}<Error, ${imports.BigDecimal}> {
-  return ${imports.Either}.encase(() => new ${imports.BigDecimal}(literal.value));
+function ${syntheticNamePrefix}decodeBigDecimalLiteral(literal: ${this.imports.Literal}): ${this.imports.Either}<Error, ${this.imports.BigDecimal}> {
+  return ${this.imports.Either}.encase(() => new ${this.imports.BigDecimal}(literal.value));
 }`,
   );

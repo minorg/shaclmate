@@ -1,9 +1,9 @@
 import { Maybe } from "purify-ts";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import { imports } from "./imports.js";
+
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { snippets } from "./snippets.js";
+
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -32,9 +32,9 @@ export class LazyObjectType extends AbstractLazyObjectType<
       partialType,
       resolveType,
       runtimeClass: {
-        name: code`${snippets.LazyObject}<${resolveType.identifierTypeAlias}, ${partialType.name}, ${resolveType.name}>`,
+        name: code`${this.snippets.LazyObject}<${resolveType.identifierTypeAlias}, ${partialType.name}, ${resolveType.name}>`,
         partialPropertyName: "partial",
-        rawName: code`${snippets.LazyObject}`,
+        rawName: code`${this.snippets.LazyObject}`,
       },
     });
   }
@@ -45,7 +45,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     if (this.partialType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).name}.${syntheticNamePrefix}create(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).name}.${syntheticNamePrefix}create(${value}), resolver: async () => ${this.imports.Right}(${value} as ${this.resolveType.name}) })`,
         // Don't check instanceof value since the NamedObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
@@ -60,7 +60,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Right}(${value} as ${this.resolveType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${this.imports.Right}(${value} as ${this.resolveType.name}) })`,
         // Don't check instanceof value since the NamedObjectUnionType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
@@ -76,7 +76,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${imports.Left}(new Error(\`unable to resolve identifier \${identifier} deserialized from JSON\`))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${this.imports.Left}(new Error(\`unable to resolve identifier \${identifier} deserialized from JSON\`))) })`;
   }
 
   override fromRdfResourceValuesExpression(

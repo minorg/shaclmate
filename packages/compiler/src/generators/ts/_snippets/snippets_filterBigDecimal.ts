@@ -9,7 +9,7 @@ export const snippets_filterBigDecimal: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterBigDecimal`,
     code`\
-function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets.NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
+function ${syntheticNamePrefix}filterBigDecimal(filter: ${this.snippets.NumericFilter}<${this.imports.BigDecimal}>, value: ${this.imports.BigDecimal}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }

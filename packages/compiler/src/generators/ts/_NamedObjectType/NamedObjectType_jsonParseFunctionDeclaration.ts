@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
-import { imports } from "../imports.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { imports } from "../this.imports.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_jsonParseFunctionDeclaration(
@@ -12,9 +12,9 @@ export function NamedObjectType_jsonParseFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function parse(json: unknown): ${imports.Either}<Error, ${syntheticNamePrefix}Json> {
+export function parse(json: unknown): ${this.imports.Either}<Error, ${syntheticNamePrefix}Json> {
   const jsonSafeParseResult = schema().safeParse(json);
-  if (!jsonSafeParseResult.success) { return ${imports.Left}(jsonSafeParseResult.error); }
-  return ${imports.Right}(jsonSafeParseResult.data);
+  if (!jsonSafeParseResult.success) { return ${this.imports.Left}(jsonSafeParseResult.error); }
+  return ${this.imports.Right}(jsonSafeParseResult.data);
 }`);
 }

@@ -2,7 +2,8 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-import { imports } from "./imports.js";
+import type { Imports } from "./Imports.js";
+import type { Snippets } from "./Snippets.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -10,7 +11,9 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  * Abstract base class all types.
  */
 export abstract class AbstractType {
+  protected readonly imports: Imports;
   protected readonly logger: Logger;
+  protected readonly snippets: Snippets;
 
   /**
    * Comment from rdfs:comment.
@@ -140,12 +143,22 @@ export abstract class AbstractType {
 
   constructor({
     comment,
+    imports,
     label,
     logger,
-  }: { comment: Maybe<string>; label: Maybe<string>; logger: Logger }) {
+    snippets,
+  }: {
+    comment: Maybe<string>;
+    imports: Imports;
+    label: Maybe<string>;
+    logger: Logger;
+    snippets: Snippets;
+  }) {
     this.comment = comment;
+    this.imports = imports;
     this.label = label;
     this.logger = logger;
+    this.snippets = snippets;
   }
 
   /**
@@ -329,7 +342,7 @@ export namespace AbstractType {
     get name(): Code {
       return this.nullable
         ? this.nullableName
-        : code`new ${imports.GraphQLNonNull}(${this.nullableName})`;
+        : code`new ${this.imports.GraphQLNonNull}(${this.nullableName})`;
     }
   }
 

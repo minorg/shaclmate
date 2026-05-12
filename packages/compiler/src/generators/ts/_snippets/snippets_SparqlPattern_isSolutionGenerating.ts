@@ -9,7 +9,7 @@ export const snippets_SparqlPattern_isSolutionGenerating: SnippetFactory = ({
     `${syntheticNamePrefix}SparqlPattern.isSolutionGenerating`,
     code`\
 namespace ${syntheticNamePrefix}SparqlPattern {
-  export function isSolutionGenerating(pattern: ${snippets.SparqlPattern}): boolean {
+  export function isSolutionGenerating(pattern: ${this.snippets.SparqlPattern}): boolean {
     switch (pattern.type) {
       case "bind":
       case "bgp":        

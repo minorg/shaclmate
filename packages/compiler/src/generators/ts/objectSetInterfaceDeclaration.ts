@@ -1,4 +1,3 @@
-import { imports } from "./imports.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
@@ -37,9 +36,9 @@ export interface ${syntheticNamePrefix}ObjectSet {
 }
 
 export namespace ${syntheticNamePrefix}ObjectSet {
-  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}> {
+  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${this.imports.BlankNode} | ${this.imports.NamedNode}> {
     readonly filter?: ObjectFilterT;
-    readonly graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
+    readonly graph?: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}>;
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;

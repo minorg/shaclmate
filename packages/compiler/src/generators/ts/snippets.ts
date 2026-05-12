@@ -1,3 +1,4 @@
+import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
@@ -107,12 +108,19 @@ import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import type { Imports } from "./Imports.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class Snippets {
-  constructor(private readonly imports: Imports) {}
+  private readonly imports: Imports;
+  private readonly logger: Logger;
+
+  constructor({ imports, logger }: { imports: Imports; logger: Logger }) {
+    this.imports = imports;
+    this.logger = logger;
+  }
 
   @Memoize()
   get arrayEquals(): Snippet {
@@ -127,6 +135,8 @@ export class Snippets {
   private snippet(snippetFactory: SnippetFactory): Snippet {
     return snippetFactory({
       imports: this.imports,
+      logger: this.logger,
+      rdfjsTermExpression,
       snippets: this,
       syntheticNamePrefix,
     });

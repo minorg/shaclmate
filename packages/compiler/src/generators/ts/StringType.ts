@@ -2,21 +2,21 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { imports } from "./imports.js";
+
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { snippets } from "./snippets.js";
+
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
-  override readonly filterFunction = code`${snippets.filterString}`;
-  override readonly filterType = code`${snippets.StringFilter}`;
+  override readonly filterFunction = code`${this.snippets.filterString}`;
+  override readonly filterType = code`${this.snippets.StringFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
-    code`${imports.GraphQLString}`,
+    code`${this.imports.GraphQLString}`,
   );
   override readonly kind = "StringType";
-  override readonly schemaType = code`${snippets.StringSchema}`;
+  override readonly schemaType = code`${this.snippets.StringSchema}`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.stringSparqlWherePatterns}`;
+    code`${this.snippets.stringSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
@@ -50,11 +50,11 @@ export class StringType extends AbstractPrimitiveType<string> {
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${imports.z}.string()`;
+        return code`${this.imports.z}.string()`;
       case 1:
-        return code`${imports.z}.literal(${this.primitiveIn[0]})`;
+        return code`${this.imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
+        return code`${this.imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
     }
   }
 
@@ -63,7 +63,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression(this.datatype, { logger: this.logger })}` : ""})]`;
+    return code`[${this.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression(this.datatype, { logger: this.logger })}` : ""})]`;
   }
 
   protected override fromRdfExpressionChain({

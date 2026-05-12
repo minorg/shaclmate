@@ -16,14 +16,14 @@ import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
-import { imports } from "./imports.js";
+
 import type { LiteralType } from "./LiteralType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { NamedUnionType } from "./NamedUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
-import { snippets } from "./snippets.js";
+
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -51,12 +51,12 @@ export class ListType<
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+    return code`${this.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   override fromRdfResourceValuesExpression({
@@ -73,7 +73,7 @@ export class ListType<
           valueList => ${this.itemType.fromRdfResourceValuesExpression({
             variables: {
               ...variables,
-              resourceValues: code`${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
+              resourceValues: code`${this.imports.Right}(${this.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
             },
           })}
       ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
@@ -101,12 +101,12 @@ export class ListType<
     switch (this.identifierNodeKind) {
       case "BlankNode": {
         mintListIdentifierFunction =
-          mintSubListIdentifierFunction = code`(() => ${imports.dataFactory}.blankNode())`;
-        resourceTypeName = code`${imports.Resource}<${imports.BlankNode}>`;
+          mintSubListIdentifierFunction = code`(() => ${this.imports.dataFactory}.blankNode())`;
+        resourceTypeName = code`${this.imports.Resource}<${this.imports.BlankNode}>`;
         break;
       }
       case "IRI": {
-        resourceTypeName = code`${imports.Resource}<${imports.NamedNode}>`;
+        resourceTypeName = code`${this.imports.Resource}<${this.imports.NamedNode}>`;
         throw new RangeError("list IRI minting is unsupported");
       }
     }
@@ -120,7 +120,7 @@ export class ListType<
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${this.imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
     currentSubListResource.add(${rdfjsTermExpression(rdf.first, { logger: this.logger })}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first, { logger: this.logger }), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 

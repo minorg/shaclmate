@@ -8,6 +8,6 @@ export const snippets_blankNodeSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BlankNodeFilter}, ${snippets.BlankNodeSchema}> =
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.BlankNodeFilter}, ${this.snippets.BlankNodeSchema}> =
   ({ propertyPatterns }) => propertyPatterns;`,
   );

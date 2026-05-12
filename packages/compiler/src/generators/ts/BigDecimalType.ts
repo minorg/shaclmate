@@ -1,29 +1,28 @@
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
+
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
-  override readonly filterFunction = code`${snippets.filterBigDecimal}`;
+  override readonly filterFunction = code`${this.snippets.filterBigDecimal}`;
   override readonly filterType =
-    code`${snippets.NumericFilter}<${imports.BigDecimal}>`;
+    code`${this.snippets.NumericFilter}<${this.imports.BigDecimal}>`;
   override readonly graphqlType = new AbstractLiteralType.GraphqlType(
-    code`${imports.GraphQLString}`,
+    code`${this.imports.GraphQLString}`,
   );
   override readonly kind = "BigDecimalType";
-  override readonly name = code`${imports.BigDecimal}`;
+  override readonly name = code`${this.imports.BigDecimal}`;
   override readonly schemaType =
-    code`${snippets.NumericSchema}<${imports.BigDecimal}>`;
+    code`${this.snippets.NumericSchema}<${this.imports.BigDecimal}>`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${snippets.bigDecimalSparqlWherePatterns}`;
+    code`${this.snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()
   override get conversions(): readonly AbstractLiteralType.Conversion[] {
     return [
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${imports.BigDecimal}(${value}.toString())`,
+      //     code`new ${this.imports.BigDecimal}(${value}.toString())`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "bigint"`,
       //   sourceTypeName: code`bigint`,
@@ -33,12 +32,12 @@ export class BigDecimalType extends AbstractLiteralType {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
-        sourceTypeName: code`${imports.BigDecimal}`,
+        sourceTypeName: code`${this.imports.BigDecimal}`,
         sourceTypeof: "object",
       },
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${imports.BigDecimal}(${value})`,
+      //     code`new ${this.imports.BigDecimal}(${value})`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "number"`,
       //   sourceTypeName: code`number`,
@@ -46,7 +45,7 @@ export class BigDecimalType extends AbstractLiteralType {
       // },
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${imports.BigDecimal}(${value})`,
+      //     code`new ${this.imports.BigDecimal}(${value})`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "string"`,
       //   sourceTypeName: code`string`,
@@ -58,7 +57,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`new ${imports.BigDecimal}(${variables.value})`;
+    return code`new ${this.imports.BigDecimal}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -80,7 +79,7 @@ export class BigDecimalType extends AbstractLiteralType {
 
   @Memoize()
   override jsonSchema(): Code {
-    return code`${imports.z}.string()`;
+    return code`${this.imports.z}.string()`;
   }
 
   override toJsonExpression({
@@ -96,7 +95,7 @@ export class BigDecimalType extends AbstractLiteralType {
   > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${snippets.decodeBigDecimalLiteral})))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.snippets.decodeBigDecimalLiteral})))`,
     };
   }
 
@@ -105,6 +104,6 @@ export class BigDecimalType extends AbstractLiteralType {
   }: Parameters<
     AbstractLiteralType["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${snippets.bigDecimalLiteral}(${variables.value})]`;
+    return code`[${this.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 }
