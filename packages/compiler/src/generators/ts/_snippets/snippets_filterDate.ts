@@ -5,7 +5,7 @@ import { snippets_DateFilter } from "./snippets_DateFilter.js";
 export const snippets_filterDate = conditionalOutput(
   `${syntheticNamePrefix}filterDate`,
   code`\
-function ${syntheticNamePrefix}filterDate(filter: ${snippets_DateFilter}, value: Date) {
+function ${syntheticNamePrefix}filterDate(filter: ${snippets.DateFilter}, value: Date) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.getTime() === value.getTime())) {
     return false;
   }

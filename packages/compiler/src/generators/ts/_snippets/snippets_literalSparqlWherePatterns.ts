@@ -8,6 +8,6 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_literalSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}literalSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_LiteralFilter}, ${snippets_LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets_termFilterSparqlPatterns}(parameters), ...parameters });`,
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.LiteralFilter}, ${snippets.LiteralSchema}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
 );

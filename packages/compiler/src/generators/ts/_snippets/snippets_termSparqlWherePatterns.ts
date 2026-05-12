@@ -9,6 +9,6 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_termSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}termSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}termSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_TermFilter}, ${snippets_TermSchema}> =
-  (parameters) => ${snippets_termSchemaSparqlPatterns}({ filterPatterns: ${snippets_termFilterSparqlPatterns}(parameters), ...parameters })`,
+const ${syntheticNamePrefix}termSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.TermFilter}, ${snippets.TermSchema}> =
+  (parameters) => ${snippets.termSchemaSparqlPatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
 );

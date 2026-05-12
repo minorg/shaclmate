@@ -6,7 +6,7 @@ export const snippets_SparqlPattern_isSolutionGenerating = conditionalOutput(
   `${syntheticNamePrefix}SparqlPattern.isSolutionGenerating`,
   code`\
 namespace ${syntheticNamePrefix}SparqlPattern {
-  export function isSolutionGenerating(pattern: ${snippets_SparqlPattern}): boolean {
+  export function isSolutionGenerating(pattern: ${snippets.SparqlPattern}): boolean {
     switch (pattern.type) {
       case "bind":
       case "bgp":        

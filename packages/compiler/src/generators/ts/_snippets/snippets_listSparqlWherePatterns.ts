@@ -14,7 +14,7 @@ const logger = dummyLogger;
 export const snippets_listSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}listSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlWherePatternsFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return (parameters) => {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
@@ -22,7 +22,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
     const listVariable = parameters.valueVariable;
-    const patterns: ${snippets_SparqlPattern}[] = [];
+    const patterns: ${snippets.SparqlPattern}[] = [];
     const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
     const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
 
@@ -67,7 +67,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       });
     }
 
-    const optionalPatterns: ${snippets_SparqlPattern}[] = [];
+    const optionalPatterns: ${snippets.SparqlPattern}[] = [];
     
     const restNVariable = variable("RestN");
     // ?list rdf:rest+ ?restN

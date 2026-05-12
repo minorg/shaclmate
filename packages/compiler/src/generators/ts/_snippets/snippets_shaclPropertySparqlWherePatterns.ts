@@ -15,17 +15,17 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
   ignoreRdfType: boolean;
   preferredLanguages: readonly string[] | undefined;
-  propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
+  propertySchema: ${snippets.ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
+  typeSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
-}): readonly ${snippets_SparqlPattern}[] {
+}): readonly ${snippets.SparqlPattern}[] {
   const propertyPathSparqlWherePatterns = ({ end, propertyPath, start, variableCounter }: {
     end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${snippets_PropertyPath};
+    propertyPath: ${snippets.PropertyPath};
     start: ${imports.NamedNode} | ${imports.Variable};
     variableCounter: { value: number };
-  }): ${snippets_SparqlPattern}[] => {
+  }): ${snippets.SparqlPattern}[] => {
     switch (propertyPath.termType) {
       case "AlternativePath": {
         return [{
@@ -43,7 +43,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
       case "ZeroOrMorePath":
       case "ZeroOrOnePath": {
         return [{
-          triples: [{ subject: start, predicate: ${snippets_sparqlPropertyPath}(propertyPath), object: end }],
+          triples: [{ subject: start, predicate: ${snippets.sparqlPropertyPath}(propertyPath), object: end }],
           type: "bgp"
         }];
       }
@@ -57,7 +57,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
           return propertyPathSparqlWherePatterns({ end, propertyPath: propertyPath.members[0], start, variableCounter });
         }
 
-        let patterns: ${snippets_SparqlPattern}[] = [];
+        let patterns: ${snippets.SparqlPattern}[] = [];
         let current: ${imports.NamedNode} | ${imports.Variable} = start;
         for (let memberI = 0; memberI < propertyPath.members.length; memberI++) {
           const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = memberI === propertyPath.members.length - 1

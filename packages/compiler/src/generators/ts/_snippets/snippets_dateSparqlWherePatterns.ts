@@ -11,9 +11,9 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_dateSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}dateSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_DateFilter}, ${snippets_DateSchema}> =
+const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.DateFilter}, ${snippets.DateSchema}> =
   ({ filter, schema, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (filter.in !== undefined && filter.in.length > 0) {
@@ -21,7 +21,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${snippets_literalFactory}.date(inValue, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime))],
+            args: [valueVariable, filter.in.map(inValue => ${snippets.literalFactory}.date(inValue, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime))],
           },
           lift: true,
           type: "filter",
@@ -33,7 +33,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxExclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxExclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -45,7 +45,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.maxInclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.maxInclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -57,7 +57,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.minExclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.minExclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -69,7 +69,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${snippets_literalFactory}.date(filter.minInclusive, schema.kind === "Date" ? ${snippets_RdfVocabularies}.xsd.date : ${snippets_RdfVocabularies}.xsd.dateTime)],
+            args: [valueVariable, ${snippets.literalFactory}.date(filter.minInclusive, schema.kind === "Date" ? ${snippets.RdfVocabularies}.xsd.date : ${snippets.RdfVocabularies}.xsd.dateTime)],
           },
           lift: true,
           type: "filter"
@@ -77,6 +77,6 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets_ValueSparqlWhere
       }
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, schema, valueVariable });
+    return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, schema, valueVariable });
   }`,
 );

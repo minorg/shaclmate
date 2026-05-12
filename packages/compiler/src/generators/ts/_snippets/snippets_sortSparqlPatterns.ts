@@ -5,10 +5,10 @@ import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 export const snippets_sortSparqlPatterns = conditionalOutput(
   `${syntheticNamePrefix}sortSparqlPatterns`,
   code`\
-function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets_SparqlPattern}[]): readonly ${snippets_SparqlPattern}[] {
-  const filterPatterns: ${snippets_SparqlPattern}[] = [];
-  const otherPatterns: ${snippets_SparqlPattern}[] = [];
-  const valuesPatterns: ${snippets_SparqlPattern}[] = [];
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
+  const filterPatterns: ${snippets.SparqlPattern}[] = [];
+  const otherPatterns: ${snippets.SparqlPattern}[] = [];
+  const valuesPatterns: ${snippets.SparqlPattern}[] = [];
 
   for (const pattern of patterns) {
     switch (pattern.type) {

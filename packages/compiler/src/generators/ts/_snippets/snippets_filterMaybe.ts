@@ -7,7 +7,7 @@ export const snippets_filterMaybe = conditionalOutput(
   `${syntheticNamePrefix}filterMaybe`,
   code`\
 function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${snippets_MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
+  return (filter: ${snippets.MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
     if (filter !== null) {
       if (value.isNothing()) {
         return false;

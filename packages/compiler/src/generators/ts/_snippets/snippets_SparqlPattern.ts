@@ -5,5 +5,5 @@ import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js"
 
 export const snippets_SparqlPattern = conditionalOutput(
   `${syntheticNamePrefix}SparqlPattern`,
-  code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${imports.sparqljs}.Pattern, ${imports.sparqljs}.FilterPattern> | ${snippets_SparqlFilterPattern};`,
+  code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${imports.sparqljs}.Pattern, ${imports.sparqljs}.FilterPattern> | ${snippets.SparqlFilterPattern};`,
 );

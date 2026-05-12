@@ -8,7 +8,7 @@ export const snippets_parseBlankNode = conditionalOutput(
   code`\
 export function ${syntheticNamePrefix}parseBlankNode(identifier: string): ${imports.Either}<Error, ${imports.BlankNode}> {
   return \
-    ${snippets_parseIdentifier}(identifier)\
+    ${snippets.parseIdentifier}(identifier)\
       .chain((identifier) => (identifier.termType === "BlankNode") ? ${imports.Right}(identifier) : ${imports.Left}(new Error("expected identifier to be BlankNode"))) \
     as ${imports.Either}<Error, ${imports.BlankNode}>;
 }`,

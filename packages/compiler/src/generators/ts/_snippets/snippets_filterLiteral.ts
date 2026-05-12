@@ -7,7 +7,7 @@ import { snippets_LiteralFilter } from "./snippets_LiteralFilter.js";
 export const snippets_filterLiteral = conditionalOutput(
   `${syntheticNamePrefix}filterLiteral`,
   code`\
-function ${syntheticNamePrefix}filterLiteral(filter: ${snippets_LiteralFilter}, value: ${imports.Literal}): boolean {
-  return ${snippets_filterTerm}(filter, value);
+function ${syntheticNamePrefix}filterLiteral(filter: ${snippets.LiteralFilter}, value: ${imports.Literal}): boolean {
+  return ${snippets.filterTerm}(filter, value);
 }`,
 );

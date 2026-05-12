@@ -13,5 +13,5 @@ type ${syntheticNamePrefix}FocusSparqlWherePatternsFunction<FilterT> =
     ignoreRdfType: boolean;
     preferredLanguages: readonly string[] | undefined;
     variablePrefix: string;
-  }) => readonly ${snippets_SparqlPattern}[];`,
+  }) => readonly ${snippets.SparqlPattern}[];`,
 );

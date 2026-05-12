@@ -6,7 +6,7 @@ import { snippets_BlankNodeFilter } from "./snippets_BlankNodeFilter.js";
 export const snippets_filterBlankNode = conditionalOutput(
   `${syntheticNamePrefix}filterBlankNode`,
   code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${snippets_BlankNodeFilter}, _value: ${imports.BlankNode}) {
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${snippets.BlankNodeFilter}, _value: ${imports.BlankNode}) {
   return true;
 }`,
 );

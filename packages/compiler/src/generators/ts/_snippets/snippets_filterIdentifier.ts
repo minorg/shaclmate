@@ -6,7 +6,7 @@ import { snippets_IdentifierFilter } from "./snippets_IdentifierFilter.js";
 export const snippets_filterIdentifier = conditionalOutput(
   `${syntheticNamePrefix}filterIdentifier`,
   code`\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets_IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
+function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets.IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }

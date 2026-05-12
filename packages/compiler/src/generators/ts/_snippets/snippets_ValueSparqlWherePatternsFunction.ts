@@ -11,9 +11,9 @@ type ${syntheticNamePrefix}ValueSparqlWherePatternsFunction<FilterT, SchemaT> =
     filter: FilterT | undefined;
     ignoreRdfType: boolean;
     preferredLanguages: readonly string[] | undefined;
-    propertyPatterns: readonly ${snippets_SparqlPattern}[];
+    propertyPatterns: readonly ${snippets.SparqlPattern}[];
     schema: SchemaT;
     valueVariable: ${imports.Variable};
     variablePrefix: string;
-  }) => readonly ${snippets_SparqlPattern}[];`,
+  }) => readonly ${snippets.SparqlPattern}[];`,
 );

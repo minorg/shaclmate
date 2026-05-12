@@ -9,11 +9,11 @@ export const snippets_maybeEquals = conditionalOutput(
 function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: ${imports.Maybe}<T>,
   rightMaybe: ${imports.Maybe}<T>,
-  valueEquals: (left: T, right: T) => boolean | ${snippets_EqualsResult},
-): ${snippets_EqualsResult} {
+  valueEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return ${snippets_EqualsResult}.fromBooleanEqualsResult(
+      return ${snippets.EqualsResult}.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -32,6 +32,6 @@ function ${syntheticNamePrefix}maybeEquals<T>(
     });
   }
 
-  return ${snippets_EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
 );

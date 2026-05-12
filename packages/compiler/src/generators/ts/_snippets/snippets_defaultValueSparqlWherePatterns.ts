@@ -7,9 +7,9 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_defaultValueSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}defaultValueSparqlWherePatterns`,
   code`\
-function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlWherePatternsFunction}<ItemFilterT, ${snippets_DefaultValueSchema}<ItemSchemaT>> {  
+function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ${snippets.DefaultValueSchema}<ItemSchemaT>> {  
   return ({ schema, ...otherParameters }) => {
-    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets_liftSparqlPatterns}(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item() }));
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item() }));
     return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,

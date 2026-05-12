@@ -10,14 +10,14 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_iriSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}iriSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_IriFilter}, ${snippets_IriSchema}> =
+const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IriFilter}, ${snippets.IriSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter?.in !== undefined && filter.in.length > 0) {
-      filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+      filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   };`,
 );

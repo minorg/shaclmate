@@ -1,24 +1,22 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_bigDecimalLiteral } from "./snippets_bigDecimalLiteral.js";
-import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
-import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_bigDecimalSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}bigDecimalSparqlWherePatterns`,
-  code`\
-const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_NumericFilter}<${imports.BigDecimal}>, ${snippets_NumericSchema}<${imports.BigDecimal}>> = ({ filter, propertyPatterns, schema, valueVariable }) => {
-  const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+export const snippets_bigDecimalSparqlWherePatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}bigDecimalSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<${imports.BigDecimal}>, ${snippets.NumericSchema}<${imports.BigDecimal}>> = ({ filter, propertyPatterns, schema, valueVariable }) => {
+  const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
   if (filter) {
     if (filter.in !== undefined && filter.in.length > 0) {
       filterPatterns.push({
         expression: {
-          args: [valueVariable, filter.in.map(${snippets_bigDecimalLiteral})],
+          args: [valueVariable, filter.in.map(${snippets.bigDecimalLiteral})],
           operator: "in",
           type: "operation",
         },
@@ -32,7 +30,7 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
         expression: {
           type: "operation",
           operator: "<",
-          args: [valueVariable, ${snippets_bigDecimalLiteral}(filter.maxExclusive)],
+          args: [valueVariable, ${snippets.bigDecimalLiteral}(filter.maxExclusive)],
         },
         lift: true,
         type: "filter",
@@ -44,7 +42,7 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
         expression: {
           type: "operation",
           operator: "<=",
-          args: [valueVariable, ${snippets_bigDecimalLiteral}(filter.maxInclusive)],
+          args: [valueVariable, ${snippets.bigDecimalLiteral}(filter.maxInclusive)],
         },
         lift: true,
         type: "filter",
@@ -56,7 +54,7 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
         expression: {
           type: "operation",
           operator: ">",
-          args: [valueVariable, ${snippets_bigDecimalLiteral}(filter.minExclusive)],
+          args: [valueVariable, ${snippets.bigDecimalLiteral}(filter.minExclusive)],
         },
         lift: true,
         type: "filter",
@@ -68,7 +66,7 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
         expression: {
           type: "operation",
           operator: ">=",
-          args: [valueVariable, ${snippets_bigDecimalLiteral}(filter.minInclusive)],
+          args: [valueVariable, ${snippets.bigDecimalLiteral}(filter.minInclusive)],
         },
         lift: true,
         type: "filter",
@@ -76,11 +74,11 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
     }
   }
 
-  const schemaPatterns: ${snippets_SparqlPattern}[] = [];
+  const schemaPatterns: ${snippets.SparqlPattern}[] = [];
   if (schema.in && schema.in.length > 0) {
     schemaPatterns.push({
       expression: {
-        args: [valueVariable, schema.in.map(${snippets_bigDecimalLiteral})],
+        args: [valueVariable, schema.in.map(${snippets.bigDecimalLiteral})],
         operator: "in",
         type: "operation",
       },
@@ -89,6 +87,6 @@ const ${syntheticNamePrefix}bigDecimalSparqlWherePatterns: ${snippets_ValueSparq
     });
   }
 
-  return (propertyPatterns as readonly ${snippets_SparqlPattern}[]).concat(schemaPatterns).concat(filterPatterns);
+  return (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(schemaPatterns).concat(filterPatterns);
 }`,
-);
+  );

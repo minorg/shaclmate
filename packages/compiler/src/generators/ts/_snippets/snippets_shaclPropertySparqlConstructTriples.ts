@@ -12,15 +12,15 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
   ignoreRdfType: boolean;
-  propertySchema: ${snippets_ShaclPropertySchema}<TypeSchemaT>;
+  propertySchema: ${snippets.ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlConstructTriples: ${snippets_ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
+  typeSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
 }): readonly ${imports.sparqljs}.Triple[] {
   const propertyPathSparqlConstructTriples = ({ end, propertyPath, start, variableCounter }: {
     variableCounter: { value: number };
     end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
-    propertyPath: ${snippets_PropertyPath};
+    propertyPath: ${snippets.PropertyPath};
     start: ${imports.NamedNode} | ${imports.Variable};
   }): readonly ${imports.sparqljs}.Triple[] => {
     switch (propertyPath.termType) {

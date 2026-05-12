@@ -13,7 +13,7 @@ export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<ValueT, ReturnT ex
    options: {
      graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
      ignoreRdfType?: boolean;
-     propertyPath: ${snippets_PropertyPath};
+     propertyPath: ${snippets.PropertyPath};
      resource: ${imports.Resource};
      resourceSet: ${imports.ResourceSet};
    }

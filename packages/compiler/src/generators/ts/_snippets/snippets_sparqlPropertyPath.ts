@@ -7,9 +7,9 @@ export const snippets_sparqlPropertyPath = conditionalOutput(
   `${syntheticNamePrefix}sparqlPropertyPath`,
   code`\
 /**
- * Convert a ${snippets_PropertyPath} to a ${imports.sparqljs}.PropertyPath.
+ * Convert a ${snippets.PropertyPath} to a ${imports.sparqljs}.PropertyPath.
  */  
-function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets_PropertyPath}): ${imports.NamedNode} | ${imports.sparqljs}.PropertyPath {
+function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets.PropertyPath}): ${imports.NamedNode} | ${imports.sparqljs}.PropertyPath {
   switch (propertyPath.termType) {
     case "AlternativePath":
       return {

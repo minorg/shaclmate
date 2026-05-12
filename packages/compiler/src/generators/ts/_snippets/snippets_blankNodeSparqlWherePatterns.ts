@@ -7,6 +7,6 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_blankNodeSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_BlankNodeFilter}, ${snippets_BlankNodeSchema}> =
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BlankNodeFilter}, ${snippets.BlankNodeSchema}> =
   ({ propertyPatterns }) => propertyPatterns;`,
 );

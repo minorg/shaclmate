@@ -10,16 +10,16 @@ import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparq
 export const snippets_booleanSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}booleanSparqlWherePatterns`,
   code`\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets_ValueSparqlWherePatternsFunction}<${snippets_BooleanFilter}, ${snippets_BooleanSchema}> =
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.BooleanFilter}, ${snippets.BooleanSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (filter.value !== undefined) {
-        filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
+        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
       }
     }
 
-    return ${snippets_termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   }`,
 );

@@ -16,9 +16,9 @@ function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { 
         subject,
         predicate: {
           items: [
-            ${snippets_RdfVocabularies}.rdf.type,
+            ${snippets.RdfVocabularies}.rdf.type,
             {
-              items: [${snippets_RdfVocabularies}.rdfs.subClassOf],
+              items: [${snippets.RdfVocabularies}.rdfs.subClassOf],
               pathType: "*",
               type: "path",
             },

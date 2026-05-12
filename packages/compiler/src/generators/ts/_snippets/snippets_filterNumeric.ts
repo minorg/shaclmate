@@ -5,7 +5,7 @@ import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 export const snippets_filterNumeric = conditionalOutput(
   `${syntheticNamePrefix}filterNumeric`,
   code`\
-function ${syntheticNamePrefix}filterNumeric<T extends bigint | number>(filter: ${snippets_NumericFilter}<T>, value: T) {
+function ${syntheticNamePrefix}filterNumeric<T extends bigint | number>(filter: ${snippets.NumericFilter}<T>, value: T) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue === value)) {
     return false;
   }

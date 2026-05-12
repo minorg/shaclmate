@@ -1,9 +1,12 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_arrayIntersection = conditionalOutput(
-  `${syntheticNamePrefix}arrayIntersection`,
-  code`\
+export const snippets_arrayIntersection: SnippetFactory = ({
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}arrayIntersection`,
+    code`\
 function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
   if (left.length === 0) {
     return right;
@@ -30,4 +33,4 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
   }
   return [...intersection];
 }`,
-);
+  );

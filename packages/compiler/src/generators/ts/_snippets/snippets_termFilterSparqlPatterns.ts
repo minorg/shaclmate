@@ -8,12 +8,12 @@ import { snippets_TermFilter } from "./snippets_TermFilter.js";
 export const snippets_termFilterSparqlPatterns = conditionalOutput(
   `${syntheticNamePrefix}termFilterSparqlPatterns`,
   code`\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets_TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets_SparqlFilterPattern}[] {
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets.TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets.SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }
 
-  const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+  const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
   if (
     filter.datatypeIn !== undefined &&
@@ -34,7 +34,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   }
 
   if (filter.in !== undefined && filter.in.length > 0) {
-    filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+    filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
   }
 
   if (

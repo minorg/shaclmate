@@ -8,7 +8,7 @@ export const snippets_shaclPropertyFromRdf = conditionalOutput(
   code`\
 function ${syntheticNamePrefix}shaclPropertyFromRdf<T>({ graph, propertySchema, resource, typeFromRdf }: {
   graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
-  propertySchema: ${snippets_ShaclPropertySchema};
+  propertySchema: ${snippets.ShaclPropertySchema};
   resource: ${imports.Resource};
   typeFromRdf: (resourceValues: ${imports.Either}<Error, ${imports.Resource}.Values>) => ${imports.Either}<Error, ${imports.Resource}.Values<T>>;
 }): ${imports.Either}<Error, T> {

@@ -6,7 +6,7 @@ import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
 export const snippets_filterBigDecimal = conditionalOutput(
   `${syntheticNamePrefix}filterBigDecimal`,
   code`\
-function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets_NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
+function ${syntheticNamePrefix}filterBigDecimal(filter: ${snippets.NumericFilter}<${imports.BigDecimal}>, value: ${imports.BigDecimal}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }

@@ -7,7 +7,7 @@ import { snippets_ValueSparqlConstructTriplesFunction } from "./snippets_ValueSp
 export const snippets_setSparqlConstructTriples = conditionalOutput(
   `${syntheticNamePrefix}setSparqlConstructTriples`,
   code`\
-function ${syntheticNamePrefix}setSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets_ValueSparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets_ValueSparqlConstructTriplesFunction}<${snippets_CollectionFilter}<ItemFilterT>, ${snippets_CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets.ValueSparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlConstructTriplesFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ schema, ...otherParameters }) => itemSparqlConstructTriplesFunction({ ...otherParameters, schema: schema.item() });
 }`,
 );

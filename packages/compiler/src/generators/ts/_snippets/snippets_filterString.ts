@@ -5,7 +5,7 @@ import { snippets_StringFilter } from "./snippets_StringFilter.js";
 export const snippets_filterString = conditionalOutput(
   `${syntheticNamePrefix}filterString`,
   code`\
-function ${syntheticNamePrefix}filterString(filter: ${snippets_StringFilter}, value: string) {
+function ${syntheticNamePrefix}filterString(filter: ${snippets.StringFilter}, value: string) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue === value)) {
     return false;
   }
