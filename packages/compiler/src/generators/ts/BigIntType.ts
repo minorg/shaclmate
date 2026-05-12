@@ -12,6 +12,15 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigIntType";
   override readonly typeofs = NonEmptyList(["bigint" as const]);
 
+  override get conversions(): readonly AbstractNumericType.Conversion[] {
+    return super.conversions.concat({
+      conversionExpression: (value) => code`BigInt(${value})`,
+      sourceTypeCheckExpression: (value) => code`typeof ${value} === "number"`,
+      sourceTypeName: "number",
+      sourceTypeof: "number",
+    });
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {

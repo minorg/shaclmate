@@ -105,6 +105,7 @@ export abstract class AbstractNumericType<
 }
 
 export namespace AbstractNumericType {
+  export type Conversion = AbstractPrimitiveType.Conversion;
   export const JsonType = AbstractPrimitiveType.JsonType;
   export type JsonType = AbstractPrimitiveType.JsonType;
 }
