@@ -11,13 +11,13 @@ export class SetType<
   /**
    * Minimum number of items in the set.
    */
-  readonly minCount: number;
+  readonly minCount: bigint;
 
   constructor({
     itemType,
     minCount,
     ...superParameters
-  }: { minCount: number } & Pick<
+  }: { minCount: bigint } & Pick<
     ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0],
     "itemType" | "mutable"
   >) {
@@ -47,7 +47,7 @@ export class SetType<
   override toJSON() {
     return {
       ...super.toJSON(),
-      minCount: this.minCount,
+      minCount: Number(this.minCount),
     };
   }
 }

@@ -120,20 +120,22 @@ function transformPropertyShapeToAstType(
   return transformShapeToAstType
     .call(this, propertyShape, shapeStack)
     .chain((propertyShapeAstType) => {
-      let maxCount = propertyShape.maxCount.orDefault(Number.MAX_SAFE_INTEGER);
-      let minCount = propertyShape.minCount.orDefault(0);
-      if (minCount < 0) {
-        minCount = 0;
+      let maxCount = propertyShape.maxCount.orDefault(
+        BigInt(Number.MAX_SAFE_INTEGER),
+      );
+      let minCount = propertyShape.minCount.orDefault(0n);
+      if (minCount < 0n) {
+        minCount = 0n;
       }
       if (propertyShape.hasValues.length > minCount) {
-        minCount = propertyShape.hasValues.length;
+        minCount = BigInt(propertyShape.hasValues.length);
       }
       if (maxCount < minCount) {
         maxCount = minCount;
       }
 
       if (propertyShapeAstType.kind === "DefaultValueType") {
-        if (minCount > 0) {
+        if (minCount > 0n) {
           return Left(
             new Error(
               `${propertyShape}: has sh:minCount > 0 and sh:defaultValue`,
@@ -152,11 +154,11 @@ function transformPropertyShapeToAstType(
         return Either.of(propertyShapeAstType);
       }
 
-      if (minCount === 1 && maxCount === 1) {
+      if (minCount === 1n && maxCount === 1n) {
         return Either.of(propertyShapeAstType);
       }
 
-      if (minCount === 0 && maxCount === 1) {
+      if (minCount === 0n && maxCount === 1n) {
         if (!ast.OptionType.isItemType(propertyShapeAstType)) {
           return Left(
             new Error(
@@ -335,12 +337,12 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             ...astAbstractTypeProperties,
             partialType: new ast.SetType({
               itemType: astPartialItemType,
-              minCount: 0,
+              minCount: 0n,
               mutable: false,
             }),
             resolveType: new ast.SetType({
               itemType: astResolveItemType,
-              minCount: 0,
+              minCount: 0n,
               mutable: false,
             }),
           });

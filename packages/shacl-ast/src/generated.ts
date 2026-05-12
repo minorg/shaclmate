@@ -555,14 +555,14 @@ export interface PropertyShape {
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
   readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
-  readonly maxCount: Maybe<number>;
+  readonly maxCount: Maybe<bigint>;
   readonly maxExclusive: Maybe<Literal>;
   readonly maxInclusive: Maybe<Literal>;
-  readonly maxLength: Maybe<number>;
-  readonly minCount: Maybe<number>;
+  readonly maxLength: Maybe<bigint>;
+  readonly minCount: Maybe<bigint>;
   readonly minExclusive: Maybe<Literal>;
   readonly minInclusive: Maybe<Literal>;
-  readonly minLength: Maybe<number>;
+  readonly minLength: Maybe<bigint>;
   readonly name: Maybe<string>;
   readonly node: Maybe<BlankNode | NamedNode>;
   readonly nodeKind: Maybe<
@@ -628,7 +628,7 @@ export namespace PropertyShape {
       | string;
     readonly label?: Maybe<string> | string;
     readonly languageIn?: Maybe<readonly string[]> | readonly string[];
-    readonly maxCount?: Maybe<number> | number;
+    readonly maxCount?: Maybe<bigint> | bigint | number;
     readonly maxExclusive?:
       | Maybe<Literal>
       | bigint
@@ -645,8 +645,8 @@ export namespace PropertyShape {
       | number
       | string
       | Literal;
-    readonly maxLength?: Maybe<number> | number;
-    readonly minCount?: Maybe<number> | number;
+    readonly maxLength?: Maybe<bigint> | bigint | number;
+    readonly minCount?: Maybe<bigint> | bigint | number;
     readonly minExclusive?:
       | Maybe<Literal>
       | bigint
@@ -663,7 +663,7 @@ export namespace PropertyShape {
       | number
       | string
       | Literal;
-    readonly minLength?: Maybe<number> | number;
+    readonly minLength?: Maybe<bigint> | bigint | number;
     readonly name?: Maybe<string> | string;
     readonly node?:
       | Maybe<BlankNode | NamedNode>
@@ -910,11 +910,13 @@ export namespace PropertyShape {
     } else {
       languageIn = parameters.languageIn satisfies never;
     }
-    let maxCount: Maybe<number>;
+    let maxCount: Maybe<bigint>;
     if (Maybe.isMaybe(parameters.maxCount)) {
       maxCount = parameters.maxCount;
-    } else if (typeof parameters.maxCount === "number") {
+    } else if (typeof parameters.maxCount === "bigint") {
       maxCount = Maybe.of(parameters.maxCount);
+    } else if (typeof parameters.maxCount === "number") {
+      maxCount = Maybe.of(BigInt(parameters.maxCount));
     } else if (parameters.maxCount === undefined) {
       maxCount = Maybe.empty();
     } else {
@@ -966,21 +968,25 @@ export namespace PropertyShape {
     } else {
       maxInclusive = parameters.maxInclusive satisfies never;
     }
-    let maxLength: Maybe<number>;
+    let maxLength: Maybe<bigint>;
     if (Maybe.isMaybe(parameters.maxLength)) {
       maxLength = parameters.maxLength;
-    } else if (typeof parameters.maxLength === "number") {
+    } else if (typeof parameters.maxLength === "bigint") {
       maxLength = Maybe.of(parameters.maxLength);
+    } else if (typeof parameters.maxLength === "number") {
+      maxLength = Maybe.of(BigInt(parameters.maxLength));
     } else if (parameters.maxLength === undefined) {
       maxLength = Maybe.empty();
     } else {
       maxLength = parameters.maxLength satisfies never;
     }
-    let minCount: Maybe<number>;
+    let minCount: Maybe<bigint>;
     if (Maybe.isMaybe(parameters.minCount)) {
       minCount = parameters.minCount;
-    } else if (typeof parameters.minCount === "number") {
+    } else if (typeof parameters.minCount === "bigint") {
       minCount = Maybe.of(parameters.minCount);
+    } else if (typeof parameters.minCount === "number") {
+      minCount = Maybe.of(BigInt(parameters.minCount));
     } else if (parameters.minCount === undefined) {
       minCount = Maybe.empty();
     } else {
@@ -1032,11 +1038,13 @@ export namespace PropertyShape {
     } else {
       minInclusive = parameters.minInclusive satisfies never;
     }
-    let minLength: Maybe<number>;
+    let minLength: Maybe<bigint>;
     if (Maybe.isMaybe(parameters.minLength)) {
       minLength = parameters.minLength;
-    } else if (typeof parameters.minLength === "number") {
+    } else if (typeof parameters.minLength === "bigint") {
       minLength = Maybe.of(parameters.minLength);
+    } else if (typeof parameters.minLength === "number") {
+      minLength = Maybe.of(BigInt(parameters.minLength));
     } else if (parameters.minLength === undefined) {
       minLength = Maybe.empty();
     } else {
@@ -1337,7 +1345,7 @@ export namespace PropertyShape {
     }
     if (
       filter.maxCount !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.maxCount,
         value.maxCount,
       )
@@ -1364,7 +1372,7 @@ export namespace PropertyShape {
     }
     if (
       filter.maxLength !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.maxLength,
         value.maxLength,
       )
@@ -1373,7 +1381,7 @@ export namespace PropertyShape {
     }
     if (
       filter.minCount !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.minCount,
         value.minCount,
       )
@@ -1400,7 +1408,7 @@ export namespace PropertyShape {
     }
     if (
       filter.minLength !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.minLength,
         value.minLength,
       )
@@ -1526,14 +1534,14 @@ export namespace PropertyShape {
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
     readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
-    readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
+    readonly maxCount?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly maxInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly maxLength?: $MaybeFilter<$NumericFilter<number>>;
-    readonly minCount?: $MaybeFilter<$NumericFilter<number>>;
+    readonly maxLength?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly minCount?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly minExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
+    readonly minLength?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly name?: $MaybeFilter<$StringFilter>;
     readonly node?: $MaybeFilter<$IdentifierFilter>;
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
@@ -1612,14 +1620,14 @@ export namespace PropertyShape {
     isDefinedBy: Maybe<BlankNode | NamedNode>;
     label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
-    maxCount: Maybe<number>;
+    maxCount: Maybe<bigint>;
     maxExclusive: Maybe<Literal>;
     maxInclusive: Maybe<Literal>;
-    maxLength: Maybe<number>;
-    minCount: Maybe<number>;
+    maxLength: Maybe<bigint>;
+    minCount: Maybe<bigint>;
     minExclusive: Maybe<Literal>;
     minInclusive: Maybe<Literal>;
-    minLength: Maybe<number>;
+    minLength: Maybe<bigint>;
     name: Maybe<string>;
     node: Maybe<BlankNode | NamedNode>;
     nodeKind: Maybe<
@@ -2193,7 +2201,7 @@ export namespace PropertyShape {
                                             resourceValues
                                               .chain((values) =>
                                                 values.chainMap((value) =>
-                                                  value.toInt(),
+                                                  value.toBigInt(),
                                                 ),
                                               )
                                               .map((values) =>
@@ -2202,7 +2210,7 @@ export namespace PropertyShape {
                                                       Maybe.of(value),
                                                     )
                                                   : Resource.Values.fromValue<
-                                                      Maybe<number>
+                                                      Maybe<bigint>
                                                     >({
                                                       focusResource: $resource,
                                                       propertyPath:
@@ -2296,7 +2304,7 @@ export namespace PropertyShape {
                                                   resourceValues
                                                     .chain((values) =>
                                                       values.chainMap((value) =>
-                                                        value.toInt(),
+                                                        value.toBigInt(),
                                                       ),
                                                     )
                                                     .map((values) =>
@@ -2305,7 +2313,7 @@ export namespace PropertyShape {
                                                             Maybe.of(value),
                                                           )
                                                         : Resource.Values.fromValue<
-                                                            Maybe<number>
+                                                            Maybe<bigint>
                                                           >({
                                                             focusResource:
                                                               $resource,
@@ -2331,7 +2339,7 @@ export namespace PropertyShape {
                                                       .chain((values) =>
                                                         values.chainMap(
                                                           (value) =>
-                                                            value.toInt(),
+                                                            value.toBigInt(),
                                                         ),
                                                       )
                                                       .map((values) =>
@@ -2341,7 +2349,7 @@ export namespace PropertyShape {
                                                                 Maybe.of(value),
                                                             )
                                                           : Resource.Values.fromValue<
-                                                              Maybe<number>
+                                                              Maybe<bigint>
                                                             >({
                                                               focusResource:
                                                                 $resource,
@@ -2461,7 +2469,7 @@ export namespace PropertyShape {
                                                             .chain((values) =>
                                                               values.chainMap(
                                                                 (value) =>
-                                                                  value.toInt(),
+                                                                  value.toBigInt(),
                                                               ),
                                                             )
                                                             .map((values) =>
@@ -2473,7 +2481,7 @@ export namespace PropertyShape {
                                                                       ),
                                                                   )
                                                                 : Resource.Values.fromValue<
-                                                                    Maybe<number>
+                                                                    Maybe<bigint>
                                                                   >({
                                                                     focusResource:
                                                                       $resource,
@@ -3413,7 +3421,7 @@ export namespace PropertyShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
@@ -3437,7 +3445,7 @@ export namespace PropertyShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
@@ -3445,7 +3453,7 @@ export namespace PropertyShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
@@ -3469,7 +3477,7 @@ export namespace PropertyShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
@@ -3826,7 +3834,7 @@ export namespace PropertyShape {
       _propertyShape.maxCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -3845,7 +3853,7 @@ export namespace PropertyShape {
       _propertyShape.maxLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -3854,7 +3862,7 @@ export namespace PropertyShape {
       _propertyShape.minCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -3873,7 +3881,7 @@ export namespace PropertyShape {
       _propertyShape.minLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -4758,14 +4766,14 @@ export interface NodeShape {
   readonly isDefinedBy: Maybe<BlankNode | NamedNode>;
   readonly label: Maybe<string>;
   readonly languageIn: Maybe<readonly string[]>;
-  readonly maxCount: Maybe<number>;
+  readonly maxCount: Maybe<bigint>;
   readonly maxExclusive: Maybe<Literal>;
   readonly maxInclusive: Maybe<Literal>;
-  readonly maxLength: Maybe<number>;
-  readonly minCount: Maybe<number>;
+  readonly maxLength: Maybe<bigint>;
+  readonly minCount: Maybe<bigint>;
   readonly minExclusive: Maybe<Literal>;
   readonly minInclusive: Maybe<Literal>;
-  readonly minLength: Maybe<number>;
+  readonly minLength: Maybe<bigint>;
   readonly node: Maybe<BlankNode | NamedNode>;
   readonly nodeKind: Maybe<
     NamedNode<
@@ -4825,7 +4833,7 @@ export namespace NodeShape {
       | string;
     readonly label?: Maybe<string> | string;
     readonly languageIn?: Maybe<readonly string[]> | readonly string[];
-    readonly maxCount?: Maybe<number> | number;
+    readonly maxCount?: Maybe<bigint> | bigint | number;
     readonly maxExclusive?:
       | Maybe<Literal>
       | bigint
@@ -4842,8 +4850,8 @@ export namespace NodeShape {
       | number
       | string
       | Literal;
-    readonly maxLength?: Maybe<number> | number;
-    readonly minCount?: Maybe<number> | number;
+    readonly maxLength?: Maybe<bigint> | bigint | number;
+    readonly minCount?: Maybe<bigint> | bigint | number;
     readonly minExclusive?:
       | Maybe<Literal>
       | bigint
@@ -4860,7 +4868,7 @@ export namespace NodeShape {
       | number
       | string
       | Literal;
-    readonly minLength?: Maybe<number> | number;
+    readonly minLength?: Maybe<bigint> | bigint | number;
     readonly node?:
       | Maybe<BlankNode | NamedNode>
       | (BlankNode | NamedNode)
@@ -5093,11 +5101,13 @@ export namespace NodeShape {
     } else {
       languageIn = parameters?.languageIn satisfies never;
     }
-    let maxCount: Maybe<number>;
+    let maxCount: Maybe<bigint>;
     if (Maybe.isMaybe(parameters?.maxCount)) {
       maxCount = parameters?.maxCount;
-    } else if (typeof parameters?.maxCount === "number") {
+    } else if (typeof parameters?.maxCount === "bigint") {
       maxCount = Maybe.of(parameters?.maxCount);
+    } else if (typeof parameters?.maxCount === "number") {
+      maxCount = Maybe.of(BigInt(parameters?.maxCount));
     } else if (parameters?.maxCount === undefined) {
       maxCount = Maybe.empty();
     } else {
@@ -5153,21 +5163,25 @@ export namespace NodeShape {
     } else {
       maxInclusive = parameters?.maxInclusive satisfies never;
     }
-    let maxLength: Maybe<number>;
+    let maxLength: Maybe<bigint>;
     if (Maybe.isMaybe(parameters?.maxLength)) {
       maxLength = parameters?.maxLength;
-    } else if (typeof parameters?.maxLength === "number") {
+    } else if (typeof parameters?.maxLength === "bigint") {
       maxLength = Maybe.of(parameters?.maxLength);
+    } else if (typeof parameters?.maxLength === "number") {
+      maxLength = Maybe.of(BigInt(parameters?.maxLength));
     } else if (parameters?.maxLength === undefined) {
       maxLength = Maybe.empty();
     } else {
       maxLength = parameters?.maxLength satisfies never;
     }
-    let minCount: Maybe<number>;
+    let minCount: Maybe<bigint>;
     if (Maybe.isMaybe(parameters?.minCount)) {
       minCount = parameters?.minCount;
-    } else if (typeof parameters?.minCount === "number") {
+    } else if (typeof parameters?.minCount === "bigint") {
       minCount = Maybe.of(parameters?.minCount);
+    } else if (typeof parameters?.minCount === "number") {
+      minCount = Maybe.of(BigInt(parameters?.minCount));
     } else if (parameters?.minCount === undefined) {
       minCount = Maybe.empty();
     } else {
@@ -5223,11 +5237,13 @@ export namespace NodeShape {
     } else {
       minInclusive = parameters?.minInclusive satisfies never;
     }
-    let minLength: Maybe<number>;
+    let minLength: Maybe<bigint>;
     if (Maybe.isMaybe(parameters?.minLength)) {
       minLength = parameters?.minLength;
-    } else if (typeof parameters?.minLength === "number") {
+    } else if (typeof parameters?.minLength === "bigint") {
       minLength = Maybe.of(parameters?.minLength);
+    } else if (typeof parameters?.minLength === "number") {
+      minLength = Maybe.of(BigInt(parameters?.minLength));
     } else if (parameters?.minLength === undefined) {
       minLength = Maybe.empty();
     } else {
@@ -5520,7 +5536,7 @@ export namespace NodeShape {
     }
     if (
       filter.maxCount !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.maxCount,
         value.maxCount,
       )
@@ -5547,7 +5563,7 @@ export namespace NodeShape {
     }
     if (
       filter.maxLength !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.maxLength,
         value.maxLength,
       )
@@ -5556,7 +5572,7 @@ export namespace NodeShape {
     }
     if (
       filter.minCount !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.minCount,
         value.minCount,
       )
@@ -5583,7 +5599,7 @@ export namespace NodeShape {
     }
     if (
       filter.minLength !== undefined &&
-      !$filterMaybe<number, $NumericFilter<number>>($filterNumeric<number>)(
+      !$filterMaybe<bigint, $NumericFilter<bigint>>($filterNumeric<bigint>)(
         filter.minLength,
         value.minLength,
       )
@@ -5701,14 +5717,14 @@ export namespace NodeShape {
     readonly isDefinedBy?: $MaybeFilter<$IdentifierFilter>;
     readonly label?: $MaybeFilter<$StringFilter>;
     readonly languageIn?: $MaybeFilter<$CollectionFilter<$StringFilter>>;
-    readonly maxCount?: $MaybeFilter<$NumericFilter<number>>;
+    readonly maxCount?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly maxExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly maxInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly maxLength?: $MaybeFilter<$NumericFilter<number>>;
-    readonly minCount?: $MaybeFilter<$NumericFilter<number>>;
+    readonly maxLength?: $MaybeFilter<$NumericFilter<bigint>>;
+    readonly minCount?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly minExclusive?: $MaybeFilter<$LiteralFilter>;
     readonly minInclusive?: $MaybeFilter<$LiteralFilter>;
-    readonly minLength?: $MaybeFilter<$NumericFilter<number>>;
+    readonly minLength?: $MaybeFilter<$NumericFilter<bigint>>;
     readonly node?: $MaybeFilter<$IdentifierFilter>;
     readonly nodeKind?: $MaybeFilter<$IriFilter>;
     readonly not?: $CollectionFilter<$IdentifierFilter>;
@@ -5783,14 +5799,14 @@ export namespace NodeShape {
     isDefinedBy: Maybe<BlankNode | NamedNode>;
     label: Maybe<string>;
     languageIn: Maybe<readonly string[]>;
-    maxCount: Maybe<number>;
+    maxCount: Maybe<bigint>;
     maxExclusive: Maybe<Literal>;
     maxInclusive: Maybe<Literal>;
-    maxLength: Maybe<number>;
-    minCount: Maybe<number>;
+    maxLength: Maybe<bigint>;
+    minCount: Maybe<bigint>;
     minExclusive: Maybe<Literal>;
     minInclusive: Maybe<Literal>;
-    minLength: Maybe<number>;
+    minLength: Maybe<bigint>;
     node: Maybe<BlankNode | NamedNode>;
     nodeKind: Maybe<
       NamedNode<
@@ -6330,7 +6346,7 @@ export namespace NodeShape {
                                           resourceValues
                                             .chain((values) =>
                                               values.chainMap((value) =>
-                                                value.toInt(),
+                                                value.toBigInt(),
                                               ),
                                             )
                                             .map((values) =>
@@ -6339,7 +6355,7 @@ export namespace NodeShape {
                                                     Maybe.of(value),
                                                   )
                                                 : Resource.Values.fromValue<
-                                                    Maybe<number>
+                                                    Maybe<bigint>
                                                   >({
                                                     focusResource: $resource,
                                                     propertyPath:
@@ -6430,7 +6446,7 @@ export namespace NodeShape {
                                                 resourceValues
                                                   .chain((values) =>
                                                     values.chainMap((value) =>
-                                                      value.toInt(),
+                                                      value.toBigInt(),
                                                     ),
                                                   )
                                                   .map((values) =>
@@ -6439,7 +6455,7 @@ export namespace NodeShape {
                                                           Maybe.of(value),
                                                         )
                                                       : Resource.Values.fromValue<
-                                                          Maybe<number>
+                                                          Maybe<bigint>
                                                         >({
                                                           focusResource:
                                                             $resource,
@@ -6461,7 +6477,7 @@ export namespace NodeShape {
                                                   resourceValues
                                                     .chain((values) =>
                                                       values.chainMap((value) =>
-                                                        value.toInt(),
+                                                        value.toBigInt(),
                                                       ),
                                                     )
                                                     .map((values) =>
@@ -6470,7 +6486,7 @@ export namespace NodeShape {
                                                             Maybe.of(value),
                                                           )
                                                         : Resource.Values.fromValue<
-                                                            Maybe<number>
+                                                            Maybe<bigint>
                                                           >({
                                                             focusResource:
                                                               $resource,
@@ -6587,7 +6603,7 @@ export namespace NodeShape {
                                                           .chain((values) =>
                                                             values.chainMap(
                                                               (value) =>
-                                                                value.toInt(),
+                                                                value.toBigInt(),
                                                             ),
                                                           )
                                                           .map((values) =>
@@ -6599,7 +6615,7 @@ export namespace NodeShape {
                                                                     ),
                                                                 )
                                                               : Resource.Values.fromValue<
-                                                                  Maybe<number>
+                                                                  Maybe<bigint>
                                                                 >({
                                                                   focusResource:
                                                                     $resource,
@@ -7448,7 +7464,7 @@ export namespace NodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
@@ -7472,7 +7488,7 @@ export namespace NodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
@@ -7480,7 +7496,7 @@ export namespace NodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
@@ -7504,7 +7520,7 @@ export namespace NodeShape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
@@ -7903,7 +7919,7 @@ export namespace NodeShape {
       _nodeShape.maxCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -7922,7 +7938,7 @@ export namespace NodeShape {
       _nodeShape.maxLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -7931,7 +7947,7 @@ export namespace NodeShape {
       _nodeShape.minCount
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -7950,7 +7966,7 @@ export namespace NodeShape {
       _nodeShape.minLength
         .toList()
         .flatMap((value) => [
-          $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
+          $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
       options?.graph,
     );
@@ -8330,7 +8346,7 @@ export namespace Shape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
       },
@@ -8354,7 +8370,7 @@ export namespace Shape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
       },
@@ -8362,7 +8378,7 @@ export namespace Shape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
       },
@@ -8386,7 +8402,7 @@ export namespace Shape {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Int" as const }),
+          item: () => ({ kind: "BigInt" as const }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
       },
