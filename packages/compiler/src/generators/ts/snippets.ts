@@ -1,3 +1,4 @@
+import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
@@ -112,6 +113,7 @@ import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class Snippets {
   protected readonly imports: Imports;
@@ -485,6 +487,30 @@ export class Snippets {
   @Memoize()
   get identifierSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_identifierSparqlWherePatterns);
+  }
+
+  get ifUsed(): Code[] {
+    return Object.entries(
+      Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this)),
+    )
+      .flatMap(([key, descriptor]) => {
+        if (typeof descriptor.get !== "function") {
+          return [];
+        }
+        switch (key) {
+          case "ifUsed":
+          case "snippets":
+            return [];
+        }
+        const value = (this as any)[key];
+        invariant(value, key);
+        invariant((value as any).usageSiteName, key);
+        return [value];
+      })
+      .sort((left, right) =>
+        left.usageSiteName.localeCompare(right.usageSiteName),
+      )
+      .map((snippet) => code`${snippet.ifUsed}`);
   }
 
   @Memoize()

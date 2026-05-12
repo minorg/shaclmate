@@ -56,14 +56,7 @@ export namespace ${astNamedUnionType.name} {
     declarations.splice(
       0,
       0,
-      joinCode(
-        Object.values(this.reusables.snippets)
-          .sort((left, right) =>
-            left.usageSiteName.localeCompare(right.usageSiteName),
-          )
-          .map((snippet) => code`${snippet.ifUsed}`),
-        { on: "\n\n" },
-      ),
+      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations, { on: "\n\n" }).toString({});

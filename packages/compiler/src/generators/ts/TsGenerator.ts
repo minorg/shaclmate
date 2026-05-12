@@ -3,9 +3,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
-
 import * as ast from "../../ast/index.js";
-
 import type { Generator } from "../Generator.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
@@ -120,14 +118,7 @@ export class TsGenerator implements Generator {
     declarations.splice(
       0,
       0,
-      joinCode(
-        Object.values(this.reusables.snippets)
-          .sort((left, right) =>
-            left.usageSiteName.localeCompare(right.usageSiteName),
-          )
-          .map((snippet) => code`${snippet.ifUsed}`),
-        { on: "\n\n" },
-      ),
+      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations).toString({});
