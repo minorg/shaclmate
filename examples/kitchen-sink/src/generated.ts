@@ -19655,501 +19655,23 @@ export namespace PartialUnionMember1 {
       }),
     );
 } /**
- * Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes
- */
-
-export interface NewName2 {
-  readonly $identifier: () => NewName2.$Identifier;
-  readonly $type: "NewName2";
-}
-
-export namespace NewName2 {
-  export function $create(parameters?: {
-    readonly $identifier?:
-      | (() => NewName2.$Identifier)
-      | (BlankNode | NamedNode)
-      | string;
-  }): NewName2 {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => NewName2.$Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NewName2" as const;
-    return { $identifier, $type };
-  }
-
-  export function $equals(left: NewName2, right: NewName2): $EqualsResult {
-    return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
-      (propertyValuesUnequal) => ({
-        left,
-        right,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "property" as const,
-      }),
-    );
-  }
-
-  export function $hash<HasherT extends $Hasher>(
-    _newName2: NewName2,
-    _hasher: HasherT,
-  ): HasherT {
-    NewName2.$hashShaclProperties(_newName2, _hasher);
-    _hasher.update(_newName2.$identifier().value);
-    _hasher.update(_newName2.$type);
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<HasherT extends $Hasher>(
-    _newName2: NewName2,
-    _hasher: HasherT,
-  ): HasherT {
-    return _hasher;
-  }
-
-  export type $Identifier = BlankNode | NamedNode;
-
-  export namespace $Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
-
-  export type $Json = { readonly "@id": string; readonly $type: "NewName2" };
-
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
-      const jsonSafeParseResult = schema().safeParse(json);
-      if (!jsonSafeParseResult.success) {
-        return Left(jsonSafeParseResult.error);
-      }
-      return Right(jsonSafeParseResult.data);
-    }
-
-    export function schema() {
-      return z
-        .object({ "@id": z.string().min(1), $type: z.literal("NewName2") })
-        .meta({
-          description:
-            "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes",
-          title: "NewName2",
-        }) satisfies z.ZodType<$Json>;
-    }
-
-    export function uiSchema(parameters?: { scopePrefix?: string }): any {
-      const scopePrefix = parameters?.scopePrefix ?? "#";
-      return {
-        elements: [
-          {
-            label: "Identifier",
-            scope: `${scopePrefix}/properties/@id`,
-            type: "Control",
-          },
-          {
-            rule: {
-              condition: {
-                schema: { const: "NewName2" as const },
-                scope: `${scopePrefix}/properties/$type`,
-              },
-              effect: "HIDE",
-            },
-            scope: `${scopePrefix}/properties/$type`,
-            type: "Control",
-          },
-        ],
-        label: "NewName2",
-        type: "Group",
-      };
-    }
-  }
-
-  export function $filter(filter: NewName2.$Filter, value: NewName2): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type $Filter = { readonly $identifier?: $IdentifierFilter };
-
-  export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    NewName2.$Filter
-  > = (parameters) => {
-    const triples: sparqljs.Triple[] = [];
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject: parameters.focusIdentifier,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
-        },
-      );
-    }
-    return triples;
-  };
-
-  export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    NewName2.$Filter
-  > = (parameters) => {
-    let patterns: $SparqlPattern[] = [];
-    const rdfTypeVariable = dataFactory.variable!(
-      `${parameters.variablePrefix}RdfType`,
-    );
-    if (!parameters?.ignoreRdfType) {
-      patterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: NewName2.$fromRdfType,
-          subject: parameters.focusIdentifier,
-        }),
-        {
-          triples: [
-            {
-              subject: parameters.focusIdentifier,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-        {
-          patterns: [
-            {
-              triples: [
-                {
-                  subject: rdfTypeVariable,
-                  predicate: {
-                    items: [$RdfVocabularies.rdfs.subClassOf],
-                    pathType: "+" as const,
-                    type: "path" as const,
-                  },
-                  object: dataFactory.variable!(
-                    `${parameters.variablePrefix}RdfClass`,
-                  ),
-                },
-              ],
-              type: "bgp" as const,
-            },
-          ],
-          type: "optional" as const,
-        },
-      );
-    }
-    if (parameters.focusIdentifier.termType === "Variable") {
-      patterns = patterns.concat(
-        $identifierSparqlWherePatterns({
-          filter: parameters.filter?.$identifier,
-          ignoreRdfType: true,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: NewName2.$schema.properties.$identifier.type(),
-          valueVariable: parameters.focusIdentifier,
-          variablePrefix: parameters.variablePrefix,
-        }),
-      );
-    }
-    return patterns;
-  };
-
-  export function $fromJson(json: NewName2.$Json): NewName2 {
-    return $create($propertiesFromJson(json));
-  }
-
-  export const $fromRdfResource: $FromRdfResourceFunction<NewName2> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NewName2.$propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map($create);
-  };
-
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NewName2
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) => NewName2.$fromRdfResource(resource, options)),
-      ),
-    );
-
-  export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName2",
-  );
-
-  export function isNewName2(object: $Object): object is NewName2 {
-    switch (object.$type) {
-      case "NewName2":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function $propertiesFromJson($json: NewName2.$Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NewName2";
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NewName2" as const;
-    return { $identifier, $type };
-  }
-
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    $type: "NewName2";
-  }> = ($resource, _$options) => {
-    return (
-      !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/OverrideName2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NewName2.$fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName2)`,
-                ),
-              );
-            })
-        : Right(true as const)
-    ).chain((_rdfTypeCheck) =>
-      Right(
-        new Resource.Value({
-          dataFactory: dataFactory,
-          focusResource: $resource,
-          propertyPath: $RdfVocabularies.rdf.subject,
-          term: $resource.identifier,
-        }).toValues(),
-      )
-        .chain((values) => values.chainMap((value) => value.toIdentifier()))
-        .chain((values) => values.head())
-        .chain(($identifier) =>
-          Right<"NewName2">("NewName2" as const).map(($type) => ({
-            $identifier,
-            $type,
-          })),
-        ),
-    );
-  };
-
-  export const $schema = {
-    properties: {
-      $identifier: {
-        kind: "Identifier" as const,
-        type: () => ({ kind: "Identifier" as const }),
-      },
-      $type: {
-        kind: "Discriminant" as const,
-        type: () => ({
-          kind: "TypeDiscriminant" as const,
-          ownValues: ["NewName2"],
-        }),
-      },
-    },
-  } as const;
-
-  export function $sparqlConstructQuery({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    prefixes,
-    subject,
-    ...queryParameters
-  }: {
-    filter?: NewName2.$Filter;
-    ignoreRdfType?: boolean;
-    prefixes?: { [prefix: string]: string };
-    preferredLanguages?: readonly string[];
-    subject: NamedNode | Variable;
-  } & Omit<
-    sparqljs.ConstructQuery,
-    "prefixes" | "queryType" | "type"
-  >): sparqljs.ConstructQuery {
-    const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "newName2";
-
-    return {
-      ...queryParameters,
-      prefixes: prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        NewName2.$focusSparqlConstructTriples({
-          filter,
-          focusIdentifier: subject,
-          ignoreRdfType: !!ignoreRdfType,
-          variablePrefix,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $normalizeSparqlWherePatterns(
-          NewName2.$focusSparqlWherePatterns({
-            filter,
-            focusIdentifier: subject,
-            ignoreRdfType: !!ignoreRdfType,
-            preferredLanguages,
-            variablePrefix,
-          }),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof NewName2.$sparqlConstructQuery>[0] &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      NewName2.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $toJson(_newName2: NewName2): NewName2.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          _newName2.$identifier().termType === "BlankNode"
-            ? `_:${_newName2.$identifier().value}`
-            : _newName2.$identifier().value,
-        $type: _newName2.$type,
-      } satisfies NewName2.$Json),
-    );
-  }
-
-  export function $toRdfResource(
-    _newName2: NewName2,
-    options?: Parameters<$ToRdfResourceFunction<NewName2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_newName2.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/OverrideName2"),
-        options?.graph,
-      );
-    }
-    return resource;
-  }
-
-  export function $propertiesToStrings(
-    _newName2: NewName2,
-  ): Record<string, string> {
-    return $compactRecord({ $identifier: _newName2.$identifier().toString() });
-  }
-
-  export function $toString(this: NewName2): string;
-  export function $toString(_newName2: NewName2): string;
-  export function $toString(
-    this: NewName2 | undefined,
-    _newName2?: NewName2,
-  ): string {
-    return `NewName2(${JSON.stringify($propertiesToStrings((_newName2 ?? this)!))})`;
-  }
-
-  export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    NewName2.$Filter,
-    typeof NewName2.$schema
-  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    NewName2.$focusSparqlConstructTriples({
-      filter,
-      focusIdentifier: valueVariable,
-      ignoreRdfType,
-      variablePrefix,
-    });
-
-  export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    NewName2.$Filter,
-    typeof NewName2.$schema
-  > = ({
-    filter,
-    ignoreRdfType,
-    preferredLanguages,
-    propertyPatterns,
-    valueVariable,
-    variablePrefix,
-  }) =>
-    (propertyPatterns as readonly $SparqlPattern[]).concat(
-      NewName2.$focusSparqlWherePatterns({
-        filter,
-        focusIdentifier: valueVariable,
-        ignoreRdfType,
-        preferredLanguages,
-        variablePrefix,
-      }),
-    );
-} /**
  * Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
 
-export interface NewName1 {
-  readonly $identifier: () => NewName1.$Identifier;
-  readonly $type: "NewName1";
+export interface NewName {
+  readonly $identifier: () => NewName.$Identifier;
+  readonly $type: "NewName";
 }
 
-export namespace NewName1 {
+export namespace NewName {
   export function $create(parameters?: {
     readonly $identifier?:
-      | (() => NewName1.$Identifier)
+      | (() => NewName.$Identifier)
       | (BlankNode | NamedNode)
       | string;
-  }): NewName1 {
+  }): NewName {
     const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => NewName1.$Identifier;
+    let $identifier: () => NewName.$Identifier;
     if (typeof $identifierParameter === "function") {
       $identifier = $identifierParameter;
     } else if (typeof $identifierParameter === "object") {
@@ -20162,11 +19684,11 @@ export namespace NewName1 {
     } else {
       $identifier = $identifierParameter satisfies never;
     }
-    const $type = "NewName1" as const;
+    const $type = "NewName" as const;
     return { $identifier, $type };
   }
 
-  export function $equals(left: NewName1, right: NewName1): $EqualsResult {
+  export function $equals(left: NewName, right: NewName): $EqualsResult {
     return $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
       (propertyValuesUnequal) => ({
         left,
@@ -20179,17 +19701,17 @@ export namespace NewName1 {
   }
 
   export function $hash<HasherT extends $Hasher>(
-    _newName1: NewName1,
+    _newName: NewName,
     _hasher: HasherT,
   ): HasherT {
-    NewName1.$hashShaclProperties(_newName1, _hasher);
-    _hasher.update(_newName1.$identifier().value);
-    _hasher.update(_newName1.$type);
+    NewName.$hashShaclProperties(_newName, _hasher);
+    _hasher.update(_newName.$identifier().value);
+    _hasher.update(_newName.$type);
     return _hasher;
   }
 
   export function $hashShaclProperties<HasherT extends $Hasher>(
-    _newName1: NewName1,
+    _newName: NewName,
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
@@ -20202,7 +19724,7 @@ export namespace NewName1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = { readonly "@id": string; readonly $type: "NewName1" };
+  export type $Json = { readonly "@id": string; readonly $type: "NewName" };
 
   export namespace $Json {
     export function parse(json: unknown): Either<Error, $Json> {
@@ -20215,7 +19737,7 @@ export namespace NewName1 {
 
     export function schema() {
       return z
-        .object({ "@id": z.string().min(1), $type: z.literal("NewName1") })
+        .object({ "@id": z.string().min(1), $type: z.literal("NewName") })
         .meta({
           description:
             "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
@@ -20234,7 +19756,7 @@ export namespace NewName1 {
           {
             rule: {
               condition: {
-                schema: { const: "NewName1" as const },
+                schema: { const: "NewName" as const },
                 scope: `${scopePrefix}/properties/$type`,
               },
               effect: "HIDE",
@@ -20243,13 +19765,13 @@ export namespace NewName1 {
             type: "Control",
           },
         ],
-        label: "NewName1",
+        label: "NewName",
         type: "Group",
       };
     }
   }
 
-  export function $filter(filter: NewName1.$Filter, value: NewName1): boolean {
+  export function $filter(filter: NewName.$Filter, value: NewName): boolean {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -20262,7 +19784,7 @@ export namespace NewName1 {
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export const $focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
-    NewName1.$Filter
+    NewName.$Filter
   > = (parameters) => {
     const triples: sparqljs.Triple[] = [];
     if (!parameters?.ignoreRdfType) {
@@ -20283,7 +19805,7 @@ export namespace NewName1 {
   };
 
   export const $focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
-    NewName1.$Filter
+    NewName.$Filter
   > = (parameters) => {
     let patterns: $SparqlPattern[] = [];
     const rdfTypeVariable = dataFactory.variable!(
@@ -20292,7 +19814,7 @@ export namespace NewName1 {
     if (!parameters?.ignoreRdfType) {
       patterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: NewName1.$fromRdfType,
+          rdfType: NewName.$fromRdfType,
           subject: parameters.focusIdentifier,
         }),
         {
@@ -20335,7 +19857,7 @@ export namespace NewName1 {
           ignoreRdfType: true,
           preferredLanguages: parameters.preferredLanguages,
           propertyPatterns: [],
-          schema: NewName1.$schema.properties.$identifier.type(),
+          schema: NewName.$schema.properties.$identifier.type(),
           valueVariable: parameters.focusIdentifier,
           variablePrefix: parameters.variablePrefix,
         }),
@@ -20344,11 +19866,11 @@ export namespace NewName1 {
     return patterns;
   };
 
-  export function $fromJson(json: NewName1.$Json): NewName1 {
+  export function $fromJson(json: NewName.$Json): NewName {
     return $create($propertiesFromJson(json));
   }
 
-  export const $fromRdfResource: $FromRdfResourceFunction<NewName1> = (
+  export const $fromRdfResource: $FromRdfResourceFunction<NewName> = (
     resource,
     options,
   ) => {
@@ -20362,7 +19884,7 @@ export namespace NewName1 {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return NewName1.$propertiesFromRdfResource(resource, {
+    return NewName.$propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
@@ -20372,43 +19894,43 @@ export namespace NewName1 {
   };
 
   export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NewName1
+    NewName
   > = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
           .toResource()
-          .chain((resource) => NewName1.$fromRdfResource(resource, options)),
+          .chain((resource) => NewName.$fromRdfResource(resource, options)),
       ),
     );
 
   export const $fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/OverrideName1",
+    "http://example.com/OverrideName",
   );
 
-  export function isNewName1(object: $Object): object is NewName1 {
+  export function isNewName(object: $Object): object is NewName {
     switch (object.$type) {
-      case "NewName1":
+      case "NewName":
         return true;
       default:
         return false;
     }
   }
 
-  export function $propertiesFromJson($json: NewName1.$Json): {
+  export function $propertiesFromJson($json: NewName.$Json): {
     $identifier: BlankNode | NamedNode;
-    $type: "NewName1";
+    $type: "NewName";
   } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "NewName1" as const;
+    const $type = "NewName" as const;
     return { $identifier, $type };
   }
 
   export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
-    $type: "NewName1";
+    $type: "NewName";
   }> = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
@@ -20418,13 +19940,13 @@ export namespace NewName1 {
             .chain((actualRdfType) => {
               // Check the expected type and its known subtypes
               switch (actualRdfType.value) {
-                case "http://example.com/OverrideName1":
+                case "http://example.com/OverrideName":
                   return Right(true as const);
               }
 
               // Check arbitrary rdfs:subClassOf's of the expected type
               if (
-                $resource.isInstanceOf(NewName1.$fromRdfType, {
+                $resource.isInstanceOf(NewName.$fromRdfType, {
                   graph: _$options.graph,
                 })
               ) {
@@ -20433,7 +19955,7 @@ export namespace NewName1 {
 
               return Left(
                 new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName1)`,
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName)`,
                 ),
               );
             })
@@ -20450,7 +19972,7 @@ export namespace NewName1 {
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head())
         .chain(($identifier) =>
-          Right<"NewName1">("NewName1" as const).map(($type) => ({
+          Right<"NewName">("NewName" as const).map(($type) => ({
             $identifier,
             $type,
           })),
@@ -20468,7 +19990,7 @@ export namespace NewName1 {
         kind: "Discriminant" as const,
         type: () => ({
           kind: "TypeDiscriminant" as const,
-          ownValues: ["NewName1"],
+          ownValues: ["NewName"],
         }),
       },
     },
@@ -20482,7 +20004,7 @@ export namespace NewName1 {
     subject,
     ...queryParameters
   }: {
-    filter?: NewName1.$Filter;
+    filter?: NewName.$Filter;
     ignoreRdfType?: boolean;
     prefixes?: { [prefix: string]: string };
     preferredLanguages?: readonly string[];
@@ -20492,14 +20014,14 @@ export namespace NewName1 {
     "prefixes" | "queryType" | "type"
   >): sparqljs.ConstructQuery {
     const variablePrefix =
-      subject.termType === "Variable" ? subject.value : "newName1";
+      subject.termType === "Variable" ? subject.value : "newName";
 
     return {
       ...queryParameters,
       prefixes: prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NewName1.$focusSparqlConstructTriples({
+        NewName.$focusSparqlConstructTriples({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,
@@ -20509,7 +20031,7 @@ export namespace NewName1 {
       type: "query",
       where: (queryParameters.where ?? []).concat(
         $normalizeSparqlWherePatterns(
-          NewName1.$focusSparqlWherePatterns({
+          NewName.$focusSparqlWherePatterns({
             filter,
             focusIdentifier: subject,
             ignoreRdfType: !!ignoreRdfType,
@@ -20522,29 +20044,29 @@ export namespace NewName1 {
   }
 
   export function $sparqlConstructQueryString(
-    parameters: Parameters<typeof NewName1.$sparqlConstructQuery>[0] &
+    parameters: Parameters<typeof NewName.$sparqlConstructQuery>[0] &
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      NewName1.$sparqlConstructQuery(parameters),
+      NewName.$sparqlConstructQuery(parameters),
     );
   }
 
-  export function $toJson(_newName1: NewName1): NewName1.$Json {
+  export function $toJson(_newName: NewName): NewName.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _newName1.$identifier().termType === "BlankNode"
-            ? `_:${_newName1.$identifier().value}`
-            : _newName1.$identifier().value,
-        $type: _newName1.$type,
-      } satisfies NewName1.$Json),
+          _newName.$identifier().termType === "BlankNode"
+            ? `_:${_newName.$identifier().value}`
+            : _newName.$identifier().value,
+        $type: _newName.$type,
+      } satisfies NewName.$Json),
     );
   }
 
   export function $toRdfResource(
-    _newName1: NewName1,
-    options?: Parameters<$ToRdfResourceFunction<NewName1>>[1],
+    _newName: NewName,
+    options?: Parameters<$ToRdfResourceFunction<NewName>>[1],
   ): Resource {
     const resourceSet =
       options?.resourceSet ??
@@ -20552,11 +20074,11 @@ export namespace NewName1 {
         dataFactory: dataFactory,
         dataset: datasetFactory.dataset(),
       });
-    const resource = resourceSet.resource(_newName1.$identifier());
+    const resource = resourceSet.resource(_newName.$identifier());
     if (!options?.ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
-        dataFactory.namedNode("http://example.com/OverrideName1"),
+        dataFactory.namedNode("http://example.com/OverrideName"),
         options?.graph,
       );
     }
@@ -20564,25 +20086,25 @@ export namespace NewName1 {
   }
 
   export function $propertiesToStrings(
-    _newName1: NewName1,
+    _newName: NewName,
   ): Record<string, string> {
-    return $compactRecord({ $identifier: _newName1.$identifier().toString() });
+    return $compactRecord({ $identifier: _newName.$identifier().toString() });
   }
 
-  export function $toString(this: NewName1): string;
-  export function $toString(_newName1: NewName1): string;
+  export function $toString(this: NewName): string;
+  export function $toString(_newName: NewName): string;
   export function $toString(
-    this: NewName1 | undefined,
-    _newName1?: NewName1,
+    this: NewName | undefined,
+    _newName?: NewName,
   ): string {
-    return `NewName1(${JSON.stringify($propertiesToStrings((_newName1 ?? this)!))})`;
+    return `NewName(${JSON.stringify($propertiesToStrings((_newName ?? this)!))})`;
   }
 
   export const $valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
-    NewName1.$Filter,
-    typeof NewName1.$schema
+    NewName.$Filter,
+    typeof NewName.$schema
   > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
-    NewName1.$focusSparqlConstructTriples({
+    NewName.$focusSparqlConstructTriples({
       filter,
       focusIdentifier: valueVariable,
       ignoreRdfType,
@@ -20590,8 +20112,8 @@ export namespace NewName1 {
     });
 
   export const $valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
-    NewName1.$Filter,
-    typeof NewName1.$schema
+    NewName.$Filter,
+    typeof NewName.$schema
   > = ({
     filter,
     ignoreRdfType,
@@ -20601,7 +20123,7 @@ export namespace NewName1 {
     variablePrefix,
   }) =>
     (propertyPatterns as readonly $SparqlPattern[]).concat(
-      NewName1.$focusSparqlWherePatterns({
+      NewName.$focusSparqlWherePatterns({
         filter,
         focusIdentifier: valueVariable,
         ignoreRdfType,
@@ -59794,8 +59316,7 @@ export type $Object =
   | NodeKinds
   | NumericProperties
   | OrderedProperties
-  | NewName1
-  | NewName2
+  | NewName
   | PartialUnionMember1
   | UnionMember1
   | PartialUnionMember2
@@ -60153,11 +59674,8 @@ export namespace $Object {
         right as OrderedProperties,
       );
     }
-    if (NewName1.isNewName1(left) && NewName1.isNewName1(right)) {
-      return NewName1.$equals(left as NewName1, right as NewName1);
-    }
-    if (NewName2.isNewName2(left) && NewName2.isNewName2(right)) {
-      return NewName2.$equals(left as NewName2, right as NewName2);
+    if (NewName.isNewName(left) && NewName.isNewName(right)) {
+      return NewName.$equals(left as NewName, right as NewName);
     }
     if (
       PartialUnionMember1.isPartialUnionMember1(left) &&
@@ -60686,13 +60204,8 @@ export namespace $Object {
         return false;
       }
     }
-    if (filter.on?.["NewName1"] !== undefined && NewName1.isNewName1(value)) {
-      if (!NewName1.$filter(filter.on["NewName1"], value)) {
-        return false;
-      }
-    }
-    if (filter.on?.["NewName2"] !== undefined && NewName2.isNewName2(value)) {
-      if (!NewName2.$filter(filter.on["NewName2"], value)) {
+    if (filter.on?.["NewName"] !== undefined && NewName.isNewName(value)) {
+      if (!NewName.$filter(filter.on["NewName"], value)) {
         return false;
       }
     }
@@ -60881,8 +60394,7 @@ export namespace $Object {
       readonly NodeKinds?: NodeKinds.$Filter;
       readonly NumericProperties?: NumericProperties.$Filter;
       readonly OrderedProperties?: OrderedProperties.$Filter;
-      readonly NewName1?: NewName1.$Filter;
-      readonly NewName2?: NewName2.$Filter;
+      readonly NewName?: NewName.$Filter;
       readonly PartialUnionMember1?: PartialUnionMember1.$Filter;
       readonly UnionMember1?: UnionMember1.$Filter;
       readonly PartialUnionMember2?: PartialUnionMember2.$Filter;
@@ -61151,17 +60663,11 @@ export namespace $Object {
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}OrderedProperties`,
       }).concat(),
-      ...NewName1.$focusSparqlConstructTriples({
-        filter: filter?.on?.NewName1,
+      ...NewName.$focusSparqlConstructTriples({
+        filter: filter?.on?.NewName,
         focusIdentifier,
         ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NewName1`,
-      }).concat(),
-      ...NewName2.$focusSparqlConstructTriples({
-        filter: filter?.on?.NewName2,
-        focusIdentifier,
-        ignoreRdfType: false,
-        variablePrefix: `${variablePrefix}NewName2`,
+        variablePrefix: `${variablePrefix}NewName`,
       }).concat(),
       ...PartialUnionMember1.$focusSparqlConstructTriples({
         filter: filter?.on?.PartialUnionMember1,
@@ -61684,22 +61190,12 @@ export namespace $Object {
           type: "group",
         },
         {
-          patterns: NewName1.$focusSparqlWherePatterns({
-            filter: filter?.on?.NewName1,
+          patterns: NewName.$focusSparqlWherePatterns({
+            filter: filter?.on?.NewName,
             focusIdentifier,
             ignoreRdfType: false,
             preferredLanguages,
-            variablePrefix: `${variablePrefix}NewName1`,
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: NewName2.$focusSparqlWherePatterns({
-            filter: filter?.on?.NewName2,
-            focusIdentifier,
-            ignoreRdfType: false,
-            preferredLanguages,
-            variablePrefix: `${variablePrefix}NewName2`,
+            variablePrefix: `${variablePrefix}NewName`,
           }).concat(),
           type: "group",
         },
@@ -62002,11 +61498,8 @@ export namespace $Object {
     if (value.$type === "OrderedProperties") {
       return OrderedProperties.$fromJson(value as OrderedProperties.$Json);
     }
-    if (value.$type === "NewName1") {
-      return NewName1.$fromJson(value as NewName1.$Json);
-    }
-    if (value.$type === "NewName2") {
-      return NewName2.$fromJson(value as NewName2.$Json);
+    if (value.$type === "NewName") {
+      return NewName.$fromJson(value as NewName.$Json);
     }
     if (value.$type === "PartialUnionMember1") {
       return PartialUnionMember1.$fromJson(value as PartialUnionMember1.$Json);
@@ -62349,14 +61842,7 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          NewName1.$fromRdfResource(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          NewName2.$fromRdfResource(resource, {
+          NewName.$fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -62961,19 +62447,7 @@ export namespace $Object {
             )
             .altLazy(
               () =>
-                NewName1.$fromRdfResourceValues(valueAsValues, {
-                  context: _options.context,
-                  graph: _options.graph,
-                  ignoreRdfType: false,
-                  objectSet: _options.objectSet,
-                  preferredLanguages: _options.preferredLanguages,
-                  propertyPath: _options.propertyPath,
-                  resource: _options.resource,
-                }) as Either<Error, Resource.Values<$Object>>,
-            )
-            .altLazy(
-              () =>
-                NewName2.$fromRdfResourceValues(valueAsValues, {
+                NewName.$fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -63283,11 +62757,8 @@ export namespace $Object {
     if (OrderedProperties.isOrderedProperties(value)) {
       OrderedProperties.$hash(value, hasher);
     }
-    if (NewName1.isNewName1(value)) {
-      NewName1.$hash(value, hasher);
-    }
-    if (NewName2.isNewName2(value)) {
-      NewName2.$hash(value, hasher);
+    if (NewName.isNewName(value)) {
+      NewName.$hash(value, hasher);
     }
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
       PartialUnionMember1.$hash(value, hasher);
@@ -63381,8 +62852,7 @@ export namespace $Object {
     | NodeKinds.$Json
     | NumericProperties.$Json
     | OrderedProperties.$Json
-    | NewName1.$Json
-    | NewName2.$Json
+    | NewName.$Json
     | PartialUnionMember1.$Json
     | UnionMember1.$Json
     | PartialUnionMember2.$Json
@@ -63442,8 +62912,7 @@ export namespace $Object {
           NodeKinds.$Json.schema(),
           NumericProperties.$Json.schema(),
           OrderedProperties.$Json.schema(),
-          NewName1.$Json.schema(),
-          NewName2.$Json.schema(),
+          NewName.$Json.schema(),
           PartialUnionMember1.$Json.schema(),
           UnionMember1.$Json.schema(),
           PartialUnionMember2.$Json.schema(),
@@ -63625,8 +63094,7 @@ export namespace $Object {
         discriminantValues: ["OrderedProperties"],
         type: OrderedProperties.$schema,
       },
-      NewName1: { discriminantValues: ["NewName1"], type: NewName1.$schema },
-      NewName2: { discriminantValues: ["NewName2"], type: NewName2.$schema },
+      NewName: { discriminantValues: ["NewName"], type: NewName.$schema },
       PartialUnionMember1: {
         discriminantValues: ["PartialUnionMember1"],
         type: PartialUnionMember1.$schema,
@@ -63868,11 +63336,8 @@ export namespace $Object {
     if (OrderedProperties.isOrderedProperties(value)) {
       return OrderedProperties.$toJson(value);
     }
-    if (NewName1.isNewName1(value)) {
-      return NewName1.$toJson(value);
-    }
-    if (NewName2.isNewName2(value)) {
-      return NewName2.$toJson(value);
+    if (NewName.isNewName(value)) {
+      return NewName.$toJson(value);
     }
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
       return PartialUnionMember1.$toJson(value);
@@ -64051,11 +63516,8 @@ export namespace $Object {
     if (OrderedProperties.isOrderedProperties(value)) {
       return OrderedProperties.$toRdfResource(value, options);
     }
-    if (NewName1.isNewName1(value)) {
-      return NewName1.$toRdfResource(value, options);
-    }
-    if (NewName2.isNewName2(value)) {
-      return NewName2.$toRdfResource(value, options);
+    if (NewName.isNewName(value)) {
+      return NewName.$toRdfResource(value, options);
     }
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
       return PartialUnionMember1.$toRdfResource(value, options);
@@ -64430,17 +63892,9 @@ export namespace $Object {
         }).identifier,
       ];
     }
-    if (NewName1.isNewName1(value)) {
+    if (NewName.isNewName(value)) {
       return [
-        NewName1.$toRdfResource(value, {
-          graph: _options.graph,
-          resourceSet: _options.resourceSet,
-        }).identifier,
-      ];
-    }
-    if (NewName2.isNewName2(value)) {
-      return [
-        NewName2.$toRdfResource(value, {
+        NewName.$toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -64687,11 +64141,8 @@ export namespace $Object {
     if (OrderedProperties.isOrderedProperties(value)) {
       return OrderedProperties.$toString(value);
     }
-    if (NewName1.isNewName1(value)) {
-      return NewName1.$toString(value);
-    }
-    if (NewName2.isNewName2(value)) {
-      return NewName2.$toString(value);
+    if (NewName.isNewName(value)) {
+      return NewName.$toString(value);
     }
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
       return PartialUnionMember1.$toString(value);
@@ -65066,19 +64517,11 @@ export namespace $Object {
       }),
     );
     triples = triples.concat(
-      NewName1.$valueSparqlConstructTriples({
+      NewName.$valueSparqlConstructTriples({
         ...otherParameters,
-        filter: filter?.on?.["NewName1"],
+        filter: filter?.on?.["NewName"],
         ignoreRdfType: false,
-        schema: schema.members["NewName1"].type,
-      }),
-    );
-    triples = triples.concat(
-      NewName2.$valueSparqlConstructTriples({
-        ...otherParameters,
-        filter: filter?.on?.["NewName2"],
-        ignoreRdfType: false,
-        schema: schema.members["NewName2"].type,
+        schema: schema.members["NewName"].type,
       }),
     );
     triples = triples.concat(
@@ -65568,20 +65011,11 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
-      patterns: NewName1.$valueSparqlWherePatterns({
+      patterns: NewName.$valueSparqlWherePatterns({
         ...otherParameters,
-        filter: filter?.on?.["NewName1"],
+        filter: filter?.on?.["NewName"],
         ignoreRdfType: false,
-        schema: schema.members["NewName1"].type,
-      }).concat(),
-      type: "group",
-    });
-    unionPatterns.push({
-      patterns: NewName2.$valueSparqlWherePatterns({
-        ...otherParameters,
-        filter: filter?.on?.["NewName2"],
-        ignoreRdfType: false,
-        schema: schema.members["NewName2"].type,
+        schema: schema.members["NewName"].type,
       }).concat(),
       type: "group",
     });
@@ -66616,45 +66050,25 @@ export interface $ObjectSet {
     >,
   ): Promise<Either<Error, readonly NamedUnionProperties[]>>;
 
-  newName1(
-    identifier: NewName1.$Identifier,
+  newName(
+    identifier: NewName.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName1>>;
+  ): Promise<Either<Error, NewName>>;
 
-  newName1Count(
+  newNameCount(
     query?: Pick<
-      $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
+      $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
-  newName1Identifiers(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1.$Identifier[]>>;
+  newNameIdentifiers(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName.$Identifier[]>>;
 
-  newName1s(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1[]>>;
-
-  newName2(
-    identifier: NewName2.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName2>>;
-
-  newName2Count(
-    query?: Pick<
-      $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  newName2Identifiers(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2.$Identifier[]>>;
-
-  newName2s(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2[]>>;
+  newNames(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName[]>>;
 
   nodeKinds(
     identifier: NodeKinds.$Identifier,
@@ -70229,137 +69643,69 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async newName1(
-    identifier: NewName1.$Identifier,
+  async newName(
+    identifier: NewName.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName1>> {
-    return this.newName1Sync(identifier, options);
+  ): Promise<Either<Error, NewName>> {
+    return this.newNameSync(identifier, options);
   }
 
-  newName1Sync(
-    identifier: NewName1.$Identifier,
+  newNameSync(
+    identifier: NewName.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NewName1> {
-    return this.newName1sSync({
+  ): Either<Error, NewName> {
+    return this.newNamesSync({
       identifiers: [identifier],
       preferredLanguages: options?.preferredLanguages,
     }).map((objects) => objects[0]);
   }
 
-  async newName1Count(
+  async newNameCount(
     query?: Pick<
-      $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
+      $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.newName1CountSync(query);
+    return this.newNameCountSync(query);
   }
 
-  newName1CountSync(
+  newNameCountSync(
     query?: Pick<
-      $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
+      $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
-    return this.newName1sSync(query).map((objects) => objects.length);
+    return this.newNamesSync(query).map((objects) => objects.length);
   }
 
-  async newName1Identifiers(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1.$Identifier[]>> {
-    return this.newName1IdentifiersSync(query);
+  async newNameIdentifiers(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName.$Identifier[]>> {
+    return this.newNameIdentifiersSync(query);
   }
 
-  newName1IdentifiersSync(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Either<Error, readonly NewName1.$Identifier[]> {
-    return this.newName1sSync(query).map((objects) =>
+  newNameIdentifiersSync(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Either<Error, readonly NewName.$Identifier[]> {
+    return this.newNamesSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
-  async newName1s(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1[]>> {
-    return this.newName1sSync(query);
+  async newNames(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName[]>> {
+    return this.newNamesSync(query);
   }
 
-  newName1sSync(
-    query?: $ObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Either<Error, readonly NewName1[]> {
-    return this.#objectsSync<NewName1, NewName1.$Filter, NewName1.$Identifier>(
+  newNamesSync(
+    query?: $ObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Either<Error, readonly NewName[]> {
+    return this.#objectsSync<NewName, NewName.$Filter, NewName.$Identifier>(
       {
-        $filter: NewName1.$filter,
-        $fromRdfResource: NewName1.$fromRdfResource,
-        $fromRdfTypes: [NewName1.$fromRdfType],
-      },
-      query,
-    );
-  }
-
-  async newName2(
-    identifier: NewName2.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName2>> {
-    return this.newName2Sync(identifier, options);
-  }
-
-  newName2Sync(
-    identifier: NewName2.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Either<Error, NewName2> {
-    return this.newName2sSync({
-      identifiers: [identifier],
-      preferredLanguages: options?.preferredLanguages,
-    }).map((objects) => objects[0]);
-  }
-
-  async newName2Count(
-    query?: Pick<
-      $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.newName2CountSync(query);
-  }
-
-  newName2CountSync(
-    query?: Pick<
-      $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-      "filter"
-    >,
-  ): Either<Error, number> {
-    return this.newName2sSync(query).map((objects) => objects.length);
-  }
-
-  async newName2Identifiers(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2.$Identifier[]>> {
-    return this.newName2IdentifiersSync(query);
-  }
-
-  newName2IdentifiersSync(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Either<Error, readonly NewName2.$Identifier[]> {
-    return this.newName2sSync(query).map((objects) =>
-      objects.map((object) => object.$identifier()),
-    );
-  }
-
-  async newName2s(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2[]>> {
-    return this.newName2sSync(query);
-  }
-
-  newName2sSync(
-    query?: $ObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Either<Error, readonly NewName2[]> {
-    return this.#objectsSync<NewName2, NewName2.$Filter, NewName2.$Identifier>(
-      {
-        $filter: NewName2.$filter,
-        $fromRdfResource: NewName2.$fromRdfResource,
-        $fromRdfTypes: [NewName2.$fromRdfType],
+        $filter: NewName.$filter,
+        $fromRdfResource: NewName.$fromRdfResource,
+        $fromRdfTypes: [NewName.$fromRdfType],
       },
       query,
     );
@@ -72749,13 +72095,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdfResource: NewName1.$fromRdfResource,
-          $fromRdfTypes: [NewName1.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdfResource: NewName2.$fromRdfResource,
-          $fromRdfTypes: [NewName2.$fromRdfType],
+          $fromRdfResource: NewName.$fromRdfResource,
+          $fromRdfTypes: [NewName.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -74852,86 +74193,44 @@ export class $SparqlObjectSet implements $ObjectSet {
     >(NamedUnionProperties, query);
   }
 
-  async newName1(
-    identifier: NewName1.$Identifier,
+  async newName(
+    identifier: NewName.$Identifier,
     options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName1>> {
+  ): Promise<Either<Error, NewName>> {
     return (
-      await this.newName1s({
+      await this.newNames({
         identifiers: [identifier],
         preferredLanguages: options?.preferredLanguages,
       })
     ).map((objects) => objects[0]);
   }
 
-  async newName1Count(
+  async newNameCount(
     query?: Pick<
-      $SparqlObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
+      $SparqlObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
-    return this.#objectCount<NewName1.$Filter, NewName1.$Identifier>(
-      NewName1,
+    return this.#objectCount<NewName.$Filter, NewName.$Identifier>(
+      NewName,
       query,
     );
   }
 
-  async newName1Identifiers(
-    query?: $SparqlObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1.$Identifier[]>> {
-    return this.#objectIdentifiers<NewName1.$Filter, NewName1.$Identifier>(
-      NewName1,
+  async newNameIdentifiers(
+    query?: $SparqlObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName.$Identifier[]>> {
+    return this.#objectIdentifiers<NewName.$Filter, NewName.$Identifier>(
+      NewName,
       query,
     );
   }
 
-  async newName1s(
-    query?: $SparqlObjectSet.Query<NewName1.$Filter, NewName1.$Identifier>,
-  ): Promise<Either<Error, readonly NewName1[]>> {
-    return this.#objects<NewName1, NewName1.$Filter, NewName1.$Identifier>(
-      NewName1,
-      query,
-    );
-  }
-
-  async newName2(
-    identifier: NewName2.$Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NewName2>> {
-    return (
-      await this.newName2s({
-        identifiers: [identifier],
-        preferredLanguages: options?.preferredLanguages,
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async newName2Count(
-    query?: Pick<
-      $SparqlObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>> {
-    return this.#objectCount<NewName2.$Filter, NewName2.$Identifier>(
-      NewName2,
-      query,
-    );
-  }
-
-  async newName2Identifiers(
-    query?: $SparqlObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2.$Identifier[]>> {
-    return this.#objectIdentifiers<NewName2.$Filter, NewName2.$Identifier>(
-      NewName2,
-      query,
-    );
-  }
-
-  async newName2s(
-    query?: $SparqlObjectSet.Query<NewName2.$Filter, NewName2.$Identifier>,
-  ): Promise<Either<Error, readonly NewName2[]>> {
-    return this.#objects<NewName2, NewName2.$Filter, NewName2.$Identifier>(
-      NewName2,
+  async newNames(
+    query?: $SparqlObjectSet.Query<NewName.$Filter, NewName.$Identifier>,
+  ): Promise<Either<Error, readonly NewName[]>> {
+    return this.#objects<NewName, NewName.$Filter, NewName.$Identifier>(
+      NewName,
       query,
     );
   }

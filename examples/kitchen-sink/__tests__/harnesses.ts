@@ -554,19 +554,12 @@ export const harnesses = {
     }),
     kitchenSink.OrderedProperties,
   ),
-  overrideName1: new Harness(
-    kitchenSink.NewName1.$create({
+  overrideName: new Harness(
+    kitchenSink.NewName.$create({
       $identifier,
     }),
-    kitchenSink.NewName1,
-    "OverrideName1",
-  ),
-  overrideName2: new Harness(
-    kitchenSink.NewName2.$create({
-      $identifier,
-    }),
-    kitchenSink.NewName2,
-    "OverrideName2",
+    kitchenSink.NewName,
+    "OverrideName",
   ),
   propertyCardinalities: new Harness(
     kitchenSink.PropertyCardinalities.$create({
