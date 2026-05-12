@@ -5550,26 +5550,26 @@
     {
       "comment": "Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes",
       "kind": "ObjectType",
-      "name": "NewName1",
+      "name": "NewName",
       "shapeIdentifier": {
         "prefix": "",
-        "reference": "OverrideName1",
+        "reference": "OverrideName",
         "termType": "NamedNode",
-        "value": "http://example.com/OverrideName1"
+        "value": "http://example.com/OverrideName"
       },
       "fromRdfType": {
         "prefix": "",
-        "reference": "OverrideName1",
+        "reference": "OverrideName",
         "termType": "NamedNode",
-        "value": "http://example.com/OverrideName1"
+        "value": "http://example.com/OverrideName"
       },
       "identifierType": {
         "kind": "IdentifierType",
         "shapeIdentifier": {
           "prefix": "",
-          "reference": "OverrideName1",
+          "reference": "OverrideName",
           "termType": "NamedNode",
-          "value": "http://example.com/OverrideName1"
+          "value": "http://example.com/OverrideName"
         },
         "nodeKinds": [
           "BlankNode",
@@ -5579,49 +5579,9 @@
       "toRdfTypes": [
         {
           "prefix": "",
-          "reference": "OverrideName1",
+          "reference": "OverrideName",
           "termType": "NamedNode",
-          "value": "http://example.com/OverrideName1"
-        }
-      ],
-      "properties": []
-    },
-    {
-      "comment": "Node shape that overrides its default name (derived from the identifier) using rdfs:label; sh:name is only for property shapes",
-      "kind": "ObjectType",
-      "label": "NewName2",
-      "name": "NewName2",
-      "shapeIdentifier": {
-        "prefix": "",
-        "reference": "OverrideName2",
-        "termType": "NamedNode",
-        "value": "http://example.com/OverrideName2"
-      },
-      "fromRdfType": {
-        "prefix": "",
-        "reference": "OverrideName2",
-        "termType": "NamedNode",
-        "value": "http://example.com/OverrideName2"
-      },
-      "identifierType": {
-        "kind": "IdentifierType",
-        "shapeIdentifier": {
-          "prefix": "",
-          "reference": "OverrideName2",
-          "termType": "NamedNode",
-          "value": "http://example.com/OverrideName2"
-        },
-        "nodeKinds": [
-          "BlankNode",
-          "IRI"
-        ]
-      },
-      "toRdfTypes": [
-        {
-          "prefix": "",
-          "reference": "OverrideName2",
-          "termType": "NamedNode",
-          "value": "http://example.com/OverrideName2"
+          "value": "http://example.com/OverrideName"
         }
       ],
       "properties": []

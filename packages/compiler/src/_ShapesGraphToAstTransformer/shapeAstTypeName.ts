@@ -17,11 +17,6 @@ export function shapeAstTypeName(shape: input.Shape): Maybe<string> {
     return shape.shaclmateName;
   }
 
-  // Explicit rdfs:label
-  if (shape.label.isJust()) {
-    return shape.label;
-  }
-
   // CURIE shape identifier
   if (shapeIdentifier instanceof Curie) {
     if (shapeIdentifier.hasUniqueReference) {
