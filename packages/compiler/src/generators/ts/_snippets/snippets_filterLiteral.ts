@@ -9,7 +9,7 @@ export const snippets_filterLiteral: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterLiteral`,
     code`\
-function ${syntheticNamePrefix}filterLiteral(filter: ${this.snippets.LiteralFilter}, value: ${this.imports.Literal}): boolean {
-  return ${this.snippets.filterTerm}(filter, value);
+function ${syntheticNamePrefix}filterLiteral(filter: ${snippets.LiteralFilter}, value: ${imports.Literal}): boolean {
+  return ${snippets.filterTerm}(filter, value);
 }`,
   );

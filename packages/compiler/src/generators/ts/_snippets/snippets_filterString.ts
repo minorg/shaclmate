@@ -8,7 +8,7 @@ export const snippets_filterString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterString`,
     code`\
-function ${syntheticNamePrefix}filterString(filter: ${this.snippets.StringFilter}, value: string) {
+function ${syntheticNamePrefix}filterString(filter: ${snippets.StringFilter}, value: string) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue === value)) {
     return false;
   }

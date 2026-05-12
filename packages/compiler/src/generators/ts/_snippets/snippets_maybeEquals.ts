@@ -10,31 +10,31 @@ export const snippets_maybeEquals: SnippetFactory = ({
     `${syntheticNamePrefix}maybeEquals`,
     code`\
 function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: ${this.imports.Maybe}<T>,
-  rightMaybe: ${this.imports.Maybe}<T>,
-  valueEquals: (left: T, right: T) => boolean | ${this.snippets.EqualsResult},
-): ${this.snippets.EqualsResult} {
+  leftMaybe: ${imports.Maybe}<T>,
+  rightMaybe: ${imports.Maybe}<T>,
+  valueEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return ${this.snippets.EqualsResult}.fromBooleanEqualsResult(
+      return ${snippets.EqualsResult}.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
       );
     }
-    return ${this.imports.Left}({
+    return ${imports.Left}({
       left: leftMaybe.unsafeCoerce(),
       type: "right-null",
     });
   }
 
   if (rightMaybe.isJust()) {
-    return ${this.imports.Left}({
+    return ${imports.Left}({
       right: rightMaybe.unsafeCoerce(),
       type: "left-null",
     });
   }
 
-  return ${this.snippets.EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
   );

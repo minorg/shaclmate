@@ -10,7 +10,7 @@ export const snippets_ShaclPropertySchema: SnippetFactory = ({
     code`\
 export interface ${syntheticNamePrefix}ShaclPropertySchema<TypeSchemaT = object> {
   readonly kind: "Shacl";
-  readonly path: ${this.snippets.PropertyPath};
+  readonly path: ${snippets.PropertyPath};
   readonly type: () => TypeSchemaT;
 }`,
   );

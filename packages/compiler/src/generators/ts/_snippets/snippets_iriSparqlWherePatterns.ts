@@ -8,14 +8,14 @@ export const snippets_iriSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}iriSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}iriSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.IriFilter}, ${this.snippets.IriSchema}> =
+const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IriFilter}, ${snippets.IriSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${this.snippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter?.in !== undefined && filter.in.length > 0) {
-      filterPatterns.push(${this.snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+      filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    return ${this.snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
+    return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   };`,
   );

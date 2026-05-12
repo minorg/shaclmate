@@ -10,7 +10,7 @@ export const snippets_filterMaybe: SnippetFactory = ({
     `${syntheticNamePrefix}filterMaybe`,
     code`\
 function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${this.snippets.MaybeFilter}<ItemFilterT>, value: ${this.imports.Maybe}<ItemT>): boolean => {
+  return (filter: ${snippets.MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
     if (filter !== null) {
       if (value.isNothing()) {
         return false;

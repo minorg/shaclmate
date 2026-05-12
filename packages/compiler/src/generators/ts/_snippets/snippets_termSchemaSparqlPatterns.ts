@@ -15,17 +15,17 @@ function ${syntheticNamePrefix}termSchemaSparqlPatterns({
   schema,
   valueVariable
 }: {
-  filterPatterns: readonly ${this.snippets.SparqlFilterPattern}[],
-  propertyPatterns: readonly ${this.snippets.SparqlPattern}[];
+  filterPatterns: readonly ${snippets.SparqlFilterPattern}[],
+  propertyPatterns: readonly ${snippets.SparqlPattern}[];
   schema: Readonly<{
-    in?: readonly (bigint | boolean | Date | string | number | ${this.imports.Literal} | ${this.imports.NamedNode})[];
+    in?: readonly (bigint | boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
   }>,
-  valueVariable: ${this.imports.Variable};
-}): readonly ${this.snippets.SparqlPattern}[] {
-  let patterns: ${this.snippets.SparqlPattern}[] = propertyPatterns.concat();
+  valueVariable: ${imports.Variable};
+}): readonly ${snippets.SparqlPattern}[] {
+  let patterns: ${snippets.SparqlPattern}[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${this.snippets.sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
+    patterns.push(${snippets.sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
   }
 
   return patterns.concat(filterPatterns);

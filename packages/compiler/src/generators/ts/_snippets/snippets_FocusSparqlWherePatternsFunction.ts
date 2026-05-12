@@ -12,9 +12,9 @@ export const snippets_FocusSparqlWherePatternsFunction: SnippetFactory = ({
 type ${syntheticNamePrefix}FocusSparqlWherePatternsFunction<FilterT> =
   (parameters: {
     filter: FilterT | undefined;
-    focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable};
+    focusIdentifier: ${imports.NamedNode} | ${imports.Variable};
     ignoreRdfType: boolean;
     preferredLanguages: readonly string[] | undefined;
     variablePrefix: string;
-  }) => readonly ${this.snippets.SparqlPattern}[];`,
+  }) => readonly ${snippets.SparqlPattern}[];`,
   );

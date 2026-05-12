@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { imports } from "../this.imports.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_graphqlTypeVariableStatement(

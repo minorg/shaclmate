@@ -9,10 +9,10 @@ export const snippets_dateEquals: SnippetFactory = ({
     `${syntheticNamePrefix}dateEquals`,
     code`\
 /**
- * Compare two Dates and return an ${this.snippets.EqualsResult}.
+ * Compare two Dates and return an ${snippets.EqualsResult}.
  */
-function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${this.snippets.EqualsResult} {
-  return ${this.snippets.EqualsResult}.fromBooleanEqualsResult(
+function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${snippets.EqualsResult} {
+  return ${snippets.EqualsResult}.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),

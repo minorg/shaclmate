@@ -9,12 +9,12 @@ export const snippets_termFilterSparqlPatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}termFilterSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${this.snippets.TermFilter}; valueVariable: ${this.imports.Variable} }): readonly ${this.snippets.SparqlFilterPattern}[] {
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${snippets.TermFilter}; valueVariable: ${imports.Variable} }): readonly ${snippets.SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }
 
-  const filterPatterns: ${this.snippets.SparqlFilterPattern}[] = [];
+  const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
   if (
     filter.datatypeIn !== undefined &&
@@ -35,7 +35,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   }
 
   if (filter.in !== undefined && filter.in.length > 0) {
-    filterPatterns.push(${this.snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+    filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
   }
 
   if (
@@ -46,7 +46,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
       expression: {
         type: "operation",
         operator: "in",
-        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => ${this.imports.dataFactory}.literal(value))]
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => ${imports.dataFactory}.literal(value))]
       },
       lift: true,
       type: "filter",

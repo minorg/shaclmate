@@ -8,10 +8,10 @@ export const snippets_EqualsResult: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}EqualsResult`,
     code`\
-export type ${syntheticNamePrefix}EqualsResult = ${this.imports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
+export type ${syntheticNamePrefix}EqualsResult = ${imports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
-  export const Equal: ${syntheticNamePrefix}EqualsResult = ${this.imports.Right}(true);
+  export const Equal: ${syntheticNamePrefix}EqualsResult = ${imports.Right}(true);
 
   export function fromBooleanEqualsResult(
     left: any,
@@ -26,7 +26,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
       return Equal;
     }
 
-    return ${this.imports.Left}({ left, right, type: "boolean" });
+    return ${imports.Left}({ left, right, type: "boolean" });
   }
 
   export type Unequal =

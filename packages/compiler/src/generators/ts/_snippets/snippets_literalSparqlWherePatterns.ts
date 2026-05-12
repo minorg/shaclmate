@@ -8,6 +8,6 @@ export const snippets_literalSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}literalSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.LiteralFilter}, ${this.snippets.LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${this.snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.LiteralFilter}, ${snippets.LiteralSchema}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
   );

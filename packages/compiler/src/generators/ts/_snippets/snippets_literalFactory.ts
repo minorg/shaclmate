@@ -7,5 +7,5 @@ export const snippets_literalFactory: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}literalFactory`,
-    code`const ${syntheticNamePrefix}literalFactory = new ${this.imports.LiteralFactory}({ dataFactory: ${this.imports.dataFactory} });`,
+    code`const ${syntheticNamePrefix}literalFactory = new ${imports.LiteralFactory}({ dataFactory: ${imports.dataFactory} });`,
   );

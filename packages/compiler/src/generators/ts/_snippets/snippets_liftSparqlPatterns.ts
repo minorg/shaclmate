@@ -8,9 +8,9 @@ export const snippets_liftSparqlPatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}liftSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${this.snippets.SparqlPattern}>): [readonly ${this.snippets.SparqlPattern}[], readonly ${this.snippets.SparqlFilterPattern}[]] {
-  const liftedPatterns: ${this.snippets.SparqlFilterPattern}[] = [];
-  const unliftedPatterns: ${this.snippets.SparqlPattern}[] = [];
+function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${snippets.SparqlPattern}>): [readonly ${snippets.SparqlPattern}[], readonly ${snippets.SparqlFilterPattern}[]] {
+  const liftedPatterns: ${snippets.SparqlFilterPattern}[] = [];
+  const unliftedPatterns: ${snippets.SparqlPattern}[] = [];
   for (const pattern of patterns) {
     if (pattern.type === "filter" && pattern.lift) {
       liftedPatterns.push(pattern);

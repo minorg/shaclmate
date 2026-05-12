@@ -11,19 +11,19 @@ export const snippets_shaclPropertySparqlConstructTriples: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, propertyName, propertySchema, typeSparqlConstructTriples, variablePrefix }: {
   filter: FilterT | undefined;
-  focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable},
+  focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
   ignoreRdfType: boolean;
-  propertySchema: ${this.snippets.ShaclPropertySchema}<TypeSchemaT>;
+  propertySchema: ${snippets.ShaclPropertySchema}<TypeSchemaT>;
   propertyName: string;
-  typeSparqlConstructTriples: ${this.snippets.ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
+  typeSparqlConstructTriples: ${snippets.ValueSparqlConstructTriplesFunction}<FilterT, TypeSchemaT>;
   variablePrefix: string;
-}): readonly ${this.imports.sparqljs}.Triple[] {
+}): readonly ${imports.sparqljs}.Triple[] {
   const propertyPathSparqlConstructTriples = ({ end, propertyPath, start, variableCounter }: {
     variableCounter: { value: number };
-    end: ${this.imports.Literal} | ${this.imports.NamedNode} | ${this.imports.Variable};
-    propertyPath: ${this.snippets.PropertyPath};
-    start: ${this.imports.NamedNode} | ${this.imports.Variable};
-  }): readonly ${this.imports.sparqljs}.Triple[] => {
+    end: ${imports.Literal} | ${imports.NamedNode} | ${imports.Variable};
+    propertyPath: ${snippets.PropertyPath};
+    start: ${imports.NamedNode} | ${imports.Variable};
+  }): readonly ${imports.sparqljs}.Triple[] => {
     switch (propertyPath.termType) {
       case "AlternativePath": {
         return propertyPath.members.flatMap((member) =>
@@ -57,14 +57,14 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
           return propertyPathSparqlConstructTriples({ end, propertyPath: propertyPath.members[0], start, variableCounter });
         }
 
-        let triples: ${this.imports.sparqljs}.Triple[] = [];
-        let current: ${this.imports.NamedNode} | ${this.imports.Variable} = start;
+        let triples: ${imports.sparqljs}.Triple[] = [];
+        let current: ${imports.NamedNode} | ${imports.Variable} = start;
         for (let memberI = 0; memberI < propertyPath.members.length; memberI++) {
-          const next: ${this.imports.NamedNode} | ${this.imports.Literal} | ${this.imports.Variable} = memberI === propertyPath.members.length - 1
+          const next: ${imports.NamedNode} | ${imports.Literal} | ${imports.Variable} = memberI === propertyPath.members.length - 1
             ? end
-            : ${this.imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
+            : ${imports.dataFactory}.variable(\`\${variablePrefix}\${variableCounter.value++}\`);
           triples = triples.concat(propertyPathSparqlConstructTriples({ end: next, propertyPath: propertyPath.members[memberI], start: current, variableCounter }));
-          current = next as ${this.imports.NamedNode} | ${this.imports.Variable};
+          current = next as ${imports.NamedNode} | ${imports.Variable};
         }
 
         return triples;
@@ -84,7 +84,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
   }
 
   const valueString = \`\${variablePrefix}\${propertyName[0].toUpperCase()}\${propertyName.slice(1)}\`;
-  const valueVariable = ${this.imports.dataFactory}.variable!(valueString);
+  const valueVariable = ${imports.dataFactory}.variable!(valueString);
 
   const variableCounter = { value: 0 };
   return propertyPathSparqlConstructTriples({ end: valueVariable, propertyPath: propertySchema.path, start: focusIdentifier, variableCounter })

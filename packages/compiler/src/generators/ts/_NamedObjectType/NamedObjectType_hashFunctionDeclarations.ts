@@ -1,6 +1,5 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const hasherVariable = code`_hasher`;

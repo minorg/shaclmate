@@ -6,7 +6,6 @@ import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
-import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";

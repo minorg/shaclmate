@@ -9,13 +9,13 @@ export const snippets_PropertiesFromRdfResourceFunction: SnippetFactory = ({
     `${syntheticNamePrefix}PropertiesFromRdfResourceFunction`,
     code`\
 type ${syntheticNamePrefix}PropertiesFromRdfResourceFunction<T> = (
-  resource: ${this.imports.Resource},
+  resource: ${imports.Resource},
   options: {
     context: undefined | unknown;
-    graph: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}> | undefined;
+    graph: Exclude<${imports.Quad_Graph}, ${imports.Variable}> | undefined;
     ignoreRdfType: boolean;
     objectSet: ${syntheticNamePrefix}ObjectSet;
     preferredLanguages?: readonly string[];
   }
-) => ${this.imports.Either}<Error, T>;`,
+) => ${imports.Either}<Error, T>;`,
   );

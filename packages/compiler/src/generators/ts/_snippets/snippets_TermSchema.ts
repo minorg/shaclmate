@@ -9,7 +9,7 @@ export const snippets_TermSchema: SnippetFactory = ({
     `${syntheticNamePrefix}TermSchema`,
     code`\
 interface ${syntheticNamePrefix}TermSchema {
-  readonly in?: readonly (${this.imports.Literal} | ${this.imports.NamedNode})[];
+  readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
   readonly kind: "Term";
 }`,
   );

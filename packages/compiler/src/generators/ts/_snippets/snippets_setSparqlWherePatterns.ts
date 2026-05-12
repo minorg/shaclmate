@@ -8,7 +8,7 @@ export const snippets_setSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}setSparqlWherePatterns`,
     code`\
-function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${this.snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${this.snippets.ValueSparqlWherePatternsFunction}<${this.snippets.CollectionFilter}<ItemFilterT>, ${this.snippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
 
@@ -18,7 +18,7 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       return itemSparqlWherePatterns;
     }
     
-    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${this.snippets.liftSparqlPatterns}(itemSparqlWherePatterns);
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatterns);
     return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,

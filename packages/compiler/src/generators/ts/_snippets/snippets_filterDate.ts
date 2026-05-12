@@ -8,7 +8,7 @@ export const snippets_filterDate: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterDate`,
     code`\
-function ${syntheticNamePrefix}filterDate(filter: ${this.snippets.DateFilter}, value: Date) {
+function ${syntheticNamePrefix}filterDate(filter: ${snippets.DateFilter}, value: Date) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.getTime() === value.getTime())) {
     return false;
   }

@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { removeUndefined } from "../removeUndefined.js";
-import { imports } from "../this.imports.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

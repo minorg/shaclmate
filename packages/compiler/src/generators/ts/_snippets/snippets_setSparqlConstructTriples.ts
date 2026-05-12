@@ -8,7 +8,7 @@ export const snippets_setSparqlConstructTriples: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}setSparqlConstructTriples`,
     code`\
-function ${syntheticNamePrefix}setSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${this.snippets.ValueSparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${this.snippets.ValueSparqlConstructTriplesFunction}<${this.snippets.CollectionFilter}<ItemFilterT>, ${this.snippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets.ValueSparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlConstructTriplesFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ schema, ...otherParameters }) => itemSparqlConstructTriplesFunction({ ...otherParameters, schema: schema.item() });
 }`,
   );

@@ -9,7 +9,7 @@ export const snippets_filterIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterIdentifier`,
     code`\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${this.snippets.IdentifierFilter}, value: ${this.imports.BlankNode} | ${this.imports.NamedNode}) {
+function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets.IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }

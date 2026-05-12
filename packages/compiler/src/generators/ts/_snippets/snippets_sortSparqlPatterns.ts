@@ -9,10 +9,10 @@ export const snippets_sortSparqlPatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}sortSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${this.snippets.SparqlPattern}[]): readonly ${this.snippets.SparqlPattern}[] {
-  const filterPatterns: ${this.snippets.SparqlPattern}[] = [];
-  const otherPatterns: ${this.snippets.SparqlPattern}[] = [];
-  const valuesPatterns: ${this.snippets.SparqlPattern}[] = [];
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
+  const filterPatterns: ${snippets.SparqlPattern}[] = [];
+  const otherPatterns: ${snippets.SparqlPattern}[] = [];
+  const valuesPatterns: ${snippets.SparqlPattern}[] = [];
 
   for (const pattern of patterns) {
     switch (pattern.type) {

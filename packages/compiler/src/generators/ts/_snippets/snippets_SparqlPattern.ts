@@ -8,5 +8,5 @@ export const snippets_SparqlPattern: SnippetFactory = ({
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}SparqlPattern`,
-    code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${this.imports.sparqljs}.Pattern, ${this.imports.sparqljs}.FilterPattern> | ${this.snippets.SparqlFilterPattern};`,
+    code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${imports.sparqljs}.Pattern, ${imports.sparqljs}.FilterPattern> | ${snippets.SparqlFilterPattern};`,
   );

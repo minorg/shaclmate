@@ -11,8 +11,8 @@ export const snippets_FocusSparqlConstructTriplesFunction: SnippetFactory = ({
 type ${syntheticNamePrefix}FocusSparqlConstructTriplesFunction<FilterT> = 
   (parameters: {
     filter: FilterT | undefined;
-    focusIdentifier: ${this.imports.NamedNode} | ${this.imports.Variable};
+    focusIdentifier: ${imports.NamedNode} | ${imports.Variable};
     ignoreRdfType: boolean;
     variablePrefix: string;
-  }) => readonly ${this.imports.sparqljs}.Triple[];`,
+  }) => readonly ${imports.sparqljs}.Triple[];`,
   );

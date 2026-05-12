@@ -11,7 +11,6 @@ import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { imports } from "../this.imports.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

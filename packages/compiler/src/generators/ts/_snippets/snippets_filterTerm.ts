@@ -9,7 +9,7 @@ export const snippets_filterTerm: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}filterTerm`,
     code`\
-  function ${syntheticNamePrefix}filterTerm(filter: ${this.snippets.TermFilter}, value: ${this.imports.BlankNode} | ${this.imports.Literal} | ${this.imports.NamedNode}): boolean {
+  function ${syntheticNamePrefix}filterTerm(filter: ${snippets.TermFilter}, value: ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}): boolean {
     if (filter.datatypeIn !== undefined && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
       return false;
     }

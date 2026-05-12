@@ -3,8 +3,6 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { imports } from "../this.imports.js";
-import { snippets } from "../this.snippets.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {

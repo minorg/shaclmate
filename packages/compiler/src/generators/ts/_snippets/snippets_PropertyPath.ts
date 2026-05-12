@@ -12,7 +12,7 @@ export const snippets_PropertyPath: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}PropertyPath`,
     code`\
-export type ${syntheticNamePrefix}PropertyPath = ${this.imports.RdfxResourcePropertyPath};
+export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
   export type $Filter = object;
@@ -21,9 +21,9 @@ export namespace ${syntheticNamePrefix}PropertyPath {
     return true;
   }
 
-  export const ${syntheticNamePrefix}fromRdfResource: ${this.snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${this.imports.RdfxResourcePropertyPath}.fromResource;
+  export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
 
-  export const $fromRdfResourceValues: ${this.snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
+  export const $fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
@@ -34,8 +34,8 @@ export namespace ${syntheticNamePrefix}PropertyPath {
 
   export const $schema: Readonly<object> = {};
 
-  export const ${syntheticNamePrefix}toRdfResource: ${this.snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${this.imports.RdfxResourcePropertyPath}.toResource;
+  export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
 
-  export const ${syntheticNamePrefix}toString = ${this.imports.RdfxResourcePropertyPath}.toString;
+  export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
   );

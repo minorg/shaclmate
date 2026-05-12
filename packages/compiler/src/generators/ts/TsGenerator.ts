@@ -2,8 +2,9 @@ import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+import { Imports } from "./Imports.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-
+import { Snippets } from "./Snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -11,15 +12,28 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
   private readonly logger: Logger;
+  private readonly snippets: Snippets;
   private readonly typeFactory: TypeFactory;
 
   constructor({ logger }: { logger: Logger }) {
+    const imports = new Imports();
     this.logger = logger;
-    this.typeFactory = new TypeFactory({ logger });
+    this.snippets = new Snippets({ imports, logger });
+    this.typeFactory = new TypeFactory({
+      imports,
+      logger,
+      snippets: this.snippets,
+    });
   }
 
   generate(ast_: ast.Ast): string {
     let declarations: Code[] = [];
+
+    for (const namedObjectType of ast_.namedObjectTypes) {
+      for (const tsImport of namedObjectType.tsImports) {
+        declarations.push(code`${tsImport}`);
+      }
+    }
 
     for (const astNamedUnionType of ast_.namedUnionTypes) {
       if (astNamedUnionType.isObjectUnionType()) {
@@ -97,7 +111,7 @@ export class TsGenerator implements Generator {
       0,
       0,
       joinCode(
-        Object.values(snippets)
+        Object.values(this.snippets)
           .sort((left, right) =>
             left.usageSiteName.localeCompare(right.usageSiteName),
           )

@@ -11,13 +11,13 @@ export const snippets_LazyObjectSet: SnippetFactory = ({
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${this.imports.BlankNode} | ${this.imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }> {
   readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${this.imports.Either}<Error, readonly ResolvedObjectT[]>>;
+  private readonly resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
 
   constructor({ partials, resolver }: {
     partials: readonly PartialObjectT[]
-    resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${this.imports.Either}<Error, readonly ResolvedObjectT[]>>,
+    resolver: (identifiers: readonly ObjectIdentifierT[], options?: { preferredLanguages?: readonly string[] }) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>,
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -27,14 +27,14 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${thi
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number; preferredLanguages?: readonly string[] }): Promise<${this.imports.Either}<Error, readonly ResolvedObjectT[]>> {
+  async resolve(options?: { limit?: number; offset?: number; preferredLanguages?: readonly string[] }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
-      return ${this.imports.Right}([]);
+      return ${imports.Right}([]);
     }
 
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return ${this.imports.Right}([]);
+      return ${imports.Right}([]);
     }
 
     let offset = options?.offset ?? 0;

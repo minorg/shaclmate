@@ -8,12 +8,12 @@ export const snippets_deduplicateSparqlPatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}deduplicateSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${this.snippets.SparqlPattern}[]): readonly ${this.snippets.SparqlPattern}[] {
+function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
   if (patterns.length === 0) {
     return patterns;
   }
 
-  const deduplicatedPatterns: ${this.snippets.SparqlPattern}[] = [];
+  const deduplicatedPatterns: ${snippets.SparqlPattern}[] = [];
   const deduplicatePatternStrings = new Set<string>();
   for (const pattern of patterns) {
     const patternString = JSON.stringify(pattern);

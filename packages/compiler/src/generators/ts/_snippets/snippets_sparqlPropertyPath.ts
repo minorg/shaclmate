@@ -10,9 +10,9 @@ export const snippets_sparqlPropertyPath: SnippetFactory = ({
     `${syntheticNamePrefix}sparqlPropertyPath`,
     code`\
 /**
- * Convert a ${this.snippets.PropertyPath} to a ${this.imports.sparqljs}.PropertyPath.
+ * Convert a ${snippets.PropertyPath} to a ${imports.sparqljs}.PropertyPath.
  */  
-function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${this.snippets.PropertyPath}): ${this.imports.NamedNode} | ${this.imports.sparqljs}.PropertyPath {
+function ${syntheticNamePrefix}sparqlPropertyPath(propertyPath: ${snippets.PropertyPath}): ${imports.NamedNode} | ${imports.sparqljs}.PropertyPath {
   switch (propertyPath.termType) {
     case "AlternativePath":
       return {

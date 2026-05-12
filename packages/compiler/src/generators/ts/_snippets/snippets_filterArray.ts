@@ -9,7 +9,7 @@ export const snippets_filterArray: SnippetFactory = ({
     `${syntheticNamePrefix}filterArray`,
     code`\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${this.snippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
+  return (filter: ${snippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
     for (const value of values) {
       if (!filterItem(filter, value)) {
         return false;

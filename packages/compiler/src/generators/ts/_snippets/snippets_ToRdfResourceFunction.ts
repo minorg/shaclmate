@@ -9,5 +9,5 @@ export const snippets_ToRdfResourceFunction: SnippetFactory = ({
     `${syntheticNamePrefix}ToRdfResourceFunction`,
     code`\
 export type ${syntheticNamePrefix}ToRdfResourceFunction<T> =
-    (value: T, options?: { graph?: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}>; ignoreRdfType?: boolean; resourceSet?: ${this.imports.ResourceSet}; }) => ${this.imports.Resource};`,
+    (value: T, options?: { graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>; ignoreRdfType?: boolean; resourceSet?: ${imports.ResourceSet}; }) => ${imports.Resource};`,
   );

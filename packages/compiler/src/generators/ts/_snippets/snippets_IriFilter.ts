@@ -9,6 +9,6 @@ export const snippets_IriFilter: SnippetFactory = ({
     `${syntheticNamePrefix}IriFilter`,
     code`\
 interface ${syntheticNamePrefix}IriFilter {
-  readonly in?: readonly ${this.imports.NamedNode}[];
+  readonly in?: readonly ${imports.NamedNode}[];
 }`,
   );
