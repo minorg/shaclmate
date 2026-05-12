@@ -198,12 +198,19 @@ export class NamedObjectType extends AbstractType {
           this,
         )().toList(),
         NamedObjectType_schemaVariableStatement.call(this),
-        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind(
-          this,
-        )().toList(),
-        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind(
-          this,
-        )().toList(),
+        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind({
+          features: this.features,
+          filterType: this.filterType,
+          imports: this.imports,
+          name: this.name,
+          snippets: this.snippets,
+        })().toList(),
+        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind({
+          features: this.features,
+          filterType: this.filterType,
+          imports: this.imports,
+          name: this.name,
+        })().toList(),
         ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toStringFunctionDeclarations.call(this),

@@ -345,7 +345,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       case "ZeroOrOnePath":
         return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
       case "NamedNode":
-        return rdfjsTermExpression(propertyPath, { logger: this.logger });
+        return rdfjsTermExpression.call(this, propertyPath);
     }
   }
 }

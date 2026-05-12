@@ -3,7 +3,6 @@ import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_listSparqlWherePatterns: SnippetFactory = ({
-  logger,
   imports,
   rdfjsTermExpression,
   snippets,
@@ -32,7 +31,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           triples: [
             {
               subject: listVariable,
-              predicate: ${rdfjsTermExpression(rdf.first, { logger })},
+              predicate: ${rdfjsTermExpression(rdf.first)},
               object: item0Variable,
             },
           ],
@@ -57,7 +56,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
         triples: [
           {
             subject: listVariable,
-            predicate: ${rdfjsTermExpression(rdf.rest, { logger })},
+            predicate: ${rdfjsTermExpression(rdf.rest)},
             object: rest0Variable,
           },
         ],
@@ -74,7 +73,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       triples: [
         {
           subject: listVariable,
-          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest, { logger })}] },
+          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] },
           object: restNVariable,
         },
       ],
@@ -88,7 +87,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           triples: [
             {
               subject: restNVariable,
-              predicate: ${rdfjsTermExpression(rdf.first, { logger })},
+              predicate: ${rdfjsTermExpression(rdf.first)},
               object: itemNVariable,
             },
           ],
@@ -111,7 +110,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       triples: [
         {
           subject: restNVariable,
-          predicate: ${rdfjsTermExpression(rdf.rest, { logger })},
+          predicate: ${rdfjsTermExpression(rdf.rest)},
           object: variable("RestNBasic"),
         },
       ],

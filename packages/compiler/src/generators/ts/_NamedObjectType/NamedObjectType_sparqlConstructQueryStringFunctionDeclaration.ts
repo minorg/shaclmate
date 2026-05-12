@@ -1,9 +1,11 @@
 import { Maybe } from "purify-ts";
+import type { Imports } from "../Imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { TsFeature } from "../TsFeature.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_sparqlConstructQueryStringFunctionDeclaration(this: {
+  readonly imports: Imports;
   readonly features: ReadonlySet<TsFeature>;
   readonly filterType: Code;
   readonly name: string;

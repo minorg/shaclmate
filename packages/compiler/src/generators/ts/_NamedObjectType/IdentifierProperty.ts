@@ -178,10 +178,8 @@ export class IdentifierProperty extends AbstractProperty<
       code`${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
-          propertyPath: rdfjsTermExpression(rdf.subject, {
-            logger: this.logger,
-          }),
-          resourceValues: code`${this.imports.Right}(new ${this.imports.Resource}.Value(${{ dataFactory: this.imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression(rdf.subject, { logger: this.logger }), term: code`${variables.resource}.identifier` }}).toValues())`,
+          propertyPath: rdfjsTermExpression.call(this, rdf.subject),
+          resourceValues: code`${this.imports.Right}(new ${this.imports.Resource}.Value(${{ dataFactory: this.imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression.call(this, rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
         },
       })}.chain(values => values.head())`,
     );

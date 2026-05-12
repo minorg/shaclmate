@@ -2,17 +2,21 @@ import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-
+import type { Imports } from "../Imports.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { removeUndefined } from "../removeUndefined.js";
+import type { Snippets } from "../Snippets.js";
+import { TsGeneratorContext } from "../TsGeneratorContext.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
-> {
+> extends TsGeneratorContext {
+  protected readonly imports: Imports;
   protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
+  protected readonly snippets: Snippets;
 
   /**
    * Optional property to include in the parameters object of a class constructor.
@@ -89,19 +93,26 @@ export abstract class AbstractProperty<
   readonly type: TypeT;
 
   constructor({
+    imports,
     logger,
     name,
     namedObjectType,
+    snippets,
     type,
   }: {
+    imports: Imports;
     logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
+    snippets: Snippets;
     type: TypeT;
   }) {
+    super();
+    this.imports = imports;
     this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;
+    this.snippets = snippets;
     this.type = type;
   }
 

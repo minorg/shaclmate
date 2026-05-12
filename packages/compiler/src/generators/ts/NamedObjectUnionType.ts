@@ -74,7 +74,13 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       ...this.graphqlTypeVariableStatement,
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
-      ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call(this)
+      ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
+        features: this.features,
+        filterType: this.filterType,
+        imports: this.imports,
+        name: this.name,
+        snippets: this.snippets,
+      })
         .map((code_) =>
           singleEntryRecord(
             `${syntheticNamePrefix}sparqlConstructQuery`,
@@ -82,9 +88,12 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
           ),
         )
         .orDefault({}),
-      ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call(
-        this,
-      )
+      ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+        features: this.features,
+        filterType: this.filterType,
+        imports: this.imports,
+        name: this.name,
+      })
         .map((code_) =>
           singleEntryRecord(
             `${syntheticNamePrefix}sparqlConstructQueryString`,

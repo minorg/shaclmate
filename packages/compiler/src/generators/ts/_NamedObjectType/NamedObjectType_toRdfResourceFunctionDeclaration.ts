@@ -31,7 +31,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
       code`if (!options?.${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${this.imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
+            code`${variables.resource}.add(${rdfjsTermExpression.call(this, rdf.type)}, ${this.imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
         ),
         { on: " " },
       )} }`,

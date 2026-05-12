@@ -153,9 +153,11 @@ export class TypeFactory {
         }
 
         return new NamedObjectType.DiscriminantProperty({
+          imports: this.imports,
           logger: this.logger,
           name: `${syntheticNamePrefix}type`,
           namedObjectType,
+          snippets: this.snippets,
           type: new NamedObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
@@ -191,9 +193,11 @@ export class TypeFactory {
           0,
           0,
           new NamedObjectType.IdentifierProperty({
+            imports: this.imports,
             logger: this.logger,
             name: `${syntheticNamePrefix}identifier`,
             namedObjectType,
+            snippets: this.snippets,
             type: identifierType,
             typeAlias: code`${name}.${syntheticNamePrefix}Identifier`,
           }),
@@ -597,6 +601,7 @@ export class TypeFactory {
       comment: astObjectTypeProperty.comment,
       description: astObjectTypeProperty.description,
       display: astObjectTypeProperty.display,
+      imports: this.imports,
       label: astObjectTypeProperty.label,
       logger: this.logger,
       mutable: astObjectTypeProperty.mutable,
@@ -604,6 +609,7 @@ export class TypeFactory {
       name: tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
+      snippets: this.snippets,
       type: this.createType(astObjectTypeProperty.type),
     });
 
