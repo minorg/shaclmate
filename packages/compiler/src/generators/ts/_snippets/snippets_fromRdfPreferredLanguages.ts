@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_fromRdfPreferredLanguages = conditionalOutput(
-  `${syntheticNamePrefix}fromRdfPreferredLanguages`,
-  code`\
+export const snippets_fromRdfPreferredLanguages: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}fromRdfPreferredLanguages`,
+    code`\
 function ${syntheticNamePrefix}fromRdfPreferredLanguages(values: ${imports.Resource}.Values, preferredLanguages?: readonly string[]): ${imports.Either}<Error, ${imports.Resource}.Values> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
     return ${imports.Right}(values);
@@ -25,4 +28,4 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(values: ${imports.Resou
 
   return ${imports.Right}(${imports.Resource}.Values.fromArray({ focusResource: values.focusResource, propertyPath: values.propertyPath, values: filteredValues }));
 }`,
-);
+  );

@@ -1,13 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
-import { snippets_ShaclPropertySchema } from "./snippets_ShaclPropertySchema.js";
-import { snippets_ValueSparqlConstructTriplesFunction } from "./snippets_ValueSparqlConstructTriplesFunction.js";
 
-export const snippets_shaclPropertySparqlConstructTriples = conditionalOutput(
-  `${syntheticNamePrefix}shaclPropertySparqlConstructTriples`,
-  code`\
+export const snippets_shaclPropertySparqlConstructTriples: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}shaclPropertySparqlConstructTriples`,
+    code`\
 function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, propertyName, propertySchema, typeSparqlConstructTriples, variablePrefix }: {
   filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
@@ -95,4 +96,4 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
       variablePrefix: valueString
     }));
 }`,
-);
+  );

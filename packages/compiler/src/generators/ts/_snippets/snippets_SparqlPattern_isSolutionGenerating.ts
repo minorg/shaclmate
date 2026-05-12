@@ -1,10 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
-export const snippets_SparqlPattern_isSolutionGenerating = conditionalOutput(
-  `${syntheticNamePrefix}SparqlPattern.isSolutionGenerating`,
-  code`\
+export const snippets_SparqlPattern_isSolutionGenerating: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}SparqlPattern.isSolutionGenerating`,
+    code`\
 namespace ${syntheticNamePrefix}SparqlPattern {
   export function isSolutionGenerating(pattern: ${snippets.SparqlPattern}): boolean {
     switch (pattern.type) {
@@ -32,4 +35,4 @@ namespace ${syntheticNamePrefix}SparqlPattern {
     }
   }
 }`,
-);
+  );

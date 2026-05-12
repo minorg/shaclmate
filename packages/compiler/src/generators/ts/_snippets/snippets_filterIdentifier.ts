@@ -1,11 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_IdentifierFilter } from "./snippets_IdentifierFilter.js";
 
-export const snippets_filterIdentifier = conditionalOutput(
-  `${syntheticNamePrefix}filterIdentifier`,
-  code`\
+export const snippets_filterIdentifier: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterIdentifier`,
+    code`\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets.IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
@@ -17,4 +20,4 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${snippets.IdentifierFil
 
   return true;
 }`,
-);
+  );

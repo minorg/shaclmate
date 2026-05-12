@@ -1,16 +1,17 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_FromRdfResourceFunction } from "./snippets_FromRdfResourceFunction.js";
-import { snippets_FromRdfResourceValuesFunction } from "./snippets_FromRdfResourceValuesFunction.js";
-import { snippets_ToRdfResourceFunction } from "./snippets_ToRdfResourceFunction.js";
 
 /**
  * Adapter between generated code and the rdfjs-resource PropertyPath.
  */
-export const snippets_PropertyPath = conditionalOutput(
-  `${syntheticNamePrefix}PropertyPath`,
-  code`\
+export const snippets_PropertyPath: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}PropertyPath`,
+    code`\
 export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
@@ -37,4 +38,4 @@ export namespace ${syntheticNamePrefix}PropertyPath {
 
   export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
-);
+  );

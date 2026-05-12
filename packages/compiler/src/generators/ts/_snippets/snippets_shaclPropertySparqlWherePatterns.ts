@@ -1,15 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
-import { snippets_ShaclPropertySchema } from "./snippets_ShaclPropertySchema.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_sparqlPropertyPath } from "./snippets_sparqlPropertyPath.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_shaclPropertySparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}shaclPropertySparqlWherePatterns`,
-  code`\
+export const snippets_shaclPropertySparqlWherePatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}shaclPropertySparqlWherePatterns`,
+    code`\
 function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({ filter, focusIdentifier, ignoreRdfType, preferredLanguages, propertyName, propertySchema, typeSparqlWherePatterns, variablePrefix }: {
   filter: FilterT | undefined;
   focusIdentifier: ${imports.NamedNode} | ${imports.Variable},
@@ -93,4 +92,4 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
     variablePrefix: valueString
   });
 }`,
-);
+  );

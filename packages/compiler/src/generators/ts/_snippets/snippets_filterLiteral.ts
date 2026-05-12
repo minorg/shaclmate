@@ -1,13 +1,15 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_filterTerm } from "./snippets_filterTerm.js";
-import { snippets_LiteralFilter } from "./snippets_LiteralFilter.js";
 
-export const snippets_filterLiteral = conditionalOutput(
-  `${syntheticNamePrefix}filterLiteral`,
-  code`\
+export const snippets_filterLiteral: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterLiteral`,
+    code`\
 function ${syntheticNamePrefix}filterLiteral(filter: ${snippets.LiteralFilter}, value: ${imports.Literal}): boolean {
   return ${snippets.filterTerm}(filter, value);
 }`,
-);
+  );

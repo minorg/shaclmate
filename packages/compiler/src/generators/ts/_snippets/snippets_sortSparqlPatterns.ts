@@ -1,10 +1,14 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
-export const snippets_sortSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}sortSparqlPatterns`,
-  code`\
+export const snippets_sortSparqlPatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}sortSparqlPatterns`,
+    code`\
 function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
   const filterPatterns: ${snippets.SparqlPattern}[] = [];
   const otherPatterns: ${snippets.SparqlPattern}[] = [];
@@ -26,4 +30,4 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${snippets.
 
   return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }`,
-);
+  );

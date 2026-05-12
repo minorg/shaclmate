@@ -1,13 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_liftSparqlPatterns } from "./snippets_liftSparqlPatterns.js";
-import { snippets_MaybeFilter } from "./snippets_MaybeFilter.js";
-import { snippets_MaybeSchema } from "./snippets_MaybeSchema.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_maybeSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}maybeSparqlWherePatterns`,
-  code`\
+export const snippets_maybeSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}maybeSparqlWherePatterns`,
+    code`\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<${snippets.MaybeFilter}<ItemFilterT>, ${snippets.MaybeSchema}<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (filter === undefined) {
@@ -26,4 +26,4 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     return itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
   }
 }`,
-);
+  );

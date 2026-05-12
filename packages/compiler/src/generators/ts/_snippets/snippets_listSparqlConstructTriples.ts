@@ -1,14 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
-import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
-import { snippets_RdfVocabularies } from "./snippets_RdfVocabularies.js";
-import { snippets_ValueSparqlConstructTriplesFunction } from "./snippets_ValueSparqlConstructTriplesFunction.js";
 
-export const snippets_listSparqlConstructTriples = conditionalOutput(
-  `${syntheticNamePrefix}listSparqlConstructTriples`,
-  code`\
+export const snippets_listSparqlConstructTriples: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}listSparqlConstructTriples`,
+    code`\
 function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(itemSparqlConstructTriplesFunction: ${snippets.ValueSparqlConstructTriplesFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlConstructTriplesFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, valueVariable: listVariable, variablePrefix: variablePrefixPrefix }) => {
     let triples: ${imports.sparqljs}.Triple[] = [];
@@ -43,4 +43,4 @@ function ${syntheticNamePrefix}listSparqlConstructTriples<ItemFilterT, ItemSchem
     return triples;
   }
 }`,
-);
+  );

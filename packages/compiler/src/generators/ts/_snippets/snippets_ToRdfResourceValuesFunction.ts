@@ -1,13 +1,17 @@
 import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_PropertyPath } from "./snippets_PropertyPath.js";
 
 const ReturnT = code`${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}`;
 
-export const snippets_ToRdfResourceValuesFunction = conditionalOutput(
-  `${syntheticNamePrefix}ToRdfResourceValuesFunction`,
-  code`\
+export const snippets_ToRdfResourceValuesFunction: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}ToRdfResourceValuesFunction`,
+    code`\
 export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<ValueT, ReturnT extends ${ReturnT} = ${ReturnT}> =
   (value: ValueT,
    options: {
@@ -18,4 +22,4 @@ export type ${syntheticNamePrefix}ToRdfResourceValuesFunction<ValueT, ReturnT ex
      resourceSet: ${imports.ResourceSet};
    }
   ) => ReturnT[];`,
-);
+  );

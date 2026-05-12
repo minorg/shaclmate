@@ -1,13 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_deduplicateSparqlPatterns } from "./snippets_deduplicateSparqlPatterns.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_SparqlPattern_isSolutionGenerating } from "./snippets_SparqlPattern_isSolutionGenerating.js";
-import { snippets_sortSparqlPatterns } from "./snippets_sortSparqlPatterns.js";
 
-export const snippets_normalizeSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
-  code`\
+export const snippets_normalizeSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
+    code`\
 function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
   function normalizePatternsRecursive(patternsRecursive: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
     if (patternsRecursive.length === 0) {
@@ -97,4 +97,4 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
 
   return normalizedPatterns;
 }`,
-);
+  );

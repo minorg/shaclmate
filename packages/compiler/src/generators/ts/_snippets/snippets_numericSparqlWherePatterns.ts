@@ -1,16 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_literalFactory } from "./snippets_literalFactory.js";
-import { snippets_NumericFilter } from "./snippets_NumericFilter.js";
-import { snippets_NumericSchema } from "./snippets_NumericSchema.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
-import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_numericSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}numericSparqlWherePatterns`,
-  code`\
+export const snippets_numericSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}numericSparqlWherePatterns`,
+    code`\
 function $numericSparqlWherePatterns<T extends bigint | number>({ filter, valueVariable, ...otherParameters }: Parameters<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<T>, ${snippets.NumericSchema}<T>>>[0]): ReturnType<${snippets.ValueSparqlWherePatternsFunction}<${snippets.NumericFilter}<T>, ${snippets.NumericSchema}<T>>> {
   const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
@@ -70,4 +67,4 @@ function $numericSparqlWherePatterns<T extends bigint | number>({ filter, valueV
 
   return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
 }`,
-);
+  );

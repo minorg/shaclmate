@@ -1,11 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_EqualsResult } from "./snippets_EqualsResult.js";
 
-export const snippets_maybeEquals = conditionalOutput(
-  `${syntheticNamePrefix}maybeEquals`,
-  code`\
+export const snippets_maybeEquals: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}maybeEquals`,
+    code`\
 function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: ${imports.Maybe}<T>,
   rightMaybe: ${imports.Maybe}<T>,
@@ -34,4 +37,4 @@ function ${syntheticNamePrefix}maybeEquals<T>(
 
   return ${snippets.EqualsResult}.Equal;
 }`,
-);
+  );

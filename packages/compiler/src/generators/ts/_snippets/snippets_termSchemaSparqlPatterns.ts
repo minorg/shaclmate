@@ -1,13 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 
-export const snippets_termSchemaSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}termSchemaSparqlPatterns`,
-  code`\
+export const snippets_termSchemaSparqlPatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}termSchemaSparqlPatterns`,
+    code`\
 function ${syntheticNamePrefix}termSchemaSparqlPatterns({
   filterPatterns,
   propertyPatterns,
@@ -29,4 +30,4 @@ function ${syntheticNamePrefix}termSchemaSparqlPatterns({
 
   return patterns.concat(filterPatterns);
 }`,
-);
+  );

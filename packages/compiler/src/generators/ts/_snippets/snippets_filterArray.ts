@@ -1,10 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 
-export const snippets_filterArray = conditionalOutput(
-  `${syntheticNamePrefix}filterArray`,
-  code`\
+export const snippets_filterArray: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterArray`,
+    code`\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
   return (filter: ${snippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
     for (const value of values) {
@@ -24,4 +27,4 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
     return true;
   }
 }`,
-);
+  );

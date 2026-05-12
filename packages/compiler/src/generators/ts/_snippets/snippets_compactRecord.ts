@@ -1,9 +1,12 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_compactRecord = conditionalOutput(
-  `${syntheticNamePrefix}compactRecord`,
-  code`\
+export const snippets_compactRecord: SnippetFactory = ({
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}compactRecord`,
+    code`\
 /**
  * Remove undefined values from a record.
  */  
@@ -16,4 +19,4 @@ function ${syntheticNamePrefix}compactRecord<KeyT extends string, ValueT extends
       return definedProperties;
     }, {} as Record<KeyT, ValueT>);
 }`,
-);
+  );

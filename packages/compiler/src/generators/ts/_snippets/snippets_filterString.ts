@@ -1,10 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_StringFilter } from "./snippets_StringFilter.js";
 
-export const snippets_filterString = conditionalOutput(
-  `${syntheticNamePrefix}filterString`,
-  code`\
+export const snippets_filterString: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterString`,
+    code`\
 function ${syntheticNamePrefix}filterString(filter: ${snippets.StringFilter}, value: string) {
   if (filter.in !== undefined && !filter.in.some(inValue => inValue === value)) {
     return false;
@@ -20,4 +23,4 @@ function ${syntheticNamePrefix}filterString(filter: ${snippets.StringFilter}, va
 
   return true;
 }`,
-);
+  );

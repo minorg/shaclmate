@@ -1,15 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_IriFilter } from "./snippets_IriFilter.js";
-import { snippets_IriSchema } from "./snippets_IriSchema.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
-import { snippets_termSchemaSparqlPatterns } from "./snippets_termSchemaSparqlPatterns.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_iriSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}iriSparqlWherePatterns`,
-  code`\
+export const snippets_iriSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}iriSparqlWherePatterns`,
+    code`\
 const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.IriFilter}, ${snippets.IriSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
@@ -20,4 +18,4 @@ const ${syntheticNamePrefix}iriSparqlWherePatterns: ${snippets.ValueSparqlWhereP
 
     return ${snippets.termSchemaSparqlPatterns}({ ...otherParameters, filterPatterns, valueVariable });
   };`,
-);
+  );

@@ -1,13 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
-import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
-import { snippets_liftSparqlPatterns } from "./snippets_liftSparqlPatterns.js";
-import { snippets_ValueSparqlWherePatternsFunction } from "./snippets_ValueSparqlWherePatternsFunction.js";
 
-export const snippets_setSparqlWherePatterns = conditionalOutput(
-  `${syntheticNamePrefix}setSparqlWherePatterns`,
-  code`\
+export const snippets_setSparqlWherePatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}setSparqlWherePatterns`,
+    code`\
 function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
@@ -22,4 +22,4 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
     return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,
-);
+  );

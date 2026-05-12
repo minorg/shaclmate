@@ -1,11 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_MaybeFilter } from "./snippets_MaybeFilter.js";
 
-export const snippets_filterMaybe = conditionalOutput(
-  `${syntheticNamePrefix}filterMaybe`,
-  code`\
+export const snippets_filterMaybe: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}filterMaybe`,
+    code`\
 function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
   return (filter: ${snippets.MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
     if (filter !== null) {
@@ -25,4 +28,4 @@ function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (item
     return true;
   }
 }`,
-);
+  );

@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_FocusSparqlConstructTriplesFunction = conditionalOutput(
-  `${syntheticNamePrefix}FocusSparqlConstructTriplesFunction`,
-  code`\
+export const snippets_FocusSparqlConstructTriplesFunction: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}FocusSparqlConstructTriplesFunction`,
+    code`\
 type ${syntheticNamePrefix}FocusSparqlConstructTriplesFunction<FilterT> = 
   (parameters: {
     filter: FilterT | undefined;
@@ -12,4 +15,4 @@ type ${syntheticNamePrefix}FocusSparqlConstructTriplesFunction<FilterT> =
     ignoreRdfType: boolean;
     variablePrefix: string;
   }) => readonly ${imports.sparqljs}.Triple[];`,
-);
+  );

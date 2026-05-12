@@ -1,10 +1,13 @@
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
 
-export const snippets_deduplicateSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}deduplicateSparqlPatterns`,
-  code`\
+export const snippets_deduplicateSparqlPatterns: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}deduplicateSparqlPatterns`,
+    code`\
 function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${snippets.SparqlPattern}[]): readonly ${snippets.SparqlPattern}[] {
   if (patterns.length === 0) {
     return patterns;
@@ -21,4 +24,4 @@ function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${sn
   }
   return deduplicatedPatterns;
 }`,
-);
+  );

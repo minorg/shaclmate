@@ -1,10 +1,13 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_LazyObjectOption = conditionalOutput(
-  `${syntheticNamePrefix}LazyObjectOption`,
-  code`\
+export const snippets_LazyObjectOption: SnippetFactory = ({
+  imports,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}LazyObjectOption`,
+    code`\
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -27,4 +30,4 @@ export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${
     return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier(), options)).map(${imports.Maybe}.of);
   }
 }`,
-);
+  );

@@ -1,14 +1,14 @@
-import { imports } from "../imports.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
-import { snippets_arrayIntersection } from "./snippets_arrayIntersection.js";
-import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
-import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";
-import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 
-export const snippets_literalSchemaSparqlPatterns = conditionalOutput(
-  `${syntheticNamePrefix}literalSchemaSparqlPatterns`,
-  code`\
+export const snippets_literalSchemaSparqlPatterns: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}literalSchemaSparqlPatterns`,
+    code`\
 function ${syntheticNamePrefix}literalSchemaSparqlPatterns({
   filterPatterns,
   preferredLanguages,
@@ -45,4 +45,4 @@ function ${syntheticNamePrefix}literalSchemaSparqlPatterns({
 
   return patterns.concat(filterPatterns);
 }`,
-);
+  );
