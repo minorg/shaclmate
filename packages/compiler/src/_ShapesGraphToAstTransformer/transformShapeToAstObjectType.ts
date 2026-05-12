@@ -22,7 +22,7 @@ function isObjectTypePropertyRequired(property: {
     case "LazyObjectOptionType":
       return false;
     case "LazyObjectSetType":
-      return property.type.partialType.minCount > 0;
+      return property.type.partialType.minCount > 0n;
     case "OptionType":
       return false;
     case "SetType":

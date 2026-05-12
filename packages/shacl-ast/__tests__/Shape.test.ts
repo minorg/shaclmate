@@ -124,7 +124,7 @@ describe("Shape", () => {
         schema.Person,
         schema.birthDate,
       ).maxCount.extractNullable(),
-    ).toStrictEqual(1);
+    ).toStrictEqual(1n);
   });
 
   it("constraints: should have an sh:maxExclusive", ({ expect }) => {
@@ -151,7 +151,7 @@ describe("Shape", () => {
         schema.DatedMoneySpecification,
         schema.amount,
       ).minCount.extractNullable(),
-    ).toStrictEqual(1);
+    ).toStrictEqual(1n);
   });
 
   it("constraints: should have an sh:minExclusive", ({ expect }) => {

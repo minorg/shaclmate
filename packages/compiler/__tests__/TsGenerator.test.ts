@@ -65,6 +65,10 @@ describe("TsGenerator", () => {
           break;
       }
 
+      // if (id !== "kitchenSink") {
+      //   return;
+      // }
+
       const diagnostics = compileTs(
         generate(shapesGraphEither.unsafeCoerce()),
         sourceDirectoryPath,

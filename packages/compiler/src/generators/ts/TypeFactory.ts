@@ -380,7 +380,7 @@ export class TypeFactory {
       itemType,
       label: astType.label,
       logger: this.logger,
-      minCount: 0,
+      minCount: 0n,
       mutable: astType.mutable,
       toRdfTypes: astType.toRdfTypes,
     });
@@ -514,9 +514,10 @@ export class TypeFactory {
         "literal type has multiple datatypes: %s",
         JSON.stringify([...datatypes].map((datatype) => datatype.value)),
       );
-    } else {
-      this.logger.debug("literal type has no datatypes");
     }
+    // } else {
+    //   // this.logger.debug("literal type has no datatypes");
+    // }
 
     return new LiteralType({
       comment: astType.comment,

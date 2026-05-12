@@ -21307,17 +21307,23 @@ export namespace NumericProperties {
     readonly decimalNumericProperty?: Maybe<BigDecimal> | BigDecimal;
     readonly doubleNumericProperty?: Maybe<number> | number;
     readonly floatNumericProperty?: Maybe<number> | number;
-    readonly integerNumericProperty?: Maybe<bigint> | bigint;
+    readonly integerNumericProperty?: Maybe<bigint> | bigint | number;
     readonly intNumericProperty?: Maybe<number> | number;
-    readonly longNumericProperty?: Maybe<bigint> | bigint;
-    readonly negativeIntegerNumericProperty?: Maybe<bigint> | bigint;
-    readonly nonNegativeIntegerNumericProperty?: Maybe<bigint> | bigint;
-    readonly nonPositiveIntegerNumericProperty?: Maybe<bigint> | bigint;
-    readonly positiveIntegerNumericProperty?: Maybe<bigint> | bigint;
+    readonly longNumericProperty?: Maybe<bigint> | bigint | number;
+    readonly negativeIntegerNumericProperty?: Maybe<bigint> | bigint | number;
+    readonly nonNegativeIntegerNumericProperty?:
+      | Maybe<bigint>
+      | bigint
+      | number;
+    readonly nonPositiveIntegerNumericProperty?:
+      | Maybe<bigint>
+      | bigint
+      | number;
+    readonly positiveIntegerNumericProperty?: Maybe<bigint> | bigint | number;
     readonly shortNumericProperty?: Maybe<number> | number;
     readonly unsignedByteNumericProperty?: Maybe<number> | number;
     readonly unsignedIntNumericProperty?: Maybe<number> | number;
-    readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint;
+    readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint | number;
     readonly unsignedShortNumericProperty?: Maybe<number> | number;
   }): NumericProperties {
     const $identifierParameter = parameters?.$identifier;
@@ -21381,6 +21387,10 @@ export namespace NumericProperties {
       integerNumericProperty = parameters?.integerNumericProperty;
     } else if (typeof parameters?.integerNumericProperty === "bigint") {
       integerNumericProperty = Maybe.of(parameters?.integerNumericProperty);
+    } else if (typeof parameters?.integerNumericProperty === "number") {
+      integerNumericProperty = Maybe.of(
+        BigInt(parameters?.integerNumericProperty),
+      );
     } else if (parameters?.integerNumericProperty === undefined) {
       integerNumericProperty = Maybe.empty();
     } else {
@@ -21402,6 +21412,8 @@ export namespace NumericProperties {
       longNumericProperty = parameters?.longNumericProperty;
     } else if (typeof parameters?.longNumericProperty === "bigint") {
       longNumericProperty = Maybe.of(parameters?.longNumericProperty);
+    } else if (typeof parameters?.longNumericProperty === "number") {
+      longNumericProperty = Maybe.of(BigInt(parameters?.longNumericProperty));
     } else if (parameters?.longNumericProperty === undefined) {
       longNumericProperty = Maybe.empty();
     } else {
@@ -21414,6 +21426,10 @@ export namespace NumericProperties {
     } else if (typeof parameters?.negativeIntegerNumericProperty === "bigint") {
       negativeIntegerNumericProperty = Maybe.of(
         parameters?.negativeIntegerNumericProperty,
+      );
+    } else if (typeof parameters?.negativeIntegerNumericProperty === "number") {
+      negativeIntegerNumericProperty = Maybe.of(
+        BigInt(parameters?.negativeIntegerNumericProperty),
       );
     } else if (parameters?.negativeIntegerNumericProperty === undefined) {
       negativeIntegerNumericProperty = Maybe.empty();
@@ -21431,6 +21447,12 @@ export namespace NumericProperties {
       nonNegativeIntegerNumericProperty = Maybe.of(
         parameters?.nonNegativeIntegerNumericProperty,
       );
+    } else if (
+      typeof parameters?.nonNegativeIntegerNumericProperty === "number"
+    ) {
+      nonNegativeIntegerNumericProperty = Maybe.of(
+        BigInt(parameters?.nonNegativeIntegerNumericProperty),
+      );
     } else if (parameters?.nonNegativeIntegerNumericProperty === undefined) {
       nonNegativeIntegerNumericProperty = Maybe.empty();
     } else {
@@ -21447,6 +21469,12 @@ export namespace NumericProperties {
       nonPositiveIntegerNumericProperty = Maybe.of(
         parameters?.nonPositiveIntegerNumericProperty,
       );
+    } else if (
+      typeof parameters?.nonPositiveIntegerNumericProperty === "number"
+    ) {
+      nonPositiveIntegerNumericProperty = Maybe.of(
+        BigInt(parameters?.nonPositiveIntegerNumericProperty),
+      );
     } else if (parameters?.nonPositiveIntegerNumericProperty === undefined) {
       nonPositiveIntegerNumericProperty = Maybe.empty();
     } else {
@@ -21460,6 +21488,10 @@ export namespace NumericProperties {
     } else if (typeof parameters?.positiveIntegerNumericProperty === "bigint") {
       positiveIntegerNumericProperty = Maybe.of(
         parameters?.positiveIntegerNumericProperty,
+      );
+    } else if (typeof parameters?.positiveIntegerNumericProperty === "number") {
+      positiveIntegerNumericProperty = Maybe.of(
+        BigInt(parameters?.positiveIntegerNumericProperty),
       );
     } else if (parameters?.positiveIntegerNumericProperty === undefined) {
       positiveIntegerNumericProperty = Maybe.empty();
@@ -21509,6 +21541,10 @@ export namespace NumericProperties {
     } else if (typeof parameters?.unsignedLongNumericProperty === "bigint") {
       unsignedLongNumericProperty = Maybe.of(
         parameters?.unsignedLongNumericProperty,
+      );
+    } else if (typeof parameters?.unsignedLongNumericProperty === "number") {
+      unsignedLongNumericProperty = Maybe.of(
+        BigInt(parameters?.unsignedLongNumericProperty),
       );
     } else if (parameters?.unsignedLongNumericProperty === undefined) {
       unsignedLongNumericProperty = Maybe.empty();

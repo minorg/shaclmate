@@ -125,8 +125,8 @@ export function transformShapeToAstListType(
             return empty;
           }
           if (
-            firstPropertyShape.maxCount.extract() !== 1 ||
-            firstPropertyShape.minCount.extract() !== 1
+            firstPropertyShape.maxCount.extract() !== 1n ||
+            firstPropertyShape.minCount.extract() !== 1n
           ) {
             return Left(
               new Error(
@@ -139,8 +139,8 @@ export function transformShapeToAstListType(
             return empty;
           }
           if (
-            restPropertyShape.maxCount.extract() !== 1 ||
-            restPropertyShape.minCount.extract() !== 1
+            restPropertyShape.maxCount.extract() !== 1n ||
+            restPropertyShape.minCount.extract() !== 1n
           ) {
             return Left(
               new Error(

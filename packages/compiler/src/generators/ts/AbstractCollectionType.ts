@@ -15,7 +15,7 @@ export abstract class AbstractCollectionType<
   ItemTypeT extends AbstractCollectionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   protected readonly _mutable: boolean;
-  protected readonly minCount: number;
+  protected readonly minCount: bigint;
 
   override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
     Maybe.empty();
@@ -28,15 +28,15 @@ export abstract class AbstractCollectionType<
     mutable,
     ...superParameters
   }: {
-    minCount: number;
+    minCount: bigint;
     mutable: boolean;
   } & ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0]) {
     super(superParameters);
     this.minCount = minCount;
-    invariant(this.minCount >= 0);
+    invariant(this.minCount >= 0n);
     this._mutable = mutable;
     if (mutable) {
-      invariant(this.minCount === 0);
+      invariant(this.minCount === 0n);
     }
   }
 
@@ -74,7 +74,7 @@ export abstract class AbstractCollectionType<
       }
     }
 
-    if (this.minCount === 0) {
+    if (this.minCount === 0n) {
       if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
         // There were no additional conversions with different item typeof's, so we don't need to check .every or do .map
         // Just check that the original value is an array with typeof "object". Array.isArray() doesn't narrow types for some reason.
@@ -175,7 +175,7 @@ export abstract class AbstractCollectionType<
     if (this._mutable) {
       return code`(${this.itemType.name})[]`;
     }
-    if (this.minCount === 0) {
+    if (this.minCount === 0n) {
       return code`readonly (${this.itemType.name})[]`;
     }
     return code`${imports.NonEmptyList}<${this.itemType.name}>`;
@@ -189,7 +189,7 @@ export abstract class AbstractCollectionType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      minCount: this.minCount > 0 ? this.minCount : undefined,
+      minCount: this.minCount > 0n ? Number(this.minCount) : undefined,
     };
   }
 
@@ -199,10 +199,10 @@ export abstract class AbstractCollectionType<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     let expression = variables.value;
-    if (!this._mutable && this.minCount > 0) {
+    if (!this._mutable && this.minCount > 0n) {
       expression = code`${imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
-    if (this.minCount === 0) {
+    if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
     const valueVariable = code`item`;
@@ -255,7 +255,7 @@ export abstract class AbstractCollectionType<
     parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {
     let schema = code`${this.itemType.jsonSchema(parameters)}.array()`;
-    if (this.minCount > 0) {
+    if (this.minCount > 0n) {
       schema = code`${schema}.nonempty().min(${this.minCount})`;
     } else {
       schema = code`${schema}.optional()`;

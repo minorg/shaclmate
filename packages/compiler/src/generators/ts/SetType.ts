@@ -15,7 +15,7 @@ export class SetType<
 
   override get conversions(): readonly AbstractCollectionType.Conversion[] {
     const conversions: AbstractCollectionType.Conversion[] = [];
-    if (this.minCount === 0) {
+    if (this.minCount === 0n) {
       conversions.push({
         conversionExpression: () => code`[]`,
         sourceTypeCheckExpression: (value) => code`${value} === undefined`,
@@ -46,7 +46,7 @@ export class SetType<
     const chain: Code[] = [
       this.itemType.fromRdfResourceValuesExpression(parameters),
     ];
-    if (this.minCount === 0 || this._mutable) {
+    if (this.minCount === 0n || this._mutable) {
       chain.push(
         code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
       );
@@ -64,7 +64,7 @@ export class SetType<
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
     const name = code`${!this.mutable ? "readonly " : ""}(${this.itemType.jsonType().name})[]`;
-    if (this.minCount === 0) {
+    if (this.minCount === 0n) {
       return new AbstractCollectionType.JsonType(name, { optional: true });
     }
     return new AbstractCollectionType.JsonType(name);
