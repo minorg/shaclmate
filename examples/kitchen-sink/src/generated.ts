@@ -37956,7 +37956,7 @@ export namespace InProperties {
     readonly inBooleansProperty?: Maybe<true> | true;
     readonly inDateTimesProperty?: Maybe<Date> | Date;
     readonly inDoublesProperty?: Maybe<1 | 2> | 1 | 2;
-    readonly inIntegersProperty?: Maybe<1n | 2n> | 1n | 2n | number;
+    readonly inIntegersProperty?: Maybe<1n | 2n> | 1n | 2n;
     readonly inIrisProperty?:
       | Maybe<
           NamedNode<
@@ -38025,8 +38025,6 @@ export namespace InProperties {
       inIntegersProperty = parameters?.inIntegersProperty;
     } else if (typeof parameters?.inIntegersProperty === "bigint") {
       inIntegersProperty = Maybe.of(parameters?.inIntegersProperty);
-    } else if (typeof parameters?.inIntegersProperty === "number") {
-      inIntegersProperty = Maybe.of(BigInt(parameters?.inIntegersProperty));
     } else if (parameters?.inIntegersProperty === undefined) {
       inIntegersProperty = Maybe.empty();
     } else {

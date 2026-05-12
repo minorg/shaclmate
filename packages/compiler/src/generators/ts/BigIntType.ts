@@ -13,6 +13,10 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly typeofs = NonEmptyList(["bigint" as const]);
 
   override get conversions(): readonly AbstractNumericType.Conversion[] {
+    if (this.in_.length > 0) {
+      return super.conversions;
+    }
+
     return super.conversions.concat({
       conversionExpression: (value) => code`BigInt(${value})`,
       sourceTypeCheckExpression: (value) => code`typeof ${value} === "number"`,

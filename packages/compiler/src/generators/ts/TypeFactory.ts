@@ -514,9 +514,10 @@ export class TypeFactory {
         "literal type has multiple datatypes: %s",
         JSON.stringify([...datatypes].map((datatype) => datatype.value)),
       );
-    } else {
-      this.logger.debug("literal type has no datatypes");
     }
+    // } else {
+    //   // this.logger.debug("literal type has no datatypes");
+    // }
 
     return new LiteralType({
       comment: astType.comment,
