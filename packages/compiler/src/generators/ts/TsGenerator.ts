@@ -1,26 +1,35 @@
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
+import { BlankNodeType } from "./BlankNodeType.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+import { IdentifierType } from "./IdentifierType.js";
 import { Imports } from "./Imports.js";
+import { IriType } from "./IriType.js";
+import type { NamedObjectType } from "./NamedObjectType.js";
+import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { Snippets } from "./Snippets.js";
-import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsFeature } from "./TsFeature.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
+  private readonly imports: Imports;
   private readonly logger: Logger;
   private readonly snippets: Snippets;
   private readonly typeFactory: TypeFactory;
 
   constructor({ logger }: { logger: Logger }) {
-    const imports = new Imports();
+    this.imports = new Imports();
     this.logger = logger;
-    this.snippets = new Snippets({ imports, logger });
+    this.snippets = new Snippets({ imports: this.imports, logger });
     this.typeFactory = new TypeFactory({
-      imports,
+      imports: this.imports,
       logger,
       snippets: this.snippets,
     });
@@ -82,10 +91,9 @@ export class TsGenerator implements Generator {
         );
         break;
       default: {
-        const uberObjectUnionType = synthesizeUberObjectUnionType({
-          logger: this.logger,
-          namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-        });
+        const uberObjectUnionType = this.synthesizeUberObjectUnionType(
+          namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+        );
         declarations = declarations.concat(
           uberObjectUnionType.declaration.toList(),
         );
@@ -121,5 +129,83 @@ export class TsGenerator implements Generator {
     );
 
     return joinCode(declarations).toString({});
+  }
+
+  /**
+   * Synthesize the $Object union.
+   */
+  private synthesizeUberObjectUnionType(
+    namedObjectTypes: readonly NamedObjectType[],
+  ): NamedObjectUnionType {
+    const filteredNamedObjectTypes = namedObjectTypes.filter(
+      (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
+    );
+    invariant(filteredNamedObjectTypes.length > 0);
+
+    const nodeKinds = filteredNamedObjectTypes.reduce(
+      (nodeKinds, namedObjectType) => {
+        for (const nodeKind of namedObjectType.identifierType.nodeKinds) {
+          nodeKinds.add(nodeKind);
+        }
+        return nodeKinds;
+      },
+      new Set<IdentifierNodeKind>(),
+    );
+
+    let identifierType: BlankNodeType | IdentifierType | IriType;
+    if (nodeKinds.size === 2) {
+      identifierType = new IdentifierType({
+        comment: Maybe.empty(),
+        imports: this.imports,
+        label: Maybe.empty(),
+        logger: this.logger,
+        snippets: this.snippets,
+      });
+    } else {
+      switch ([...nodeKinds][0]) {
+        case "BlankNode":
+          identifierType = new BlankNodeType({
+            comment: Maybe.empty(),
+            imports: this.imports,
+            label: Maybe.empty(),
+            logger: this.logger,
+            snippets: this.snippets,
+          });
+          break;
+        case "IRI":
+          identifierType = new IriType({
+            comment: Maybe.empty(),
+            hasValues: [],
+            imports: this.imports,
+            in_: [],
+            label: Maybe.empty(),
+            logger: this.logger,
+            snippets: this.snippets,
+          });
+          break;
+      }
+    }
+
+    return new NamedObjectUnionType({
+      comment: Maybe.empty(),
+      features: filteredNamedObjectTypes.reduce((features, namedObjectType) => {
+        for (const feature of namedObjectType.features) {
+          features.add(feature);
+        }
+        features.delete("graphql");
+        return features;
+      }, new Set<TsFeature>()),
+      identifierType,
+      imports: this.imports,
+      label: Maybe.empty(),
+      logger: this.logger,
+      members: filteredNamedObjectTypes.map((namedObjectType) => ({
+        discriminantValue: Maybe.empty(),
+        type: namedObjectType,
+      })),
+      name: `${syntheticNamePrefix}Object`,
+      recursive: false,
+      snippets: this.snippets,
+    });
   }
 }
