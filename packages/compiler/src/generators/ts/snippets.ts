@@ -136,7 +136,11 @@ export class Snippets {
     return snippetFactory({
       imports: this.imports,
       logger: this.logger,
-      rdfjsTermExpression,
+      rdfjsTermExpression: rdfjsTermExpression.bind({
+        imports: this.imports,
+        logger: this.logger,
+        snippets: this,
+      }),
       snippets: this,
       syntheticNamePrefix,
     });

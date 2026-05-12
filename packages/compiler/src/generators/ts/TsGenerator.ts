@@ -1,8 +1,11 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
+
 import * as ast from "../../ast/index.js";
+
 import type { Generator } from "../Generator.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
@@ -19,10 +22,11 @@ import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
-  private readonly imports: Imports;
-  private readonly logger: Logger;
-  private readonly snippets: Snippets;
   private readonly typeFactory: TypeFactory;
+
+  protected readonly imports: Imports;
+  protected readonly logger: Logger;
+  protected readonly snippets: Snippets;
 
   constructor({ logger }: { logger: Logger }) {
     this.imports = new Imports();
@@ -102,7 +106,7 @@ export class TsGenerator implements Generator {
     }
 
     declarations.push(
-      ...objectSetDeclarations({
+      ...objectSetDeclarations.call(this, {
         namedObjectTypes: namedObjectTypesNameSorted,
         namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
       }),

@@ -2,16 +2,24 @@ import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import type { Logger } from "ts-log";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
-
+import type { AbstractType } from "./AbstractType.js";
+import type { Imports } from "./Imports.js";
+import type { Snippets } from "./Snippets.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export function rdfjsTermExpression(
+  this: (AbstractType | TsGenerator) &
+    Readonly<{
+      imports: Imports;
+      logger: Logger;
+      snippets: Snippets;
+    }>,
   rdfjsTerm:
     | Omit<BlankNode, "equals">
     | Omit<Literal, "equals">
     | Omit<NamedNode, "equals">
     | Omit<Variable, "equals">,
-  { logger }: { logger: Logger },
 ): Code {
   switch (rdfjsTerm.termType) {
     case "BlankNode":
@@ -23,7 +31,7 @@ export function rdfjsTermExpression(
         }
         return code`${this.imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${literalOf(rdfjsTerm.language)})`;
       }
-      return code`${this.imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype, { logger })})`;
+      return code`${this.imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression.call(this, rdfjsTerm.datatype)})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
@@ -72,7 +80,7 @@ export function rdfjsTermExpression(
           case "unsignedShort":
             return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
-            logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
+            this.logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
         }
       }
 

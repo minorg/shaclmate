@@ -72,9 +72,7 @@ export class TermType<
       ...super.schemaObject,
       in:
         this.in_.length > 0
-          ? this.in_.map((in_) =>
-              rdfjsTermExpression(in_, { logger: this.logger }),
-            )
+          ? this.in_.map((in_) => rdfjsTermExpression.call(this, in_))
           : undefined,
     };
   }

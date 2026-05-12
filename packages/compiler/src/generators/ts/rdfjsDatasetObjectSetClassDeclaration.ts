@@ -5,16 +5,20 @@ import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
-export function rdfjsDatasetObjectSetClassDeclaration({
-  namedObjectTypes,
-  namedObjectUnionTypes,
-}: {
-  namedObjectTypes: readonly NamedObjectType[];
-  namedObjectUnionTypes: readonly NamedObjectUnionType[];
-}): Code {
+export function rdfjsDatasetObjectSetClassDeclaration(
+  this: TsGenerator,
+  {
+    namedObjectTypes,
+    namedObjectUnionTypes,
+  }: {
+    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+  },
+): Code {
   const namedObjectTypeType = code`\
 {
   ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
