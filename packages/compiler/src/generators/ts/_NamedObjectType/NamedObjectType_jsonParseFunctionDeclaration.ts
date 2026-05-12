@@ -11,9 +11,9 @@ export function NamedObjectType_jsonParseFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function parse(json: unknown): ${this.imports.Either}<Error, ${syntheticNamePrefix}Json> {
+export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${syntheticNamePrefix}Json> {
   const jsonSafeParseResult = schema().safeParse(json);
-  if (!jsonSafeParseResult.success) { return ${this.imports.Left}(jsonSafeParseResult.error); }
-  return ${this.imports.Right}(jsonSafeParseResult.data);
+  if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
+  return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
 }`);
 }

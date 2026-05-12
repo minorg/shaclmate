@@ -106,15 +106,15 @@ export abstract class AbstractCollectionType<
             sourceTypeCheckExpression: (value) => {
               switch (itemTypeof as Typeof) {
                 case "bigint":
-                  return code`${this.snippets.isReadonlyBigIntArray}(${value})`;
+                  return code`${this.reusables.snippets.isReadonlyBigIntArray}(${value})`;
                 case "boolean":
-                  return code`${this.snippets.isReadonlyBooleanArray}(${value})`;
+                  return code`${this.reusables.snippets.isReadonlyBooleanArray}(${value})`;
                 case "number":
-                  return code`${this.snippets.isReadonlyNumberArray}(${value})`;
+                  return code`${this.reusables.snippets.isReadonlyNumberArray}(${value})`;
                 case "object":
-                  return code`${this.snippets.isReadonlyObjectArray}(${value})`;
+                  return code`${this.reusables.snippets.isReadonlyObjectArray}(${value})`;
                 case "string":
-                  return code`${this.snippets.isReadonlyStringArray}(${value})`;
+                  return code`${this.reusables.snippets.isReadonlyStringArray}(${value})`;
                 case "function":
                 case "symbol":
                 case "undefined":
@@ -134,7 +134,7 @@ export abstract class AbstractCollectionType<
       conversions.push({
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          code`${this.imports.NonEmptyList}.isNonEmpty(${value})`,
+          code`${this.reusables.imports.NonEmptyList}.isNonEmpty(${value})`,
         sourceTypeName: this.name,
         sourceTypeof: "object",
       });
@@ -145,23 +145,24 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`((left, right) => ${this.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
+    return code`((left, right) => ${this.reusables.snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.snippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${this.reusables.snippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.snippets.CollectionFilter}<${this.itemType.filterType}>`;
+    return code`${this.reusables.snippets.CollectionFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return new AbstractContainerType.GraphqlType(
-      code`new ${this.imports.GraphQLList}(${this.itemType.graphqlType.name})`,
+      code`new ${this.reusables.imports.GraphQLList}(${this.itemType.graphqlType.name})`,
+      this.reusables,
     );
   }
 
@@ -177,12 +178,12 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0n) {
       return code`readonly (${this.itemType.name})[]`;
     }
-    return code`${this.imports.NonEmptyList}<${this.itemType.name}>`;
+    return code`${this.reusables.imports.NonEmptyList}<${this.itemType.name}>`;
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.snippets.CollectionSchema}<${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
   protected override get schemaObject() {
@@ -199,7 +200,7 @@ export abstract class AbstractCollectionType<
   >[0]): Code {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0n) {
-      expression = code`${this.imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
+      expression = code`${this.reusables.imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;

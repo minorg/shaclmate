@@ -29,7 +29,7 @@ export function NamedObjectType_equalsFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${this.snippets.EqualsResult} {
+export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${this.reusables.snippets.EqualsResult} {
   return ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,

@@ -1,14 +1,19 @@
 import { NonEmptyList } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { AbstractNumericType } from "./AbstractNumericType.js";
-
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class IntType extends AbstractNumericType<number> {
-  override readonly graphqlType = new AbstractNumericType.GraphqlType(
-    code`${this.imports.GraphQLInt}`,
-  );
   override readonly kind = "IntType";
   override readonly typeofs = NonEmptyList(["number" as const]);
+
+  @Memoize()
+  override get graphqlType() {
+    return new AbstractNumericType.GraphqlType(
+      code`${this.reusables.imports.GraphQLInt}`,
+      this.reusables,
+    );
+  }
 
   protected override fromRdfResourceValueExpression({
     variables,

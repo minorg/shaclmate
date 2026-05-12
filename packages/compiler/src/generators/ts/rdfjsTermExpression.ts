@@ -1,10 +1,12 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import type { TsGeneratorContext } from "./TsGeneratorContext.js";
+import type { Logger } from "ts-log";
+import type { Imports } from "./Imports.js";
+import type { Snippets } from "./Snippets.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export function rdfjsTermExpression(
-  this: TsGeneratorContext,
+  this: { imports: Imports; logger: Logger; snippets: Snippets },
   rdfjsTerm:
     | Omit<BlankNode, "equals">
     | Omit<Literal, "equals">

@@ -21,7 +21,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { NamedUnionType } from "./NamedUnionType.js";
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
 
 import type { TermType } from "./TermType.js";
@@ -51,12 +50,12 @@ export class ListType<
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+    return code`${this.reusables.snippets.listSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.reusables.snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   override fromRdfResourceValuesExpression({
@@ -73,7 +72,7 @@ export class ListType<
           valueList => ${this.itemType.fromRdfResourceValuesExpression({
             variables: {
               ...variables,
-              resourceValues: code`${this.imports.Right}(${this.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
+              resourceValues: code`${this.reusables.imports.Right}(${this.reusables.imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, values: valueList.toArray() }))`,
             },
           })}
       ))`, // Resource.Values<Resource.Values> to Resource.Values<item type arrays>
@@ -101,12 +100,12 @@ export class ListType<
     switch (this.identifierNodeKind) {
       case "BlankNode": {
         mintListIdentifierFunction =
-          mintSubListIdentifierFunction = code`(() => ${this.imports.dataFactory}.blankNode())`;
-        resourceTypeName = code`${this.imports.Resource}<${this.imports.BlankNode}>`;
+          mintSubListIdentifierFunction = code`(() => ${this.reusables.imports.dataFactory}.blankNode())`;
+        resourceTypeName = code`${this.reusables.imports.Resource}<${this.reusables.imports.BlankNode}>`;
         break;
       }
       case "IRI": {
-        resourceTypeName = code`${this.imports.Resource}<${this.imports.NamedNode}>`;
+        resourceTypeName = code`${this.reusables.imports.Resource}<${this.reusables.imports.NamedNode}>`;
         throw new RangeError("list IRI minting is unsupported");
       }
     }
@@ -116,16 +115,16 @@ export class ListType<
       currentSubListResource = listResource;
     } else {
       const newSubListResource = ${variables.resourceSet}.resource(${mintSubListIdentifierFunction}());
-      currentSubListResource!.add(${rdfjsTermExpression.call(this, rdf.rest)}, newSubListResource.identifier, ${variables.graph});
+      currentSubListResource!.add(${this.rdfjsTermExpression(rdf.rest)}, newSubListResource.identifier, ${variables.graph});
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.type)}, ${this.imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${this.rdfjsTermExpression(rdf.type)}, ${this.reusables.imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
-    currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.first)}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression.call(this, rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
+    currentSubListResource.add(${this.rdfjsTermExpression(rdf.first)}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: this.rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.rest)}, ${rdfjsTermExpression.call(this, rdf.nil)}, ${variables.graph});
+      currentSubListResource.add(${this.rdfjsTermExpression(rdf.rest)}, ${this.rdfjsTermExpression(rdf.nil)}, ${variables.graph});
     }
     
     return { currentSubListResource, listResource };
@@ -137,7 +136,7 @@ export class ListType<
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};
   },
-).listResource.identifier : ${rdfjsTermExpression.call(this, rdf.nil)}]`;
+).listResource.identifier : ${this.rdfjsTermExpression(rdf.nil)}]`;
   }
 
   override toStringExpression({

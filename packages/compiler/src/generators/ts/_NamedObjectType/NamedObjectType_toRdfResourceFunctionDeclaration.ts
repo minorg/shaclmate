@@ -1,7 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -13,7 +12,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
   }
 
   const statements: Code[] = [
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${this.imports.ResourceSet}({ dataFactory: ${this.imports.dataFactory}, dataset: ${this.imports.datasetFactory}.dataset() });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${this.reusables.imports.ResourceSet}({ dataFactory: ${this.reusables.imports.dataFactory}, dataset: ${this.reusables.imports.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
@@ -31,7 +30,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
       code`if (!options?.${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression.call(this, rdf.type)}, ${this.imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
+            code`${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.reusables.imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
         ),
         { on: " " },
       )} }`,
@@ -56,7 +55,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}toRdfResource(${this.thisVariable}: ${this.name}, options?: Parameters<${this.snippets.ToRdfResourceFunction}<${this.name}>>[1]): ${this.toRdfjsResourceType} {
+export function ${syntheticNamePrefix}toRdfResource(${this.thisVariable}: ${this.name}, options?: Parameters<${this.reusables.snippets.ToRdfResourceFunction}<${this.name}>>[1]): ${this.toRdfjsResourceType} {
   ${joinCode(statements)}
 }`);
 }

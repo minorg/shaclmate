@@ -9,7 +9,6 @@ import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -88,9 +87,9 @@ export class IdentifierProperty extends AbstractProperty<
     if (this.type.in_.length > 0 && this.type.kind === "IriType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${this.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
+      schema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
     } else {
-      schema = code`${this.imports.z}.string().min(1)`;
+      schema = code`${this.reusables.imports.z}.string().min(1)`;
     }
 
     return Maybe.of({
@@ -146,7 +145,7 @@ export class IdentifierProperty extends AbstractProperty<
       (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
     ) {
       conversionBranches.push(
-        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${this.imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
+        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${this.reusables.imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
       );
     }
 
@@ -178,8 +177,8 @@ export class IdentifierProperty extends AbstractProperty<
       code`${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
-          propertyPath: rdfjsTermExpression.call(this, rdf.subject),
-          resourceValues: code`${this.imports.Right}(new ${this.imports.Resource}.Value(${{ dataFactory: this.imports.dataFactory, focusResource: variables.resource, propertyPath: rdfjsTermExpression.call(this, rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
+          propertyPath: this.rdfjsTermExpression(rdf.subject),
+          resourceValues: code`${this.reusables.imports.Right}(new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: this.rdfjsTermExpression(rdf.subject), term: code`${variables.resource}.identifier` }}).toValues())`,
         },
       })}.chain(values => values.head())`,
     );

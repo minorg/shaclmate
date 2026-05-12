@@ -201,15 +201,14 @@ export class NamedObjectType extends AbstractType {
         ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind({
           features: this.features,
           filterType: this.filterType,
-          imports: this.imports,
           name: this.name,
-          snippets: this.snippets,
+          reusables: this.reusables,
         })().toList(),
         ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind({
           features: this.features,
           filterType: this.filterType,
-          imports: this.imports,
           name: this.name,
+          reusables: this.reusables,
         })().toList(),
         ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
@@ -292,6 +291,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
       code`${this.name}.${syntheticNamePrefix}GraphQL`,
+      this.reusables,
     );
   }
 
@@ -348,7 +348,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${this.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.imports.NamedNode}>` : ""}`;
+    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()
@@ -404,7 +404,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${this.imports.z}.lazy((): ${this.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

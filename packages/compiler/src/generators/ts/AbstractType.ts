@@ -2,19 +2,21 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-import type { Imports } from "./Imports.js";
-import type { Snippets } from "./Snippets.js";
-import { TsGeneratorContext } from "./TsGeneratorContext.js";
+
+import type { Reusables } from "./Reusables.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
  */
-export abstract class AbstractType extends TsGeneratorContext {
-  protected readonly imports: Imports;
+export abstract class AbstractType {
   protected readonly logger: Logger;
-  protected readonly snippets: Snippets;
+  protected readonly reusables: Reusables;
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 
   /**
    * Comment from rdfs:comment.
@@ -144,23 +146,24 @@ export abstract class AbstractType extends TsGeneratorContext {
 
   constructor({
     comment,
-    imports,
     label,
     logger,
-    snippets,
+    reusables,
   }: {
     comment: Maybe<string>;
-    imports: Imports;
     label: Maybe<string>;
     logger: Logger;
-    snippets: Snippets;
+    reusables: Reusables;
   }) {
-    super();
     this.comment = comment;
-    this.imports = imports;
     this.label = label;
     this.logger = logger;
-    this.snippets = snippets;
+    this.reusables = reusables;
+    this.rdfjsTermExpression = rdfjsTermExpression.bind({
+      imports: this.reusables.imports,
+      logger: this.logger,
+      snippets: this.reusables.snippets,
+    });
   }
 
   /**
@@ -335,16 +338,23 @@ export namespace AbstractType {
      */
     readonly nullableName: Code;
 
-    constructor(nullableName: Code, parameters?: { nullable: boolean }) {
-      this.nullable = !!parameters?.nullable;
+    private readonly reusables: Reusables;
+
+    constructor(
+      nullableName: Code,
+      reusables: Reusables,
+      options?: { nullable: boolean },
+    ) {
+      this.nullable = !!options?.nullable;
       this.nullableName = nullableName;
+      this.reusables = reusables;
     }
 
     @Memoize()
     get name(): Code {
       return this.nullable
         ? this.nullableName
-        : code`new ${this.imports.GraphQLNonNull}(${this.nullableName})`;
+        : code`new ${this.reusables.imports.GraphQLNonNull}(${this.nullableName})`;
     }
   }
 

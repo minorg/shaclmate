@@ -10,34 +10,28 @@ import type { Generator } from "../Generator.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { IdentifierType } from "./IdentifierType.js";
-import { Imports } from "./Imports.js";
 import { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-import { Snippets } from "./Snippets.js";
+import { Reusables } from "./Reusables.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
-import { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export class TsGenerator extends TsGeneratorContext implements Generator {
+export class TsGenerator implements Generator {
   private readonly typeFactory: TypeFactory;
 
-  protected readonly imports: Imports;
   protected readonly logger: Logger;
-  protected readonly snippets: Snippets;
+  protected readonly reusables: Reusables;
 
   constructor({ logger }: { logger: Logger }) {
-    super();
-    this.imports = new Imports();
     this.logger = logger;
-    this.snippets = new Snippets({ imports: this.imports, logger });
+    this.reusables = new Reusables({ logger });
     this.typeFactory = new TypeFactory({
-      imports: this.imports,
       logger,
-      snippets: this.snippets,
+      reusables: this.reusables,
     });
   }
 
@@ -127,7 +121,7 @@ export class TsGenerator extends TsGeneratorContext implements Generator {
       0,
       0,
       joinCode(
-        Object.values(this.snippets)
+        Object.values(this.reusables.snippets)
           .sort((left, right) =>
             left.usageSiteName.localeCompare(right.usageSiteName),
           )
@@ -164,31 +158,28 @@ export class TsGenerator extends TsGeneratorContext implements Generator {
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
         comment: Maybe.empty(),
-        imports: this.imports,
         label: Maybe.empty(),
         logger: this.logger,
-        snippets: this.snippets,
+        reusables: this.reusables,
       });
     } else {
       switch ([...nodeKinds][0]) {
         case "BlankNode":
           identifierType = new BlankNodeType({
             comment: Maybe.empty(),
-            imports: this.imports,
             label: Maybe.empty(),
             logger: this.logger,
-            snippets: this.snippets,
+            reusables: this.reusables,
           });
           break;
         case "IRI":
           identifierType = new IriType({
             comment: Maybe.empty(),
             hasValues: [],
-            imports: this.imports,
             in_: [],
             label: Maybe.empty(),
             logger: this.logger,
-            snippets: this.snippets,
+            reusables: this.reusables,
           });
           break;
       }
@@ -204,7 +195,7 @@ export class TsGenerator extends TsGeneratorContext implements Generator {
         return features;
       }, new Set<TsFeature>()),
       identifierType,
-      imports: this.imports,
+
       label: Maybe.empty(),
       logger: this.logger,
       members: filteredNamedObjectTypes.map((namedObjectType) => ({
@@ -213,7 +204,7 @@ export class TsGenerator extends TsGeneratorContext implements Generator {
       })),
       name: `${syntheticNamePrefix}Object`,
       recursive: false,
-      snippets: this.snippets,
+      reusables: this.reusables,
     });
   }
 }

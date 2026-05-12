@@ -124,7 +124,7 @@ ${joinCode(
 
     if (this.features.has("hash")) {
       staticModuleDeclarations[`${syntheticNamePrefix}hash`] =
-        code`export function ${syntheticNamePrefix}hash<HasherT extends ${this.snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
+        code`export function ${syntheticNamePrefix}hash<HasherT extends ${this.reusables.snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
     }
 
     if (this.features.has("json")) {
@@ -134,10 +134,10 @@ ${this.jsonTypeAliasDeclaration}
 export namespace ${syntheticNamePrefix}Json {
   ${this.jsonSchemaFunctionDeclaration}
 
-  export function parse(json: unknown): ${this.imports.Either}<Error, ${syntheticNamePrefix}Json> {
+  export function parse(json: unknown): ${this.reusables.imports.Either}<Error, ${syntheticNamePrefix}Json> {
     const jsonSafeParseResult = schema().safeParse(json);
-    if (!jsonSafeParseResult.success) { return ${this.imports.Left}(jsonSafeParseResult.error); }
-    return ${this.imports.Right}(jsonSafeParseResult.data);
+    if (!jsonSafeParseResult.success) { return ${this.reusables.imports.Left}(jsonSafeParseResult.error); }
+    return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
   }
 }`;
 
@@ -150,7 +150,7 @@ export namespace ${syntheticNamePrefix}Json {
 
     if (this.features.has("rdf")) {
       staticModuleDeclarations[`${syntheticNamePrefix}fromRdfResourceValues`] =
-        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${this.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
+        code`export const ${syntheticNamePrefix}fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
 
       staticModuleDeclarations[`${syntheticNamePrefix}toRdfResourceValues`] =
         code`export const ${syntheticNamePrefix}toRdfResourceValues = ${this.inlineToRdfResourceValuesFunction};`;
@@ -160,12 +160,12 @@ export namespace ${syntheticNamePrefix}Json {
       staticModuleDeclarations[
         `${syntheticNamePrefix}valueSparqlConstructTriples`
       ] =
-        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${this.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
+        code`export const ${syntheticNamePrefix}valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
 
       staticModuleDeclarations[
         `${syntheticNamePrefix}valueSparqlWherePatterns`
       ] =
-        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${this.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
+        code`export const ${syntheticNamePrefix}valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
     staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
@@ -212,7 +212,7 @@ export namespace ${syntheticNamePrefix}Json {
     if (this.features.has("json")) {
       const expression = code`${this.name}.${syntheticNamePrefix}Json.schema()`;
       if (context === "property" && this.recursive) {
-        return code`${this.imports.z}.lazy((): ${this.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.${syntheticNamePrefix}Json> => ${expression})`;
       }
       return expression;
     }

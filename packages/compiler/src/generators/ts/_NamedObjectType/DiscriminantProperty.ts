@@ -37,8 +37,8 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
       key: this.name,
       schema:
         this.type.values.length > 1
-          ? code`${this.imports.z}.enum(${arrayOf(...this.type.values)})`
-          : code`${this.imports.z}.literal(${literalOf(this.type.values[0])})`,
+          ? code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.values)})`
+          : code`${this.reusables.imports.z}.literal(${literalOf(this.type.values[0])})`,
     });
   }
 
@@ -69,7 +69,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
     return Maybe.of(
-      code`${this.imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
+      code`${this.reusables.imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
     );
   }
 

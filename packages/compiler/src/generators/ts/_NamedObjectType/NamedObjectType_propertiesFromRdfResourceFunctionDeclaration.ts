@@ -1,7 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -35,13 +34,13 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${this.snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
+      code`${this.reusables.snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
     );
   });
 
   this.fromRdfType.ifJust((fromRdfType) => {
     const fromRdfTypeVariable = this.fromRdfTypeVariable.unsafeCoerce();
-    const predicate = rdfjsTermExpression.call(this, rdf.type);
+    const predicate = this.rdfjsTermExpression(rdf.type);
     // Check the expected type and its known subtypes
     const cases = new Set<string>();
     cases.add(fromRdfType.value);
@@ -55,16 +54,16 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
       // Check the expected type and its known subtypes
       switch (actualRdfType.value) {
         ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
-          return ${this.imports.Right}(true as const);
+          return ${this.reusables.imports.Right}(true as const);
       }
 
       // Check arbitrary rdfs:subClassOf's of the expected type
       if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable}, ${{ graph: variables.graph }})) {
-        return ${this.imports.Right}(true as const);
+        return ${this.reusables.imports.Right}(true as const);
       }
 
-      return ${this.imports.Left}(new Error(\`\${${variables.resource}.identifier} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
-    }) : ${this.imports.Right}(true as const)`,
+      return ${this.reusables.imports.Left}(new Error(\`\${${variables.resource}.identifier} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
+    }) : ${this.reusables.imports.Right}(true as const)`,
       variable: "_rdfTypeCheck",
     });
   });
@@ -94,7 +93,9 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
   const statements: Code[] = [];
   const resultExpression = code`{ ${joinCode(initializers, { on: "," })} }`;
   if (chains.length === 0) {
-    statements.push(code`return ${this.imports.Right}(${resultExpression});`);
+    statements.push(
+      code`return ${this.reusables.imports.Right}(${resultExpression});`,
+    );
   } else {
     statements.push(
       code`return ${chains
@@ -116,7 +117,7 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}propertiesFromRdfResource: ${this.snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
+export const ${syntheticNamePrefix}propertiesFromRdfResource: ${this.reusables.snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
 ${joinCode(statements)}
 };`);
 }

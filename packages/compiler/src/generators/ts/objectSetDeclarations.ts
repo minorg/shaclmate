@@ -3,11 +3,11 @@ import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
-import type { TsGeneratorContext } from "./TsGeneratorContext.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import type { Code } from "./ts-poet-wrapper.js";
 
 export function objectSetDeclarations(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   {
     namedObjectUnionTypes,
     ...parameters

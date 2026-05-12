@@ -2,11 +2,11 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TsGeneratorContext } from "./TsGeneratorContext.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export function objectSetInterfaceDeclaration(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   {
     namedObjectTypes,
     namedObjectUnionTypes,
@@ -42,9 +42,9 @@ export interface ${syntheticNamePrefix}ObjectSet {
 }
 
 export namespace ${syntheticNamePrefix}ObjectSet {
-  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${this.imports.BlankNode} | ${this.imports.NamedNode}> {
+  export interface Query<ObjectFilterT, ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}> {
     readonly filter?: ObjectFilterT;
-    readonly graph?: Exclude<${this.imports.Quad_Graph}, ${this.imports.Variable}>;
+    readonly graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
     readonly identifiers?: readonly ObjectIdentifierT[];
     readonly limit?: number;
     readonly offset?: number;

@@ -9,8 +9,6 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 
-import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-
 import type { Type } from "./Type.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -73,7 +71,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.snippets.DefaultValueSchema}`;
+    return code`${this.reusables.snippets.DefaultValueSchema}`;
   }
 
   @Memoize()
@@ -83,7 +81,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {
@@ -99,7 +97,7 @@ export class DefaultValueType<
       case "BigDecimalType":
         invariant(this.defaultValue.termType === "Literal");
         return Maybe.of(
-          code`new ${this.imports.BigDecimal}(${literalOf(this.defaultValue.value)})`,
+          code`new ${this.reusables.imports.BigDecimal}(${literalOf(this.defaultValue.value)})`,
         );
       case "BigIntType":
         invariant(this.defaultValue.termType === "Literal");
@@ -156,7 +154,7 @@ export class DefaultValueType<
 
   @Memoize()
   private get defaultValueTermExpression(): Code {
-    return rdfjsTermExpression.call(this, this.defaultValue);
+    return this.rdfjsTermExpression(this.defaultValue);
   }
 
   override fromJsonExpression(
@@ -173,7 +171,7 @@ export class DefaultValueType<
     return this.itemType.fromRdfResourceValuesExpression({
       variables: {
         ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.imports.Resource}.Value(${{ dataFactory: this.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.defaultValueTermExpression }}).toValues())`,
+        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.defaultValueTermExpression }}).toValues())`,
       },
     });
   }

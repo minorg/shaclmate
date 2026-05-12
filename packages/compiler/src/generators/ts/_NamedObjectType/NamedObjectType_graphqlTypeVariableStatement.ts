@@ -15,7 +15,7 @@ export function NamedObjectType_graphqlTypeVariableStatement(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}GraphQL = new ${this.imports.GraphQLObjectType}<${this.name}, { objectSet: ${syntheticNamePrefix}ObjectSet }>(${{
+export const ${syntheticNamePrefix}GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.name}, { objectSet: ${syntheticNamePrefix}ObjectSet }>(${{
     description: this.comment.extract(),
     fields: code`() => (${this.properties.reduce(
       (fields, property) => {

@@ -1,14 +1,19 @@
 import { NonEmptyList } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { AbstractNumericType } from "./AbstractNumericType.js";
-
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class FloatType extends AbstractNumericType<number> {
   override readonly kind = "FloatType";
-  override readonly graphqlType = new AbstractNumericType.GraphqlType(
-    code`${this.imports.GraphQLFloat}`,
-  );
   override readonly typeofs = NonEmptyList(["number" as const]);
+
+  @Memoize()
+  override get graphqlType() {
+    return new AbstractNumericType.GraphqlType(
+      code`${this.reusables.imports.GraphQLFloat}`,
+      this.reusables,
+    );
+  }
 
   protected override fromRdfResourceValueExpression({
     variables,

@@ -4,23 +4,20 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
 import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
-import { Imports } from "./Imports.js";
-import { Snippets } from "./Snippets.js";
+import { Reusables } from "./Reusables.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ZodGenerator implements Generator {
-  private readonly snippets: Snippets;
+  private readonly reusables: Reusables;
   private readonly typeFactory: TypeFactory;
 
   constructor({ logger }: { logger: Logger }) {
-    const imports = new Imports();
-    this.snippets = new Snippets({ imports, logger });
+    this.reusables = new Reusables({ logger });
     this.typeFactory = new TypeFactory({
-      imports,
       logger,
-      snippets: this.snippets,
+      reusables: this.reusables,
     });
   }
 
@@ -60,7 +57,7 @@ export namespace ${astNamedUnionType.name} {
       0,
       0,
       joinCode(
-        Object.values(this.snippets)
+        Object.values(this.reusables.snippets)
           .sort((left, right) =>
             left.usageSiteName.localeCompare(right.usageSiteName),
           )

@@ -1,7 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -18,8 +17,8 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const rdfClassVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+  const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+  const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   let triplesVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
@@ -35,8 +34,8 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
     statements.push(code`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
-    { subject: ${variables.focusIdentifier}, predicate: ${rdfjsTermExpression.call(this, rdf.type)}, object: ${rdfTypeVariable} },
-    { subject: ${rdfTypeVariable}, predicate: ${rdfjsTermExpression.call(this, rdfs.subClassOf)}, object: ${rdfClassVariable} }
+    { subject: ${variables.focusIdentifier}, predicate: ${this.rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
+    { subject: ${rdfTypeVariable}, predicate: ${this.rdfjsTermExpression(rdfs.subClassOf)}, object: ${rdfClassVariable} }
   );
 }`);
   }
@@ -57,11 +56,11 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${this.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
-        code`${triplesVariableDeclarationKeyword} triples: ${this.imports.sparqljs}.Triple[] = [];`,
+        code`${triplesVariableDeclarationKeyword} triples: ${this.reusables.imports.sparqljs}.Triple[] = [];`,
         ...statements,
         code`return triples;`,
       ])

@@ -1,28 +1,26 @@
 import { Memoize } from "typescript-memoize";
-import { AbstractLiteralType } from "./AbstractLiteralType.js";
 
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
-  override readonly filterFunction = code`${this.snippets.filterBigDecimal}`;
+  override readonly filterFunction =
+    code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
-    code`${this.snippets.NumericFilter}<${this.imports.BigDecimal}>`;
-  override readonly graphqlType = new AbstractLiteralType.GraphqlType(
-    code`${this.imports.GraphQLString}`,
-  );
+    code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
   override readonly kind = "BigDecimalType";
-  override readonly name = code`${this.imports.BigDecimal}`;
+  override readonly name = code`${this.reusables.imports.BigDecimal}`;
   override readonly schemaType =
-    code`${this.snippets.NumericSchema}<${this.imports.BigDecimal}>`;
+    code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
   override readonly valueSparqlWherePatternsFunction =
-    code`${this.snippets.bigDecimalSparqlWherePatterns}`;
+    code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()
   override get conversions(): readonly AbstractLiteralType.Conversion[] {
     return [
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${this.imports.BigDecimal}(${value}.toString())`,
+      //     code`new ${this.reusables.imports.BigDecimal}(${value}.toString())`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "bigint"`,
       //   sourceTypeName: code`bigint`,
@@ -32,12 +30,12 @@ export class BigDecimalType extends AbstractLiteralType {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
-        sourceTypeName: code`${this.imports.BigDecimal}`,
+        sourceTypeName: code`${this.reusables.imports.BigDecimal}`,
         sourceTypeof: "object",
       },
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${this.imports.BigDecimal}(${value})`,
+      //     code`new ${this.reusables.imports.BigDecimal}(${value})`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "number"`,
       //   sourceTypeName: code`number`,
@@ -45,7 +43,7 @@ export class BigDecimalType extends AbstractLiteralType {
       // },
       // {
       //   conversionExpression: (value) =>
-      //     code`new ${this.imports.BigDecimal}(${value})`,
+      //     code`new ${this.reusables.imports.BigDecimal}(${value})`,
       //   sourceTypeCheckExpression: (value) =>
       //     code`typeof ${value} === "string"`,
       //   sourceTypeName: code`string`,
@@ -54,10 +52,18 @@ export class BigDecimalType extends AbstractLiteralType {
     ];
   }
 
+  @Memoize()
+  override get graphqlType() {
+    return new AbstractLiteralType.GraphqlType(
+      code`${this.reusables.imports.GraphQLString}`,
+      this.reusables,
+    );
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`new ${this.imports.BigDecimal}(${variables.value})`;
+    return code`new ${this.reusables.imports.BigDecimal}(${variables.value})`;
   }
 
   override graphqlResolveExpression({
@@ -73,19 +79,27 @@ export class BigDecimalType extends AbstractLiteralType {
   }
 
   @Memoize()
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType("string");
+  override jsonSchema(): Code {
+    return code`${this.reusables.imports.z}.string()`;
   }
 
   @Memoize()
-  override jsonSchema(): Code {
-    return code`${this.imports.z}.string()`;
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType("string");
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`${variables.value}.toFixed()`;
+  }
+
+  override toRdfResourceValuesExpression({
+    variables,
+  }: Parameters<
+    AbstractLiteralType["toRdfResourceValuesExpression"]
+  >[0]): Code {
+    return code`[${this.reusables.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -95,15 +109,7 @@ export class BigDecimalType extends AbstractLiteralType {
   > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.snippets.decodeBigDecimalLiteral})))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toLiteral().chain(${this.reusables.snippets.decodeBigDecimalLiteral})))`,
     };
-  }
-
-  override toRdfResourceValuesExpression({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["toRdfResourceValuesExpression"]
-  >[0]): Code {
-    return code`[${this.snippets.bigDecimalLiteral}(${variables.value})]`;
   }
 }

@@ -28,12 +28,12 @@ export class SetType<
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+    return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.reusables.snippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   override fromRdfResourceValuesExpression(
@@ -51,11 +51,11 @@ export class SetType<
       );
     } else {
       chain.push(
-        code`chain(values => ${this.imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
+        code`chain(values => ${this.reusables.imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
       );
     }
     chain.push(
-      code`map(valuesArray => ${this.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
+      code`map(valuesArray => ${this.reusables.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
     );
     return joinCode(chain, { on: "." });
   }

@@ -37,6 +37,6 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
   // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
-  return ${this.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${this.imports.z}.ZodType<${syntheticNamePrefix}Json>;
+  return ${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${this.reusables.imports.z}.ZodType<${syntheticNamePrefix}Json>;
 }`);
 }

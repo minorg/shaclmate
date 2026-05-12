@@ -24,7 +24,7 @@ export class OptionType<
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) =>
-        code`${this.imports.Maybe}.isMaybe(${value})`,
+        code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
       sourceTypeName: this.name,
       sourceTypeof: "object",
     });
@@ -32,7 +32,7 @@ export class OptionType<
       conversions.push({
         ...itemTypeConversion,
         conversionExpression: (value) =>
-          code`${this.imports.Maybe}.of(${itemTypeConversion.conversionExpression(value)})`,
+          code`${this.reusables.imports.Maybe}.of(${itemTypeConversion.conversionExpression(value)})`,
       });
     }
 
@@ -48,7 +48,8 @@ export class OptionType<
       !conversions.some((conversion) => conversion.sourceTypeof === "undefined")
     ) {
       conversions.push({
-        conversionExpression: () => code`${this.imports.Maybe}.empty()`,
+        conversionExpression: () =>
+          code`${this.reusables.imports.Maybe}.empty()`,
         sourceTypeCheckExpression: (value) => code`${value} === undefined`,
         sourceTypeName: code`undefined`,
         sourceTypeof: "undefined",
@@ -60,17 +61,17 @@ export class OptionType<
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`((left, right) => ${this.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
+    return code`((left, right) => ${this.reusables.snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${this.snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${this.reusables.snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${this.snippets.MaybeFilter}<${this.itemType.filterType}>`;
+    return code`${this.reusables.snippets.MaybeFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
@@ -78,6 +79,7 @@ export class OptionType<
     invariant(!this.itemType.graphqlType.nullable);
     return new AbstractContainerType.GraphqlType(
       this.itemType.graphqlType.name,
+      this.reusables,
       {
         nullable: true,
       },
@@ -90,22 +92,22 @@ export class OptionType<
 
   @Memoize()
   override get name(): Code {
-    return code`${this.imports.Maybe}<${this.itemType.name}>`;
+    return code`${this.reusables.imports.Maybe}<${this.itemType.name}>`;
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
   }
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    return code`${this.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
+    return code`${this.reusables.snippets.maybeSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
+    return code`${this.reusables.snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {
@@ -120,7 +122,7 @@ export class OptionType<
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
-    const expression = code`${this.imports.Maybe}.fromNullable(${variables.value})`;
+    const expression = code`${this.reusables.imports.Maybe}.fromNullable(${variables.value})`;
     const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: valueVariable },
@@ -136,7 +138,7 @@ export class OptionType<
     >[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.imports.Maybe}.of(value)) : ${this.imports.Resource}.Values.fromValue<${this.imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.imports.Maybe}.empty() }))`;
+    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.reusables.imports.Maybe}.of(value)) : ${this.reusables.imports.Resource}.Values.fromValue<${this.reusables.imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.reusables.imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(

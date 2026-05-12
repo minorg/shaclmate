@@ -479,7 +479,7 @@ dash:ImageViewer
 
 dash:IncludedScript
     a dash:ShapeClass ;
-    rdfs:comment """The code associated with instances of this class will get injected into the generated APIs, as global code this.snippets. Typically used to declare libraries of utility functions or constants that are (compared to shape scripts) not necessarily associated with specific classes or shapes.
+    rdfs:comment """The code associated with instances of this class will get injected into the generated APIs, as global code this.reusables.snippets. Typically used to declare libraries of utility functions or constants that are (compared to shape scripts) not necessarily associated with specific classes or shapes.
 
 Note that the JavaScript code stored in dash:js cannot use the export keyword because the code must also work in external scripts (such as on Node.js). Instead, you need to enumerate the exported symbols via dash:exports.""" ;
     rdfs:label "Included script" ;

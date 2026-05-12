@@ -3,11 +3,11 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TsGeneratorContext } from "./TsGeneratorContext.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 function graphqlQueryObjectType(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   {
     namedObjectTypes,
     namedObjectUnionTypes,
@@ -16,7 +16,7 @@ function graphqlQueryObjectType(
     namedObjectUnionTypes: readonly NamedObjectUnionType[];
   },
 ): Code {
-  return code`new ${this.imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
+  return code`new ${this.reusables.imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
     ...namedObjectTypes,
     ...namedObjectUnionTypes,
   ].reduce(
@@ -24,12 +24,12 @@ function graphqlQueryObjectType(
       fields[namedObjectType.objectSetMethodNames.object] = {
         args: {
           identifier: {
-            type: code`new ${this.imports.GraphQLNonNull}(${this.imports.GraphQLID})`,
+            type: code`new ${this.reusables.imports.GraphQLNonNull}(${this.reusables.imports.GraphQLID})`,
           },
         },
         resolve: code`\
 async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObjectType.name}> => 
-  (await ${this.imports.EitherAsync}<Error, ${namedObjectType.name}>(async ({ liftEither }) => 
+  (await ${this.reusables.imports.EitherAsync}<Error, ${namedObjectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${namedObjectType.objectSetMethodNames.object}(await liftEither(${namedObjectType.identifierTypeAlias}.parse(args.identifier))))
   )).unsafeCoerce()`,
         type: namedObjectType.graphqlType.name,
@@ -38,33 +38,33 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${namedObj
       fields[namedObjectType.objectSetMethodNames.objectIdentifiers] = {
         args: {
           limit: {
-            type: code`${this.imports.GraphQLInt}`,
+            type: code`${this.reusables.imports.GraphQLInt}`,
           },
           offset: {
-            type: code`${this.imports.GraphQLInt}`,
+            type: code`${this.reusables.imports.GraphQLInt}`,
           },
         },
         resolve: code`\
  async (_source, args: { limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly string[]> =>
   (await objectSet.${namedObjectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${namedObjectType.identifierTypeAlias}.stringify)`,
-        type: code`new ${this.imports.GraphQLNonNull}(new ${this.imports.GraphQLList}(${this.imports.GraphQLString}))`,
+        type: code`new ${this.reusables.imports.GraphQLNonNull}(new ${this.reusables.imports.GraphQLList}(${this.reusables.imports.GraphQLString}))`,
       };
 
       fields[namedObjectType.objectSetMethodNames.objects] = {
         args: {
           identifiers: {
-            type: code`new ${this.imports.GraphQLList}(new ${this.imports.GraphQLNonNull}(${this.imports.GraphQLID}))`,
+            type: code`new ${this.reusables.imports.GraphQLList}(new ${this.reusables.imports.GraphQLNonNull}(${this.reusables.imports.GraphQLID}))`,
           },
           limit: {
-            type: code`${this.imports.GraphQLInt}`,
+            type: code`${this.reusables.imports.GraphQLInt}`,
           },
           offset: {
-            type: code`${this.imports.GraphQLInt}`,
+            type: code`${this.reusables.imports.GraphQLInt}`,
           },
         },
         resolve: code`\
 async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${namedObjectType.name}[]> =>
-(await ${this.imports.EitherAsync}<Error, readonly ${namedObjectType.name}[]>(async ({ liftEither }) => {
+(await ${this.reusables.imports.EitherAsync}<Error, readonly ${namedObjectType.name}[]>(async ({ liftEither }) => {
   let filter: ${namedObjectType.filterType} | undefined;
   if (args.identifiers) {
     const identifiers: ${namedObjectType.identifierTypeAlias}[] = [];
@@ -75,13 +75,13 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   }
   return await liftEither(await objectSet.${namedObjectType.objectSetMethodNames.objects}({ filter, limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined }));
 })).unsafeCoerce()`,
-        type: code`new ${this.imports.GraphQLNonNull}(new ${this.imports.GraphQLList}(${namedObjectType.graphqlType.name}))`,
+        type: code`new ${this.reusables.imports.GraphQLNonNull}(new ${this.reusables.imports.GraphQLList}(${namedObjectType.graphqlType.name}))`,
       };
 
       fields[namedObjectType.objectSetMethodNames.objectCount] = {
         resolve: code`\
 async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${namedObjectType.objectSetMethodNames.objectCount}()).unsafeCoerce()`,
-        type: code`new ${this.imports.GraphQLNonNull}(${this.imports.GraphQLInt})`,
+        type: code`new ${this.reusables.imports.GraphQLNonNull}(${this.reusables.imports.GraphQLInt})`,
       };
 
       return fields;
@@ -91,7 +91,7 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${nam
 }
 
 export function graphqlSchemaVariableStatement(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   parameters: {
     namedObjectTypes: readonly NamedObjectType[];
     namedObjectUnionTypes: NamedObjectUnionType[];
@@ -110,6 +110,6 @@ export function graphqlSchemaVariableStatement(
   }
 
   return Maybe.of(code`\
-export const graphqlSchema = new ${this.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType.call(this, { namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });
+export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType.call(this, { namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });
 `);
 }

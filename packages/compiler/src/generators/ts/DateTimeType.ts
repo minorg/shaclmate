@@ -1,17 +1,23 @@
+import { Memoize } from "typescript-memoize";
 import { AbstractDateType } from "./AbstractDateType.js";
 
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
-  override readonly graphqlType = new AbstractDateType.GraphqlType(
-    code`${this.imports.GraphQLDateTime}`,
-  );
   override readonly kind = "DateTimeType";
+
+  @Memoize()
+  override get graphqlType() {
+    return new DateTimeType.GraphqlType(
+      code`${this.reusables.imports.GraphQLDateTime}`,
+      this.reusables,
+    );
+  }
 
   override jsonSchema(
     _parameters: Parameters<AbstractDateType["jsonSchema"]>[0],
   ): Code {
-    return code`${this.imports.z}.iso.datetime()`;
+    return code`${this.reusables.imports.z}.iso.datetime()`;
   }
 
   override toJsonExpression({

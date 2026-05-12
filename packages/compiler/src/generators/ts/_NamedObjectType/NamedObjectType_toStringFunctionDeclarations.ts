@@ -29,7 +29,7 @@ export function NamedObjectType_toStringFunctionDeclarations(
         );
       });
   }
-  const propertiesToStringsReturnExpression = code`${this.snippets.compactRecord}({${joinCode(propertiesToStringRecordProperties, { on: "," })}})`;
+  const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(propertiesToStringRecordProperties, { on: "," })}})`;
   const toStringReturnExpression = (propertiesToStrings: Code) =>
     code`\`${this.name}(\${JSON.stringify(${propertiesToStrings})})\``;
 

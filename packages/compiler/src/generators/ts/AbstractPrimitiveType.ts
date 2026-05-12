@@ -9,7 +9,8 @@ export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
-  override readonly equalsFunction = code`${this.snippets.strictEquals}`;
+  override readonly equalsFunction =
+    code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:
     | "BigIntType"
     | "BooleanType"

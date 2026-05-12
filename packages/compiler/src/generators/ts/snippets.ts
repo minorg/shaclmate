@@ -112,14 +112,12 @@ import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { TsGeneratorContext } from "./TsGeneratorContext.js";
 
-export class Snippets extends TsGeneratorContext {
+export class Snippets {
   protected readonly imports: Imports;
   protected readonly logger: Logger;
 
   constructor({ imports, logger }: { imports: Imports; logger: Logger }) {
-    super();
     this.imports = imports;
     this.logger = logger;
   }
@@ -667,7 +665,11 @@ export class Snippets extends TsGeneratorContext {
     return snippetFactory({
       imports: this.imports,
       logger: this.logger,
-      rdfjsTermExpression: rdfjsTermExpression.bind(this),
+      rdfjsTermExpression: rdfjsTermExpression.bind({
+        imports: this.imports,
+        logger: this.logger,
+        snippets: this,
+      }),
       snippets: this,
       syntheticNamePrefix,
     });

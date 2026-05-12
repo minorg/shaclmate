@@ -11,7 +11,7 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${this.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
+export const ${syntheticNamePrefix}fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
 ${joinCode([
   code`let { context, graph, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
   code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,

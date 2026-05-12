@@ -2,21 +2,22 @@ import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
-import type { Imports } from "../Imports.js";
 import type { NamedObjectType } from "../NamedObjectType.js";
+import type { Reusables } from "../Reusables.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { removeUndefined } from "../removeUndefined.js";
-import type { Snippets } from "../Snippets.js";
-import { TsGeneratorContext } from "../TsGeneratorContext.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
-> extends TsGeneratorContext {
-  protected readonly imports: Imports;
+> {
   protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
-  protected readonly snippets: Snippets;
+  protected readonly reusables: Reusables;
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 
   /**
    * Optional property to include in the parameters object of a class constructor.
@@ -93,27 +94,28 @@ export abstract class AbstractProperty<
   readonly type: TypeT;
 
   constructor({
-    imports,
     logger,
     name,
     namedObjectType,
-    snippets,
+    reusables,
     type,
   }: {
-    imports: Imports;
     logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
-    snippets: Snippets;
+    reusables: Reusables;
     type: TypeT;
   }) {
-    super();
-    this.imports = imports;
     this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;
-    this.snippets = snippets;
+    this.reusables = reusables;
     this.type = type;
+    this.rdfjsTermExpression = rdfjsTermExpression.bind({
+      imports: this.reusables.imports,
+      logger: this.logger,
+      snippets: this.reusables.snippets,
+    });
   }
 
   /**

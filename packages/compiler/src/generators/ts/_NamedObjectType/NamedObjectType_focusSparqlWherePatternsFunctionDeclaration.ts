@@ -1,7 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
@@ -19,8 +18,8 @@ export function NamedObjectType_focusSparqlWherePatternsFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const rdfClassVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = code`${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+  const rdfClassVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+  const rdfTypeVariable = code`${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   let patternsVariableDeclarationKeyword = "const";
   const statements: Code[] = [];
@@ -47,19 +46,19 @@ if (!parameters?.ignoreRdfType) {
     {
       type: "values" as const,
       values: [${joinCode(fromRdfTypeVariables, { on: "," })}].map((identifier) => {
-        const valuePatternRow: ${this.imports.sparqljs}.ValuePatternRow = {};
-        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as ${this.imports.NamedNode};
+        const valuePatternRow: ${this.reusables.imports.sparqljs}.ValuePatternRow = {};
+        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as ${this.reusables.imports.NamedNode};
         return valuePatternRow;
       }),
     },
-    ${this.snippets.sparqlInstancesOfPattern}({ rdfType: ${this.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: ${variables.focusIdentifier} }),`
-        : code`${this.snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: ${variables.focusIdentifier} }),`
+    ${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${this.reusables.imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject: ${variables.focusIdentifier} }),`
+        : code`${this.reusables.snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject: ${variables.focusIdentifier} }),`
     }
     {
       triples: [
         {
           subject: ${variables.focusIdentifier},
-          predicate: ${rdfjsTermExpression.call(this, rdf.type)},
+          predicate: ${this.rdfjsTermExpression(rdf.type)},
           object: rdfTypeVariable
         }
       ],
@@ -72,7 +71,7 @@ if (!parameters?.ignoreRdfType) {
             {
               subject: rdfTypeVariable,
               predicate: {
-                items: [${rdfjsTermExpression.call(this, rdfs.subClassOf)}],
+                items: [${this.rdfjsTermExpression(rdfs.subClassOf)}],
                 pathType: "+" as const,
                 type: "path" as const
               },
@@ -108,11 +107,11 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}focusSparqlWherePatterns: ${this.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+export const ${syntheticNamePrefix}focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([
-        code`${patternsVariableDeclarationKeyword} patterns: ${this.snippets.SparqlPattern}[] = [];`,
+        code`${patternsVariableDeclarationKeyword} patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
         ...statements,
         code`return patterns;`,
       ])

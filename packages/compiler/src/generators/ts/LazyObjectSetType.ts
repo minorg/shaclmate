@@ -14,10 +14,10 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.of({
     limit: {
-      type: code`${this.imports.GraphQLInt}`,
+      type: code`${this.reusables.imports.GraphQLInt}`,
     },
     offset: {
-      type: code`${this.imports.GraphQLInt}`,
+      type: code`${this.reusables.imports.GraphQLInt}`,
     },
   });
   override readonly kind = "LazyObjectSetType";
@@ -29,7 +29,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     if (this.partialType.itemType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${this.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
@@ -43,7 +43,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${this.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
@@ -64,16 +64,16 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 
   protected override get runtimeClass() {
     return {
-      name: code`${this.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      name: code`${this.reusables.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
       partialPropertyName: "partials",
-      rawName: code`${this.snippets.LazyObjectSet}`,
+      rawName: code`${this.reusables.snippets.LazyObjectSet}`,
     };
   }
 
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${this.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
   }
 
   override fromRdfResourceValuesExpression(

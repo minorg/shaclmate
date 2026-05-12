@@ -1,10 +1,10 @@
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import type { TsGeneratorContext } from "./TsGeneratorContext.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 function unsupportedObjectSetMethodDeclaration(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   {
     name,
     parameters,
@@ -17,12 +17,12 @@ function unsupportedObjectSetMethodDeclaration(
 ) {
   return code`\
 async ${name}(${parameters}): ${returnType} {
-  return ${this.imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
+  return ${this.reusables.imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
 }`;
 }
 
 export function unsupportedObjectSetMethodDeclarations(
-  this: TsGeneratorContext,
+  this: TsGenerator,
   {
     namedObjectType,
   }: {

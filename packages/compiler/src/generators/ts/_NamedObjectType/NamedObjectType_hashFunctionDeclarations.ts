@@ -57,11 +57,11 @@ export function NamedObjectType_hashFunctionDeclarations(
 
   return [
     code`\
-export function ${syntheticNamePrefix}hash<HasherT extends ${this.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function ${syntheticNamePrefix}hash<HasherT extends ${this.reusables.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-export function ${syntheticNamePrefix}hashShaclProperties<HasherT extends ${this.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function ${syntheticNamePrefix}hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];
