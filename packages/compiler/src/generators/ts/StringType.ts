@@ -63,7 +63,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${this.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression(this.datatype, { logger: this.logger })}` : ""})]`;
+    return code`[${this.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${rdfjsTermExpression.call(this, this.datatype)}` : ""})]`;
   }
 
   protected override fromRdfExpressionChain({

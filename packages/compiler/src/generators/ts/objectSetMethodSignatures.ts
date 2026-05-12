@@ -1,17 +1,21 @@
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-export function objectSetMethodSignatures(parameters: {
-  namedObjectType: {
-    readonly filterType: Code;
-    readonly identifierTypeAlias: Code;
-    readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
-    readonly name: string;
-  };
-  parameterNamePrefix?: string;
-  queryT?: string;
-}): Readonly<
+export function objectSetMethodSignatures(
+  this: TsGeneratorContext,
+  parameters: {
+    namedObjectType: {
+      readonly filterType: Code;
+      readonly identifierTypeAlias: Code;
+      readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
+      readonly name: string;
+    };
+    parameterNamePrefix?: string;
+    queryT?: string;
+  },
+): Readonly<
   Record<
     keyof NamedObjectType.ObjectSetMethodNames,
     {

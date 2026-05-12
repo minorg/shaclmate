@@ -42,9 +42,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       ...super.schemaObject,
       in:
         this.in_.length > 0
-          ? this.in_
-              .map((in_) => rdfjsTermExpression(in_, { logger: this.logger }))
-              .concat()
+          ? this.in_.map((in_) => rdfjsTermExpression.call(this, in_)).concat()
           : undefined,
     };
   }
@@ -121,9 +119,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       valueTo: code`chain(values => values.chainMap(value => value.toIri(${
         this.in_.length > 0
           ? code`[${joinCode(
-              this.in_.map((in_) =>
-                rdfjsTermExpression(in_, { logger: this.logger }),
-              ),
+              this.in_.map((in_) => rdfjsTermExpression.call(this, in_)),
               { on: ", " },
             )}]`
           : ""

@@ -213,9 +213,7 @@ export abstract class AbstractTermType<
     let valueToExpression: Code;
     if (this.in_.length > 0) {
       valueToExpression = code`value.toTerm([${joinCode(
-        this.in_.map((in_) =>
-          rdfjsTermExpression(in_, { logger: this.logger }),
-        ),
+        this.in_.map((in_) => rdfjsTermExpression.call(this, in_)),
         { on: ", " },
       )}])`;
     } else if (this.nodeKinds.size < 3) {
@@ -235,7 +233,7 @@ export abstract class AbstractTermType<
           ? code`\
 chain(values => ${this.imports.Either}.sequence([${joinCode(
               this.hasValues.map((hasValue) =>
-                rdfjsTermExpression(hasValue, { logger: this.logger }),
+                rdfjsTermExpression.call(this, hasValue),
               ),
               { on: ", " },
             )}].map(hasValue => values.find(value => value.term.equals(hasValue)))).map(() => values))`

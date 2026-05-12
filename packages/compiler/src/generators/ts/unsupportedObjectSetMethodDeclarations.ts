@@ -1,10 +1,10 @@
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 function unsupportedObjectSetMethodDeclaration(
-  this: TsGenerator,
+  this: TsGeneratorContext,
   {
     name,
     parameters,
@@ -22,7 +22,7 @@ async ${name}(${parameters}): ${returnType} {
 }
 
 export function unsupportedObjectSetMethodDeclarations(
-  this: TsGenerator,
+  this: TsGeneratorContext,
   {
     namedObjectType,
   }: {
@@ -34,7 +34,7 @@ export function unsupportedObjectSetMethodDeclarations(
     };
   },
 ): Readonly<Record<keyof NamedObjectType.ObjectSetMethodNames, Code>> {
-  const methodSignatures = objectSetMethodSignatures({
+  const methodSignatures = objectSetMethodSignatures.call(this, {
     namedObjectType,
     parameterNamePrefix: "_",
   });

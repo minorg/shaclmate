@@ -1,11 +1,10 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { SetType } from "./SetType.js";
-
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -22,31 +21,6 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     },
   });
   override readonly kind = "LazyObjectSetType";
-
-  constructor({
-    partialType,
-    resolveType,
-    ...superParameters
-  }: Omit<
-    ConstructorParameters<
-      typeof AbstractLazyObjectType<
-        SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
-        SetType<AbstractLazyObjectType.ObjectTypeConstraint>
-      >
-    >[0],
-    "runtimeClass"
-  >) {
-    super({
-      ...superParameters,
-      partialType,
-      resolveType,
-      runtimeClass: {
-        name: code`${this.snippets.LazyObjectSet}<${resolveType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolveType.itemType.name}>`,
-        partialPropertyName: "partials",
-        rawName: code`${this.snippets.LazyObjectSet}`,
-      },
-    });
-  }
 
   @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
@@ -86,6 +60,14 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     });
 
     return conversions;
+  }
+
+  protected override get runtimeClass() {
+    return {
+      name: code`${this.snippets.LazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      partialPropertyName: "partials",
+      rawName: code`${this.snippets.LazyObjectSet}`,
+    };
   }
 
   override fromJsonExpression(

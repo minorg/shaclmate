@@ -3,15 +3,19 @@ import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
-function graphqlQueryObjectType({
-  namedObjectTypes,
-  namedObjectUnionTypes,
-}: {
-  namedObjectTypes: readonly NamedObjectType[];
-  namedObjectUnionTypes: readonly NamedObjectUnionType[];
-}): Code {
+function graphqlQueryObjectType(
+  this: TsGeneratorContext,
+  {
+    namedObjectTypes,
+    namedObjectUnionTypes,
+  }: {
+    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+  },
+): Code {
   return code`new ${this.imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
     ...namedObjectTypes,
     ...namedObjectUnionTypes,
@@ -86,10 +90,13 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${nam
   )} })`;
 }
 
-export function graphqlSchemaVariableStatement(parameters: {
-  namedObjectTypes: readonly NamedObjectType[];
-  namedObjectUnionTypes: NamedObjectUnionType[];
-}): Maybe<Code> {
+export function graphqlSchemaVariableStatement(
+  this: TsGeneratorContext,
+  parameters: {
+    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectUnionTypes: NamedObjectUnionType[];
+  },
+): Maybe<Code> {
   const namedObjectTypes = parameters.namedObjectTypes.filter(
     (namedObjectType) =>
       namedObjectType.features.has("graphql") && !namedObjectType.synthetic,
@@ -103,6 +110,6 @@ export function graphqlSchemaVariableStatement(parameters: {
   }
 
   return Maybe.of(code`\
-export const graphqlSchema = new ${this.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType({ namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });
+export const graphqlSchema = new ${this.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType.call(this, { namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });
 `);
 }

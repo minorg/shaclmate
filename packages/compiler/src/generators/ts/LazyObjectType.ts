@@ -1,9 +1,9 @@
 import { Maybe } from "purify-ts";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { Memoize } from "typescript-memoize";
 
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,31 +13,6 @@ export class LazyObjectType extends AbstractLazyObjectType<
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
   override readonly kind = "LazyObjectType";
-
-  constructor({
-    partialType,
-    resolveType,
-    ...superParameters
-  }: Omit<
-    ConstructorParameters<
-      typeof AbstractLazyObjectType<
-        AbstractLazyObjectType.ObjectTypeConstraint,
-        AbstractLazyObjectType.ObjectTypeConstraint
-      >
-    >[0],
-    "runtimeClass"
-  >) {
-    super({
-      ...superParameters,
-      partialType,
-      resolveType,
-      runtimeClass: {
-        name: code`${this.snippets.LazyObject}<${resolveType.identifierTypeAlias}, ${partialType.name}, ${resolveType.name}>`,
-        partialPropertyName: "partial",
-        rawName: code`${this.snippets.LazyObject}`,
-      },
-    });
-  }
 
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
@@ -71,6 +46,15 @@ export class LazyObjectType extends AbstractLazyObjectType<
     }
 
     return conversions;
+  }
+
+  @Memoize()
+  protected override get runtimeClass() {
+    return {
+      name: code`${this.snippets.LazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>`,
+      partialPropertyName: "partial",
+      rawName: code`${this.snippets.LazyObject}`,
+    };
   }
 
   override fromJsonExpression(

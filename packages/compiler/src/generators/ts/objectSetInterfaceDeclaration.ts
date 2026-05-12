@@ -2,26 +2,32 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export function objectSetInterfaceDeclaration({
-  namedObjectTypes,
-  namedObjectUnionTypes,
-}: {
-  namedObjectTypes: readonly NamedObjectType[];
-  namedObjectUnionTypes: readonly NamedObjectUnionType[];
-}): Code {
+export function objectSetInterfaceDeclaration(
+  this: TsGeneratorContext,
+  {
+    namedObjectTypes,
+    namedObjectUnionTypes,
+  }: {
+    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+  },
+): Code {
   return code`\
 export interface ${syntheticNamePrefix}ObjectSet {
   ${joinCode(
     namedObjectTypes
       .flatMap((namedObjectType) =>
-        Object.values(objectSetMethodSignatures({ namedObjectType })),
+        Object.values(
+          objectSetMethodSignatures.call(this, { namedObjectType }),
+        ),
       )
       .concat(
         namedObjectUnionTypes.flatMap((namedObjectUnionType) =>
           Object.values(
-            objectSetMethodSignatures({
+            objectSetMethodSignatures.call(this, {
               namedObjectType: namedObjectUnionType,
             }),
           ),

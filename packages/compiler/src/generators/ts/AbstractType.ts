@@ -4,13 +4,14 @@ import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import type { Imports } from "./Imports.js";
 import type { Snippets } from "./Snippets.js";
+import { TsGeneratorContext } from "./TsGeneratorContext.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
  */
-export abstract class AbstractType {
+export abstract class AbstractType extends TsGeneratorContext {
   protected readonly imports: Imports;
   protected readonly logger: Logger;
   protected readonly snippets: Snippets;
@@ -154,6 +155,7 @@ export abstract class AbstractType {
     logger: Logger;
     snippets: Snippets;
   }) {
+    super();
     this.comment = comment;
     this.imports = imports;
     this.label = label;

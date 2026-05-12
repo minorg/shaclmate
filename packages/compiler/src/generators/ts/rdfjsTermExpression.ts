@@ -1,20 +1,10 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import type { Logger } from "ts-log";
-import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
-import type { AbstractType } from "./AbstractType.js";
-import type { Imports } from "./Imports.js";
-import type { Snippets } from "./Snippets.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export function rdfjsTermExpression(
-  this: (AbstractType | TsGenerator) &
-    Readonly<{
-      imports: Imports;
-      logger: Logger;
-      snippets: Snippets;
-    }>,
+  this: TsGeneratorContext,
   rdfjsTerm:
     | Omit<BlankNode, "equals">
     | Omit<Literal, "equals">
@@ -41,9 +31,9 @@ export function rdfjsTermExpression(
           case "rest":
           case "subject":
           case "type":
-            return code`${snippets_RdfVocabularies}.rdf.${unqualifiedName}`;
+            return code`${this.snippets.RdfVocabularies}.rdf.${unqualifiedName}`;
           default:
-            logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
+            this.logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
         }
       } else if (rdfjsTerm.value.startsWith(rdfs[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(
@@ -51,9 +41,9 @@ export function rdfjsTermExpression(
         );
         switch (unqualifiedName) {
           case "subClassOf":
-            return code`${snippets_RdfVocabularies}.rdfs.${unqualifiedName}`;
+            return code`${this.snippets.RdfVocabularies}.rdfs.${unqualifiedName}`;
           default:
-            logger.warn("unrecognized rdfs IRI: %s", rdfjsTerm.value);
+            this.logger.warn("unrecognized rdfs IRI: %s", rdfjsTerm.value);
         }
       } else if (rdfjsTerm.value.startsWith(xsd[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(xsd[""].value.length);
@@ -78,7 +68,7 @@ export function rdfjsTermExpression(
           case "unsignedInt":
           case "unsignedLong":
           case "unsignedShort":
-            return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
+            return code`${this.snippets.RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
             this.logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
         }

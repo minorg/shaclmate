@@ -76,7 +76,7 @@ export abstract class AbstractNumericType<
   }: Parameters<
     AbstractPrimitiveType<string>["toRdfResourceValuesExpression"]
   >[0]): Code {
-    return code`[${this.snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${rdfjsTermExpression(this.datatype, { logger: this.logger })})]`;
+    return code`[${this.snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${rdfjsTermExpression.call(this, this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

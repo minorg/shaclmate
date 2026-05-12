@@ -1,11 +1,10 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,39 +12,15 @@ type Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
 >;
+
 const Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
 >;
 
 export class LazyObjectOptionType extends Super {
-  override readonly kind = "LazyObjectOptionType";
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-
-  constructor({
-    partialType,
-    resolveType,
-    ...superParameters
-  }: Omit<
-    ConstructorParameters<
-      typeof AbstractLazyObjectType<
-        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
-        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
-      >
-    >[0],
-    "runtimeClass"
-  >) {
-    super({
-      ...superParameters,
-      partialType,
-      resolveType,
-      runtimeClass: {
-        name: code`${this.snippets.LazyObjectOption}<${resolveType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolveType.itemType.name}>`,
-        partialPropertyName: "partial",
-        rawName: code`${this.snippets.LazyObjectOption}`,
-      },
-    });
-  }
+  override readonly kind = "LazyObjectOptionType";
 
   @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
@@ -111,6 +86,15 @@ export class LazyObjectOptionType extends Super {
     });
 
     return conversions;
+  }
+
+  @Memoize()
+  protected override get runtimeClass() {
+    return {
+      name: code`${this.snippets.LazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      partialPropertyName: "partial",
+      rawName: code`${this.snippets.LazyObjectOption}`,
+    };
   }
 
   override fromJsonExpression(

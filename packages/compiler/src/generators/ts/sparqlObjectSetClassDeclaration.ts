@@ -3,12 +3,12 @@ import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration(
-  this: TsGenerator,
+  this: TsGeneratorContext,
   {
     namedObjectTypes,
     namedObjectUnionTypes,
@@ -58,7 +58,7 @@ ${joinCode(
         );
       }
 
-      const methodSignatures = objectSetMethodSignatures({
+      const methodSignatures = objectSetMethodSignatures.call(this, {
         namedObjectType,
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
       });

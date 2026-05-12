@@ -3,11 +3,11 @@ import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
-import type { TsGenerator } from "./TsGenerator.js";
+import type { TsGeneratorContext } from "./TsGeneratorContext.js";
 import type { Code } from "./ts-poet-wrapper.js";
 
 export function objectSetDeclarations(
-  this: TsGenerator,
+  this: TsGeneratorContext,
   {
     namedObjectUnionTypes,
     ...parameters
@@ -63,7 +63,7 @@ export function objectSetDeclarations(
   }
 
   const declarations: Code[] = [
-    objectSetInterfaceDeclaration({
+    objectSetInterfaceDeclaration.call(this, {
       namedObjectTypes: namedObjectTypes,
       namedObjectUnionTypes,
     }),
@@ -71,7 +71,7 @@ export function objectSetDeclarations(
 
   if (namedObjectTypesWithRdfFeatureCount > 0) {
     declarations.push(
-      rdfjsDatasetObjectSetClassDeclaration({
+      rdfjsDatasetObjectSetClassDeclaration.call(this, {
         namedObjectTypes: namedObjectTypes,
         namedObjectUnionTypes,
       }),

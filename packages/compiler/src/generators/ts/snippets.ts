@@ -112,48 +112,16 @@ import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { TsGeneratorContext } from "./TsGeneratorContext.js";
 
-export class Snippets {
-  private readonly imports: Imports;
-  private readonly logger: Logger;
+export class Snippets extends TsGeneratorContext {
+  protected readonly imports: Imports;
+  protected readonly logger: Logger;
 
   constructor({ imports, logger }: { imports: Imports; logger: Logger }) {
+    super();
     this.imports = imports;
     this.logger = logger;
-  }
-
-  @Memoize()
-  get arrayEquals(): Snippet {
-    return this.snippet(snippets_arrayEquals);
-  }
-
-  @Memoize()
-  get arrayIntersection(): Snippet {
-    return this.snippet(snippets_arrayIntersection);
-  }
-
-  private snippet(snippetFactory: SnippetFactory): Snippet {
-    return snippetFactory({
-      imports: this.imports,
-      logger: this.logger,
-      rdfjsTermExpression: rdfjsTermExpression.bind({
-        imports: this.imports,
-        logger: this.logger,
-        snippets: this,
-      }),
-      snippets: this,
-      syntheticNamePrefix,
-    });
-  }
-
-  @Memoize()
-  get bigDecimalLiteral(): Snippet {
-    return this.snippet(snippets_bigDecimalLiteral);
-  }
-
-  @Memoize()
-  get bigDecimalSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_bigDecimalSparqlWherePatterns);
   }
 
   @Memoize()
@@ -167,16 +135,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get blankNodeSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_blankNodeSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get booleanEquals(): Snippet {
-    return this.snippet(snippets_booleanEquals);
-  }
-
-  @Memoize()
   get BooleanFilter(): Snippet {
     return this.snippet(snippets_BooleanFilter);
   }
@@ -184,11 +142,6 @@ export class Snippets {
   @Memoize()
   get BooleanSchema(): Snippet {
     return this.snippet(snippets_BooleanSchema);
-  }
-
-  @Memoize()
-  get booleanSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_booleanSparqlWherePatterns);
   }
 
   @Memoize()
@@ -202,16 +155,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get compactRecord(): Snippet {
-    return this.snippet(snippets_compactRecord);
-  }
-
-  @Memoize()
-  get dateEquals(): Snippet {
-    return this.snippet(snippets_dateEquals);
-  }
-
-  @Memoize()
   get DateFilter(): Snippet {
     return this.snippet(snippets_DateFilter);
   }
@@ -219,6 +162,236 @@ export class Snippets {
   @Memoize()
   get DateSchema(): Snippet {
     return this.snippet(snippets_DateSchema);
+  }
+
+  @Memoize()
+  get DefaultValueSchema(): Snippet {
+    return this.snippet(snippets_DefaultValueSchema);
+  }
+
+  @Memoize()
+  get EqualsResult(): Snippet {
+    return this.snippet(snippets_EqualsResult);
+  }
+
+  @Memoize()
+  get FocusSparqlConstructTriplesFunction(): Snippet {
+    return this.snippet(snippets_FocusSparqlConstructTriplesFunction);
+  }
+
+  @Memoize()
+  get FocusSparqlWherePatternsFunction(): Snippet {
+    return this.snippet(snippets_FocusSparqlWherePatternsFunction);
+  }
+
+  @Memoize()
+  get FromRdfResourceFunction(): Snippet {
+    return this.snippet(snippets_FromRdfResourceFunction);
+  }
+
+  @Memoize()
+  get FromRdfResourceValuesFunction(): Snippet {
+    return this.snippet(snippets_FromRdfResourceValuesFunction);
+  }
+
+  @Memoize()
+  get Hasher(): Snippet {
+    return this.snippet(snippets_Hasher);
+  }
+
+  @Memoize()
+  get IdentifierFilter(): Snippet {
+    return this.snippet(snippets_IdentifierFilter);
+  }
+
+  @Memoize()
+  get IdentifierSchema(): Snippet {
+    return this.snippet(snippets_IdentifierSchema);
+  }
+
+  @Memoize()
+  get IdentifierSet(): Snippet {
+    return this.snippet(snippets_IdentifierSet);
+  }
+
+  @Memoize()
+  get IriFilter(): Snippet {
+    return this.snippet(snippets_IriFilter);
+  }
+
+  @Memoize()
+  get IriSchema(): Snippet {
+    return this.snippet(snippets_IriSchema);
+  }
+
+  @Memoize()
+  get LazyObject(): Snippet {
+    return this.snippet(snippets_LazyObject);
+  }
+
+  @Memoize()
+  get LazyObjectOption(): Snippet {
+    return this.snippet(snippets_LazyObjectOption);
+  }
+
+  @Memoize()
+  get LazyObjectSet(): Snippet {
+    return this.snippet(snippets_LazyObjectSet);
+  }
+
+  @Memoize()
+  get LiteralFilter(): Snippet {
+    return this.snippet(snippets_LiteralFilter);
+  }
+
+  @Memoize()
+  get LiteralSchema(): Snippet {
+    return this.snippet(snippets_LiteralSchema);
+  }
+
+  @Memoize()
+  get MaybeFilter(): Snippet {
+    return this.snippet(snippets_MaybeFilter);
+  }
+
+  @Memoize()
+  get MaybeSchema(): Snippet {
+    return this.snippet(snippets_MaybeSchema);
+  }
+
+  @Memoize()
+  get NumericFilter(): Snippet {
+    return this.snippet(snippets_NumericFilter);
+  }
+
+  @Memoize()
+  get NumericSchema(): Snippet {
+    return this.snippet(snippets_NumericSchema);
+  }
+
+  @Memoize()
+  get PropertiesFromRdfResourceFunction(): Snippet {
+    return this.snippet(snippets_PropertiesFromRdfResourceFunction);
+  }
+
+  @Memoize()
+  get PropertyPath(): Snippet {
+    return this.snippet(snippets_PropertyPath);
+  }
+
+  @Memoize()
+  get RdfVocabularies(): Snippet {
+    return this.snippet(snippets_RdfVocabularies);
+  }
+
+  @Memoize()
+  get ShaclPropertySchema(): Snippet {
+    return this.snippet(snippets_ShaclPropertySchema);
+  }
+
+  @Memoize()
+  get SparqlFilterPattern(): Snippet {
+    return this.snippet(snippets_SparqlFilterPattern);
+  }
+
+  @Memoize()
+  get SparqlPattern(): Snippet {
+    return this.snippet(snippets_SparqlPattern);
+  }
+
+  @Memoize()
+  get SparqlPattern_isSolutionGenerating(): Snippet {
+    return this.snippet(snippets_SparqlPattern_isSolutionGenerating);
+  }
+
+  @Memoize()
+  get StringFilter(): Snippet {
+    return this.snippet(snippets_StringFilter);
+  }
+
+  @Memoize()
+  get StringSchema(): Snippet {
+    return this.snippet(snippets_StringSchema);
+  }
+
+  @Memoize()
+  get TermFilter(): Snippet {
+    return this.snippet(snippets_TermFilter);
+  }
+
+  @Memoize()
+  get TermSchema(): Snippet {
+    return this.snippet(snippets_TermSchema);
+  }
+
+  @Memoize()
+  get ToRdfResourceFunction(): Snippet {
+    return this.snippet(snippets_ToRdfResourceFunction);
+  }
+
+  @Memoize()
+  get ToRdfResourceValuesFunction(): Snippet {
+    return this.snippet(snippets_ToRdfResourceValuesFunction);
+  }
+
+  @Memoize()
+  get UnwrapR(): Snippet {
+    return this.snippet(snippets_UnwrapR);
+  }
+
+  @Memoize()
+  get ValueSparqlConstructTriplesFunction(): Snippet {
+    return this.snippet(snippets_ValueSparqlConstructTriplesFunction);
+  }
+
+  @Memoize()
+  get ValueSparqlWherePatternsFunction(): Snippet {
+    return this.snippet(snippets_ValueSparqlWherePatternsFunction);
+  }
+
+  @Memoize()
+  get arrayEquals(): Snippet {
+    return this.snippet(snippets_arrayEquals);
+  }
+
+  @Memoize()
+  get arrayIntersection(): Snippet {
+    return this.snippet(snippets_arrayIntersection);
+  }
+
+  @Memoize()
+  get bigDecimalLiteral(): Snippet {
+    return this.snippet(snippets_bigDecimalLiteral);
+  }
+
+  @Memoize()
+  get bigDecimalSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_bigDecimalSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get blankNodeSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_blankNodeSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get booleanEquals(): Snippet {
+    return this.snippet(snippets_booleanEquals);
+  }
+
+  @Memoize()
+  get booleanSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_booleanSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get compactRecord(): Snippet {
+    return this.snippet(snippets_compactRecord);
+  }
+
+  @Memoize()
+  get dateEquals(): Snippet {
+    return this.snippet(snippets_dateEquals);
   }
 
   @Memoize()
@@ -239,16 +412,6 @@ export class Snippets {
   @Memoize()
   get defaultValueSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_defaultValueSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get DefaultValueSchema(): Snippet {
-    return this.snippet(snippets_DefaultValueSchema);
-  }
-
-  @Memoize()
-  get EqualsResult(): Snippet {
-    return this.snippet(snippets_EqualsResult);
   }
 
   @Memoize()
@@ -312,16 +475,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get FocusSparqlConstructTriplesFunction(): Snippet {
-    return this.snippet(snippets_FocusSparqlConstructTriplesFunction);
-  }
-
-  @Memoize()
-  get FocusSparqlWherePatternsFunction(): Snippet {
-    return this.snippet(snippets_FocusSparqlWherePatternsFunction);
-  }
-
-  @Memoize()
   get fromRdfLanguageIn(): Snippet {
     return this.snippet(snippets_fromRdfLanguageIn);
   }
@@ -332,48 +485,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get FromRdfResourceFunction(): Snippet {
-    return this.snippet(snippets_FromRdfResourceFunction);
-  }
-
-  @Memoize()
-  get FromRdfResourceValuesFunction(): Snippet {
-    return this.snippet(snippets_FromRdfResourceValuesFunction);
-  }
-
-  @Memoize()
-  get Hasher(): Snippet {
-    return this.snippet(snippets_Hasher);
-  }
-
-  @Memoize()
-  get IdentifierFilter(): Snippet {
-    return this.snippet(snippets_IdentifierFilter);
-  }
-
-  @Memoize()
-  get IdentifierSchema(): Snippet {
-    return this.snippet(snippets_IdentifierSchema);
-  }
-
-  @Memoize()
-  get IdentifierSet(): Snippet {
-    return this.snippet(snippets_IdentifierSet);
-  }
-
-  @Memoize()
   get identifierSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_identifierSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get IriFilter(): Snippet {
-    return this.snippet(snippets_IriFilter);
-  }
-
-  @Memoize()
-  get IriSchema(): Snippet {
-    return this.snippet(snippets_IriSchema);
   }
 
   @Memoize()
@@ -407,21 +520,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get LazyObject(): Snippet {
-    return this.snippet(snippets_LazyObject);
-  }
-
-  @Memoize()
-  get LazyObjectOption(): Snippet {
-    return this.snippet(snippets_LazyObjectOption);
-  }
-
-  @Memoize()
-  get LazyObjectSet(): Snippet {
-    return this.snippet(snippets_LazyObjectSet);
-  }
-
-  @Memoize()
   get liftSparqlPatterns(): Snippet {
     return this.snippet(snippets_liftSparqlPatterns);
   }
@@ -442,16 +540,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get LiteralFilter(): Snippet {
-    return this.snippet(snippets_LiteralFilter);
-  }
-
-  @Memoize()
-  get LiteralSchema(): Snippet {
-    return this.snippet(snippets_LiteralSchema);
-  }
-
-  @Memoize()
   get literalSchemaSparqlPatterns(): Snippet {
     return this.snippet(snippets_literalSchemaSparqlPatterns);
   }
@@ -467,16 +555,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get MaybeFilter(): Snippet {
-    return this.snippet(snippets_MaybeFilter);
-  }
-
-  @Memoize()
-  get MaybeSchema(): Snippet {
-    return this.snippet(snippets_MaybeSchema);
-  }
-
-  @Memoize()
   get maybeSparqlConstructTriples(): Snippet {
     return this.snippet(snippets_maybeSparqlConstructTriples);
   }
@@ -489,16 +567,6 @@ export class Snippets {
   @Memoize()
   get normalizeSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_normalizeSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get NumericFilter(): Snippet {
-    return this.snippet(snippets_NumericFilter);
-  }
-
-  @Memoize()
-  get NumericSchema(): Snippet {
-    return this.snippet(snippets_NumericSchema);
   }
 
   @Memoize()
@@ -522,28 +590,18 @@ export class Snippets {
   }
 
   @Memoize()
-  get PropertiesFromRdfResourceFunction(): Snippet {
-    return this.snippet(snippets_PropertiesFromRdfResourceFunction);
+  get setSparqlConstructTriples(): Snippet {
+    return this.snippet(snippets_setSparqlConstructTriples);
   }
 
   @Memoize()
-  get PropertyPath(): Snippet {
-    return this.snippet(snippets_PropertyPath);
-  }
-
-  @Memoize()
-  get RdfVocabularies(): Snippet {
-    return this.snippet(snippets_RdfVocabularies);
+  get setSparqlWherePatterns(): Snippet {
+    return this.snippet(snippets_setSparqlWherePatterns);
   }
 
   @Memoize()
   get shaclPropertyFromRdf(): Snippet {
     return this.snippet(snippets_shaclPropertyFromRdf);
-  }
-
-  @Memoize()
-  get ShaclPropertySchema(): Snippet {
-    return this.snippet(snippets_ShaclPropertySchema);
   }
 
   @Memoize()
@@ -557,38 +615,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get setSparqlConstructTriples(): Snippet {
-    return this.snippet(snippets_setSparqlConstructTriples);
-  }
-
-  @Memoize()
-  get setSparqlWherePatterns(): Snippet {
-    return this.snippet(snippets_setSparqlWherePatterns);
-  }
-
-  @Memoize()
   get sortSparqlPatterns(): Snippet {
     return this.snippet(snippets_sortSparqlPatterns);
   }
 
   @Memoize()
-  get SparqlFilterPattern(): Snippet {
-    return this.snippet(snippets_SparqlFilterPattern);
-  }
-
-  @Memoize()
   get sparqlInstancesOfPattern(): Snippet {
     return this.snippet(snippets_sparqlInstancesOfPattern);
-  }
-
-  @Memoize()
-  get SparqlPattern_isSolutionGenerating(): Snippet {
-    return this.snippet(snippets_SparqlPattern_isSolutionGenerating);
-  }
-
-  @Memoize()
-  get SparqlPattern(): Snippet {
-    return this.snippet(snippets_SparqlPattern);
   }
 
   @Memoize()
@@ -607,33 +640,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get StringFilter(): Snippet {
-    return this.snippet(snippets_StringFilter);
-  }
-
-  @Memoize()
-  get StringSchema(): Snippet {
-    return this.snippet(snippets_StringSchema);
-  }
-
-  @Memoize()
   get stringSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_stringSparqlWherePatterns);
   }
 
   @Memoize()
-  get TermFilter(): Snippet {
-    return this.snippet(snippets_TermFilter);
-  }
-
-  @Memoize()
   get termFilterSparqlPatterns(): Snippet {
     return this.snippet(snippets_termFilterSparqlPatterns);
-  }
-
-  @Memoize()
-  get TermSchema(): Snippet {
-    return this.snippet(snippets_TermSchema);
   }
 
   @Memoize()
@@ -646,28 +659,17 @@ export class Snippets {
     return this.snippet(snippets_termSparqlWherePatterns);
   }
 
-  @Memoize()
-  get ToRdfResourceFunction(): Snippet {
-    return this.snippet(snippets_ToRdfResourceFunction);
+  protected get snippets(): Snippets {
+    return this;
   }
 
-  @Memoize()
-  get ToRdfResourceValuesFunction(): Snippet {
-    return this.snippet(snippets_ToRdfResourceValuesFunction);
-  }
-
-  @Memoize()
-  get UnwrapR(): Snippet {
-    return this.snippet(snippets_UnwrapR);
-  }
-
-  @Memoize()
-  get ValueSparqlConstructTriplesFunction(): Snippet {
-    return this.snippet(snippets_ValueSparqlConstructTriplesFunction);
-  }
-
-  @Memoize()
-  get ValueSparqlWherePatternsFunction(): Snippet {
-    return this.snippet(snippets_ValueSparqlWherePatternsFunction);
+  private snippet(snippetFactory: SnippetFactory): Snippet {
+    return snippetFactory({
+      imports: this.imports,
+      logger: this.logger,
+      rdfjsTermExpression: rdfjsTermExpression.bind(this),
+      snippets: this,
+      syntheticNamePrefix,
+    });
   }
 }

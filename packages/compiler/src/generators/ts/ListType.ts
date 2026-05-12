@@ -116,16 +116,16 @@ export class ListType<
       currentSubListResource = listResource;
     } else {
       const newSubListResource = ${variables.resourceSet}.resource(${mintSubListIdentifierFunction}());
-      currentSubListResource!.add(${rdfjsTermExpression(rdf.rest, { logger: this.logger })}, newSubListResource.identifier, ${variables.graph});
+      currentSubListResource!.add(${rdfjsTermExpression.call(this, rdf.rest)}, newSubListResource.identifier, ${variables.graph});
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type, { logger: this.logger })}, ${this.imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.type)}, ${this.imports.dataFactory}.namedNode("${rdfType.value}"), ${variables.graph})`))}
     
-    currentSubListResource.add(${rdfjsTermExpression(rdf.first, { logger: this.logger })}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression(rdf.first, { logger: this.logger }), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
+    currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.first)}, ${this.itemType.toRdfResourceValuesExpression({ variables: { graph: variables.graph, propertyPath: rdfjsTermExpression.call(this, rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })}, ${variables.graph});
 
     if (itemIndex + 1 === list.length) {
-      currentSubListResource.add(${rdfjsTermExpression(rdf.rest, { logger: this.logger })}, ${rdfjsTermExpression(rdf.nil, { logger: this.logger })}, ${variables.graph});
+      currentSubListResource.add(${rdfjsTermExpression.call(this, rdf.rest)}, ${rdfjsTermExpression.call(this, rdf.nil)}, ${variables.graph});
     }
     
     return { currentSubListResource, listResource };
@@ -137,7 +137,7 @@ export class ListType<
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};
   },
-).listResource.identifier : ${rdfjsTermExpression(rdf.nil, { logger: this.logger })}]`;
+).listResource.identifier : ${rdfjsTermExpression.call(this, rdf.nil)}]`;
   }
 
   override toStringExpression({

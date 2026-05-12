@@ -18,10 +18,11 @@ import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { Snippets } from "./Snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
+import { TsGeneratorContext } from "./TsGeneratorContext.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export class TsGenerator implements Generator {
+export class TsGenerator extends TsGeneratorContext implements Generator {
   private readonly typeFactory: TypeFactory;
 
   protected readonly imports: Imports;
@@ -29,6 +30,7 @@ export class TsGenerator implements Generator {
   protected readonly snippets: Snippets;
 
   constructor({ logger }: { logger: Logger }) {
+    super();
     this.imports = new Imports();
     this.logger = logger;
     this.snippets = new Snippets({ imports: this.imports, logger });
@@ -113,10 +115,12 @@ export class TsGenerator implements Generator {
     );
 
     declarations.push(
-      ...graphqlSchemaVariableStatement({
-        namedObjectTypes: namedObjectTypesNameSorted,
-        namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
-      }).toList(),
+      ...graphqlSchemaVariableStatement
+        .call(this, {
+          namedObjectTypes: namedObjectTypesNameSorted,
+          namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
+        })
+        .toList(),
     );
 
     declarations.splice(
