@@ -245,6 +245,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
+      jsonName: this._discriminantProperty.jsonName,
       name: this._discriminantProperty.name,
       ownValues: this._discriminantProperty.type.ownValues,
       descendantValues: this._discriminantProperty.type.descendantValues,

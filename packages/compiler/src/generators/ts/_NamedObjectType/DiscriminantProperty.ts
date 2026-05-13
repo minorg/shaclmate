@@ -29,6 +29,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   @Memoize()
+  get jsonName(): string {
+    return "@type";
+  }
+
+  @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
       key: this.jsonName,
@@ -46,11 +51,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   private get initializer(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
-  }
-
-  @Memoize()
-  private get jsonName(): string {
-    return "@type";
   }
 
   override constructorStatements(): readonly Code[] {
