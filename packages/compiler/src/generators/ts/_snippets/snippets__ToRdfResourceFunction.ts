@@ -8,13 +8,13 @@ export const snippets__ToRdfResourceFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}_ToRdfResourceFunction`,
     code`\
-export type ${syntheticNamePrefix}_ToRdfResourceFunction<T> = (
+export type ${syntheticNamePrefix}_ToRdfResourceFunction<IdentifierT extends ${imports.Resource}.Identifier, ObjectT extends { ${syntheticNamePrefix}identifier: () => IdentifierT }> = (
   parameters: {
     graph: Exclude<${imports.Quad_Graph}, ${imports.Variable}> | undefined;
     ignoreRdfType: boolean;
-    resource: ${imports.Resource};
+    object: ObjectT
+    resource: ${imports.Resource}<IdentifierT>;
     resourceSet: ${imports.ResourceSet};
-    value: T
   }
 ) => void;`,
   );

@@ -20,7 +20,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
       code`if (!${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.reusables.imports.dataFactory}.namedNode("${toRdfType.value}"), options?.${variables.graph});`,
+            code`${variables.resource}.add(${this.rdfjsTermExpression(rdf.type)}, ${this.reusables.imports.dataFactory}.namedNode("${toRdfType.value}"), ${variables.graph});`,
         ),
         { on: " " },
       )} }`,
@@ -35,7 +35,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
           resource: variables.resource,
           resourceSet: variables.resourceSet,
           value: property.accessExpression({
-            variables: { object: variables.value },
+            variables: { object: variables.object },
           }),
         },
       }),
@@ -45,7 +45,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.name}> = (parameters) => {
+export const _toRdfResource: ${this.reusables.snippets._ToRdfResourceFunction}<${this.identifierTypeAlias}, ${this.name}> = (parameters) => {
 ${joinCode(statements)}
 }
 
@@ -55,7 +55,7 @@ export const toRdfResource = ${this.reusables.snippets.wrap_ToRdfResourceFunctio
 const variables = {
   ignoreRdfType: code`parameters.ignoreRdfType`,
   graph: code`parameters.graph`,
+  object: code`parameters.object`,
   resource: code`parameters.resource`,
   resourceSet: code`parameters.resourceSet`,
-  value: code`parameters.value`,
 };

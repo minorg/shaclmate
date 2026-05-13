@@ -39,6 +39,17 @@ type $_FromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
+export type $_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends { $identifier: () => IdentifierT },
+> = (parameters: {
+  graph: Exclude<Quad_Graph, Variable> | undefined;
+  ignoreRdfType: boolean;
+  object: ObjectT;
+  resource: Resource<IdentifierT>;
+  resourceSet: ResourceSet;
+}) => void;
+
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
@@ -2670,14 +2681,17 @@ const $termSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     ...parameters,
   });
 
-export type $ToRdfResourceFunction<T> = (
-  value: T,
+export type $ToRdfResourceFunction<
+  ObjectT,
+  IdentifierT extends Resource.Identifier = Resource.Identifier,
+> = (
+  object: ObjectT,
   options?: {
     graph?: Exclude<Quad_Graph, Variable>;
     ignoreRdfType?: boolean;
     resourceSet?: ResourceSet;
   },
-) => Resource;
+) => Resource<IdentifierT>;
 
 export type $ToRdfResourceValuesFunction<
   ValueT,
@@ -2735,6 +2749,32 @@ function $wrap_FromRdfResourceFunction<T>(
       objectSet,
       preferredLanguages,
     });
+  };
+}
+
+function $wrap_ToRdfResourceFunction<
+  IdentifierT extends Resource.Identifier,
+  ObjectT extends { $identifier: () => IdentifierT },
+>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<IdentifierT, ObjectT>,
+): $ToRdfResourceFunction<ObjectT, IdentifierT> {
+  return (object, options) => {
+    let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
+    if (!resourceSet) {
+      resourceSet = new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    }
+    const resource = resourceSet.resource(object.$identifier());
+    _toRdfResourceFunction({
+      graph,
+      ignoreRdfType,
+      object,
+      resource,
+      resourceSet,
+    });
+    return resource;
   };
 }
 
@@ -3568,19 +3608,14 @@ export namespace $NamedDefaultPartial {
     );
   }
 
-  export function toRdfResource(
-    _namedDefaultPartial: $NamedDefaultPartial,
-    options?: Parameters<$ToRdfResourceFunction<$NamedDefaultPartial>>[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_namedDefaultPartial.$identifier());
-    return resource;
-  }
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    $NamedDefaultPartial.Identifier,
+    $NamedDefaultPartial
+  > = (parameters) => {
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _namedDefaultPartial: $NamedDefaultPartial,
@@ -3928,19 +3963,14 @@ export namespace $DefaultPartial {
     );
   }
 
-  export function toRdfResource(
-    _defaultPartial: $DefaultPartial,
-    options?: Parameters<$ToRdfResourceFunction<$DefaultPartial>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_defaultPartial.$identifier());
-    return resource;
-  }
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    $DefaultPartial.Identifier,
+    $DefaultPartial
+  > = (parameters) => {
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _defaultPartial: $DefaultPartial,
@@ -10360,74 +10390,63 @@ export namespace UnionDiscriminants {
     );
   }
 
-  export function toRdfResource(
-    _unionDiscriminants: UnionDiscriminants,
-    options?: Parameters<$ToRdfResourceFunction<UnionDiscriminants>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_unionDiscriminants.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionDiscriminants.Identifier,
+    UnionDiscriminants
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"),
-      _unionDiscriminants.optionalIriOrLiteralProperty
-        .toList()
-        .flatMap((value) =>
-          (
-            ((value, _options): (NamedNode | Literal)[] => {
-              if (value.termType === "NamedNode") {
-                return [value];
-              }
-              if (value.termType === "Literal") {
-                return [value];
-              }
+      parameters.object.optionalIriOrLiteralProperty.toList().flatMap((value) =>
+        (
+          ((value, _options): (NamedNode | Literal)[] => {
+            if (value.termType === "NamedNode") {
+              return [value];
+            }
+            if (value.termType === "Literal") {
+              return [value];
+            }
 
-              throw new Error("unable to serialize to RDF");
-            }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
-          )(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
-            propertyPath: dataFactory.namedNode(
-              "http://example.com/optionalIriOrLiteralProperty",
-            ),
-          }),
-        ),
-      options?.graph,
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
+        )(value, {
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath: dataFactory.namedNode(
+            "http://example.com/optionalIriOrLiteralProperty",
+          ),
+        }),
+      ),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/optionalIriOrStringProperty"),
-      _unionDiscriminants.optionalIriOrStringProperty
-        .toList()
-        .flatMap((value) =>
-          (
-            ((value, _options): (NamedNode | Literal)[] => {
-              if (typeof value === "object") {
-                return [value];
-              }
-              if (typeof value === "string") {
-                return [$literalFactory.string(value)];
-              }
+      parameters.object.optionalIriOrStringProperty.toList().flatMap((value) =>
+        (
+          ((value, _options): (NamedNode | Literal)[] => {
+            if (typeof value === "object") {
+              return [value];
+            }
+            if (typeof value === "string") {
+              return [$literalFactory.string(value)];
+            }
 
-              throw new Error("unable to serialize to RDF");
-            }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
-          )(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
-            propertyPath: dataFactory.namedNode(
-              "http://example.com/optionalIriOrStringProperty",
-            ),
-          }),
-        ),
-      options?.graph,
+            throw new Error("unable to serialize to RDF");
+          }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
+        )(value, {
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
+          propertyPath: dataFactory.namedNode(
+            "http://example.com/optionalIriOrStringProperty",
+          ),
+        }),
+      ),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/optionalNodeOrLiteralProperty"),
-      _unionDiscriminants.optionalNodeOrLiteralProperty
+      parameters.object.optionalNodeOrLiteralProperty
         .toList()
         .flatMap((value) =>
           (
@@ -10449,21 +10468,21 @@ export namespace UnionDiscriminants {
               { termType: "UnionMember1"; value: UnionMember1 } | Literal
             >
           )(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resource: parameters.resource,
+            resourceSet: parameters.resourceSet,
             propertyPath: dataFactory.namedNode(
               "http://example.com/optionalNodeOrLiteralProperty",
             ),
           }),
         ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalNodeOrNodeOrStringProperty",
       ),
-      _unionDiscriminants.optionalNodeOrNodeOrStringProperty
+      parameters.object.optionalNodeOrNodeOrStringProperty
         .toList()
         .flatMap((value) =>
           (
@@ -10498,17 +10517,17 @@ export namespace UnionDiscriminants {
                 }
             >
           )(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resource: parameters.resource,
+            resourceSet: parameters.resourceSet,
             propertyPath: dataFactory.namedNode(
               "http://example.com/optionalNodeOrNodeOrStringProperty",
             ),
           }),
         ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredIriOrLiteralProperty"),
       (
         ((value, _options): (NamedNode | Literal)[] => {
@@ -10521,17 +10540,17 @@ export namespace UnionDiscriminants {
 
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
-      )(_unionDiscriminants.requiredIriOrLiteralProperty, {
-        graph: options?.graph,
-        resource: resource,
-        resourceSet: resourceSet,
+      )(parameters.object.requiredIriOrLiteralProperty, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
         propertyPath: dataFactory.namedNode(
           "http://example.com/requiredIriOrLiteralProperty",
         ),
       }),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredIriOrStringProperty"),
       (
         ((value, _options): (NamedNode | Literal)[] => {
@@ -10544,17 +10563,17 @@ export namespace UnionDiscriminants {
 
           throw new Error("unable to serialize to RDF");
         }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
-      )(_unionDiscriminants.requiredIriOrStringProperty, {
-        graph: options?.graph,
-        resource: resource,
-        resourceSet: resourceSet,
+      )(parameters.object.requiredIriOrStringProperty, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
         propertyPath: dataFactory.namedNode(
           "http://example.com/requiredIriOrStringProperty",
         ),
       }),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredNodeOrLiteralProperty"),
       (
         ((value, _options): (BlankNode | NamedNode | Literal)[] => {
@@ -10574,17 +10593,17 @@ export namespace UnionDiscriminants {
         }) satisfies $ToRdfResourceValuesFunction<
           { termType: "UnionMember1"; value: UnionMember1 } | Literal
         >
-      )(_unionDiscriminants.requiredNodeOrLiteralProperty, {
-        graph: options?.graph,
-        resource: resource,
-        resourceSet: resourceSet,
+      )(parameters.object.requiredNodeOrLiteralProperty, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
         propertyPath: dataFactory.namedNode(
           "http://example.com/requiredNodeOrLiteralProperty",
         ),
       }),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/requiredNodeOrNodeOrStringProperty",
       ),
@@ -10619,19 +10638,19 @@ export namespace UnionDiscriminants {
               value: string;
             }
         >
-      )(_unionDiscriminants.requiredNodeOrNodeOrStringProperty, {
-        graph: options?.graph,
-        resource: resource,
-        resourceSet: resourceSet,
+      )(parameters.object.requiredNodeOrNodeOrStringProperty, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
         propertyPath: dataFactory.namedNode(
           "http://example.com/requiredNodeOrNodeOrStringProperty",
         ),
       }),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"),
-      _unionDiscriminants.setIriOrLiteralProperty.flatMap((item) =>
+      parameters.object.setIriOrLiteralProperty.flatMap((item) =>
         (
           ((value, _options): (NamedNode | Literal)[] => {
             if (value.termType === "NamedNode") {
@@ -10644,19 +10663,19 @@ export namespace UnionDiscriminants {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<NamedNode | Literal>
         )(item, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/setIriOrLiteralProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/setIriOrStringProperty"),
-      _unionDiscriminants.setIriOrStringProperty.flatMap((item) =>
+      parameters.object.setIriOrStringProperty.flatMap((item) =>
         (
           ((value, _options): (NamedNode | Literal)[] => {
             if (typeof value === "object") {
@@ -10669,19 +10688,19 @@ export namespace UnionDiscriminants {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<NamedNode | string>
         )(item, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/setIriOrStringProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/setNodeOrLiteralProperty"),
-      _unionDiscriminants.setNodeOrLiteralProperty.flatMap((item) =>
+      parameters.object.setNodeOrLiteralProperty.flatMap((item) =>
         (
           ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.termType === "UnionMember1") {
@@ -10701,19 +10720,19 @@ export namespace UnionDiscriminants {
             { termType: "UnionMember1"; value: UnionMember1 } | Literal
           >
         )(item, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/setNodeOrLiteralProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/setNodeOrNodeOrStringProperty"),
-      _unionDiscriminants.setNodeOrNodeOrStringProperty.flatMap((item) =>
+      parameters.object.setNodeOrNodeOrStringProperty.flatMap((item) =>
         (
           ((value, _options): (BlankNode | NamedNode | Literal)[] => {
             if (value.type === "UnionMember1") {
@@ -10746,18 +10765,20 @@ export namespace UnionDiscriminants {
               }
           >
         )(item, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/setNodeOrNodeOrStringProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _unionDiscriminants: UnionDiscriminants,
@@ -12367,89 +12388,84 @@ export namespace TermProperties {
     );
   }
 
-  export function toRdfResource(
-    _termProperties: TermProperties,
-    options?: Parameters<$ToRdfResourceFunction<TermProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_termProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    TermProperties.Identifier,
+    TermProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/TermProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/blankNodeTermProperty"),
-      _termProperties.blankNodeTermProperty.toList(),
-      options?.graph,
+      parameters.object.blankNodeTermProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/booleanTermProperty"),
-      _termProperties.booleanTermProperty
+      parameters.object.booleanTermProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateTermProperty"),
-      _termProperties.dateTermProperty
+      parameters.object.dateTermProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.date(value, $RdfVocabularies.xsd.date),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateTimeTermProperty"),
-      _termProperties.dateTimeTermProperty
+      parameters.object.dateTimeTermProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/iriTermProperty"),
-      _termProperties.iriTermProperty.toList(),
-      options?.graph,
+      parameters.object.iriTermProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/literalTermProperty"),
-      _termProperties.literalTermProperty.toList(),
-      options?.graph,
+      parameters.object.literalTermProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/numberTermProperty"),
-      _termProperties.numberTermProperty
+      parameters.object.numberTermProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.double),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/stringTermProperty"),
-      _termProperties.stringTermProperty
+      parameters.object.stringTermProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/termProperty"),
-      _termProperties.termProperty.toList(),
-      options?.graph,
+      parameters.object.termProperty.toList(),
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _termProperties: TermProperties,
@@ -12995,42 +13011,37 @@ export namespace RecursiveUnionMember2 {
     );
   }
 
-  export function toRdfResource(
-    _recursiveUnionMember2: RecursiveUnionMember2,
-    options?: Parameters<$ToRdfResourceFunction<RecursiveUnionMember2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_recursiveUnionMember2.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    RecursiveUnionMember2.Identifier,
+    RecursiveUnionMember2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RecursiveUnionMember2"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/recursiveUnionMember2Property"),
-      _recursiveUnionMember2.recursiveUnionMember2Property
+      parameters.object.recursiveUnionMember2Property
         .toList()
         .flatMap((value) =>
           RecursiveUnion.toRdfResourceValues(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resource: parameters.resource,
+            resourceSet: parameters.resourceSet,
             propertyPath: dataFactory.namedNode(
               "http://example.com/recursiveUnionMember2Property",
             ),
           }),
         ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _recursiveUnionMember2: RecursiveUnionMember2,
@@ -13578,42 +13589,37 @@ export namespace RecursiveUnionMember1 {
     );
   }
 
-  export function toRdfResource(
-    _recursiveUnionMember1: RecursiveUnionMember1,
-    options?: Parameters<$ToRdfResourceFunction<RecursiveUnionMember1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_recursiveUnionMember1.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    RecursiveUnionMember1.Identifier,
+    RecursiveUnionMember1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RecursiveUnionMember1"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/recursiveUnionMember1Property"),
-      _recursiveUnionMember1.recursiveUnionMember1Property
+      parameters.object.recursiveUnionMember1Property
         .toList()
         .flatMap((value) =>
           RecursiveUnion.toRdfResourceValues(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resource: parameters.resource,
+            resourceSet: parameters.resourceSet,
             propertyPath: dataFactory.namedNode(
               "http://example.com/recursiveUnionMember1Property",
             ),
           }),
         ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _recursiveUnionMember1: RecursiveUnionMember1,
@@ -14294,41 +14300,36 @@ export namespace PropertyPaths {
     );
   }
 
-  export function toRdfResource(
-    _propertyPaths: PropertyPaths,
-    options?: Parameters<$ToRdfResourceFunction<PropertyPaths>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_propertyPaths.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    PropertyPaths.Identifier,
+    PropertyPaths
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/PropertyPaths"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       {
         path: dataFactory.namedNode("http://example.com/inversePathProperty"),
         termType: "InversePath" as const,
       },
-      _propertyPaths.inversePathProperty.toList(),
-      options?.graph,
+      parameters.object.inversePathProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/predicatePathProperty"),
-      _propertyPaths.predicatePathProperty
+      parameters.object.predicatePathProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _propertyPaths: PropertyPaths,
@@ -15205,51 +15206,46 @@ export namespace PropertyNames {
     );
   }
 
-  export function toRdfResource(
-    _propertyNames: PropertyNames,
-    options?: Parameters<$ToRdfResourceFunction<PropertyNames>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_propertyNames.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    PropertyNames.Identifier,
+    PropertyNames
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/PropertyNames"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/actualPropertyName1"),
-      [$literalFactory.string(_propertyNames.actualPropertyName1)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.actualPropertyName1)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName2"),
-      [$literalFactory.string(_propertyNames.actualPropertyName2)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.actualPropertyName2)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName3"),
-      [$literalFactory.string(_propertyNames.actualPropertyName3)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.actualPropertyName3)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName4"),
-      [$literalFactory.string(_propertyNames.actualPropertyName4)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.actualPropertyName4)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/ignorePropertyName5"),
-      [$literalFactory.string(_propertyNames.actualPropertyName5)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.actualPropertyName5)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _propertyNames: PropertyNames,
@@ -16076,45 +16072,40 @@ export namespace PropertyCardinalities {
     );
   }
 
-  export function toRdfResource(
-    _propertyCardinalities: PropertyCardinalities,
-    options?: Parameters<$ToRdfResourceFunction<PropertyCardinalities>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_propertyCardinalities.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    PropertyCardinalities.Identifier,
+    PropertyCardinalities
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-      _propertyCardinalities.emptyStringSetProperty.flatMap((item) => [
+      parameters.object.emptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-      _propertyCardinalities.nonEmptyStringSetProperty.flatMap((item) => [
+      parameters.object.nonEmptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/optionalStringProperty"),
-      _propertyCardinalities.optionalStringProperty
+      parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
-      [$literalFactory.string(_propertyCardinalities.requiredStringProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.requiredStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _propertyCardinalities: PropertyCardinalities,
@@ -16674,39 +16665,32 @@ export namespace UnionMemberCommonParent {
     );
   }
 
-  export function toRdfResource(
-    _unionMemberCommonParent: UnionMemberCommonParent,
-    options?: Parameters<$ToRdfResourceFunction<UnionMemberCommonParent>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _unionMemberCommonParent.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionMemberCommonParent.Identifier,
+    UnionMemberCommonParent
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMemberCommonParent"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/unionMemberCommonParentProperty",
       ),
       [
         $literalFactory.string(
-          _unionMemberCommonParent.unionMemberCommonParentProperty,
+          parameters.object.unionMemberCommonParentProperty,
         ),
       ],
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _unionMemberCommonParent: UnionMemberCommonParent,
@@ -17249,35 +17233,30 @@ export namespace UnionMember2 {
     );
   }
 
-  export function toRdfResource(
-    _unionMember2: UnionMember2,
-    options?: Parameters<$ToRdfResourceFunction<UnionMember2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = UnionMemberCommonParent.toRdfResource(_unionMember2, {
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionMember2.Identifier,
+    UnionMember2
+  > = (parameters) => {
+    UnionMemberCommonParent._toRdfResource({
+      ...parameters,
       ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
     });
-    if (!options?.ignoreRdfType) {
-      resource.add(
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember2"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unionMember2Property"),
-      [$literalFactory.string(_unionMember2.unionMember2Property)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.unionMember2Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _unionMember2: UnionMember2,
@@ -17804,35 +17783,26 @@ export namespace PartialUnionMember2 {
     );
   }
 
-  export function toRdfResource(
-    _partialUnionMember2: PartialUnionMember2,
-    options?: Parameters<$ToRdfResourceFunction<PartialUnionMember2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_partialUnionMember2.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    PartialUnionMember2.Identifier,
+    PartialUnionMember2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember2"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _partialUnionMember2.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _partialUnionMember2: PartialUnionMember2,
@@ -18373,35 +18343,30 @@ export namespace UnionMember1 {
     );
   }
 
-  export function toRdfResource(
-    _unionMember1: UnionMember1,
-    options?: Parameters<$ToRdfResourceFunction<UnionMember1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = UnionMemberCommonParent.toRdfResource(_unionMember1, {
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    UnionMember1.Identifier,
+    UnionMember1
+  > = (parameters) => {
+    UnionMemberCommonParent._toRdfResource({
+      ...parameters,
       ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
     });
-    if (!options?.ignoreRdfType) {
-      resource.add(
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember1"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unionMember1Property"),
-      [$literalFactory.string(_unionMember1.unionMember1Property)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.unionMember1Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _unionMember1: UnionMember1,
@@ -18928,35 +18893,26 @@ export namespace PartialUnionMember1 {
     );
   }
 
-  export function toRdfResource(
-    _partialUnionMember1: PartialUnionMember1,
-    options?: Parameters<$ToRdfResourceFunction<PartialUnionMember1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_partialUnionMember1.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    PartialUnionMember1.Identifier,
+    PartialUnionMember1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/UnionMember1"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _partialUnionMember1.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _partialUnionMember1: PartialUnionMember1,
@@ -19383,26 +19339,21 @@ export namespace NewName {
     );
   }
 
-  export function toRdfResource(
-    _newName: NewName,
-    options?: Parameters<$ToRdfResourceFunction<NewName>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_newName.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NewName.Identifier,
+    NewName
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/OverrideName"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _newName: NewName,
@@ -19996,34 +19947,29 @@ export namespace OrderedProperties {
     );
   }
 
-  export function toRdfResource(
-    _orderedProperties: OrderedProperties,
-    options?: Parameters<$ToRdfResourceFunction<OrderedProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_orderedProperties.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    OrderedProperties.Identifier,
+    OrderedProperties
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/orderedPropertyC"),
-      [$literalFactory.string(_orderedProperties.orderedPropertyC)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.orderedPropertyC)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/orderedPropertyB"),
-      [$literalFactory.string(_orderedProperties.orderedPropertyB)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.orderedPropertyB)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/orderedPropertyA"),
-      [$literalFactory.string(_orderedProperties.orderedPropertyA)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.orderedPropertyA)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _orderedProperties: OrderedProperties,
@@ -22432,101 +22378,94 @@ export namespace NumericProperties {
     );
   }
 
-  export function toRdfResource(
-    _numericProperties: NumericProperties,
-    options?: Parameters<$ToRdfResourceFunction<NumericProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_numericProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NumericProperties.Identifier,
+    NumericProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/NumericProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/byteNumericProperty"),
-      _numericProperties.byteNumericProperty
+      parameters.object.byteNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.byte),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/decimalNumericProperty"),
-      _numericProperties.decimalNumericProperty
+      parameters.object.decimalNumericProperty
         .toList()
         .flatMap((value) => [$bigDecimalLiteral(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/doubleNumericProperty"),
-      _numericProperties.doubleNumericProperty
+      parameters.object.doubleNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.double),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/floatNumericProperty"),
-      _numericProperties.floatNumericProperty
+      parameters.object.floatNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.float),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/integerNumericProperty"),
-      _numericProperties.integerNumericProperty
+      parameters.object.integerNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/intNumericProperty"),
-      _numericProperties.intNumericProperty
+      parameters.object.intNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.int),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/longNumericProperty"),
-      _numericProperties.longNumericProperty
+      parameters.object.longNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.long),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/negativeIntegerNumericProperty",
       ),
-      _numericProperties.negativeIntegerNumericProperty
+      parameters.object.negativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.negativeInteger),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/nonNegativeIntegerNumericProperty",
       ),
-      _numericProperties.nonNegativeIntegerNumericProperty
+      parameters.object.nonNegativeIntegerNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(
@@ -22534,13 +22473,13 @@ export namespace NumericProperties {
             $RdfVocabularies.xsd.nonNegativeInteger,
           ),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/nonPositiveIntegerNumericProperty",
       ),
-      _numericProperties.nonPositiveIntegerNumericProperty
+      parameters.object.nonPositiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(
@@ -22548,66 +22487,68 @@ export namespace NumericProperties {
             $RdfVocabularies.xsd.nonPositiveInteger,
           ),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/positiveIntegerNumericProperty",
       ),
-      _numericProperties.positiveIntegerNumericProperty
+      parameters.object.positiveIntegerNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.positiveInteger),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/shortNumericProperty"),
-      _numericProperties.shortNumericProperty
+      parameters.object.shortNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.short),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unsignedByteNumericProperty"),
-      _numericProperties.unsignedByteNumericProperty
+      parameters.object.unsignedByteNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.unsignedByte),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unsignedIntNumericProperty"),
-      _numericProperties.unsignedIntNumericProperty
+      parameters.object.unsignedIntNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.unsignedInt),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unsignedLongNumericProperty"),
-      _numericProperties.unsignedLongNumericProperty
+      parameters.object.unsignedLongNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.unsignedLong),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/unsignedShortNumericProperty"),
-      _numericProperties.unsignedShortNumericProperty
+      parameters.object.unsignedShortNumericProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.unsignedShort),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _numericProperties: NumericProperties,
@@ -23849,60 +23790,55 @@ export namespace NodeKinds {
     );
   }
 
-  export function toRdfResource(
-    _nodeKinds: NodeKinds,
-    options?: Parameters<$ToRdfResourceFunction<NodeKinds>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_nodeKinds.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NodeKinds.Identifier,
+    NodeKinds
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/NodeKinds"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/blankNodeKindProperty"),
-      [_nodeKinds.blankNodeKindProperty],
-      options?.graph,
+      [parameters.object.blankNodeKindProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/blankNodeOrIriNodeKindProperty",
       ),
-      [_nodeKinds.blankNodeOrIriNodeKindProperty],
-      options?.graph,
+      [parameters.object.blankNodeOrIriNodeKindProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/blankNodeOrLiteralNodeKindProperty",
       ),
-      [_nodeKinds.blankNodeOrLiteralNodeKindProperty],
-      options?.graph,
+      [parameters.object.blankNodeOrLiteralNodeKindProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/iriNodeKindProperty"),
-      [_nodeKinds.iriNodeKindProperty],
-      options?.graph,
+      [parameters.object.iriNodeKindProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/iriOrLiteralNodeKindProperty"),
-      [_nodeKinds.iriOrLiteralNodeKindProperty],
-      options?.graph,
+      [parameters.object.iriOrLiteralNodeKindProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/literalNodeKindProperty"),
-      [_nodeKinds.literalNodeKindProperty],
-      options?.graph,
+      [parameters.object.literalNodeKindProperty],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _nodeKinds: NodeKinds,
@@ -24337,28 +24273,19 @@ export namespace NoRdfTypeUnionMember2 {
     );
   }
 
-  export function toRdfResource(
-    _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
-    options?: Parameters<$ToRdfResourceFunction<NoRdfTypeUnionMember2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_noRdfTypeUnionMember2.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NoRdfTypeUnionMember2.Identifier,
+    NoRdfTypeUnionMember2
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/noRdfTypeUnionMember2Property"),
-      [
-        $literalFactory.string(
-          _noRdfTypeUnionMember2.noRdfTypeUnionMember2Property,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.noRdfTypeUnionMember2Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
@@ -24797,28 +24724,19 @@ export namespace NoRdfTypeUnionMember1 {
     );
   }
 
-  export function toRdfResource(
-    _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
-    options?: Parameters<$ToRdfResourceFunction<NoRdfTypeUnionMember1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_noRdfTypeUnionMember1.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NoRdfTypeUnionMember1.Identifier,
+    NoRdfTypeUnionMember1
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/noRdfTypeUnionMember1Property"),
-      [
-        $literalFactory.string(
-          _noRdfTypeUnionMember1.noRdfTypeUnionMember1Property,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.noRdfTypeUnionMember1Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
@@ -25458,56 +25376,45 @@ export namespace NamedUnionProperties {
     );
   }
 
-  export function toRdfResource(
-    _namedUnionProperties: NamedUnionProperties,
-    options?: Parameters<$ToRdfResourceFunction<NamedUnionProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_namedUnionProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NamedUnionProperties.Identifier,
+    NamedUnionProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/NamedUnionProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/namedUnion1Property"),
-      NamedUnion1.toRdfResourceValues(
-        _namedUnionProperties.namedUnion1Property,
-        {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
-          propertyPath: dataFactory.namedNode(
-            "http://example.com/namedUnion1Property",
-          ),
-        },
-      ),
-      options?.graph,
+      NamedUnion1.toRdfResourceValues(parameters.object.namedUnion1Property, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath: dataFactory.namedNode(
+          "http://example.com/namedUnion1Property",
+        ),
+      }),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/namedUnion2Property"),
-      NamedUnion2.toRdfResourceValues(
-        _namedUnionProperties.namedUnion2Property,
-        {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
-          propertyPath: dataFactory.namedNode(
-            "http://example.com/namedUnion2Property",
-          ),
-        },
-      ),
-      options?.graph,
+      NamedUnion2.toRdfResourceValues(parameters.object.namedUnion2Property, {
+        graph: parameters.graph,
+        resource: parameters.resource,
+        resourceSet: parameters.resourceSet,
+        propertyPath: dataFactory.namedNode(
+          "http://example.com/namedUnion2Property",
+        ),
+      }),
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _namedUnionProperties: NamedUnionProperties,
@@ -26362,27 +26269,20 @@ export namespace MutableProperties {
     );
   }
 
-  export function toRdfResource(
-    _mutableProperties: MutableProperties,
-    options?: Parameters<$ToRdfResourceFunction<MutableProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_mutableProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    MutableProperties.Identifier,
+    MutableProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/MutableProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/mutableListProperty"),
-      _mutableProperties.mutableListProperty.toList().flatMap((value) => [
+      parameters.object.mutableListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -26394,13 +26294,13 @@ export namespace MutableProperties {
                 if (itemIndex === 0) {
                   currentSubListResource = listResource;
                 } else {
-                  const newSubListResource = resourceSet.resource(
+                  const newSubListResource = parameters.resourceSet.resource(
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
-                    options?.graph,
+                    parameters.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
@@ -26408,14 +26308,14 @@ export namespace MutableProperties {
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
                   [$literalFactory.string(item)],
-                  options?.graph,
+                  parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
-                    options?.graph,
+                    parameters.graph,
                   );
                 }
 
@@ -26423,7 +26323,7 @@ export namespace MutableProperties {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(
+                listResource: parameters.resourceSet.resource(
                   (() => dataFactory.blankNode())(),
                 ),
               } as {
@@ -26433,24 +26333,26 @@ export namespace MutableProperties {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/mutableSetProperty"),
-      _mutableProperties.mutableSetProperty.flatMap((item) => [
+      parameters.object.mutableSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/mutableStringProperty"),
-      _mutableProperties.mutableStringProperty
+      parameters.object.mutableStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _mutableProperties: MutableProperties,
@@ -27378,27 +27280,20 @@ export namespace ListProperties {
     );
   }
 
-  export function toRdfResource(
-    _listProperties: ListProperties,
-    options?: Parameters<$ToRdfResourceFunction<ListProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_listProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ListProperties.Identifier,
+    ListProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ListProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/iriListProperty"),
-      _listProperties.iriListProperty.toList().flatMap((value) => [
+      parameters.object.iriListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -27410,13 +27305,13 @@ export namespace ListProperties {
                 if (itemIndex === 0) {
                   currentSubListResource = listResource;
                 } else {
-                  const newSubListResource = resourceSet.resource(
+                  const newSubListResource = parameters.resourceSet.resource(
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
-                    options?.graph,
+                    parameters.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
@@ -27424,14 +27319,14 @@ export namespace ListProperties {
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
                   [item],
-                  options?.graph,
+                  parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
-                    options?.graph,
+                    parameters.graph,
                   );
                 }
 
@@ -27439,7 +27334,7 @@ export namespace ListProperties {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(
+                listResource: parameters.resourceSet.resource(
                   (() => dataFactory.blankNode())(),
                 ),
               } as {
@@ -27449,11 +27344,11 @@ export namespace ListProperties {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/objectListProperty"),
-      _listProperties.objectListProperty.toList().flatMap((value) => [
+      parameters.object.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -27465,13 +27360,13 @@ export namespace ListProperties {
                 if (itemIndex === 0) {
                   currentSubListResource = listResource;
                 } else {
-                  const newSubListResource = resourceSet.resource(
+                  const newSubListResource = parameters.resourceSet.resource(
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
-                    options?.graph,
+                    parameters.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
@@ -27480,18 +27375,18 @@ export namespace ListProperties {
                   $RdfVocabularies.rdf.first,
                   [
                     NonClass.toRdfResource(item, {
-                      graph: options?.graph,
-                      resourceSet: resourceSet,
+                      graph: parameters.graph,
+                      resourceSet: parameters.resourceSet,
                     }).identifier,
                   ],
-                  options?.graph,
+                  parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
-                    options?.graph,
+                    parameters.graph,
                   );
                 }
 
@@ -27499,7 +27394,7 @@ export namespace ListProperties {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(
+                listResource: parameters.resourceSet.resource(
                   (() => dataFactory.blankNode())(),
                 ),
               } as {
@@ -27509,11 +27404,11 @@ export namespace ListProperties {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/stringListProperty"),
-      _listProperties.stringListProperty.toList().flatMap((value) => [
+      parameters.object.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
               (
@@ -27525,13 +27420,13 @@ export namespace ListProperties {
                 if (itemIndex === 0) {
                   currentSubListResource = listResource;
                 } else {
-                  const newSubListResource = resourceSet.resource(
+                  const newSubListResource = parameters.resourceSet.resource(
                     (() => dataFactory.blankNode())(),
                   );
                   currentSubListResource!.add(
                     $RdfVocabularies.rdf.rest,
                     newSubListResource.identifier,
-                    options?.graph,
+                    parameters.graph,
                   );
                   currentSubListResource = newSubListResource;
                 }
@@ -27539,14 +27434,14 @@ export namespace ListProperties {
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
                   [$literalFactory.string(item)],
-                  options?.graph,
+                  parameters.graph,
                 );
 
                 if (itemIndex + 1 === list.length) {
                   currentSubListResource.add(
                     $RdfVocabularies.rdf.rest,
                     $RdfVocabularies.rdf.nil,
-                    options?.graph,
+                    parameters.graph,
                   );
                 }
 
@@ -27554,7 +27449,7 @@ export namespace ListProperties {
               },
               {
                 currentSubListResource: null,
-                listResource: resourceSet.resource(
+                listResource: parameters.resourceSet.resource(
                   (() => dataFactory.blankNode())(),
                 ),
               } as {
@@ -27564,10 +27459,12 @@ export namespace ListProperties {
             ).listResource.identifier
           : $RdfVocabularies.rdf.nil,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _listProperties: ListProperties,
@@ -30383,167 +30280,159 @@ export namespace LazyProperties {
     );
   }
 
-  export function toRdfResource(
-    _lazyProperties: LazyProperties,
-    options?: Parameters<$ToRdfResourceFunction<LazyProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_lazyProperties.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazyProperties.Identifier,
+    LazyProperties
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
       ),
-      _lazyProperties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.partial
+      parameters.object.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.partial
         .toList()
         .flatMap((value) => [
           $DefaultPartial.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalLazyToResolvedIriIdentifierProperty",
       ),
-      _lazyProperties.optionalLazyToResolvedIriIdentifierProperty.partial
+      parameters.object.optionalLazyToResolvedIriIdentifierProperty.partial
         .toList()
         .flatMap((value) => [
           $NamedDefaultPartial.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalLazyToResolvedUnionProperty",
       ),
-      _lazyProperties.optionalLazyToResolvedUnionProperty.partial
+      parameters.object.optionalLazyToResolvedUnionProperty.partial
         .toList()
         .flatMap((value) => [
           $DefaultPartial.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
       ),
-      _lazyProperties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.partial
+      parameters.object.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.partial
         .toList()
         .flatMap((value) => [
           Partial.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalPartialToResolvedUnionProperty",
       ),
-      _lazyProperties.optionalPartialToResolvedUnionProperty.partial
+      parameters.object.optionalPartialToResolvedUnionProperty.partial
         .toList()
         .flatMap((value) => [
           Partial.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/optionalPartialUnionToResolvedUnionProperty",
       ),
-      _lazyProperties.optionalPartialUnionToResolvedUnionProperty.partial
+      parameters.object.optionalPartialUnionToResolvedUnionProperty.partial
         .toList()
         .flatMap((value) =>
           PartialUnion.toRdfResourceValues(value, {
-            graph: options?.graph,
-            resource: resource,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resource: parameters.resource,
+            resourceSet: parameters.resourceSet,
             propertyPath: dataFactory.namedNode(
               "http://example.com/optionalPartialUnionToResolvedUnionProperty",
             ),
           }),
         ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
       ),
       [
         $DefaultPartial.toRdfResource(
-          _lazyProperties.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty
-            .partial,
-          {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          },
+          parameters.object
+            .requiredLazyToResolvedBlankNodeOrIriIdentifierProperty.partial,
+          { graph: parameters.graph, resourceSet: parameters.resourceSet },
         ).identifier,
       ],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
       ),
       [
         Partial.toRdfResource(
-          _lazyProperties
+          parameters.object
             .requiredPartialToResolvedBlankNodeOrIriIdentifierProperty.partial,
           {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           },
         ).identifier,
       ],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/setLazyToResolvedBlankNodeOrIriIdentifierProperty",
       ),
-      _lazyProperties.setLazyToResolvedBlankNodeOrIriIdentifierProperty.partials.flatMap(
+      parameters.object.setLazyToResolvedBlankNodeOrIriIdentifierProperty.partials.flatMap(
         (item) => [
           $DefaultPartial.toRdfResource(item, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ],
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/setPartialToResolvedBlankNodeOrIriIdentifierProperty",
       ),
-      _lazyProperties.setPartialToResolvedBlankNodeOrIriIdentifierProperty.partials.flatMap(
+      parameters.object.setPartialToResolvedBlankNodeOrIriIdentifierProperty.partials.flatMap(
         (item) => [
           Partial.toRdfResource(item, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ],
       ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _lazyProperties: LazyProperties,
@@ -30982,32 +30871,19 @@ export namespace LazilyResolvedIriIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
-    options?: Parameters<
-      $ToRdfResourceFunction<LazilyResolvedIriIdentifier>
-    >[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _lazilyResolvedIriIdentifier.$identifier(),
-    );
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazilyResolvedIriIdentifier.Identifier,
+    LazilyResolvedIriIdentifier
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedIriIdentifier.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
@@ -31545,37 +31421,26 @@ export namespace LazilyResolvedUnionMember2 {
     );
   }
 
-  export function toRdfResource(
-    _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
-    options?: Parameters<$ToRdfResourceFunction<LazilyResolvedUnionMember2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _lazilyResolvedUnionMember2.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazilyResolvedUnionMember2.Identifier,
+    LazilyResolvedUnionMember2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember2"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedUnionMember2.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
@@ -32111,37 +31976,26 @@ export namespace LazilyResolvedUnionMember1 {
     );
   }
 
-  export function toRdfResource(
-    _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
-    options?: Parameters<$ToRdfResourceFunction<LazilyResolvedUnionMember1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _lazilyResolvedUnionMember1.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazilyResolvedUnionMember1.Identifier,
+    LazilyResolvedUnionMember1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/LazilyResolvedUnionMember1"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedUnionMember1.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
@@ -32691,41 +32545,28 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
-    options?: Parameters<
-      $ToRdfResourceFunction<LazilyResolvedBlankNodeOrIriIdentifier>
-    >[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _lazilyResolvedBlankNodeOrIriIdentifier.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+    LazilyResolvedBlankNodeOrIriIdentifier
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode(
           "http://example.com/LazilyResolvedBlankNodeOrIriIdentifier",
         ),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [
-        $literalFactory.string(
-          _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedStringProperty,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
@@ -33240,24 +33081,19 @@ export namespace LanguageInProperties {
     );
   }
 
-  export function toRdfResource(
-    _languageInProperties: LanguageInProperties,
-    options?: Parameters<$ToRdfResourceFunction<LanguageInProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_languageInProperties.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    LanguageInProperties.Identifier,
+    LanguageInProperties
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/languageInLiteralProperty"),
-      _languageInProperties.languageInLiteralProperty.flatMap((item) => [item]),
-      options?.graph,
+      parameters.object.languageInLiteralProperty.flatMap((item) => [item]),
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _languageInProperties: LanguageInProperties,
@@ -34165,29 +34001,20 @@ export namespace JsPrimitiveUnionProperty {
     );
   }
 
-  export function toRdfResource(
-    _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
-    options?: Parameters<$ToRdfResourceFunction<JsPrimitiveUnionProperty>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _jsPrimitiveUnionProperty.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    JsPrimitiveUnionProperty.Identifier,
+    JsPrimitiveUnionProperty
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/JsPrimitiveUnionProperty"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/jsPrimitiveUnionProperty"),
-      _jsPrimitiveUnionProperty.jsPrimitiveUnionProperty.flatMap((item) =>
+      parameters.object.jsPrimitiveUnionProperty.flatMap((item) =>
         (
           ((value, _options): Literal[] => {
             if (typeof value === "boolean") {
@@ -34207,18 +34034,20 @@ export namespace JsPrimitiveUnionProperty {
             throw new Error("unable to serialize to RDF");
           }) satisfies $ToRdfResourceValuesFunction<boolean | number | string>
         )(item, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/jsPrimitiveUnionProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
@@ -34646,26 +34475,21 @@ export namespace IriIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _iriIdentifier: IriIdentifier,
-    options?: Parameters<$ToRdfResourceFunction<IriIdentifier>>[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_iriIdentifier.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    IriIdentifier.Identifier,
+    IriIdentifier
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IriIdentifier"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _iriIdentifier: IriIdentifier,
@@ -35212,40 +35036,31 @@ export namespace IndirectRecursiveHelper {
     );
   }
 
-  export function toRdfResource(
-    _indirectRecursiveHelper: IndirectRecursiveHelper,
-    options?: Parameters<$ToRdfResourceFunction<IndirectRecursiveHelper>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _indirectRecursiveHelper.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    IndirectRecursiveHelper.Identifier,
+    IndirectRecursiveHelper
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IndirectRecursiveHelper"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/indirectRecursiveProperty"),
-      _indirectRecursiveHelper.indirectRecursiveProperty
-        .toList()
-        .flatMap((value) => [
-          IndirectRecursive.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
-          }).identifier,
-        ]),
-      options?.graph,
+      parameters.object.indirectRecursiveProperty.toList().flatMap((value) => [
+        IndirectRecursive.toRdfResource(value, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
+        }).identifier,
+      ]),
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _indirectRecursiveHelper: IndirectRecursiveHelper,
@@ -35792,40 +35607,35 @@ export namespace IndirectRecursive {
     );
   }
 
-  export function toRdfResource(
-    _indirectRecursive: IndirectRecursive,
-    options?: Parameters<$ToRdfResourceFunction<IndirectRecursive>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_indirectRecursive.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    IndirectRecursive.Identifier,
+    IndirectRecursive
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/IndirectRecursive"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/indirectRecursiveHelperProperty",
       ),
-      _indirectRecursive.indirectRecursiveHelperProperty
+      parameters.object.indirectRecursiveHelperProperty
         .toList()
         .flatMap((value) => [
           IndirectRecursiveHelper.toRdfResource(value, {
-            graph: options?.graph,
-            resourceSet: resourceSet,
+            graph: parameters.graph,
+            resourceSet: parameters.resourceSet,
           }).identifier,
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _indirectRecursive: IndirectRecursive,
@@ -37022,74 +36832,69 @@ export namespace InProperties {
     );
   }
 
-  export function toRdfResource(
-    _inProperties: InProperties,
-    options?: Parameters<$ToRdfResourceFunction<InProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_inProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    InProperties.Identifier,
+    InProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inBooleansProperty"),
-      _inProperties.inBooleansProperty
+      parameters.object.inBooleansProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.boolean(value, $RdfVocabularies.xsd.boolean),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inDateTimesProperty"),
-      _inProperties.inDateTimesProperty
+      parameters.object.inDateTimesProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.date(value, $RdfVocabularies.xsd.dateTime),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inDoublesProperty"),
-      _inProperties.inDoublesProperty
+      parameters.object.inDoublesProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.number(value, $RdfVocabularies.xsd.double),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inIntegersProperty"),
-      _inProperties.inIntegersProperty
+      parameters.object.inIntegersProperty
         .toList()
         .flatMap((value) => [
           $literalFactory.bigint(value, $RdfVocabularies.xsd.integer),
         ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inIrisProperty"),
-      _inProperties.inIrisProperty.toList(),
-      options?.graph,
+      parameters.object.inIrisProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inStringsProperty"),
-      _inProperties.inStringsProperty
+      parameters.object.inStringsProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _inProperties: InProperties,
@@ -37683,33 +37488,28 @@ export namespace InIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _inIdentifier: InIdentifier,
-    options?: Parameters<$ToRdfResourceFunction<InIdentifier>>[1],
-  ): Resource<NamedNode> {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_inIdentifier.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    InIdentifier.Identifier,
+    InIdentifier
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/InIdentifier"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/inIdentifierProperty"),
-      _inIdentifier.inIdentifierProperty
+      parameters.object.inIdentifierProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _inIdentifier: InIdentifier,
@@ -38254,29 +38054,24 @@ export namespace HasValueProperties {
     );
   }
 
-  export function toRdfResource(
-    _hasValueProperties: HasValueProperties,
-    options?: Parameters<$ToRdfResourceFunction<HasValueProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_hasValueProperties.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    HasValueProperties.Identifier,
+    HasValueProperties
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/hasIriValueProperty"),
-      [_hasValueProperties.hasIriValueProperty],
-      options?.graph,
+      [parameters.object.hasIriValueProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/hasLiteralValueProperty"),
-      [$literalFactory.string(_hasValueProperties.hasLiteralValueProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.hasLiteralValueProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _hasValueProperties: HasValueProperties,
@@ -38801,35 +38596,26 @@ export namespace FlattenUnionMember3 {
     );
   }
 
-  export function toRdfResource(
-    _flattenUnionMember3: FlattenUnionMember3,
-    options?: Parameters<$ToRdfResourceFunction<FlattenUnionMember3>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_flattenUnionMember3.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    FlattenUnionMember3.Identifier,
+    FlattenUnionMember3
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/FlattenUnionMember3"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/flattenUnionMember3Property"),
-      [
-        $literalFactory.string(
-          _flattenUnionMember3.flattenUnionMember3Property,
-        ),
-      ],
-      options?.graph,
+      [$literalFactory.string(parameters.object.flattenUnionMember3Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _flattenUnionMember3: FlattenUnionMember3,
@@ -39378,36 +39164,31 @@ export namespace ExternProperty {
     );
   }
 
-  export function toRdfResource(
-    _externProperty: ExternProperty,
-    options?: Parameters<$ToRdfResourceFunction<ExternProperty>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_externProperty.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ExternProperty.Identifier,
+    ExternProperty
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ExternProperty"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/externProperty"),
-      _externProperty.externProperty.toList().flatMap((value) => [
+      parameters.object.externProperty.toList().flatMap((value) => [
         Extern.toRdfResource(value, {
-          graph: options?.graph,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
         }).identifier,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _externProperty: ExternProperty,
@@ -39942,31 +39723,26 @@ export namespace BaseForExtern {
     );
   }
 
-  export function toRdfResource(
-    _baseForExtern: BaseForExtern,
-    options?: Parameters<$ToRdfResourceFunction<BaseForExtern>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_baseForExtern.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    BaseForExtern.Identifier,
+    BaseForExtern
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/BaseForExtern"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/baseForExternProperty"),
-      [$literalFactory.string(_baseForExtern.baseForExternProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.baseForExternProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _baseForExtern: BaseForExtern,
@@ -40497,31 +40273,26 @@ export namespace ExplicitRdfType {
     );
   }
 
-  export function toRdfResource(
-    _explicitRdfType: ExplicitRdfType,
-    options?: Parameters<$ToRdfResourceFunction<ExplicitRdfType>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_explicitRdfType.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ExplicitRdfType.Identifier,
+    ExplicitRdfType
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/RdfType"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/explicitRdfTypeProperty"),
-      [$literalFactory.string(_explicitRdfType.explicitRdfTypeProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.explicitRdfTypeProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _explicitRdfType: ExplicitRdfType,
@@ -41064,44 +40835,37 @@ export namespace ExplicitFromToRdfTypes {
     );
   }
 
-  export function toRdfResource(
-    _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
-    options?: Parameters<$ToRdfResourceFunction<ExplicitFromToRdfTypes>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _explicitFromToRdfTypes.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ExplicitFromToRdfTypes.Identifier,
+    ExplicitFromToRdfTypes
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ToRdfType"),
-        options?.graph,
+        parameters.graph,
       );
-      resource.add(
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/FromRdfType"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/explicitFromToRdfTypesProperty",
       ),
       [
         $literalFactory.string(
-          _explicitFromToRdfTypes.explicitFromToRdfTypesProperty,
+          parameters.object.explicitFromToRdfTypesProperty,
         ),
       ],
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
@@ -41829,41 +41593,36 @@ export namespace DisplayProperties {
     );
   }
 
-  export function toRdfResource(
-    _displayProperties: DisplayProperties,
-    options?: Parameters<$ToRdfResourceFunction<DisplayProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_displayProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DisplayProperties.Identifier,
+    DisplayProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DisplayProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/explicitFalseDisplayProperty"),
-      [$literalFactory.string(_displayProperties.explicitFalseDisplayProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.explicitFalseDisplayProperty)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/explicitTrueDisplayProperty"),
-      [$literalFactory.string(_displayProperties.explicitTrueDisplayProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.explicitTrueDisplayProperty)],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/implicitFalseDisplayProperty"),
-      [$literalFactory.string(_displayProperties.implicitFalseDisplayProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.implicitFalseDisplayProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _displayProperties: DisplayProperties,
@@ -42399,36 +42158,31 @@ export namespace DirectRecursive {
     );
   }
 
-  export function toRdfResource(
-    _directRecursive: DirectRecursive,
-    options?: Parameters<$ToRdfResourceFunction<DirectRecursive>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_directRecursive.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DirectRecursive.Identifier,
+    DirectRecursive
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DirectRecursive"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/directRecursiveProperty"),
-      _directRecursive.directRecursiveProperty.toList().flatMap((value) => [
+      parameters.object.directRecursiveProperty.toList().flatMap((value) => [
         DirectRecursive.toRdfResource(value, {
-          graph: options?.graph,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
         }).identifier,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _directRecursive: DirectRecursive,
@@ -43589,121 +43343,104 @@ export namespace DefaultValueProperties {
     );
   }
 
-  export function toRdfResource(
-    _defaultValueProperties: DefaultValueProperties,
-    options?: Parameters<$ToRdfResourceFunction<DefaultValueProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _defaultValueProperties.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DefaultValueProperties.Identifier,
+    DefaultValueProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DefaultValueProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateDefaultValueProperty"),
       $dateEquals(
-        _defaultValueProperties.dateDefaultValueProperty,
+        parameters.object.dateDefaultValueProperty,
         new Date("2018-04-09T00:00:00.000Z"),
       ).isLeft()
         ? [
             $literalFactory.date(
-              _defaultValueProperties.dateDefaultValueProperty,
+              parameters.object.dateDefaultValueProperty,
               $RdfVocabularies.xsd.date,
             ),
           ]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateTimeDefaultValueProperty"),
       $dateEquals(
-        _defaultValueProperties.dateTimeDefaultValueProperty,
+        parameters.object.dateTimeDefaultValueProperty,
         new Date("2018-04-09T10:00:00.000Z"),
       ).isLeft()
         ? [
             $literalFactory.date(
-              _defaultValueProperties.dateTimeDefaultValueProperty,
+              parameters.object.dateTimeDefaultValueProperty,
               $RdfVocabularies.xsd.dateTime,
             ),
           ]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/falseBooleanDefaultValueProperty",
       ),
       $strictEquals(
-        _defaultValueProperties.falseBooleanDefaultValueProperty,
+        parameters.object.falseBooleanDefaultValueProperty,
         false,
       ).isLeft()
         ? [
             $literalFactory.boolean(
-              _defaultValueProperties.falseBooleanDefaultValueProperty,
+              parameters.object.falseBooleanDefaultValueProperty,
               $RdfVocabularies.xsd.boolean,
             ),
           ]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/numberDefaultValueProperty"),
-      $strictEquals(
-        _defaultValueProperties.numberDefaultValueProperty,
-        0,
-      ).isLeft()
+      $strictEquals(parameters.object.numberDefaultValueProperty, 0).isLeft()
         ? [
             $literalFactory.number(
-              _defaultValueProperties.numberDefaultValueProperty,
+              parameters.object.numberDefaultValueProperty,
               $RdfVocabularies.xsd.double,
             ),
           ]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/stringDefaultValueProperty"),
-      $strictEquals(
-        _defaultValueProperties.stringDefaultValueProperty,
-        "",
-      ).isLeft()
-        ? [
-            $literalFactory.string(
-              _defaultValueProperties.stringDefaultValueProperty,
-            ),
-          ]
+      $strictEquals(parameters.object.stringDefaultValueProperty, "").isLeft()
+        ? [$literalFactory.string(parameters.object.stringDefaultValueProperty)]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/trueBooleanDefaultValueProperty",
       ),
       $strictEquals(
-        _defaultValueProperties.trueBooleanDefaultValueProperty,
+        parameters.object.trueBooleanDefaultValueProperty,
         true,
       ).isLeft()
         ? [
             $literalFactory.boolean(
-              _defaultValueProperties.trueBooleanDefaultValueProperty,
+              parameters.object.trueBooleanDefaultValueProperty,
               $RdfVocabularies.xsd.boolean,
             ),
           ]
         : [],
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _defaultValueProperties: DefaultValueProperties,
@@ -45943,27 +45680,20 @@ export namespace DateUnionProperties {
     );
   }
 
-  export function toRdfResource(
-    _dateUnionProperties: DateUnionProperties,
-    options?: Parameters<$ToRdfResourceFunction<DateUnionProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_dateUnionProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    DateUnionProperties.Identifier,
+    DateUnionProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/DateUnionProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateOrDateTimeProperty"),
-      _dateUnionProperties.dateOrDateTimeProperty.toList().flatMap((value) =>
+      parameters.object.dateOrDateTimeProperty.toList().flatMap((value) =>
         (
           ((value, _options): Literal[] => {
             if (value.type === "date") {
@@ -45985,19 +45715,19 @@ export namespace DateUnionProperties {
             { type: "date"; value: Date } | { type: "dateTime"; value: Date }
           >
         )(value, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/dateOrDateTimeProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateOrStringProperty"),
-      _dateUnionProperties.dateOrStringProperty.toList().flatMap((value) =>
+      parameters.object.dateOrStringProperty.toList().flatMap((value) =>
         (
           ((value, _options): Literal[] => {
             if (value.type === "date") {
@@ -46014,19 +45744,19 @@ export namespace DateUnionProperties {
             { type: "date"; value: Date } | { type: "string"; value: string }
           >
         )(value, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/dateOrStringProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/dateTimeOrDateProperty"),
-      _dateUnionProperties.dateTimeOrDateProperty.toList().flatMap((value) =>
+      parameters.object.dateTimeOrDateProperty.toList().flatMap((value) =>
         (
           ((value, _options): Literal[] => {
             if (value.type === "dateTime") {
@@ -46048,19 +45778,19 @@ export namespace DateUnionProperties {
             { type: "dateTime"; value: Date } | { type: "date"; value: Date }
           >
         )(value, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/dateTimeOrDateProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/stringOrDateProperty"),
-      _dateUnionProperties.stringOrDateProperty.toList().flatMap((value) =>
+      parameters.object.stringOrDateProperty.toList().flatMap((value) =>
         (
           ((value, _options): Literal[] => {
             if (value.type === "string") {
@@ -46077,18 +45807,20 @@ export namespace DateUnionProperties {
             { type: "string"; value: string } | { type: "date"; value: Date }
           >
         )(value, {
-          graph: options?.graph,
-          resource: resource,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resource: parameters.resource,
+          resourceSet: parameters.resourceSet,
           propertyPath: dataFactory.namedNode(
             "http://example.com/stringOrDateProperty",
           ),
         }),
       ),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _dateUnionProperties: DateUnionProperties,
@@ -48500,108 +48232,95 @@ export namespace ConvertibleTypeProperties {
     );
   }
 
-  export function toRdfResource(
-    _convertibleTypeProperties: ConvertibleTypeProperties,
-    options?: Parameters<$ToRdfResourceFunction<ConvertibleTypeProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _convertibleTypeProperties.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ConvertibleTypeProperties.Identifier,
+    ConvertibleTypeProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ConvertibleTypeProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/convertibleIriNonEmptySetProperty",
       ),
-      _convertibleTypeProperties.convertibleIriNonEmptySetProperty.flatMap(
-        (item) => [item],
-      ),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleIriOptionProperty"),
-      _convertibleTypeProperties.convertibleIriOptionProperty.toList(),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleIriProperty"),
-      [_convertibleTypeProperties.convertibleIriProperty],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleIriSetProperty"),
-      _convertibleTypeProperties.convertibleIriSetProperty.flatMap((item) => [
+      parameters.object.convertibleIriNonEmptySetProperty.flatMap((item) => [
         item,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleIriOptionProperty"),
+      parameters.object.convertibleIriOptionProperty.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleIriProperty"),
+      [parameters.object.convertibleIriProperty],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleIriSetProperty"),
+      parameters.object.convertibleIriSetProperty.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/convertibleLiteralNonEmptySetProperty",
       ),
-      _convertibleTypeProperties.convertibleLiteralNonEmptySetProperty.flatMap(
+      parameters.object.convertibleLiteralNonEmptySetProperty.flatMap(
         (item) => [item],
       ),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/convertibleLiteralOptionProperty",
       ),
-      _convertibleTypeProperties.convertibleLiteralOptionProperty.toList(),
-      options?.graph,
+      parameters.object.convertibleLiteralOptionProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/convertibleLiteralProperty"),
-      [_convertibleTypeProperties.convertibleLiteralProperty],
-      options?.graph,
+      [parameters.object.convertibleLiteralProperty],
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/convertibleLiteralSetProperty"),
-      _convertibleTypeProperties.convertibleLiteralSetProperty.flatMap(
-        (item) => [item],
-      ),
-      options?.graph,
+      parameters.object.convertibleLiteralSetProperty.flatMap((item) => [item]),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode(
         "http://example.com/convertibleTermNonEmptySetProperty",
       ),
-      _convertibleTypeProperties.convertibleTermNonEmptySetProperty.flatMap(
-        (item) => [item],
-      ),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleTermOptionProperty"),
-      _convertibleTypeProperties.convertibleTermOptionProperty.toList(),
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleTermProperty"),
-      [_convertibleTypeProperties.convertibleTermProperty],
-      options?.graph,
-    );
-    resource.add(
-      dataFactory.namedNode("http://example.com/convertibleTermSetProperty"),
-      _convertibleTypeProperties.convertibleTermSetProperty.flatMap((item) => [
+      parameters.object.convertibleTermNonEmptySetProperty.flatMap((item) => [
         item,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    return resource;
-  }
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleTermOptionProperty"),
+      parameters.object.convertibleTermOptionProperty.toList(),
+      parameters.graph,
+    );
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleTermProperty"),
+      [parameters.object.convertibleTermProperty],
+      parameters.graph,
+    );
+    parameters.resource.add(
+      dataFactory.namedNode("http://example.com/convertibleTermSetProperty"),
+      parameters.object.convertibleTermSetProperty.flatMap((item) => [item]),
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _convertibleTypeProperties: ConvertibleTypeProperties,
@@ -49028,24 +48747,19 @@ export namespace Partial {
     );
   }
 
-  export function toRdfResource(
-    _partial: Partial,
-    options?: Parameters<$ToRdfResourceFunction<Partial>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_partial.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    Partial.Identifier,
+    Partial
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/lazilyResolvedStringProperty"),
-      [$literalFactory.string(_partial.lazilyResolvedStringProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.lazilyResolvedStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _partial: Partial,
@@ -49459,24 +49173,19 @@ export namespace NonClass {
     );
   }
 
-  export function toRdfResource(
-    _nonClass: NonClass,
-    options?: Parameters<$ToRdfResourceFunction<NonClass>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_nonClass.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    NonClass.Identifier,
+    NonClass
+  > = (parameters) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nonClassProperty"),
-      [$literalFactory.string(_nonClass.nonClassProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.nonClassProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _nonClass: NonClass,
@@ -50562,61 +50271,56 @@ export namespace ClassProperties {
     );
   }
 
-  export function toRdfResource(
-    _classProperties: ClassProperties,
-    options?: Parameters<$ToRdfResourceFunction<ClassProperties>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_classProperties.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassProperties.Identifier,
+    ClassProperties
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassProperties"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/iriClassProperty"),
-      _classProperties.iriClassProperty.toList(),
-      options?.graph,
+      parameters.object.iriClassProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/multiClassProperty"),
-      _classProperties.multiClassProperty.toList(),
-      options?.graph,
+      parameters.object.multiClassProperty.toList(),
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nodeClassProperty1"),
-      _classProperties.nodeClassProperty1.toList().flatMap((value) => [
+      parameters.object.nodeClassProperty1.toList().flatMap((value) => [
         NonClass.toRdfResource(value, {
-          graph: options?.graph,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
         }).identifier,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nodeClassProperty2"),
-      _classProperties.nodeClassProperty2.toList().flatMap((value) => [
+      parameters.object.nodeClassProperty2.toList().flatMap((value) => [
         Partial.toRdfResource(value, {
-          graph: options?.graph,
-          resourceSet: resourceSet,
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
         }).identifier,
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/singleClassProperty"),
-      _classProperties.singleClassProperty.toList(),
-      options?.graph,
+      parameters.object.singleClassProperty.toList(),
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _classProperties: ClassProperties,
@@ -51184,31 +50888,26 @@ export namespace ClassHierarchy0 {
     );
   }
 
-  export function toRdfResource(
-    _classHierarchy0: ClassHierarchy0,
-    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy0>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_classHierarchy0.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassHierarchy0.Identifier,
+    ClassHierarchy0
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassHierarchy0"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/classHierarchy0Property"),
-      [$literalFactory.string(_classHierarchy0.classHierarchy0Property)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.classHierarchy0Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _classHierarchy0: ClassHierarchy0,
@@ -51685,30 +51384,22 @@ export namespace ClassHierarchy1 {
     );
   }
 
-  export function toRdfResource(
-    _classHierarchy1: ClassHierarchy1,
-    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy1>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = ClassHierarchy0.toRdfResource(_classHierarchy1, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassHierarchy1.Identifier,
+    ClassHierarchy1
+  > = (parameters) => {
+    ClassHierarchy0._toRdfResource({ ...parameters, ignoreRdfType: true });
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassHierarchy1"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _classHierarchy1: ClassHierarchy1,
@@ -52278,35 +51969,27 @@ export namespace ClassHierarchy2 {
     );
   }
 
-  export function toRdfResource(
-    _classHierarchy2: ClassHierarchy2,
-    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy2>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = ClassHierarchy1.toRdfResource(_classHierarchy2, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassHierarchy2.Identifier,
+    ClassHierarchy2
+  > = (parameters) => {
+    ClassHierarchy1._toRdfResource({ ...parameters, ignoreRdfType: true });
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassHierarchy2"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/classHierarchy2Property"),
-      [$literalFactory.string(_classHierarchy2.classHierarchy2Property)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.classHierarchy2Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _classHierarchy2: ClassHierarchy2,
@@ -52859,35 +52542,27 @@ export namespace ClassHierarchy3 {
     );
   }
 
-  export function toRdfResource(
-    _classHierarchy3: ClassHierarchy3,
-    options?: Parameters<$ToRdfResourceFunction<ClassHierarchy3>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = ClassHierarchy2.toRdfResource(_classHierarchy3, {
-      ignoreRdfType: true,
-      graph: options?.graph,
-      resourceSet,
-    });
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassHierarchy3.Identifier,
+    ClassHierarchy3
+  > = (parameters) => {
+    ClassHierarchy2._toRdfResource({ ...parameters, ignoreRdfType: true });
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/ClassHierarchy3"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/classHierarchy3Property"),
-      [$literalFactory.string(_classHierarchy3.classHierarchy3Property)],
-      options?.graph,
+      [$literalFactory.string(parameters.object.classHierarchy3Property)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _classHierarchy3: ClassHierarchy3,
@@ -53341,28 +53016,21 @@ export namespace BlankNodeOrIriIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
-    options?: Parameters<$ToRdfResourceFunction<BlankNodeOrIriIdentifier>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(
-      _blankNodeOrIriIdentifier.$identifier(),
-    );
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    BlankNodeOrIriIdentifier.Identifier,
+    BlankNodeOrIriIdentifier
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/BlankNodeOrIriIdentifier"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
@@ -53800,26 +53468,21 @@ export namespace BlankNodeIdentifier {
     );
   }
 
-  export function toRdfResource(
-    _blankNodeIdentifier: BlankNodeIdentifier,
-    options?: Parameters<$ToRdfResourceFunction<BlankNodeIdentifier>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_blankNodeIdentifier.$identifier());
-    if (!options?.ignoreRdfType) {
-      resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    BlankNodeIdentifier.Identifier,
+    BlankNodeIdentifier
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
         $RdfVocabularies.rdf.type,
         dataFactory.namedNode("http://example.com/BlankNodeIdentifier"),
-        options?.graph,
+        parameters.graph,
       );
     }
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _blankNodeIdentifier: BlankNodeIdentifier,
@@ -54296,17 +53959,17 @@ export namespace FlattenUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<FlattenUnion> = (
-    value,
+    object,
     options,
   ) => {
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.toRdfResource(value, options);
+    if (UnionMember1.isUnionMember1(object)) {
+      return UnionMember1.toRdfResource(object, options);
     }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.toRdfResource(value, options);
+    if (UnionMember2.isUnionMember2(object)) {
+      return UnionMember2.toRdfResource(object, options);
     }
-    if (FlattenUnionMember3.isFlattenUnionMember3(value)) {
-      return FlattenUnionMember3.toRdfResource(value, options);
+    if (FlattenUnionMember3.isFlattenUnionMember3(object)) {
+      return FlattenUnionMember3.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -54778,14 +54441,14 @@ export namespace Union {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<Union> = (
-    value,
+    object,
     options,
   ) => {
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.toRdfResource(value, options);
+    if (UnionMember1.isUnionMember1(object)) {
+      return UnionMember1.toRdfResource(object, options);
     }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.toRdfResource(value, options);
+    if (UnionMember2.isUnionMember2(object)) {
+      return UnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -55269,14 +54932,14 @@ export namespace LazilyResolvedUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<LazilyResolvedUnion> = (
-    value,
+    object,
     options,
   ) => {
-    if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(value)) {
-      return LazilyResolvedUnionMember1.toRdfResource(value, options);
+    if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(object)) {
+      return LazilyResolvedUnionMember1.toRdfResource(object, options);
     }
-    if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(value)) {
-      return LazilyResolvedUnionMember2.toRdfResource(value, options);
+    if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(object)) {
+      return LazilyResolvedUnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -55732,14 +55395,14 @@ export namespace PartialUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<PartialUnion> = (
-    value,
+    object,
     options,
   ) => {
-    if (PartialUnionMember1.isPartialUnionMember1(value)) {
-      return PartialUnionMember1.toRdfResource(value, options);
+    if (PartialUnionMember1.isPartialUnionMember1(object)) {
+      return PartialUnionMember1.toRdfResource(object, options);
     }
-    if (PartialUnionMember2.isPartialUnionMember2(value)) {
-      return PartialUnionMember2.toRdfResource(value, options);
+    if (PartialUnionMember2.isPartialUnionMember2(object)) {
+      return PartialUnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -56194,14 +55857,14 @@ export namespace NoRdfTypeUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<NoRdfTypeUnion> = (
-    value,
+    object,
     options,
   ) => {
-    if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(value)) {
-      return NoRdfTypeUnionMember1.toRdfResource(value, options);
+    if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(object)) {
+      return NoRdfTypeUnionMember1.toRdfResource(object, options);
     }
-    if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(value)) {
-      return NoRdfTypeUnionMember2.toRdfResource(value, options);
+    if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(object)) {
+      return NoRdfTypeUnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -56656,14 +56319,14 @@ export namespace RecursiveUnion {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<RecursiveUnion> = (
-    value,
+    object,
     options,
   ) => {
-    if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
-      return RecursiveUnionMember1.toRdfResource(value, options);
+    if (RecursiveUnionMember1.isRecursiveUnionMember1(object)) {
+      return RecursiveUnionMember1.toRdfResource(object, options);
     }
-    if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
-      return RecursiveUnionMember2.toRdfResource(value, options);
+    if (RecursiveUnionMember2.isRecursiveUnionMember2(object)) {
+      return RecursiveUnionMember2.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };
@@ -61013,180 +60676,180 @@ export namespace $Object {
   };
 
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
-    value,
+    object,
     options,
   ) => {
-    if (BlankNodeIdentifier.isBlankNodeIdentifier(value)) {
-      return BlankNodeIdentifier.toRdfResource(value, options);
+    if (BlankNodeIdentifier.isBlankNodeIdentifier(object)) {
+      return BlankNodeIdentifier.toRdfResource(object, options);
     }
-    if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
-      return BlankNodeOrIriIdentifier.toRdfResource(value, options);
+    if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(object)) {
+      return BlankNodeOrIriIdentifier.toRdfResource(object, options);
     }
-    if (ClassHierarchy3.isClassHierarchy3(value)) {
-      return ClassHierarchy3.toRdfResource(value, options);
+    if (ClassHierarchy3.isClassHierarchy3(object)) {
+      return ClassHierarchy3.toRdfResource(object, options);
     }
-    if (ClassHierarchy2.isClassHierarchy2(value)) {
-      return ClassHierarchy2.toRdfResource(value, options);
+    if (ClassHierarchy2.isClassHierarchy2(object)) {
+      return ClassHierarchy2.toRdfResource(object, options);
     }
-    if (ClassHierarchy1.isClassHierarchy1(value)) {
-      return ClassHierarchy1.toRdfResource(value, options);
+    if (ClassHierarchy1.isClassHierarchy1(object)) {
+      return ClassHierarchy1.toRdfResource(object, options);
     }
-    if (ClassHierarchy0.isClassHierarchy0(value)) {
-      return ClassHierarchy0.toRdfResource(value, options);
+    if (ClassHierarchy0.isClassHierarchy0(object)) {
+      return ClassHierarchy0.toRdfResource(object, options);
     }
-    if (ClassProperties.isClassProperties(value)) {
-      return ClassProperties.toRdfResource(value, options);
+    if (ClassProperties.isClassProperties(object)) {
+      return ClassProperties.toRdfResource(object, options);
     }
-    if (NonClass.isNonClass(value)) {
-      return NonClass.toRdfResource(value, options);
+    if (NonClass.isNonClass(object)) {
+      return NonClass.toRdfResource(object, options);
     }
-    if (Partial.isPartial(value)) {
-      return Partial.toRdfResource(value, options);
+    if (Partial.isPartial(object)) {
+      return Partial.toRdfResource(object, options);
     }
-    if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
-      return ConvertibleTypeProperties.toRdfResource(value, options);
+    if (ConvertibleTypeProperties.isConvertibleTypeProperties(object)) {
+      return ConvertibleTypeProperties.toRdfResource(object, options);
     }
-    if (DateUnionProperties.isDateUnionProperties(value)) {
-      return DateUnionProperties.toRdfResource(value, options);
+    if (DateUnionProperties.isDateUnionProperties(object)) {
+      return DateUnionProperties.toRdfResource(object, options);
     }
-    if (DefaultValueProperties.isDefaultValueProperties(value)) {
-      return DefaultValueProperties.toRdfResource(value, options);
+    if (DefaultValueProperties.isDefaultValueProperties(object)) {
+      return DefaultValueProperties.toRdfResource(object, options);
     }
-    if (DirectRecursive.isDirectRecursive(value)) {
-      return DirectRecursive.toRdfResource(value, options);
+    if (DirectRecursive.isDirectRecursive(object)) {
+      return DirectRecursive.toRdfResource(object, options);
     }
-    if (DisplayProperties.isDisplayProperties(value)) {
-      return DisplayProperties.toRdfResource(value, options);
+    if (DisplayProperties.isDisplayProperties(object)) {
+      return DisplayProperties.toRdfResource(object, options);
     }
-    if (ExplicitFromToRdfTypes.isExplicitFromToRdfTypes(value)) {
-      return ExplicitFromToRdfTypes.toRdfResource(value, options);
+    if (ExplicitFromToRdfTypes.isExplicitFromToRdfTypes(object)) {
+      return ExplicitFromToRdfTypes.toRdfResource(object, options);
     }
-    if (ExplicitRdfType.isExplicitRdfType(value)) {
-      return ExplicitRdfType.toRdfResource(value, options);
+    if (ExplicitRdfType.isExplicitRdfType(object)) {
+      return ExplicitRdfType.toRdfResource(object, options);
     }
-    if (BaseForExtern.isBaseForExtern(value)) {
-      return BaseForExtern.toRdfResource(value, options);
+    if (BaseForExtern.isBaseForExtern(object)) {
+      return BaseForExtern.toRdfResource(object, options);
     }
-    if (ExternProperty.isExternProperty(value)) {
-      return ExternProperty.toRdfResource(value, options);
+    if (ExternProperty.isExternProperty(object)) {
+      return ExternProperty.toRdfResource(object, options);
     }
-    if (FlattenUnionMember3.isFlattenUnionMember3(value)) {
-      return FlattenUnionMember3.toRdfResource(value, options);
+    if (FlattenUnionMember3.isFlattenUnionMember3(object)) {
+      return FlattenUnionMember3.toRdfResource(object, options);
     }
-    if (HasValueProperties.isHasValueProperties(value)) {
-      return HasValueProperties.toRdfResource(value, options);
+    if (HasValueProperties.isHasValueProperties(object)) {
+      return HasValueProperties.toRdfResource(object, options);
     }
-    if (InIdentifier.isInIdentifier(value)) {
-      return InIdentifier.toRdfResource(value, options);
+    if (InIdentifier.isInIdentifier(object)) {
+      return InIdentifier.toRdfResource(object, options);
     }
-    if (InProperties.isInProperties(value)) {
-      return InProperties.toRdfResource(value, options);
+    if (InProperties.isInProperties(object)) {
+      return InProperties.toRdfResource(object, options);
     }
-    if (IndirectRecursive.isIndirectRecursive(value)) {
-      return IndirectRecursive.toRdfResource(value, options);
+    if (IndirectRecursive.isIndirectRecursive(object)) {
+      return IndirectRecursive.toRdfResource(object, options);
     }
-    if (IndirectRecursiveHelper.isIndirectRecursiveHelper(value)) {
-      return IndirectRecursiveHelper.toRdfResource(value, options);
+    if (IndirectRecursiveHelper.isIndirectRecursiveHelper(object)) {
+      return IndirectRecursiveHelper.toRdfResource(object, options);
     }
-    if (IriIdentifier.isIriIdentifier(value)) {
-      return IriIdentifier.toRdfResource(value, options);
+    if (IriIdentifier.isIriIdentifier(object)) {
+      return IriIdentifier.toRdfResource(object, options);
     }
-    if (JsPrimitiveUnionProperty.isJsPrimitiveUnionProperty(value)) {
-      return JsPrimitiveUnionProperty.toRdfResource(value, options);
+    if (JsPrimitiveUnionProperty.isJsPrimitiveUnionProperty(object)) {
+      return JsPrimitiveUnionProperty.toRdfResource(object, options);
     }
-    if (LanguageInProperties.isLanguageInProperties(value)) {
-      return LanguageInProperties.toRdfResource(value, options);
+    if (LanguageInProperties.isLanguageInProperties(object)) {
+      return LanguageInProperties.toRdfResource(object, options);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifier.isLazilyResolvedBlankNodeOrIriIdentifier(
-        value,
+        object,
       )
     ) {
       return LazilyResolvedBlankNodeOrIriIdentifier.toRdfResource(
-        value,
+        object,
         options,
       );
     }
-    if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(value)) {
-      return LazilyResolvedUnionMember1.toRdfResource(value, options);
+    if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(object)) {
+      return LazilyResolvedUnionMember1.toRdfResource(object, options);
     }
-    if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(value)) {
-      return LazilyResolvedUnionMember2.toRdfResource(value, options);
+    if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(object)) {
+      return LazilyResolvedUnionMember2.toRdfResource(object, options);
     }
-    if (LazilyResolvedIriIdentifier.isLazilyResolvedIriIdentifier(value)) {
-      return LazilyResolvedIriIdentifier.toRdfResource(value, options);
+    if (LazilyResolvedIriIdentifier.isLazilyResolvedIriIdentifier(object)) {
+      return LazilyResolvedIriIdentifier.toRdfResource(object, options);
     }
-    if (LazyProperties.isLazyProperties(value)) {
-      return LazyProperties.toRdfResource(value, options);
+    if (LazyProperties.isLazyProperties(object)) {
+      return LazyProperties.toRdfResource(object, options);
     }
-    if (ListProperties.isListProperties(value)) {
-      return ListProperties.toRdfResource(value, options);
+    if (ListProperties.isListProperties(object)) {
+      return ListProperties.toRdfResource(object, options);
     }
-    if (MutableProperties.isMutableProperties(value)) {
-      return MutableProperties.toRdfResource(value, options);
+    if (MutableProperties.isMutableProperties(object)) {
+      return MutableProperties.toRdfResource(object, options);
     }
-    if (NamedUnionProperties.isNamedUnionProperties(value)) {
-      return NamedUnionProperties.toRdfResource(value, options);
+    if (NamedUnionProperties.isNamedUnionProperties(object)) {
+      return NamedUnionProperties.toRdfResource(object, options);
     }
-    if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(value)) {
-      return NoRdfTypeUnionMember1.toRdfResource(value, options);
+    if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(object)) {
+      return NoRdfTypeUnionMember1.toRdfResource(object, options);
     }
-    if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(value)) {
-      return NoRdfTypeUnionMember2.toRdfResource(value, options);
+    if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(object)) {
+      return NoRdfTypeUnionMember2.toRdfResource(object, options);
     }
-    if (NodeKinds.isNodeKinds(value)) {
-      return NodeKinds.toRdfResource(value, options);
+    if (NodeKinds.isNodeKinds(object)) {
+      return NodeKinds.toRdfResource(object, options);
     }
-    if (NumericProperties.isNumericProperties(value)) {
-      return NumericProperties.toRdfResource(value, options);
+    if (NumericProperties.isNumericProperties(object)) {
+      return NumericProperties.toRdfResource(object, options);
     }
-    if (OrderedProperties.isOrderedProperties(value)) {
-      return OrderedProperties.toRdfResource(value, options);
+    if (OrderedProperties.isOrderedProperties(object)) {
+      return OrderedProperties.toRdfResource(object, options);
     }
-    if (NewName.isNewName(value)) {
-      return NewName.toRdfResource(value, options);
+    if (NewName.isNewName(object)) {
+      return NewName.toRdfResource(object, options);
     }
-    if (PartialUnionMember1.isPartialUnionMember1(value)) {
-      return PartialUnionMember1.toRdfResource(value, options);
+    if (PartialUnionMember1.isPartialUnionMember1(object)) {
+      return PartialUnionMember1.toRdfResource(object, options);
     }
-    if (UnionMember1.isUnionMember1(value)) {
-      return UnionMember1.toRdfResource(value, options);
+    if (UnionMember1.isUnionMember1(object)) {
+      return UnionMember1.toRdfResource(object, options);
     }
-    if (PartialUnionMember2.isPartialUnionMember2(value)) {
-      return PartialUnionMember2.toRdfResource(value, options);
+    if (PartialUnionMember2.isPartialUnionMember2(object)) {
+      return PartialUnionMember2.toRdfResource(object, options);
     }
-    if (UnionMember2.isUnionMember2(value)) {
-      return UnionMember2.toRdfResource(value, options);
+    if (UnionMember2.isUnionMember2(object)) {
+      return UnionMember2.toRdfResource(object, options);
     }
-    if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
-      return UnionMemberCommonParent.toRdfResource(value, options);
+    if (UnionMemberCommonParent.isUnionMemberCommonParent(object)) {
+      return UnionMemberCommonParent.toRdfResource(object, options);
     }
-    if (PropertyCardinalities.isPropertyCardinalities(value)) {
-      return PropertyCardinalities.toRdfResource(value, options);
+    if (PropertyCardinalities.isPropertyCardinalities(object)) {
+      return PropertyCardinalities.toRdfResource(object, options);
     }
-    if (PropertyNames.isPropertyNames(value)) {
-      return PropertyNames.toRdfResource(value, options);
+    if (PropertyNames.isPropertyNames(object)) {
+      return PropertyNames.toRdfResource(object, options);
     }
-    if (PropertyPaths.isPropertyPaths(value)) {
-      return PropertyPaths.toRdfResource(value, options);
+    if (PropertyPaths.isPropertyPaths(object)) {
+      return PropertyPaths.toRdfResource(object, options);
     }
-    if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
-      return RecursiveUnionMember1.toRdfResource(value, options);
+    if (RecursiveUnionMember1.isRecursiveUnionMember1(object)) {
+      return RecursiveUnionMember1.toRdfResource(object, options);
     }
-    if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
-      return RecursiveUnionMember2.toRdfResource(value, options);
+    if (RecursiveUnionMember2.isRecursiveUnionMember2(object)) {
+      return RecursiveUnionMember2.toRdfResource(object, options);
     }
-    if (TermProperties.isTermProperties(value)) {
-      return TermProperties.toRdfResource(value, options);
+    if (TermProperties.isTermProperties(object)) {
+      return TermProperties.toRdfResource(object, options);
     }
-    if (UnionDiscriminants.isUnionDiscriminants(value)) {
-      return UnionDiscriminants.toRdfResource(value, options);
+    if (UnionDiscriminants.isUnionDiscriminants(object)) {
+      return UnionDiscriminants.toRdfResource(object, options);
     }
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return $DefaultPartial.toRdfResource(value, options);
+    if ($DefaultPartial.is$DefaultPartial(object)) {
+      return $DefaultPartial.toRdfResource(object, options);
     }
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return $NamedDefaultPartial.toRdfResource(value, options);
+    if ($NamedDefaultPartial.is$NamedDefaultPartial(object)) {
+      return $NamedDefaultPartial.toRdfResource(object, options);
     }
     throw new Error("unrecognized type");
   };

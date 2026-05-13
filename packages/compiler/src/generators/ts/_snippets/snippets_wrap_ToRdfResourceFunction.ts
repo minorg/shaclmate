@@ -9,14 +9,14 @@ export const snippets_wrap_ToRdfResourceFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}wrap_ToRdfResourceFunction`,
     code`\
-function ${syntheticNamePrefix}wrap_ToRdfResourceFunction<T>(_toRdfResourceFunction: ${snippets._ToRdfResourceFunction}<T>): ${snippets.ToRdfResourceFunction}<T> {
-  return (value, options) => {
+function ${syntheticNamePrefix}wrap_ToRdfResourceFunction<IdentifierT extends ${imports.Resource}.Identifier, ObjectT extends { ${syntheticNamePrefix}identifier: () => IdentifierT }>(_toRdfResourceFunction: ${snippets._ToRdfResourceFunction}<IdentifierT, ObjectT>): ${snippets.ToRdfResourceFunction}<ObjectT, IdentifierT> {
+  return (object, options) => {
     let { graph, ignoreRdfType = false, resourceSet } = (options ?? {});
     if (!resourceSet) {
       resourceSet = new ${imports.ResourceSet}({ dataFactory: ${imports.dataFactory}, dataset: ${imports.datasetFactory}.dataset() });
     }
-    const resource = resourceSet.resource(value.${syntheticNamePrefix}identifier());
-    _toRdfResourceFunction({ graph, ignoreRdfType, resourceSet, value });
+    const resource = resourceSet.resource(object.${syntheticNamePrefix}identifier());
+    _toRdfResourceFunction({ graph, ignoreRdfType, object, resource, resourceSet });
     return resource;
   };
 }`,

@@ -131,7 +131,7 @@ export class ListType<
   },
   {
     currentSubListResource: null,
-    listResource: resourceSet.resource(${mintListIdentifierFunction}()),
+    listResource: ${variables.resourceSet}.resource(${mintListIdentifierFunction}()),
   } as {
     currentSubListResource: ${resourceTypeName} | null;
     listResource: ${resourceTypeName};
