@@ -415,7 +415,7 @@ export type $PropertyPath = RdfxResourcePropertyPath;
 export namespace $PropertyPath {
   export type Filter = object;
 
-  export function filter(_filter: $Filter, _value: $PropertyPath): boolean {
+  export function filter(_filter: Filter, _value: $PropertyPath): boolean {
     return true;
   }
 
@@ -1773,10 +1773,10 @@ export type $Object = FormNodeShape | NestedNodeShape;
 export namespace $Object {
   export const $toString = (value: $Object): string => {
     if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.toString(value);
+      return FormNodeShape.$toString(value);
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.toString(value);
+      return NestedNodeShape.$toString(value);
     }
 
     throw new Error("unable to serialize to string");
@@ -2371,7 +2371,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.$graph;
+    const graph = query?.graph ?? this.#graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -2493,7 +2493,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
-    const graph = query?.graph ?? this.$graph;
+    const graph = query?.graph ?? this.#graph;
 
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
