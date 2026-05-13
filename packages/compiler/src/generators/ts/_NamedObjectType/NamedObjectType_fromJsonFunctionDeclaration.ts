@@ -24,14 +24,17 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
   });
 
   for (const property of this.properties) {
-    const propertyFromJsonStatements = property.fromJsonStatements({
-      variables,
-    });
-    if (propertyFromJsonStatements.length > 0) {
-      initializers.push(code`${property.name}`);
-      statements.push(...propertyFromJsonStatements);
-    }
+    property
+      .fromJsonExpression({
+        variables,
+      })
+      .ifJust((propertyFromJsonExpression) => {
+        initializers.push(
+          code`${property.name}: ${propertyFromJsonExpression}`,
+        );
+      });
   }
+
   statements.push(
     code`return create({ ${joinCode(initializers, { on: ", " })} });`,
   );

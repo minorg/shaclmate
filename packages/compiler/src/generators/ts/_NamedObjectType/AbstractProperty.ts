@@ -153,13 +153,13 @@ export abstract class AbstractProperty<
   }): readonly Code[];
 
   /**
-   * Statements to deserialize JSON for this property (as described by toJsonObjectMember) to a typed value of the property.
+   * Expression to deserialize JSON for this property (as described by toJsonObjectMember) to a typed value of the property.
    */
-  abstract fromJsonStatements(parameters: {
+  abstract fromJsonExpression(parameters: {
     variables: {
       jsonObject: Code;
     };
-  }): readonly Code[];
+  }): Maybe<Code>;
 
   /**
    * Expression to deserialize this property on the given rdfjsResource.Resource to a Either<Error, this property type>.

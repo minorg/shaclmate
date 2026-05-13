@@ -831,11 +831,12 @@ export namespace NestedNodeShape {
   };
 
   export function fromJson($json: NestedNodeShape.Json): NestedNodeShape {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const requiredStringProperty = $json["requiredStringProperty"];
-    return create({ $identifier, requiredStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      requiredStringProperty: $json["requiredStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NestedNodeShape> = (
@@ -1374,29 +1375,22 @@ export namespace FormNodeShape {
   };
 
   export function fromJson($json: FormNodeShape.Json): FormNodeShape {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
-    const nestedObjectProperty = NestedNodeShape.fromJson(
-      $json["nestedObjectProperty"],
-    );
-    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
-      $json["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = Maybe.fromNullable(
-      $json["optionalStringProperty"],
-    );
-    const requiredIntegerProperty = $json["requiredIntegerProperty"];
-    const requiredStringProperty = $json["requiredStringProperty"];
     return create({
-      $identifier,
-      emptyStringSetProperty,
-      nestedObjectProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredIntegerProperty,
-      requiredStringProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      emptyStringSetProperty: $json["emptyStringSetProperty"] ?? [],
+      nestedObjectProperty: NestedNodeShape.fromJson(
+        $json["nestedObjectProperty"],
+      ),
+      nonEmptyStringSetProperty: NonEmptyList.fromArray(
+        $json["nonEmptyStringSetProperty"],
+      ).unsafeCoerce(),
+      optionalStringProperty: Maybe.fromNullable(
+        $json["optionalStringProperty"],
+      ),
+      requiredIntegerProperty: $json["requiredIntegerProperty"],
+      requiredStringProperty: $json["requiredStringProperty"],
     });
   }
 

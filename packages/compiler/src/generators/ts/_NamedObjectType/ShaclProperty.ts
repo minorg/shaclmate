@@ -182,14 +182,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     return statements;
   }
 
-  override fromJsonStatements({
+  override fromJsonExpression({
     variables,
   }: Parameters<
-    AbstractProperty<TypeT>["fromJsonStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: code`${variables.jsonObject}["${this.name}"]` } })};`,
-    ];
+    AbstractProperty<TypeT>["fromJsonExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      this.type.fromJsonExpression({
+        variables: { value: code`${variables.jsonObject}["${this.name}"]` },
+      }),
+    );
   }
 
   override fromRdfResourceValuesExpression({

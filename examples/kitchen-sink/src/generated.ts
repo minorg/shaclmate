@@ -3476,8 +3476,7 @@ export namespace $NamedDefaultPartial {
   export function fromJson(
     $json: $NamedDefaultPartial.Json,
   ): $NamedDefaultPartial {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return create({ $identifier });
+    return create({ $identifier: dataFactory.namedNode($json["@id"]) });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -3827,10 +3826,11 @@ export namespace $DefaultPartial {
   };
 
   export function fromJson($json: $DefaultPartial.Json): $DefaultPartial {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    return create({ $identifier });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
@@ -7845,456 +7845,87 @@ export namespace UnionDiscriminants {
   };
 
   export function fromJson($json: UnionDiscriminants.Json): UnionDiscriminants {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const optionalIriOrLiteralProperty = Maybe.fromNullable(
-      $json["optionalIriOrLiteralProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            },
-      ): NamedNode | Literal => {
-        if (value["termType"] === "NamedNode") {
-          return dataFactory.namedNode(
-            (
-              value as {
-                readonly "@id": string;
-                readonly termType: "NamedNode";
-              }
-            )["@id"],
-          );
-        }
-        if (value["termType"] === "Literal") {
-          return dataFactory.literal(
-            (
-              value as {
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      optionalIriOrLiteralProperty: Maybe.fromNullable(
+        $json["optionalIriOrLiteralProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { readonly "@id": string; readonly termType: "NamedNode" }
+            | {
                 readonly "@language"?: string;
                 readonly termType: "Literal";
                 readonly "@type"?: string;
                 readonly "@value": string;
-              }
-            )["@value"],
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@language"] !== undefined
-              ? (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"]
-              : (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"]!,
-                  )
-                : undefined,
-          );
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const optionalIriOrStringProperty = Maybe.fromNullable(
-      $json["optionalIriOrStringProperty"],
-    ).map((item) =>
-      ((value: { readonly "@id": string } | string): NamedNode | string => {
-        if (typeof value === "object") {
-          return dataFactory.namedNode(
-            (value as { readonly "@id": string })["@id"],
-          );
-        }
-        if (typeof value === "string") {
-          return value as string;
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const optionalNodeOrLiteralProperty = Maybe.fromNullable(
-      $json["optionalNodeOrLiteralProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { termType: "UnionMember1"; value: UnionMember1.Json }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            },
-      ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
-        if (value["termType"] === "UnionMember1") {
-          return {
-            termType: "UnionMember1" as const,
-            value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-          };
-        }
-        if (value["termType"] === "Literal") {
-          return dataFactory.literal(
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@value"],
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@language"] !== undefined
-              ? (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"]
-              : (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"]!,
-                  )
-                : undefined,
-          );
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const optionalNodeOrNodeOrStringProperty = Maybe.fromNullable(
-      $json["optionalNodeOrNodeOrStringProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { type: "UnionMember1"; value: UnionMember1.Json }
-          | { type: "UnionMember2"; value: UnionMember2.Json }
-          | { type: "string"; value: string },
-      ):
-        | { type: "UnionMember1"; value: UnionMember1 }
-        | { type: "UnionMember2"; value: UnionMember2 }
-        | {
-            type: "string";
-            value: string;
-          } => {
-        if (value["type"] === "UnionMember1") {
-          return {
-            type: "UnionMember1" as const,
-            value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-          };
-        }
-        if (value["type"] === "UnionMember2") {
-          return {
-            type: "UnionMember2" as const,
-            value: UnionMember2.fromJson(value.value as UnionMember2.Json),
-          };
-        }
-        if (value["type"] === "string") {
-          return { type: "string" as const, value: value.value as string };
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const requiredIriOrLiteralProperty = ((
-      value:
-        | { readonly "@id": string; readonly termType: "NamedNode" }
-        | {
-            readonly "@language"?: string;
-            readonly termType: "Literal";
-            readonly "@type"?: string;
-            readonly "@value": string;
-          },
-    ): NamedNode | Literal => {
-      if (value["termType"] === "NamedNode") {
-        return dataFactory.namedNode(
-          (value as { readonly "@id": string; readonly termType: "NamedNode" })[
-            "@id"
-          ],
-        );
-      }
-      if (value["termType"] === "Literal") {
-        return dataFactory.literal(
-          (
-            value as {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            }
-          )["@value"],
-          (
-            value as {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            }
-          )["@language"] !== undefined
-            ? (
+              },
+        ): NamedNode | Literal => {
+          if (value["termType"] === "NamedNode") {
+            return dataFactory.namedNode(
+              (
+                value as {
+                  readonly "@id": string;
+                  readonly termType: "NamedNode";
+                }
+              )["@id"],
+            );
+          }
+          if (value["termType"] === "Literal") {
+            return dataFactory.literal(
+              (
                 value as {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
                 }
-              )["@language"]
-            : (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@type"] !== undefined
-              ? dataFactory.namedNode(
-                  (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@type"]!,
-                )
-              : undefined,
-        );
-      }
-
-      throw new Error("unable to deserialize JSON");
-    })($json["requiredIriOrLiteralProperty"]);
-    const requiredIriOrStringProperty = ((
-      value: { readonly "@id": string } | string,
-    ): NamedNode | string => {
-      if (typeof value === "object") {
-        return dataFactory.namedNode(
-          (value as { readonly "@id": string })["@id"],
-        );
-      }
-      if (typeof value === "string") {
-        return value as string;
-      }
-
-      throw new Error("unable to deserialize JSON");
-    })($json["requiredIriOrStringProperty"]);
-    const requiredNodeOrLiteralProperty = ((
-      value:
-        | { termType: "UnionMember1"; value: UnionMember1.Json }
-        | {
-            readonly "@language"?: string;
-            readonly termType: "Literal";
-            readonly "@type"?: string;
-            readonly "@value": string;
-          },
-    ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
-      if (value["termType"] === "UnionMember1") {
-        return {
-          termType: "UnionMember1" as const,
-          value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-        };
-      }
-      if (value["termType"] === "Literal") {
-        return dataFactory.literal(
-          (
-            value as {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            }
-          )["@value"],
-          (
-            value as {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            }
-          )["@language"] !== undefined
-            ? (
+              )["@value"],
+              (
                 value as {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
                 }
-              )["@language"]
-            : (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@type"] !== undefined
-              ? dataFactory.namedNode(
-                  (
+              )["@language"] !== undefined
+                ? (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@type"]!,
-                )
-              : undefined,
-        );
-      }
-
-      throw new Error("unable to deserialize JSON");
-    })($json["requiredNodeOrLiteralProperty"]);
-    const requiredNodeOrNodeOrStringProperty = ((
-      value:
-        | { type: "UnionMember1"; value: UnionMember1.Json }
-        | { type: "UnionMember2"; value: UnionMember2.Json }
-        | { type: "string"; value: string },
-    ):
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        } => {
-      if (value["type"] === "UnionMember1") {
-        return {
-          type: "UnionMember1" as const,
-          value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-        };
-      }
-      if (value["type"] === "UnionMember2") {
-        return {
-          type: "UnionMember2" as const,
-          value: UnionMember2.fromJson(value.value as UnionMember2.Json),
-        };
-      }
-      if (value["type"] === "string") {
-        return { type: "string" as const, value: value.value as string };
-      }
-
-      throw new Error("unable to deserialize JSON");
-    })($json["requiredNodeOrNodeOrStringProperty"]);
-    const setIriOrLiteralProperty = (
-      $json["setIriOrLiteralProperty"] ?? []
-    ).map((item) =>
-      ((
-        value:
-          | { readonly "@id": string; readonly termType: "NamedNode" }
-          | {
-              readonly "@language"?: string;
-              readonly termType: "Literal";
-              readonly "@type"?: string;
-              readonly "@value": string;
-            },
-      ): NamedNode | Literal => {
-        if (value["termType"] === "NamedNode") {
-          return dataFactory.namedNode(
-            (
-              value as {
-                readonly "@id": string;
-                readonly termType: "NamedNode";
-              }
-            )["@id"],
-          );
-        }
-        if (value["termType"] === "Literal") {
-          return dataFactory.literal(
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@value"],
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@language"] !== undefined
-              ? (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"]
-              : (
-                    value as {
-                      readonly "@language"?: string;
-                      readonly termType: "Literal";
-                      readonly "@type"?: string;
-                      readonly "@value": string;
-                    }
-                  )["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    (
+                  )["@language"]
+                : (
                       value as {
                         readonly "@language"?: string;
                         readonly termType: "Literal";
                         readonly "@type"?: string;
                         readonly "@value": string;
                       }
-                    )["@type"]!,
-                  )
-                : undefined,
-          );
-        }
+                    )["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"]!,
+                    )
+                  : undefined,
+            );
+          }
 
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const setIriOrStringProperty = ($json["setIriOrStringProperty"] ?? []).map(
-      (item) =>
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      optionalIriOrStringProperty: Maybe.fromNullable(
+        $json["optionalIriOrStringProperty"],
+      ).map((item) =>
         ((value: { readonly "@id": string } | string): NamedNode | string => {
           if (typeof value === "object") {
             return dataFactory.namedNode(
@@ -8307,11 +7938,196 @@ export namespace UnionDiscriminants {
 
           throw new Error("unable to deserialize JSON");
         })(item),
-    );
-    const setNodeOrLiteralProperty = (
-      $json["setNodeOrLiteralProperty"] ?? []
-    ).map((item) =>
-      ((
+      ),
+      optionalNodeOrLiteralProperty: Maybe.fromNullable(
+        $json["optionalNodeOrLiteralProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { termType: "UnionMember1"; value: UnionMember1.Json }
+            | {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              },
+        ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
+          if (value["termType"] === "UnionMember1") {
+            return {
+              termType: "UnionMember1" as const,
+              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
+            };
+          }
+          if (value["termType"] === "Literal") {
+            return dataFactory.literal(
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"] !== undefined
+                ? (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"]
+                : (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"]!,
+                    )
+                  : undefined,
+            );
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      optionalNodeOrNodeOrStringProperty: Maybe.fromNullable(
+        $json["optionalNodeOrNodeOrStringProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { type: "UnionMember1"; value: UnionMember1.Json }
+            | { type: "UnionMember2"; value: UnionMember2.Json }
+            | { type: "string"; value: string },
+        ):
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            } => {
+          if (value["type"] === "UnionMember1") {
+            return {
+              type: "UnionMember1" as const,
+              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
+            };
+          }
+          if (value["type"] === "UnionMember2") {
+            return {
+              type: "UnionMember2" as const,
+              value: UnionMember2.fromJson(value.value as UnionMember2.Json),
+            };
+          }
+          if (value["type"] === "string") {
+            return { type: "string" as const, value: value.value as string };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      requiredIriOrLiteralProperty: ((
+        value:
+          | { readonly "@id": string; readonly termType: "NamedNode" }
+          | {
+              readonly "@language"?: string;
+              readonly termType: "Literal";
+              readonly "@type"?: string;
+              readonly "@value": string;
+            },
+      ): NamedNode | Literal => {
+        if (value["termType"] === "NamedNode") {
+          return dataFactory.namedNode(
+            (
+              value as {
+                readonly "@id": string;
+                readonly termType: "NamedNode";
+              }
+            )["@id"],
+          );
+        }
+        if (value["termType"] === "Literal") {
+          return dataFactory.literal(
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@value"],
+            (
+              value as {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              }
+            )["@language"] !== undefined
+              ? (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"]
+              : (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@type"] !== undefined
+                ? dataFactory.namedNode(
+                    (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@type"]!,
+                  )
+                : undefined,
+          );
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredIriOrLiteralProperty"]),
+      requiredIriOrStringProperty: ((
+        value: { readonly "@id": string } | string,
+      ): NamedNode | string => {
+        if (typeof value === "object") {
+          return dataFactory.namedNode(
+            (value as { readonly "@id": string })["@id"],
+          );
+        }
+        if (typeof value === "string") {
+          return value as string;
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })($json["requiredIriOrStringProperty"]),
+      requiredNodeOrLiteralProperty: ((
         value:
           | { termType: "UnionMember1"; value: UnionMember1.Json }
           | {
@@ -8376,12 +8192,8 @@ export namespace UnionDiscriminants {
         }
 
         throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const setNodeOrNodeOrStringProperty = (
-      $json["setNodeOrNodeOrStringProperty"] ?? []
-    ).map((item) =>
-      ((
+      })($json["requiredNodeOrLiteralProperty"]),
+      requiredNodeOrNodeOrStringProperty: ((
         value:
           | { type: "UnionMember1"; value: UnionMember1.Json }
           | { type: "UnionMember2"; value: UnionMember2.Json }
@@ -8410,22 +8222,198 @@ export namespace UnionDiscriminants {
         }
 
         throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    return create({
-      $identifier,
-      optionalIriOrLiteralProperty,
-      optionalIriOrStringProperty,
-      optionalNodeOrLiteralProperty,
-      optionalNodeOrNodeOrStringProperty,
-      requiredIriOrLiteralProperty,
-      requiredIriOrStringProperty,
-      requiredNodeOrLiteralProperty,
-      requiredNodeOrNodeOrStringProperty,
-      setIriOrLiteralProperty,
-      setIriOrStringProperty,
-      setNodeOrLiteralProperty,
-      setNodeOrNodeOrStringProperty,
+      })($json["requiredNodeOrNodeOrStringProperty"]),
+      setIriOrLiteralProperty: ($json["setIriOrLiteralProperty"] ?? []).map(
+        (item) =>
+          ((
+            value:
+              | { readonly "@id": string; readonly termType: "NamedNode" }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                },
+          ): NamedNode | Literal => {
+            if (value["termType"] === "NamedNode") {
+              return dataFactory.namedNode(
+                (
+                  value as {
+                    readonly "@id": string;
+                    readonly termType: "NamedNode";
+                  }
+                )["@id"],
+              );
+            }
+            if (value["termType"] === "Literal") {
+              return dataFactory.literal(
+                (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@value"],
+                (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"] !== undefined
+                  ? (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@language"]
+                  : (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"] !== undefined
+                    ? dataFactory.namedNode(
+                        (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"]!,
+                      )
+                    : undefined,
+              );
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+      ),
+      setIriOrStringProperty: ($json["setIriOrStringProperty"] ?? []).map(
+        (item) =>
+          ((value: { readonly "@id": string } | string): NamedNode | string => {
+            if (typeof value === "object") {
+              return dataFactory.namedNode(
+                (value as { readonly "@id": string })["@id"],
+              );
+            }
+            if (typeof value === "string") {
+              return value as string;
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+      ),
+      setNodeOrLiteralProperty: ($json["setNodeOrLiteralProperty"] ?? []).map(
+        (item) =>
+          ((
+            value:
+              | { termType: "UnionMember1"; value: UnionMember1.Json }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                },
+          ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
+            if (value["termType"] === "UnionMember1") {
+              return {
+                termType: "UnionMember1" as const,
+                value: UnionMember1.fromJson(value.value as UnionMember1.Json),
+              };
+            }
+            if (value["termType"] === "Literal") {
+              return dataFactory.literal(
+                (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@value"],
+                (
+                  value as {
+                    readonly "@language"?: string;
+                    readonly termType: "Literal";
+                    readonly "@type"?: string;
+                    readonly "@value": string;
+                  }
+                )["@language"] !== undefined
+                  ? (
+                      value as {
+                        readonly "@language"?: string;
+                        readonly termType: "Literal";
+                        readonly "@type"?: string;
+                        readonly "@value": string;
+                      }
+                    )["@language"]
+                  : (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"] !== undefined
+                    ? dataFactory.namedNode(
+                        (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"]!,
+                      )
+                    : undefined,
+              );
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+      ),
+      setNodeOrNodeOrStringProperty: (
+        $json["setNodeOrNodeOrStringProperty"] ?? []
+      ).map((item) =>
+        ((
+          value:
+            | { type: "UnionMember1"; value: UnionMember1.Json }
+            | { type: "UnionMember2"; value: UnionMember2.Json }
+            | { type: "string"; value: string },
+        ):
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            } => {
+          if (value["type"] === "UnionMember1") {
+            return {
+              type: "UnionMember1" as const,
+              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
+            };
+          }
+          if (value["type"] === "UnionMember2") {
+            return {
+              type: "UnionMember2" as const,
+              value: UnionMember2.fromJson(value.value as UnionMember2.Json),
+            };
+          }
+          if (value["type"] === "string") {
+            return { type: "string" as const, value: value.value as string };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
     });
   }
 
@@ -11856,40 +11844,37 @@ export namespace TermProperties {
   };
 
   export function fromJson($json: TermProperties.Json): TermProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const blankNodeTermProperty = Maybe.fromNullable(
-      $json["blankNodeTermProperty"],
-    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
-    const booleanTermProperty = Maybe.fromNullable(
-      $json["booleanTermProperty"],
-    );
-    const dateTermProperty = Maybe.fromNullable($json["dateTermProperty"]).map(
-      (item) => new Date(item),
-    );
-    const dateTimeTermProperty = Maybe.fromNullable(
-      $json["dateTimeTermProperty"],
-    ).map((item) => new Date(item));
-    const iriTermProperty = Maybe.fromNullable($json["iriTermProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const literalTermProperty = Maybe.fromNullable(
-      $json["literalTermProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        item["@language"] !== undefined
-          ? item["@language"]
-          : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"]!)
-            : undefined,
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      blankNodeTermProperty: Maybe.fromNullable(
+        $json["blankNodeTermProperty"],
+      ).map((item) => dataFactory.blankNode(item["@id"].substring(2))),
+      booleanTermProperty: Maybe.fromNullable($json["booleanTermProperty"]),
+      dateTermProperty: Maybe.fromNullable($json["dateTermProperty"]).map(
+        (item) => new Date(item),
       ),
-    );
-    const numberTermProperty = Maybe.fromNullable($json["numberTermProperty"]);
-    const stringTermProperty = Maybe.fromNullable($json["stringTermProperty"]);
-    const termProperty = Maybe.fromNullable($json["termProperty"]).map(
-      (item) =>
+      dateTimeTermProperty: Maybe.fromNullable(
+        $json["dateTimeTermProperty"],
+      ).map((item) => new Date(item)),
+      iriTermProperty: Maybe.fromNullable($json["iriTermProperty"]).map(
+        (item) => dataFactory.namedNode(item["@id"]),
+      ),
+      literalTermProperty: Maybe.fromNullable($json["literalTermProperty"]).map(
+        (item) =>
+          dataFactory.literal(
+            item["@value"],
+            item["@language"] !== undefined
+              ? item["@language"]
+              : item["@type"] !== undefined
+                ? dataFactory.namedNode(item["@type"]!)
+                : undefined,
+          ),
+      ),
+      numberTermProperty: Maybe.fromNullable($json["numberTermProperty"]),
+      stringTermProperty: Maybe.fromNullable($json["stringTermProperty"]),
+      termProperty: Maybe.fromNullable($json["termProperty"]).map((item) =>
         item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
@@ -11902,18 +11887,7 @@ export namespace TermProperties {
           : item.termType === "NamedNode"
             ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
-    );
-    return create({
-      $identifier,
-      blankNodeTermProperty,
-      booleanTermProperty,
-      dateTermProperty,
-      dateTimeTermProperty,
-      iriTermProperty,
-      literalTermProperty,
-      numberTermProperty,
-      stringTermProperty,
-      termProperty,
+      ),
     });
   }
 
@@ -12829,13 +12803,14 @@ export namespace RecursiveUnionMember2 {
   export function fromJson(
     $json: RecursiveUnionMember2.Json,
   ): RecursiveUnionMember2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const recursiveUnionMember2Property = Maybe.fromNullable(
-      $json["recursiveUnionMember2Property"],
-    ).map((item) => RecursiveUnion.fromJson(item));
-    return create({ $identifier, recursiveUnionMember2Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      recursiveUnionMember2Property: Maybe.fromNullable(
+        $json["recursiveUnionMember2Property"],
+      ).map((item) => RecursiveUnion.fromJson(item)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -13407,13 +13382,14 @@ export namespace RecursiveUnionMember1 {
   export function fromJson(
     $json: RecursiveUnionMember1.Json,
   ): RecursiveUnionMember1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const recursiveUnionMember1Property = Maybe.fromNullable(
-      $json["recursiveUnionMember1Property"],
-    ).map((item) => RecursiveUnion.fromJson(item));
-    return create({ $identifier, recursiveUnionMember1Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      recursiveUnionMember1Property: Maybe.fromNullable(
+        $json["recursiveUnionMember1Property"],
+      ).map((item) => RecursiveUnion.fromJson(item)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -14085,16 +14061,15 @@ export namespace PropertyPaths {
   };
 
   export function fromJson($json: PropertyPaths.Json): PropertyPaths {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const inversePathProperty = Maybe.fromNullable(
-      $json["inversePathProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const predicatePathProperty = Maybe.fromNullable(
-      $json["predicatePathProperty"],
-    );
-    return create({ $identifier, inversePathProperty, predicatePathProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      inversePathProperty: Maybe.fromNullable($json["inversePathProperty"]).map(
+        (item) => dataFactory.namedNode(item["@id"]),
+      ),
+      predicatePathProperty: Maybe.fromNullable($json["predicatePathProperty"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyPaths> = (
@@ -14940,21 +14915,15 @@ export namespace PropertyNames {
   };
 
   export function fromJson($json: PropertyNames.Json): PropertyNames {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const actualPropertyName1 = $json["actualPropertyName1"];
-    const actualPropertyName2 = $json["actualPropertyName2"];
-    const actualPropertyName3 = $json["actualPropertyName3"];
-    const actualPropertyName4 = $json["actualPropertyName4"];
-    const actualPropertyName5 = $json["actualPropertyName5"];
     return create({
-      $identifier,
-      actualPropertyName1,
-      actualPropertyName2,
-      actualPropertyName3,
-      actualPropertyName4,
-      actualPropertyName5,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      actualPropertyName1: $json["actualPropertyName1"],
+      actualPropertyName2: $json["actualPropertyName2"],
+      actualPropertyName3: $json["actualPropertyName3"],
+      actualPropertyName4: $json["actualPropertyName4"],
+      actualPropertyName5: $json["actualPropertyName5"],
     });
   }
 
@@ -15804,23 +15773,18 @@ export namespace PropertyCardinalities {
   export function fromJson(
     $json: PropertyCardinalities.Json,
   ): PropertyCardinalities {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
-    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
-      $json["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = Maybe.fromNullable(
-      $json["optionalStringProperty"],
-    );
-    const requiredStringProperty = $json["requiredStringProperty"];
     return create({
-      $identifier,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      emptyStringSetProperty: $json["emptyStringSetProperty"] ?? [],
+      nonEmptyStringSetProperty: NonEmptyList.fromArray(
+        $json["nonEmptyStringSetProperty"],
+      ).unsafeCoerce(),
+      optionalStringProperty: Maybe.fromNullable(
+        $json["optionalStringProperty"],
+      ),
+      requiredStringProperty: $json["requiredStringProperty"],
     });
   }
 
@@ -16496,12 +16460,12 @@ export namespace UnionMemberCommonParent {
   export function fromJson(
     $json: UnionMemberCommonParent.Json,
   ): UnionMemberCommonParent {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const unionMemberCommonParentProperty =
-      $json["unionMemberCommonParentProperty"];
-    return create({ $identifier, unionMemberCommonParentProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      unionMemberCommonParentProperty: $json["unionMemberCommonParentProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -17075,14 +17039,12 @@ export namespace UnionMember2 {
   };
 
   export function fromJson($json: UnionMember2.Json): UnionMember2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const unionMember2Property = $json["unionMember2Property"];
     return create({
       ...UnionMemberCommonParent.fromJson($json),
-      $identifier,
-      unionMember2Property,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      unionMember2Property: $json["unionMember2Property"],
     });
   }
 
@@ -17627,11 +17589,12 @@ export namespace PartialUnionMember2 {
   export function fromJson(
     $json: PartialUnionMember2.Json,
   ): PartialUnionMember2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -18188,14 +18151,12 @@ export namespace UnionMember1 {
   };
 
   export function fromJson($json: UnionMember1.Json): UnionMember1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const unionMember1Property = $json["unionMember1Property"];
     return create({
       ...UnionMemberCommonParent.fromJson($json),
-      $identifier,
-      unionMember1Property,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      unionMember1Property: $json["unionMember1Property"],
     });
   }
 
@@ -18740,11 +18701,12 @@ export namespace PartialUnionMember1 {
   export function fromJson(
     $json: PartialUnionMember1.Json,
   ): PartialUnionMember1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -19220,10 +19182,11 @@ export namespace NewName {
   };
 
   export function fromJson($json: NewName.Json): NewName {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    return create({ $identifier });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NewName> = (
@@ -19775,17 +19738,13 @@ export namespace OrderedProperties {
   };
 
   export function fromJson($json: OrderedProperties.Json): OrderedProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const orderedPropertyC = $json["orderedPropertyC"];
-    const orderedPropertyB = $json["orderedPropertyB"];
-    const orderedPropertyA = $json["orderedPropertyA"];
     return create({
-      $identifier,
-      orderedPropertyC,
-      orderedPropertyB,
-      orderedPropertyA,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      orderedPropertyC: $json["orderedPropertyC"],
+      orderedPropertyB: $json["orderedPropertyB"],
+      orderedPropertyA: $json["orderedPropertyA"],
     });
   }
 
@@ -21541,73 +21500,48 @@ export namespace NumericProperties {
   };
 
   export function fromJson($json: NumericProperties.Json): NumericProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const byteNumericProperty = Maybe.fromNullable(
-      $json["byteNumericProperty"],
-    );
-    const decimalNumericProperty = Maybe.fromNullable(
-      $json["decimalNumericProperty"],
-    ).map((item) => new BigDecimal(item));
-    const doubleNumericProperty = Maybe.fromNullable(
-      $json["doubleNumericProperty"],
-    );
-    const floatNumericProperty = Maybe.fromNullable(
-      $json["floatNumericProperty"],
-    );
-    const integerNumericProperty = Maybe.fromNullable(
-      $json["integerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const intNumericProperty = Maybe.fromNullable($json["intNumericProperty"]);
-    const longNumericProperty = Maybe.fromNullable(
-      $json["longNumericProperty"],
-    ).map((item) => BigInt(item));
-    const negativeIntegerNumericProperty = Maybe.fromNullable(
-      $json["negativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
-      $json["nonNegativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
-      $json["nonPositiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const positiveIntegerNumericProperty = Maybe.fromNullable(
-      $json["positiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const shortNumericProperty = Maybe.fromNullable(
-      $json["shortNumericProperty"],
-    );
-    const unsignedByteNumericProperty = Maybe.fromNullable(
-      $json["unsignedByteNumericProperty"],
-    );
-    const unsignedIntNumericProperty = Maybe.fromNullable(
-      $json["unsignedIntNumericProperty"],
-    );
-    const unsignedLongNumericProperty = Maybe.fromNullable(
-      $json["unsignedLongNumericProperty"],
-    ).map((item) => BigInt(item));
-    const unsignedShortNumericProperty = Maybe.fromNullable(
-      $json["unsignedShortNumericProperty"],
-    );
     return create({
-      $identifier,
-      byteNumericProperty,
-      decimalNumericProperty,
-      doubleNumericProperty,
-      floatNumericProperty,
-      integerNumericProperty,
-      intNumericProperty,
-      longNumericProperty,
-      negativeIntegerNumericProperty,
-      nonNegativeIntegerNumericProperty,
-      nonPositiveIntegerNumericProperty,
-      positiveIntegerNumericProperty,
-      shortNumericProperty,
-      unsignedByteNumericProperty,
-      unsignedIntNumericProperty,
-      unsignedLongNumericProperty,
-      unsignedShortNumericProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      byteNumericProperty: Maybe.fromNullable($json["byteNumericProperty"]),
+      decimalNumericProperty: Maybe.fromNullable(
+        $json["decimalNumericProperty"],
+      ).map((item) => new BigDecimal(item)),
+      doubleNumericProperty: Maybe.fromNullable($json["doubleNumericProperty"]),
+      floatNumericProperty: Maybe.fromNullable($json["floatNumericProperty"]),
+      integerNumericProperty: Maybe.fromNullable(
+        $json["integerNumericProperty"],
+      ).map((item) => BigInt(item)),
+      intNumericProperty: Maybe.fromNullable($json["intNumericProperty"]),
+      longNumericProperty: Maybe.fromNullable($json["longNumericProperty"]).map(
+        (item) => BigInt(item),
+      ),
+      negativeIntegerNumericProperty: Maybe.fromNullable(
+        $json["negativeIntegerNumericProperty"],
+      ).map((item) => BigInt(item)),
+      nonNegativeIntegerNumericProperty: Maybe.fromNullable(
+        $json["nonNegativeIntegerNumericProperty"],
+      ).map((item) => BigInt(item)),
+      nonPositiveIntegerNumericProperty: Maybe.fromNullable(
+        $json["nonPositiveIntegerNumericProperty"],
+      ).map((item) => BigInt(item)),
+      positiveIntegerNumericProperty: Maybe.fromNullable(
+        $json["positiveIntegerNumericProperty"],
+      ).map((item) => BigInt(item)),
+      shortNumericProperty: Maybe.fromNullable($json["shortNumericProperty"]),
+      unsignedByteNumericProperty: Maybe.fromNullable(
+        $json["unsignedByteNumericProperty"],
+      ),
+      unsignedIntNumericProperty: Maybe.fromNullable(
+        $json["unsignedIntNumericProperty"],
+      ),
+      unsignedLongNumericProperty: Maybe.fromNullable(
+        $json["unsignedLongNumericProperty"],
+      ).map((item) => BigInt(item)),
+      unsignedShortNumericProperty: Maybe.fromNullable(
+        $json["unsignedShortNumericProperty"],
+      ),
     });
   }
 
@@ -23395,68 +23329,61 @@ export namespace NodeKinds {
   };
 
   export function fromJson($json: NodeKinds.Json): NodeKinds {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const blankNodeKindProperty = dataFactory.blankNode(
-      $json["blankNodeKindProperty"]["@id"].substring(2),
-    );
-    const blankNodeOrIriNodeKindProperty = $json[
-      "blankNodeOrIriNodeKindProperty"
-    ]["@id"].startsWith("_:")
-      ? dataFactory.blankNode(
-          $json["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
-        )
-      : dataFactory.namedNode($json["blankNodeOrIriNodeKindProperty"]["@id"]);
-    const blankNodeOrLiteralNodeKindProperty =
-      $json["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
-        ? dataFactory.literal(
-            $json["blankNodeOrLiteralNodeKindProperty"]["@value"],
-            $json["blankNodeOrLiteralNodeKindProperty"]["@language"] !==
-              undefined
-              ? $json["blankNodeOrLiteralNodeKindProperty"]["@language"]
-              : $json["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
-                  undefined
-                ? dataFactory.namedNode(
-                    $json["blankNodeOrLiteralNodeKindProperty"]["@type"]!,
-                  )
-                : undefined,
-          )
-        : dataFactory.blankNode(
-            $json["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(2),
-          );
-    const iriNodeKindProperty = dataFactory.namedNode(
-      $json["iriNodeKindProperty"]["@id"],
-    );
-    const iriOrLiteralNodeKindProperty =
-      $json["iriOrLiteralNodeKindProperty"].termType === "Literal"
-        ? dataFactory.literal(
-            $json["iriOrLiteralNodeKindProperty"]["@value"],
-            $json["iriOrLiteralNodeKindProperty"]["@language"] !== undefined
-              ? $json["iriOrLiteralNodeKindProperty"]["@language"]
-              : $json["iriOrLiteralNodeKindProperty"]["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    $json["iriOrLiteralNodeKindProperty"]["@type"]!,
-                  )
-                : undefined,
-          )
-        : dataFactory.namedNode($json["iriOrLiteralNodeKindProperty"]["@id"]);
-    const literalNodeKindProperty = dataFactory.literal(
-      $json["literalNodeKindProperty"]["@value"],
-      $json["literalNodeKindProperty"]["@language"] !== undefined
-        ? $json["literalNodeKindProperty"]["@language"]
-        : $json["literalNodeKindProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"]!)
-          : undefined,
-    );
     return create({
-      $identifier,
-      blankNodeKindProperty,
-      blankNodeOrIriNodeKindProperty,
-      blankNodeOrLiteralNodeKindProperty,
-      iriNodeKindProperty,
-      iriOrLiteralNodeKindProperty,
-      literalNodeKindProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      blankNodeKindProperty: dataFactory.blankNode(
+        $json["blankNodeKindProperty"]["@id"].substring(2),
+      ),
+      blankNodeOrIriNodeKindProperty: $json["blankNodeOrIriNodeKindProperty"][
+        "@id"
+      ].startsWith("_:")
+        ? dataFactory.blankNode(
+            $json["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
+          )
+        : dataFactory.namedNode($json["blankNodeOrIriNodeKindProperty"]["@id"]),
+      blankNodeOrLiteralNodeKindProperty:
+        $json["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
+          ? dataFactory.literal(
+              $json["blankNodeOrLiteralNodeKindProperty"]["@value"],
+              $json["blankNodeOrLiteralNodeKindProperty"]["@language"] !==
+                undefined
+                ? $json["blankNodeOrLiteralNodeKindProperty"]["@language"]
+                : $json["blankNodeOrLiteralNodeKindProperty"]["@type"] !==
+                    undefined
+                  ? dataFactory.namedNode(
+                      $json["blankNodeOrLiteralNodeKindProperty"]["@type"]!,
+                    )
+                  : undefined,
+            )
+          : dataFactory.blankNode(
+              $json["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(2),
+            ),
+      iriNodeKindProperty: dataFactory.namedNode(
+        $json["iriNodeKindProperty"]["@id"],
+      ),
+      iriOrLiteralNodeKindProperty:
+        $json["iriOrLiteralNodeKindProperty"].termType === "Literal"
+          ? dataFactory.literal(
+              $json["iriOrLiteralNodeKindProperty"]["@value"],
+              $json["iriOrLiteralNodeKindProperty"]["@language"] !== undefined
+                ? $json["iriOrLiteralNodeKindProperty"]["@language"]
+                : $json["iriOrLiteralNodeKindProperty"]["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      $json["iriOrLiteralNodeKindProperty"]["@type"]!,
+                    )
+                  : undefined,
+            )
+          : dataFactory.namedNode($json["iriOrLiteralNodeKindProperty"]["@id"]),
+      literalNodeKindProperty: dataFactory.literal(
+        $json["literalNodeKindProperty"]["@value"],
+        $json["literalNodeKindProperty"]["@language"] !== undefined
+          ? $json["literalNodeKindProperty"]["@language"]
+          : $json["literalNodeKindProperty"]["@type"] !== undefined
+            ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"]!)
+            : undefined,
+      ),
     });
   }
 
@@ -24153,12 +24080,12 @@ export namespace NoRdfTypeUnionMember2 {
   export function fromJson(
     $json: NoRdfTypeUnionMember2.Json,
   ): NoRdfTypeUnionMember2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const noRdfTypeUnionMember2Property =
-      $json["noRdfTypeUnionMember2Property"];
-    return create({ $identifier, noRdfTypeUnionMember2Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      noRdfTypeUnionMember2Property: $json["noRdfTypeUnionMember2Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -24604,12 +24531,12 @@ export namespace NoRdfTypeUnionMember1 {
   export function fromJson(
     $json: NoRdfTypeUnionMember1.Json,
   ): NoRdfTypeUnionMember1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const noRdfTypeUnionMember1Property =
-      $json["noRdfTypeUnionMember1Property"];
-    return create({ $identifier, noRdfTypeUnionMember1Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      noRdfTypeUnionMember1Property: $json["noRdfTypeUnionMember1Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -25166,16 +25093,13 @@ export namespace NamedUnionProperties {
   export function fromJson(
     $json: NamedUnionProperties.Json,
   ): NamedUnionProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const namedUnion1Property = NamedUnion1.fromJson(
-      $json["namedUnion1Property"],
-    );
-    const namedUnion2Property = NamedUnion2.fromJson(
-      $json["namedUnion2Property"],
-    );
-    return create({ $identifier, namedUnion1Property, namedUnion2Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      namedUnion1Property: NamedUnion1.fromJson($json["namedUnion1Property"]),
+      namedUnion2Property: NamedUnion2.fromJson($json["namedUnion2Property"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -25986,21 +25910,15 @@ export namespace MutableProperties {
   };
 
   export function fromJson($json: MutableProperties.Json): MutableProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const mutableListProperty = Maybe.fromNullable(
-      $json["mutableListProperty"],
-    ).map((item) => item ?? []);
-    const mutableSetProperty = $json["mutableSetProperty"] ?? [];
-    const mutableStringProperty = Maybe.fromNullable(
-      $json["mutableStringProperty"],
-    );
     return create({
-      $identifier,
-      mutableListProperty,
-      mutableSetProperty,
-      mutableStringProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      mutableListProperty: Maybe.fromNullable($json["mutableListProperty"]).map(
+        (item) => item ?? [],
+      ),
+      mutableSetProperty: $json["mutableSetProperty"] ?? [],
+      mutableStringProperty: Maybe.fromNullable($json["mutableStringProperty"]),
     });
   }
 
@@ -26754,12 +26672,13 @@ export namespace ClassMultipleInheritanceParent2 {
   export function fromJson(
     $json: ClassMultipleInheritanceParent2.Json,
   ): ClassMultipleInheritanceParent2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classMultipleInheritanceParent2Property =
-      $json["classMultipleInheritanceParent2Property"];
-    return create({ $identifier, classMultipleInheritanceParent2Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classMultipleInheritanceParent2Property:
+        $json["classMultipleInheritanceParent2Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -27354,12 +27273,13 @@ export namespace ClassMultipleInheritanceParent1 {
   export function fromJson(
     $json: ClassMultipleInheritanceParent1.Json,
   ): ClassMultipleInheritanceParent1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classMultipleInheritanceParent1Property =
-      $json["classMultipleInheritanceParent1Property"];
-    return create({ $identifier, classMultipleInheritanceParent1Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classMultipleInheritanceParent1Property:
+        $json["classMultipleInheritanceParent1Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -27989,16 +27909,14 @@ export namespace ClassMultipleInheritanceChild {
   export function fromJson(
     $json: ClassMultipleInheritanceChild.Json,
   ): ClassMultipleInheritanceChild {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classMultipleInheritanceChildProperty =
-      $json["classMultipleInheritanceChildProperty"];
     return create({
       ...ClassMultipleInheritanceParent1.fromJson($json),
       ...ClassMultipleInheritanceParent2.fromJson($json),
-      $identifier,
-      classMultipleInheritanceChildProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classMultipleInheritanceChildProperty:
+        $json["classMultipleInheritanceChildProperty"],
     });
   }
 
@@ -28826,23 +28744,20 @@ export namespace ListProperties {
   };
 
   export function fromJson($json: ListProperties.Json): ListProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
-      (item) => (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
-    );
-    const objectListProperty = Maybe.fromNullable(
-      $json["objectListProperty"],
-    ).map((item) => (item ?? []).map((item) => NonClass.fromJson(item)));
-    const stringListProperty = Maybe.fromNullable(
-      $json["stringListProperty"],
-    ).map((item) => item ?? []);
     return create({
-      $identifier,
-      iriListProperty,
-      objectListProperty,
-      stringListProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      iriListProperty: Maybe.fromNullable($json["iriListProperty"]).map(
+        (item) =>
+          (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
+      ),
+      objectListProperty: Maybe.fromNullable($json["objectListProperty"]).map(
+        (item) => (item ?? []).map((item) => NonClass.fromJson(item)),
+      ),
+      stringListProperty: Maybe.fromNullable($json["stringListProperty"]).map(
+        (item) => item ?? [],
+      ),
     });
   }
 
@@ -31205,17 +31120,52 @@ export namespace LazyProperties {
   };
 
   export function fromJson($json: LazyProperties.Json): LazyProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        new $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >({
+          partial: Maybe.fromNullable(
+            $json["optionalLazyToResolvedBlankNodeOrIriIdentifierProperty"],
+          ).map((item) => $DefaultPartial.fromJson(item)),
+          resolver: (identifier) =>
+            Promise.resolve(
+              Left(
+                new Error(
+                  `unable to resolve identifier ${identifier} deserialized from JSON`,
+                ),
+              ),
+            ),
+        }),
+      optionalLazyToResolvedIriIdentifierProperty: new $LazyObjectOption<
+        LazilyResolvedIriIdentifier.Identifier,
+        $NamedDefaultPartial,
+        LazilyResolvedIriIdentifier
       >({
         partial: Maybe.fromNullable(
-          $json["optionalLazyToResolvedBlankNodeOrIriIdentifierProperty"],
+          $json["optionalLazyToResolvedIriIdentifierProperty"],
+        ).map((item) => $NamedDefaultPartial.fromJson(item)),
+        resolver: (identifier) =>
+          Promise.resolve(
+            Left(
+              new Error(
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
+              ),
+            ),
+          ),
+      }),
+      optionalLazyToResolvedUnionProperty: new $LazyObjectOption<
+        LazilyResolvedUnion.Identifier,
+        $DefaultPartial,
+        LazilyResolvedUnion
+      >({
+        partial: Maybe.fromNullable(
+          $json["optionalLazyToResolvedUnionProperty"],
         ).map((item) => $DefaultPartial.fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
@@ -31225,49 +31175,32 @@ export namespace LazyProperties {
               ),
             ),
           ),
-      });
-    const optionalLazyToResolvedIriIdentifierProperty = new $LazyObjectOption<
-      LazilyResolvedIriIdentifier.Identifier,
-      $NamedDefaultPartial,
-      LazilyResolvedIriIdentifier
-    >({
-      partial: Maybe.fromNullable(
-        $json["optionalLazyToResolvedIriIdentifierProperty"],
-      ).map((item) => $NamedDefaultPartial.fromJson(item)),
-      resolver: (identifier) =>
-        Promise.resolve(
-          Left(
-            new Error(
-              `unable to resolve identifier ${identifier} deserialized from JSON`,
+      }),
+      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        new $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >({
+          partial: Maybe.fromNullable(
+            $json["optionalPartialToResolvedBlankNodeOrIriIdentifierProperty"],
+          ).map((item) => Partial.fromJson(item)),
+          resolver: (identifier) =>
+            Promise.resolve(
+              Left(
+                new Error(
+                  `unable to resolve identifier ${identifier} deserialized from JSON`,
+                ),
+              ),
             ),
-          ),
-        ),
-    });
-    const optionalLazyToResolvedUnionProperty = new $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      $DefaultPartial,
-      LazilyResolvedUnion
-    >({
-      partial: Maybe.fromNullable(
-        $json["optionalLazyToResolvedUnionProperty"],
-      ).map((item) => $DefaultPartial.fromJson(item)),
-      resolver: (identifier) =>
-        Promise.resolve(
-          Left(
-            new Error(
-              `unable to resolve identifier ${identifier} deserialized from JSON`,
-            ),
-          ),
-        ),
-    });
-    const optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObjectOption<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+        }),
+      optionalPartialToResolvedUnionProperty: new $LazyObjectOption<
+        LazilyResolvedUnion.Identifier,
         Partial,
-        LazilyResolvedBlankNodeOrIriIdentifier
+        LazilyResolvedUnion
       >({
         partial: Maybe.fromNullable(
-          $json["optionalPartialToResolvedBlankNodeOrIriIdentifierProperty"],
+          $json["optionalPartialToResolvedUnionProperty"],
         ).map((item) => Partial.fromJson(item)),
         resolver: (identifier) =>
           Promise.resolve(
@@ -31277,43 +31210,25 @@ export namespace LazyProperties {
               ),
             ),
           ),
-      });
-    const optionalPartialToResolvedUnionProperty = new $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      Partial,
-      LazilyResolvedUnion
-    >({
-      partial: Maybe.fromNullable(
-        $json["optionalPartialToResolvedUnionProperty"],
-      ).map((item) => Partial.fromJson(item)),
-      resolver: (identifier) =>
-        Promise.resolve(
-          Left(
-            new Error(
-              `unable to resolve identifier ${identifier} deserialized from JSON`,
+      }),
+      optionalPartialUnionToResolvedUnionProperty: new $LazyObjectOption<
+        LazilyResolvedUnion.Identifier,
+        PartialUnion,
+        LazilyResolvedUnion
+      >({
+        partial: Maybe.fromNullable(
+          $json["optionalPartialUnionToResolvedUnionProperty"],
+        ).map((item) => PartialUnion.fromJson(item)),
+        resolver: (identifier) =>
+          Promise.resolve(
+            Left(
+              new Error(
+                `unable to resolve identifier ${identifier} deserialized from JSON`,
+              ),
             ),
           ),
-        ),
-    });
-    const optionalPartialUnionToResolvedUnionProperty = new $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      PartialUnion,
-      LazilyResolvedUnion
-    >({
-      partial: Maybe.fromNullable(
-        $json["optionalPartialUnionToResolvedUnionProperty"],
-      ).map((item) => PartialUnion.fromJson(item)),
-      resolver: (identifier) =>
-        Promise.resolve(
-          Left(
-            new Error(
-              `unable to resolve identifier ${identifier} deserialized from JSON`,
-            ),
-          ),
-        ),
-    });
-    const requiredLazyToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObject<
+      }),
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObject<
         LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifier
@@ -31329,27 +31244,26 @@ export namespace LazyProperties {
               ),
             ),
           ),
-      });
-    const requiredPartialToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        Partial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partial: Partial.fromJson(
-          $json["requiredPartialToResolvedBlankNodeOrIriIdentifierProperty"],
-        ),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
+      }),
+      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        new $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >({
+          partial: Partial.fromJson(
+            $json["requiredPartialToResolvedBlankNodeOrIriIdentifierProperty"],
+          ),
+          resolver: (identifier) =>
+            Promise.resolve(
+              Left(
+                new Error(
+                  `unable to resolve identifier ${identifier} deserialized from JSON`,
+                ),
               ),
             ),
-          ),
-      });
-    const setLazyToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObjectSet<
+        }),
+      setLazyToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
         $DefaultPartial,
         LazilyResolvedBlankNodeOrIriIdentifier
@@ -31363,9 +31277,8 @@ export namespace LazyProperties {
               new Error("unable to resolve identifiers deserialized from JSON"),
             ),
           ),
-      });
-    const setPartialToResolvedBlankNodeOrIriIdentifierProperty =
-      new $LazyObjectSet<
+      }),
+      setPartialToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObjectSet<
         LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
         Partial,
         LazilyResolvedBlankNodeOrIriIdentifier
@@ -31379,19 +31292,7 @@ export namespace LazyProperties {
               new Error("unable to resolve identifiers deserialized from JSON"),
             ),
           ),
-      });
-    return create({
-      $identifier,
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      optionalLazyToResolvedIriIdentifierProperty,
-      optionalLazyToResolvedUnionProperty,
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
-      optionalPartialToResolvedUnionProperty,
-      optionalPartialUnionToResolvedUnionProperty,
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+      }),
     });
   }
 
@@ -32624,9 +32525,10 @@ export namespace LazilyResolvedIriIdentifier {
   export function fromJson(
     $json: LazilyResolvedIriIdentifier.Json,
   ): LazilyResolvedIriIdentifier {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -33133,11 +33035,12 @@ export namespace LazilyResolvedUnionMember2 {
   export function fromJson(
     $json: LazilyResolvedUnionMember2.Json,
   ): LazilyResolvedUnionMember2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -33690,11 +33593,12 @@ export namespace LazilyResolvedUnionMember1 {
   export function fromJson(
     $json: LazilyResolvedUnionMember1.Json,
   ): LazilyResolvedUnionMember1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -34256,11 +34160,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function fromJson(
     $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
   ): LazilyResolvedBlankNodeOrIriIdentifier {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -34796,24 +34701,25 @@ export namespace LanguageInProperties {
   export function fromJson(
     $json: LanguageInProperties.Json,
   ): LanguageInProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const languageInLiteralProperty = NonEmptyList.fromArray(
-      $json["languageInLiteralProperty"],
-    )
-      .unsafeCoerce()
-      .map((item) =>
-        dataFactory.literal(
-          item["@value"],
-          item["@language"] !== undefined
-            ? item["@language"]
-            : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"]!)
-              : undefined,
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      languageInLiteralProperty: NonEmptyList.fromArray(
+        $json["languageInLiteralProperty"],
+      )
+        .unsafeCoerce()
+        .map((item) =>
+          dataFactory.literal(
+            item["@value"],
+            item["@language"] !== undefined
+              ? item["@language"]
+              : item["@type"] !== undefined
+                ? dataFactory.namedNode(item["@type"]!)
+                : undefined,
+          ),
         ),
-      );
-    return create({ $identifier, languageInLiteralProperty });
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -35614,27 +35520,27 @@ export namespace JsPrimitiveUnionProperty {
   export function fromJson(
     $json: JsPrimitiveUnionProperty.Json,
   ): JsPrimitiveUnionProperty {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const jsPrimitiveUnionProperty = (
-      $json["jsPrimitiveUnionProperty"] ?? []
-    ).map((item) =>
-      ((value: boolean | number | string): boolean | number | string => {
-        if (typeof value === "boolean") {
-          return value as boolean;
-        }
-        if (typeof value === "number") {
-          return value as number;
-        }
-        if (typeof value === "string") {
-          return value as string;
-        }
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      jsPrimitiveUnionProperty: ($json["jsPrimitiveUnionProperty"] ?? []).map(
+        (item) =>
+          ((value: boolean | number | string): boolean | number | string => {
+            if (typeof value === "boolean") {
+              return value as boolean;
+            }
+            if (typeof value === "number") {
+              return value as number;
+            }
+            if (typeof value === "string") {
+              return value as string;
+            }
 
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    return create({ $identifier, jsPrimitiveUnionProperty });
+            throw new Error("unable to deserialize JSON");
+          })(item),
+      ),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -36235,8 +36141,7 @@ export namespace IriIdentifier {
   };
 
   export function fromJson($json: IriIdentifier.Json): IriIdentifier {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    return create({ $identifier });
+    return create({ $identifier: dataFactory.namedNode($json["@id"]) });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<IriIdentifier> = (
@@ -36737,13 +36642,14 @@ export namespace IndirectRecursiveHelper {
   export function fromJson(
     $json: IndirectRecursiveHelper.Json,
   ): IndirectRecursiveHelper {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const indirectRecursiveProperty = Maybe.fromNullable(
-      $json["indirectRecursiveProperty"],
-    ).map((item) => IndirectRecursive.fromJson(item));
-    return create({ $identifier, indirectRecursiveProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      indirectRecursiveProperty: Maybe.fromNullable(
+        $json["indirectRecursiveProperty"],
+      ).map((item) => IndirectRecursive.fromJson(item)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -37312,13 +37218,14 @@ export namespace IndirectRecursive {
   };
 
   export function fromJson($json: IndirectRecursive.Json): IndirectRecursive {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const indirectRecursiveHelperProperty = Maybe.fromNullable(
-      $json["indirectRecursiveHelperProperty"],
-    ).map((item) => IndirectRecursiveHelper.fromJson(item));
-    return create({ $identifier, indirectRecursiveHelperProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      indirectRecursiveHelperProperty: Maybe.fromNullable(
+        $json["indirectRecursiveHelperProperty"],
+      ).map((item) => IndirectRecursiveHelper.fromJson(item)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -38320,29 +38227,22 @@ export namespace InProperties {
   };
 
   export function fromJson($json: InProperties.Json): InProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const inBooleansProperty = Maybe.fromNullable($json["inBooleansProperty"]);
-    const inDateTimesProperty = Maybe.fromNullable(
-      $json["inDateTimesProperty"],
-    ).map((item) => new Date(item));
-    const inDoublesProperty = Maybe.fromNullable($json["inDoublesProperty"]);
-    const inIntegersProperty = Maybe.fromNullable(
-      $json["inIntegersProperty"],
-    ).map((item) => BigInt(item) as 1n | 2n);
-    const inIrisProperty = Maybe.fromNullable($json["inIrisProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const inStringsProperty = Maybe.fromNullable($json["inStringsProperty"]);
     return create({
-      $identifier,
-      inBooleansProperty,
-      inDateTimesProperty,
-      inDoublesProperty,
-      inIntegersProperty,
-      inIrisProperty,
-      inStringsProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      inBooleansProperty: Maybe.fromNullable($json["inBooleansProperty"]),
+      inDateTimesProperty: Maybe.fromNullable($json["inDateTimesProperty"]).map(
+        (item) => new Date(item),
+      ),
+      inDoublesProperty: Maybe.fromNullable($json["inDoublesProperty"]),
+      inIntegersProperty: Maybe.fromNullable($json["inIntegersProperty"]).map(
+        (item) => BigInt(item) as 1n | 2n,
+      ),
+      inIrisProperty: Maybe.fromNullable($json["inIrisProperty"]).map((item) =>
+        dataFactory.namedNode(item["@id"]),
+      ),
+      inStringsProperty: Maybe.fromNullable($json["inStringsProperty"]),
     });
   }
 
@@ -39195,11 +39095,10 @@ export namespace InIdentifier {
   };
 
   export function fromJson($json: InIdentifier.Json): InIdentifier {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const inIdentifierProperty = Maybe.fromNullable(
-      $json["inIdentifierProperty"],
-    );
-    return create({ $identifier, inIdentifierProperty });
+    return create({
+      $identifier: dataFactory.namedNode($json["@id"]),
+      inIdentifierProperty: Maybe.fromNullable($json["inIdentifierProperty"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<InIdentifier> = (
@@ -39766,17 +39665,14 @@ export namespace HasValueProperties {
   };
 
   export function fromJson($json: HasValueProperties.Json): HasValueProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const hasIriValueProperty = dataFactory.namedNode(
-      $json["hasIriValueProperty"]["@id"],
-    );
-    const hasLiteralValueProperty = $json["hasLiteralValueProperty"];
     return create({
-      $identifier,
-      hasIriValueProperty,
-      hasLiteralValueProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      hasIriValueProperty: dataFactory.namedNode(
+        $json["hasIriValueProperty"]["@id"],
+      ),
+      hasLiteralValueProperty: $json["hasLiteralValueProperty"],
     });
   }
 
@@ -40319,11 +40215,12 @@ export namespace FlattenUnionMember3 {
   export function fromJson(
     $json: FlattenUnionMember3.Json,
   ): FlattenUnionMember3 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const flattenUnionMember3Property = $json["flattenUnionMember3Property"];
-    return create({ $identifier, flattenUnionMember3Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      flattenUnionMember3Property: $json["flattenUnionMember3Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -40882,13 +40779,14 @@ export namespace ExternProperty {
   };
 
   export function fromJson($json: ExternProperty.Json): ExternProperty {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const externProperty = Maybe.fromNullable($json["externProperty"]).map(
-      (item) => Extern.fromJson(item),
-    );
-    return create({ $identifier, externProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      externProperty: Maybe.fromNullable($json["externProperty"]).map((item) =>
+        Extern.fromJson(item),
+      ),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ExternProperty> = (
@@ -41449,11 +41347,12 @@ export namespace BaseForExtern {
   };
 
   export function fromJson($json: BaseForExtern.Json): BaseForExtern {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const baseForExternProperty = $json["baseForExternProperty"];
-    return create({ $identifier, baseForExternProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      baseForExternProperty: $json["baseForExternProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<BaseForExtern> = (
@@ -41996,11 +41895,12 @@ export namespace ExplicitRdfType {
   };
 
   export function fromJson($json: ExplicitRdfType.Json): ExplicitRdfType {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const explicitRdfTypeProperty = $json["explicitRdfTypeProperty"];
-    return create({ $identifier, explicitRdfTypeProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      explicitRdfTypeProperty: $json["explicitRdfTypeProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ExplicitRdfType> = (
@@ -42553,12 +42453,12 @@ export namespace ExplicitFromToRdfTypes {
   export function fromJson(
     $json: ExplicitFromToRdfTypes.Json,
   ): ExplicitFromToRdfTypes {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const explicitFromToRdfTypesProperty =
-      $json["explicitFromToRdfTypesProperty"];
-    return create({ $identifier, explicitFromToRdfTypesProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      explicitFromToRdfTypesProperty: $json["explicitFromToRdfTypesProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -43252,17 +43152,13 @@ export namespace DisplayProperties {
   };
 
   export function fromJson($json: DisplayProperties.Json): DisplayProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const explicitFalseDisplayProperty = $json["explicitFalseDisplayProperty"];
-    const explicitTrueDisplayProperty = $json["explicitTrueDisplayProperty"];
-    const implicitFalseDisplayProperty = $json["implicitFalseDisplayProperty"];
     return create({
-      $identifier,
-      explicitFalseDisplayProperty,
-      explicitTrueDisplayProperty,
-      implicitFalseDisplayProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      explicitFalseDisplayProperty: $json["explicitFalseDisplayProperty"],
+      explicitTrueDisplayProperty: $json["explicitTrueDisplayProperty"],
+      implicitFalseDisplayProperty: $json["implicitFalseDisplayProperty"],
     });
   }
 
@@ -43863,13 +43759,14 @@ export namespace DirectRecursive {
   };
 
   export function fromJson($json: DirectRecursive.Json): DirectRecursive {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const directRecursiveProperty = Maybe.fromNullable(
-      $json["directRecursiveProperty"],
-    ).map((item) => DirectRecursive.fromJson(item));
-    return create({ $identifier, directRecursiveProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      directRecursiveProperty: Maybe.fromNullable(
+        $json["directRecursiveProperty"],
+      ).map((item) => DirectRecursive.fromJson(item)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<DirectRecursive> = (
@@ -44806,29 +44703,19 @@ export namespace DefaultValueProperties {
   export function fromJson(
     $json: DefaultValueProperties.Json,
   ): DefaultValueProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const dateDefaultValueProperty = new Date(
-      $json["dateDefaultValueProperty"],
-    );
-    const dateTimeDefaultValueProperty = new Date(
-      $json["dateTimeDefaultValueProperty"],
-    );
-    const falseBooleanDefaultValueProperty =
-      $json["falseBooleanDefaultValueProperty"];
-    const numberDefaultValueProperty = $json["numberDefaultValueProperty"];
-    const stringDefaultValueProperty = $json["stringDefaultValueProperty"];
-    const trueBooleanDefaultValueProperty =
-      $json["trueBooleanDefaultValueProperty"];
     return create({
-      $identifier,
-      dateDefaultValueProperty,
-      dateTimeDefaultValueProperty,
-      falseBooleanDefaultValueProperty,
-      numberDefaultValueProperty,
-      stringDefaultValueProperty,
-      trueBooleanDefaultValueProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      dateDefaultValueProperty: new Date($json["dateDefaultValueProperty"]),
+      dateTimeDefaultValueProperty: new Date(
+        $json["dateTimeDefaultValueProperty"],
+      ),
+      falseBooleanDefaultValueProperty:
+        $json["falseBooleanDefaultValueProperty"],
+      numberDefaultValueProperty: $json["numberDefaultValueProperty"],
+      stringDefaultValueProperty: $json["stringDefaultValueProperty"],
+      trueBooleanDefaultValueProperty: $json["trueBooleanDefaultValueProperty"],
     });
   }
 
@@ -46774,105 +46661,108 @@ export namespace DateUnionProperties {
   export function fromJson(
     $json: DateUnionProperties.Json,
   ): DateUnionProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const dateOrDateTimeProperty = Maybe.fromNullable(
-      $json["dateOrDateTimeProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { type: "date"; value: string }
-          | { type: "dateTime"; value: string },
-      ): { type: "date"; value: Date } | { type: "dateTime"; value: Date } => {
-        if (value["type"] === "date") {
-          return {
-            type: "date" as const,
-            value: new Date(value.value as string),
-          };
-        }
-        if (value["type"] === "dateTime") {
-          return {
-            type: "dateTime" as const,
-            value: new Date(value.value as string),
-          };
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const dateOrStringProperty = Maybe.fromNullable(
-      $json["dateOrStringProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { type: "date"; value: string }
-          | { type: "string"; value: string },
-      ): { type: "date"; value: Date } | { type: "string"; value: string } => {
-        if (value["type"] === "date") {
-          return {
-            type: "date" as const,
-            value: new Date(value.value as string),
-          };
-        }
-        if (value["type"] === "string") {
-          return { type: "string" as const, value: value.value as string };
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const dateTimeOrDateProperty = Maybe.fromNullable(
-      $json["dateTimeOrDateProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { type: "dateTime"; value: string }
-          | { type: "date"; value: string },
-      ): { type: "dateTime"; value: Date } | { type: "date"; value: Date } => {
-        if (value["type"] === "dateTime") {
-          return {
-            type: "dateTime" as const,
-            value: new Date(value.value as string),
-          };
-        }
-        if (value["type"] === "date") {
-          return {
-            type: "date" as const,
-            value: new Date(value.value as string),
-          };
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    const stringOrDateProperty = Maybe.fromNullable(
-      $json["stringOrDateProperty"],
-    ).map((item) =>
-      ((
-        value:
-          | { type: "string"; value: string }
-          | { type: "date"; value: string },
-      ): { type: "string"; value: string } | { type: "date"; value: Date } => {
-        if (value["type"] === "string") {
-          return { type: "string" as const, value: value.value as string };
-        }
-        if (value["type"] === "date") {
-          return {
-            type: "date" as const,
-            value: new Date(value.value as string),
-          };
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
     return create({
-      $identifier,
-      dateOrDateTimeProperty,
-      dateOrStringProperty,
-      dateTimeOrDateProperty,
-      stringOrDateProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      dateOrDateTimeProperty: Maybe.fromNullable(
+        $json["dateOrDateTimeProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { type: "date"; value: string }
+            | { type: "dateTime"; value: string },
+        ):
+          | { type: "date"; value: Date }
+          | { type: "dateTime"; value: Date } => {
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: new Date(value.value as string),
+            };
+          }
+          if (value["type"] === "dateTime") {
+            return {
+              type: "dateTime" as const,
+              value: new Date(value.value as string),
+            };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      dateOrStringProperty: Maybe.fromNullable(
+        $json["dateOrStringProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { type: "date"; value: string }
+            | { type: "string"; value: string },
+        ):
+          | { type: "date"; value: Date }
+          | { type: "string"; value: string } => {
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: new Date(value.value as string),
+            };
+          }
+          if (value["type"] === "string") {
+            return { type: "string" as const, value: value.value as string };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      dateTimeOrDateProperty: Maybe.fromNullable(
+        $json["dateTimeOrDateProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { type: "dateTime"; value: string }
+            | { type: "date"; value: string },
+        ):
+          | { type: "dateTime"; value: Date }
+          | { type: "date"; value: Date } => {
+          if (value["type"] === "dateTime") {
+            return {
+              type: "dateTime" as const,
+              value: new Date(value.value as string),
+            };
+          }
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: new Date(value.value as string),
+            };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
+      stringOrDateProperty: Maybe.fromNullable(
+        $json["stringOrDateProperty"],
+      ).map((item) =>
+        ((
+          value:
+            | { type: "string"; value: string }
+            | { type: "date"; value: string },
+        ):
+          | { type: "string"; value: string }
+          | { type: "date"; value: Date } => {
+          if (value["type"] === "string") {
+            return { type: "string" as const, value: value.value as string };
+          }
+          if (value["type"] === "date") {
+            return {
+              type: "date" as const,
+              value: new Date(value.value as string),
+            };
+          }
+
+          throw new Error("unable to deserialize JSON");
+        })(item),
+      ),
     });
   }
 
@@ -49272,28 +49162,41 @@ export namespace ConvertibleTypeProperties {
   export function fromJson(
     $json: ConvertibleTypeProperties.Json,
   ): ConvertibleTypeProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const convertibleIriNonEmptySetProperty = NonEmptyList.fromArray(
-      $json["convertibleIriNonEmptySetProperty"],
-    )
-      .unsafeCoerce()
-      .map((item) => dataFactory.namedNode(item["@id"]));
-    const convertibleIriOptionProperty = Maybe.fromNullable(
-      $json["convertibleIriOptionProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const convertibleIriProperty = dataFactory.namedNode(
-      $json["convertibleIriProperty"]["@id"],
-    );
-    const convertibleIriSetProperty = (
-      $json["convertibleIriSetProperty"] ?? []
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const convertibleLiteralNonEmptySetProperty = NonEmptyList.fromArray(
-      $json["convertibleLiteralNonEmptySetProperty"],
-    )
-      .unsafeCoerce()
-      .map((item) =>
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      convertibleIriNonEmptySetProperty: NonEmptyList.fromArray(
+        $json["convertibleIriNonEmptySetProperty"],
+      )
+        .unsafeCoerce()
+        .map((item) => dataFactory.namedNode(item["@id"])),
+      convertibleIriOptionProperty: Maybe.fromNullable(
+        $json["convertibleIriOptionProperty"],
+      ).map((item) => dataFactory.namedNode(item["@id"])),
+      convertibleIriProperty: dataFactory.namedNode(
+        $json["convertibleIriProperty"]["@id"],
+      ),
+      convertibleIriSetProperty: ($json["convertibleIriSetProperty"] ?? []).map(
+        (item) => dataFactory.namedNode(item["@id"]),
+      ),
+      convertibleLiteralNonEmptySetProperty: NonEmptyList.fromArray(
+        $json["convertibleLiteralNonEmptySetProperty"],
+      )
+        .unsafeCoerce()
+        .map((item) =>
+          dataFactory.literal(
+            item["@value"],
+            item["@language"] !== undefined
+              ? item["@language"]
+              : item["@type"] !== undefined
+                ? dataFactory.namedNode(item["@type"]!)
+                : undefined,
+          ),
+        ),
+      convertibleLiteralOptionProperty: Maybe.fromNullable(
+        $json["convertibleLiteralOptionProperty"],
+      ).map((item) =>
         dataFactory.literal(
           item["@value"],
           item["@language"] !== undefined
@@ -49302,44 +49205,50 @@ export namespace ConvertibleTypeProperties {
               ? dataFactory.namedNode(item["@type"]!)
               : undefined,
         ),
-      );
-    const convertibleLiteralOptionProperty = Maybe.fromNullable(
-      $json["convertibleLiteralOptionProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        item["@language"] !== undefined
-          ? item["@language"]
-          : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"]!)
+      ),
+      convertibleLiteralProperty: dataFactory.literal(
+        $json["convertibleLiteralProperty"]["@value"],
+        $json["convertibleLiteralProperty"]["@language"] !== undefined
+          ? $json["convertibleLiteralProperty"]["@language"]
+          : $json["convertibleLiteralProperty"]["@type"] !== undefined
+            ? dataFactory.namedNode(
+                $json["convertibleLiteralProperty"]["@type"]!,
+              )
             : undefined,
       ),
-    );
-    const convertibleLiteralProperty = dataFactory.literal(
-      $json["convertibleLiteralProperty"]["@value"],
-      $json["convertibleLiteralProperty"]["@language"] !== undefined
-        ? $json["convertibleLiteralProperty"]["@language"]
-        : $json["convertibleLiteralProperty"]["@type"] !== undefined
-          ? dataFactory.namedNode($json["convertibleLiteralProperty"]["@type"]!)
-          : undefined,
-    );
-    const convertibleLiteralSetProperty = (
-      $json["convertibleLiteralSetProperty"] ?? []
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        item["@language"] !== undefined
-          ? item["@language"]
-          : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"]!)
-            : undefined,
+      convertibleLiteralSetProperty: (
+        $json["convertibleLiteralSetProperty"] ?? []
+      ).map((item) =>
+        dataFactory.literal(
+          item["@value"],
+          item["@language"] !== undefined
+            ? item["@language"]
+            : item["@type"] !== undefined
+              ? dataFactory.namedNode(item["@type"]!)
+              : undefined,
+        ),
       ),
-    );
-    const convertibleTermNonEmptySetProperty = NonEmptyList.fromArray(
-      $json["convertibleTermNonEmptySetProperty"],
-    )
-      .unsafeCoerce()
-      .map((item) =>
+      convertibleTermNonEmptySetProperty: NonEmptyList.fromArray(
+        $json["convertibleTermNonEmptySetProperty"],
+      )
+        .unsafeCoerce()
+        .map((item) =>
+          item.termType === "Literal"
+            ? dataFactory.literal(
+                item["@value"],
+                item["@language"] !== undefined
+                  ? item["@language"]
+                  : item["@type"] !== undefined
+                    ? dataFactory.namedNode(item["@type"]!)
+                    : undefined,
+              )
+            : item.termType === "NamedNode"
+              ? dataFactory.namedNode(item["@id"])
+              : dataFactory.blankNode(item["@id"].substring(2)),
+        ),
+      convertibleTermOptionProperty: Maybe.fromNullable(
+        $json["convertibleTermOptionProperty"],
+      ).map((item) =>
         item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
@@ -49352,70 +49261,40 @@ export namespace ConvertibleTypeProperties {
           : item.termType === "NamedNode"
             ? dataFactory.namedNode(item["@id"])
             : dataFactory.blankNode(item["@id"].substring(2)),
-      );
-    const convertibleTermOptionProperty = Maybe.fromNullable(
-      $json["convertibleTermOptionProperty"],
-    ).map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"]!)
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : dataFactory.blankNode(item["@id"].substring(2)),
-    );
-    const convertibleTermProperty =
-      $json["convertibleTermProperty"].termType === "Literal"
-        ? dataFactory.literal(
-            $json["convertibleTermProperty"]["@value"],
-            $json["convertibleTermProperty"]["@language"] !== undefined
-              ? $json["convertibleTermProperty"]["@language"]
-              : $json["convertibleTermProperty"]["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    $json["convertibleTermProperty"]["@type"]!,
-                  )
-                : undefined,
-          )
-        : $json["convertibleTermProperty"].termType === "NamedNode"
-          ? dataFactory.namedNode($json["convertibleTermProperty"]["@id"])
-          : dataFactory.blankNode(
-              $json["convertibleTermProperty"]["@id"].substring(2),
-            );
-    const convertibleTermSetProperty = (
-      $json["convertibleTermSetProperty"] ?? []
-    ).map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"]!)
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
-          : dataFactory.blankNode(item["@id"].substring(2)),
-    );
-    return create({
-      $identifier,
-      convertibleIriNonEmptySetProperty,
-      convertibleIriOptionProperty,
-      convertibleIriProperty,
-      convertibleIriSetProperty,
-      convertibleLiteralNonEmptySetProperty,
-      convertibleLiteralOptionProperty,
-      convertibleLiteralProperty,
-      convertibleLiteralSetProperty,
-      convertibleTermNonEmptySetProperty,
-      convertibleTermOptionProperty,
-      convertibleTermProperty,
-      convertibleTermSetProperty,
+      ),
+      convertibleTermProperty:
+        $json["convertibleTermProperty"].termType === "Literal"
+          ? dataFactory.literal(
+              $json["convertibleTermProperty"]["@value"],
+              $json["convertibleTermProperty"]["@language"] !== undefined
+                ? $json["convertibleTermProperty"]["@language"]
+                : $json["convertibleTermProperty"]["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      $json["convertibleTermProperty"]["@type"]!,
+                    )
+                  : undefined,
+            )
+          : $json["convertibleTermProperty"].termType === "NamedNode"
+            ? dataFactory.namedNode($json["convertibleTermProperty"]["@id"])
+            : dataFactory.blankNode(
+                $json["convertibleTermProperty"]["@id"].substring(2),
+              ),
+      convertibleTermSetProperty: (
+        $json["convertibleTermSetProperty"] ?? []
+      ).map((item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      ),
     });
   }
 
@@ -50518,11 +50397,12 @@ export namespace Partial {
   };
 
   export function fromJson($json: Partial.Json): Partial {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return create({ $identifier, lazilyResolvedStringProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<Partial> = (
@@ -50948,11 +50828,12 @@ export namespace NonClass {
   };
 
   export function fromJson($json: NonClass.Json): NonClass {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const nonClassProperty = $json["nonClassProperty"];
-    return create({ $identifier, nonClassProperty });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      nonClassProperty: $json["nonClassProperty"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NonClass> = (
@@ -51809,39 +51690,31 @@ export namespace ClassProperties {
   };
 
   export function fromJson($json: ClassProperties.Json): ClassProperties {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const iriClassProperty = Maybe.fromNullable($json["iriClassProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const multiClassProperty = Maybe.fromNullable(
-      $json["multiClassProperty"],
-    ).map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
-    const nodeClassProperty1 = Maybe.fromNullable(
-      $json["nodeClassProperty1"],
-    ).map((item) => NonClass.fromJson(item));
-    const nodeClassProperty2 = Maybe.fromNullable(
-      $json["nodeClassProperty2"],
-    ).map((item) => Partial.fromJson(item));
-    const singleClassProperty = Maybe.fromNullable(
-      $json["singleClassProperty"],
-    ).map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
     return create({
-      $identifier,
-      iriClassProperty,
-      multiClassProperty,
-      nodeClassProperty1,
-      nodeClassProperty2,
-      singleClassProperty,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      iriClassProperty: Maybe.fromNullable($json["iriClassProperty"]).map(
+        (item) => dataFactory.namedNode(item["@id"]),
+      ),
+      multiClassProperty: Maybe.fromNullable($json["multiClassProperty"]).map(
+        (item) =>
+          item["@id"].startsWith("_:")
+            ? dataFactory.blankNode(item["@id"].substring(2))
+            : dataFactory.namedNode(item["@id"]),
+      ),
+      nodeClassProperty1: Maybe.fromNullable($json["nodeClassProperty1"]).map(
+        (item) => NonClass.fromJson(item),
+      ),
+      nodeClassProperty2: Maybe.fromNullable($json["nodeClassProperty2"]).map(
+        (item) => Partial.fromJson(item),
+      ),
+      singleClassProperty: Maybe.fromNullable($json["singleClassProperty"]).map(
+        (item) =>
+          item["@id"].startsWith("_:")
+            ? dataFactory.blankNode(item["@id"].substring(2))
+            : dataFactory.namedNode(item["@id"]),
+      ),
     });
   }
 
@@ -52606,11 +52479,12 @@ export namespace ClassHierarchy0 {
   };
 
   export function fromJson($json: ClassHierarchy0.Json): ClassHierarchy0 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classHierarchy0Property = $json["classHierarchy0Property"];
-    return create({ $identifier, classHierarchy0Property });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classHierarchy0Property: $json["classHierarchy0Property"],
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy0> = (
@@ -53139,10 +53013,12 @@ export namespace ClassHierarchy1 {
   };
 
   export function fromJson($json: ClassHierarchy1.Json): ClassHierarchy1 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    return create({ ...ClassHierarchy0.fromJson($json), $identifier });
+    return create({
+      ...ClassHierarchy0.fromJson($json),
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy1> = (
@@ -53697,14 +53573,12 @@ export namespace ClassHierarchy2 {
   };
 
   export function fromJson($json: ClassHierarchy2.Json): ClassHierarchy2 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classHierarchy2Property = $json["classHierarchy2Property"];
     return create({
       ...ClassHierarchy1.fromJson($json),
-      $identifier,
-      classHierarchy2Property,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classHierarchy2Property: $json["classHierarchy2Property"],
     });
   }
 
@@ -54276,14 +54150,12 @@ export namespace ClassHierarchy3 {
   };
 
   export function fromJson($json: ClassHierarchy3.Json): ClassHierarchy3 {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const classHierarchy3Property = $json["classHierarchy3Property"];
     return create({
       ...ClassHierarchy2.fromJson($json),
-      $identifier,
-      classHierarchy3Property,
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+      classHierarchy3Property: $json["classHierarchy3Property"],
     });
   }
 
@@ -54785,10 +54657,11 @@ export namespace BlankNodeOrIriIdentifier {
   export function fromJson(
     $json: BlankNodeOrIriIdentifier.Json,
   ): BlankNodeOrIriIdentifier {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    return create({ $identifier });
+    return create({
+      $identifier: $json["@id"].startsWith("_:")
+        ? dataFactory.blankNode($json["@id"].substring(2))
+        : dataFactory.namedNode($json["@id"]),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -55246,8 +55119,9 @@ export namespace BlankNodeIdentifier {
   export function fromJson(
     $json: BlankNodeIdentifier.Json,
   ): BlankNodeIdentifier {
-    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
-    return create({ $identifier });
+    return create({
+      $identifier: dataFactory.blankNode($json["@id"].substring(2)),
+    });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
