@@ -11,10 +11,10 @@ export function NamedObjectType_fromRdfResourceValuesFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
+export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = (values, options) => 
   values.chain(
     values => values.chainMap(
-      value => value.toResource().chain(resource => ${this.name}.${syntheticNamePrefix}fromRdfResource(resource, options))
+      value => value.toResource().chain(resource => ${this.name}.fromRdfResource(resource, options))
     )
   );`);
 }

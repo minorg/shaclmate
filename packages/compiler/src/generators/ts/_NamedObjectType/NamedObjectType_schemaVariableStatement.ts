@@ -6,11 +6,11 @@ export function NamedObjectType_schemaVariableStatement(
   this: NamedObjectType,
 ): Code {
   return code`\
-export const ${syntheticNamePrefix}schema = { properties: { ${joinCode(
+export const schema = { properties: { ${joinCode(
     this.parentObjectTypes
       .map(
         (parentObjectType) =>
-          code`...${parentObjectType.name}.${syntheticNamePrefix}schema.properties`,
+          code`...${parentObjectType.name}.schema.properties`,
       )
       .concat(
         this.properties.map(

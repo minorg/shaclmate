@@ -12,6 +12,6 @@ export function NamedObjectType_fromRdfTypeVariableStatement(
 
   return this.fromRdfType.map(
     (fromRdfType) => code`\
-export const ${syntheticNamePrefix}fromRdfType: ${this.reusables.imports.NamedNode}<string> = ${this.rdfjsTermExpression(fromRdfType)};`,
+export const fromRdfType: ${this.reusables.imports.NamedNode}<string> = ${this.rdfjsTermExpression(fromRdfType)};`,
   );
 }

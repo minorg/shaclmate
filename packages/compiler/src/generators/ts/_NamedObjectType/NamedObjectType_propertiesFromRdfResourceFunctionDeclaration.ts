@@ -29,12 +29,12 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: code`${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
+      expression: code`${parentObjectType.name}.propertiesFromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${this.reusables.snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromRdfResource>>`,
+      code`${this.reusables.snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.name}.propertiesFromRdfResource>>`,
     );
   });
 
@@ -117,7 +117,7 @@ export function NamedObjectType_propertiesFromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}propertiesFromRdfResource: ${this.reusables.snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
+export const propertiesFromRdfResource: ${this.reusables.snippets.PropertiesFromRdfResourceFunction}<${joinCode(returnType, { on: " & " })}> = (${syntheticNamePrefix}resource, ${optionsVariable}) => {
 ${joinCode(statements)}
 };`);
 }

@@ -206,13 +206,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       code`${this.reusables.snippets.shaclPropertyFromRdf}(${{
         graph: variables.graph,
         resource: variables.resource,
-        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        propertySchema: code`schema.properties.${this.name}`,
         typeFromRdf: code`((resourceValues) => ${this.type.fromRdfResourceValuesExpression(
           {
             variables: {
               ...variables,
               ignoreRdfType: true,
-              propertyPath: code`${this.namedObjectType.name}.${syntheticNamePrefix}schema.properties.${this.name}.path`,
+              propertyPath: code`${this.namedObjectType.name}.schema.properties.${this.name}.path`,
               resourceValues: code`resourceValues`,
             },
           },
@@ -255,7 +255,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         focusIdentifier: variables.focusIdentifier,
         ignoreRdfType: true,
         propertyName: this.name,
-        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        propertySchema: code`schema.properties.${this.name}`,
         typeSparqlConstructTriples:
           this.type.valueSparqlConstructTriplesFunction,
         variablePrefix: variables.variablePrefix,
@@ -277,7 +277,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         ignoreRdfType: true,
         preferredLanguages: variables.preferredLanguages,
         propertyName: this.name,
-        propertySchema: code`${syntheticNamePrefix}schema.properties.${this.name}`,
+        propertySchema: code`schema.properties.${this.name}`,
         typeSparqlWherePatterns: this.type.valueSparqlWherePatternsFunction,
         variablePrefix: variables.variablePrefix,
       }})`,

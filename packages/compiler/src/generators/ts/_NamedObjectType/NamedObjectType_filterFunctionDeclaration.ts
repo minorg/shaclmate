@@ -25,7 +25,7 @@ export function NamedObjectType_filterFunctionDeclaration(
   statements.push(code`return true;`);
 
   return code`\
-export function ${syntheticNamePrefix}filter(filter: ${this.filterType}, value: ${this.name}): boolean {
+export function filter(filter: ${this.filterType}, value: ${this.name}): boolean {
   ${joinCode(statements)}
 }`;
 }

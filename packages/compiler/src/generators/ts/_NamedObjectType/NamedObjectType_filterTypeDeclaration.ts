@@ -25,9 +25,9 @@ export function NamedObjectType_filterTypeDeclaration(
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.name}.${syntheticNamePrefix}Filter`);
+    members.push(code`${parentObjectType.name}.Filter`);
   }
 
   return code`\
-export type ${syntheticNamePrefix}Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
+export type Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
 }

@@ -26,7 +26,7 @@ export function NamedObjectType_focusSparqlWherePatternsFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(code`\
-patterns = patterns.concat(${parentObjectType.name}.${syntheticNamePrefix}focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
+patterns = patterns.concat(${parentObjectType.name}.focusSparqlWherePatterns(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, preferredLanguages: variables.preferredLanguages, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 
@@ -107,7 +107,7 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+export const focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([

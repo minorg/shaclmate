@@ -9,7 +9,7 @@ export function NamedObjectType_toStringFunctionDeclarations(
   if (this.parentObjectTypes.length > 0) {
     for (const parentObjectType of this.parentObjectTypes) {
       propertiesToStringRecordProperties.push(
-        code`...${parentObjectType.name}.${syntheticNamePrefix}propertiesToStrings(${this.thisVariable})`,
+        code`...${parentObjectType.name}.propertiesToStrings(${this.thisVariable})`,
       );
     }
   }
@@ -36,15 +36,15 @@ export function NamedObjectType_toStringFunctionDeclarations(
   return [
     // Use overloads to allow the function to be attached to an instance or used freestanding
     code`\
-export function ${syntheticNamePrefix}propertiesToStrings(${this.thisVariable}: ${this.name}): Record<string, string> {
+export function propertiesToStrings(${this.thisVariable}: ${this.name}): Record<string, string> {
   return ${propertiesToStringsReturnExpression};
 }`,
 
     code`\
-export function ${syntheticNamePrefix}toString(this: ${this.name}): string;
-export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.name}): string;
-export function ${syntheticNamePrefix}toString(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): string {
-  return ${toStringReturnExpression(code`${syntheticNamePrefix}propertiesToStrings((${this.thisVariable} ?? this)!)`)};
+export function toString(this: ${this.name}): string;
+export function toString(${this.thisVariable}: ${this.name}): string;
+export function toString(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): string {
+  return ${toStringReturnExpression(code`propertiesToStrings((${this.thisVariable} ?? this)!)`)};
 }`,
   ];
 }

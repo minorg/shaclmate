@@ -21,10 +21,10 @@ export function NamedObjectType_propertiesFromJsonFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType) => {
     initializers.push(
-      code`...${parentObjectType.name}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
+      code`...${parentObjectType.name}.propertiesFromJson(${variables.jsonObject})`,
     );
     returnType.push(
-      code`ReturnType<typeof ${parentObjectType.name}.${syntheticNamePrefix}propertiesFromJson>`,
+      code`ReturnType<typeof ${parentObjectType.name}.propertiesFromJson>`,
     );
   });
 
@@ -51,7 +51,7 @@ export function NamedObjectType_propertiesFromJsonFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject}: ${this.jsonType().name}): ${joinCode(returnType, { on: " & " })} {
+export function propertiesFromJson(${variables.jsonObject}: ${this.jsonType().name}): ${joinCode(returnType, { on: " & " })} {
 ${joinCode(statements)}
 }`);
 }

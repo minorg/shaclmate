@@ -24,6 +24,6 @@ export function NamedObjectType_jsonTypeAliasDeclaration(
   }
 
   return Maybe.of(
-    code`export type ${syntheticNamePrefix}Json = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`,
+    code`export type Json = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`,
   );
 }

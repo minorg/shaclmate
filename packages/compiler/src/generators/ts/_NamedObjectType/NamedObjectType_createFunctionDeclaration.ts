@@ -21,7 +21,7 @@ export function NamedObjectType_createFunctionDeclaration(
   }
   for (const parentObjectType of this.parentObjectTypes) {
     parametersType.push(
-      code`Parameters<typeof ${parentObjectType.name}.${syntheticNamePrefix}create>[0]`,
+      code`Parameters<typeof ${parentObjectType.name}.create>[0]`,
     );
   }
   if (parametersType.length === 0) {
@@ -32,9 +32,7 @@ export function NamedObjectType_createFunctionDeclaration(
   const omitPropertyNames: string[] = [];
   const propertyStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
-    propertyInitializers.push(
-      `...${parentObjectType.name}.${syntheticNamePrefix}create(parameters)`,
-    );
+    propertyInitializers.push(`...${parentObjectType.name}.create(parameters)`);
   }
   const parametersHasQuestionToken =
     this.parentObjectTypes.length === 0 &&
@@ -61,7 +59,7 @@ export function NamedObjectType_createFunctionDeclaration(
   invariant(propertyStatements.length > 0);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
+export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
   ${joinCode(propertyStatements)}
   return { ${propertyInitializers.join(", ")} };
 }`);

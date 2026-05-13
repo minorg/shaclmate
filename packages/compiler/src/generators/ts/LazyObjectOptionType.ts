@@ -30,7 +30,7 @@ export class LazyObjectOptionType extends Super {
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create), resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.create), resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
           sourceTypeCheckExpression: (value) =>
             code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>`,
@@ -38,7 +38,7 @@ export class LazyObjectOptionType extends Super {
         },
         {
           conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).name}.${syntheticNamePrefix}create(${value})), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
+            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).name}.create(${value})), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
           // Don't check instanceof value since the NamedObjectUnionType may be an interface
           // Rely on the fact that this will be the last type check on an object
           sourceTypeCheckExpression: (value) =>

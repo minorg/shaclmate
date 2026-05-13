@@ -15,7 +15,7 @@ export function NamedObjectType_sparqlConstructQueryStringFunctionDeclaration(th
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters: Parameters<typeof ${this.name}.${syntheticNamePrefix}sparqlConstructQuery>[0] & ${this.reusables.imports.sparqljs}.GeneratorOptions): string {
-  return new ${this.reusables.imports.sparqljs}.Generator(parameters).stringify(${this.name}.${syntheticNamePrefix}sparqlConstructQuery(parameters));
+export function sparqlConstructQueryString(parameters: Parameters<typeof ${this.name}.sparqlConstructQuery>[0] & ${this.reusables.imports.sparqljs}.GeneratorOptions): string {
+  return new ${this.reusables.imports.sparqljs}.Generator(parameters).stringify(${this.name}.sparqlConstructQuery(parameters));
 }`);
 }
