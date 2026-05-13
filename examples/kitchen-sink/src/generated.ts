@@ -3412,9 +3412,10 @@ export namespace $NamedDefaultPartial {
   };
 
   export function fromJson(
-    json: $NamedDefaultPartial.Json,
+    $json: $NamedDefaultPartial.Json,
   ): $NamedDefaultPartial {
-    return create(propertiesFromJson(json));
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -3463,15 +3464,6 @@ export namespace $NamedDefaultPartial {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: $NamedDefaultPartial.Json): {
-    $identifier: NamedNode;
-    $type: "$NamedDefaultPartial";
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const $type = "$NamedDefaultPartial" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -3803,8 +3795,11 @@ export namespace $DefaultPartial {
     return patterns;
   };
 
-  export function fromJson(json: $DefaultPartial.Json): $DefaultPartial {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: $DefaultPartial.Json): $DefaultPartial {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<$DefaultPartial> = (
@@ -3854,17 +3849,6 @@ export namespace $DefaultPartial {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: $DefaultPartial.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "$DefaultPartial";
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "$DefaultPartial" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -7825,104 +7809,10 @@ export namespace UnionDiscriminants {
     return patterns;
   };
 
-  export function fromJson(json: UnionDiscriminants.Json): UnionDiscriminants {
-    return create(propertiesFromJson(json));
-  }
-
-  export const fromRdfResource: $FromRdfResourceFunction<UnionDiscriminants> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return UnionDiscriminants.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    UnionDiscriminants
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            UnionDiscriminants.fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isUnionDiscriminants(
-    object: $Object,
-  ): object is UnionDiscriminants {
-    switch (object.$type) {
-      case "UnionDiscriminants":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function propertiesFromJson($json: UnionDiscriminants.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "UnionDiscriminants";
-    optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
-    optionalIriOrStringProperty: Maybe<NamedNode | string>;
-    optionalNodeOrLiteralProperty: Maybe<
-      { termType: "UnionMember1"; value: UnionMember1 } | Literal
-    >;
-    optionalNodeOrNodeOrStringProperty: Maybe<
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    >;
-    requiredIriOrLiteralProperty: NamedNode | Literal;
-    requiredIriOrStringProperty: NamedNode | string;
-    requiredNodeOrLiteralProperty:
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal;
-    requiredNodeOrNodeOrStringProperty:
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | {
-          type: "UnionMember2";
-          value: UnionMember2;
-        }
-      | { type: "string"; value: string };
-    setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
-    setIriOrStringProperty: readonly (NamedNode | string)[];
-    setNodeOrLiteralProperty: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    setNodeOrNodeOrStringProperty: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
-  } {
+  export function fromJson($json: UnionDiscriminants.Json): UnionDiscriminants {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "UnionDiscriminants" as const;
     const optionalIriOrLiteralProperty = Maybe.fromNullable(
       $json["optionalIriOrLiteralProperty"],
     ).map((item) =>
@@ -8487,9 +8377,8 @@ export namespace UnionDiscriminants {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
-    return {
+    return create({
       $identifier,
-      $type,
       optionalIriOrLiteralProperty,
       optionalIriOrStringProperty,
       optionalNodeOrLiteralProperty,
@@ -8502,7 +8391,54 @@ export namespace UnionDiscriminants {
       setIriOrStringProperty,
       setNodeOrLiteralProperty,
       setNodeOrNodeOrStringProperty,
-    };
+    });
+  }
+
+  export const fromRdfResource: $FromRdfResourceFunction<UnionDiscriminants> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return UnionDiscriminants.propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map(create);
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    UnionDiscriminants
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            UnionDiscriminants.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export function isUnionDiscriminants(
+    object: $Object,
+  ): object is UnionDiscriminants {
+    switch (object.$type) {
+      case "UnionDiscriminants":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -12018,8 +11954,66 @@ export namespace TermProperties {
     return patterns;
   };
 
-  export function fromJson(json: TermProperties.Json): TermProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: TermProperties.Json): TermProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const blankNodeTermProperty = Maybe.fromNullable(
+      $json["blankNodeTermProperty"],
+    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
+    const booleanTermProperty = Maybe.fromNullable(
+      $json["booleanTermProperty"],
+    );
+    const dateTermProperty = Maybe.fromNullable($json["dateTermProperty"]).map(
+      (item) => new Date(item),
+    );
+    const dateTimeTermProperty = Maybe.fromNullable(
+      $json["dateTimeTermProperty"],
+    ).map((item) => new Date(item));
+    const iriTermProperty = Maybe.fromNullable($json["iriTermProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
+    const literalTermProperty = Maybe.fromNullable(
+      $json["literalTermProperty"],
+    ).map((item) =>
+      dataFactory.literal(
+        item["@value"],
+        item["@language"] !== undefined
+          ? item["@language"]
+          : item["@type"] !== undefined
+            ? dataFactory.namedNode(item["@type"]!)
+            : undefined,
+      ),
+    );
+    const numberTermProperty = Maybe.fromNullable($json["numberTermProperty"]);
+    const stringTermProperty = Maybe.fromNullable($json["stringTermProperty"]);
+    const termProperty = Maybe.fromNullable($json["termProperty"]).map(
+      (item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+    );
+    return create({
+      $identifier,
+      blankNodeTermProperty,
+      booleanTermProperty,
+      dateTermProperty,
+      dateTimeTermProperty,
+      iriTermProperty,
+      literalTermProperty,
+      numberTermProperty,
+      stringTermProperty,
+      termProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<TermProperties> = (
@@ -12069,82 +12063,6 @@ export namespace TermProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: TermProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "TermProperties";
-    blankNodeTermProperty: Maybe<BlankNode>;
-    booleanTermProperty: Maybe<boolean>;
-    dateTermProperty: Maybe<Date>;
-    dateTimeTermProperty: Maybe<Date>;
-    iriTermProperty: Maybe<NamedNode>;
-    literalTermProperty: Maybe<Literal>;
-    numberTermProperty: Maybe<number>;
-    stringTermProperty: Maybe<string>;
-    termProperty: Maybe<BlankNode | NamedNode | Literal>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "TermProperties" as const;
-    const blankNodeTermProperty = Maybe.fromNullable(
-      $json["blankNodeTermProperty"],
-    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
-    const booleanTermProperty = Maybe.fromNullable(
-      $json["booleanTermProperty"],
-    );
-    const dateTermProperty = Maybe.fromNullable($json["dateTermProperty"]).map(
-      (item) => new Date(item),
-    );
-    const dateTimeTermProperty = Maybe.fromNullable(
-      $json["dateTimeTermProperty"],
-    ).map((item) => new Date(item));
-    const iriTermProperty = Maybe.fromNullable($json["iriTermProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const literalTermProperty = Maybe.fromNullable(
-      $json["literalTermProperty"],
-    ).map((item) =>
-      dataFactory.literal(
-        item["@value"],
-        item["@language"] !== undefined
-          ? item["@language"]
-          : item["@type"] !== undefined
-            ? dataFactory.namedNode(item["@type"]!)
-            : undefined,
-      ),
-    );
-    const numberTermProperty = Maybe.fromNullable($json["numberTermProperty"]);
-    const stringTermProperty = Maybe.fromNullable($json["stringTermProperty"]);
-    const termProperty = Maybe.fromNullable($json["termProperty"]).map(
-      (item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"]!)
-                  : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
-    );
-    return {
-      $identifier,
-      $type,
-      blankNodeTermProperty,
-      booleanTermProperty,
-      dateTermProperty,
-      dateTimeTermProperty,
-      iriTermProperty,
-      literalTermProperty,
-      numberTermProperty,
-      stringTermProperty,
-      termProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -13044,9 +12962,15 @@ export namespace RecursiveUnionMember2 {
   };
 
   export function fromJson(
-    json: RecursiveUnionMember2.Json,
+    $json: RecursiveUnionMember2.Json,
   ): RecursiveUnionMember2 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const recursiveUnionMember2Property = Maybe.fromNullable(
+      $json["recursiveUnionMember2Property"],
+    ).map((item) => RecursiveUnion.fromJson(item));
+    return create({ $identifier, recursiveUnionMember2Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -13097,21 +13021,6 @@ export namespace RecursiveUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: RecursiveUnionMember2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "RecursiveUnionMember2";
-    recursiveUnionMember2Property: Maybe<RecursiveUnion>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "RecursiveUnionMember2" as const;
-    const recursiveUnionMember2Property = Maybe.fromNullable(
-      $json["recursiveUnionMember2Property"],
-    ).map((item) => RecursiveUnion.fromJson(item));
-    return { $identifier, $type, recursiveUnionMember2Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -13663,9 +13572,15 @@ export namespace RecursiveUnionMember1 {
   };
 
   export function fromJson(
-    json: RecursiveUnionMember1.Json,
+    $json: RecursiveUnionMember1.Json,
   ): RecursiveUnionMember1 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const recursiveUnionMember1Property = Maybe.fromNullable(
+      $json["recursiveUnionMember1Property"],
+    ).map((item) => RecursiveUnion.fromJson(item));
+    return create({ $identifier, recursiveUnionMember1Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -13716,21 +13631,6 @@ export namespace RecursiveUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: RecursiveUnionMember1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "RecursiveUnionMember1";
-    recursiveUnionMember1Property: Maybe<RecursiveUnion>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "RecursiveUnionMember1" as const;
-    const recursiveUnionMember1Property = Maybe.fromNullable(
-      $json["recursiveUnionMember1Property"],
-    ).map((item) => RecursiveUnion.fromJson(item));
-    return { $identifier, $type, recursiveUnionMember1Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -14383,8 +14283,17 @@ export namespace PropertyPaths {
     return patterns;
   };
 
-  export function fromJson(json: PropertyPaths.Json): PropertyPaths {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: PropertyPaths.Json): PropertyPaths {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const inversePathProperty = Maybe.fromNullable(
+      $json["inversePathProperty"],
+    ).map((item) => dataFactory.namedNode(item["@id"]));
+    const predicatePathProperty = Maybe.fromNullable(
+      $json["predicatePathProperty"],
+    );
+    return create({ $identifier, inversePathProperty, predicatePathProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<PropertyPaths> = (
@@ -14434,25 +14343,6 @@ export namespace PropertyPaths {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: PropertyPaths.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PropertyPaths";
-    inversePathProperty: Maybe<NamedNode>;
-    predicatePathProperty: Maybe<string>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PropertyPaths" as const;
-    const inversePathProperty = Maybe.fromNullable(
-      $json["inversePathProperty"],
-    ).map((item) => dataFactory.namedNode(item["@id"]));
-    const predicatePathProperty = Maybe.fromNullable(
-      $json["predicatePathProperty"],
-    );
-    return { $identifier, $type, inversePathProperty, predicatePathProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -15276,8 +15166,23 @@ export namespace PropertyNames {
     return patterns;
   };
 
-  export function fromJson(json: PropertyNames.Json): PropertyNames {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: PropertyNames.Json): PropertyNames {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const actualPropertyName1 = $json["actualPropertyName1"];
+    const actualPropertyName2 = $json["actualPropertyName2"];
+    const actualPropertyName3 = $json["actualPropertyName3"];
+    const actualPropertyName4 = $json["actualPropertyName4"];
+    const actualPropertyName5 = $json["actualPropertyName5"];
+    return create({
+      $identifier,
+      actualPropertyName1,
+      actualPropertyName2,
+      actualPropertyName3,
+      actualPropertyName4,
+      actualPropertyName5,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<PropertyNames> = (
@@ -15327,35 +15232,6 @@ export namespace PropertyNames {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: PropertyNames.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PropertyNames";
-    actualPropertyName1: string;
-    actualPropertyName2: string;
-    actualPropertyName3: string;
-    actualPropertyName4: string;
-    actualPropertyName5: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PropertyNames" as const;
-    const actualPropertyName1 = $json["actualPropertyName1"];
-    const actualPropertyName2 = $json["actualPropertyName2"];
-    const actualPropertyName3 = $json["actualPropertyName3"];
-    const actualPropertyName4 = $json["actualPropertyName4"];
-    const actualPropertyName5 = $json["actualPropertyName5"];
-    return {
-      $identifier,
-      $type,
-      actualPropertyName1,
-      actualPropertyName2,
-      actualPropertyName3,
-      actualPropertyName4,
-      actualPropertyName5,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -16184,9 +16060,26 @@ export namespace PropertyCardinalities {
   };
 
   export function fromJson(
-    json: PropertyCardinalities.Json,
+    $json: PropertyCardinalities.Json,
   ): PropertyCardinalities {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
+    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
+      $json["nonEmptyStringSetProperty"],
+    ).unsafeCoerce();
+    const optionalStringProperty = Maybe.fromNullable(
+      $json["optionalStringProperty"],
+    );
+    const requiredStringProperty = $json["requiredStringProperty"];
+    return create({
+      $identifier,
+      emptyStringSetProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredStringProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -16233,36 +16126,6 @@ export namespace PropertyCardinalities {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: PropertyCardinalities.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PropertyCardinalities";
-    emptyStringSetProperty: readonly string[];
-    nonEmptyStringSetProperty: NonEmptyList<string>;
-    optionalStringProperty: Maybe<string>;
-    requiredStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PropertyCardinalities" as const;
-    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
-    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
-      $json["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = Maybe.fromNullable(
-      $json["optionalStringProperty"],
-    );
-    const requiredStringProperty = $json["requiredStringProperty"];
-    return {
-      $identifier,
-      $type,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -16921,9 +16784,14 @@ export namespace UnionMemberCommonParent {
   };
 
   export function fromJson(
-    json: UnionMemberCommonParent.Json,
+    $json: UnionMemberCommonParent.Json,
   ): UnionMemberCommonParent {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const unionMemberCommonParentProperty =
+      $json["unionMemberCommonParentProperty"];
+    return create({ $identifier, unionMemberCommonParentProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -16976,20 +16844,6 @@ export namespace UnionMemberCommonParent {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: UnionMemberCommonParent.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "UnionMemberCommonParent" | "UnionMember1" | "UnionMember2";
-    unionMemberCommonParentProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "UnionMemberCommonParent" as const;
-    const unionMemberCommonParentProperty =
-      $json["unionMemberCommonParentProperty"];
-    return { $identifier, $type, unionMemberCommonParentProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -17542,8 +17396,16 @@ export namespace UnionMember2 {
     return patterns;
   };
 
-  export function fromJson(json: UnionMember2.Json): UnionMember2 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: UnionMember2.Json): UnionMember2 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const unionMember2Property = $json["unionMember2Property"];
+    return create({
+      ...UnionMemberCommonParent.fromJson($json),
+      $identifier,
+      unionMember2Property,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<UnionMember2> = (
@@ -17591,24 +17453,6 @@ export namespace UnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: UnionMember2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "UnionMember2";
-    unionMember2Property: string;
-  } & ReturnType<typeof UnionMemberCommonParent.propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "UnionMember2" as const;
-    const unionMember2Property = $json["unionMember2Property"];
-    return {
-      ...UnionMemberCommonParent.propertiesFromJson($json),
-      $identifier,
-      $type,
-      unionMember2Property,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -18137,9 +17981,13 @@ export namespace PartialUnionMember2 {
   };
 
   export function fromJson(
-    json: PartialUnionMember2.Json,
+    $json: PartialUnionMember2.Json,
   ): PartialUnionMember2 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -18190,19 +18038,6 @@ export namespace PartialUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: PartialUnionMember2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PartialUnionMember2";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PartialUnionMember2" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -18741,8 +18576,16 @@ export namespace UnionMember1 {
     return patterns;
   };
 
-  export function fromJson(json: UnionMember1.Json): UnionMember1 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: UnionMember1.Json): UnionMember1 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const unionMember1Property = $json["unionMember1Property"];
+    return create({
+      ...UnionMemberCommonParent.fromJson($json),
+      $identifier,
+      unionMember1Property,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<UnionMember1> = (
@@ -18790,24 +18633,6 @@ export namespace UnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: UnionMember1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "UnionMember1";
-    unionMember1Property: string;
-  } & ReturnType<typeof UnionMemberCommonParent.propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "UnionMember1" as const;
-    const unionMember1Property = $json["unionMember1Property"];
-    return {
-      ...UnionMemberCommonParent.propertiesFromJson($json),
-      $identifier,
-      $type,
-      unionMember1Property,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -19336,9 +19161,13 @@ export namespace PartialUnionMember1 {
   };
 
   export function fromJson(
-    json: PartialUnionMember1.Json,
+    $json: PartialUnionMember1.Json,
   ): PartialUnionMember1 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -19389,19 +19218,6 @@ export namespace PartialUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: PartialUnionMember1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "PartialUnionMember1";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "PartialUnionMember1" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -19861,8 +19677,11 @@ export namespace NewName {
     return patterns;
   };
 
-  export function fromJson(json: NewName.Json): NewName {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: NewName.Json): NewName {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<NewName> = (
@@ -19910,17 +19729,6 @@ export namespace NewName {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NewName.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NewName";
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NewName" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -20454,8 +20262,19 @@ export namespace OrderedProperties {
     return patterns;
   };
 
-  export function fromJson(json: OrderedProperties.Json): OrderedProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: OrderedProperties.Json): OrderedProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const orderedPropertyC = $json["orderedPropertyC"];
+    const orderedPropertyB = $json["orderedPropertyB"];
+    const orderedPropertyA = $json["orderedPropertyA"];
+    return create({
+      $identifier,
+      orderedPropertyC,
+      orderedPropertyB,
+      orderedPropertyA,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<OrderedProperties> = (
@@ -20503,29 +20322,6 @@ export namespace OrderedProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: OrderedProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "OrderedProperties";
-    orderedPropertyC: string;
-    orderedPropertyB: string;
-    orderedPropertyA: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "OrderedProperties" as const;
-    const orderedPropertyC = $json["orderedPropertyC"];
-    const orderedPropertyB = $json["orderedPropertyB"];
-    const orderedPropertyA = $json["orderedPropertyA"];
-    return {
-      $identifier,
-      $type,
-      orderedPropertyC,
-      orderedPropertyB,
-      orderedPropertyA,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -22265,8 +22061,75 @@ export namespace NumericProperties {
     return patterns;
   };
 
-  export function fromJson(json: NumericProperties.Json): NumericProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: NumericProperties.Json): NumericProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const byteNumericProperty = Maybe.fromNullable(
+      $json["byteNumericProperty"],
+    );
+    const decimalNumericProperty = Maybe.fromNullable(
+      $json["decimalNumericProperty"],
+    ).map((item) => new BigDecimal(item));
+    const doubleNumericProperty = Maybe.fromNullable(
+      $json["doubleNumericProperty"],
+    );
+    const floatNumericProperty = Maybe.fromNullable(
+      $json["floatNumericProperty"],
+    );
+    const integerNumericProperty = Maybe.fromNullable(
+      $json["integerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const intNumericProperty = Maybe.fromNullable($json["intNumericProperty"]);
+    const longNumericProperty = Maybe.fromNullable(
+      $json["longNumericProperty"],
+    ).map((item) => BigInt(item));
+    const negativeIntegerNumericProperty = Maybe.fromNullable(
+      $json["negativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
+      $json["nonNegativeIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
+      $json["nonPositiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const positiveIntegerNumericProperty = Maybe.fromNullable(
+      $json["positiveIntegerNumericProperty"],
+    ).map((item) => BigInt(item));
+    const shortNumericProperty = Maybe.fromNullable(
+      $json["shortNumericProperty"],
+    );
+    const unsignedByteNumericProperty = Maybe.fromNullable(
+      $json["unsignedByteNumericProperty"],
+    );
+    const unsignedIntNumericProperty = Maybe.fromNullable(
+      $json["unsignedIntNumericProperty"],
+    );
+    const unsignedLongNumericProperty = Maybe.fromNullable(
+      $json["unsignedLongNumericProperty"],
+    ).map((item) => BigInt(item));
+    const unsignedShortNumericProperty = Maybe.fromNullable(
+      $json["unsignedShortNumericProperty"],
+    );
+    return create({
+      $identifier,
+      byteNumericProperty,
+      decimalNumericProperty,
+      doubleNumericProperty,
+      floatNumericProperty,
+      integerNumericProperty,
+      intNumericProperty,
+      longNumericProperty,
+      negativeIntegerNumericProperty,
+      nonNegativeIntegerNumericProperty,
+      nonPositiveIntegerNumericProperty,
+      positiveIntegerNumericProperty,
+      shortNumericProperty,
+      unsignedByteNumericProperty,
+      unsignedIntNumericProperty,
+      unsignedLongNumericProperty,
+      unsignedShortNumericProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<NumericProperties> = (
@@ -22318,98 +22181,6 @@ export namespace NumericProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NumericProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NumericProperties";
-    byteNumericProperty: Maybe<number>;
-    decimalNumericProperty: Maybe<BigDecimal>;
-    doubleNumericProperty: Maybe<number>;
-    floatNumericProperty: Maybe<number>;
-    integerNumericProperty: Maybe<bigint>;
-    intNumericProperty: Maybe<number>;
-    longNumericProperty: Maybe<bigint>;
-    negativeIntegerNumericProperty: Maybe<bigint>;
-    nonNegativeIntegerNumericProperty: Maybe<bigint>;
-    nonPositiveIntegerNumericProperty: Maybe<bigint>;
-    positiveIntegerNumericProperty: Maybe<bigint>;
-    shortNumericProperty: Maybe<number>;
-    unsignedByteNumericProperty: Maybe<number>;
-    unsignedIntNumericProperty: Maybe<number>;
-    unsignedLongNumericProperty: Maybe<bigint>;
-    unsignedShortNumericProperty: Maybe<number>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NumericProperties" as const;
-    const byteNumericProperty = Maybe.fromNullable(
-      $json["byteNumericProperty"],
-    );
-    const decimalNumericProperty = Maybe.fromNullable(
-      $json["decimalNumericProperty"],
-    ).map((item) => new BigDecimal(item));
-    const doubleNumericProperty = Maybe.fromNullable(
-      $json["doubleNumericProperty"],
-    );
-    const floatNumericProperty = Maybe.fromNullable(
-      $json["floatNumericProperty"],
-    );
-    const integerNumericProperty = Maybe.fromNullable(
-      $json["integerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const intNumericProperty = Maybe.fromNullable($json["intNumericProperty"]);
-    const longNumericProperty = Maybe.fromNullable(
-      $json["longNumericProperty"],
-    ).map((item) => BigInt(item));
-    const negativeIntegerNumericProperty = Maybe.fromNullable(
-      $json["negativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonNegativeIntegerNumericProperty = Maybe.fromNullable(
-      $json["nonNegativeIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const nonPositiveIntegerNumericProperty = Maybe.fromNullable(
-      $json["nonPositiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const positiveIntegerNumericProperty = Maybe.fromNullable(
-      $json["positiveIntegerNumericProperty"],
-    ).map((item) => BigInt(item));
-    const shortNumericProperty = Maybe.fromNullable(
-      $json["shortNumericProperty"],
-    );
-    const unsignedByteNumericProperty = Maybe.fromNullable(
-      $json["unsignedByteNumericProperty"],
-    );
-    const unsignedIntNumericProperty = Maybe.fromNullable(
-      $json["unsignedIntNumericProperty"],
-    );
-    const unsignedLongNumericProperty = Maybe.fromNullable(
-      $json["unsignedLongNumericProperty"],
-    ).map((item) => BigInt(item));
-    const unsignedShortNumericProperty = Maybe.fromNullable(
-      $json["unsignedShortNumericProperty"],
-    );
-    return {
-      $identifier,
-      $type,
-      byteNumericProperty,
-      decimalNumericProperty,
-      doubleNumericProperty,
-      floatNumericProperty,
-      integerNumericProperty,
-      intNumericProperty,
-      longNumericProperty,
-      negativeIntegerNumericProperty,
-      nonNegativeIntegerNumericProperty,
-      nonPositiveIntegerNumericProperty,
-      positiveIntegerNumericProperty,
-      shortNumericProperty,
-      unsignedByteNumericProperty,
-      unsignedIntNumericProperty,
-      unsignedLongNumericProperty,
-      unsignedShortNumericProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -24218,71 +23989,10 @@ export namespace NodeKinds {
     return patterns;
   };
 
-  export function fromJson(json: NodeKinds.Json): NodeKinds {
-    return create(propertiesFromJson(json));
-  }
-
-  export const fromRdfResource: $FromRdfResourceFunction<NodeKinds> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NodeKinds.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    NodeKinds
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) => NodeKinds.fromRdfResource(resource, options)),
-      ),
-    );
-
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/NodeKinds",
-  );
-
-  export function isNodeKinds(object: $Object): object is NodeKinds {
-    switch (object.$type) {
-      case "NodeKinds":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function propertiesFromJson($json: NodeKinds.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NodeKinds";
-    blankNodeKindProperty: BlankNode;
-    blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
-    blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
-    iriNodeKindProperty: NamedNode;
-    iriOrLiteralNodeKindProperty: NamedNode | Literal;
-    literalNodeKindProperty: Literal;
-  } {
+  export function fromJson($json: NodeKinds.Json): NodeKinds {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "NodeKinds" as const;
     const blankNodeKindProperty = dataFactory.blankNode(
       $json["blankNodeKindProperty"]["@id"].substring(2),
     );
@@ -24334,16 +24044,62 @@ export namespace NodeKinds {
           ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"]!)
           : undefined,
     );
-    return {
+    return create({
       $identifier,
-      $type,
       blankNodeKindProperty,
       blankNodeOrIriNodeKindProperty,
       blankNodeOrLiteralNodeKindProperty,
       iriNodeKindProperty,
       iriOrLiteralNodeKindProperty,
       literalNodeKindProperty,
-    };
+    });
+  }
+
+  export const fromRdfResource: $FromRdfResourceFunction<NodeKinds> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return NodeKinds.propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map(create);
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    NodeKinds
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) => NodeKinds.fromRdfResource(resource, options)),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/NodeKinds",
+  );
+
+  export function isNodeKinds(object: $Object): object is NodeKinds {
+    switch (object.$type) {
+      case "NodeKinds":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -25027,9 +24783,14 @@ export namespace NoRdfTypeUnionMember2 {
   };
 
   export function fromJson(
-    json: NoRdfTypeUnionMember2.Json,
+    $json: NoRdfTypeUnionMember2.Json,
   ): NoRdfTypeUnionMember2 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const noRdfTypeUnionMember2Property =
+      $json["noRdfTypeUnionMember2Property"];
+    return create({ $identifier, noRdfTypeUnionMember2Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -25076,20 +24837,6 @@ export namespace NoRdfTypeUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NoRdfTypeUnionMember2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NoRdfTypeUnionMember2";
-    noRdfTypeUnionMember2Property: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NoRdfTypeUnionMember2" as const;
-    const noRdfTypeUnionMember2Property =
-      $json["noRdfTypeUnionMember2Property"];
-    return { $identifier, $type, noRdfTypeUnionMember2Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -25524,9 +25271,14 @@ export namespace NoRdfTypeUnionMember1 {
   };
 
   export function fromJson(
-    json: NoRdfTypeUnionMember1.Json,
+    $json: NoRdfTypeUnionMember1.Json,
   ): NoRdfTypeUnionMember1 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const noRdfTypeUnionMember1Property =
+      $json["noRdfTypeUnionMember1Property"];
+    return create({ $identifier, noRdfTypeUnionMember1Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -25573,20 +25325,6 @@ export namespace NoRdfTypeUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NoRdfTypeUnionMember1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NoRdfTypeUnionMember1";
-    noRdfTypeUnionMember1Property: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NoRdfTypeUnionMember1" as const;
-    const noRdfTypeUnionMember1Property =
-      $json["noRdfTypeUnionMember1Property"];
-    return { $identifier, $type, noRdfTypeUnionMember1Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -26132,9 +25870,18 @@ export namespace NamedUnionProperties {
   };
 
   export function fromJson(
-    json: NamedUnionProperties.Json,
+    $json: NamedUnionProperties.Json,
   ): NamedUnionProperties {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const namedUnion1Property = NamedUnion1.fromJson(
+      $json["namedUnion1Property"],
+    );
+    const namedUnion2Property = NamedUnion2.fromJson(
+      $json["namedUnion2Property"],
+    );
+    return create({ $identifier, namedUnion1Property, namedUnion2Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -26185,25 +25932,6 @@ export namespace NamedUnionProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NamedUnionProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NamedUnionProperties";
-    namedUnion1Property: NamedUnion1;
-    namedUnion2Property: NamedUnion2;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NamedUnionProperties" as const;
-    const namedUnion1Property = NamedUnion1.fromJson(
-      $json["namedUnion1Property"],
-    );
-    const namedUnion2Property = NamedUnion2.fromJson(
-      $json["namedUnion2Property"],
-    );
-    return { $identifier, $type, namedUnion1Property, namedUnion2Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -27002,8 +26730,23 @@ export namespace MutableProperties {
     return patterns;
   };
 
-  export function fromJson(json: MutableProperties.Json): MutableProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: MutableProperties.Json): MutableProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const mutableListProperty = Maybe.fromNullable(
+      $json["mutableListProperty"],
+    ).map((item) => item ?? []);
+    const mutableSetProperty = $json["mutableSetProperty"] ?? [];
+    const mutableStringProperty = Maybe.fromNullable(
+      $json["mutableStringProperty"],
+    );
+    return create({
+      $identifier,
+      mutableListProperty,
+      mutableSetProperty,
+      mutableStringProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<MutableProperties> = (
@@ -27055,33 +26798,6 @@ export namespace MutableProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: MutableProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "MutableProperties";
-    mutableListProperty: Maybe<string[]>;
-    mutableSetProperty: string[];
-    mutableStringProperty: Maybe<string>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "MutableProperties" as const;
-    const mutableListProperty = Maybe.fromNullable(
-      $json["mutableListProperty"],
-    ).map((item) => item ?? []);
-    const mutableSetProperty = $json["mutableSetProperty"] ?? [];
-    const mutableStringProperty = Maybe.fromNullable(
-      $json["mutableStringProperty"],
-    );
-    return {
-      $identifier,
-      $type,
-      mutableListProperty,
-      mutableSetProperty,
-      mutableStringProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -28018,8 +27734,25 @@ export namespace ListProperties {
     return patterns;
   };
 
-  export function fromJson(json: ListProperties.Json): ListProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ListProperties.Json): ListProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
+      (item) => (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
+    );
+    const objectListProperty = Maybe.fromNullable(
+      $json["objectListProperty"],
+    ).map((item) => (item ?? []).map((item) => NonClass.fromJson(item)));
+    const stringListProperty = Maybe.fromNullable(
+      $json["stringListProperty"],
+    ).map((item) => item ?? []);
+    return create({
+      $identifier,
+      iriListProperty,
+      objectListProperty,
+      stringListProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ListProperties> = (
@@ -28069,35 +27802,6 @@ export namespace ListProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ListProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ListProperties";
-    iriListProperty: Maybe<readonly NamedNode[]>;
-    objectListProperty: Maybe<readonly NonClass[]>;
-    stringListProperty: Maybe<readonly string[]>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ListProperties" as const;
-    const iriListProperty = Maybe.fromNullable($json["iriListProperty"]).map(
-      (item) => (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
-    );
-    const objectListProperty = Maybe.fromNullable(
-      $json["objectListProperty"],
-    ).map((item) => (item ?? []).map((item) => NonClass.fromJson(item)));
-    const stringListProperty = Maybe.fromNullable(
-      $json["stringListProperty"],
-    ).map((item) => item ?? []);
-    return {
-      $identifier,
-      $type,
-      iriListProperty,
-      objectListProperty,
-      stringListProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -30444,113 +30148,10 @@ export namespace LazyProperties {
     return patterns;
   };
 
-  export function fromJson(json: LazyProperties.Json): LazyProperties {
-    return create(propertiesFromJson(json));
-  }
-
-  export const fromRdfResource: $FromRdfResourceFunction<LazyProperties> = (
-    resource,
-    options,
-  ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return LazyProperties.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    LazyProperties
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            LazyProperties.fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export function isLazyProperties(object: $Object): object is LazyProperties {
-    switch (object.$type) {
-      case "LazyProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function propertiesFromJson($json: LazyProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "LazyProperties";
-    optionalLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    optionalLazyToResolvedIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedIriIdentifier.Identifier,
-      $NamedDefaultPartial,
-      LazilyResolvedIriIdentifier
-    >;
-    optionalLazyToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      $DefaultPartial,
-      LazilyResolvedUnion
-    >;
-    optionalPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    optionalPartialToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      Partial,
-      LazilyResolvedUnion
-    >;
-    optionalPartialUnionToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      PartialUnion,
-      LazilyResolvedUnion
-    >;
-    requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    requiredPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    setLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    setPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-  } {
+  export function fromJson($json: LazyProperties.Json): LazyProperties {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "LazyProperties" as const;
     const optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
       new $LazyObjectOption<
         LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
@@ -30723,9 +30324,8 @@ export namespace LazyProperties {
             ),
           ),
       });
-    return {
+    return create({
       $identifier,
-      $type,
       optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
       optionalLazyToResolvedIriIdentifierProperty,
       optionalLazyToResolvedUnionProperty,
@@ -30736,7 +30336,52 @@ export namespace LazyProperties {
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
       setLazyToResolvedBlankNodeOrIriIdentifierProperty,
       setPartialToResolvedBlankNodeOrIriIdentifierProperty,
-    };
+    });
+  }
+
+  export const fromRdfResource: $FromRdfResourceFunction<LazyProperties> = (
+    resource,
+    options,
+  ) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return LazyProperties.propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map(create);
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    LazyProperties
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            LazyProperties.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export function isLazyProperties(object: $Object): object is LazyProperties {
+    switch (object.$type) {
+      case "LazyProperties":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -32009,9 +31654,11 @@ export namespace LazilyResolvedIriIdentifier {
   };
 
   export function fromJson(
-    json: LazilyResolvedIriIdentifier.Json,
+    $json: LazilyResolvedIriIdentifier.Json,
   ): LazilyResolvedIriIdentifier {
-    return create(propertiesFromJson(json));
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -32058,17 +31705,6 @@ export namespace LazilyResolvedIriIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: LazilyResolvedIriIdentifier.Json): {
-    $identifier: NamedNode;
-    $type: "LazilyResolvedIriIdentifier";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedIriIdentifier" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -32569,9 +32205,13 @@ export namespace LazilyResolvedUnionMember2 {
   };
 
   export function fromJson(
-    json: LazilyResolvedUnionMember2.Json,
+    $json: LazilyResolvedUnionMember2.Json,
   ): LazilyResolvedUnionMember2 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -32622,19 +32262,6 @@ export namespace LazilyResolvedUnionMember2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: LazilyResolvedUnionMember2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "LazilyResolvedUnionMember2";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedUnionMember2" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -33171,9 +32798,13 @@ export namespace LazilyResolvedUnionMember1 {
   };
 
   export function fromJson(
-    json: LazilyResolvedUnionMember1.Json,
+    $json: LazilyResolvedUnionMember1.Json,
   ): LazilyResolvedUnionMember1 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -33224,19 +32855,6 @@ export namespace LazilyResolvedUnionMember1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: LazilyResolvedUnionMember1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "LazilyResolvedUnionMember1";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedUnionMember1" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -33782,9 +33400,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   };
 
   export function fromJson(
-    json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
+    $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
   ): LazilyResolvedBlankNodeOrIriIdentifier {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -33841,21 +33463,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson(
-    $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
-  ): {
-    $identifier: BlankNode | NamedNode;
-    $type: "LazilyResolvedBlankNodeOrIriIdentifier";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "LazilyResolvedBlankNodeOrIriIdentifier" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -34376,9 +33983,26 @@ export namespace LanguageInProperties {
   };
 
   export function fromJson(
-    json: LanguageInProperties.Json,
+    $json: LanguageInProperties.Json,
   ): LanguageInProperties {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const languageInLiteralProperty = NonEmptyList.fromArray(
+      $json["languageInLiteralProperty"],
+    )
+      .unsafeCoerce()
+      .map((item) =>
+        dataFactory.literal(
+          item["@value"],
+          item["@language"] !== undefined
+            ? item["@language"]
+            : item["@type"] !== undefined
+              ? dataFactory.namedNode(item["@type"]!)
+              : undefined,
+        ),
+      );
+    return create({ $identifier, languageInLiteralProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -34425,32 +34049,6 @@ export namespace LanguageInProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: LanguageInProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "LanguageInProperties";
-    languageInLiteralProperty: NonEmptyList<Literal>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "LanguageInProperties" as const;
-    const languageInLiteralProperty = NonEmptyList.fromArray(
-      $json["languageInLiteralProperty"],
-    )
-      .unsafeCoerce()
-      .map((item) =>
-        dataFactory.literal(
-          item["@value"],
-          item["@language"] !== undefined
-            ? item["@language"]
-            : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"]!)
-              : undefined,
-        ),
-      );
-    return { $identifier, $type, languageInLiteralProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -35236,9 +34834,29 @@ export namespace JsPrimitiveUnionProperty {
   };
 
   export function fromJson(
-    json: JsPrimitiveUnionProperty.Json,
+    $json: JsPrimitiveUnionProperty.Json,
   ): JsPrimitiveUnionProperty {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const jsPrimitiveUnionProperty = (
+      $json["jsPrimitiveUnionProperty"] ?? []
+    ).map((item) =>
+      ((value: boolean | number | string): boolean | number | string => {
+        if (typeof value === "boolean") {
+          return value as boolean;
+        }
+        if (typeof value === "number") {
+          return value as number;
+        }
+        if (typeof value === "string") {
+          return value as string;
+        }
+
+        throw new Error("unable to deserialize JSON");
+      })(item),
+    );
+    return create({ $identifier, jsPrimitiveUnionProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -35289,35 +34907,6 @@ export namespace JsPrimitiveUnionProperty {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: JsPrimitiveUnionProperty.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "JsPrimitiveUnionProperty";
-    jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "JsPrimitiveUnionProperty" as const;
-    const jsPrimitiveUnionProperty = (
-      $json["jsPrimitiveUnionProperty"] ?? []
-    ).map((item) =>
-      ((value: boolean | number | string): boolean | number | string => {
-        if (typeof value === "boolean") {
-          return value as boolean;
-        }
-        if (typeof value === "number") {
-          return value as number;
-        }
-        if (typeof value === "string") {
-          return value as string;
-        }
-
-        throw new Error("unable to deserialize JSON");
-      })(item),
-    );
-    return { $identifier, $type, jsPrimitiveUnionProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -35898,8 +35487,9 @@ export namespace IriIdentifier {
     return patterns;
   };
 
-  export function fromJson(json: IriIdentifier.Json): IriIdentifier {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: IriIdentifier.Json): IriIdentifier {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<IriIdentifier> = (
@@ -35949,15 +35539,6 @@ export namespace IriIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: IriIdentifier.Json): {
-    $identifier: NamedNode;
-    $type: "IriIdentifier";
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const $type = "IriIdentifier" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -36437,9 +36018,15 @@ export namespace IndirectRecursiveHelper {
   };
 
   export function fromJson(
-    json: IndirectRecursiveHelper.Json,
+    $json: IndirectRecursiveHelper.Json,
   ): IndirectRecursiveHelper {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const indirectRecursiveProperty = Maybe.fromNullable(
+      $json["indirectRecursiveProperty"],
+    ).map((item) => IndirectRecursive.fromJson(item));
+    return create({ $identifier, indirectRecursiveProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -36490,21 +36077,6 @@ export namespace IndirectRecursiveHelper {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: IndirectRecursiveHelper.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "IndirectRecursiveHelper";
-    indirectRecursiveProperty: Maybe<IndirectRecursive>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "IndirectRecursiveHelper" as const;
-    const indirectRecursiveProperty = Maybe.fromNullable(
-      $json["indirectRecursiveProperty"],
-    ).map((item) => IndirectRecursive.fromJson(item));
-    return { $identifier, $type, indirectRecursiveProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -37058,8 +36630,14 @@ export namespace IndirectRecursive {
     return patterns;
   };
 
-  export function fromJson(json: IndirectRecursive.Json): IndirectRecursive {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: IndirectRecursive.Json): IndirectRecursive {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const indirectRecursiveHelperProperty = Maybe.fromNullable(
+      $json["indirectRecursiveHelperProperty"],
+    ).map((item) => IndirectRecursiveHelper.fromJson(item));
+    return create({ $identifier, indirectRecursiveHelperProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<IndirectRecursive> = (
@@ -37111,21 +36689,6 @@ export namespace IndirectRecursive {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: IndirectRecursive.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "IndirectRecursive";
-    indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelper>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "IndirectRecursive" as const;
-    const indirectRecursiveHelperProperty = Maybe.fromNullable(
-      $json["indirectRecursiveHelperProperty"],
-    ).map((item) => IndirectRecursiveHelper.fromJson(item));
-    return { $identifier, $type, indirectRecursiveHelperProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -38113,8 +37676,31 @@ export namespace InProperties {
     return patterns;
   };
 
-  export function fromJson(json: InProperties.Json): InProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: InProperties.Json): InProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const inBooleansProperty = Maybe.fromNullable($json["inBooleansProperty"]);
+    const inDateTimesProperty = Maybe.fromNullable(
+      $json["inDateTimesProperty"],
+    ).map((item) => new Date(item));
+    const inDoublesProperty = Maybe.fromNullable($json["inDoublesProperty"]);
+    const inIntegersProperty = Maybe.fromNullable(
+      $json["inIntegersProperty"],
+    ).map((item) => BigInt(item) as 1n | 2n);
+    const inIrisProperty = Maybe.fromNullable($json["inIrisProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
+    const inStringsProperty = Maybe.fromNullable($json["inStringsProperty"]);
+    return create({
+      $identifier,
+      inBooleansProperty,
+      inDateTimesProperty,
+      inDoublesProperty,
+      inIntegersProperty,
+      inIrisProperty,
+      inStringsProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<InProperties> = (
@@ -38162,49 +37748,6 @@ export namespace InProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: InProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "InProperties";
-    inBooleansProperty: Maybe<true>;
-    inDateTimesProperty: Maybe<Date>;
-    inDoublesProperty: Maybe<1 | 2>;
-    inIntegersProperty: Maybe<1n | 2n>;
-    inIrisProperty: Maybe<
-      NamedNode<
-        | "http://example.com/InPropertiesIri1"
-        | "http://example.com/InPropertiesIri2"
-      >
-    >;
-    inStringsProperty: Maybe<"text" | "html">;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "InProperties" as const;
-    const inBooleansProperty = Maybe.fromNullable($json["inBooleansProperty"]);
-    const inDateTimesProperty = Maybe.fromNullable(
-      $json["inDateTimesProperty"],
-    ).map((item) => new Date(item));
-    const inDoublesProperty = Maybe.fromNullable($json["inDoublesProperty"]);
-    const inIntegersProperty = Maybe.fromNullable(
-      $json["inIntegersProperty"],
-    ).map((item) => BigInt(item) as 1n | 2n);
-    const inIrisProperty = Maybe.fromNullable($json["inIrisProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const inStringsProperty = Maybe.fromNullable($json["inStringsProperty"]);
-    return {
-      $identifier,
-      $type,
-      inBooleansProperty,
-      inDateTimesProperty,
-      inDoublesProperty,
-      inIntegersProperty,
-      inIrisProperty,
-      inStringsProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -39047,8 +38590,12 @@ export namespace InIdentifier {
     return patterns;
   };
 
-  export function fromJson(json: InIdentifier.Json): InIdentifier {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: InIdentifier.Json): InIdentifier {
+    const $identifier = dataFactory.namedNode($json["@id"]);
+    const inIdentifierProperty = Maybe.fromNullable(
+      $json["inIdentifierProperty"],
+    );
+    return create({ $identifier, inIdentifierProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<InIdentifier> = (
@@ -39096,22 +38643,6 @@ export namespace InIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: InIdentifier.Json): {
-    $identifier: NamedNode<
-      | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2"
-    >;
-    $type: "InIdentifier";
-    inIdentifierProperty: Maybe<string>;
-  } {
-    const $identifier = dataFactory.namedNode($json["@id"]);
-    const $type = "InIdentifier" as const;
-    const inIdentifierProperty = Maybe.fromNullable(
-      $json["inIdentifierProperty"],
-    );
-    return { $identifier, $type, inIdentifierProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -39665,8 +39196,19 @@ export namespace HasValueProperties {
     return patterns;
   };
 
-  export function fromJson(json: HasValueProperties.Json): HasValueProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: HasValueProperties.Json): HasValueProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const hasIriValueProperty = dataFactory.namedNode(
+      $json["hasIriValueProperty"]["@id"],
+    );
+    const hasLiteralValueProperty = $json["hasLiteralValueProperty"];
+    return create({
+      $identifier,
+      hasIriValueProperty,
+      hasLiteralValueProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<HasValueProperties> = (
@@ -39714,23 +39256,6 @@ export namespace HasValueProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: HasValueProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "HasValueProperties";
-    hasIriValueProperty: NamedNode;
-    hasLiteralValueProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "HasValueProperties" as const;
-    const hasIriValueProperty = dataFactory.namedNode(
-      $json["hasIriValueProperty"]["@id"],
-    );
-    const hasLiteralValueProperty = $json["hasLiteralValueProperty"];
-    return { $identifier, $type, hasIriValueProperty, hasLiteralValueProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -40253,9 +39778,13 @@ export namespace FlattenUnionMember3 {
   };
 
   export function fromJson(
-    json: FlattenUnionMember3.Json,
+    $json: FlattenUnionMember3.Json,
   ): FlattenUnionMember3 {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const flattenUnionMember3Property = $json["flattenUnionMember3Property"];
+    return create({ $identifier, flattenUnionMember3Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -40306,19 +39835,6 @@ export namespace FlattenUnionMember3 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: FlattenUnionMember3.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "FlattenUnionMember3";
-    flattenUnionMember3Property: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "FlattenUnionMember3" as const;
-    const flattenUnionMember3Property = $json["flattenUnionMember3Property"];
-    return { $identifier, $type, flattenUnionMember3Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -40861,8 +40377,14 @@ export namespace ExternProperty {
     return patterns;
   };
 
-  export function fromJson(json: ExternProperty.Json): ExternProperty {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ExternProperty.Json): ExternProperty {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const externProperty = Maybe.fromNullable($json["externProperty"]).map(
+      (item) => Extern.fromJson(item),
+    );
+    return create({ $identifier, externProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ExternProperty> = (
@@ -40912,21 +40434,6 @@ export namespace ExternProperty {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ExternProperty.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ExternProperty";
-    externProperty: Maybe<Extern>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ExternProperty" as const;
-    const externProperty = Maybe.fromNullable($json["externProperty"]).map(
-      (item) => Extern.fromJson(item),
-    );
-    return { $identifier, $type, externProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -41469,8 +40976,12 @@ export namespace BaseForExtern {
     return patterns;
   };
 
-  export function fromJson(json: BaseForExtern.Json): BaseForExtern {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: BaseForExtern.Json): BaseForExtern {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const baseForExternProperty = $json["baseForExternProperty"];
+    return create({ $identifier, baseForExternProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<BaseForExtern> = (
@@ -41521,19 +41032,6 @@ export namespace BaseForExtern {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: BaseForExtern.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "BaseForExtern" | "Extern";
-    baseForExternProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "BaseForExtern" as const;
-    const baseForExternProperty = $json["baseForExternProperty"];
-    return { $identifier, $type, baseForExternProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -42055,8 +41553,12 @@ export namespace ExplicitRdfType {
     return patterns;
   };
 
-  export function fromJson(json: ExplicitRdfType.Json): ExplicitRdfType {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ExplicitRdfType.Json): ExplicitRdfType {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const explicitRdfTypeProperty = $json["explicitRdfTypeProperty"];
+    return create({ $identifier, explicitRdfTypeProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ExplicitRdfType> = (
@@ -42108,19 +41610,6 @@ export namespace ExplicitRdfType {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ExplicitRdfType.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ExplicitRdfType";
-    explicitRdfTypeProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ExplicitRdfType" as const;
-    const explicitRdfTypeProperty = $json["explicitRdfTypeProperty"];
-    return { $identifier, $type, explicitRdfTypeProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -42650,9 +42139,14 @@ export namespace ExplicitFromToRdfTypes {
   };
 
   export function fromJson(
-    json: ExplicitFromToRdfTypes.Json,
+    $json: ExplicitFromToRdfTypes.Json,
   ): ExplicitFromToRdfTypes {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const explicitFromToRdfTypesProperty =
+      $json["explicitFromToRdfTypesProperty"];
+    return create({ $identifier, explicitFromToRdfTypesProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -42703,20 +42197,6 @@ export namespace ExplicitFromToRdfTypes {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ExplicitFromToRdfTypes.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ExplicitFromToRdfTypes";
-    explicitFromToRdfTypesProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ExplicitFromToRdfTypes" as const;
-    const explicitFromToRdfTypesProperty =
-      $json["explicitFromToRdfTypesProperty"];
-    return { $identifier, $type, explicitFromToRdfTypesProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -43393,8 +42873,19 @@ export namespace DisplayProperties {
     return patterns;
   };
 
-  export function fromJson(json: DisplayProperties.Json): DisplayProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: DisplayProperties.Json): DisplayProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const explicitFalseDisplayProperty = $json["explicitFalseDisplayProperty"];
+    const explicitTrueDisplayProperty = $json["explicitTrueDisplayProperty"];
+    const implicitFalseDisplayProperty = $json["implicitFalseDisplayProperty"];
+    return create({
+      $identifier,
+      explicitFalseDisplayProperty,
+      explicitTrueDisplayProperty,
+      implicitFalseDisplayProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<DisplayProperties> = (
@@ -43446,29 +42937,6 @@ export namespace DisplayProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: DisplayProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "DisplayProperties";
-    explicitFalseDisplayProperty: string;
-    explicitTrueDisplayProperty: string;
-    implicitFalseDisplayProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "DisplayProperties" as const;
-    const explicitFalseDisplayProperty = $json["explicitFalseDisplayProperty"];
-    const explicitTrueDisplayProperty = $json["explicitTrueDisplayProperty"];
-    const implicitFalseDisplayProperty = $json["implicitFalseDisplayProperty"];
-    return {
-      $identifier,
-      $type,
-      explicitFalseDisplayProperty,
-      explicitTrueDisplayProperty,
-      implicitFalseDisplayProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -44048,8 +43516,14 @@ export namespace DirectRecursive {
     return patterns;
   };
 
-  export function fromJson(json: DirectRecursive.Json): DirectRecursive {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: DirectRecursive.Json): DirectRecursive {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const directRecursiveProperty = Maybe.fromNullable(
+      $json["directRecursiveProperty"],
+    ).map((item) => DirectRecursive.fromJson(item));
+    return create({ $identifier, directRecursiveProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<DirectRecursive> = (
@@ -44101,21 +43575,6 @@ export namespace DirectRecursive {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: DirectRecursive.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "DirectRecursive";
-    directRecursiveProperty: Maybe<DirectRecursive>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "DirectRecursive" as const;
-    const directRecursiveProperty = Maybe.fromNullable(
-      $json["directRecursiveProperty"],
-    ).map((item) => DirectRecursive.fromJson(item));
-    return { $identifier, $type, directRecursiveProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -45029,9 +44488,32 @@ export namespace DefaultValueProperties {
   };
 
   export function fromJson(
-    json: DefaultValueProperties.Json,
+    $json: DefaultValueProperties.Json,
   ): DefaultValueProperties {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const dateDefaultValueProperty = new Date(
+      $json["dateDefaultValueProperty"],
+    );
+    const dateTimeDefaultValueProperty = new Date(
+      $json["dateTimeDefaultValueProperty"],
+    );
+    const falseBooleanDefaultValueProperty =
+      $json["falseBooleanDefaultValueProperty"];
+    const numberDefaultValueProperty = $json["numberDefaultValueProperty"];
+    const stringDefaultValueProperty = $json["stringDefaultValueProperty"];
+    const trueBooleanDefaultValueProperty =
+      $json["trueBooleanDefaultValueProperty"];
+    return create({
+      $identifier,
+      dateDefaultValueProperty,
+      dateTimeDefaultValueProperty,
+      falseBooleanDefaultValueProperty,
+      numberDefaultValueProperty,
+      stringDefaultValueProperty,
+      trueBooleanDefaultValueProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -45082,44 +44564,6 @@ export namespace DefaultValueProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: DefaultValueProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "DefaultValueProperties";
-    dateDefaultValueProperty: Date;
-    dateTimeDefaultValueProperty: Date;
-    falseBooleanDefaultValueProperty: boolean;
-    numberDefaultValueProperty: number;
-    stringDefaultValueProperty: string;
-    trueBooleanDefaultValueProperty: boolean;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "DefaultValueProperties" as const;
-    const dateDefaultValueProperty = new Date(
-      $json["dateDefaultValueProperty"],
-    );
-    const dateTimeDefaultValueProperty = new Date(
-      $json["dateTimeDefaultValueProperty"],
-    );
-    const falseBooleanDefaultValueProperty =
-      $json["falseBooleanDefaultValueProperty"];
-    const numberDefaultValueProperty = $json["numberDefaultValueProperty"];
-    const stringDefaultValueProperty = $json["stringDefaultValueProperty"];
-    const trueBooleanDefaultValueProperty =
-      $json["trueBooleanDefaultValueProperty"];
-    return {
-      $identifier,
-      $type,
-      dateDefaultValueProperty,
-      dateTimeDefaultValueProperty,
-      falseBooleanDefaultValueProperty,
-      numberDefaultValueProperty,
-      stringDefaultValueProperty,
-      trueBooleanDefaultValueProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -47055,81 +46499,11 @@ export namespace DateUnionProperties {
   };
 
   export function fromJson(
-    json: DateUnionProperties.Json,
+    $json: DateUnionProperties.Json,
   ): DateUnionProperties {
-    return create(propertiesFromJson(json));
-  }
-
-  export const fromRdfResource: $FromRdfResourceFunction<
-    DateUnionProperties
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return DateUnionProperties.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    DateUnionProperties
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            DateUnionProperties.fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/DateUnionProperties",
-  );
-
-  export function isDateUnionProperties(
-    object: $Object,
-  ): object is DateUnionProperties {
-    switch (object.$type) {
-      case "DateUnionProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function propertiesFromJson($json: DateUnionProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "DateUnionProperties";
-    dateOrDateTimeProperty: Maybe<
-      { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-    >;
-    dateOrStringProperty: Maybe<
-      { type: "date"; value: Date } | { type: "string"; value: string }
-    >;
-    dateTimeOrDateProperty: Maybe<
-      { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-    >;
-    stringOrDateProperty: Maybe<
-      { type: "string"; value: string } | { type: "date"; value: Date }
-    >;
-  } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "DateUnionProperties" as const;
     const dateOrDateTimeProperty = Maybe.fromNullable(
       $json["dateOrDateTimeProperty"],
     ).map((item) =>
@@ -47220,14 +46594,63 @@ export namespace DateUnionProperties {
         throw new Error("unable to deserialize JSON");
       })(item),
     );
-    return {
+    return create({
       $identifier,
-      $type,
       dateOrDateTimeProperty,
       dateOrStringProperty,
       dateTimeOrDateProperty,
       stringOrDateProperty,
-    };
+    });
+  }
+
+  export const fromRdfResource: $FromRdfResourceFunction<
+    DateUnionProperties
+  > = (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return DateUnionProperties.propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map(create);
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    DateUnionProperties
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            DateUnionProperties.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DateUnionProperties",
+  );
+
+  export function isDateUnionProperties(
+    object: $Object,
+  ): object is DateUnionProperties {
+    switch (object.$type) {
+      case "DateUnionProperties":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -49629,83 +49052,11 @@ export namespace ConvertibleTypeProperties {
   };
 
   export function fromJson(
-    json: ConvertibleTypeProperties.Json,
+    $json: ConvertibleTypeProperties.Json,
   ): ConvertibleTypeProperties {
-    return create(propertiesFromJson(json));
-  }
-
-  export const fromRdfResource: $FromRdfResourceFunction<
-    ConvertibleTypeProperties
-  > = (resource, options) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return ConvertibleTypeProperties.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
-  };
-
-  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    ConvertibleTypeProperties
-  > = (values, options) =>
-    values.chain((values) =>
-      values.chainMap((value) =>
-        value
-          .toResource()
-          .chain((resource) =>
-            ConvertibleTypeProperties.fromRdfResource(resource, options),
-          ),
-      ),
-    );
-
-  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/ConvertibleTypeProperties",
-  );
-
-  export function isConvertibleTypeProperties(
-    object: $Object,
-  ): object is ConvertibleTypeProperties {
-    switch (object.$type) {
-      case "ConvertibleTypeProperties":
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  export function propertiesFromJson($json: ConvertibleTypeProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ConvertibleTypeProperties";
-    convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
-    convertibleIriOptionProperty: Maybe<NamedNode>;
-    convertibleIriProperty: NamedNode;
-    convertibleIriSetProperty: readonly NamedNode[];
-    convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
-    convertibleLiteralOptionProperty: Maybe<Literal>;
-    convertibleLiteralProperty: Literal;
-    convertibleLiteralSetProperty: readonly Literal[];
-    convertibleTermNonEmptySetProperty: NonEmptyList<
-      BlankNode | NamedNode | Literal
-    >;
-    convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
-    convertibleTermProperty: BlankNode | NamedNode | Literal;
-    convertibleTermSetProperty: readonly (BlankNode | NamedNode | Literal)[];
-  } {
     const $identifier = $json["@id"].startsWith("_:")
       ? dataFactory.blankNode($json["@id"].substring(2))
       : dataFactory.namedNode($json["@id"]);
-    const $type = "ConvertibleTypeProperties" as const;
     const convertibleIriNonEmptySetProperty = NonEmptyList.fromArray(
       $json["convertibleIriNonEmptySetProperty"],
     )
@@ -49833,9 +49184,8 @@ export namespace ConvertibleTypeProperties {
           ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
-    return {
+    return create({
       $identifier,
-      $type,
       convertibleIriNonEmptySetProperty,
       convertibleIriOptionProperty,
       convertibleIriProperty,
@@ -49848,7 +49198,57 @@ export namespace ConvertibleTypeProperties {
       convertibleTermOptionProperty,
       convertibleTermProperty,
       convertibleTermSetProperty,
-    };
+    });
+  }
+
+  export const fromRdfResource: $FromRdfResourceFunction<
+    ConvertibleTypeProperties
+  > = (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return ConvertibleTypeProperties.propertiesFromRdfResource(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    }).map(create);
+  };
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ConvertibleTypeProperties
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ConvertibleTypeProperties.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ConvertibleTypeProperties",
+  );
+
+  export function isConvertibleTypeProperties(
+    object: $Object,
+  ): object is ConvertibleTypeProperties {
+    switch (object.$type) {
+      case "ConvertibleTypeProperties":
+        return true;
+      default:
+        return false;
+    }
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -50962,8 +50362,12 @@ export namespace Partial {
     return patterns;
   };
 
-  export function fromJson(json: Partial.Json): Partial {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: Partial.Json): Partial {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
+    return create({ $identifier, lazilyResolvedStringProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<Partial> = (
@@ -51007,19 +50411,6 @@ export namespace Partial {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: Partial.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "Partial";
-    lazilyResolvedStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "Partial" as const;
-    const lazilyResolvedStringProperty = $json["lazilyResolvedStringProperty"];
-    return { $identifier, $type, lazilyResolvedStringProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -51433,8 +50824,12 @@ export namespace NonClass {
     return patterns;
   };
 
-  export function fromJson(json: NonClass.Json): NonClass {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: NonClass.Json): NonClass {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const nonClassProperty = $json["nonClassProperty"];
+    return create({ $identifier, nonClassProperty });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<NonClass> = (
@@ -51478,19 +50873,6 @@ export namespace NonClass {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: NonClass.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NonClass";
-    nonClassProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NonClass" as const;
-    const nonClassProperty = $json["nonClassProperty"];
-    return { $identifier, $type, nonClassProperty };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -52337,8 +51719,41 @@ export namespace ClassProperties {
     return patterns;
   };
 
-  export function fromJson(json: ClassProperties.Json): ClassProperties {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ClassProperties.Json): ClassProperties {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const iriClassProperty = Maybe.fromNullable($json["iriClassProperty"]).map(
+      (item) => dataFactory.namedNode(item["@id"]),
+    );
+    const multiClassProperty = Maybe.fromNullable(
+      $json["multiClassProperty"],
+    ).map((item) =>
+      item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(item["@id"].substring(2))
+        : dataFactory.namedNode(item["@id"]),
+    );
+    const nodeClassProperty1 = Maybe.fromNullable(
+      $json["nodeClassProperty1"],
+    ).map((item) => NonClass.fromJson(item));
+    const nodeClassProperty2 = Maybe.fromNullable(
+      $json["nodeClassProperty2"],
+    ).map((item) => Partial.fromJson(item));
+    const singleClassProperty = Maybe.fromNullable(
+      $json["singleClassProperty"],
+    ).map((item) =>
+      item["@id"].startsWith("_:")
+        ? dataFactory.blankNode(item["@id"].substring(2))
+        : dataFactory.namedNode(item["@id"]),
+    );
+    return create({
+      $identifier,
+      iriClassProperty,
+      multiClassProperty,
+      nodeClassProperty1,
+      nodeClassProperty2,
+      singleClassProperty,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ClassProperties> = (
@@ -52390,53 +51805,6 @@ export namespace ClassProperties {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ClassProperties.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ClassProperties";
-    iriClassProperty: Maybe<NamedNode>;
-    multiClassProperty: Maybe<BlankNode | NamedNode>;
-    nodeClassProperty1: Maybe<NonClass>;
-    nodeClassProperty2: Maybe<Partial>;
-    singleClassProperty: Maybe<BlankNode | NamedNode>;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ClassProperties" as const;
-    const iriClassProperty = Maybe.fromNullable($json["iriClassProperty"]).map(
-      (item) => dataFactory.namedNode(item["@id"]),
-    );
-    const multiClassProperty = Maybe.fromNullable(
-      $json["multiClassProperty"],
-    ).map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
-    const nodeClassProperty1 = Maybe.fromNullable(
-      $json["nodeClassProperty1"],
-    ).map((item) => NonClass.fromJson(item));
-    const nodeClassProperty2 = Maybe.fromNullable(
-      $json["nodeClassProperty2"],
-    ).map((item) => Partial.fromJson(item));
-    const singleClassProperty = Maybe.fromNullable(
-      $json["singleClassProperty"],
-    ).map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
-    return {
-      $identifier,
-      $type,
-      iriClassProperty,
-      multiClassProperty,
-      nodeClassProperty1,
-      nodeClassProperty2,
-      singleClassProperty,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -53180,8 +52548,12 @@ export namespace ClassHierarchy0 {
     return patterns;
   };
 
-  export function fromJson(json: ClassHierarchy0.Json): ClassHierarchy0 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ClassHierarchy0.Json): ClassHierarchy0 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classHierarchy0Property = $json["classHierarchy0Property"];
+    return create({ $identifier, classHierarchy0Property });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ClassHierarchy0> = (
@@ -53236,23 +52608,6 @@ export namespace ClassHierarchy0 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ClassHierarchy0.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type:
-      | "ClassHierarchy0"
-      | "ClassHierarchy1"
-      | "ClassHierarchy2"
-      | "ClassHierarchy3";
-    classHierarchy0Property: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ClassHierarchy0" as const;
-    const classHierarchy0Property = $json["classHierarchy0Property"];
-    return { $identifier, $type, classHierarchy0Property };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -53752,8 +53107,11 @@ export namespace ClassHierarchy1 {
     return patterns;
   };
 
-  export function fromJson(json: ClassHierarchy1.Json): ClassHierarchy1 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ClassHierarchy1.Json): ClassHierarchy1 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return create({ ...ClassHierarchy0.fromJson($json), $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ClassHierarchy1> = (
@@ -53807,17 +53165,6 @@ export namespace ClassHierarchy1 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ClassHierarchy1.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ClassHierarchy1" | "ClassHierarchy2" | "ClassHierarchy3";
-  } & ReturnType<typeof ClassHierarchy0.propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ClassHierarchy1" as const;
-    return { ...ClassHierarchy0.propertiesFromJson($json), $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -54353,8 +53700,16 @@ export namespace ClassHierarchy2 {
     return patterns;
   };
 
-  export function fromJson(json: ClassHierarchy2.Json): ClassHierarchy2 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ClassHierarchy2.Json): ClassHierarchy2 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classHierarchy2Property = $json["classHierarchy2Property"];
+    return create({
+      ...ClassHierarchy1.fromJson($json),
+      $identifier,
+      classHierarchy2Property,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ClassHierarchy2> = (
@@ -54407,24 +53762,6 @@ export namespace ClassHierarchy2 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ClassHierarchy2.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ClassHierarchy2" | "ClassHierarchy3";
-    classHierarchy2Property: string;
-  } & ReturnType<typeof ClassHierarchy1.propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ClassHierarchy2" as const;
-    const classHierarchy2Property = $json["classHierarchy2Property"];
-    return {
-      ...ClassHierarchy1.propertiesFromJson($json),
-      $identifier,
-      $type,
-      classHierarchy2Property,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -54976,8 +54313,16 @@ export namespace ClassHierarchy3 {
     return patterns;
   };
 
-  export function fromJson(json: ClassHierarchy3.Json): ClassHierarchy3 {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: ClassHierarchy3.Json): ClassHierarchy3 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classHierarchy3Property = $json["classHierarchy3Property"];
+    return create({
+      ...ClassHierarchy2.fromJson($json),
+      $identifier,
+      classHierarchy3Property,
+    });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<ClassHierarchy3> = (
@@ -55029,24 +54374,6 @@ export namespace ClassHierarchy3 {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: ClassHierarchy3.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "ClassHierarchy3";
-    classHierarchy3Property: string;
-  } & ReturnType<typeof ClassHierarchy2.propertiesFromJson> {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "ClassHierarchy3" as const;
-    const classHierarchy3Property = $json["classHierarchy3Property"];
-    return {
-      ...ClassHierarchy2.propertiesFromJson($json),
-      $identifier,
-      $type,
-      classHierarchy3Property,
-    };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<
@@ -55530,9 +54857,12 @@ export namespace BlankNodeOrIriIdentifier {
   };
 
   export function fromJson(
-    json: BlankNodeOrIriIdentifier.Json,
+    $json: BlankNodeOrIriIdentifier.Json,
   ): BlankNodeOrIriIdentifier {
-    return create(propertiesFromJson(json));
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -55583,17 +54913,6 @@ export namespace BlankNodeOrIriIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: BlankNodeOrIriIdentifier.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "BlankNodeOrIriIdentifier";
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "BlankNodeOrIriIdentifier" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
@@ -56033,9 +55352,10 @@ export namespace BlankNodeIdentifier {
   };
 
   export function fromJson(
-    json: BlankNodeIdentifier.Json,
+    $json: BlankNodeIdentifier.Json,
   ): BlankNodeIdentifier {
-    return create(propertiesFromJson(json));
+    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
+    return create({ $identifier });
   }
 
   export const fromRdfResource: $FromRdfResourceFunction<
@@ -56086,15 +55406,6 @@ export namespace BlankNodeIdentifier {
       default:
         return false;
     }
-  }
-
-  export function propertiesFromJson($json: BlankNodeIdentifier.Json): {
-    $identifier: BlankNode;
-    $type: "BlankNodeIdentifier";
-  } {
-    const $identifier = dataFactory.blankNode($json["@id"].substring(2));
-    const $type = "BlankNodeIdentifier" as const;
-    return { $identifier, $type };
   }
 
   export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{

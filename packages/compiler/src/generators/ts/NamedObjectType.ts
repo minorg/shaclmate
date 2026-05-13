@@ -26,7 +26,6 @@ import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectTyp
 import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { NamedObjectType_jsonUiSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonUiSchemaFunctionDeclaration.js";
 import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
-import { NamedObjectType_propertiesFromJsonFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromJsonFunctionDeclaration.js";
 import { NamedObjectType_propertiesFromRdfResourceFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_propertiesFromRdfResourceFunctionDeclaration.js";
 import { NamedObjectType_schemaVariableStatement } from "./_NamedObjectType/NamedObjectType_schemaVariableStatement.js";
 import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
@@ -190,9 +189,6 @@ export class NamedObjectType extends AbstractType {
         ).toList(),
         ...NamedObjectType_fromRdfTypeVariableStatement.call(this).toList(),
         NamedObjectType_isTypeFunctionDeclaration.call(this),
-        ...NamedObjectType_propertiesFromJsonFunctionDeclaration.bind(
-          this,
-        )().toList(),
         ...NamedObjectType_propertiesFromRdfResourceFunctionDeclaration.bind(
           this,
         )().toList(),

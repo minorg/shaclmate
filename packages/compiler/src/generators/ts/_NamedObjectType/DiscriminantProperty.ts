@@ -64,7 +64,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override fromJsonStatements(): readonly Code[] {
-    return [code`const ${this.name} = ${this.initializer};`];
+    return [];
   }
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {

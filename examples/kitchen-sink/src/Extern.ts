@@ -35,7 +35,7 @@ export namespace Extern {
   }
 
   export function fromJson(json: Json): Extern {
-    return create(BaseForExtern.propertiesFromJson(json));
+    return create(BaseForExtern.fromJson(json));
   }
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Extern> = (
