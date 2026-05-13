@@ -15,27 +15,27 @@ export const snippets_PropertyPath: SnippetFactory = ({
 export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
-  export type $Filter = object;
+  export type Filter = object;
 
-  export function $filter(_filter: $Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
+  export function filter(_filter: $Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
     return true;
   }
 
-  export const ${syntheticNamePrefix}fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
+  export const fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;
 
-  export const $fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
+  export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${syntheticNamePrefix}PropertyPath> = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
           .toResource()
-          .chain((resource) => ${syntheticNamePrefix}fromRdfResource(resource, options)),
+          .chain((resource) => fromRdfResource(resource, options)),
       ),
     );
 
   export const $schema: Readonly<object> = {};
 
-  export const ${syntheticNamePrefix}toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
+  export const toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
 
-  export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
+  export const toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
   );
