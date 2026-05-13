@@ -26402,6 +26402,1872 @@ export namespace MutableProperties {
         variablePrefix,
       }),
     );
+}
+export interface ClassMultipleInheritanceParent2 {
+  readonly $identifier: () => ClassMultipleInheritanceParent2.Identifier;
+  readonly $type:
+    | "ClassMultipleInheritanceParent2"
+    | "ClassMultipleInheritanceChild";
+  readonly classMultipleInheritanceParent2Property: string;
+}
+
+export namespace ClassMultipleInheritanceParent2 {
+  export function create(parameters: {
+    readonly $identifier?:
+      | (() => ClassMultipleInheritanceParent2.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly classMultipleInheritanceParent2Property: string;
+  }): ClassMultipleInheritanceParent2 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassMultipleInheritanceParent2.Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassMultipleInheritanceParent2" as const;
+    const classMultipleInheritanceParent2Property =
+      parameters.classMultipleInheritanceParent2Property;
+    return { $identifier, $type, classMultipleInheritanceParent2Property };
+  }
+
+  export function equals(
+    left: ClassMultipleInheritanceParent2,
+    right: ClassMultipleInheritanceParent2,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(
+          left.classMultipleInheritanceParent2Property,
+          right.classMultipleInheritanceParent2Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classMultipleInheritanceParent2Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassMultipleInheritanceParent2.hashShaclProperties(
+      _classMultipleInheritanceParent2,
+      _hasher,
+    );
+    _hasher.update(_classMultipleInheritanceParent2.$identifier().value);
+    _hasher.update(_classMultipleInheritanceParent2.$type);
+    return _hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(
+      _classMultipleInheritanceParent2.classMultipleInheritanceParent2Property,
+    );
+    return _hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "ClassMultipleInheritanceParent2"
+      | "ClassMultipleInheritanceChild";
+    readonly classMultipleInheritanceParent2Property: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "ClassMultipleInheritanceParent2",
+            "ClassMultipleInheritanceChild",
+          ]),
+          classMultipleInheritanceParent2Property: z.string().meta({}),
+        })
+        .meta({}) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ClassMultipleInheritanceParent2" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classMultipleInheritanceParent2Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassMultipleInheritanceParent2",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(
+    filter: ClassMultipleInheritanceParent2.Filter,
+    value: ClassMultipleInheritanceParent2,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classMultipleInheritanceParent2Property !== undefined &&
+      !$filterString(
+        filter.classMultipleInheritanceParent2Property,
+        value.classMultipleInheritanceParent2Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classMultipleInheritanceParent2Property?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceParent2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceParent2Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassMultipleInheritanceParent2.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceParent2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceParent2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceParent2Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson(
+    $json: ClassMultipleInheritanceParent2.Json,
+  ): ClassMultipleInheritanceParent2 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classMultipleInheritanceParent2Property =
+      $json["classMultipleInheritanceParent2Property"];
+    return create({ $identifier, classMultipleInheritanceParent2Property });
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    ClassMultipleInheritanceParent2
+  > = ($resource, _$options) => {
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassMultipleInheritanceParent2":
+                case "http://example.com/ClassMultipleInheritanceChild":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(
+                  ClassMultipleInheritanceParent2.fromRdfType,
+                  { graph: _$options.graph },
+                )
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceParent2)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: _$options.graph,
+            resource: $resource,
+            propertySchema:
+              schema.properties.classMultipleInheritanceParent2Property,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages(
+                    values,
+                    _$options.preferredLanguages,
+                  ),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((classMultipleInheritanceParent2Property) =>
+            create({
+              $identifier,
+              classMultipleInheritanceParent2Property,
+            }),
+          ),
+        ),
+    );
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassMultipleInheritanceParent2
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassMultipleInheritanceParent2.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassMultipleInheritanceParent2",
+  );
+
+  export function isClassMultipleInheritanceParent2(
+    object: $Object,
+  ): object is ClassMultipleInheritanceParent2 {
+    switch (object.$type) {
+      case "ClassMultipleInheritanceChild":
+      case "ClassMultipleInheritanceParent2":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ClassMultipleInheritanceChild"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassMultipleInheritanceParent2"],
+        }),
+      },
+      classMultipleInheritanceParent2Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classMultipleInheritanceParent2Property",
+        ),
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceParent2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceParent2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceParent2.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceParent2.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(
+    _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+  ): ClassMultipleInheritanceParent2.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _classMultipleInheritanceParent2.$identifier().termType ===
+          "BlankNode"
+            ? `_:${_classMultipleInheritanceParent2.$identifier().value}`
+            : _classMultipleInheritanceParent2.$identifier().value,
+        $type: _classMultipleInheritanceParent2.$type,
+        classMultipleInheritanceParent2Property:
+          _classMultipleInheritanceParent2.classMultipleInheritanceParent2Property,
+      } satisfies ClassMultipleInheritanceParent2.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassMultipleInheritanceParent2.Identifier,
+    ClassMultipleInheritanceParent2
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/ClassMultipleInheritanceParent2",
+        ),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      dataFactory.namedNode(
+        "http://example.com/classMultipleInheritanceParent2Property",
+      ),
+      [
+        $literalFactory.string(
+          parameters.object.classMultipleInheritanceParent2Property,
+        ),
+      ],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _classMultipleInheritanceParent2.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassMultipleInheritanceParent2): string;
+  export function $toString(
+    _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+  ): string;
+  export function $toString(
+    this: ClassMultipleInheritanceParent2 | undefined,
+    _classMultipleInheritanceParent2?: ClassMultipleInheritanceParent2,
+  ): string {
+    return `ClassMultipleInheritanceParent2(${JSON.stringify(
+      _propertiesToStrings((_classMultipleInheritanceParent2 ?? this)!),
+    )})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent2.Filter,
+    typeof ClassMultipleInheritanceParent2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent2.Filter,
+    typeof ClassMultipleInheritanceParent2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+export interface ClassMultipleInheritanceParent1 {
+  readonly $identifier: () => ClassMultipleInheritanceParent1.Identifier;
+  readonly $type:
+    | "ClassMultipleInheritanceParent1"
+    | "ClassMultipleInheritanceChild";
+  readonly classMultipleInheritanceParent1Property: string;
+}
+
+export namespace ClassMultipleInheritanceParent1 {
+  export function create(parameters: {
+    readonly $identifier?:
+      | (() => ClassMultipleInheritanceParent1.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly classMultipleInheritanceParent1Property: string;
+  }): ClassMultipleInheritanceParent1 {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassMultipleInheritanceParent1.Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassMultipleInheritanceParent1" as const;
+    const classMultipleInheritanceParent1Property =
+      parameters.classMultipleInheritanceParent1Property;
+    return { $identifier, $type, classMultipleInheritanceParent1Property };
+  }
+
+  export function equals(
+    left: ClassMultipleInheritanceParent1,
+    right: ClassMultipleInheritanceParent1,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier(), right.$identifier())
+      .mapLeft((propertyValuesUnequal) => ({
+        left,
+        right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(
+          left.classMultipleInheritanceParent1Property,
+          right.classMultipleInheritanceParent1Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classMultipleInheritanceParent1Property",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassMultipleInheritanceParent1.hashShaclProperties(
+      _classMultipleInheritanceParent1,
+      _hasher,
+    );
+    _hasher.update(_classMultipleInheritanceParent1.$identifier().value);
+    _hasher.update(_classMultipleInheritanceParent1.$type);
+    return _hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(
+      _classMultipleInheritanceParent1.classMultipleInheritanceParent1Property,
+    );
+    return _hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly $type:
+      | "ClassMultipleInheritanceParent1"
+      | "ClassMultipleInheritanceChild";
+    readonly classMultipleInheritanceParent1Property: string;
+  };
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          "@id": z.string().min(1),
+          $type: z.enum([
+            "ClassMultipleInheritanceParent1",
+            "ClassMultipleInheritanceChild",
+          ]),
+          classMultipleInheritanceParent1Property: z.string().meta({}),
+        })
+        .meta({}) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            rule: {
+              condition: {
+                schema: { const: "ClassMultipleInheritanceParent1" as const },
+                scope: `${scopePrefix}/properties/$type`,
+              },
+              effect: "HIDE",
+            },
+            scope: `${scopePrefix}/properties/$type`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classMultipleInheritanceParent1Property`,
+            type: "Control",
+          },
+        ],
+        label: "ClassMultipleInheritanceParent1",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(
+    filter: ClassMultipleInheritanceParent1.Filter,
+    value: ClassMultipleInheritanceParent1,
+  ): boolean {
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classMultipleInheritanceParent1Property !== undefined &&
+      !$filterString(
+        filter.classMultipleInheritanceParent1Property,
+        value.classMultipleInheritanceParent1Property,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classMultipleInheritanceParent1Property?: $StringFilter;
+  };
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceParent1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceParent1Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassMultipleInheritanceParent1.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceParent1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceParent1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceParent1Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson(
+    $json: ClassMultipleInheritanceParent1.Json,
+  ): ClassMultipleInheritanceParent1 {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classMultipleInheritanceParent1Property =
+      $json["classMultipleInheritanceParent1Property"];
+    return create({ $identifier, classMultipleInheritanceParent1Property });
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    ClassMultipleInheritanceParent1
+  > = ($resource, _$options) => {
+    return (
+      !_$options.ignoreRdfType
+        ? $resource
+            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ClassMultipleInheritanceParent1":
+                case "http://example.com/ClassMultipleInheritanceChild":
+                  return Right(true as const);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $resource.isInstanceOf(
+                  ClassMultipleInheritanceParent1.fromRdfType,
+                  { graph: _$options.graph },
+                )
+              ) {
+                return Right(true as const);
+              }
+
+              return Left(
+                new Error(
+                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceParent1)`,
+                ),
+              );
+            })
+        : Right(true as const)
+    ).chain((_rdfTypeCheck) =>
+      Right(
+        new Resource.Value({
+          dataFactory: dataFactory,
+          focusResource: $resource,
+          propertyPath: $RdfVocabularies.rdf.subject,
+          term: $resource.identifier,
+        }).toValues(),
+      )
+        .chain((values) => values.chainMap((value) => value.toIdentifier()))
+        .chain((values) => values.head())
+        .chain(($identifier) =>
+          $shaclPropertyFromRdf({
+            graph: _$options.graph,
+            resource: $resource,
+            propertySchema:
+              schema.properties.classMultipleInheritanceParent1Property,
+            typeFromRdf: (resourceValues) =>
+              resourceValues
+                .chain((values) =>
+                  $fromRdfPreferredLanguages(
+                    values,
+                    _$options.preferredLanguages,
+                  ),
+                )
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
+          }).map((classMultipleInheritanceParent1Property) =>
+            create({
+              $identifier,
+              classMultipleInheritanceParent1Property,
+            }),
+          ),
+        ),
+    );
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassMultipleInheritanceParent1
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassMultipleInheritanceParent1.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassMultipleInheritanceParent1",
+  );
+
+  export function isClassMultipleInheritanceParent1(
+    object: $Object,
+  ): object is ClassMultipleInheritanceParent1 {
+    switch (object.$type) {
+      case "ClassMultipleInheritanceChild":
+      case "ClassMultipleInheritanceParent1":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export const schema = {
+    properties: {
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          descendantValues: ["ClassMultipleInheritanceChild"],
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassMultipleInheritanceParent1"],
+        }),
+      },
+      classMultipleInheritanceParent1Property: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classMultipleInheritanceParent1Property",
+        ),
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceParent1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceParent1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceParent1.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceParent1.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(
+    _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+  ): ClassMultipleInheritanceParent1.Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _classMultipleInheritanceParent1.$identifier().termType ===
+          "BlankNode"
+            ? `_:${_classMultipleInheritanceParent1.$identifier().value}`
+            : _classMultipleInheritanceParent1.$identifier().value,
+        $type: _classMultipleInheritanceParent1.$type,
+        classMultipleInheritanceParent1Property:
+          _classMultipleInheritanceParent1.classMultipleInheritanceParent1Property,
+      } satisfies ClassMultipleInheritanceParent1.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassMultipleInheritanceParent1.Identifier,
+    ClassMultipleInheritanceParent1
+  > = (parameters) => {
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/ClassMultipleInheritanceParent1",
+        ),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      dataFactory.namedNode(
+        "http://example.com/classMultipleInheritanceParent1Property",
+      ),
+      [
+        $literalFactory.string(
+          parameters.object.classMultipleInheritanceParent1Property,
+        ),
+      ],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+  ): Record<string, string> {
+    return $compactRecord({
+      $identifier: _classMultipleInheritanceParent1.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassMultipleInheritanceParent1): string;
+  export function $toString(
+    _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+  ): string;
+  export function $toString(
+    this: ClassMultipleInheritanceParent1 | undefined,
+    _classMultipleInheritanceParent1?: ClassMultipleInheritanceParent1,
+  ): string {
+    return `ClassMultipleInheritanceParent1(${JSON.stringify(
+      _propertiesToStrings((_classMultipleInheritanceParent1 ?? this)!),
+    )})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent1.Filter,
+    typeof ClassMultipleInheritanceParent1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent1.Filter,
+    typeof ClassMultipleInheritanceParent1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
+}
+export interface ClassMultipleInheritanceChild
+  extends ClassMultipleInheritanceParent1,
+    ClassMultipleInheritanceParent2 {
+  readonly $identifier: () => ClassMultipleInheritanceChild.Identifier;
+  readonly $type: "ClassMultipleInheritanceChild";
+  readonly classMultipleInheritanceChildProperty: string;
+}
+
+export namespace ClassMultipleInheritanceChild {
+  export function create(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassMultipleInheritanceChild.Identifier)
+        | (BlankNode | NamedNode)
+        | string;
+      readonly classMultipleInheritanceChildProperty: string;
+    } & Parameters<typeof ClassMultipleInheritanceParent1.create>[0] &
+      Parameters<typeof ClassMultipleInheritanceParent2.create>[0],
+  ): ClassMultipleInheritanceChild {
+    const $identifierParameter = parameters.$identifier;
+    let $identifier: () => ClassMultipleInheritanceChild.Identifier;
+    if (typeof $identifierParameter === "function") {
+      $identifier = $identifierParameter;
+    } else if (typeof $identifierParameter === "object") {
+      $identifier = () => $identifierParameter;
+    } else if (typeof $identifierParameter === "string") {
+      $identifier = () => dataFactory.namedNode($identifierParameter);
+    } else if ($identifierParameter === undefined) {
+      const $eagerIdentifier = dataFactory.blankNode();
+      $identifier = () => $eagerIdentifier;
+    } else {
+      $identifier = $identifierParameter satisfies never;
+    }
+    const $type = "ClassMultipleInheritanceChild" as const;
+    const classMultipleInheritanceChildProperty =
+      parameters.classMultipleInheritanceChildProperty;
+    return {
+      ...ClassMultipleInheritanceParent1.create(parameters),
+      ...ClassMultipleInheritanceParent2.create(parameters),
+      $identifier,
+      $type,
+      classMultipleInheritanceChildProperty,
+    };
+  }
+
+  export function equals(
+    left: ClassMultipleInheritanceChild,
+    right: ClassMultipleInheritanceChild,
+  ): $EqualsResult {
+    return ClassMultipleInheritanceParent1.equals(left, right)
+      .chain(() => ClassMultipleInheritanceParent2.equals(left, right))
+      .chain(() =>
+        $booleanEquals(left.$identifier(), right.$identifier()).mapLeft(
+          (propertyValuesUnequal) => ({
+            left,
+            right,
+            propertyName: "$identifier",
+            propertyValuesUnequal,
+            type: "property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          left.classMultipleInheritanceChildProperty,
+          right.classMultipleInheritanceChildProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left,
+          right,
+          propertyName: "classMultipleInheritanceChildProperty",
+          propertyValuesUnequal,
+          type: "property" as const,
+        })),
+      );
+  }
+
+  export function hash<HasherT extends $Hasher>(
+    _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassMultipleInheritanceChild.hashShaclProperties(
+      _classMultipleInheritanceChild,
+      _hasher,
+    );
+    _hasher.update(_classMultipleInheritanceChild.$identifier().value);
+    return _hasher;
+  }
+
+  export function hashShaclProperties<HasherT extends $Hasher>(
+    _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+    _hasher: HasherT,
+  ): HasherT {
+    ClassMultipleInheritanceParent1.hashShaclProperties(
+      _classMultipleInheritanceChild,
+      _hasher,
+    );
+    ClassMultipleInheritanceParent2.hashShaclProperties(
+      _classMultipleInheritanceChild,
+      _hasher,
+    );
+    _hasher.update(
+      _classMultipleInheritanceChild.classMultipleInheritanceChildProperty,
+    );
+    return _hasher;
+  }
+
+  export type Identifier = BlankNode | NamedNode;
+
+  export namespace Identifier {
+    export const parse = $parseIdentifier;
+    export const stringify = NTriplesTerm.stringify;
+  }
+
+  export type Json = {
+    readonly "@id": string;
+    readonly classMultipleInheritanceChildProperty: string;
+  } & ClassMultipleInheritanceParent1.Json &
+    ClassMultipleInheritanceParent2.Json;
+
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
+      const jsonSafeParseResult = schema().safeParse(json);
+      if (!jsonSafeParseResult.success) {
+        return Left(jsonSafeParseResult.error);
+      }
+      return Right(jsonSafeParseResult.data);
+    }
+
+    export function schema() {
+      return z
+        .object({
+          ...ClassMultipleInheritanceParent1.Json.schema().shape,
+          ...ClassMultipleInheritanceParent2.Json.schema().shape,
+          "@id": z.string().min(1),
+          classMultipleInheritanceChildProperty: z.string().meta({}),
+        })
+        .meta({}) satisfies z.ZodType<Json>;
+    }
+
+    export function uiSchema(parameters?: { scopePrefix?: string }): any {
+      const scopePrefix = parameters?.scopePrefix ?? "#";
+      return {
+        elements: [
+          ClassMultipleInheritanceParent1.Json.uiSchema({ scopePrefix }),
+          ClassMultipleInheritanceParent2.Json.uiSchema({ scopePrefix }),
+          {
+            label: "Identifier",
+            scope: `${scopePrefix}/properties/@id`,
+            type: "Control",
+          },
+          {
+            scope: `${scopePrefix}/properties/classMultipleInheritanceChildProperty`,
+            type: "Control",
+          },
+        ],
+        label: "ClassMultipleInheritanceChild",
+        type: "Group",
+      };
+    }
+  }
+
+  export function filter(
+    filter: ClassMultipleInheritanceChild.Filter,
+    value: ClassMultipleInheritanceChild,
+  ): boolean {
+    if (!ClassMultipleInheritanceParent1.filter(filter, value)) {
+      return false;
+    }
+    if (!ClassMultipleInheritanceParent2.filter(filter, value)) {
+      return false;
+    }
+    if (
+      filter.$identifier !== undefined &&
+      !$filterIdentifier(filter.$identifier, value.$identifier())
+    ) {
+      return false;
+    }
+    if (
+      filter.classMultipleInheritanceChildProperty !== undefined &&
+      !$filterString(
+        filter.classMultipleInheritanceChildProperty,
+        value.classMultipleInheritanceChildProperty,
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  export type Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly classMultipleInheritanceChildProperty?: $StringFilter;
+  } & ClassMultipleInheritanceParent1.Filter &
+    ClassMultipleInheritanceParent2.Filter;
+
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceChild.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceChildProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceChildProperty",
+        propertySchema: schema.properties.classMultipleInheritanceChildProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceChild.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassMultipleInheritanceChild.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceChild.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceChildProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceChildProperty",
+        propertySchema: schema.properties.classMultipleInheritanceChildProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
+  export function fromJson(
+    $json: ClassMultipleInheritanceChild.Json,
+  ): ClassMultipleInheritanceChild {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const classMultipleInheritanceChildProperty =
+      $json["classMultipleInheritanceChildProperty"];
+    return create({
+      ...ClassMultipleInheritanceParent1.fromJson($json),
+      ...ClassMultipleInheritanceParent2.fromJson($json),
+      $identifier,
+      classMultipleInheritanceChildProperty,
+    });
+  }
+
+  export const _fromRdfResource: $_FromRdfResourceFunction<
+    ClassMultipleInheritanceChild
+  > = ($resource, _$options) => {
+    return ClassMultipleInheritanceParent1._fromRdfResource($resource, {
+      ..._$options,
+      ignoreRdfType: true,
+    }).chain(($super0) =>
+      ClassMultipleInheritanceParent2._fromRdfResource($resource, {
+        ..._$options,
+        ignoreRdfType: true,
+      }).chain(($super1) =>
+        (!_$options.ignoreRdfType
+          ? $resource
+              .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
+              .chain((actualRdfType) => actualRdfType.toIri())
+              .chain((actualRdfType) => {
+                // Check the expected type and its known subtypes
+                switch (actualRdfType.value) {
+                  case "http://example.com/ClassMultipleInheritanceChild":
+                    return Right(true as const);
+                }
+
+                // Check arbitrary rdfs:subClassOf's of the expected type
+                if (
+                  $resource.isInstanceOf(
+                    ClassMultipleInheritanceChild.fromRdfType,
+                    { graph: _$options.graph },
+                  )
+                ) {
+                  return Right(true as const);
+                }
+
+                return Left(
+                  new Error(
+                    `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceChild)`,
+                  ),
+                );
+              })
+          : Right(true as const)
+        ).chain((_rdfTypeCheck) =>
+          Right(
+            new Resource.Value({
+              dataFactory: dataFactory,
+              focusResource: $resource,
+              propertyPath: $RdfVocabularies.rdf.subject,
+              term: $resource.identifier,
+            }).toValues(),
+          )
+            .chain((values) => values.chainMap((value) => value.toIdentifier()))
+            .chain((values) => values.head())
+            .chain(($identifier) =>
+              $shaclPropertyFromRdf({
+                graph: _$options.graph,
+                resource: $resource,
+                propertySchema:
+                  schema.properties.classMultipleInheritanceChildProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    ),
+              }).map((classMultipleInheritanceChildProperty) =>
+                create({
+                  ...$super0,
+                  ...$super1,
+                  $identifier,
+                  classMultipleInheritanceChildProperty,
+                }),
+              ),
+            ),
+        ),
+      ),
+    );
+  };
+
+  export const fromRdfResource =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
+
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
+    ClassMultipleInheritanceChild
+  > = (values, options) =>
+    values.chain((values) =>
+      values.chainMap((value) =>
+        value
+          .toResource()
+          .chain((resource) =>
+            ClassMultipleInheritanceChild.fromRdfResource(resource, options),
+          ),
+      ),
+    );
+
+  export const fromRdfType: NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ClassMultipleInheritanceChild",
+  );
+
+  export function isClassMultipleInheritanceChild(
+    object: $Object,
+  ): object is ClassMultipleInheritanceChild {
+    switch (object.$type) {
+      case "ClassMultipleInheritanceChild":
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  export const schema = {
+    properties: {
+      ...ClassMultipleInheritanceParent1.schema.properties,
+      ...ClassMultipleInheritanceParent2.schema.properties,
+      $identifier: {
+        kind: "Identifier" as const,
+        type: () => ({ kind: "Identifier" as const }),
+      },
+      $type: {
+        kind: "Discriminant" as const,
+        type: () => ({
+          kind: "TypeDiscriminant" as const,
+          ownValues: ["ClassMultipleInheritanceChild"],
+        }),
+      },
+      classMultipleInheritanceChildProperty: {
+        kind: "Shacl" as const,
+        type: () => ({ kind: "String" as const }),
+        path: dataFactory.namedNode(
+          "http://example.com/classMultipleInheritanceChildProperty",
+        ),
+      },
+    },
+  } as const;
+
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceChild.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceChild";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceChild.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceChild.sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function toJson(
+    _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+  ): ClassMultipleInheritanceChild.Json {
+    return JSON.parse(
+      JSON.stringify({
+        ...ClassMultipleInheritanceParent1.toJson(
+          _classMultipleInheritanceChild,
+        ),
+        ...ClassMultipleInheritanceParent2.toJson(
+          _classMultipleInheritanceChild,
+        ),
+        "@id":
+          _classMultipleInheritanceChild.$identifier().termType === "BlankNode"
+            ? `_:${_classMultipleInheritanceChild.$identifier().value}`
+            : _classMultipleInheritanceChild.$identifier().value,
+        classMultipleInheritanceChildProperty:
+          _classMultipleInheritanceChild.classMultipleInheritanceChildProperty,
+      } satisfies ClassMultipleInheritanceChild.Json),
+    );
+  }
+
+  export const _toRdfResource: $_ToRdfResourceFunction<
+    ClassMultipleInheritanceChild.Identifier,
+    ClassMultipleInheritanceChild
+  > = (parameters) => {
+    ClassMultipleInheritanceParent1._toRdfResource({
+      ...parameters,
+      ignoreRdfType: true,
+    });
+    ClassMultipleInheritanceParent2._toRdfResource({
+      ...parameters,
+      ignoreRdfType: true,
+    });
+    if (!parameters.ignoreRdfType) {
+      parameters.resource.add(
+        $RdfVocabularies.rdf.type,
+        dataFactory.namedNode(
+          "http://example.com/ClassMultipleInheritanceChild",
+        ),
+        parameters.graph,
+      );
+    }
+    parameters.resource.add(
+      dataFactory.namedNode(
+        "http://example.com/classMultipleInheritanceChildProperty",
+      ),
+      [
+        $literalFactory.string(
+          parameters.object.classMultipleInheritanceChildProperty,
+        ),
+      ],
+      parameters.graph,
+    );
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
+
+  export function _propertiesToStrings(
+    _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+  ): Record<string, string> {
+    return $compactRecord({
+      ...ClassMultipleInheritanceParent1._propertiesToStrings(
+        _classMultipleInheritanceChild,
+      ),
+      ...ClassMultipleInheritanceParent2._propertiesToStrings(
+        _classMultipleInheritanceChild,
+      ),
+      $identifier: _classMultipleInheritanceChild.$identifier().toString(),
+    });
+  }
+
+  export function $toString(this: ClassMultipleInheritanceChild): string;
+  export function $toString(
+    _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+  ): string;
+  export function $toString(
+    this: ClassMultipleInheritanceChild | undefined,
+    _classMultipleInheritanceChild?: ClassMultipleInheritanceChild,
+  ): string {
+    return `ClassMultipleInheritanceChild(${JSON.stringify(
+      _propertiesToStrings((_classMultipleInheritanceChild ?? this)!),
+    )})`;
+  }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceChild.Filter,
+    typeof ClassMultipleInheritanceChild.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceChild.Filter,
+    typeof ClassMultipleInheritanceChild.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that uses the list shapes in properties.
  */
@@ -56453,6 +58319,9 @@ export type $Object =
   | LazilyResolvedIriIdentifier
   | LazyProperties
   | ListProperties
+  | ClassMultipleInheritanceChild
+  | ClassMultipleInheritanceParent1
+  | ClassMultipleInheritanceParent2
   | MutableProperties
   | NamedUnionProperties
   | NoRdfTypeUnionMember1
@@ -56580,6 +58449,19 @@ export namespace $Object {
     }
     if (ListProperties.isListProperties(value)) {
       return ListProperties.$toString(value);
+    }
+    if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)) {
+      return ClassMultipleInheritanceChild.$toString(value);
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
+    ) {
+      return ClassMultipleInheritanceParent1.$toString(value);
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
+    ) {
+      return ClassMultipleInheritanceParent2.$toString(value);
     }
     if (MutableProperties.isMutableProperties(value)) {
       return MutableProperties.$toString(value);
@@ -56933,6 +58815,33 @@ export namespace $Object {
       return ListProperties.equals(
         left as ListProperties,
         right as ListProperties,
+      );
+    }
+    if (
+      ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(left) &&
+      ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(right)
+    ) {
+      return ClassMultipleInheritanceChild.equals(
+        left as ClassMultipleInheritanceChild,
+        right as ClassMultipleInheritanceChild,
+      );
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(left) &&
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(right)
+    ) {
+      return ClassMultipleInheritanceParent1.equals(
+        left as ClassMultipleInheritanceParent1,
+        right as ClassMultipleInheritanceParent1,
+      );
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(left) &&
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(right)
+    ) {
+      return ClassMultipleInheritanceParent2.equals(
+        left as ClassMultipleInheritanceParent2,
+        right as ClassMultipleInheritanceParent2,
       );
     }
     if (
@@ -57455,6 +59364,45 @@ export namespace $Object {
       }
     }
     if (
+      filter.on?.["ClassMultipleInheritanceChild"] !== undefined &&
+      ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)
+    ) {
+      if (
+        !ClassMultipleInheritanceChild.filter(
+          filter.on["ClassMultipleInheritanceChild"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ClassMultipleInheritanceParent1"] !== undefined &&
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
+    ) {
+      if (
+        !ClassMultipleInheritanceParent1.filter(
+          filter.on["ClassMultipleInheritanceParent1"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
+      filter.on?.["ClassMultipleInheritanceParent2"] !== undefined &&
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
+    ) {
+      if (
+        !ClassMultipleInheritanceParent2.filter(
+          filter.on["ClassMultipleInheritanceParent2"],
+          value,
+        )
+      ) {
+        return false;
+      }
+    }
+    if (
       filter.on?.["MutableProperties"] !== undefined &&
       MutableProperties.isMutableProperties(value)
     ) {
@@ -57690,6 +59638,9 @@ export namespace $Object {
       readonly LazilyResolvedIriIdentifier?: LazilyResolvedIriIdentifier.Filter;
       readonly LazyProperties?: LazyProperties.Filter;
       readonly ListProperties?: ListProperties.Filter;
+      readonly ClassMultipleInheritanceChild?: ClassMultipleInheritanceChild.Filter;
+      readonly ClassMultipleInheritanceParent1?: ClassMultipleInheritanceParent1.Filter;
+      readonly ClassMultipleInheritanceParent2?: ClassMultipleInheritanceParent2.Filter;
       readonly MutableProperties?: MutableProperties.Filter;
       readonly NamedUnionProperties?: NamedUnionProperties.Filter;
       readonly NoRdfTypeUnionMember1?: NoRdfTypeUnionMember1.Filter;
@@ -57923,6 +59874,24 @@ export namespace $Object {
         focusIdentifier,
         ignoreRdfType: false,
         variablePrefix: `${variablePrefix}ListProperties`,
+      }).concat(),
+      ...ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceChild,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceChild`,
+      }).concat(),
+      ...ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceParent1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent1`,
+      }).concat(),
+      ...ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceParent2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent2`,
       }).concat(),
       ...MutableProperties.focusSparqlConstructTriples({
         filter: filter?.on?.MutableProperties,
@@ -58423,6 +60392,36 @@ export namespace $Object {
           type: "group",
         },
         {
+          patterns: ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceChild,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceChild`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceParent1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceParent2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent2`,
+          }).concat(),
+          type: "group",
+        },
+        {
           patterns: MutableProperties.focusSparqlWherePatterns({
             filter: filter?.on?.MutableProperties,
             focusIdentifier,
@@ -58772,6 +60771,21 @@ export namespace $Object {
     if (value.$type === "ListProperties") {
       return ListProperties.fromJson(value as ListProperties.Json);
     }
+    if (value.$type === "ClassMultipleInheritanceChild") {
+      return ClassMultipleInheritanceChild.fromJson(
+        value as ClassMultipleInheritanceChild.Json,
+      );
+    }
+    if (value.$type === "ClassMultipleInheritanceParent1") {
+      return ClassMultipleInheritanceParent1.fromJson(
+        value as ClassMultipleInheritanceParent1.Json,
+      );
+    }
+    if (value.$type === "ClassMultipleInheritanceParent2") {
+      return ClassMultipleInheritanceParent2.fromJson(
+        value as ClassMultipleInheritanceParent2.Json,
+      );
+    }
     if (value.$type === "MutableProperties") {
       return MutableProperties.fromJson(value as MutableProperties.Json);
     }
@@ -59084,6 +61098,27 @@ export namespace $Object {
       .altLazy(
         () =>
           ListProperties.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassMultipleInheritanceChild.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassMultipleInheritanceParent1.fromRdfResource(resource, {
+            ...options,
+            ignoreRdfType: false,
+          }) as Either<Error, $Object>,
+      )
+      .altLazy(
+        () =>
+          ClassMultipleInheritanceParent2.fromRdfResource(resource, {
             ...options,
             ignoreRdfType: false,
           }) as Either<Error, $Object>,
@@ -59657,6 +61692,51 @@ export namespace $Object {
             )
             .altLazy(
               () =>
+                ClassMultipleInheritanceChild.fromRdfResourceValues(
+                  valueAsValues,
+                  {
+                    context: _options.context,
+                    graph: _options.graph,
+                    ignoreRdfType: false,
+                    objectSet: _options.objectSet,
+                    preferredLanguages: _options.preferredLanguages,
+                    propertyPath: _options.propertyPath,
+                    resource: _options.resource,
+                  },
+                ) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                ClassMultipleInheritanceParent1.fromRdfResourceValues(
+                  valueAsValues,
+                  {
+                    context: _options.context,
+                    graph: _options.graph,
+                    ignoreRdfType: false,
+                    objectSet: _options.objectSet,
+                    preferredLanguages: _options.preferredLanguages,
+                    propertyPath: _options.propertyPath,
+                    resource: _options.resource,
+                  },
+                ) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
+                ClassMultipleInheritanceParent2.fromRdfResourceValues(
+                  valueAsValues,
+                  {
+                    context: _options.context,
+                    graph: _options.graph,
+                    ignoreRdfType: false,
+                    objectSet: _options.objectSet,
+                    preferredLanguages: _options.preferredLanguages,
+                    propertyPath: _options.propertyPath,
+                    resource: _options.resource,
+                  },
+                ) as Either<Error, Resource.Values<$Object>>,
+            )
+            .altLazy(
+              () =>
                 MutableProperties.fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
@@ -60030,6 +62110,19 @@ export namespace $Object {
     if (ListProperties.isListProperties(value)) {
       ListProperties.hash(value, hasher);
     }
+    if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)) {
+      ClassMultipleInheritanceChild.hash(value, hasher);
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
+    ) {
+      ClassMultipleInheritanceParent1.hash(value, hasher);
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
+    ) {
+      ClassMultipleInheritanceParent2.hash(value, hasher);
+    }
     if (MutableProperties.isMutableProperties(value)) {
       MutableProperties.hash(value, hasher);
     }
@@ -60139,6 +62232,9 @@ export namespace $Object {
     | LazilyResolvedIriIdentifier.Json
     | LazyProperties.Json
     | ListProperties.Json
+    | ClassMultipleInheritanceChild.Json
+    | ClassMultipleInheritanceParent1.Json
+    | ClassMultipleInheritanceParent2.Json
     | MutableProperties.Json
     | NamedUnionProperties.Json
     | NoRdfTypeUnionMember1.Json
@@ -60199,6 +62295,9 @@ export namespace $Object {
           LazilyResolvedIriIdentifier.Json.schema(),
           LazyProperties.Json.schema(),
           ListProperties.Json.schema(),
+          ClassMultipleInheritanceChild.Json.schema(),
+          ClassMultipleInheritanceParent1.Json.schema(),
+          ClassMultipleInheritanceParent2.Json.schema(),
           MutableProperties.Json.schema(),
           NamedUnionProperties.Json.schema(),
           NoRdfTypeUnionMember1.Json.schema(),
@@ -60362,6 +62461,18 @@ export namespace $Object {
       ListProperties: {
         discriminantValues: ["ListProperties"],
         type: ListProperties.schema,
+      },
+      ClassMultipleInheritanceChild: {
+        discriminantValues: ["ClassMultipleInheritanceChild"],
+        type: ClassMultipleInheritanceChild.schema,
+      },
+      ClassMultipleInheritanceParent1: {
+        discriminantValues: ["ClassMultipleInheritanceParent1"],
+        type: ClassMultipleInheritanceParent1.schema,
+      },
+      ClassMultipleInheritanceParent2: {
+        discriminantValues: ["ClassMultipleInheritanceParent2"],
+        type: ClassMultipleInheritanceParent2.schema,
       },
       MutableProperties: {
         discriminantValues: ["MutableProperties"],
@@ -60609,6 +62720,19 @@ export namespace $Object {
     if (ListProperties.isListProperties(value)) {
       return ListProperties.toJson(value);
     }
+    if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)) {
+      return ClassMultipleInheritanceChild.toJson(value);
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
+    ) {
+      return ClassMultipleInheritanceParent1.toJson(value);
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
+    ) {
+      return ClassMultipleInheritanceParent2.toJson(value);
+    }
     if (MutableProperties.isMutableProperties(value)) {
       return MutableProperties.toJson(value);
     }
@@ -60788,6 +62912,19 @@ export namespace $Object {
     }
     if (ListProperties.isListProperties(object)) {
       return ListProperties.toRdfResource(object, options);
+    }
+    if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(object)) {
+      return ClassMultipleInheritanceChild.toRdfResource(object, options);
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(object)
+    ) {
+      return ClassMultipleInheritanceParent1.toRdfResource(object, options);
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(object)
+    ) {
+      return ClassMultipleInheritanceParent2.toRdfResource(object, options);
     }
     if (MutableProperties.isMutableProperties(object)) {
       return MutableProperties.toRdfResource(object, options);
@@ -61125,6 +63262,34 @@ export namespace $Object {
     if (ListProperties.isListProperties(value)) {
       return [
         ListProperties.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)) {
+      return [
+        ClassMultipleInheritanceChild.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (
+      ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
+    ) {
+      return [
+        ClassMultipleInheritanceParent1.toRdfResource(value, {
+          graph: _options.graph,
+          resourceSet: _options.resourceSet,
+        }).identifier,
+      ];
+    }
+    if (
+      ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
+    ) {
+      return [
+        ClassMultipleInheritanceParent2.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -61578,6 +63743,30 @@ export namespace $Object {
         filter: filter?.on?.["ListProperties"],
         ignoreRdfType: false,
         schema: schema.members["ListProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceChild.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceChild"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceChild"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent1"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent2"].type,
       }),
     );
     triples = triples.concat(
@@ -62069,6 +64258,33 @@ export namespace $Object {
       type: "group",
     });
     unionPatterns.push({
+      patterns: ClassMultipleInheritanceChild.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceChild"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceChild"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassMultipleInheritanceParent1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassMultipleInheritanceParent2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
       patterns: MutableProperties.valueSparqlWherePatterns({
         ...otherParameters,
         filter: filter?.on?.["MutableProperties"],
@@ -62459,6 +64675,99 @@ export interface $ObjectSet {
       ClassHierarchy3.Identifier
     >,
   ): Promise<Either<Error, readonly ClassHierarchy3[]>>;
+
+  classMultipleInheritanceChild(
+    identifier: ClassMultipleInheritanceChild.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceChild>>;
+
+  classMultipleInheritanceChildCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceChild.Filter,
+        ClassMultipleInheritanceChild.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classMultipleInheritanceChildIdentifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceChild.Identifier[]>
+  >;
+
+  classMultipleInheritanceChildren(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceChild[]>>;
+
+  classMultipleInheritanceParent1(
+    identifier: ClassMultipleInheritanceParent1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent1>>;
+
+  classMultipleInheritanceParent1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent1.Filter,
+        ClassMultipleInheritanceParent1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classMultipleInheritanceParent1Identifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent1.Identifier[]>
+  >;
+
+  classMultipleInheritanceParent1s(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent1[]>>;
+
+  classMultipleInheritanceParent2(
+    identifier: ClassMultipleInheritanceParent2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent2>>;
+
+  classMultipleInheritanceParent2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent2.Filter,
+        ClassMultipleInheritanceParent2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>>;
+
+  classMultipleInheritanceParent2Identifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent2.Identifier[]>
+  >;
+
+  classMultipleInheritanceParent2s(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent2[]>>;
 
   classProperties(
     identifier: ClassProperties.Identifier,
@@ -64422,6 +66731,294 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         filter: ClassHierarchy3.filter,
         fromRdfResource: ClassHierarchy3.fromRdfResource,
         fromRdfTypes: [ClassHierarchy3.fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async classMultipleInheritanceChild(
+    identifier: ClassMultipleInheritanceChild.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceChild>> {
+    return this.classMultipleInheritanceChildSync(identifier, options);
+  }
+
+  classMultipleInheritanceChildSync(
+    identifier: ClassMultipleInheritanceChild.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassMultipleInheritanceChild> {
+    return this.classMultipleInheritanceChildrenSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceChildCount(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceChild.Filter,
+        ClassMultipleInheritanceChild.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classMultipleInheritanceChildCountSync(query);
+  }
+
+  classMultipleInheritanceChildCountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceChild.Filter,
+        ClassMultipleInheritanceChild.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classMultipleInheritanceChildrenSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async classMultipleInheritanceChildIdentifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceChild.Identifier[]>
+  > {
+    return this.classMultipleInheritanceChildIdentifiersSync(query);
+  }
+
+  classMultipleInheritanceChildIdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceChild.Identifier[]> {
+    return this.classMultipleInheritanceChildrenSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classMultipleInheritanceChildren(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceChild[]>> {
+    return this.classMultipleInheritanceChildrenSync(query);
+  }
+
+  classMultipleInheritanceChildrenSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceChild[]> {
+    return this.#objectsSync<
+      ClassMultipleInheritanceChild,
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(
+      {
+        filter: ClassMultipleInheritanceChild.filter,
+        fromRdfResource: ClassMultipleInheritanceChild.fromRdfResource,
+        fromRdfTypes: [ClassMultipleInheritanceChild.fromRdfType],
+      },
+      query,
+    );
+  }
+
+  async classMultipleInheritanceParent1(
+    identifier: ClassMultipleInheritanceParent1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent1>> {
+    return this.classMultipleInheritanceParent1Sync(identifier, options);
+  }
+
+  classMultipleInheritanceParent1Sync(
+    identifier: ClassMultipleInheritanceParent1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassMultipleInheritanceParent1> {
+    return this.classMultipleInheritanceParent1sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent1Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent1.Filter,
+        ClassMultipleInheritanceParent1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classMultipleInheritanceParent1CountSync(query);
+  }
+
+  classMultipleInheritanceParent1CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent1.Filter,
+        ClassMultipleInheritanceParent1.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classMultipleInheritanceParent1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async classMultipleInheritanceParent1Identifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent1.Identifier[]>
+  > {
+    return this.classMultipleInheritanceParent1IdentifiersSync(query);
+  }
+
+  classMultipleInheritanceParent1IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceParent1.Identifier[]> {
+    return this.classMultipleInheritanceParent1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classMultipleInheritanceParent1s(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent1[]>> {
+    return this.classMultipleInheritanceParent1sSync(query);
+  }
+
+  classMultipleInheritanceParent1sSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceParent1[]> {
+    return this.#objectsSync<
+      ClassMultipleInheritanceParent1,
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(
+      {
+        filter: ClassMultipleInheritanceParent1.filter,
+        fromRdfResource: ClassMultipleInheritanceParent1.fromRdfResource,
+        fromRdfTypes: [
+          ClassMultipleInheritanceParent1.fromRdfType,
+          ClassMultipleInheritanceChild.fromRdfType,
+        ],
+      },
+      query,
+    );
+  }
+
+  async classMultipleInheritanceParent2(
+    identifier: ClassMultipleInheritanceParent2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent2>> {
+    return this.classMultipleInheritanceParent2Sync(identifier, options);
+  }
+
+  classMultipleInheritanceParent2Sync(
+    identifier: ClassMultipleInheritanceParent2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Either<Error, ClassMultipleInheritanceParent2> {
+    return this.classMultipleInheritanceParent2sSync({
+      identifiers: [identifier],
+      preferredLanguages: options?.preferredLanguages,
+    }).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent2Count(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent2.Filter,
+        ClassMultipleInheritanceParent2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.classMultipleInheritanceParent2CountSync(query);
+  }
+
+  classMultipleInheritanceParent2CountSync(
+    query?: Pick<
+      $ObjectSet.Query<
+        ClassMultipleInheritanceParent2.Filter,
+        ClassMultipleInheritanceParent2.Identifier
+      >,
+      "filter"
+    >,
+  ): Either<Error, number> {
+    return this.classMultipleInheritanceParent2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  async classMultipleInheritanceParent2Identifiers(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent2.Identifier[]>
+  > {
+    return this.classMultipleInheritanceParent2IdentifiersSync(query);
+  }
+
+  classMultipleInheritanceParent2IdentifiersSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceParent2.Identifier[]> {
+    return this.classMultipleInheritanceParent2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier()),
+    );
+  }
+
+  async classMultipleInheritanceParent2s(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent2[]>> {
+    return this.classMultipleInheritanceParent2sSync(query);
+  }
+
+  classMultipleInheritanceParent2sSync(
+    query?: $ObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Either<Error, readonly ClassMultipleInheritanceParent2[]> {
+    return this.#objectsSync<
+      ClassMultipleInheritanceParent2,
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(
+      {
+        filter: ClassMultipleInheritanceParent2.filter,
+        fromRdfResource: ClassMultipleInheritanceParent2.fromRdfResource,
+        fromRdfTypes: [
+          ClassMultipleInheritanceParent2.fromRdfType,
+          ClassMultipleInheritanceChild.fromRdfType,
+        ],
       },
       query,
     );
@@ -69017,6 +71614,27 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           filter: $Object.filter,
+          fromRdfResource: ClassMultipleInheritanceChild.fromRdfResource,
+          fromRdfTypes: [ClassMultipleInheritanceChild.fromRdfType],
+        },
+        {
+          filter: $Object.filter,
+          fromRdfResource: ClassMultipleInheritanceParent1.fromRdfResource,
+          fromRdfTypes: [
+            ClassMultipleInheritanceParent1.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ],
+        },
+        {
+          filter: $Object.filter,
+          fromRdfResource: ClassMultipleInheritanceParent2.fromRdfResource,
+          fromRdfTypes: [
+            ClassMultipleInheritanceParent2.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ],
+        },
+        {
+          filter: $Object.filter,
           fromRdfResource: MutableProperties.fromRdfResource,
           fromRdfTypes: [MutableProperties.fromRdfType],
         },
@@ -69801,6 +72419,168 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassHierarchy3.Filter,
       ClassHierarchy3.Identifier
     >(ClassHierarchy3, query);
+  }
+
+  async classMultipleInheritanceChild(
+    identifier: ClassMultipleInheritanceChild.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceChild>> {
+    return (
+      await this.classMultipleInheritanceChildren({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceChildCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceChild.Filter,
+        ClassMultipleInheritanceChild.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceChildIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceChild.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceChildren(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceChild[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceChild,
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceParent1(
+    identifier: ClassMultipleInheritanceParent1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent1>> {
+    return (
+      await this.classMultipleInheritanceParent1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceParent1.Filter,
+        ClassMultipleInheritanceParent1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent1.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent1s(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent1[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceParent1,
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent2(
+    identifier: ClassMultipleInheritanceParent2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent2>> {
+    return (
+      await this.classMultipleInheritanceParent2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceParent2.Filter,
+        ClassMultipleInheritanceParent2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
+  }
+
+  async classMultipleInheritanceParent2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent2.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
+  }
+
+  async classMultipleInheritanceParent2s(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent2[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceParent2,
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
   }
 
   async classProperties(

@@ -600,6 +600,34 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :stringListProperty
     ] .
 
+:ClassMultipleInheritanceParent1
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classMultipleInheritanceParent1Property
+    ] .
+
+:ClassMultipleInheritanceParent2
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classMultipleInheritanceParent2Property
+    ] .
+
+:ClassMultipleInheritanceChild
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassMultipleInheritanceParent1, :ClassMultipleInheritanceParent2 ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classMultipleInheritanceChildProperty
+    ] .
+
 :MutableProperties
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape with shaclmate:mutable properties." ;

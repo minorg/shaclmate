@@ -99,6 +99,14 @@ export const harnesses = {
     }),
     kitchenSink.ClassHierarchy3,
   ),
+  classMultipleInheritanceChild: new Harness(
+    kitchenSink.ClassMultipleInheritanceChild.create({
+      classMultipleInheritanceChildProperty: "child",
+      classMultipleInheritanceParent1Property: "parent1",
+      classMultipleInheritanceParent2Property: "parent2",
+    }),
+    kitchenSink.ClassMultipleInheritanceChild,
+  ),
   convertibleTypeProperties: new Harness(
     kitchenSink.ConvertibleTypeProperties.create({
       convertibleIriNonEmptySetProperty: NonEmptyList([
