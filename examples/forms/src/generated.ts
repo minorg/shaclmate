@@ -413,29 +413,29 @@ type $PropertiesFromRdfResourceFunction<T> = (
 export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
-  export type $Filter = object;
+  export type Filter = object;
 
-  export function $filter(_filter: $Filter, _value: $PropertyPath): boolean {
+  export function filter(_filter: $Filter, _value: $PropertyPath): boolean {
     return true;
   }
 
-  export const $fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
+  export const fromRdfResource: $FromRdfResourceFunction<$PropertyPath> =
     RdfxResourcePropertyPath.fromResource;
 
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     $PropertyPath
   > = (values, options) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
           .toResource()
-          .chain((resource) => $fromRdfResource(resource, options)),
+          .chain((resource) => fromRdfResource(resource, options)),
       ),
     );
 
-  export const $schema: Readonly<object> = {};
+  export const schema: Readonly<object> = {};
 
-  export const $toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
+  export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
     RdfxResourcePropertyPath.toResource;
 
   export const $toString = RdfxResourcePropertyPath.toString;
@@ -596,7 +596,7 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 export interface NestedNodeShape {
-  readonly $identifier: () => NestedNodeShape.$Identifier;
+  readonly $identifier: () => NestedNodeShape.Identifier;
   readonly $type: "NestedNodeShape" /**
    * Required string
    */;
@@ -605,15 +605,15 @@ export interface NestedNodeShape {
 }
 
 export namespace NestedNodeShape {
-  export function $create(parameters: {
+  export function create(parameters: {
     readonly $identifier?:
-      | (() => NestedNodeShape.$Identifier)
+      | (() => NestedNodeShape.Identifier)
       | (BlankNode | NamedNode)
       | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
     const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NestedNodeShape.$Identifier;
+    let $identifier: () => NestedNodeShape.Identifier;
     if (typeof $identifierParameter === "function") {
       $identifier = $identifierParameter;
     } else if (typeof $identifierParameter === "object") {
@@ -631,7 +631,7 @@ export namespace NestedNodeShape {
     return { $identifier, $type, requiredStringProperty };
   }
 
-  export function $equals(
+  export function equals(
     left: NestedNodeShape,
     right: NestedNodeShape,
   ): $EqualsResult {
@@ -657,17 +657,17 @@ export namespace NestedNodeShape {
       );
   }
 
-  export function $hash<HasherT extends $Hasher>(
+  export function hash<HasherT extends $Hasher>(
     _nestedNodeShape: NestedNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    NestedNodeShape.$hashShaclProperties(_nestedNodeShape, _hasher);
+    NestedNodeShape.hashShaclProperties(_nestedNodeShape, _hasher);
     _hasher.update(_nestedNodeShape.$identifier().value);
     _hasher.update(_nestedNodeShape.$type);
     return _hasher;
   }
 
-  export function $hashShaclProperties<HasherT extends $Hasher>(
+  export function hashShaclProperties<HasherT extends $Hasher>(
     _nestedNodeShape: NestedNodeShape,
     _hasher: HasherT,
   ): HasherT {
@@ -675,21 +675,21 @@ export namespace NestedNodeShape {
     return _hasher;
   }
 
-  export type $Identifier = BlankNode | NamedNode;
+  export type Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
+  export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = {
+  export type Json = {
     readonly "@id": string;
     readonly $type: "NestedNodeShape";
     readonly requiredStringProperty: string;
   };
 
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -704,7 +704,7 @@ export namespace NestedNodeShape {
           $type: z.literal("NestedNodeShape"),
           requiredStringProperty: z.string().meta({ title: "Required string" }),
         })
-        .meta({}) satisfies z.ZodType<$Json>;
+        .meta({}) satisfies z.ZodType<Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -739,8 +739,8 @@ export namespace NestedNodeShape {
     }
   }
 
-  export function $filter(
-    filter: NestedNodeShape.$Filter,
+  export function filter(
+    filter: NestedNodeShape.Filter,
     value: NestedNodeShape,
   ): boolean {
     if (
@@ -761,16 +761,16 @@ export namespace NestedNodeShape {
     return true;
   }
 
-  export type $Filter = {
+  export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function $fromJson(json: NestedNodeShape.$Json): NestedNodeShape {
-    return $create($propertiesFromJson(json));
+  export function fromJson(json: NestedNodeShape.Json): NestedNodeShape {
+    return create(propertiesFromJson(json));
   }
 
-  export const $fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
+  export const fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
     resource,
     options,
   ) => {
@@ -784,16 +784,16 @@ export namespace NestedNodeShape {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return NestedNodeShape.$propertiesFromRdfResource(resource, {
+    return NestedNodeShape.propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    }).map($create);
+    }).map(create);
   };
 
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NestedNodeShape
   > = (values, options) =>
     values.chain((values) =>
@@ -801,7 +801,7 @@ export namespace NestedNodeShape {
         value
           .toResource()
           .chain((resource) =>
-            NestedNodeShape.$fromRdfResource(resource, options),
+            NestedNodeShape.fromRdfResource(resource, options),
           ),
       ),
     );
@@ -817,7 +817,7 @@ export namespace NestedNodeShape {
     }
   }
 
-  export function $propertiesFromJson($json: NestedNodeShape.$Json): {
+  export function propertiesFromJson($json: NestedNodeShape.Json): {
     $identifier: BlankNode | NamedNode;
     $type: "NestedNodeShape";
     requiredStringProperty: string;
@@ -830,7 +830,7 @@ export namespace NestedNodeShape {
     return { $identifier, $type, requiredStringProperty };
   }
 
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+  export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "NestedNodeShape";
     requiredStringProperty: string;
@@ -850,7 +850,7 @@ export namespace NestedNodeShape {
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
-            propertySchema: $schema.properties.requiredStringProperty,
+            propertySchema: schema.properties.requiredStringProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -871,7 +871,7 @@ export namespace NestedNodeShape {
       );
   };
 
-  export const $schema = {
+  export const schema = {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
@@ -894,9 +894,9 @@ export namespace NestedNodeShape {
     },
   } as const;
 
-  export function $toJson(
+  export function toJson(
     _nestedNodeShape: NestedNodeShape,
-  ): NestedNodeShape.$Json {
+  ): NestedNodeShape.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -905,11 +905,11 @@ export namespace NestedNodeShape {
             : _nestedNodeShape.$identifier().value,
         $type: _nestedNodeShape.$type,
         requiredStringProperty: _nestedNodeShape.requiredStringProperty,
-      } satisfies NestedNodeShape.$Json),
+      } satisfies NestedNodeShape.Json),
     );
   }
 
-  export function $toRdfResource(
+  export function toRdfResource(
     _nestedNodeShape: NestedNodeShape,
     options?: Parameters<$ToRdfResourceFunction<NestedNodeShape>>[1],
   ): Resource {
@@ -928,7 +928,7 @@ export namespace NestedNodeShape {
     return resource;
   }
 
-  export function $propertiesToStrings(
+  export function propertiesToStrings(
     _nestedNodeShape: NestedNodeShape,
   ): Record<string, string> {
     return $compactRecord({
@@ -942,14 +942,14 @@ export namespace NestedNodeShape {
     this: NestedNodeShape | undefined,
     _nestedNodeShape?: NestedNodeShape,
   ): string {
-    return `NestedNodeShape(${JSON.stringify($propertiesToStrings((_nestedNodeShape ?? this)!))})`;
+    return `NestedNodeShape(${JSON.stringify(propertiesToStrings((_nestedNodeShape ?? this)!))})`;
   }
 } /**
  * Form
  */
 
 export interface FormNodeShape {
-  readonly $identifier: () => FormNodeShape.$Identifier;
+  readonly $identifier: () => FormNodeShape.Identifier;
   readonly $type: "FormNodeShape" /**
    * Empty string set
    */;
@@ -978,9 +978,9 @@ export interface FormNodeShape {
 }
 
 export namespace FormNodeShape {
-  export function $create(parameters: {
+  export function create(parameters: {
     readonly $identifier?:
-      | (() => FormNodeShape.$Identifier)
+      | (() => FormNodeShape.Identifier)
       | (BlankNode | NamedNode)
       | string;
     readonly emptyStringSetProperty?: readonly string[];
@@ -991,7 +991,7 @@ export namespace FormNodeShape {
     readonly requiredStringProperty: string;
   }): FormNodeShape {
     const $identifierParameter = parameters.$identifier;
-    let $identifier: () => FormNodeShape.$Identifier;
+    let $identifier: () => FormNodeShape.Identifier;
     if (typeof $identifierParameter === "function") {
       $identifier = $identifierParameter;
     } else if (typeof $identifierParameter === "object") {
@@ -1041,7 +1041,7 @@ export namespace FormNodeShape {
     };
   }
 
-  export function $equals(
+  export function equals(
     left: FormNodeShape,
     right: FormNodeShape,
   ): $EqualsResult {
@@ -1066,7 +1066,7 @@ export namespace FormNodeShape {
         })),
       )
       .chain(() =>
-        NestedNodeShape.$equals(
+        NestedNodeShape.equals(
           left.nestedObjectProperty,
           right.nestedObjectProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -1127,24 +1127,24 @@ export namespace FormNodeShape {
       );
   }
 
-  export function $hash<HasherT extends $Hasher>(
+  export function hash<HasherT extends $Hasher>(
     _formNodeShape: FormNodeShape,
     _hasher: HasherT,
   ): HasherT {
-    FormNodeShape.$hashShaclProperties(_formNodeShape, _hasher);
+    FormNodeShape.hashShaclProperties(_formNodeShape, _hasher);
     _hasher.update(_formNodeShape.$identifier().value);
     _hasher.update(_formNodeShape.$type);
     return _hasher;
   }
 
-  export function $hashShaclProperties<HasherT extends $Hasher>(
+  export function hashShaclProperties<HasherT extends $Hasher>(
     _formNodeShape: FormNodeShape,
     _hasher: HasherT,
   ): HasherT {
     for (const item0 of _formNodeShape.emptyStringSetProperty) {
       _hasher.update(item0);
     }
-    NestedNodeShape.$hash(_formNodeShape.nestedObjectProperty, _hasher);
+    NestedNodeShape.hash(_formNodeShape.nestedObjectProperty, _hasher);
     for (const item0 of _formNodeShape.nonEmptyStringSetProperty) {
       _hasher.update(item0);
     }
@@ -1156,26 +1156,26 @@ export namespace FormNodeShape {
     return _hasher;
   }
 
-  export type $Identifier = BlankNode | NamedNode;
+  export type Identifier = BlankNode | NamedNode;
 
-  export namespace $Identifier {
+  export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = {
+  export type Json = {
     readonly "@id": string;
     readonly $type: "FormNodeShape";
     readonly emptyStringSetProperty?: readonly string[];
-    readonly nestedObjectProperty: NestedNodeShape.$Json;
+    readonly nestedObjectProperty: NestedNodeShape.Json;
     readonly nonEmptyStringSetProperty: readonly string[];
     readonly optionalStringProperty?: string;
     readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   };
 
-  export namespace $Json {
-    export function parse(json: unknown): Either<Error, $Json> {
+  export namespace Json {
+    export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -1194,9 +1194,9 @@ export namespace FormNodeShape {
             .optional()
             .readonly()
             .meta({ title: "Empty string set" }),
-          nestedObjectProperty: NestedNodeShape.$Json
-            .schema()
-            .meta({ title: "Nested object" }),
+          nestedObjectProperty: NestedNodeShape.Json.schema().meta({
+            title: "Nested object",
+          }),
           nonEmptyStringSetProperty: z
             .string()
             .array()
@@ -1215,7 +1215,7 @@ export namespace FormNodeShape {
             .meta({ title: "Required integer" }),
           requiredStringProperty: z.string().meta({ title: "Required string" }),
         })
-        .meta({ title: "Form" }) satisfies z.ZodType<$Json>;
+        .meta({ title: "Form" }) satisfies z.ZodType<Json>;
     }
 
     export function uiSchema(parameters?: { scopePrefix?: string }): any {
@@ -1243,7 +1243,7 @@ export namespace FormNodeShape {
             scope: `${scopePrefix}/properties/emptyStringSetProperty`,
             type: "Control",
           },
-          NestedNodeShape.$Json.uiSchema({
+          NestedNodeShape.Json.uiSchema({
             scopePrefix: `${scopePrefix}/properties/nestedObjectProperty`,
           }),
           {
@@ -1273,8 +1273,8 @@ export namespace FormNodeShape {
     }
   }
 
-  export function $filter(
-    filter: FormNodeShape.$Filter,
+  export function filter(
+    filter: FormNodeShape.Filter,
     value: FormNodeShape,
   ): boolean {
     if (
@@ -1294,7 +1294,7 @@ export namespace FormNodeShape {
     }
     if (
       filter.nestedObjectProperty !== undefined &&
-      !NestedNodeShape.$filter(
+      !NestedNodeShape.filter(
         filter.nestedObjectProperty,
         value.nestedObjectProperty,
       )
@@ -1340,21 +1340,21 @@ export namespace FormNodeShape {
     return true;
   }
 
-  export type $Filter = {
+  export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly nestedObjectProperty?: NestedNodeShape.$Filter;
+    readonly nestedObjectProperty?: NestedNodeShape.Filter;
     readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredIntegerProperty?: $NumericFilter<number>;
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function $fromJson(json: FormNodeShape.$Json): FormNodeShape {
-    return $create($propertiesFromJson(json));
+  export function fromJson(json: FormNodeShape.Json): FormNodeShape {
+    return create(propertiesFromJson(json));
   }
 
-  export const $fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
+  export const fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
     resource,
     options,
   ) => {
@@ -1368,16 +1368,16 @@ export namespace FormNodeShape {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return FormNodeShape.$propertiesFromRdfResource(resource, {
+    return FormNodeShape.propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    }).map($create);
+    }).map(create);
   };
 
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     FormNodeShape
   > = (values, options) =>
     values.chain((values) =>
@@ -1385,7 +1385,7 @@ export namespace FormNodeShape {
         value
           .toResource()
           .chain((resource) =>
-            FormNodeShape.$fromRdfResource(resource, options),
+            FormNodeShape.fromRdfResource(resource, options),
           ),
       ),
     );
@@ -1399,7 +1399,7 @@ export namespace FormNodeShape {
     }
   }
 
-  export function $propertiesFromJson($json: FormNodeShape.$Json): {
+  export function propertiesFromJson($json: FormNodeShape.Json): {
     $identifier: BlankNode | NamedNode;
     $type: "FormNodeShape";
     emptyStringSetProperty: readonly string[];
@@ -1414,7 +1414,7 @@ export namespace FormNodeShape {
       : dataFactory.namedNode($json["@id"]);
     const $type = "FormNodeShape" as const;
     const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
-    const nestedObjectProperty = NestedNodeShape.$fromJson(
+    const nestedObjectProperty = NestedNodeShape.fromJson(
       $json["nestedObjectProperty"],
     );
     const nonEmptyStringSetProperty = NonEmptyList.fromArray(
@@ -1437,7 +1437,7 @@ export namespace FormNodeShape {
     };
   }
 
-  export const $propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
+  export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
     $identifier: BlankNode | NamedNode;
     $type: "FormNodeShape";
     emptyStringSetProperty: readonly string[];
@@ -1462,7 +1462,7 @@ export namespace FormNodeShape {
           $shaclPropertyFromRdf({
             graph: _$options.graph,
             resource: $resource,
-            propertySchema: $schema.properties.emptyStringSetProperty,
+            propertySchema: schema.properties.emptyStringSetProperty,
             typeFromRdf: (resourceValues) =>
               resourceValues
                 .chain((values) =>
@@ -1477,7 +1477,7 @@ export namespace FormNodeShape {
                   Resource.Values.fromValue({
                     focusResource: $resource,
                     propertyPath:
-                      FormNodeShape.$schema.properties.emptyStringSetProperty
+                      FormNodeShape.schema.properties.emptyStringSetProperty
                         .path,
                     value: valuesArray,
                   }),
@@ -1486,9 +1486,9 @@ export namespace FormNodeShape {
             $shaclPropertyFromRdf({
               graph: _$options.graph,
               resource: $resource,
-              propertySchema: $schema.properties.nestedObjectProperty,
+              propertySchema: schema.properties.nestedObjectProperty,
               typeFromRdf: (resourceValues) =>
-                NestedNodeShape.$fromRdfResourceValues(resourceValues, {
+                NestedNodeShape.fromRdfResourceValues(resourceValues, {
                   context: _$options.context,
                   graph: _$options.graph,
                   preferredLanguages: _$options.preferredLanguages,
@@ -1496,13 +1496,13 @@ export namespace FormNodeShape {
                   resource: $resource,
                   ignoreRdfType: true,
                   propertyPath:
-                    FormNodeShape.$schema.properties.nestedObjectProperty.path,
+                    FormNodeShape.schema.properties.nestedObjectProperty.path,
                 }),
             }).chain((nestedObjectProperty) =>
               $shaclPropertyFromRdf({
                 graph: _$options.graph,
                 resource: $resource,
-                propertySchema: $schema.properties.nonEmptyStringSetProperty,
+                propertySchema: schema.properties.nonEmptyStringSetProperty,
                 typeFromRdf: (resourceValues) =>
                   resourceValues
                     .chain((values) =>
@@ -1523,7 +1523,7 @@ export namespace FormNodeShape {
                       Resource.Values.fromValue({
                         focusResource: $resource,
                         propertyPath:
-                          FormNodeShape.$schema.properties
+                          FormNodeShape.schema.properties
                             .nonEmptyStringSetProperty.path,
                         value: valuesArray,
                       }),
@@ -1532,7 +1532,7 @@ export namespace FormNodeShape {
                 $shaclPropertyFromRdf({
                   graph: _$options.graph,
                   resource: $resource,
-                  propertySchema: $schema.properties.optionalStringProperty,
+                  propertySchema: schema.properties.optionalStringProperty,
                   typeFromRdf: (resourceValues) =>
                     resourceValues
                       .chain((values) =>
@@ -1550,7 +1550,7 @@ export namespace FormNodeShape {
                           : Resource.Values.fromValue<Maybe<string>>({
                               focusResource: $resource,
                               propertyPath:
-                                FormNodeShape.$schema.properties
+                                FormNodeShape.schema.properties
                                   .optionalStringProperty.path,
                               value: Maybe.empty(),
                             }),
@@ -1559,7 +1559,7 @@ export namespace FormNodeShape {
                   $shaclPropertyFromRdf({
                     graph: _$options.graph,
                     resource: $resource,
-                    propertySchema: $schema.properties.requiredIntegerProperty,
+                    propertySchema: schema.properties.requiredIntegerProperty,
                     typeFromRdf: (resourceValues) =>
                       resourceValues.chain((values) =>
                         values.chainMap((value) => value.toInt()),
@@ -1568,7 +1568,7 @@ export namespace FormNodeShape {
                     $shaclPropertyFromRdf({
                       graph: _$options.graph,
                       resource: $resource,
-                      propertySchema: $schema.properties.requiredStringProperty,
+                      propertySchema: schema.properties.requiredStringProperty,
                       typeFromRdf: (resourceValues) =>
                         resourceValues
                           .chain((values) =>
@@ -1599,7 +1599,7 @@ export namespace FormNodeShape {
       );
   };
 
-  export const $schema = {
+  export const schema = {
     properties: {
       $identifier: {
         kind: "Identifier" as const,
@@ -1624,7 +1624,7 @@ export namespace FormNodeShape {
       },
       nestedObjectProperty: {
         kind: "Shacl" as const,
-        type: () => NestedNodeShape.$schema,
+        type: () => NestedNodeShape.schema,
         path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
       },
       nonEmptyStringSetProperty: {
@@ -1665,7 +1665,7 @@ export namespace FormNodeShape {
     },
   } as const;
 
-  export function $toJson(_formNodeShape: FormNodeShape): FormNodeShape.$Json {
+  export function toJson(_formNodeShape: FormNodeShape): FormNodeShape.Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -1676,7 +1676,7 @@ export namespace FormNodeShape {
         emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
           (item) => item,
         ),
-        nestedObjectProperty: NestedNodeShape.$toJson(
+        nestedObjectProperty: NestedNodeShape.toJson(
           _formNodeShape.nestedObjectProperty,
         ),
         nonEmptyStringSetProperty: _formNodeShape.nonEmptyStringSetProperty.map(
@@ -1687,11 +1687,11 @@ export namespace FormNodeShape {
           .extract(),
         requiredIntegerProperty: _formNodeShape.requiredIntegerProperty,
         requiredStringProperty: _formNodeShape.requiredStringProperty,
-      } satisfies FormNodeShape.$Json),
+      } satisfies FormNodeShape.Json),
     );
   }
 
-  export function $toRdfResource(
+  export function toRdfResource(
     _formNodeShape: FormNodeShape,
     options?: Parameters<$ToRdfResourceFunction<FormNodeShape>>[1],
   ): Resource {
@@ -1712,7 +1712,7 @@ export namespace FormNodeShape {
     resource.add(
       dataFactory.namedNode("http://example.com/nestedObjectProperty"),
       [
-        NestedNodeShape.$toRdfResource(_formNodeShape.nestedObjectProperty, {
+        NestedNodeShape.toRdfResource(_formNodeShape.nestedObjectProperty, {
           graph: options?.graph,
           resourceSet: resourceSet,
         }).identifier,
@@ -1751,7 +1751,7 @@ export namespace FormNodeShape {
     return resource;
   }
 
-  export function $propertiesToStrings(
+  export function propertiesToStrings(
     _formNodeShape: FormNodeShape,
   ): Record<string, string> {
     return $compactRecord({
@@ -1765,18 +1765,29 @@ export namespace FormNodeShape {
     this: FormNodeShape | undefined,
     _formNodeShape?: FormNodeShape,
   ): string {
-    return `FormNodeShape(${JSON.stringify($propertiesToStrings((_formNodeShape ?? this)!))})`;
+    return `FormNodeShape(${JSON.stringify(propertiesToStrings((_formNodeShape ?? this)!))})`;
   }
 }
 export type $Object = FormNodeShape | NestedNodeShape;
 
 export namespace $Object {
-  export const $equals = (left: $Object, right: $Object) => {
+  export const $toString = (value: $Object): string => {
+    if (FormNodeShape.isFormNodeShape(value)) {
+      return FormNodeShape.toString(value);
+    }
+    if (NestedNodeShape.isNestedNodeShape(value)) {
+      return NestedNodeShape.toString(value);
+    }
+
+    throw new Error("unable to serialize to string");
+  };
+
+  export const equals = (left: $Object, right: $Object) => {
     if (
       FormNodeShape.isFormNodeShape(left) &&
       FormNodeShape.isFormNodeShape(right)
     ) {
-      return FormNodeShape.$equals(
+      return FormNodeShape.equals(
         left as FormNodeShape,
         right as FormNodeShape,
       );
@@ -1785,7 +1796,7 @@ export namespace $Object {
       NestedNodeShape.isNestedNodeShape(left) &&
       NestedNodeShape.isNestedNodeShape(right)
     ) {
-      return NestedNodeShape.$equals(
+      return NestedNodeShape.equals(
         left as NestedNodeShape,
         right as NestedNodeShape,
       );
@@ -1804,7 +1815,7 @@ export namespace $Object {
     });
   };
 
-  export const $filter = (filter: $Object.$Filter, value: $Object) => {
+  export const filter = (filter: $Object.Filter, value: $Object) => {
     if (
       filter.$identifier !== undefined &&
       !$filterIdentifier(filter.$identifier, value.$identifier())
@@ -1815,7 +1826,7 @@ export namespace $Object {
       filter.on?.["FormNodeShape"] !== undefined &&
       FormNodeShape.isFormNodeShape(value)
     ) {
-      if (!FormNodeShape.$filter(filter.on["FormNodeShape"], value)) {
+      if (!FormNodeShape.filter(filter.on["FormNodeShape"], value)) {
         return false;
       }
     }
@@ -1823,7 +1834,7 @@ export namespace $Object {
       filter.on?.["NestedNodeShape"] !== undefined &&
       NestedNodeShape.isNestedNodeShape(value)
     ) {
-      if (!NestedNodeShape.$filter(filter.on["NestedNodeShape"], value)) {
+      if (!NestedNodeShape.filter(filter.on["NestedNodeShape"], value)) {
         return false;
       }
     }
@@ -1831,49 +1842,49 @@ export namespace $Object {
     return true;
   };
 
-  export type $Filter = {
+  export type Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly FormNodeShape?: FormNodeShape.$Filter;
-      readonly NestedNodeShape?: NestedNodeShape.$Filter;
+      readonly FormNodeShape?: FormNodeShape.Filter;
+      readonly NestedNodeShape?: NestedNodeShape.Filter;
     };
   };
 
-  export const $fromJson = (value: $Object.$Json): $Object => {
+  export const fromJson = (value: $Object.Json): $Object => {
     if (value.$type === "FormNodeShape") {
-      return FormNodeShape.$fromJson(value as FormNodeShape.$Json);
+      return FormNodeShape.fromJson(value as FormNodeShape.Json);
     }
     if (value.$type === "NestedNodeShape") {
-      return NestedNodeShape.$fromJson(value as NestedNodeShape.$Json);
+      return NestedNodeShape.fromJson(value as NestedNodeShape.Json);
     }
 
     throw new Error("unable to deserialize JSON");
   };
 
-  export const $fromRdfResource: $FromRdfResourceFunction<$Object> = (
+  export const fromRdfResource: $FromRdfResourceFunction<$Object> = (
     resource,
     options,
   ) =>
     (
-      FormNodeShape.$fromRdfResource(resource, {
+      FormNodeShape.fromRdfResource(resource, {
         ...options,
         ignoreRdfType: false,
       }) as Either<Error, $Object>
     ).altLazy(
       () =>
-        NestedNodeShape.$fromRdfResource(resource, {
+        NestedNodeShape.fromRdfResource(resource, {
           ...options,
           ignoreRdfType: false,
         }) as Either<Error, $Object>,
     );
 
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<$Object> =
     ((values, _options) =>
       values.chain((values) =>
         values.chainMap((value) => {
           const valueAsValues = Right(value.toValues());
           return (
-            FormNodeShape.$fromRdfResourceValues(valueAsValues, {
+            FormNodeShape.fromRdfResourceValues(valueAsValues, {
               context: _options.context,
               graph: _options.graph,
               ignoreRdfType: false,
@@ -1885,7 +1896,7 @@ export namespace $Object {
           )
             .altLazy(
               () =>
-                NestedNodeShape.$fromRdfResourceValues(valueAsValues, {
+                NestedNodeShape.fromRdfResourceValues(valueAsValues, {
                   context: _options.context,
                   graph: _options.graph,
                   ignoreRdfType: false,
@@ -1899,38 +1910,38 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
-  export function $hash<HasherT extends $Hasher>(
+  export function hash<HasherT extends $Hasher>(
     value: $Object,
     hasher: HasherT,
   ): HasherT {
     if (FormNodeShape.isFormNodeShape(value)) {
-      FormNodeShape.$hash(value, hasher);
+      FormNodeShape.hash(value, hasher);
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
-      NestedNodeShape.$hash(value, hasher);
+      NestedNodeShape.hash(value, hasher);
     }
     return hasher;
   }
 
-  export type $Identifier = BlankNode | NamedNode;
-  export namespace $Identifier {
+  export type Identifier = BlankNode | NamedNode;
+  export namespace Identifier {
     export const parse = $parseIdentifier;
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type $Json = FormNodeShape.$Json | NestedNodeShape.$Json;
+  export type Json = FormNodeShape.Json | NestedNodeShape.Json;
 
-  export namespace $Json {
+  export namespace Json {
     export const schema = () =>
       z
         .discriminatedUnion("$type", [
-          FormNodeShape.$Json.schema(),
-          NestedNodeShape.$Json.schema(),
+          FormNodeShape.Json.schema(),
+          NestedNodeShape.Json.schema(),
         ])
         .readonly()
         .meta({});
 
-    export function parse(json: unknown): Either<Error, $Json> {
+    export function parse(json: unknown): Either<Error, Json> {
       const jsonSafeParseResult = schema().safeParse(json);
       if (!jsonSafeParseResult.success) {
         return Left(jsonSafeParseResult.error);
@@ -1939,16 +1950,16 @@ export namespace $Object {
     }
   }
 
-  export const $schema = {
+  export const schema = {
     kind: "NamedObjectUnion" as const,
     members: {
       FormNodeShape: {
         discriminantValues: ["FormNodeShape"],
-        type: FormNodeShape.$schema,
+        type: FormNodeShape.schema,
       },
       NestedNodeShape: {
         discriminantValues: ["NestedNodeShape"],
-        type: NestedNodeShape.$schema,
+        type: NestedNodeShape.schema,
       },
     },
     properties: {
@@ -1962,37 +1973,37 @@ export namespace $Object {
     },
   } as const;
 
-  export const $toJson = (value: $Object): $Object.$Json => {
+  export const toJson = (value: $Object): $Object.Json => {
     if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.$toJson(value);
+      return FormNodeShape.toJson(value);
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.$toJson(value);
+      return NestedNodeShape.toJson(value);
     }
 
     throw new Error("unable to serialize to JSON");
   };
 
-  export const $toRdfResource: $ToRdfResourceFunction<$Object> = (
+  export const toRdfResource: $ToRdfResourceFunction<$Object> = (
     value,
     options,
   ) => {
     if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.$toRdfResource(value, options);
+      return FormNodeShape.toRdfResource(value, options);
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.$toRdfResource(value, options);
+      return NestedNodeShape.toRdfResource(value, options);
     }
     throw new Error("unrecognized type");
   };
 
-  export const $toRdfResourceValues = ((
+  export const toRdfResourceValues = ((
     value,
     _options,
   ): (BlankNode | NamedNode)[] => {
     if (FormNodeShape.isFormNodeShape(value)) {
       return [
-        FormNodeShape.$toRdfResource(value, {
+        FormNodeShape.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -2000,7 +2011,7 @@ export namespace $Object {
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
       return [
-        NestedNodeShape.$toRdfResource(value, {
+        NestedNodeShape.toRdfResource(value, {
           graph: _options.graph,
           resourceSet: _options.resourceSet,
         }).identifier,
@@ -2009,83 +2020,72 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
-
-  export const $toString = (value: $Object): string => {
-    if (FormNodeShape.isFormNodeShape(value)) {
-      return FormNodeShape.$toString(value);
-    }
-    if (NestedNodeShape.isNestedNodeShape(value)) {
-      return NestedNodeShape.$toString(value);
-    }
-
-    throw new Error("unable to serialize to string");
-  };
 }
 export interface $ObjectSet {
   formNodeShape(
-    identifier: FormNodeShape.$Identifier,
+    identifier: FormNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FormNodeShape>>;
 
   formNodeShapeCount(
     query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
   formNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-  ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>>;
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
+  ): Promise<Either<Error, readonly FormNodeShape.Identifier[]>>;
 
   formNodeShapes(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>>;
 
   nestedNodeShape(
-    identifier: NestedNodeShape.$Identifier,
+    identifier: NestedNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NestedNodeShape>>;
 
   nestedNodeShapeCount(
     query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      $ObjectSet.Query<NestedNodeShape.Filter, NestedNodeShape.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
   nestedNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
-  ): Promise<Either<Error, readonly NestedNodeShape.$Identifier[]>>;
+  ): Promise<Either<Error, readonly NestedNodeShape.Identifier[]>>;
 
   nestedNodeShapes(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>>;
 
   $object(
-    identifier: $Object.$Identifier,
+    identifier: $Object.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>>;
 
   $objectCount(
     query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
 
   $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-  ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
+  ): Promise<Either<Error, readonly $Object.Identifier[]>>;
 
   $objects(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Promise<Either<Error, readonly $Object[]>>;
 }
 
@@ -2103,15 +2103,15 @@ export namespace $ObjectSet {
   }
 }
 export class $RdfjsDatasetObjectSet implements $ObjectSet {
-  protected readonly $graph?: Exclude<Quad_Graph, Variable>;
   readonly #dataset: DatasetCore | (() => DatasetCore);
+  readonly #graph?: Exclude<Quad_Graph, Variable>;
 
   constructor(
     dataset: DatasetCore | (() => DatasetCore),
     options?: { graph?: Exclude<Quad_Graph, Variable> },
   ) {
     this.#dataset = dataset;
-    this.$graph = options?.graph;
+    this.#graph = options?.graph;
   }
 
   protected $dataset(): DatasetCore {
@@ -2129,14 +2129,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async formNodeShape(
-    identifier: FormNodeShape.$Identifier,
+    identifier: FormNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, FormNodeShape>> {
     return this.formNodeShapeSync(identifier, options);
   }
 
   formNodeShapeSync(
-    identifier: FormNodeShape.$Identifier,
+    identifier: FormNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, FormNodeShape> {
     return this.formNodeShapesSync({
@@ -2147,7 +2147,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async formNodeShapeCount(
     query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
@@ -2156,7 +2156,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   formNodeShapeCountSync(
     query?: Pick<
-      $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+      $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
@@ -2164,51 +2164,51 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async formNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-  ): Promise<Either<Error, readonly FormNodeShape.$Identifier[]>> {
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
+  ): Promise<Either<Error, readonly FormNodeShape.Identifier[]>> {
     return this.formNodeShapeIdentifiersSync(query);
   }
 
   formNodeShapeIdentifiersSync(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
-  ): Either<Error, readonly FormNodeShape.$Identifier[]> {
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
+  ): Either<Error, readonly FormNodeShape.Identifier[]> {
     return this.formNodeShapesSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
   async formNodeShapes(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
   ): Promise<Either<Error, readonly FormNodeShape[]>> {
     return this.formNodeShapesSync(query);
   }
 
   formNodeShapesSync(
-    query?: $ObjectSet.Query<FormNodeShape.$Filter, FormNodeShape.$Identifier>,
+    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
   ): Either<Error, readonly FormNodeShape[]> {
     return this.#objectsSync<
       FormNodeShape,
-      FormNodeShape.$Filter,
-      FormNodeShape.$Identifier
+      FormNodeShape.Filter,
+      FormNodeShape.Identifier
     >(
       {
-        $filter: FormNodeShape.$filter,
-        $fromRdfResource: FormNodeShape.$fromRdfResource,
-        $fromRdfTypes: [],
+        filter: FormNodeShape.filter,
+        fromRdfResource: FormNodeShape.fromRdfResource,
+        fromRdfTypes: [],
       },
       query,
     );
   }
 
   async nestedNodeShape(
-    identifier: NestedNodeShape.$Identifier,
+    identifier: NestedNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, NestedNodeShape>> {
     return this.nestedNodeShapeSync(identifier, options);
   }
 
   nestedNodeShapeSync(
-    identifier: NestedNodeShape.$Identifier,
+    identifier: NestedNodeShape.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, NestedNodeShape> {
     return this.nestedNodeShapesSync({
@@ -2219,7 +2219,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nestedNodeShapeCount(
     query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      $ObjectSet.Query<NestedNodeShape.Filter, NestedNodeShape.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
@@ -2228,7 +2228,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   nestedNodeShapeCountSync(
     query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.$Filter, NestedNodeShape.$Identifier>,
+      $ObjectSet.Query<NestedNodeShape.Filter, NestedNodeShape.Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
@@ -2237,19 +2237,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nestedNodeShapeIdentifiers(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
-  ): Promise<Either<Error, readonly NestedNodeShape.$Identifier[]>> {
+  ): Promise<Either<Error, readonly NestedNodeShape.Identifier[]>> {
     return this.nestedNodeShapeIdentifiersSync(query);
   }
 
   nestedNodeShapeIdentifiersSync(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
-  ): Either<Error, readonly NestedNodeShape.$Identifier[]> {
+  ): Either<Error, readonly NestedNodeShape.Identifier[]> {
     return this.nestedNodeShapesSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
@@ -2257,8 +2257,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async nestedNodeShapes(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
   ): Promise<Either<Error, readonly NestedNodeShape[]>> {
     return this.nestedNodeShapesSync(query);
@@ -2266,33 +2266,33 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   nestedNodeShapesSync(
     query?: $ObjectSet.Query<
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >,
   ): Either<Error, readonly NestedNodeShape[]> {
     return this.#objectsSync<
       NestedNodeShape,
-      NestedNodeShape.$Filter,
-      NestedNodeShape.$Identifier
+      NestedNodeShape.Filter,
+      NestedNodeShape.Identifier
     >(
       {
-        $filter: NestedNodeShape.$filter,
-        $fromRdfResource: NestedNodeShape.$fromRdfResource,
-        $fromRdfTypes: [],
+        filter: NestedNodeShape.filter,
+        fromRdfResource: NestedNodeShape.fromRdfResource,
+        fromRdfTypes: [],
       },
       query,
     );
   }
 
   async $object(
-    identifier: $Object.$Identifier,
+    identifier: $Object.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Promise<Either<Error, $Object>> {
     return this.$objectSync(identifier, options);
   }
 
   $objectSync(
-    identifier: $Object.$Identifier,
+    identifier: $Object.Identifier,
     options?: { preferredLanguages?: readonly string[] },
   ): Either<Error, $Object> {
     return this.$objectsSync({
@@ -2303,7 +2303,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async $objectCount(
     query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
       "filter"
     >,
   ): Promise<Either<Error, number>> {
@@ -2312,7 +2312,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   $objectCountSync(
     query?: Pick<
-      $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
       "filter"
     >,
   ): Either<Error, number> {
@@ -2320,43 +2320,39 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-  ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
+  ): Promise<Either<Error, readonly $Object.Identifier[]>> {
     return this.$objectIdentifiersSync(query);
   }
 
   $objectIdentifiersSync(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
-  ): Either<Error, readonly $Object.$Identifier[]> {
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
+  ): Either<Error, readonly $Object.Identifier[]> {
     return this.$objectsSync(query).map((objects) =>
       objects.map((object) => object.$identifier()),
     );
   }
 
   async $objects(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.$objectsSync(query);
   }
 
   $objectsSync(
-    query?: $ObjectSet.Query<$Object.$Filter, $Object.$Identifier>,
+    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
   ): Either<Error, readonly $Object[]> {
-    return this.#objectUnionsSync<
-      $Object,
-      $Object.$Filter,
-      $Object.$Identifier
-    >(
+    return this.#objectUnionsSync<$Object, $Object.Filter, $Object.Identifier>(
       [
         {
-          $filter: $Object.$filter,
-          $fromRdfResource: FormNodeShape.$fromRdfResource,
-          $fromRdfTypes: [],
+          filter: $Object.filter,
+          fromRdfResource: FormNodeShape.fromRdfResource,
+          fromRdfTypes: [],
         },
         {
-          $filter: $Object.$filter,
-          $fromRdfResource: NestedNodeShape.$fromRdfResource,
-          $fromRdfTypes: [],
+          filter: $Object.filter,
+          fromRdfResource: NestedNodeShape.fromRdfResource,
+          fromRdfTypes: [],
         },
       ],
       query,
@@ -2369,9 +2365,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     namedObjectType: {
-      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
-      $fromRdfTypes: readonly NamedNode[];
+      filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+      fromRdfResource: $FromRdfResourceFunction<ObjectT>;
+      fromRdfTypes: readonly NamedNode[];
     },
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
@@ -2403,11 +2399,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         resource: resourceSet.resource(identifier),
       }));
       sortResources = false;
-    } else if (namedObjectType.$fromRdfTypes.length > 0) {
+    } else if (namedObjectType.fromRdfTypes.length > 0) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const fromRdfType of namedObjectType.$fromRdfTypes) {
+      for (const fromRdfType of namedObjectType.fromRdfTypes) {
         for (const resource of resourceSet.instancesOf(fromRdfType, {
           graph,
         })) {
@@ -2441,7 +2437,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         const resource = resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
         namedObjectType
-          .$fromRdfResource(resource, fromRdfResourceOptions)
+          .fromRdfResource(resource, fromRdfResourceOptions)
           .ifRight((object) => {
             resources.push({ object, resource });
           });
@@ -2461,7 +2457,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const objects: ObjectT[] = [];
     for (let { object, resource } of resources) {
       if (!object) {
-        const objectEither = namedObjectType.$fromRdfResource(
+        const objectEither = namedObjectType.fromRdfResource(
           resource,
           fromRdfResourceOptions,
         );
@@ -2471,7 +2467,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         object = objectEither.unsafeCoerce();
       }
 
-      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.filter(query.filter, object)) {
         continue;
       }
 
@@ -2491,9 +2487,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectIdentifierT extends BlankNode | NamedNode,
   >(
     namedObjectTypes: readonly {
-      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
-      $fromRdfTypes: readonly NamedNode[];
+      filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+      fromRdfResource: $FromRdfResourceFunction<ObjectT>;
+      fromRdfTypes: readonly NamedNode[];
     }[],
     query?: $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
   ): Either<Error, readonly ObjectT[]> {
@@ -2520,9 +2516,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     let resources: {
       object?: ObjectT;
       namedObjectType?: {
-        $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-        $fromRdfResource: $FromRdfResourceFunction<ObjectT>;
-        $fromRdfTypes: readonly NamedNode[];
+        filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+        fromRdfResource: $FromRdfResourceFunction<ObjectT>;
+        fromRdfTypes: readonly NamedNode[];
       };
       resource: Resource;
     }[];
@@ -2535,14 +2531,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       sortResources = false;
     } else if (
       namedObjectTypes.every(
-        (namedObjectType) => namedObjectType.$fromRdfTypes.length > 0,
+        (namedObjectType) => namedObjectType.fromRdfTypes.length > 0,
       )
     ) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
       for (const namedObjectType of namedObjectTypes) {
-        for (const fromRdfType of namedObjectType.$fromRdfTypes) {
+        for (const fromRdfType of namedObjectType.fromRdfTypes) {
           for (const resource of resourceSet.instancesOf(fromRdfType, {
             graph,
           })) {
@@ -2579,7 +2575,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         for (const namedObjectType of namedObjectTypes) {
           if (
             namedObjectType
-              .$fromRdfResource(resource, fromRdfResourceOptions)
+              .fromRdfResource(resource, fromRdfResourceOptions)
               .ifRight((object) => {
                 resources.push({ object, namedObjectType, resource });
               })
@@ -2606,14 +2602,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       if (!object) {
         let objectEither: Either<Error, ObjectT>;
         if (namedObjectType) {
-          objectEither = namedObjectType.$fromRdfResource(
+          objectEither = namedObjectType.fromRdfResource(
             resource,
             fromRdfResourceOptions,
           );
         } else {
           objectEither = Left(new Error("no object types"));
           for (const tryObjectType of namedObjectTypes) {
-            objectEither = tryObjectType.$fromRdfResource(
+            objectEither = tryObjectType.fromRdfResource(
               resource,
               fromRdfResourceOptions,
             );
@@ -2632,7 +2628,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         throw new Error("namedObjectType should be set here");
       }
 
-      if (query?.filter && !namedObjectType.$filter(query.filter, object)) {
+      if (query?.filter && !namedObjectType.filter(query.filter, object)) {
         continue;
       }
 

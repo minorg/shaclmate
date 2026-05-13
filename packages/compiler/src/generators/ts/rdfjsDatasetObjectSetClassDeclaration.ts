@@ -159,7 +159,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 #objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
+  const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${this.reusables.imports.Right}([]); }
@@ -252,7 +252,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 #objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
+  const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${this.reusables.imports.Right}([]); }

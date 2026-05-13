@@ -1,4 +1,5 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_toStringFunctionDeclarations(
@@ -40,9 +41,9 @@ export function propertiesToStrings(${this.thisVariable}: ${this.name}): Record<
 }`,
 
     code`\
-export function toString(this: ${this.name}): string;
-export function toString(${this.thisVariable}: ${this.name}): string;
-export function toString(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): string {
+export function ${syntheticNamePrefix}toString(this: ${this.name}): string;
+export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.name}): string;
+export function ${syntheticNamePrefix}toString(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): string {
   return ${toStringReturnExpression(code`propertiesToStrings((${this.thisVariable} ?? this)!)`)};
 }`,
   ];

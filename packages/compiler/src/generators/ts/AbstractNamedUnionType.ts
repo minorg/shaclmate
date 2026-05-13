@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
-
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
@@ -163,8 +163,8 @@ export namespace Json {
         code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
-    staticModuleDeclarations[`toString`] =
-      code`export const toString = ${this.inlineToStringFunction};`;
+    staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+      code`export const ${syntheticNamePrefix}toString = ${this.inlineToStringFunction};`;
 
     return staticModuleDeclarations;
   }
@@ -244,6 +244,6 @@ export namespace Json {
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name}.toString(${variables.value})`;
+    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
   }
 }

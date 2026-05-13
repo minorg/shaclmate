@@ -17,7 +17,7 @@ export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyP
 export namespace ${syntheticNamePrefix}PropertyPath {
   export type Filter = object;
 
-  export function filter(_filter: $Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
+  export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
     return true;
   }
 
@@ -32,10 +32,10 @@ export namespace ${syntheticNamePrefix}PropertyPath {
       ),
     );
 
-  export const $schema: Readonly<object> = {};
+  export const schema: Readonly<object> = {};
 
   export const toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;
 
-  export const toString = ${imports.RdfxResourcePropertyPath}.toString;
+  export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;
 }`,
   );
