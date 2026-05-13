@@ -120,18 +120,18 @@ export abstract class AbstractShapesGraph<
     const dataset = datasetFactory.dataset();
     const resourceSet = new ResourceSet({ dataFactory, dataset });
     for (const nodeShape of this.nodeShapes) {
-      this.typeFunctions.NodeShape.$toRdfResource(nodeShape, { resourceSet });
+      this.typeFunctions.NodeShape.toRdfResource(nodeShape, { resourceSet });
     }
     for (const ontology of this.ontologies) {
-      this.typeFunctions.Ontology.$toRdfResource(ontology, { resourceSet });
+      this.typeFunctions.Ontology.toRdfResource(ontology, { resourceSet });
     }
     for (const propertyGroup of this.propertyGroups) {
-      this.typeFunctions.PropertyGroup.$toRdfResource(propertyGroup, {
+      this.typeFunctions.PropertyGroup.toRdfResource(propertyGroup, {
         resourceSet,
       });
     }
     for (const propertyShape of this.propertyShapes) {
-      this.typeFunctions.PropertyShape.$toRdfResource(propertyShape, {
+      this.typeFunctions.PropertyShape.toRdfResource(propertyShape, {
         resourceSet,
       });
     }
@@ -180,12 +180,12 @@ export abstract class AbstractShapesGraph<
 type IdentifierMap<T> = TermMap<BlankNode | NamedNode, T>;
 
 type TypeFunctions<T> = {
-  $fromRdfResource: (
+  fromRdfResource: (
     resource: Resource,
     options?: { ignoreRdfType?: boolean },
   ) => Either<Error, T>;
 
-  $toRdfResource: (
+  toRdfResource: (
     value: T,
     options?: { resourceSet?: ResourceSet },
   ) => Resource;
@@ -344,7 +344,7 @@ export namespace AbstractShapesGraph {
           if (this.ontologiesByIdentifier.has(ontologyResource.identifier)) {
             continue;
           }
-          this.typeFunctions.Ontology.$fromRdfResource(ontologyResource, {
+          this.typeFunctions.Ontology.fromRdfResource(ontologyResource, {
             ignoreRdfType: true,
           }).ifRight((ontology) => this.add(ontology));
         }
@@ -366,7 +366,7 @@ export namespace AbstractShapesGraph {
             continue;
           }
 
-          this.typeFunctions.PropertyGroup.$fromRdfResource(
+          this.typeFunctions.PropertyGroup.fromRdfResource(
             curieResourceSet.resource(propertyGroupResource.identifier),
             { ignoreRdfType: true },
           ).ifRight((propertyGroup) => this.add(propertyGroup));
@@ -509,7 +509,7 @@ export namespace AbstractShapesGraph {
           if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
             // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
             this.add(
-              this.typeFunctions.PropertyShape.$fromRdfResource(
+              this.typeFunctions.PropertyShape.fromRdfResource(
                 curieResourceSet.resource(shapeNode),
                 {
                   ignoreRdfType: true,
@@ -519,7 +519,7 @@ export namespace AbstractShapesGraph {
           } else {
             // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
             this.add(
-              this.typeFunctions.NodeShape.$fromRdfResource(
+              this.typeFunctions.NodeShape.fromRdfResource(
                 curieResourceSet.resource(shapeNode),
                 {
                   ignoreRdfType: true,
