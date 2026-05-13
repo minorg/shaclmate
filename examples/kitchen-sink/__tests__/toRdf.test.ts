@@ -146,6 +146,32 @@ describe("toRdf", async () => {
     expect(resource.dataset.size).toStrictEqual(1); // The rdf:type statement
   });
 
+  it("class multiple inheritance", ({ expect }) => {
+    const resource =
+      harnesses.classMultipleInheritanceChild.staticSide.toRdfResource(
+        harnesses.classMultipleInheritanceChild.instance,
+      );
+    expect(resource.dataset.size).toStrictEqual(4); // Child property + parent 1 property + parent 2 property + rdf:type
+    resource
+      .value(
+        kitchenSink.ClassMultipleInheritanceChild.schema.properties
+          .classMultipleInheritanceChildProperty.path,
+      )
+      .unsafeCoerce();
+    resource
+      .value(
+        kitchenSink.ClassMultipleInheritanceChild.schema.properties
+          .classMultipleInheritanceParent1Property.path,
+      )
+      .unsafeCoerce();
+    resource
+      .value(
+        kitchenSink.ClassMultipleInheritanceChild.schema.properties
+          .classMultipleInheritanceParent2Property.path,
+      )
+      .unsafeCoerce();
+  });
+
   for (const [id, harness] of Object.entries(harnesses)) {
     if (id.startsWith("lazy")) {
       continue;
