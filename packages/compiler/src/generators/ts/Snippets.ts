@@ -1,6 +1,7 @@
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
+import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
@@ -75,7 +76,6 @@ import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numericSparqlWherePatterns } from "./_snippets/snippets_numericSparqlWherePatterns.js";
-import { snippets_PropertiesFromRdfResourceFunction } from "./_snippets/snippets_PropertiesFromRdfResourceFunction.js";
 import { snippets_PropertyPath } from "./_snippets/snippets_PropertyPath.js";
 import { snippets_parseBlankNode } from "./_snippets/snippets_parseBlankNode.js";
 import { snippets_parseIdentifier } from "./_snippets/snippets_parseIdentifier.js";
@@ -108,6 +108,7 @@ import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparq
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
+import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
@@ -270,11 +271,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get PropertiesFromRdfResourceFunction(): Snippet {
-    return this.snippet(snippets_PropertiesFromRdfResourceFunction);
-  }
-
-  @Memoize()
   get PropertyPath(): Snippet {
     return this.snippet(snippets_PropertyPath);
   }
@@ -347,6 +343,11 @@ export class Snippets {
   @Memoize()
   get ValueSparqlWherePatternsFunction(): Snippet {
     return this.snippet(snippets_ValueSparqlWherePatternsFunction);
+  }
+
+  @Memoize()
+  get _FromRdfResourceFunction(): Snippet {
+    return this.snippet(snippets__FromRdfResourceFunction);
   }
 
   @Memoize()
@@ -681,6 +682,11 @@ export class Snippets {
   @Memoize()
   get termSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_termSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get wrap_FromRdfResourceFunction(): Snippet {
+    return this.snippet(snippets_wrap_FromRdfResourceFunction);
   }
 
   protected get snippets(): Snippets {

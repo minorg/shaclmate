@@ -68,9 +68,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
-    return Maybe.of(
-      code`${this.reusables.imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
-    );
+    return Maybe.empty();
   }
 
   override hashStatements({

@@ -18,6 +18,17 @@ import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { type Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
 import { z } from "zod";
 
+type $_FromRdfResourceFunction<T> = (
+  resource: Resource,
+  options: {
+    context: undefined | unknown;
+    graph: Exclude<Quad_Graph, Variable> | undefined;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages: readonly string[] | undefined;
+  },
+) => Either<Error, T>;
+
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
@@ -399,17 +410,6 @@ interface $NumericFilter<T> {
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
-type $PropertiesFromRdfResourceFunction<T> = (
-  resource: Resource,
-  options: {
-    context: undefined | unknown;
-    graph: Exclude<Quad_Graph, Variable> | undefined;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-  },
-) => Either<Error, T>;
-
 export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
@@ -595,6 +595,30 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+function $wrap_FromRdfResourceFunction<T>(
+  _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
+): $FromRdfResourceFunction<T> {
+  return (resource, options) => {
+    let {
+      context,
+      graph,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
+    }
+    return _fromRdfResourceFunction(resource, {
+      context,
+      graph,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+    });
+  };
+}
 export interface NestedNodeShape {
   readonly $identifier: () => NestedNodeShape.Identifier;
   readonly $type: "NestedNodeShape" /**
@@ -766,32 +790,50 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson(json: NestedNodeShape.Json): NestedNodeShape {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: NestedNodeShape.Json): NestedNodeShape {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const requiredStringProperty = $json["requiredStringProperty"];
+    return create({ $identifier, requiredStringProperty });
   }
 
-  export const fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> = (
-    resource,
-    options,
+  export const _fromRdfResource: $_FromRdfResourceFunction<NestedNodeShape> = (
+    $resource,
+    _$options,
   ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return NestedNodeShape.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.requiredStringProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString())),
+        }).map((requiredStringProperty) =>
+          create({ $identifier, requiredStringProperty }),
+        ),
+      );
   };
+
+  export const fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     NestedNodeShape
@@ -816,60 +858,6 @@ export namespace NestedNodeShape {
         return false;
     }
   }
-
-  export function propertiesFromJson($json: NestedNodeShape.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "NestedNodeShape";
-    requiredStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "NestedNodeShape" as const;
-    const requiredStringProperty = $json["requiredStringProperty"];
-    return { $identifier, $type, requiredStringProperty };
-  }
-
-  export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    $type: "NestedNodeShape";
-    requiredStringProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"NestedNodeShape">("NestedNodeShape" as const).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: _$options.graph,
-            resource: $resource,
-            propertySchema: schema.properties.requiredStringProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    _$options.preferredLanguages,
-                  ),
-                )
-                .chain((values) =>
-                  values.chainMap((value) => value.toString()),
-                ),
-          }).map((requiredStringProperty) => ({
-            $identifier,
-            $type,
-            requiredStringProperty,
-          })),
-        ),
-      );
-  };
 
   export const schema = {
     properties: {
@@ -1350,32 +1338,189 @@ export namespace FormNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson(json: FormNodeShape.Json): FormNodeShape {
-    return create(propertiesFromJson(json));
+  export function fromJson($json: FormNodeShape.Json): FormNodeShape {
+    const $identifier = $json["@id"].startsWith("_:")
+      ? dataFactory.blankNode($json["@id"].substring(2))
+      : dataFactory.namedNode($json["@id"]);
+    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
+    const nestedObjectProperty = NestedNodeShape.fromJson(
+      $json["nestedObjectProperty"],
+    );
+    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
+      $json["nonEmptyStringSetProperty"],
+    ).unsafeCoerce();
+    const optionalStringProperty = Maybe.fromNullable(
+      $json["optionalStringProperty"],
+    );
+    const requiredIntegerProperty = $json["requiredIntegerProperty"];
+    const requiredStringProperty = $json["requiredStringProperty"];
+    return create({
+      $identifier,
+      emptyStringSetProperty,
+      nestedObjectProperty,
+      nonEmptyStringSetProperty,
+      optionalStringProperty,
+      requiredIntegerProperty,
+      requiredStringProperty,
+    });
   }
 
-  export const fromRdfResource: $FromRdfResourceFunction<FormNodeShape> = (
-    resource,
-    options,
+  export const _fromRdfResource: $_FromRdfResourceFunction<FormNodeShape> = (
+    $resource,
+    _$options,
   ) => {
-    let {
-      context,
-      graph,
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
-    return FormNodeShape.propertiesFromRdfResource(resource, {
-      context,
-      graph,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-    }).map(create);
+    return Right(
+      new Resource.Value({
+        dataFactory: dataFactory,
+        focusResource: $resource,
+        propertyPath: $RdfVocabularies.rdf.subject,
+        term: $resource.identifier,
+      }).toValues(),
+    )
+      .chain((values) => values.chainMap((value) => value.toIdentifier()))
+      .chain((values) => values.head())
+      .chain(($identifier) =>
+        $shaclPropertyFromRdf({
+          graph: _$options.graph,
+          resource: $resource,
+          propertySchema: schema.properties.emptyStringSetProperty,
+          typeFromRdf: (resourceValues) =>
+            resourceValues
+              .chain((values) =>
+                $fromRdfPreferredLanguages(
+                  values,
+                  _$options.preferredLanguages,
+                ),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) => values.toArray())
+              .map((valuesArray) =>
+                Resource.Values.fromValue({
+                  focusResource: $resource,
+                  propertyPath:
+                    FormNodeShape.schema.properties.emptyStringSetProperty.path,
+                  value: valuesArray,
+                }),
+              ),
+        }).chain((emptyStringSetProperty) =>
+          $shaclPropertyFromRdf({
+            graph: _$options.graph,
+            resource: $resource,
+            propertySchema: schema.properties.nestedObjectProperty,
+            typeFromRdf: (resourceValues) =>
+              NestedNodeShape.fromRdfResourceValues(resourceValues, {
+                context: _$options.context,
+                graph: _$options.graph,
+                preferredLanguages: _$options.preferredLanguages,
+                objectSet: _$options.objectSet,
+                resource: $resource,
+                ignoreRdfType: true,
+                propertyPath:
+                  FormNodeShape.schema.properties.nestedObjectProperty.path,
+              }),
+          }).chain((nestedObjectProperty) =>
+            $shaclPropertyFromRdf({
+              graph: _$options.graph,
+              resource: $resource,
+              propertySchema: schema.properties.nonEmptyStringSetProperty,
+              typeFromRdf: (resourceValues) =>
+                resourceValues
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages(
+                      values,
+                      _$options.preferredLanguages,
+                    ),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .chain((values) =>
+                    NonEmptyList.fromArray(values.toArray()).toEither(
+                      new Error(`${$resource.identifier} is an empty set`),
+                    ),
+                  )
+                  .map((valuesArray) =>
+                    Resource.Values.fromValue({
+                      focusResource: $resource,
+                      propertyPath:
+                        FormNodeShape.schema.properties
+                          .nonEmptyStringSetProperty.path,
+                      value: valuesArray,
+                    }),
+                  ),
+            }).chain((nonEmptyStringSetProperty) =>
+              $shaclPropertyFromRdf({
+                graph: _$options.graph,
+                resource: $resource,
+                propertySchema: schema.properties.optionalStringProperty,
+                typeFromRdf: (resourceValues) =>
+                  resourceValues
+                    .chain((values) =>
+                      $fromRdfPreferredLanguages(
+                        values,
+                        _$options.preferredLanguages,
+                      ),
+                    )
+                    .chain((values) =>
+                      values.chainMap((value) => value.toString()),
+                    )
+                    .map((values) =>
+                      values.length > 0
+                        ? values.map((value) => Maybe.of(value))
+                        : Resource.Values.fromValue<Maybe<string>>({
+                            focusResource: $resource,
+                            propertyPath:
+                              FormNodeShape.schema.properties
+                                .optionalStringProperty.path,
+                            value: Maybe.empty(),
+                          }),
+                    ),
+              }).chain((optionalStringProperty) =>
+                $shaclPropertyFromRdf({
+                  graph: _$options.graph,
+                  resource: $resource,
+                  propertySchema: schema.properties.requiredIntegerProperty,
+                  typeFromRdf: (resourceValues) =>
+                    resourceValues.chain((values) =>
+                      values.chainMap((value) => value.toInt()),
+                    ),
+                }).chain((requiredIntegerProperty) =>
+                  $shaclPropertyFromRdf({
+                    graph: _$options.graph,
+                    resource: $resource,
+                    propertySchema: schema.properties.requiredStringProperty,
+                    typeFromRdf: (resourceValues) =>
+                      resourceValues
+                        .chain((values) =>
+                          $fromRdfPreferredLanguages(
+                            values,
+                            _$options.preferredLanguages,
+                          ),
+                        )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        ),
+                  }).map((requiredStringProperty) =>
+                    create({
+                      $identifier,
+                      emptyStringSetProperty,
+                      nestedObjectProperty,
+                      nonEmptyStringSetProperty,
+                      optionalStringProperty,
+                      requiredIntegerProperty,
+                      requiredStringProperty,
+                    }),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
   };
+
+  export const fromRdfResource: $FromRdfResourceFunction<FormNodeShape> =
+    $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
     FormNodeShape
@@ -1398,206 +1543,6 @@ export namespace FormNodeShape {
         return false;
     }
   }
-
-  export function propertiesFromJson($json: FormNodeShape.Json): {
-    $identifier: BlankNode | NamedNode;
-    $type: "FormNodeShape";
-    emptyStringSetProperty: readonly string[];
-    nestedObjectProperty: NestedNodeShape;
-    nonEmptyStringSetProperty: NonEmptyList<string>;
-    optionalStringProperty: Maybe<string>;
-    requiredIntegerProperty: number;
-    requiredStringProperty: string;
-  } {
-    const $identifier = $json["@id"].startsWith("_:")
-      ? dataFactory.blankNode($json["@id"].substring(2))
-      : dataFactory.namedNode($json["@id"]);
-    const $type = "FormNodeShape" as const;
-    const emptyStringSetProperty = $json["emptyStringSetProperty"] ?? [];
-    const nestedObjectProperty = NestedNodeShape.fromJson(
-      $json["nestedObjectProperty"],
-    );
-    const nonEmptyStringSetProperty = NonEmptyList.fromArray(
-      $json["nonEmptyStringSetProperty"],
-    ).unsafeCoerce();
-    const optionalStringProperty = Maybe.fromNullable(
-      $json["optionalStringProperty"],
-    );
-    const requiredIntegerProperty = $json["requiredIntegerProperty"];
-    const requiredStringProperty = $json["requiredStringProperty"];
-    return {
-      $identifier,
-      $type,
-      emptyStringSetProperty,
-      nestedObjectProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredIntegerProperty,
-      requiredStringProperty,
-    };
-  }
-
-  export const propertiesFromRdfResource: $PropertiesFromRdfResourceFunction<{
-    $identifier: BlankNode | NamedNode;
-    $type: "FormNodeShape";
-    emptyStringSetProperty: readonly string[];
-    nestedObjectProperty: NestedNodeShape;
-    nonEmptyStringSetProperty: NonEmptyList<string>;
-    optionalStringProperty: Maybe<string>;
-    requiredIntegerProperty: number;
-    requiredStringProperty: string;
-  }> = ($resource, _$options) => {
-    return Right(
-      new Resource.Value({
-        dataFactory: dataFactory,
-        focusResource: $resource,
-        propertyPath: $RdfVocabularies.rdf.subject,
-        term: $resource.identifier,
-      }).toValues(),
-    )
-      .chain((values) => values.chainMap((value) => value.toIdentifier()))
-      .chain((values) => values.head())
-      .chain(($identifier) =>
-        Right<"FormNodeShape">("FormNodeShape" as const).chain(($type) =>
-          $shaclPropertyFromRdf({
-            graph: _$options.graph,
-            resource: $resource,
-            propertySchema: schema.properties.emptyStringSetProperty,
-            typeFromRdf: (resourceValues) =>
-              resourceValues
-                .chain((values) =>
-                  $fromRdfPreferredLanguages(
-                    values,
-                    _$options.preferredLanguages,
-                  ),
-                )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) => values.toArray())
-                .map((valuesArray) =>
-                  Resource.Values.fromValue({
-                    focusResource: $resource,
-                    propertyPath:
-                      FormNodeShape.schema.properties.emptyStringSetProperty
-                        .path,
-                    value: valuesArray,
-                  }),
-                ),
-          }).chain((emptyStringSetProperty) =>
-            $shaclPropertyFromRdf({
-              graph: _$options.graph,
-              resource: $resource,
-              propertySchema: schema.properties.nestedObjectProperty,
-              typeFromRdf: (resourceValues) =>
-                NestedNodeShape.fromRdfResourceValues(resourceValues, {
-                  context: _$options.context,
-                  graph: _$options.graph,
-                  preferredLanguages: _$options.preferredLanguages,
-                  objectSet: _$options.objectSet,
-                  resource: $resource,
-                  ignoreRdfType: true,
-                  propertyPath:
-                    FormNodeShape.schema.properties.nestedObjectProperty.path,
-                }),
-            }).chain((nestedObjectProperty) =>
-              $shaclPropertyFromRdf({
-                graph: _$options.graph,
-                resource: $resource,
-                propertySchema: schema.properties.nonEmptyStringSetProperty,
-                typeFromRdf: (resourceValues) =>
-                  resourceValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages(
-                        values,
-                        _$options.preferredLanguages,
-                      ),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
-                    )
-                    .chain((values) =>
-                      NonEmptyList.fromArray(values.toArray()).toEither(
-                        new Error(`${$resource.identifier} is an empty set`),
-                      ),
-                    )
-                    .map((valuesArray) =>
-                      Resource.Values.fromValue({
-                        focusResource: $resource,
-                        propertyPath:
-                          FormNodeShape.schema.properties
-                            .nonEmptyStringSetProperty.path,
-                        value: valuesArray,
-                      }),
-                    ),
-              }).chain((nonEmptyStringSetProperty) =>
-                $shaclPropertyFromRdf({
-                  graph: _$options.graph,
-                  resource: $resource,
-                  propertySchema: schema.properties.optionalStringProperty,
-                  typeFromRdf: (resourceValues) =>
-                    resourceValues
-                      .chain((values) =>
-                        $fromRdfPreferredLanguages(
-                          values,
-                          _$options.preferredLanguages,
-                        ),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
-                      )
-                      .map((values) =>
-                        values.length > 0
-                          ? values.map((value) => Maybe.of(value))
-                          : Resource.Values.fromValue<Maybe<string>>({
-                              focusResource: $resource,
-                              propertyPath:
-                                FormNodeShape.schema.properties
-                                  .optionalStringProperty.path,
-                              value: Maybe.empty(),
-                            }),
-                      ),
-                }).chain((optionalStringProperty) =>
-                  $shaclPropertyFromRdf({
-                    graph: _$options.graph,
-                    resource: $resource,
-                    propertySchema: schema.properties.requiredIntegerProperty,
-                    typeFromRdf: (resourceValues) =>
-                      resourceValues.chain((values) =>
-                        values.chainMap((value) => value.toInt()),
-                      ),
-                  }).chain((requiredIntegerProperty) =>
-                    $shaclPropertyFromRdf({
-                      graph: _$options.graph,
-                      resource: $resource,
-                      propertySchema: schema.properties.requiredStringProperty,
-                      typeFromRdf: (resourceValues) =>
-                        resourceValues
-                          .chain((values) =>
-                            $fromRdfPreferredLanguages(
-                              values,
-                              _$options.preferredLanguages,
-                            ),
-                          )
-                          .chain((values) =>
-                            values.chainMap((value) => value.toString()),
-                          ),
-                    }).map((requiredStringProperty) => ({
-                      $identifier,
-                      $type,
-                      emptyStringSetProperty,
-                      nestedObjectProperty,
-                      nonEmptyStringSetProperty,
-                      optionalStringProperty,
-                      requiredIntegerProperty,
-                      requiredStringProperty,
-                    })),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-  };
 
   export const schema = {
     properties: {

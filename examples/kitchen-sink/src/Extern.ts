@@ -76,7 +76,7 @@ export namespace Extern {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return BaseForExtern.propertiesFromRdfResource(resource, {
+    return BaseForExtern._fromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
