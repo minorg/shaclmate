@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { removeUndefined } from "../removeUndefined.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -29,10 +30,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
-    if (this.override) {
-      return Maybe.empty();
-    }
-
     return Maybe.of({
       key: this.name,
       schema:
@@ -44,19 +41,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
-    if (this.override) {
-      return Maybe.empty();
-    }
-
     return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
   private get initializer(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
-  }
-
-  private get override(): boolean {
-    return this.namedObjectType.parentObjectTypes.length > 0;
   }
 
   override constructorStatements(): readonly Code[] {
@@ -76,7 +65,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    if (this.override) {
+    if (this.namedObjectType.parentObjectTypes.length > 0) {
       return [];
     }
 
@@ -88,7 +77,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    if (this.override) {
+    if (this.namedObjectType.parentObjectTypes.length > 0) {
       return Maybe.empty();
     }
 
@@ -113,10 +102,6 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<Code> {
-    if (this.override) {
-      return Maybe.empty();
-    }
-
     return Maybe.of(code`${this.name}: ${variables.value}`);
   }
 

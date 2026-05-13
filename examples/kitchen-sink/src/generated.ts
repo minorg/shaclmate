@@ -16840,6 +16840,7 @@ export namespace UnionMember2 {
 
   export type Json = {
     readonly "@id": string;
+    readonly $type: "UnionMember2";
     readonly unionMember2Property: string;
   } & UnionMemberCommonParent.Json;
 
@@ -16857,6 +16858,7 @@ export namespace UnionMember2 {
         .object({
           ...UnionMemberCommonParent.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.literal("UnionMember2"),
           unionMember2Property: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -17228,6 +17230,7 @@ export namespace UnionMember2 {
           _unionMember2.$identifier().termType === "BlankNode"
             ? `_:${_unionMember2.$identifier().value}`
             : _unionMember2.$identifier().value,
+        $type: _unionMember2.$type,
         unionMember2Property: _unionMember2.unionMember2Property,
       } satisfies UnionMember2.Json),
     );
@@ -17950,6 +17953,7 @@ export namespace UnionMember1 {
 
   export type Json = {
     readonly "@id": string;
+    readonly $type: "UnionMember1";
     readonly unionMember1Property: string;
   } & UnionMemberCommonParent.Json;
 
@@ -17967,6 +17971,7 @@ export namespace UnionMember1 {
         .object({
           ...UnionMemberCommonParent.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.literal("UnionMember1"),
           unionMember1Property: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -18338,6 +18343,7 @@ export namespace UnionMember1 {
           _unionMember1.$identifier().termType === "BlankNode"
             ? `_:${_unionMember1.$identifier().value}`
             : _unionMember1.$identifier().value,
+        $type: _unionMember1.$type,
         unionMember1Property: _unionMember1.unionMember1Property,
       } satisfies UnionMember1.Json),
     );
@@ -27718,6 +27724,7 @@ export namespace ClassMultipleInheritanceChild {
 
   export type Json = {
     readonly "@id": string;
+    readonly $type: "ClassMultipleInheritanceChild";
     readonly classMultipleInheritanceChildProperty: string;
   } & ClassMultipleInheritanceParent1.Json &
     ClassMultipleInheritanceParent2.Json;
@@ -27737,6 +27744,7 @@ export namespace ClassMultipleInheritanceChild {
           ...ClassMultipleInheritanceParent1.Json.schema().shape,
           ...ClassMultipleInheritanceParent2.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.literal("ClassMultipleInheritanceChild"),
           classMultipleInheritanceChildProperty: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -28167,6 +28175,7 @@ export namespace ClassMultipleInheritanceChild {
           _classMultipleInheritanceChild.$identifier().termType === "BlankNode"
             ? `_:${_classMultipleInheritanceChild.$identifier().value}`
             : _classMultipleInheritanceChild.$identifier().value,
+        $type: _classMultipleInheritanceChild.$type,
         classMultipleInheritanceChildProperty:
           _classMultipleInheritanceChild.classMultipleInheritanceChildProperty,
       } satisfies ClassMultipleInheritanceChild.Json),
@@ -52901,7 +52910,10 @@ export namespace ClassHierarchy1 {
     export const stringify = NTriplesTerm.stringify;
   }
 
-  export type Json = { readonly "@id": string } & ClassHierarchy0.Json;
+  export type Json = {
+    readonly "@id": string;
+    readonly $type: "ClassHierarchy1" | "ClassHierarchy2" | "ClassHierarchy3";
+  } & ClassHierarchy0.Json;
 
   export namespace Json {
     export function parse(json: unknown): Either<Error, Json> {
@@ -52917,6 +52929,11 @@ export namespace ClassHierarchy1 {
         .object({
           ...ClassHierarchy0.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.enum([
+            "ClassHierarchy1",
+            "ClassHierarchy2",
+            "ClassHierarchy3",
+          ]),
         })
         .meta({}) satisfies z.ZodType<Json>;
     }
@@ -53250,6 +53267,7 @@ export namespace ClassHierarchy1 {
           _classHierarchy1.$identifier().termType === "BlankNode"
             ? `_:${_classHierarchy1.$identifier().value}`
             : _classHierarchy1.$identifier().value,
+        $type: _classHierarchy1.$type,
       } satisfies ClassHierarchy1.Json),
     );
   }
@@ -53418,6 +53436,7 @@ export namespace ClassHierarchy2 {
 
   export type Json = {
     readonly "@id": string;
+    readonly $type: "ClassHierarchy2" | "ClassHierarchy3";
     readonly classHierarchy2Property: string;
   } & ClassHierarchy1.Json;
 
@@ -53435,6 +53454,7 @@ export namespace ClassHierarchy2 {
         .object({
           ...ClassHierarchy1.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.enum(["ClassHierarchy2", "ClassHierarchy3"]),
           classHierarchy2Property: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -53834,6 +53854,7 @@ export namespace ClassHierarchy2 {
           _classHierarchy2.$identifier().termType === "BlankNode"
             ? `_:${_classHierarchy2.$identifier().value}`
             : _classHierarchy2.$identifier().value,
+        $type: _classHierarchy2.$type,
         classHierarchy2Property: _classHierarchy2.classHierarchy2Property,
       } satisfies ClassHierarchy2.Json),
     );
@@ -54008,6 +54029,7 @@ export namespace ClassHierarchy3 {
 
   export type Json = {
     readonly "@id": string;
+    readonly $type: "ClassHierarchy3";
     readonly classHierarchy3Property: string;
   } & ClassHierarchy2.Json;
 
@@ -54025,6 +54047,7 @@ export namespace ClassHierarchy3 {
         .object({
           ...ClassHierarchy2.Json.schema().shape,
           "@id": z.string().min(1),
+          $type: z.literal("ClassHierarchy3"),
           classHierarchy3Property: z.string().meta({}),
         })
         .meta({}) satisfies z.ZodType<Json>;
@@ -54407,6 +54430,7 @@ export namespace ClassHierarchy3 {
           _classHierarchy3.$identifier().termType === "BlankNode"
             ? `_:${_classHierarchy3.$identifier().value}`
             : _classHierarchy3.$identifier().value,
+        $type: _classHierarchy3.$type,
         classHierarchy3Property: _classHierarchy3.classHierarchy3Property,
       } satisfies ClassHierarchy3.Json),
     );
