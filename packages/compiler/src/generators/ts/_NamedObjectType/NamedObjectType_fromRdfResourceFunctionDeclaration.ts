@@ -86,7 +86,7 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   }
 
   const statements: Code[] = [];
-  const resultExpression = code`create({ ${joinCode(initializers, { on: "," })} })`;
+  const resultExpression = code`${this.name}.create({ ${joinCode(initializers, { on: "," })} })`;
   if (chains.length === 0) {
     statements.push(
       code`return ${this.reusables.imports.Right}(${resultExpression});`,
