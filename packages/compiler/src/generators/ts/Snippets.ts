@@ -2,6 +2,7 @@ import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 import { snippets__FromRdfResourceFunction } from "./_snippets/snippets__FromRdfResourceFunction.js";
+import { snippets__ToRdfResourceFunction } from "./_snippets/snippets__ToRdfResourceFunction.js";
 import { snippets_arrayEquals } from "./_snippets/snippets_arrayEquals.js";
 import { snippets_arrayIntersection } from "./_snippets/snippets_arrayIntersection.js";
 import { snippets_BlankNodeFilter } from "./_snippets/snippets_BlankNodeFilter.js";
@@ -109,6 +110,7 @@ import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
+import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
@@ -348,6 +350,11 @@ export class Snippets {
   @Memoize()
   get _FromRdfResourceFunction(): Snippet {
     return this.snippet(snippets__FromRdfResourceFunction);
+  }
+
+  @Memoize()
+  get _ToRdfResourceFunction(): Snippet {
+    return this.snippet(snippets__ToRdfResourceFunction);
   }
 
   @Memoize()
@@ -687,6 +694,11 @@ export class Snippets {
   @Memoize()
   get wrap_FromRdfResourceFunction(): Snippet {
     return this.snippet(snippets_wrap_FromRdfResourceFunction);
+  }
+
+  @Memoize()
+  get wrap_ToRdfResourceFunction(): Snippet {
+    return this.snippet(snippets_wrap_ToRdfResourceFunction);
   }
 
   protected get snippets(): Snippets {

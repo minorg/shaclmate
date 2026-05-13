@@ -29,6 +29,14 @@ type $_FromRdfResourceFunction<T> = (
   },
 ) => Either<Error, T>;
 
+export type $_ToRdfResourceFunction<T> = (parameters: {
+  graph: Exclude<Quad_Graph, Variable> | undefined;
+  ignoreRdfType: boolean;
+  resource: Resource;
+  resourceSet: ResourceSet;
+  value: T;
+}) => void;
+
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
@@ -619,6 +627,23 @@ function $wrap_FromRdfResourceFunction<T>(
     });
   };
 }
+
+function $wrap_ToRdfResourceFunction<T>(
+  _toRdfResourceFunction: $_ToRdfResourceFunction<T>,
+): $ToRdfResourceFunction<T> {
+  return (value, options) => {
+    let { graph, ignoreRdfType = false, resourceSet } = options ?? {};
+    if (!resourceSet) {
+      resourceSet = new ResourceSet({
+        dataFactory: dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    }
+    const resource = resourceSet.resource(value.$identifier());
+    _toRdfResourceFunction({ graph, ignoreRdfType, resourceSet, value });
+    return resource;
+  };
+}
 export interface NestedNodeShape {
   readonly $identifier: () => NestedNodeShape.Identifier;
   readonly $type: "NestedNodeShape" /**
@@ -832,7 +857,7 @@ export namespace NestedNodeShape {
       );
   };
 
-  export const fromRdfResource: $FromRdfResourceFunction<NestedNodeShape> =
+  export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -897,24 +922,18 @@ export namespace NestedNodeShape {
     );
   }
 
-  export function toRdfResource(
-    _nestedNodeShape: NestedNodeShape,
-    options?: Parameters<$ToRdfResourceFunction<NestedNodeShape>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_nestedNodeShape.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<NestedNodeShape> = (
+    parameters,
+  ) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
-      [$literalFactory.string(_nestedNodeShape.requiredStringProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.value.requiredStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _nestedNodeShape: NestedNodeShape,
@@ -1519,7 +1538,7 @@ export namespace FormNodeShape {
       );
   };
 
-  export const fromRdfResource: $FromRdfResourceFunction<FormNodeShape> =
+  export const fromRdfResource =
     $wrap_FromRdfResourceFunction(_fromRdfResource);
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<
@@ -1636,65 +1655,59 @@ export namespace FormNodeShape {
     );
   }
 
-  export function toRdfResource(
-    _formNodeShape: FormNodeShape,
-    options?: Parameters<$ToRdfResourceFunction<FormNodeShape>>[1],
-  ): Resource {
-    const resourceSet =
-      options?.resourceSet ??
-      new ResourceSet({
-        dataFactory: dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.resource(_formNodeShape.$identifier());
-    resource.add(
+  export const _toRdfResource: $_ToRdfResourceFunction<FormNodeShape> = (
+    parameters,
+  ) => {
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-      _formNodeShape.emptyStringSetProperty.flatMap((item) => [
+      parameters.value.emptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nestedObjectProperty"),
       [
-        NestedNodeShape.toRdfResource(_formNodeShape.nestedObjectProperty, {
-          graph: options?.graph,
-          resourceSet: resourceSet,
+        NestedNodeShape.toRdfResource(parameters.value.nestedObjectProperty, {
+          graph: parameters.graph,
+          resourceSet: parameters.resourceSet,
         }).identifier,
       ],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-      _formNodeShape.nonEmptyStringSetProperty.flatMap((item) => [
+      parameters.value.nonEmptyStringSetProperty.flatMap((item) => [
         $literalFactory.string(item),
       ]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/optionalStringProperty"),
-      _formNodeShape.optionalStringProperty
+      parameters.value.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredIntegerProperty"),
       [
         $literalFactory.number(
-          _formNodeShape.requiredIntegerProperty,
+          parameters.value.requiredIntegerProperty,
           $RdfVocabularies.xsd.int,
         ),
       ],
-      options?.graph,
+      parameters.graph,
     );
-    resource.add(
+    parameters.resource.add(
       dataFactory.namedNode("http://example.com/requiredStringProperty"),
-      [$literalFactory.string(_formNodeShape.requiredStringProperty)],
-      options?.graph,
+      [$literalFactory.string(parameters.value.requiredStringProperty)],
+      parameters.graph,
     );
-    return resource;
-  }
+    return parameters.resource;
+  };
+
+  export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
   export function propertiesToStrings(
     _formNodeShape: FormNodeShape,
