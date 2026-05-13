@@ -158,14 +158,16 @@ export class IdentifierProperty extends AbstractProperty<
     return statements;
   }
 
-  override fromJsonStatements({
+  override fromJsonExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromJsonStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
-    ];
+    AbstractProperty<IdentifierType>["fromJsonExpression"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      this.type.fromJsonExpression({
+        variables: { value: variables.jsonObject },
+      }),
+    );
   }
 
   override fromRdfResourceValuesExpression({

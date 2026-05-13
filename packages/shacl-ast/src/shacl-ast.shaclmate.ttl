@@ -352,7 +352,7 @@ shaclmate:comment
 
 shaclmate:label
     shaclmate:display true ;
-    a sh:PropertyShap ;
+    a sh:PropertyShape ;
     sh:datatype xsd:string ;
     sh:maxCount 1 ;
     sh:path rdfs:label .

@@ -302,12 +302,12 @@ ${{
     return singleEntryRecord(
       `toRdfResource`,
       code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (object, options) => {
 ${joinCode(
   this.members
     .map(
       (member) =>
-        code`if (${member.type.name}.is${member.type.name}(value)) { return ${member.type.name}.toRdfResource(value, options); }`,
+        code`if (${member.type.name}.is${member.type.name}(object)) { return ${member.type.name}.toRdfResource(object, options); }`,
     )
     .concat(code`throw new Error("unrecognized type");`),
 )}

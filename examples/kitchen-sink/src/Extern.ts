@@ -35,7 +35,7 @@ export namespace Extern {
   }
 
   export function fromJson(json: Json): Extern {
-    return create(BaseForExtern.propertiesFromJson(json));
+    return create(BaseForExtern.fromJson(json));
   }
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Extern> = (
@@ -76,7 +76,7 @@ export namespace Extern {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return BaseForExtern.propertiesFromRdfResource(resource, {
+    return BaseForExtern._fromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,

@@ -63,7 +63,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "kitchenSink") {
+      // if (id !== "propertyShapeNameConflicts") {
       //   return;
       // }
 

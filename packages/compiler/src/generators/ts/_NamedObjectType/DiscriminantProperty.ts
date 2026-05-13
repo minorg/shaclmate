@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { removeUndefined } from "../removeUndefined.js";
 import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -28,13 +29,14 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   @Memoize()
-  override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
-    if (this.override) {
-      return Maybe.empty();
-    }
+  get jsonName(): string {
+    return "@type";
+  }
 
+  @Memoize()
+  override get jsonSchema(): AbstractProperty<DiscriminantProperty.Type>["jsonSchema"] {
     return Maybe.of({
-      key: this.name,
+      key: this.jsonName,
       schema:
         this.type.values.length > 1
           ? code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.values)})`
@@ -44,33 +46,23 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
-    if (this.override) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
+    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
   }
 
   private get initializer(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
   }
 
-  private get override(): boolean {
-    return this.namedObjectType.parentObjectTypes.length > 0;
-  }
-
   override constructorStatements(): readonly Code[] {
     return [code`const ${this.name} = ${this.initializer};`];
   }
 
-  override fromJsonStatements(): readonly Code[] {
-    return [code`const ${this.name} = ${this.initializer};`];
+  override fromJsonExpression(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override fromRdfResourceValuesExpression(): Maybe<Code> {
-    return Maybe.of(
-      code`${this.reusables.imports.Right}<${literalOf(this.namedObjectType.discriminantValue)}>(${this.initializer})`,
-    );
+    return Maybe.empty();
   }
 
   override hashStatements({
@@ -78,7 +70,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    if (this.override) {
+    if (this.namedObjectType.parentObjectTypes.length > 0) {
       return [];
     }
 
@@ -90,11 +82,11 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    if (this.override) {
+    if (this.namedObjectType.parentObjectTypes.length > 0) {
       return Maybe.empty();
     }
 
-    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
     );
@@ -115,11 +107,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<Code> {
-    if (this.override) {
-      return Maybe.empty();
-    }
-
-    return Maybe.of(code`${this.name}: ${variables.value}`);
+    return Maybe.of(code`"${this.jsonName}": ${variables.value}`);
   }
 
   override toRdfRdfResourceValuesStatements(): readonly Code[] {
