@@ -1,7 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
@@ -25,7 +24,7 @@ export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
 
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(
-      code`triples = triples.concat(${parentObjectType.name}.${syntheticNamePrefix}focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
+      code`triples = triples.concat(${parentObjectType.name}.focusSparqlConstructTriples(${{ filter: variables.filter, focusIdentifier: variables.focusIdentifier, ignoreRdfType: true, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
   }
@@ -56,7 +55,7 @@ if (!parameters?.ignoreRdfType) {
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
+export const focusSparqlConstructTriples: ${this.reusables.snippets.FocusSparqlConstructTriplesFunction}<${this.filterType}> = (${statements.length === 0 ? "_" : ""}parameters) => {
 ${
   statements.length > 0
     ? joinCode([

@@ -17,7 +17,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
 
   if (this.parentObjectTypes.length > 0) {
     statements.push(
-      code`const ${variables.resource} = ${this.parentObjectTypes[0].name}.${syntheticNamePrefix}toRdfResource(${this.thisVariable}, { ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} });`,
+      code`const ${variables.resource} = ${this.parentObjectTypes[0].name}.toRdfResource(${this.thisVariable}, { ${variables.ignoreRdfType}: true, ${variables.graph}: options?.${variables.graph}, ${variables.resourceSet} });`,
     );
   } else {
     statements.push(
@@ -55,7 +55,7 @@ export function NamedObjectType_toRdfResourceFunctionDeclaration(
   statements.push(code`return ${variables.resource};`);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}toRdfResource(${this.thisVariable}: ${this.name}, options?: Parameters<${this.reusables.snippets.ToRdfResourceFunction}<${this.name}>>[1]): ${this.toRdfjsResourceType} {
+export function toRdfResource(${this.thisVariable}: ${this.name}, options?: Parameters<${this.reusables.snippets.ToRdfResourceFunction}<${this.name}>>[1]): ${this.toRdfjsResourceType} {
   ${joinCode(statements)}
 }`);
 }

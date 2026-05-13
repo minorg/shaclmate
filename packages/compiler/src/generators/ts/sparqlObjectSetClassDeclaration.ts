@@ -19,12 +19,12 @@ export function sparqlObjectSetClassDeclaration(
 ): Code {
   const parameters = {
     constructObjectType: code`namedObjectType: {\
-  ${syntheticNamePrefix}focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;
-  ${syntheticNamePrefix}fromRdfResource:  ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
-  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${this.reusables.imports.sparqljs}.GeneratorOptions) => string;
+  focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;
+  fromRdfResource:  ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
+  sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${this.reusables.imports.sparqljs}.GeneratorOptions) => string;
 }`,
     query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
-    selectObjectTypeType: code`namedObjectType: { ${syntheticNamePrefix}focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
+    selectObjectTypeType: code`namedObjectType: { focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
   };
   const sparqlClientType = code`{ queryBindings: (query: string) => Promise<readonly Record<string, ${this.reusables.imports.BlankNode} | ${this.reusables.imports.Literal} | ${this.reusables.imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${this.reusables.imports.Quad}[]>; }`;
 
@@ -171,7 +171,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
         return [];
       }
 
-      const constructQueryString = namedObjectType.${syntheticNamePrefix}sparqlConstructQueryString({
+      const constructQueryString = namedObjectType.sparqlConstructQueryString({
         subject: this.#objectVariable,
         where: [{
           type: "values" as const,
@@ -188,7 +188,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       const dataset = ${this.reusables.imports.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
-        objects.push(await liftEither(namedObjectType.${syntheticNamePrefix}fromRdfResource(new ${this.reusables.imports.Resource}({ dataFactory: ${this.reusables.imports.dataFactory}, dataset: dataset, identifier: identifier as ${this.reusables.imports.NamedNode} }), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
+        objects.push(await liftEither(namedObjectType.fromRdfResource(new ${this.reusables.imports.Resource}({ dataFactory: ${this.reusables.imports.dataFactory}, dataset: dataset, identifier: identifier as ${this.reusables.imports.NamedNode} }), { objectSet: this, preferredLanguages: query?.preferredLanguages })));
       }
       return objects;
     });
@@ -237,7 +237,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
       patterns = patterns.concat(query.where(this.#objectVariable));
     }
 
-    patterns = patterns.concat(namedObjectType.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.#objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.#objectVariable.value }));
+    patterns = patterns.concat(namedObjectType.focusSparqlWherePatterns({ filter: query?.filter, focusIdentifier: this.#objectVariable, ignoreRdfType: false, preferredLanguages: query?.preferredLanguages, variablePrefix: this.#objectVariable.value }));
 
     patterns = ${this.reusables.snippets.normalizeSparqlWherePatterns}(patterns).concat();
 

@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_equalsFunctionDeclaration(
@@ -13,9 +12,7 @@ export function NamedObjectType_equalsFunctionDeclaration(
   const chain: Code[] = [];
   // For every parent, find the nearest equals implementation
   for (const parentObjectType of this.parentObjectTypes) {
-    chain.push(
-      code`${parentObjectType.name}.${syntheticNamePrefix}equals(left, right)`,
-    );
+    chain.push(code`${parentObjectType.name}.equals(left, right)`);
   }
 
   for (const property of this.properties) {
@@ -29,7 +26,7 @@ export function NamedObjectType_equalsFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${this.reusables.snippets.EqualsResult} {
+export function equals(left: ${this.name}, right: ${this.name}): ${this.reusables.snippets.EqualsResult} {
   return ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,

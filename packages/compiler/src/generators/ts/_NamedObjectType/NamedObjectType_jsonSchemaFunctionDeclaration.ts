@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_jsonSchemaFunctionDeclaration(
@@ -37,6 +36,6 @@ export function NamedObjectType_jsonSchemaFunctionDeclaration(
   // ${this.properties.every((property) => !property.mutable) ? `.readonly()` : ""}
   return Maybe.of(code`\
 export function schema() {
-  return ${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${this.reusables.imports.z}.ZodType<${syntheticNamePrefix}Json>;
+  return ${this.reusables.imports.z}.object({${joinCode(properties, { on: "," })}}).meta(${meta}) satisfies ${this.reusables.imports.z}.ZodType<Json>;
 }`);
 }

@@ -21,9 +21,9 @@ export function rdfjsDatasetObjectSetClassDeclaration(
 ): Code {
   const namedObjectTypeType = code`\
 {
-  ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-  ${syntheticNamePrefix}fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
-  ${syntheticNamePrefix}fromRdfTypes: readonly ${this.reusables.imports.NamedNode}[]
+  filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+  fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
+  fromRdfTypes: readonly ${this.reusables.imports.NamedNode}[]
 }`;
 
   const parameters = {
@@ -38,12 +38,12 @@ export function rdfjsDatasetObjectSetClassDeclaration(
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
-  protected readonly ${syntheticNamePrefix}graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
   readonly #dataset: ${this.reusables.imports.DatasetCore} | (() => ${this.reusables.imports.DatasetCore});
+  readonly #graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
 
   constructor(dataset: ${this.reusables.imports.DatasetCore} | (() => ${this.reusables.imports.DatasetCore}), options?: { graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}> }) {
     this.#dataset = dataset;
-    this.${syntheticNamePrefix}graph = options?.graph;
+    this.#graph = options?.graph;
   }
 
   protected ${syntheticNamePrefix}dataset(): DatasetCore {
@@ -126,7 +126,7 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             const fromRdfTypes = namedObjectType.fromRdfTypeVariable
               .toList()
               .concat(namedObjectType.descendantFromRdfTypeVariables);
-            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdfResource: ${namedObjectType.name}.${syntheticNamePrefix}fromRdfResource, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.name}.fromRdfResource, fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
           };
 
           switch (namedObjectType.kind) {
@@ -159,7 +159,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 #objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
+  const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${this.reusables.imports.Right}([]); }
@@ -175,11 +175,11 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   if (query?.identifiers) {
     resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));
     sortResources = false;
-  } else if (namedObjectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
+  } else if (namedObjectType.fromRdfTypes.length > 0) {
     const identifierSet = new ${this.reusables.snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
-    for (const fromRdfType of namedObjectType.${syntheticNamePrefix}fromRdfTypes) {
+    for (const fromRdfType of namedObjectType.fromRdfTypes) {
       for (const resource of resourceSet.instancesOf(fromRdfType, { graph })) {
         if (!identifierSet.has(resource.identifier)) {
           identifierSet.add(resource.identifier);
@@ -210,7 +210,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       identifierSet.add(quad.subject);
       const resource = resourceSet.resource(quad.subject);
       // Eagerly eliminate the majority of resources that won't match the object type
-      namedObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
+      namedObjectType.fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
         resources.push({ object, resource });
       });
     }
@@ -225,14 +225,14 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   const objects: ObjectT[] = [];
   for (let { object, resource } of resources) {
     if (!object) {
-      const objectEither = namedObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
+      const objectEither = namedObjectType.fromRdfResource(resource, fromRdfResourceOptions);
       if (objectEither.isLeft()) {
         return objectEither;
       }
       object = objectEither.unsafeCoerce();
     }
 
-    if (query?.filter && !namedObjectType.${syntheticNamePrefix}filter(query.filter, object)) {
+    if (query?.filter && !namedObjectType.filter(query.filter, object)) {
       continue;
     }
 
@@ -252,7 +252,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         ? [
             code`\
 #objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
-  const graph = query?.graph ?? this.${syntheticNamePrefix}graph;
+  const graph = query?.graph ?? this.#graph;
 
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${this.reusables.imports.Right}([]); }
@@ -268,12 +268,12 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   if (query?.identifiers) {
     resources = query.identifiers.map(identifier => ({ resource: resourceSet.resource(identifier) }));
     sortResources = false;
-  } else if (namedObjectTypes.every(namedObjectType => namedObjectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
+  } else if (namedObjectTypes.every(namedObjectType => namedObjectType.fromRdfTypes.length > 0)) {
     const identifierSet = new ${this.reusables.snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const namedObjectType of namedObjectTypes) {
-      for (const fromRdfType of namedObjectType.${syntheticNamePrefix}fromRdfTypes) {
+      for (const fromRdfType of namedObjectType.fromRdfTypes) {
         for (const resource of resourceSet.instancesOf(fromRdfType, { graph })) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
@@ -306,7 +306,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       // Eagerly eliminate the majority of resources that won't match the object types
       const resource = resourceSet.resource(quad.subject);
       for (const namedObjectType of namedObjectTypes) {
-        if (namedObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
+        if (namedObjectType.fromRdfResource(resource, fromRdfResourceOptions).ifRight(object => {
           resources.push({ object, namedObjectType, resource });
         }).isRight()) {
           break;
@@ -326,11 +326,11 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     if (!object) {
       let objectEither: ${this.reusables.imports.Either}<Error, ObjectT>;
       if (namedObjectType) {
-        objectEither = namedObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
+        objectEither = namedObjectType.fromRdfResource(resource, fromRdfResourceOptions);
       } else {
         objectEither = ${this.reusables.imports.Left}(new Error("no object types"));
         for (const tryObjectType of namedObjectTypes) {
-          objectEither = tryObjectType.${syntheticNamePrefix}fromRdfResource(resource, fromRdfResourceOptions);
+          objectEither = tryObjectType.fromRdfResource(resource, fromRdfResourceOptions);
           if (objectEither.isRight()) {
             namedObjectType = tryObjectType;
             break;
@@ -346,7 +346,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
       throw new Error("namedObjectType should be set here");
     }
 
-    if (query?.filter && !namedObjectType.${syntheticNamePrefix}filter(query.filter, object)) {
+    if (query?.filter && !namedObjectType.filter(query.filter, object)) {
       continue;
     }
 

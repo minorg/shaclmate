@@ -1,5 +1,4 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function identifierTypeDeclarations(
@@ -15,16 +14,16 @@ export function identifierTypeDeclarations(
     // This object type's identifier type has the same identifier type as an ancestor object type,
     // so just reuse the latter.
     return [
-      code`export type ${syntheticNamePrefix}Identifier = ${ancestorObjectTypeWithSameIdentifierType.identifierTypeAlias};`,
-      code`export const ${syntheticNamePrefix}Identifier = ${ancestorObjectTypeWithSameIdentifierType.identifierTypeAlias};`,
+      code`export type Identifier = ${ancestorObjectTypeWithSameIdentifierType.identifierTypeAlias};`,
+      code`export const Identifier = ${ancestorObjectTypeWithSameIdentifierType.identifierTypeAlias};`,
     ];
   }
 
   // Bespoke identifier type and associated functions
   return [
-    code`export type ${syntheticNamePrefix}Identifier = ${this.identifierType.name};`,
+    code`export type Identifier = ${this.identifierType.name};`,
     code`\
-export namespace ${syntheticNamePrefix}Identifier {
+export namespace Identifier {
   export const parse = ${this.identifierType.parseFunction};
   export const stringify = ${this.identifierType.stringifyFunction};
 }`,

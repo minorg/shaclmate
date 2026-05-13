@@ -14,15 +14,15 @@ export class Harness<
   constructor(
     readonly instance: T,
     readonly staticSide: Readonly<{
-      $equals: (left: T, right: T) => $EqualsResult;
-      $fromJson: (json: any) => T;
-      $fromRdfResource: (
+      equals: (left: T, right: T) => $EqualsResult;
+      fromJson: (json: any) => T;
+      fromRdfResource: (
         resource: Resource,
         parameters: {
           [_index: string]: any;
         },
       ) => Either<Error, T>;
-      $hash: <
+      hash: <
         HasherT extends {
           update: (
             message: string | number[] | ArrayBuffer | Uint8Array,
@@ -32,11 +32,11 @@ export class Harness<
         value: T,
         hasher: HasherT,
       ) => HasherT;
-      $sparqlConstructQueryString: (parameters: {
+      sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;
       }) => string;
-      $toJson: (instance: T) => any;
-      $toRdfResource: (
+      toJson: (instance: T) => any;
+      toRdfResource: (
         instance: T,
         options?: {
           graph?: Exclude<Quad_Graph, Variable>;

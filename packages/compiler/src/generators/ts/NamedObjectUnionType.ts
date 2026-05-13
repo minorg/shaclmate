@@ -40,14 +40,14 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
   @Memoize()
   override get graphqlType(): AbstractType.GraphqlType {
     return new AbstractType.GraphqlType(
-      code`${this._name}.${syntheticNamePrefix}GraphQL`,
+      code`${this._name}.GraphQL`,
       this.reusables,
     );
   }
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return code`${this.name}.${syntheticNamePrefix}Identifier`;
+    return code`${this.name}.Identifier`;
   }
 
   @Memoize()
@@ -57,7 +57,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.name}.${syntheticNamePrefix}schema`;
+    return code`${this.name}.schema`;
   }
 
   @Memoize()
@@ -82,12 +82,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
         name: this.name,
         reusables: this.reusables,
       })
-        .map((code_) =>
-          singleEntryRecord(
-            `${syntheticNamePrefix}sparqlConstructQuery`,
-            code_,
-          ),
-        )
+        .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
         .orDefault({}),
       ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
         features: this.features,
@@ -95,12 +90,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
         name: this.name,
         reusables: this.reusables,
       })
-        .map((code_) =>
-          singleEntryRecord(
-            `${syntheticNamePrefix}sparqlConstructQueryString`,
-            code_,
-          ),
-        )
+        .map((code_) => singleEntryRecord(`sparqlConstructQueryString`, code_))
         .orDefault({}),
       ...this.toRdfResourceFunctionDeclaration,
     };
@@ -115,13 +105,13 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}focusSparqlConstructTriples`,
+      `focusSparqlConstructTriples`,
       code`\
-export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${this.reusables.imports.sparqljs}.Triple[] {
+export function focusSparqlConstructTriples({ filter, focusIdentifier, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; variablePrefix: string }): readonly ${this.reusables.imports.sparqljs}.Triple[] {
   return [${joinCode(
     this.members.map(
       (member) =>
-        code`...${member.type.name}.${syntheticNamePrefix}focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
+        code`...${member.type.name}.focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
     ),
     { on: ", " },
   )}];
@@ -138,9 +128,9 @@ export function ${syntheticNamePrefix}focusSparqlConstructTriples({ filter, focu
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}focusSparqlWherePatterns`,
+      `focusSparqlWherePatterns`,
       code`\
-export function ${syntheticNamePrefix}focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${this.reusables.snippets.SparqlPattern}[] {
+export function focusSparqlWherePatterns({ filter, focusIdentifier, preferredLanguages, variablePrefix }: { filter: ${this.filterType} | undefined; focusIdentifier: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; ignoreRdfType: boolean; preferredLanguages: readonly string[] | undefined; variablePrefix: string }): readonly ${this.reusables.snippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
   code`\
@@ -159,7 +149,7 @@ if (focusIdentifier.termType === "Variable") {
     this.members.map(
       (member) =>
         code`${{
-          patterns: code`${member.type.name}.${syntheticNamePrefix}focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
+          patterns: code`${member.type.name}.focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),
@@ -177,12 +167,12 @@ if (focusIdentifier.termType === "Variable") {
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}fromRdfResource`,
+      `fromRdfResource`,
       code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
+export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
   ${this.members.reduce(
     (expression, member) => {
-      const memberTypeExpression = code`(${member.type.name}.${syntheticNamePrefix}fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${this.reusables.imports.Either}<Error, ${this.name}>)`;
+      const memberTypeExpression = code`(${member.type.name}.fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${this.reusables.imports.Either}<Error, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -198,9 +188,9 @@ export const ${syntheticNamePrefix}fromRdfResource: ${this.reusables.snippets.Fr
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}GraphQL`,
+      `GraphQL`,
       code`\
-export const ${syntheticNamePrefix}GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
+export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
         resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
@@ -214,10 +204,10 @@ export const ${syntheticNamePrefix}GraphQL = new ${this.reusables.imports.GraphQ
 
   private get identifierTypeDeclarations(): Record<string, Code> {
     return singleEntryRecord(
-      `${syntheticNamePrefix}Identifier`,
+      `Identifier`,
       code`\
-export type ${syntheticNamePrefix}Identifier = ${this.#identifierType.name};
-export namespace ${syntheticNamePrefix}Identifier {
+export type Identifier = ${this.#identifierType.name};
+export namespace Identifier {
   export const parse = ${this.#identifierType.parseFunction};
   export const stringify = ${this.#identifierType.stringifyFunction};
 }`,
@@ -294,9 +284,9 @@ export namespace ${syntheticNamePrefix}Identifier {
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}schema`,
+      `schema`,
       code`\
-export const ${syntheticNamePrefix}schema =
+export const schema =
 ${{
   ...super.schemaObject,
   properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
@@ -310,14 +300,14 @@ ${{
     }
 
     return singleEntryRecord(
-      `${syntheticNamePrefix}toRdfResource`,
+      `toRdfResource`,
       code`\
-export const ${syntheticNamePrefix}toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (value, options) => {
 ${joinCode(
   this.members
     .map(
       (member) =>
-        code`if (${member.type.name}.is${member.type.name}(value)) { return ${member.type.name}.${syntheticNamePrefix}toRdfResource(value, options); }`,
+        code`if (${member.type.name}.is${member.type.name}(value)) { return ${member.type.name}.toRdfResource(value, options); }`,
     )
     .concat(code`throw new Error("unrecognized type");`),
 )}

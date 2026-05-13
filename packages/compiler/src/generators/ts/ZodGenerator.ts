@@ -5,7 +5,6 @@ import type { Generator } from "../Generator.js";
 import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
 import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { Reusables } from "./Reusables.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -33,7 +32,7 @@ export class ZodGenerator implements Generator {
 export namespace ${namedObjectType.name} {
   ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
 
-  export namespace ${syntheticNamePrefix}Json {
+  export namespace Json {
     ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(namedObjectType)().toList())}
   }
 }`);
@@ -47,7 +46,7 @@ export namespace ${namedObjectType.name} {
       declarations.push(code`\
 export namespace ${astNamedUnionType.name} {
   ${astNamedUnionType.jsonTypeAliasDeclaration}
-  export namespace ${syntheticNamePrefix}Json {
+  export namespace Json {
     ${astNamedUnionType.jsonSchemaFunctionDeclaration}
   }
 }`);

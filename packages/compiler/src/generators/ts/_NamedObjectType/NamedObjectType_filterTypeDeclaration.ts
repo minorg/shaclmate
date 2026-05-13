@@ -1,5 +1,4 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_filterTypeDeclaration(
@@ -25,9 +24,9 @@ export function NamedObjectType_filterTypeDeclaration(
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(code`${parentObjectType.name}.${syntheticNamePrefix}Filter`);
+    members.push(code`${parentObjectType.name}.Filter`);
   }
 
   return code`\
-export type ${syntheticNamePrefix}Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
+export type Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
 }

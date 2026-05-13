@@ -11,11 +11,11 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
+export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => {
 ${joinCode([
   code`let { context, graph, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});`,
   code`if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet(resource.dataset); }`,
-  code`return ${code`${this.name}.${syntheticNamePrefix}propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(${syntheticNamePrefix}create)`};`,
+  code`return ${code`${this.name}.propertiesFromRdfResource(resource, { context, graph, ignoreRdfType, objectSet, preferredLanguages }).map(create)`};`,
 ])}
 };`);
 }

@@ -1,7 +1,6 @@
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type { Reusables } from "../Reusables.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { TsFeature } from "../TsFeature.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
@@ -16,7 +15,7 @@ export function NamedObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable} } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${this.reusables.imports.sparqljs}.ConstructQuery {
+export function sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable} } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${this.reusables.imports.sparqljs}.ConstructQuery {
   const variablePrefix = subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}";
 
   return {
@@ -24,7 +23,7 @@ export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfTy
     prefixes: prefixes ?? {},
     queryType: "CONSTRUCT",
     template: (queryParameters.template ?? []).concat(
-      ${this.name}.${syntheticNamePrefix}focusSparqlConstructTriples({
+      ${this.name}.focusSparqlConstructTriples({
         filter,
         focusIdentifier: subject,
         ignoreRdfType: !!ignoreRdfType,
@@ -34,7 +33,7 @@ export function ${syntheticNamePrefix}sparqlConstructQuery({ filter, ignoreRdfTy
     type: "query",
     where: (queryParameters.where ?? []).concat(
       ${this.reusables.snippets.normalizeSparqlWherePatterns}(
-        ${this.name}.${syntheticNamePrefix}focusSparqlWherePatterns({
+        ${this.name}.focusSparqlWherePatterns({
           filter,
           focusIdentifier: subject,
           ignoreRdfType: !!ignoreRdfType,

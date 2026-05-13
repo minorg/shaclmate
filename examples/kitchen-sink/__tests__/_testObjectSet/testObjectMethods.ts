@@ -10,7 +10,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
     it("concrete child", async ({ expect }) => {
       const objectSet = createObjectSet(objectDataset(data.classHierarchy3s));
       expect(
-        kitchenSink.ClassHierarchy3.$equals(
+        kitchenSink.ClassHierarchy3.equals(
           (
             await objectSet.classHierarchy3(
               data.classHierarchy3s[0].$identifier(),
@@ -49,7 +49,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
         const objectSet = createObjectSet(objectDataset(data.unions));
         for (const expectedUnion of data.unions) {
           expect(
-            kitchenSink.Union.$equals(
+            kitchenSink.Union.equals(
               (
                 await objectSet.union(expectedUnion.$identifier())
               ).unsafeCoerce(),
@@ -65,7 +65,7 @@ export function testObjectMethods(createObjectSet: ObjectSetFactory) {
           const actualUnion = (
             await objectSet.noRdfTypeUnion(expectedUnion.$identifier())
           ).unsafeCoerce();
-          const equalsResult = kitchenSink.NoRdfTypeUnion.$equals(
+          const equalsResult = kitchenSink.NoRdfTypeUnion.equals(
             expectedUnion,
             actualUnion,
           );

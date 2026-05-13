@@ -16,40 +16,41 @@ export interface Extern extends BaseForExtern {
 }
 
 export namespace Extern {
-  export type $Filter = BaseForExtern.$Filter;
-  export type $Identifier = BaseForExtern.$Identifier;
-  export type $Json = BaseForExtern.$Json;
-  export const $Json = BaseForExtern.$Json;
+  export type Filter = BaseForExtern.Filter;
+  export type Identifier = BaseForExtern.Identifier;
+  export type Json = BaseForExtern.Json;
+  export const Json = BaseForExtern.Json;
 
-  export function $create(
-    parameters: Parameters<typeof BaseForExtern.$create>[0],
+  export function create(
+    parameters: Parameters<typeof BaseForExtern.create>[0],
   ): Extern {
     return {
-      ...BaseForExtern.$create(parameters),
+      ...BaseForExtern.create(parameters),
       $type: "Extern",
     };
   }
 
-  export function $equals(left: Extern, right: Extern) {
-    return BaseForExtern.$equals(left, right);
+  export function equals(left: Extern, right: Extern) {
+    return BaseForExtern.equals(left, right);
   }
 
-  export function $fromJson(json: $Json): Extern {
-    return $create(BaseForExtern.$propertiesFromJson(json));
+  export function fromJson(json: Json): Extern {
+    return create(BaseForExtern.propertiesFromJson(json));
   }
 
-  export const $fromRdfResourceValues: $FromRdfResourceValuesFunction<
-    Extern
-  > = (values, options) =>
+  export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Extern> = (
+    values,
+    options,
+  ) =>
     values.chain((values) =>
       values.chainMap((value) =>
         value
           .toResource()
-          .chain((resource) => Extern.$fromRdfResource(resource, options)),
+          .chain((resource) => Extern.fromRdfResource(resource, options)),
       ),
     );
 
-  export const $fromRdfResource: $FromRdfResourceFunction<Extern> = (
+  export const fromRdfResource: $FromRdfResourceFunction<Extern> = (
     resource,
     options,
   ) => {
@@ -75,22 +76,22 @@ export namespace Extern {
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
     }
-    return BaseForExtern.$propertiesFromRdfResource(resource, {
+    return BaseForExtern.propertiesFromRdfResource(resource, {
       context,
       graph,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    }).map($create);
+    }).map(create);
   };
 
   // Called by interface functions
-  export function $hash<
+  export function hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(instance: Extern, hasher: HasherT): HasherT {
-    BaseForExtern.$hash(instance, hasher);
+    BaseForExtern.hash(instance, hasher);
     return hasher;
   }
 
@@ -98,24 +99,22 @@ export namespace Extern {
     return object.$type === "Extern";
   }
 
-  export const $filter = BaseForExtern.$filter;
+  export const filter = BaseForExtern.filter;
 
-  export const $focusSparqlConstructTriples =
-    BaseForExtern.$focusSparqlConstructTriples;
-  export const $focusSparqlWherePatterns =
-    BaseForExtern.$focusSparqlWherePatterns;
+  export const focusSparqlConstructTriples =
+    BaseForExtern.focusSparqlConstructTriples;
+  export const focusSparqlWherePatterns =
+    BaseForExtern.focusSparqlWherePatterns;
 
-  export const $fromRdfType = dataFactory.namedNode(
-    "http://example.com/Extern",
-  );
+  export const fromRdfType = dataFactory.namedNode("http://example.com/Extern");
 
-  export const $schema = BaseForExtern.$schema;
+  export const schema = BaseForExtern.schema;
 
-  export const $toJson = BaseForExtern.$toJson;
-  export const $toRdfResource = BaseForExtern.$toRdfResource;
+  export const toJson = BaseForExtern.toJson;
+  export const toRdfResource = BaseForExtern.toRdfResource;
 
-  export const $valueSparqlConstructTriples =
-    BaseForExtern.$valueSparqlConstructTriples;
-  export const $valueSparqlWherePatterns =
-    BaseForExtern.$valueSparqlWherePatterns;
+  export const valueSparqlConstructTriples =
+    BaseForExtern.valueSparqlConstructTriples;
+  export const valueSparqlWherePatterns =
+    BaseForExtern.valueSparqlWherePatterns;
 }

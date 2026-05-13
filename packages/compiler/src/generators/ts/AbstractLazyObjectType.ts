@@ -8,7 +8,6 @@ import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { SetType } from "./SetType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLazyObjectType<
@@ -195,7 +194,7 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedNamedObjectUnionType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.name}.${syntheticNamePrefix}create(${variables.resolvedObjectUnion});`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialNamedObjectUnionType.members[memberI].type.name}.create(${variables.resolvedObjectUnion});`;
       },
     );
     caseBlocks.push(

@@ -17,7 +17,7 @@ describe("sparql", () => {
     const languageInSubject = oxigraph.blankNode();
     for (const language of ["", "ar", "en", "fr"]) {
       for (const property of Object.values(
-        kitchenSink.LanguageInProperties.$schema.properties,
+        kitchenSink.LanguageInProperties.schema.properties,
       )) {
         if (property.kind !== "Shacl") {
           continue;
@@ -64,7 +64,7 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      const toRdfDataset = harness.staticSide.$toRdfResource(
+      const toRdfDataset = harness.staticSide.toRdfResource(
         harness.instance as any,
       ).dataset;
       const toRdfQuads: Quad[] = [];
@@ -76,7 +76,7 @@ describe("sparql", () => {
       }
 
       const constructQueryString =
-        harness.staticSide.$sparqlConstructQueryString({
+        harness.staticSide.sparqlConstructQueryString({
           subject: dataFactory.variable("subject"),
         });
 
@@ -84,7 +84,7 @@ describe("sparql", () => {
       const constructResultDataset = datasetFactory.dataset(
         oxigraphStore.query(constructQueryString) as Quad[],
       );
-      const constructInstanceEither = harness.staticSide.$fromRdfResource(
+      const constructInstanceEither = harness.staticSide.fromRdfResource(
         new ResourceSet({
           dataFactory,
           dataset: constructResultDataset,
@@ -98,7 +98,7 @@ describe("sparql", () => {
       if (constructInstanceEither.isRight()) {
         const constructInstance = constructInstanceEither.unsafeCoerce();
         const equalsResult = harness.staticSide
-          .$equals(harness.instance as any, constructInstance as any)
+          .equals(harness.instance as any, constructInstance as any)
           .extract();
         expect(equalsResult).toStrictEqual(true);
         return;
@@ -118,7 +118,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: unspecified", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.sparqlConstructQueryString({
         subject: dataFactory.variable("object"),
       }),
     );
@@ -127,7 +127,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: []", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.sparqlConstructQueryString({
         preferredLanguages: [],
         subject: dataFactory.variable("object"),
       }),
@@ -137,7 +137,7 @@ describe("sparql", () => {
 
   it("preferredLanguages: ['en']", ({ expect }) => {
     const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInProperties.$sparqlConstructQueryString({
+      kitchenSink.LanguageInProperties.sparqlConstructQueryString({
         preferredLanguages: ["en"],
         subject: dataFactory.variable("object"),
       }),

@@ -6,7 +6,7 @@ describe("hash", () => {
   it("known hash", ({ expect }) => {
     expect(
       harnesses.nonClass.staticSide
-        .$hash(harnesses.nonClass.instance, sha256.create())
+        .hash(harnesses.nonClass.instance, sha256.create())
         .hex(),
     ).toStrictEqual(
       "ba44c34b2d16c106158236a335cce5555a54833ea3a49080abc6fcf783ebfbcc",

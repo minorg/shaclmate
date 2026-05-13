@@ -1,5 +1,4 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_filterFunctionDeclaration(
@@ -25,7 +24,7 @@ export function NamedObjectType_filterFunctionDeclaration(
   statements.push(code`return true;`);
 
   return code`\
-export function ${syntheticNamePrefix}filter(filter: ${this.filterType}, value: ${this.name}): boolean {
+export function filter(filter: ${this.filterType}, value: ${this.name}): boolean {
   ${joinCode(statements)}
 }`;
 }

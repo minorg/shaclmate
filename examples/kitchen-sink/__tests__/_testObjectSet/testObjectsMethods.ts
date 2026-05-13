@@ -15,7 +15,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         // parentClass may be an instance of the parent class rather than the child class, depending on the implementation
         expect(
           parentClasses.some((parentClass) =>
-            kitchenSink.ClassHierarchy2.$equals(
+            kitchenSink.ClassHierarchy2.equals(
               parentClass,
               childClass,
             ).isRight(),
@@ -46,7 +46,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.ClassHierarchy3.$equals(
+            kitchenSink.ClassHierarchy3.equals(
               actual[i],
               expected[i],
             ).isRight(),
@@ -64,7 +64,7 @@ export function testObjectsMethods(createObjectSet: ObjectSetFactory) {
         expect(actual).toHaveLength(expected.length);
         for (let i = 0; i < expected.length; i++) {
           expect(
-            kitchenSink.ClassHierarchy3.$equals(
+            kitchenSink.ClassHierarchy3.equals(
               actual[i],
               expected[i],
             ).isRight(),

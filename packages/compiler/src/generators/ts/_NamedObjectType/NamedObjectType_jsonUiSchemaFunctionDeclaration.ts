@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_jsonUiSchemaFunctionDeclaration(
@@ -14,7 +13,7 @@ export function NamedObjectType_jsonUiSchemaFunctionDeclaration(
   const elements: Code[] = this.parentObjectTypes
     .map(
       (parentObjectType) =>
-        code`${parentObjectType.name}.${syntheticNamePrefix}Json.uiSchema({ scopePrefix })`,
+        code`${parentObjectType.name}.Json.uiSchema({ scopePrefix })`,
     )
     .concat(
       this.properties.flatMap((property) =>

@@ -190,7 +190,7 @@ export class TypeFactory {
             namedObjectType,
             reusables: this.reusables,
             type: identifierType,
-            typeAlias: code`${name}.${syntheticNamePrefix}Identifier`,
+            typeAlias: code`${name}.Identifier`,
           }),
         );
 

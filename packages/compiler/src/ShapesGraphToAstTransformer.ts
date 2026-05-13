@@ -23,12 +23,12 @@ function relatedNodeShapes({
 }: {
   logger: Logger;
   shapesGraph: input.ShapesGraph;
-}): TermMap<input.NodeShape.$Identifier, RelatedNodeShapes> {
+}): TermMap<input.NodeShape.Identifier, RelatedNodeShapes> {
   const immediateRelatedNodeShapes = new TermMap<
-    input.NodeShape.$Identifier,
+    input.NodeShape.Identifier,
     {
-      children: TermMap<input.NodeShape.$Identifier, input.NodeShape>;
-      parents: TermMap<input.NodeShape.$Identifier, input.NodeShape>;
+      children: TermMap<input.NodeShape.Identifier, input.NodeShape>;
+      parents: TermMap<input.NodeShape.Identifier, input.NodeShape>;
     }
   >();
 
@@ -86,14 +86,14 @@ function relatedNodeShapes({
     }
   }
 
-  const result = new TermMap<input.NodeShape.$Identifier, RelatedNodeShapes>();
+  const result = new TermMap<input.NodeShape.Identifier, RelatedNodeShapes>();
 
   for (const nodeShape of shapesGraph.nodeShapes) {
     const { children: childNodeShapes, parents: parentNodeShapes } =
       immediateRelatedNodeShapes.get(nodeShape.$identifier())!;
 
     const ancestorNodeShapes = new TermMap<
-      input.NodeShape.$Identifier,
+      input.NodeShape.Identifier,
       input.NodeShape
     >();
 
@@ -113,7 +113,7 @@ function relatedNodeShapes({
     recurseAncestorNodeShapes(nodeShape);
 
     const descendantNodeShapes = new TermMap<
-      input.NodeShape.$Identifier,
+      input.NodeShape.Identifier,
       input.NodeShape
     >();
     function recurseDescendantNodeShapes(nodeShape: input.NodeShape) {

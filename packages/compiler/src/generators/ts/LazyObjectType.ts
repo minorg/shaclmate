@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
@@ -20,7 +19,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     if (this.partialType.kind === "NamedObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).name}.${syntheticNamePrefix}create(${value}), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).name}.create(${value}), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.name}) })`,
         // Don't check instanceof value since the NamedObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>

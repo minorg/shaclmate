@@ -17,10 +17,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("blank node", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             blankNodeTermProperty: dataFactory.blankNode(),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[1],
             stringTermProperty: "test",
           }),
@@ -31,7 +31,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         present: [{ blankNodeTermProperty: {} }, [identifiers[0]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
@@ -55,12 +55,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.$create({
+            kitchenSink.NumericProperties.create({
               $identifier: identifiers[i],
               decimalNumericProperty: new Decimal(i),
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -90,7 +90,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.NumericProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.NumericProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -110,12 +110,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.$create({
+            kitchenSink.NumericProperties.create({
               $identifier: identifiers[i],
               integerNumericProperty: BigInt(i),
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -142,7 +142,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.NumericProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.NumericProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -162,12 +162,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.$create({
+            kitchenSink.TermProperties.create({
               $identifier: identifiers[i],
               booleanTermProperty: i === 0,
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -182,7 +182,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         valueTrue: [{ booleanTermProperty: { value: true } }, [identifiers[0]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -204,12 +204,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.$create({
+            kitchenSink.TermProperties.create({
               $identifier: identifiers[i],
               dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -240,7 +240,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -262,11 +262,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
 
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: blankNodeIdentifier,
             stringTermProperty: "ignored",
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: namedNodeIdentifier,
             stringTermProperty: "ignored",
           }),
@@ -288,7 +288,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly (BlankNode | NamedNode)[]]
+        [kitchenSink.TermProperties.Filter, readonly (BlankNode | NamedNode)[]]
       >)) {
         it(id, async ({ expect }) => {
           if (
@@ -315,15 +315,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("literal", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[0],
             literalTermProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[1],
             literalTermProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             literalTermProperty: dataFactory.literal("1", xsd.integer),
           }),
@@ -345,7 +345,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -365,14 +365,14 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.$create({
+            kitchenSink.TermProperties.create({
               $identifier: identifiers[i],
               iriTermProperty: dataFactory.namedNode(
                 `http://example.com/prop${i}`,
               ),
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -390,7 +390,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -410,12 +410,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.$create({
+            kitchenSink.TermProperties.create({
               $identifier: identifiers[i],
               numberTermProperty: i,
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -442,7 +442,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -462,14 +462,14 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.ClassHierarchy3.$create({
+            kitchenSink.ClassHierarchy3.create({
               classHierarchy0Property: `test${i}`,
               $identifier: identifiers[i],
               classHierarchy3Property: `test${i}`,
               classHierarchy2Property: `test${i}`,
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -491,7 +491,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.ClassHierarchy3.$Filter, readonly NamedNode[]]
+        [kitchenSink.ClassHierarchy3.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -512,18 +512,18 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
             i === 0
-              ? kitchenSink.UnionMember1.$create({
+              ? kitchenSink.UnionMember1.create({
                   $identifier: identifiers[i],
                   unionMember1Property: `test${i}`,
                   unionMemberCommonParentProperty: `test${i}`,
                 })
-              : kitchenSink.UnionMember2.$create({
+              : kitchenSink.UnionMember2.create({
                   $identifier: identifiers[i],
                   unionMember2Property: `test${i}`,
                   unionMemberCommonParentProperty: `test${i}`,
                 }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -591,7 +591,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.Union.$Filter, readonly NamedNode[]]
+        [kitchenSink.Union.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -608,7 +608,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     });
 
     describe("option", () => {
-      const instance = kitchenSink.TermProperties.$create({
+      const instance = kitchenSink.TermProperties.create({
         booleanTermProperty: true,
         $identifier: identifiers[0],
       });
@@ -621,7 +621,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         nonNull2: [{ stringTermProperty: {} }, []],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -641,7 +641,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const value = "test";
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.PropertyCardinalities.$create({
+          kitchenSink.PropertyCardinalities.create({
             $identifier: identifiers[0],
             emptyStringSetProperty: [value],
             nonEmptyStringSetProperty: NonEmptyList([value]),
@@ -668,7 +668,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           : {}),
       } satisfies Record<
         string,
-        [kitchenSink.PropertyCardinalities.$Filter, readonly NamedNode[]]
+        [kitchenSink.PropertyCardinalities.Filter, readonly NamedNode[]]
       >))
         it(id, async ({ expect }) => {
           const actual = (
@@ -687,12 +687,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.$create({
+            kitchenSink.TermProperties.create({
               $identifier: identifiers[i],
               stringTermProperty: "x".repeat(i + 1),
             }),
           ),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -705,7 +705,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         minLength: [{ stringTermProperty: { maxLength: 1 } }, [identifiers[1]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -724,23 +724,23 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("term", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[0],
             termProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[1],
             termProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[2],
             termProperty: dataFactory.literal("1", xsd.integer),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[3],
             termProperty: dataFactory.namedNode("http://example.com"),
           }),
-          kitchenSink.TermProperties.$create({
+          kitchenSink.TermProperties.create({
             $identifier: identifiers[4],
             stringTermProperty: "test",
           }),
@@ -763,7 +763,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         typeIn: [{ termProperty: { typeIn: ["NamedNode"] } }, [identifiers[3]]],
       } satisfies Record<
         string,
-        [kitchenSink.TermProperties.$Filter, readonly NamedNode[]]
+        [kitchenSink.TermProperties.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           const actual = (
@@ -782,11 +782,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("union", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.UnionDiscriminants.$create({
+          kitchenSink.UnionDiscriminants.create({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrStringProperty: {
               type: "UnionMember1",
-              value: kitchenSink.UnionMember1.$create({
+              value: kitchenSink.UnionMember1.create({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/unionMember1",
                 ),
@@ -796,7 +796,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
             },
             requiredNodeOrLiteralProperty: {
               termType: "UnionMember1",
-              value: kitchenSink.UnionMember1.$create({
+              value: kitchenSink.UnionMember1.create({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/unionMember1",
                 ),
@@ -811,7 +811,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               "http://example.com/test0",
             ),
           }),
-          kitchenSink.UnionDiscriminants.$create({
+          kitchenSink.UnionDiscriminants.create({
             $identifier: identifiers[1],
             requiredNodeOrNodeOrStringProperty: {
               type: "string",
@@ -961,7 +961,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         ],
       } satisfies Record<
         string,
-        [kitchenSink.UnionDiscriminants.$Filter, readonly NamedNode[]]
+        [kitchenSink.UnionDiscriminants.Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
           // if (id.endsWith("Negative")) {

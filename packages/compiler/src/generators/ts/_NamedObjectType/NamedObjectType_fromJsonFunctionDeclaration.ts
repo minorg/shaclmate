@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_fromJsonFunctionDeclaration(
@@ -11,7 +10,7 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromJson(json: ${this.jsonType().name}): ${this.name} {
-  return ${syntheticNamePrefix}create(${syntheticNamePrefix}propertiesFromJson(json));
+export function fromJson(json: ${this.jsonType().name}): ${this.name} {
+  return create(propertiesFromJson(json));
 }`);
 }
