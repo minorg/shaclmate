@@ -3617,7 +3617,7 @@ export namespace $NamedDefaultPartial {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _namedDefaultPartial: $NamedDefaultPartial,
   ): Record<string, string> {
     return $compactRecord({
@@ -3631,7 +3631,7 @@ export namespace $NamedDefaultPartial {
     this: $NamedDefaultPartial | undefined,
     _namedDefaultPartial?: $NamedDefaultPartial,
   ): string {
-    return `$NamedDefaultPartial(${JSON.stringify(propertiesToStrings((_namedDefaultPartial ?? this)!))})`;
+    return `$NamedDefaultPartial(${JSON.stringify(_propertiesToStrings((_namedDefaultPartial ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -3972,7 +3972,7 @@ export namespace $DefaultPartial {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _defaultPartial: $DefaultPartial,
   ): Record<string, string> {
     return $compactRecord({
@@ -3986,7 +3986,7 @@ export namespace $DefaultPartial {
     this: $DefaultPartial | undefined,
     _defaultPartial?: $DefaultPartial,
   ): string {
-    return `$DefaultPartial(${JSON.stringify(propertiesToStrings((_defaultPartial ?? this)!))})`;
+    return `$DefaultPartial(${JSON.stringify(_propertiesToStrings((_defaultPartial ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -10780,7 +10780,7 @@ export namespace UnionDiscriminants {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _unionDiscriminants: UnionDiscriminants,
   ): Record<string, string> {
     return $compactRecord({
@@ -10794,7 +10794,7 @@ export namespace UnionDiscriminants {
     this: UnionDiscriminants | undefined,
     _unionDiscriminants?: UnionDiscriminants,
   ): string {
-    return `UnionDiscriminants(${JSON.stringify(propertiesToStrings((_unionDiscriminants ?? this)!))})`;
+    return `UnionDiscriminants(${JSON.stringify(_propertiesToStrings((_unionDiscriminants ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -12467,7 +12467,7 @@ export namespace TermProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _termProperties: TermProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -12481,7 +12481,7 @@ export namespace TermProperties {
     this: TermProperties | undefined,
     _termProperties?: TermProperties,
   ): string {
-    return `TermProperties(${JSON.stringify(propertiesToStrings((_termProperties ?? this)!))})`;
+    return `TermProperties(${JSON.stringify(_propertiesToStrings((_termProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -13043,7 +13043,7 @@ export namespace RecursiveUnionMember2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _recursiveUnionMember2: RecursiveUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
@@ -13059,7 +13059,7 @@ export namespace RecursiveUnionMember2 {
     this: RecursiveUnionMember2 | undefined,
     _recursiveUnionMember2?: RecursiveUnionMember2,
   ): string {
-    return `RecursiveUnionMember2(${JSON.stringify(propertiesToStrings((_recursiveUnionMember2 ?? this)!))})`;
+    return `RecursiveUnionMember2(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember2 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -13621,7 +13621,7 @@ export namespace RecursiveUnionMember1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _recursiveUnionMember1: RecursiveUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
@@ -13637,7 +13637,7 @@ export namespace RecursiveUnionMember1 {
     this: RecursiveUnionMember1 | undefined,
     _recursiveUnionMember1?: RecursiveUnionMember1,
   ): string {
-    return `RecursiveUnionMember1(${JSON.stringify(propertiesToStrings((_recursiveUnionMember1 ?? this)!))})`;
+    return `RecursiveUnionMember1(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember1 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -14331,7 +14331,7 @@ export namespace PropertyPaths {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _propertyPaths: PropertyPaths,
   ): Record<string, string> {
     return $compactRecord({
@@ -14345,7 +14345,7 @@ export namespace PropertyPaths {
     this: PropertyPaths | undefined,
     _propertyPaths?: PropertyPaths,
   ): string {
-    return `PropertyPaths(${JSON.stringify(propertiesToStrings((_propertyPaths ?? this)!))})`;
+    return `PropertyPaths(${JSON.stringify(_propertiesToStrings((_propertyPaths ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -15247,7 +15247,7 @@ export namespace PropertyNames {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _propertyNames: PropertyNames,
   ): Record<string, string> {
     return $compactRecord({
@@ -15261,7 +15261,7 @@ export namespace PropertyNames {
     this: PropertyNames | undefined,
     _propertyNames?: PropertyNames,
   ): string {
-    return `PropertyNames(${JSON.stringify(propertiesToStrings((_propertyNames ?? this)!))})`;
+    return `PropertyNames(${JSON.stringify(_propertiesToStrings((_propertyNames ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -16107,7 +16107,7 @@ export namespace PropertyCardinalities {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _propertyCardinalities: PropertyCardinalities,
   ): Record<string, string> {
     return $compactRecord({
@@ -16123,7 +16123,7 @@ export namespace PropertyCardinalities {
     this: PropertyCardinalities | undefined,
     _propertyCardinalities?: PropertyCardinalities,
   ): string {
-    return `PropertyCardinalities(${JSON.stringify(propertiesToStrings((_propertyCardinalities ?? this)!))})`;
+    return `PropertyCardinalities(${JSON.stringify(_propertiesToStrings((_propertyCardinalities ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -16692,7 +16692,7 @@ export namespace UnionMemberCommonParent {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _unionMemberCommonParent: UnionMemberCommonParent,
   ): Record<string, string> {
     return $compactRecord({
@@ -16708,7 +16708,7 @@ export namespace UnionMemberCommonParent {
     this: UnionMemberCommonParent | undefined,
     _unionMemberCommonParent?: UnionMemberCommonParent,
   ): string {
-    return `UnionMemberCommonParent(${JSON.stringify(propertiesToStrings((_unionMemberCommonParent ?? this)!))})`;
+    return `UnionMemberCommonParent(${JSON.stringify(_propertiesToStrings((_unionMemberCommonParent ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -17258,11 +17258,11 @@ export namespace UnionMember2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _unionMember2: UnionMember2,
   ): Record<string, string> {
     return $compactRecord({
-      ...UnionMemberCommonParent.propertiesToStrings(_unionMember2),
+      ...UnionMemberCommonParent._propertiesToStrings(_unionMember2),
       $identifier: _unionMember2.$identifier().toString(),
     });
   }
@@ -17273,7 +17273,7 @@ export namespace UnionMember2 {
     this: UnionMember2 | undefined,
     _unionMember2?: UnionMember2,
   ): string {
-    return `UnionMember2(${JSON.stringify(propertiesToStrings((_unionMember2 ?? this)!))})`;
+    return `UnionMember2(${JSON.stringify(_propertiesToStrings((_unionMember2 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -17804,7 +17804,7 @@ export namespace PartialUnionMember2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _partialUnionMember2: PartialUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
@@ -17818,7 +17818,7 @@ export namespace PartialUnionMember2 {
     this: PartialUnionMember2 | undefined,
     _partialUnionMember2?: PartialUnionMember2,
   ): string {
-    return `PartialUnionMember2(${JSON.stringify(propertiesToStrings((_partialUnionMember2 ?? this)!))})`;
+    return `PartialUnionMember2(${JSON.stringify(_propertiesToStrings((_partialUnionMember2 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -18368,11 +18368,11 @@ export namespace UnionMember1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _unionMember1: UnionMember1,
   ): Record<string, string> {
     return $compactRecord({
-      ...UnionMemberCommonParent.propertiesToStrings(_unionMember1),
+      ...UnionMemberCommonParent._propertiesToStrings(_unionMember1),
       $identifier: _unionMember1.$identifier().toString(),
     });
   }
@@ -18383,7 +18383,7 @@ export namespace UnionMember1 {
     this: UnionMember1 | undefined,
     _unionMember1?: UnionMember1,
   ): string {
-    return `UnionMember1(${JSON.stringify(propertiesToStrings((_unionMember1 ?? this)!))})`;
+    return `UnionMember1(${JSON.stringify(_propertiesToStrings((_unionMember1 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -18914,7 +18914,7 @@ export namespace PartialUnionMember1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _partialUnionMember1: PartialUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
@@ -18928,7 +18928,7 @@ export namespace PartialUnionMember1 {
     this: PartialUnionMember1 | undefined,
     _partialUnionMember1?: PartialUnionMember1,
   ): string {
-    return `PartialUnionMember1(${JSON.stringify(propertiesToStrings((_partialUnionMember1 ?? this)!))})`;
+    return `PartialUnionMember1(${JSON.stringify(_propertiesToStrings((_partialUnionMember1 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -19355,7 +19355,7 @@ export namespace NewName {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _newName: NewName,
   ): Record<string, string> {
     return $compactRecord({ $identifier: _newName.$identifier().toString() });
@@ -19367,7 +19367,7 @@ export namespace NewName {
     this: NewName | undefined,
     _newName?: NewName,
   ): string {
-    return `NewName(${JSON.stringify(propertiesToStrings((_newName ?? this)!))})`;
+    return `NewName(${JSON.stringify(_propertiesToStrings((_newName ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -19971,7 +19971,7 @@ export namespace OrderedProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _orderedProperties: OrderedProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -19985,7 +19985,7 @@ export namespace OrderedProperties {
     this: OrderedProperties | undefined,
     _orderedProperties?: OrderedProperties,
   ): string {
-    return `OrderedProperties(${JSON.stringify(propertiesToStrings((_orderedProperties ?? this)!))})`;
+    return `OrderedProperties(${JSON.stringify(_propertiesToStrings((_orderedProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -22550,7 +22550,7 @@ export namespace NumericProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _numericProperties: NumericProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -22564,7 +22564,7 @@ export namespace NumericProperties {
     this: NumericProperties | undefined,
     _numericProperties?: NumericProperties,
   ): string {
-    return `NumericProperties(${JSON.stringify(propertiesToStrings((_numericProperties ?? this)!))})`;
+    return `NumericProperties(${JSON.stringify(_propertiesToStrings((_numericProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -23840,7 +23840,7 @@ export namespace NodeKinds {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _nodeKinds: NodeKinds,
   ): Record<string, string> {
     return $compactRecord({ $identifier: _nodeKinds.$identifier().toString() });
@@ -23852,7 +23852,7 @@ export namespace NodeKinds {
     this: NodeKinds | undefined,
     _nodeKinds?: NodeKinds,
   ): string {
-    return `NodeKinds(${JSON.stringify(propertiesToStrings((_nodeKinds ?? this)!))})`;
+    return `NodeKinds(${JSON.stringify(_propertiesToStrings((_nodeKinds ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -24287,7 +24287,7 @@ export namespace NoRdfTypeUnionMember2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
@@ -24303,7 +24303,7 @@ export namespace NoRdfTypeUnionMember2 {
     this: NoRdfTypeUnionMember2 | undefined,
     _noRdfTypeUnionMember2?: NoRdfTypeUnionMember2,
   ): string {
-    return `NoRdfTypeUnionMember2(${JSON.stringify(propertiesToStrings((_noRdfTypeUnionMember2 ?? this)!))})`;
+    return `NoRdfTypeUnionMember2(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember2 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -24738,7 +24738,7 @@ export namespace NoRdfTypeUnionMember1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
@@ -24754,7 +24754,7 @@ export namespace NoRdfTypeUnionMember1 {
     this: NoRdfTypeUnionMember1 | undefined,
     _noRdfTypeUnionMember1?: NoRdfTypeUnionMember1,
   ): string {
-    return `NoRdfTypeUnionMember1(${JSON.stringify(propertiesToStrings((_noRdfTypeUnionMember1 ?? this)!))})`;
+    return `NoRdfTypeUnionMember1(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember1 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -25416,7 +25416,7 @@ export namespace NamedUnionProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _namedUnionProperties: NamedUnionProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -25432,7 +25432,7 @@ export namespace NamedUnionProperties {
     this: NamedUnionProperties | undefined,
     _namedUnionProperties?: NamedUnionProperties,
   ): string {
-    return `NamedUnionProperties(${JSON.stringify(propertiesToStrings((_namedUnionProperties ?? this)!))})`;
+    return `NamedUnionProperties(${JSON.stringify(_propertiesToStrings((_namedUnionProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -26354,7 +26354,7 @@ export namespace MutableProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _mutableProperties: MutableProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -26368,7 +26368,7 @@ export namespace MutableProperties {
     this: MutableProperties | undefined,
     _mutableProperties?: MutableProperties,
   ): string {
-    return `MutableProperties(${JSON.stringify(propertiesToStrings((_mutableProperties ?? this)!))})`;
+    return `MutableProperties(${JSON.stringify(_propertiesToStrings((_mutableProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -27466,7 +27466,7 @@ export namespace ListProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _listProperties: ListProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -27480,7 +27480,7 @@ export namespace ListProperties {
     this: ListProperties | undefined,
     _listProperties?: ListProperties,
   ): string {
-    return `ListProperties(${JSON.stringify(propertiesToStrings((_listProperties ?? this)!))})`;
+    return `ListProperties(${JSON.stringify(_propertiesToStrings((_listProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -30434,7 +30434,7 @@ export namespace LazyProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _lazyProperties: LazyProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -30448,7 +30448,7 @@ export namespace LazyProperties {
     this: LazyProperties | undefined,
     _lazyProperties?: LazyProperties,
   ): string {
-    return `LazyProperties(${JSON.stringify(propertiesToStrings((_lazyProperties ?? this)!))})`;
+    return `LazyProperties(${JSON.stringify(_propertiesToStrings((_lazyProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -30885,7 +30885,7 @@ export namespace LazilyResolvedIriIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -30902,7 +30902,7 @@ export namespace LazilyResolvedIriIdentifier {
     _lazilyResolvedIriIdentifier?: LazilyResolvedIriIdentifier,
   ): string {
     return `LazilyResolvedIriIdentifier(${JSON.stringify(
-      propertiesToStrings((_lazilyResolvedIriIdentifier ?? this)!),
+      _propertiesToStrings((_lazilyResolvedIriIdentifier ?? this)!),
     )})`;
   }
 
@@ -31442,7 +31442,7 @@ export namespace LazilyResolvedUnionMember2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
   ): Record<string, string> {
     return $compactRecord({
@@ -31458,7 +31458,9 @@ export namespace LazilyResolvedUnionMember2 {
     this: LazilyResolvedUnionMember2 | undefined,
     _lazilyResolvedUnionMember2?: LazilyResolvedUnionMember2,
   ): string {
-    return `LazilyResolvedUnionMember2(${JSON.stringify(propertiesToStrings((_lazilyResolvedUnionMember2 ?? this)!))})`;
+    return `LazilyResolvedUnionMember2(${JSON.stringify(
+      _propertiesToStrings((_lazilyResolvedUnionMember2 ?? this)!),
+    )})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -31997,7 +31999,7 @@ export namespace LazilyResolvedUnionMember1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
   ): Record<string, string> {
     return $compactRecord({
@@ -32013,7 +32015,9 @@ export namespace LazilyResolvedUnionMember1 {
     this: LazilyResolvedUnionMember1 | undefined,
     _lazilyResolvedUnionMember1?: LazilyResolvedUnionMember1,
   ): string {
-    return `LazilyResolvedUnionMember1(${JSON.stringify(propertiesToStrings((_lazilyResolvedUnionMember1 ?? this)!))})`;
+    return `LazilyResolvedUnionMember1(${JSON.stringify(
+      _propertiesToStrings((_lazilyResolvedUnionMember1 ?? this)!),
+    )})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -32568,7 +32572,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -32589,7 +32593,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     _lazilyResolvedBlankNodeOrIriIdentifier?: LazilyResolvedBlankNodeOrIriIdentifier,
   ): string {
     return `LazilyResolvedBlankNodeOrIriIdentifier(${JSON.stringify(
-      propertiesToStrings((_lazilyResolvedBlankNodeOrIriIdentifier ?? this)!),
+      _propertiesToStrings((_lazilyResolvedBlankNodeOrIriIdentifier ?? this)!),
     )})`;
   }
 
@@ -33095,7 +33099,7 @@ export namespace LanguageInProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _languageInProperties: LanguageInProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -33111,7 +33115,7 @@ export namespace LanguageInProperties {
     this: LanguageInProperties | undefined,
     _languageInProperties?: LanguageInProperties,
   ): string {
-    return `LanguageInProperties(${JSON.stringify(propertiesToStrings((_languageInProperties ?? this)!))})`;
+    return `LanguageInProperties(${JSON.stringify(_propertiesToStrings((_languageInProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -34049,7 +34053,7 @@ export namespace JsPrimitiveUnionProperty {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
   ): Record<string, string> {
     return $compactRecord({
@@ -34065,7 +34069,7 @@ export namespace JsPrimitiveUnionProperty {
     this: JsPrimitiveUnionProperty | undefined,
     _jsPrimitiveUnionProperty?: JsPrimitiveUnionProperty,
   ): string {
-    return `JsPrimitiveUnionProperty(${JSON.stringify(propertiesToStrings((_jsPrimitiveUnionProperty ?? this)!))})`;
+    return `JsPrimitiveUnionProperty(${JSON.stringify(_propertiesToStrings((_jsPrimitiveUnionProperty ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -34491,7 +34495,7 @@ export namespace IriIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _iriIdentifier: IriIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -34505,7 +34509,7 @@ export namespace IriIdentifier {
     this: IriIdentifier | undefined,
     _iriIdentifier?: IriIdentifier,
   ): string {
-    return `IriIdentifier(${JSON.stringify(propertiesToStrings((_iriIdentifier ?? this)!))})`;
+    return `IriIdentifier(${JSON.stringify(_propertiesToStrings((_iriIdentifier ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -35062,7 +35066,7 @@ export namespace IndirectRecursiveHelper {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _indirectRecursiveHelper: IndirectRecursiveHelper,
   ): Record<string, string> {
     return $compactRecord({
@@ -35078,7 +35082,7 @@ export namespace IndirectRecursiveHelper {
     this: IndirectRecursiveHelper | undefined,
     _indirectRecursiveHelper?: IndirectRecursiveHelper,
   ): string {
-    return `IndirectRecursiveHelper(${JSON.stringify(propertiesToStrings((_indirectRecursiveHelper ?? this)!))})`;
+    return `IndirectRecursiveHelper(${JSON.stringify(_propertiesToStrings((_indirectRecursiveHelper ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -35637,7 +35641,7 @@ export namespace IndirectRecursive {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _indirectRecursive: IndirectRecursive,
   ): Record<string, string> {
     return $compactRecord({
@@ -35651,7 +35655,7 @@ export namespace IndirectRecursive {
     this: IndirectRecursive | undefined,
     _indirectRecursive?: IndirectRecursive,
   ): string {
-    return `IndirectRecursive(${JSON.stringify(propertiesToStrings((_indirectRecursive ?? this)!))})`;
+    return `IndirectRecursive(${JSON.stringify(_propertiesToStrings((_indirectRecursive ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -36896,7 +36900,7 @@ export namespace InProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _inProperties: InProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -36910,7 +36914,7 @@ export namespace InProperties {
     this: InProperties | undefined,
     _inProperties?: InProperties,
   ): string {
-    return `InProperties(${JSON.stringify(propertiesToStrings((_inProperties ?? this)!))})`;
+    return `InProperties(${JSON.stringify(_propertiesToStrings((_inProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -37511,7 +37515,7 @@ export namespace InIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _inIdentifier: InIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -37525,7 +37529,7 @@ export namespace InIdentifier {
     this: InIdentifier | undefined,
     _inIdentifier?: InIdentifier,
   ): string {
-    return `InIdentifier(${JSON.stringify(propertiesToStrings((_inIdentifier ?? this)!))})`;
+    return `InIdentifier(${JSON.stringify(_propertiesToStrings((_inIdentifier ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -38073,7 +38077,7 @@ export namespace HasValueProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _hasValueProperties: HasValueProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -38087,7 +38091,7 @@ export namespace HasValueProperties {
     this: HasValueProperties | undefined,
     _hasValueProperties?: HasValueProperties,
   ): string {
-    return `HasValueProperties(${JSON.stringify(propertiesToStrings((_hasValueProperties ?? this)!))})`;
+    return `HasValueProperties(${JSON.stringify(_propertiesToStrings((_hasValueProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -38617,7 +38621,7 @@ export namespace FlattenUnionMember3 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _flattenUnionMember3: FlattenUnionMember3,
   ): Record<string, string> {
     return $compactRecord({
@@ -38631,7 +38635,7 @@ export namespace FlattenUnionMember3 {
     this: FlattenUnionMember3 | undefined,
     _flattenUnionMember3?: FlattenUnionMember3,
   ): string {
-    return `FlattenUnionMember3(${JSON.stringify(propertiesToStrings((_flattenUnionMember3 ?? this)!))})`;
+    return `FlattenUnionMember3(${JSON.stringify(_propertiesToStrings((_flattenUnionMember3 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39190,7 +39194,7 @@ export namespace ExternProperty {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _externProperty: ExternProperty,
   ): Record<string, string> {
     return $compactRecord({
@@ -39204,7 +39208,7 @@ export namespace ExternProperty {
     this: ExternProperty | undefined,
     _externProperty?: ExternProperty,
   ): string {
-    return `ExternProperty(${JSON.stringify(propertiesToStrings((_externProperty ?? this)!))})`;
+    return `ExternProperty(${JSON.stringify(_propertiesToStrings((_externProperty ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39744,7 +39748,7 @@ export namespace BaseForExtern {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _baseForExtern: BaseForExtern,
   ): Record<string, string> {
     return $compactRecord({
@@ -39758,7 +39762,7 @@ export namespace BaseForExtern {
     this: BaseForExtern | undefined,
     _baseForExtern?: BaseForExtern,
   ): string {
-    return `BaseForExtern(${JSON.stringify(propertiesToStrings((_baseForExtern ?? this)!))})`;
+    return `BaseForExtern(${JSON.stringify(_propertiesToStrings((_baseForExtern ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -40294,7 +40298,7 @@ export namespace ExplicitRdfType {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _explicitRdfType: ExplicitRdfType,
   ): Record<string, string> {
     return $compactRecord({
@@ -40308,7 +40312,7 @@ export namespace ExplicitRdfType {
     this: ExplicitRdfType | undefined,
     _explicitRdfType?: ExplicitRdfType,
   ): string {
-    return `ExplicitRdfType(${JSON.stringify(propertiesToStrings((_explicitRdfType ?? this)!))})`;
+    return `ExplicitRdfType(${JSON.stringify(_propertiesToStrings((_explicitRdfType ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -40867,7 +40871,7 @@ export namespace ExplicitFromToRdfTypes {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
   ): Record<string, string> {
     return $compactRecord({
@@ -40883,7 +40887,7 @@ export namespace ExplicitFromToRdfTypes {
     this: ExplicitFromToRdfTypes | undefined,
     _explicitFromToRdfTypes?: ExplicitFromToRdfTypes,
   ): string {
-    return `ExplicitFromToRdfTypes(${JSON.stringify(propertiesToStrings((_explicitFromToRdfTypes ?? this)!))})`;
+    return `ExplicitFromToRdfTypes(${JSON.stringify(_propertiesToStrings((_explicitFromToRdfTypes ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -41624,7 +41628,7 @@ export namespace DisplayProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _displayProperties: DisplayProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -41640,7 +41644,7 @@ export namespace DisplayProperties {
     this: DisplayProperties | undefined,
     _displayProperties?: DisplayProperties,
   ): string {
-    return `DisplayProperties(${JSON.stringify(propertiesToStrings((_displayProperties ?? this)!))})`;
+    return `DisplayProperties(${JSON.stringify(_propertiesToStrings((_displayProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -42184,7 +42188,7 @@ export namespace DirectRecursive {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _directRecursive: DirectRecursive,
   ): Record<string, string> {
     return $compactRecord({
@@ -42198,7 +42202,7 @@ export namespace DirectRecursive {
     this: DirectRecursive | undefined,
     _directRecursive?: DirectRecursive,
   ): string {
-    return `DirectRecursive(${JSON.stringify(propertiesToStrings((_directRecursive ?? this)!))})`;
+    return `DirectRecursive(${JSON.stringify(_propertiesToStrings((_directRecursive ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -43442,7 +43446,7 @@ export namespace DefaultValueProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _defaultValueProperties: DefaultValueProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -43458,7 +43462,7 @@ export namespace DefaultValueProperties {
     this: DefaultValueProperties | undefined,
     _defaultValueProperties?: DefaultValueProperties,
   ): string {
-    return `DefaultValueProperties(${JSON.stringify(propertiesToStrings((_defaultValueProperties ?? this)!))})`;
+    return `DefaultValueProperties(${JSON.stringify(_propertiesToStrings((_defaultValueProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -45822,7 +45826,7 @@ export namespace DateUnionProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _dateUnionProperties: DateUnionProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -45836,7 +45840,7 @@ export namespace DateUnionProperties {
     this: DateUnionProperties | undefined,
     _dateUnionProperties?: DateUnionProperties,
   ): string {
-    return `DateUnionProperties(${JSON.stringify(propertiesToStrings((_dateUnionProperties ?? this)!))})`;
+    return `DateUnionProperties(${JSON.stringify(_propertiesToStrings((_dateUnionProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -48322,7 +48326,7 @@ export namespace ConvertibleTypeProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _convertibleTypeProperties: ConvertibleTypeProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -48338,7 +48342,7 @@ export namespace ConvertibleTypeProperties {
     this: ConvertibleTypeProperties | undefined,
     _convertibleTypeProperties?: ConvertibleTypeProperties,
   ): string {
-    return `ConvertibleTypeProperties(${JSON.stringify(propertiesToStrings((_convertibleTypeProperties ?? this)!))})`;
+    return `ConvertibleTypeProperties(${JSON.stringify(_propertiesToStrings((_convertibleTypeProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -48761,7 +48765,7 @@ export namespace Partial {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _partial: Partial,
   ): Record<string, string> {
     return $compactRecord({ $identifier: _partial.$identifier().toString() });
@@ -48773,7 +48777,7 @@ export namespace Partial {
     this: Partial | undefined,
     _partial?: Partial,
   ): string {
-    return `Partial(${JSON.stringify(propertiesToStrings((_partial ?? this)!))})`;
+    return `Partial(${JSON.stringify(_propertiesToStrings((_partial ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -49187,7 +49191,7 @@ export namespace NonClass {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _nonClass: NonClass,
   ): Record<string, string> {
     return $compactRecord({ $identifier: _nonClass.$identifier().toString() });
@@ -49199,7 +49203,7 @@ export namespace NonClass {
     this: NonClass | undefined,
     _nonClass?: NonClass,
   ): string {
-    return `NonClass(${JSON.stringify(propertiesToStrings((_nonClass ?? this)!))})`;
+    return `NonClass(${JSON.stringify(_propertiesToStrings((_nonClass ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -50322,7 +50326,7 @@ export namespace ClassProperties {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _classProperties: ClassProperties,
   ): Record<string, string> {
     return $compactRecord({
@@ -50336,7 +50340,7 @@ export namespace ClassProperties {
     this: ClassProperties | undefined,
     _classProperties?: ClassProperties,
   ): string {
-    return `ClassProperties(${JSON.stringify(propertiesToStrings((_classProperties ?? this)!))})`;
+    return `ClassProperties(${JSON.stringify(_propertiesToStrings((_classProperties ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -50909,7 +50913,7 @@ export namespace ClassHierarchy0 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _classHierarchy0: ClassHierarchy0,
   ): Record<string, string> {
     return $compactRecord({
@@ -50923,7 +50927,7 @@ export namespace ClassHierarchy0 {
     this: ClassHierarchy0 | undefined,
     _classHierarchy0?: ClassHierarchy0,
   ): string {
-    return `ClassHierarchy0(${JSON.stringify(propertiesToStrings((_classHierarchy0 ?? this)!))})`;
+    return `ClassHierarchy0(${JSON.stringify(_propertiesToStrings((_classHierarchy0 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -51401,11 +51405,11 @@ export namespace ClassHierarchy1 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _classHierarchy1: ClassHierarchy1,
   ): Record<string, string> {
     return $compactRecord({
-      ...ClassHierarchy0.propertiesToStrings(_classHierarchy1),
+      ...ClassHierarchy0._propertiesToStrings(_classHierarchy1),
       $identifier: _classHierarchy1.$identifier().toString(),
     });
   }
@@ -51416,7 +51420,7 @@ export namespace ClassHierarchy1 {
     this: ClassHierarchy1 | undefined,
     _classHierarchy1?: ClassHierarchy1,
   ): string {
-    return `ClassHierarchy1(${JSON.stringify(propertiesToStrings((_classHierarchy1 ?? this)!))})`;
+    return `ClassHierarchy1(${JSON.stringify(_propertiesToStrings((_classHierarchy1 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -51991,11 +51995,11 @@ export namespace ClassHierarchy2 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _classHierarchy2: ClassHierarchy2,
   ): Record<string, string> {
     return $compactRecord({
-      ...ClassHierarchy1.propertiesToStrings(_classHierarchy2),
+      ...ClassHierarchy1._propertiesToStrings(_classHierarchy2),
       $identifier: _classHierarchy2.$identifier().toString(),
     });
   }
@@ -52006,7 +52010,7 @@ export namespace ClassHierarchy2 {
     this: ClassHierarchy2 | undefined,
     _classHierarchy2?: ClassHierarchy2,
   ): string {
-    return `ClassHierarchy2(${JSON.stringify(propertiesToStrings((_classHierarchy2 ?? this)!))})`;
+    return `ClassHierarchy2(${JSON.stringify(_propertiesToStrings((_classHierarchy2 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -52564,11 +52568,11 @@ export namespace ClassHierarchy3 {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _classHierarchy3: ClassHierarchy3,
   ): Record<string, string> {
     return $compactRecord({
-      ...ClassHierarchy2.propertiesToStrings(_classHierarchy3),
+      ...ClassHierarchy2._propertiesToStrings(_classHierarchy3),
       $identifier: _classHierarchy3.$identifier().toString(),
     });
   }
@@ -52579,7 +52583,7 @@ export namespace ClassHierarchy3 {
     this: ClassHierarchy3 | undefined,
     _classHierarchy3?: ClassHierarchy3,
   ): string {
-    return `ClassHierarchy3(${JSON.stringify(propertiesToStrings((_classHierarchy3 ?? this)!))})`;
+    return `ClassHierarchy3(${JSON.stringify(_propertiesToStrings((_classHierarchy3 ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -53032,7 +53036,7 @@ export namespace BlankNodeOrIriIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -53048,7 +53052,7 @@ export namespace BlankNodeOrIriIdentifier {
     this: BlankNodeOrIriIdentifier | undefined,
     _blankNodeOrIriIdentifier?: BlankNodeOrIriIdentifier,
   ): string {
-    return `BlankNodeOrIriIdentifier(${JSON.stringify(propertiesToStrings((_blankNodeOrIriIdentifier ?? this)!))})`;
+    return `BlankNodeOrIriIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeOrIriIdentifier ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -53484,7 +53488,7 @@ export namespace BlankNodeIdentifier {
 
   export const toRdfResource = $wrap_ToRdfResourceFunction(_toRdfResource);
 
-  export function propertiesToStrings(
+  export function _propertiesToStrings(
     _blankNodeIdentifier: BlankNodeIdentifier,
   ): Record<string, string> {
     return $compactRecord({
@@ -53498,7 +53502,7 @@ export namespace BlankNodeIdentifier {
     this: BlankNodeIdentifier | undefined,
     _blankNodeIdentifier?: BlankNodeIdentifier,
   ): string {
-    return `BlankNodeIdentifier(${JSON.stringify(propertiesToStrings((_blankNodeIdentifier ?? this)!))})`;
+    return `BlankNodeIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeIdentifier ?? this)!))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
