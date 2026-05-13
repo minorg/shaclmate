@@ -6,10 +6,10 @@ import { harnesses } from "./harnesses.js";
 describe("fromJson", () => {
   for (const [id, harness] of Object.entries(harnesses)) {
     it(`${id} round trip`, ({ expect }) => {
-      const jsonObject = harness.staticSide.$toJson(harness.instance as any);
-      const fromJsonInstance: any = harness.staticSide.$fromJson(jsonObject);
+      const jsonObject = harness.staticSide.toJson(harness.instance as any);
+      const fromJsonInstance: any = harness.staticSide.fromJson(jsonObject);
       const equalsResult = harness.staticSide
-        .$equals(harness.instance as any, fromJsonInstance as any)
+        .equals(harness.instance as any, fromJsonInstance as any)
         .extract();
       if (equalsResult !== true) {
         console.log("not equal");
@@ -19,8 +19,8 @@ describe("fromJson", () => {
   }
 
   it("concrete base class fromJson", ({ expect }) => {
-    const fromJsonInstance = kitchenSink.ClassHierarchy2.$fromJson(
-      kitchenSink.ClassHierarchy3.$toJson(harnesses.classHierarchy3.instance),
+    const fromJsonInstance = kitchenSink.ClassHierarchy2.fromJson(
+      kitchenSink.ClassHierarchy3.toJson(harnesses.classHierarchy3.instance),
     );
     expect(
       fromJsonInstance

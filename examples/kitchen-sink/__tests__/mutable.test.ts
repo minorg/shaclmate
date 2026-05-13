@@ -7,13 +7,13 @@ import { sha256 } from "js-sha256";
 
 function $identifier(this: kitchenSink.MutableProperties) {
   return dataFactory.namedNode(
-    `urn:shaclmate:MutableProperties:${kitchenSink.MutableProperties.$hashShaclProperties(this, sha256.create())}`,
+    `urn:shaclmate:MutableProperties:${kitchenSink.MutableProperties.hashShaclProperties(this, sha256.create())}`,
   );
 }
 
 describe("mutable", () => {
   it("mutable list", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.$create({
+    const instance = kitchenSink.MutableProperties.create({
       $identifier,
       mutableListProperty: ["test1", "test2"],
     });
@@ -32,7 +32,7 @@ describe("mutable", () => {
   });
 
   it("mutable property", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.$create({
+    const instance = kitchenSink.MutableProperties.create({
       $identifier,
       mutableStringProperty: "test",
     });
@@ -48,7 +48,7 @@ describe("mutable", () => {
   });
 
   it("mutable set", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.$create({
+    const instance = kitchenSink.MutableProperties.create({
       $identifier,
       mutableSetProperty: ["test1", "test2"],
     });

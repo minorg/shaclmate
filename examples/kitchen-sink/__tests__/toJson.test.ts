@@ -5,7 +5,7 @@ import { harnesses } from "./harnesses.js";
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
     {
-      const jsonObject = kitchenSink.UnionDiscriminants.$toJson(
+      const jsonObject = kitchenSink.UnionDiscriminants.toJson(
         harnesses.unionDiscriminants1.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
@@ -48,7 +48,7 @@ describe("toJson", () => {
     }
 
     {
-      const jsonObject = kitchenSink.UnionDiscriminants.$toJson(
+      const jsonObject = kitchenSink.UnionDiscriminants.toJson(
         harnesses.unionDiscriminants2.instance,
       );
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
@@ -119,7 +119,7 @@ describe("toJson", () => {
   });
 
   it("class hierarchy", ({ expect }) => {
-    const jsonObject = kitchenSink.ClassHierarchy3.$toJson(
+    const jsonObject = kitchenSink.ClassHierarchy3.toJson(
       harnesses.classHierarchy3.instance,
     );
     expect(jsonObject.classHierarchy0Property).toStrictEqual("0");
