@@ -5,7 +5,6 @@ import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 type Super = AbstractLazyObjectType<

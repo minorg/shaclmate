@@ -1,7 +1,6 @@
 import { camelCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type { Reusables } from "../Reusables.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { TsFeature } from "../TsFeature.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
