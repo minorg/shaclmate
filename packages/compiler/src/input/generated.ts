@@ -1394,7 +1394,7 @@ export namespace PropertyShape {
       xone,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -3703,7 +3703,7 @@ export namespace PropertyGroup {
     }
     const $object = { $identifier, $type, comment, label };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -4151,7 +4151,7 @@ export namespace Ontology {
       tsImports,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -5575,7 +5575,7 @@ export namespace NodeShape {
       xone,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
