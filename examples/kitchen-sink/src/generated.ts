@@ -3358,7 +3358,7 @@ export namespace $NamedDefaultPartial {
     const $type = "$NamedDefaultPartial" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -3715,7 +3715,7 @@ export namespace $DefaultPartial {
     const $type = "$DefaultPartial" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -4351,7 +4351,7 @@ export namespace UnionDiscriminants {
       setNodeOrNodeOrStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -10866,7 +10866,7 @@ export namespace TermProperties {
       termProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -12335,7 +12335,7 @@ export namespace RecursiveUnionMember2 {
     }
     const $object = { $identifier, $type, recursiveUnionMember2Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -12916,7 +12916,7 @@ export namespace RecursiveUnionMember1 {
     }
     const $object = { $identifier, $type, recursiveUnionMember1Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -13516,7 +13516,7 @@ export namespace PropertyPaths {
       predicatePathProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -14228,7 +14228,7 @@ export namespace PropertyNames {
       actualPropertyName5,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -15130,7 +15130,7 @@ export namespace PropertyCardinalities {
       requiredStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -15916,7 +15916,7 @@ export namespace UnionMemberCommonParent {
       parameters.unionMemberCommonParentProperty;
     const $object = { $identifier, $type, unionMemberCommonParentProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -16510,7 +16510,7 @@ export namespace UnionMember2 {
       unionMember2Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -17072,7 +17072,7 @@ export namespace PartialUnionMember2 {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -17624,7 +17624,7 @@ export namespace UnionMember1 {
       unionMember1Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -18186,7 +18186,7 @@ export namespace PartialUnionMember1 {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -18731,7 +18731,7 @@ export namespace NewName {
     const $type = "NewName" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -19191,7 +19191,7 @@ export namespace OrderedProperties {
       orderedPropertyA,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -20053,7 +20053,7 @@ export namespace NumericProperties {
       unsignedShortNumericProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -22361,7 +22361,7 @@ export namespace NodeKinds {
       literalNodeKindProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -23465,7 +23465,7 @@ export namespace NoRdfTypeUnionMember2 {
       parameters.noRdfTypeUnionMember2Property;
     const $object = { $identifier, $type, noRdfTypeUnionMember2Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -23915,7 +23915,7 @@ export namespace NoRdfTypeUnionMember1 {
       parameters.noRdfTypeUnionMember1Property;
     const $object = { $identifier, $type, noRdfTypeUnionMember1Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -24379,7 +24379,7 @@ export namespace NamedUnionProperties {
       namedUnion2Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -25092,7 +25092,7 @@ export namespace MutableProperties {
       mutableStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -25970,7 +25970,7 @@ export namespace ClassMultipleInheritanceParent2 {
       classMultipleInheritanceParent2Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -26572,7 +26572,7 @@ export namespace ClassMultipleInheritanceParent1 {
       classMultipleInheritanceParent1Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -27179,7 +27179,7 @@ export namespace ClassMultipleInheritanceChild {
       classMultipleInheritanceChildProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -27886,7 +27886,7 @@ export namespace ListProperties {
       stringListProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -29666,7 +29666,7 @@ export namespace LazyProperties {
       setPartialToResolvedBlankNodeOrIriIdentifierProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -31844,7 +31844,7 @@ export namespace LazilyResolvedIriIdentifier {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -32299,7 +32299,7 @@ export namespace LazilyResolvedUnionMember2 {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -32857,7 +32857,7 @@ export namespace LazilyResolvedUnionMember1 {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -33418,7 +33418,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -33998,7 +33998,7 @@ export namespace LanguageInProperties {
     const languageInLiteralProperty = parameters.languageInLiteralProperty;
     const $object = { $identifier, $type, languageInLiteralProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -34524,7 +34524,7 @@ export namespace JsPrimitiveUnionProperty {
     }
     const $object = { $identifier, $type, jsPrimitiveUnionProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -35463,7 +35463,7 @@ export namespace IriIdentifier {
     const $type = "IriIdentifier" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -35930,7 +35930,7 @@ export namespace IndirectRecursiveHelper {
     }
     const $object = { $identifier, $type, indirectRecursiveProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -36509,7 +36509,7 @@ export namespace IndirectRecursive {
     }
     const $object = { $identifier, $type, indirectRecursiveHelperProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -37178,7 +37178,7 @@ export namespace InProperties {
       inStringsProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -38310,7 +38310,7 @@ export namespace InIdentifier {
     }
     const $object = { $identifier, $type, inIdentifierProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -38937,7 +38937,7 @@ export namespace HasValueProperties {
       hasLiteralValueProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -39473,7 +39473,7 @@ export namespace FlattenUnionMember3 {
     const flattenUnionMember3Property = parameters.flattenUnionMember3Property;
     const $object = { $identifier, $type, flattenUnionMember3Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -40030,7 +40030,7 @@ export namespace ExternProperty {
     }
     const $object = { $identifier, $type, externProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -40599,7 +40599,7 @@ export namespace BaseForExtern {
     const baseForExternProperty = parameters.baseForExternProperty;
     const $object = { $identifier, $type, baseForExternProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -41156,7 +41156,7 @@ export namespace ExplicitRdfType {
     const explicitRdfTypeProperty = parameters.explicitRdfTypeProperty;
     const $object = { $identifier, $type, explicitRdfTypeProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -41709,7 +41709,7 @@ export namespace ExplicitFromToRdfTypes {
       parameters.explicitFromToRdfTypesProperty;
     const $object = { $identifier, $type, explicitFromToRdfTypesProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -42303,7 +42303,7 @@ export namespace DisplayProperties {
       implicitFalseDisplayProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -43029,7 +43029,7 @@ export namespace DirectRecursive {
     }
     const $object = { $identifier, $type, directRecursiveProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -43662,7 +43662,7 @@ export namespace DefaultValueProperties {
       trueBooleanDefaultValueProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -44888,7 +44888,7 @@ export namespace DateUnionProperties {
       stringOrDateProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -47531,7 +47531,7 @@ export namespace ConvertibleTypeProperties {
       convertibleTermSetProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -49617,7 +49617,7 @@ export namespace Partial {
       parameters.lazilyResolvedStringProperty;
     const $object = { $identifier, $type, lazilyResolvedStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -50051,7 +50051,7 @@ export namespace NonClass {
     const nonClassProperty = parameters.nonClassProperty;
     const $object = { $identifier, $type, nonClassProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -50577,7 +50577,7 @@ export namespace ClassProperties {
       singleClassProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -51595,7 +51595,7 @@ export namespace ClassHierarchy0 {
     const classHierarchy0Property = parameters.classHierarchy0Property;
     const $object = { $identifier, $type, classHierarchy0Property };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -52179,7 +52179,7 @@ export namespace ClassHierarchy1 {
       $type,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -52696,7 +52696,7 @@ export namespace ClassHierarchy2 {
       classHierarchy2Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -53289,7 +53289,7 @@ export namespace ClassHierarchy3 {
       classHierarchy3Property,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -53858,7 +53858,7 @@ export namespace BlankNodeOrIriIdentifier {
     const $type = "BlankNodeOrIriIdentifier" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -54328,7 +54328,7 @@ export namespace BlankNodeIdentifier {
     const $type = "BlankNodeIdentifier" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }

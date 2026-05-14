@@ -682,7 +682,7 @@ export namespace $DefaultPartial {
     const $type = "$DefaultPartial" as const;
     const $object = { $identifier, $type };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -844,7 +844,7 @@ export namespace UnionMember2 {
     }
     const $object = { $identifier, $type, optionalStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -1123,7 +1123,7 @@ export namespace UnionMember1 {
     }
     const $object = { $identifier, $type, optionalNumberProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -1426,7 +1426,7 @@ export namespace Nested {
       requiredStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -1792,7 +1792,7 @@ export namespace Parent {
     }
     const $object = { $identifier, $type, parentStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -2219,7 +2219,7 @@ export namespace Child {
       requiredStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }

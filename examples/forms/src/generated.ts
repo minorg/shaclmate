@@ -710,7 +710,7 @@ export namespace NestedNodeShape {
     const requiredStringProperty = parameters.requiredStringProperty;
     const $object = { $identifier, $type, requiredStringProperty };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
@@ -1079,7 +1079,7 @@ export namespace FormNodeShape {
       requiredStringProperty,
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      $object.toString = $toString;
+      ($object as any).toString = $toString;
     }
     return $object;
   }
