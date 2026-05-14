@@ -1238,7 +1238,7 @@ export namespace PropertyShape {
     } else {
       xone = parameters.xone satisfies never;
     }
-    return {
+    const $object = {
       $identifier,
       $type,
       and,
@@ -1274,6 +1274,10 @@ export namespace PropertyShape {
       uniqueLang,
       xone,
     };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      ($object as any).toString = $toString;
+    }
+    return $object;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -3380,7 +3384,11 @@ export namespace PropertyGroup {
     } else {
       label = parameters?.label satisfies never;
     }
-    return { $identifier, $type, comment, label };
+    const $object = { $identifier, $type, comment, label };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      ($object as any).toString = $toString;
+    }
+    return $object;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -3686,7 +3694,11 @@ export namespace Ontology {
     } else {
       label = parameters?.label satisfies never;
     }
-    return { $identifier, $type, comment, label };
+    const $object = { $identifier, $type, comment, label };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      ($object as any).toString = $toString;
+    }
+    return $object;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -4546,7 +4558,7 @@ export namespace NodeShape {
     } else {
       xone = parameters?.xone satisfies never;
     }
-    return {
+    const $object = {
       $identifier,
       $type,
       and,
@@ -4580,6 +4592,10 @@ export namespace NodeShape {
       types,
       xone,
     };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      ($object as any).toString = $toString;
+    }
+    return $object;
   }
 
   export type Identifier = BlankNode | NamedNode;
