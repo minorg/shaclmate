@@ -18,8 +18,8 @@ const variables = {
 const propertyFromRdfResourceValuesExpressionVariable = {
   context: variables.context,
   graph: variables.graph,
-  preferredLanguages: variables.preferredLanguages,
   objectSet: variables.objectSet,
+  preferredLanguages: variables.preferredLanguages,
   resource: variables.resource,
 };
 
@@ -31,14 +31,14 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   }
 
   const chains: { expression: Code; variable: string }[] = [];
-  const initializers: Code[] = [];
+  const partials: string[] = [];
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
       expression: code`${parentObjectType.name}._fromRdfResource(${variables.resource}, { ...${optionsVariable}, ignoreRdfType: true })`,
-      variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
+      variable: `super${parentObjectTypeI}`,
     });
-    initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
+    partials.push(`super${parentObjectTypeI}`);
   });
 
   this.fromRdfType.ifJust((fromRdfType) => {
@@ -67,26 +67,44 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
 
       return ${this.reusables.imports.Left}(new Error(\`\${${variables.resource}.identifier} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
     }) : ${this.reusables.imports.Right}(true as const)`,
-      variable: "_rdfTypeCheck",
+      variable: `_rdfTypeCheck`,
     });
   });
 
+  const propertyFromRdfResourceValuesExpressions: Record<string, Code> = {};
   for (const property of this.properties) {
     property
       .fromRdfResourceValuesExpression({
         variables: propertyFromRdfResourceValuesExpressionVariable,
       })
-      .ifJust((propertyFromRdfExpression) => {
-        chains.push({
-          expression: propertyFromRdfExpression,
-          variable: property.name,
-        });
-        initializers.push(code`${property.name}`);
+      .ifJust((propertyFromRdfResourceValuesExpression) => {
+        propertyFromRdfResourceValuesExpressions[property.name] =
+          propertyFromRdfResourceValuesExpression;
       });
+  }
+  if (Object.keys(propertyFromRdfResourceValuesExpressions).length > 0) {
+    chains.push({
+      expression: code`${this.reusables.snippets.sequenceRecord}(${propertyFromRdfResourceValuesExpressions})`,
+      variable: "properties",
+    });
+    partials.push("properties");
+  }
+
+  let partialsJoined: Code;
+  switch (partials.length) {
+    case 0:
+      partialsJoined = code`{}`;
+      break;
+    case 1:
+      partialsJoined = code`${partials[0]}`;
+      break;
+    default:
+      partialsJoined = code`{ ${partials.map((partial) => `...${partial}`).join(", ")} }`;
+      break;
   }
 
   const statements: Code[] = [];
-  const resultExpression = code`${this.name}.create({ ${joinCode(initializers, { on: "," })} })`;
+  const resultExpression = code`create(${partialsJoined})`;
   if (chains.length === 0) {
     statements.push(
       code`return ${this.reusables.imports.Right}(${resultExpression});`,
