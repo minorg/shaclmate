@@ -63,7 +63,7 @@ export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joi
   ${joinCode(propertyStatements)}
   const ${syntheticNamePrefix}object = { ${propertyInitializers.join(", ")} };
   if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
-    ${syntheticNamePrefix}object.toString = ${syntheticNamePrefix}toString;
+    (${syntheticNamePrefix}object as any).toString = ${syntheticNamePrefix}toString;
   }
   return ${syntheticNamePrefix}object;
 }`);
