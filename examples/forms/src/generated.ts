@@ -544,7 +544,7 @@ namespace $RdfVocabularies {
 function $sequenceRecord<T extends Record<string, unknown>>(
   record: { [K in keyof T]: Either<Error, T[K]> },
 ): Either<Error, T> {
-  const result: Partial<T> = {};
+  const result: { [K in keyof T]?: T[K] } = {};
 
   for (const key of globalThis.Object.keys(record) as Array<keyof T>) {
     const either = record[key];
