@@ -708,7 +708,11 @@ export namespace NestedNodeShape {
     }
     const $type = "NestedNodeShape" as const;
     const requiredStringProperty = parameters.requiredStringProperty;
-    return { $identifier, $type, requiredStringProperty };
+    const $object = { $identifier, $type, requiredStringProperty };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export function equals(
@@ -1064,7 +1068,7 @@ export namespace FormNodeShape {
     }
     const requiredIntegerProperty = parameters.requiredIntegerProperty;
     const requiredStringProperty = parameters.requiredStringProperty;
-    return {
+    const $object = {
       $identifier,
       $type,
       emptyStringSetProperty,
@@ -1074,6 +1078,10 @@ export namespace FormNodeShape {
       requiredIntegerProperty,
       requiredStringProperty,
     };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export function equals(

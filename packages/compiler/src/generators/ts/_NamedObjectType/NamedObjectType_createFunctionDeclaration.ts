@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { NamedObjectType } from "../NamedObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_createFunctionDeclaration(
@@ -60,6 +61,10 @@ export function NamedObjectType_createFunctionDeclaration(
   return Maybe.of(code`\
 export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
   ${joinCode(propertyStatements)}
-  return { ${propertyInitializers.join(", ")} };
+  const ${syntheticNamePrefix}object = { ${propertyInitializers.join(", ")} };
+  if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
+    ${syntheticNamePrefix}object.toString = ${syntheticNamePrefix}toString;
+  }
+  return ${syntheticNamePrefix}object;
 }`);
 }

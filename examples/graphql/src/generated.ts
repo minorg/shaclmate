@@ -680,7 +680,11 @@ export namespace $DefaultPartial {
       $identifier = $identifierParameter satisfies never;
     }
     const $type = "$DefaultPartial" as const;
-    return { $identifier, $type };
+    const $object = { $identifier, $type };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -838,7 +842,11 @@ export namespace UnionMember2 {
       optionalStringProperty =
         parameters?.optionalStringProperty satisfies never;
     }
-    return { $identifier, $type, optionalStringProperty };
+    const $object = { $identifier, $type, optionalStringProperty };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1113,7 +1121,11 @@ export namespace UnionMember1 {
       optionalNumberProperty =
         parameters?.optionalNumberProperty satisfies never;
     }
-    return { $identifier, $type, optionalNumberProperty };
+    const $object = { $identifier, $type, optionalNumberProperty };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1406,13 +1418,17 @@ export namespace Nested {
         parameters.optionalStringProperty satisfies never;
     }
     const requiredStringProperty = parameters.requiredStringProperty;
-    return {
+    const $object = {
       $identifier,
       $type,
       optionalNumberProperty,
       optionalStringProperty,
       requiredStringProperty,
     };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1774,7 +1790,11 @@ export namespace Parent {
     } else {
       parentStringProperty = parameters.parentStringProperty satisfies never;
     }
-    return { $identifier, $type, parentStringProperty };
+    const $object = { $identifier, $type, parentStringProperty };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -2187,7 +2207,7 @@ export namespace Child {
         parameters.optionalStringProperty satisfies never;
     }
     const requiredStringProperty = parameters.requiredStringProperty;
-    return {
+    const $object = {
       ...Parent.create(parameters),
       $identifier,
       $type,
@@ -2198,6 +2218,10 @@ export namespace Child {
       optionalStringProperty,
       requiredStringProperty,
     };
+    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
+      $object.toString = $toString;
+    }
+    return $object;
   }
 
   export const GraphQL = new GraphQLObjectType<
