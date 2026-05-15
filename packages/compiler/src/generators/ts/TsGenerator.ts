@@ -13,7 +13,6 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { Reusables } from "./Reusables.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -21,13 +20,28 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export class TsGenerator implements Generator {
   private readonly typeFactory: TypeFactory;
 
+  protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
 
-  constructor({ logger }: { logger: Logger }) {
+  constructor({
+    configuration,
+    logger,
+  }: { configuration?: TsGenerator.Configuration; logger: Logger }) {
+    if (!configuration) {
+      configuration = TsGenerator.Configuration.default_;
+    }
+    this.configuration = {
+      ...configuration,
+      features: TsGenerator.Configuration.inferFeatures(configuration.features),
+    };
     this.logger = logger;
-    this.reusables = new Reusables({ logger });
+    this.reusables = new Reusables({
+      configuration: this.configuration,
+      logger,
+    });
     this.typeFactory = new TypeFactory({
+      configuration: this.configuration,
       logger,
       reusables: this.reusables,
     });
@@ -85,7 +99,7 @@ export class TsGenerator implements Generator {
         break;
       case 1:
         declarations.push(
-          code`type ${syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
+          code`type ${this.configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
         );
         break;
       default: {
@@ -149,6 +163,7 @@ export class TsGenerator implements Generator {
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
         comment: Maybe.empty(),
+        configuration: this.configuration,
         label: Maybe.empty(),
         logger: this.logger,
         reusables: this.reusables,
@@ -158,6 +173,7 @@ export class TsGenerator implements Generator {
         case "BlankNode":
           identifierType = new BlankNodeType({
             comment: Maybe.empty(),
+            configuration: this.configuration,
             label: Maybe.empty(),
             logger: this.logger,
             reusables: this.reusables,
@@ -166,6 +182,7 @@ export class TsGenerator implements Generator {
         case "IRI":
           identifierType = new IriType({
             comment: Maybe.empty(),
+            configuration: this.configuration,
             hasValues: [],
             in_: [],
             label: Maybe.empty(),
@@ -178,24 +195,46 @@ export class TsGenerator implements Generator {
 
     return new NamedObjectUnionType({
       comment: Maybe.empty(),
-      features: filteredNamedObjectTypes.reduce((features, namedObjectType) => {
-        for (const feature of namedObjectType.features) {
-          features.add(feature);
-        }
-        features.delete("graphql");
-        return features;
-      }, new Set<TsFeature>()),
+      configuration: this.configuration,
       identifierType,
-
       label: Maybe.empty(),
       logger: this.logger,
       members: filteredNamedObjectTypes.map((namedObjectType) => ({
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
-      name: `${syntheticNamePrefix}Object`,
+      name: `${this.configuration.syntheticNamePrefix}Object`,
       recursive: false,
       reusables: this.reusables,
+      synthetic: true,
     });
+  }
+}
+
+export namespace TsGenerator {
+  export interface Configuration {
+    readonly features: ReadonlySet<TsFeature>;
+    readonly syntheticNamePrefix: string;
+  }
+
+  export namespace Configuration {
+    export const default_: Configuration = {
+      features: new Set(["create", "equals", "hash", "json", "rdf"]),
+      syntheticNamePrefix: "$",
+    };
+
+    export function inferFeatures(features: ReadonlySet<TsFeature>) {
+      const inferredFeatures = new Set(features);
+
+      if (inferredFeatures.has("graphql") || inferredFeatures.has("sparql")) {
+        inferredFeatures.add("rdf");
+      }
+
+      if (inferredFeatures.has("json") || inferredFeatures.has("rdf")) {
+        inferredFeatures.add("create");
+      }
+
+      return inferredFeatures;
+    }
   }
 }

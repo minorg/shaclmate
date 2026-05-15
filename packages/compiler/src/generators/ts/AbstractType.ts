@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 
 import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -12,11 +13,9 @@ import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
  * Abstract base class all types.
  */
 export abstract class AbstractType {
+  protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
-  protected readonly rdfjsTermExpression: (
-    parameters: Parameters<typeof rdfjsTermExpression>[0],
-  ) => Code;
 
   /**
    * Comment from rdfs:comment.
@@ -146,16 +145,19 @@ export abstract class AbstractType {
 
   constructor({
     comment,
+    configuration,
     label,
     logger,
     reusables,
   }: {
     comment: Maybe<string>;
+    configuration: TsGenerator.Configuration;
     label: Maybe<string>;
     logger: Logger;
     reusables: Reusables;
   }) {
     this.comment = comment;
+    this.configuration = configuration;
     this.label = label;
     this.logger = logger;
     this.reusables = reusables;
@@ -307,6 +309,10 @@ export abstract class AbstractType {
    * An expression that converts a value of this type to a human-readable string (toString).
    */
   abstract toStringExpression(parameters: { variables: { value: Code } }): Code;
+
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 }
 
 export namespace AbstractType {

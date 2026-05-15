@@ -1,4 +1,5 @@
 import { PropertyPath } from "@rdfx/resource";
+
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -10,11 +11,8 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -23,18 +21,22 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "NamedObjectUnionType";
+  readonly synthetic: boolean;
 
   constructor({
     identifierType,
+    synthetic,
     ...superParameters
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
+    synthetic: boolean;
   } & Omit<
     ConstructorParameters<typeof AbstractNamedUnionType<NamedObjectType>>[0],
     "identifierType"
   >) {
     super({ ...superParameters, identifierType: Maybe.of(identifierType) });
     this.#identifierType = identifierType;
+    this.synthetic = synthetic;
   }
 
   @Memoize()
@@ -52,7 +54,10 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
 
   @Memoize()
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
-    return NamedObjectType_objectSetMethodNames.call(this);
+    return NamedObjectType_objectSetMethodNames.call({
+      configuration: this.configuration,
+      name: this.name,
+    });
   }
 
   @Memoize()
@@ -76,16 +81,15 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
       ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
-        features: this.features,
+        configuration: this.configuration,
         filterType: this.filterType,
-
         name: this.name,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
         .orDefault({}),
       ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-        features: this.features,
+        configuration: this.configuration,
         filterType: this.filterType,
         name: this.name,
         reusables: this.reusables,
@@ -100,7 +104,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
     string,
     Code
   > {
-    if (!this.features.has("sparql")) {
+    if (!this.configuration.features.has("sparql")) {
       return {};
     }
 
@@ -123,7 +127,7 @@ export function focusSparqlConstructTriples({ filter, focusIdentifier, variableP
     string,
     Code
   > {
-    if (!this.features.has("sparql")) {
+    if (!this.configuration.features.has("sparql")) {
       return {};
     }
 
@@ -136,7 +140,7 @@ ${joinCode([
   code`\
 if (focusIdentifier.termType === "Variable") {
   patterns = patterns.concat(${this.#identifierType.valueSparqlWherePatternsFunction}({
-      filter: filter?.${syntheticNamePrefix}identifier,
+      filter: filter?.${this.configuration.syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
@@ -162,7 +166,7 @@ if (focusIdentifier.termType === "Variable") {
   }
 
   private get fromRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.features.has("rdf")) {
+    if (!this.configuration.features.has("rdf")) {
       return {};
     }
 
@@ -183,7 +187,11 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
   }
 
   private get graphqlTypeVariableStatement(): Record<string, Code> {
-    if (!this.features.has("graphql")) {
+    if (!this.configuration.features.has("graphql")) {
+      return {};
+    }
+
+    if (this.synthetic) {
       return {};
     }
 
@@ -193,7 +201,7 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
 export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
-        resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
+        resolveType: code`(value: ${this.name}) => value.${this.configuration.syntheticNamePrefix}type`,
         types: code`[${joinCode(
           this.members.map((member) => member.type.graphqlType.nullableName),
           { on: ", " },
@@ -215,14 +223,14 @@ export namespace Identifier {
   }
 
   private get isTypeFunctionDeclaration(): Record<string, Code> {
-    if (this._name === `${syntheticNamePrefix}Object`) {
+    if (this._name === `${this.configuration.syntheticNamePrefix}Object`) {
       return {};
     }
 
     return singleEntryRecord(
       `is${this._name}`,
       code`\
-    export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
+    export function is${this._name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
         this.members.map(
           (member) => code`${member.type.name}.is${member.type.name}(object)`,
@@ -295,7 +303,7 @@ ${{
   }
 
   private get toRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.features.has("rdf")) {
+    if (!this.configuration.features.has("rdf")) {
       return {};
     }
 

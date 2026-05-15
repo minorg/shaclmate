@@ -1,7 +1,6 @@
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -15,6 +14,8 @@ export function objectSetInterfaceDeclaration(
     namedObjectUnionTypes: readonly NamedObjectUnionType[];
   },
 ): Code {
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
   return code`\
 export interface ${syntheticNamePrefix}ObjectSet {
   ${joinCode(

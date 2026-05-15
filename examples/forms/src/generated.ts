@@ -424,6 +424,17 @@ const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
+  export function equals(
+    left: $PropertyPath,
+    right: $PropertyPath,
+  ): $EqualsResult {
+    return $EqualsResult.fromBooleanEqualsResult(
+      left,
+      right,
+      RdfxResourcePropertyPath.equals(left, right),
+    );
+  }
+
   export type Filter = object;
 
   export function filter(_filter: Filter, _value: $PropertyPath): boolean {

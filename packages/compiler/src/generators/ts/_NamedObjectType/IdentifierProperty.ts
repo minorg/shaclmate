@@ -9,7 +9,6 @@ import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -71,6 +70,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
       args: Maybe.empty(),
@@ -144,6 +144,7 @@ export class IdentifierProperty extends AbstractProperty<
     if (
       (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
     ) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
       conversionBranches.push(
         code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${this.reusables.imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
       );

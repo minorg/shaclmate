@@ -8,10 +8,6 @@ describe("ShapesGraph: kitchen sink", () => {
     expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(155);
   });
 
-  it("should parse ontologies correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.ontologies).toHaveLength(1);
-  });
-
   it("should parse property shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
   });

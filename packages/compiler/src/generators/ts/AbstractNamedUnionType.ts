@@ -2,8 +2,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
@@ -12,18 +10,13 @@ export abstract class AbstractNamedUnionType<
 > extends AbstractUnionType<MemberTypeT> {
   protected readonly _name: string;
 
-  readonly features: ReadonlySet<TsFeature>;
-
   constructor({
-    features,
     name,
     ...superParameters
   }: {
-    features: ReadonlySet<TsFeature>;
     name: string;
   } & ConstructorParameters<typeof AbstractUnionType<MemberTypeT>>[0]) {
     super(superParameters);
-    this.features = features;
     this._name = name;
   }
 
@@ -53,7 +46,7 @@ ${joinCode(
 
   @Memoize()
   override get equalsFunction(): Code {
-    if (this.features.has("equals")) {
+    if (this.configuration.features.has("equals")) {
       return code`${this.name}.equals`;
     }
     return this.inlineEqualsFunction;
@@ -94,7 +87,7 @@ ${joinCode(
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    if (this.features.has("sparql")) {
+    if (this.configuration.features.has("sparql")) {
       return code`${this.name}.valueSparqlConstructTriples`;
     }
     return this.inlineValueSparqlConstructTriplesFunction;
@@ -102,7 +95,7 @@ ${joinCode(
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    if (this.features.has("sparql")) {
+    if (this.configuration.features.has("sparql")) {
       return code`${this.name}.valueSparqlWherePatterns`;
     }
     return this.inlineValueSparqlWherePatternsFunction;
@@ -111,7 +104,7 @@ ${joinCode(
   protected get staticModuleDeclarations(): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
 
-    if (this.features.has("equals")) {
+    if (this.configuration.features.has("equals")) {
       staticModuleDeclarations[`equals`] =
         code`export const equals = ${this.inlineEqualsFunction};`;
     }
@@ -121,12 +114,12 @@ ${joinCode(
     staticModuleDeclarations[`filter`] =
       code`export const filter = ${this.inlineFilterFunction};`;
 
-    if (this.features.has("hash")) {
+    if (this.configuration.features.has("hash")) {
       staticModuleDeclarations[`hash`] =
         code`export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
     }
 
-    if (this.features.has("json")) {
+    if (this.configuration.features.has("json")) {
       staticModuleDeclarations[`Json`] = code`\
 ${this.jsonTypeAliasDeclaration}
 
@@ -147,7 +140,7 @@ export namespace Json {
         code`export const toJson = ${this.inlineToJsonFunction};`;
     }
 
-    if (this.features.has("rdf")) {
+    if (this.configuration.features.has("rdf")) {
       staticModuleDeclarations[`fromRdfResourceValues`] =
         code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
 
@@ -155,7 +148,7 @@ export namespace Json {
         code`export const toRdfResourceValues = ${this.inlineToRdfResourceValuesFunction};`;
     }
 
-    if (this.features.has("sparql")) {
+    if (this.configuration.features.has("sparql")) {
       staticModuleDeclarations[`valueSparqlConstructTriples`] =
         code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
 
@@ -163,6 +156,7 @@ export namespace Json {
         code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
       code`export const ${syntheticNamePrefix}toString = ${this.inlineToStringFunction};`;
 
@@ -172,7 +166,7 @@ export namespace Json {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    if (this.features.has("json")) {
+    if (this.configuration.features.has("json")) {
       return code`${this.name}.fromJson(${variables.value})`;
     }
     return code`${this.inlineFromJsonFunction}(${variables.value})`;
@@ -183,7 +177,7 @@ export namespace Json {
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     const { resourceValues: resourceValuesVariable, ...otherVariables } =
       variables;
-    if (this.features.has("rdf")) {
+    if (this.configuration.features.has("rdf")) {
       return code`${this.name}.fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
     }
     return code`${this.inlineFromRdfResourceValuesFunction}(${resourceValuesVariable}, ${otherVariables})`;
@@ -193,7 +187,7 @@ export namespace Json {
     depth,
     variables,
   }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    if (this.features.has("hash")) {
+    if (this.configuration.features.has("hash")) {
       return [
         code`${this.name}.hash(${variables.value}, ${variables.hasher});`,
       ];
@@ -204,7 +198,7 @@ export namespace Json {
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    if (this.features.has("json")) {
+    if (this.configuration.features.has("json")) {
       const expression = code`${this.name}.Json.schema()`;
       if (context === "property" && this.recursive) {
         return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.Json> => ${expression})`;
@@ -216,7 +210,7 @@ export namespace Json {
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    if (this.features.has("json")) {
+    if (this.configuration.features.has("json")) {
       return new AbstractType.JsonType(`${this.name}.Json`);
     }
     return this.inlineJsonType;
@@ -225,7 +219,7 @@ export namespace Json {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    if (this.features.has("json")) {
+    if (this.configuration.features.has("json")) {
       return code`${this.name}.toJson(${variables.value})`;
     }
     return code`${this.inlineToJsonFunction}(${variables.value})`;
@@ -235,7 +229,7 @@ export namespace Json {
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
-    if (this.features.has("rdf")) {
+    if (this.configuration.features.has("rdf")) {
       return code`${this.name}.toRdfResourceValues(${valueVariable}, ${otherVariables})`;
     }
     return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
@@ -244,6 +238,6 @@ export namespace Json {
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
+    return code`${this.name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
 }

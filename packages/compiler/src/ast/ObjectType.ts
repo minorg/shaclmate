@@ -6,7 +6,6 @@ import type { Maybe } from "purify-ts";
 import genericToposort from "toposort";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import { arrayEquals } from "./equals.js";
@@ -90,11 +89,6 @@ export class ObjectType extends AbstractType {
   readonly toRdfTypes: readonly NamedNode[];
 
   /**
-   * TypeScript features to generate.
-   */
-  readonly tsFeatures: ReadonlySet<TsFeature>;
-
-  /**
    * TypeScript imports to add to generated code.
    *
    * This is often used in conjunction with extern=true to import the extern'd ObjectType code in order for generated
@@ -110,7 +104,6 @@ export class ObjectType extends AbstractType {
     identifierType,
     synthetic,
     toRdfTypes,
-    tsFeatures,
     tsImports,
     ...superParameters
   }: {
@@ -119,7 +112,6 @@ export class ObjectType extends AbstractType {
     identifierType: BlankNodeType | IdentifierType | IriType;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
-    tsFeatures: ReadonlySet<TsFeature>;
     tsImports: readonly string[];
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
@@ -128,7 +120,6 @@ export class ObjectType extends AbstractType {
     this.identifierType = identifierType;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;
-    this.tsFeatures = tsFeatures;
     this.tsImports = tsImports;
   }
 

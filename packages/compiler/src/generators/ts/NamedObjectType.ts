@@ -40,8 +40,6 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TsFeature } from "./TsFeature.js";
 import type { Type } from "./Type.js";
 import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
@@ -49,7 +47,6 @@ export class NamedObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly extern: boolean;
-  readonly features: ReadonlySet<TsFeature>;
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
@@ -61,7 +58,6 @@ export class NamedObjectType extends AbstractType {
 
   constructor({
     extern,
-    features,
     fromRdfType,
     identifierType,
     lazyAncestorObjectTypes,
@@ -78,7 +74,6 @@ export class NamedObjectType extends AbstractType {
   }: {
     comment: Maybe<string>;
     extern: boolean;
-    features: ReadonlySet<TsFeature>;
     fromRdfType: Maybe<NamedNode>;
     identifierType: BlankNodeType | IdentifierType | IriType;
     label: Maybe<string>;
@@ -99,7 +94,6 @@ export class NamedObjectType extends AbstractType {
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.extern = extern;
-    this.features = features;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     // Lazily initialize some members in getters to avoid recursive construction
@@ -152,7 +146,7 @@ export class NamedObjectType extends AbstractType {
       declarations.push(NamedObjectType_interfaceDeclaration.call(this));
       staticModuleDeclarations.push(
         ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
-        ...NamedObjectType_equalsFunctionDeclaration.bind(this)().toList(),
+        ...NamedObjectType_equalsFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_hashFunctionDeclarations.call(this),
       );
 
@@ -173,12 +167,12 @@ export class NamedObjectType extends AbstractType {
           : []),
         NamedObjectType_filterFunctionDeclaration.call(this),
         NamedObjectType_filterTypeDeclaration.call(this),
-        ...NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.bind(
+        ...NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
           this,
-        )().toList(),
-        ...NamedObjectType_focusSparqlWherePatternsFunctionDeclaration.bind(
+        ).toList(),
+        ...NamedObjectType_focusSparqlWherePatternsFunctionDeclaration.call(
           this,
-        )().toList(),
+        ).toList(),
         ...NamedObjectType_fromJsonFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_fromRdfResourceFunctionDeclaration.call(
           this,
@@ -189,27 +183,27 @@ export class NamedObjectType extends AbstractType {
         ...NamedObjectType_fromRdfTypeVariableStatement.call(this).toList(),
         NamedObjectType_isTypeFunctionDeclaration.call(this),
         NamedObjectType_schemaVariableStatement.call(this),
-        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.bind({
-          features: this.features,
+        ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
+          configuration: this.configuration,
           filterType: this.filterType,
           name: this.name,
           reusables: this.reusables,
-        })().toList(),
-        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.bind({
-          features: this.features,
+        }).toList(),
+        ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+          configuration: this.configuration,
           filterType: this.filterType,
           name: this.name,
           reusables: this.reusables,
-        })().toList(),
+        }).toList(),
         ...NamedObjectType_toJsonFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_toStringFunctionDeclarations.call(this),
-        ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.bind(
+        ...NamedObjectType_valueSparqlConstructTriplesFunctionDeclaration.call(
           this,
-        )().toList(),
-        ...NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.bind(
+        ).toList(),
+        ...NamedObjectType_valueSparqlWherePatternsFunctionDeclaration.call(
           this,
-        )().toList(),
+        ).toList(),
       );
 
       if (staticModuleDeclarations.length > 0) {
@@ -297,7 +291,10 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 
   @Memoize()
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
-    return NamedObjectType_objectSetMethodNames.call(this);
+    return NamedObjectType_objectSetMethodNames.call({
+      configuration: this.configuration,
+      name: this.name,
+    });
   }
 
   @Memoize()
@@ -419,7 +416,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override toStringExpression({
     variables,
   }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name}.${syntheticNamePrefix}toString(${variables.value})`;
+    return code`${this.name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({

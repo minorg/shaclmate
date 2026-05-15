@@ -4,7 +4,6 @@ import type { Logger } from "ts-log";
 import type { Ast } from "../ast/Ast.js";
 import { Compiler } from "../Compiler.js";
 import type { Generator } from "../generators/Generator.js";
-import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as generated from "./generated.js";
 
@@ -29,7 +28,6 @@ export class ShapesGraph extends AbstractShapesGraph<
   compile(parameters: {
     generator: Generator;
     logger: Logger;
-    tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }): Either<Error, string> {
     return new Compiler(parameters).compile(this);
   }
@@ -41,17 +39,10 @@ export class ShapesGraph extends AbstractShapesGraph<
   /**
    * Transform the shapes graph to an AST.
    */
-  toAst({
-    logger,
-    tsFeaturesDefault,
-  }: {
-    logger: Logger;
-    tsFeaturesDefault?: ReadonlySet<TsFeature>;
-  }): Either<Error, Ast> {
+  toAst({ logger }: { logger: Logger }): Either<Error, Ast> {
     return new ShapesGraphToAstTransformer({
       logger,
       shapesGraph: this,
-      tsFeaturesDefault,
     }).transform();
   }
 }

@@ -19,45 +19,10 @@ export function objectSetDeclarations(
   const namedObjectTypes = parameters.namedObjectTypes.filter(
     (namedObjectType) => !namedObjectType.extern && !namedObjectType.synthetic,
   );
-  let namedObjectTypesWithRdfFeatureCount = 0;
-  let namedObjectTypesWithSparqlFeatureCount = 0;
-  for (const namedObjectType of namedObjectTypes) {
-    if (
-      !namedObjectType.features.has("rdf") &&
-      !namedObjectType.features.has("sparql")
-    ) {
-      continue;
-    }
-    if (namedObjectType.features.has("rdf")) {
-      namedObjectTypesWithRdfFeatureCount++;
-    }
-    if (namedObjectType.features.has("sparql")) {
-      namedObjectTypesWithSparqlFeatureCount++;
-    }
-  }
-
-  let namedObjectUnionTypesWithRdfFeatureCount = 0;
-  let namedObjectUnionTypesWithSparqlFeatureCount = 0;
-  for (const namedObjectUnionType of namedObjectUnionTypes) {
-    if (
-      !namedObjectUnionType.features.has("rdf") &&
-      !namedObjectUnionType.features.has("sparql")
-    ) {
-      continue;
-    }
-    if (namedObjectUnionType.features.has("rdf")) {
-      namedObjectUnionTypesWithRdfFeatureCount++;
-    }
-    if (namedObjectUnionType.features.has("sparql")) {
-      namedObjectUnionTypesWithSparqlFeatureCount++;
-    }
-  }
 
   if (
-    namedObjectTypesWithRdfFeatureCount === 0 &&
-    namedObjectTypesWithSparqlFeatureCount === 0 &&
-    namedObjectUnionTypesWithRdfFeatureCount === 0 &&
-    namedObjectUnionTypesWithSparqlFeatureCount === 0
+    !this.configuration.features.has("rdf") &&
+    !this.configuration.features.has("sparql")
   ) {
     return [];
   }
@@ -69,7 +34,7 @@ export function objectSetDeclarations(
     }),
   ];
 
-  if (namedObjectTypesWithRdfFeatureCount > 0) {
+  if (this.configuration.features.has("rdf")) {
     declarations.push(
       rdfjsDatasetObjectSetClassDeclaration.call(this, {
         namedObjectTypes: namedObjectTypes,
@@ -78,7 +43,7 @@ export function objectSetDeclarations(
     );
   }
 
-  if (namedObjectTypesWithSparqlFeatureCount > 0) {
+  if (this.configuration.features.has("sparql")) {
     declarations.push(
       sparqlObjectSetClassDeclaration.call(this, {
         namedObjectTypes: namedObjectTypes,

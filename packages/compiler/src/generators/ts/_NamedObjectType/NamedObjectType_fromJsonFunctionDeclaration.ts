@@ -1,21 +1,19 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-
-const variables = {
-  jsonObject: code`${syntheticNamePrefix}json`,
-};
 
 export function NamedObjectType_fromJsonFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.features.has("json")) {
+  if (!this.configuration.features.has("json")) {
     return Maybe.empty();
   }
 
   const initializers: Code[] = [];
   const statements: Code[] = [];
+  const variables = {
+    jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
+  };
 
   this.parentObjectTypes.forEach((parentObjectType) => {
     initializers.push(

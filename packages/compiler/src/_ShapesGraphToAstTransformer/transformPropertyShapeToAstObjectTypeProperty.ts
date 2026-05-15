@@ -5,7 +5,6 @@ import { invariant } from "ts-invariant";
 import type { AbstractContainerType } from "../ast/AbstractContainerType.js";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import type { TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { ShapeStack } from "./ShapeStack.js";
@@ -13,10 +12,8 @@ import { transformShapeToAstType } from "./transformShapeToAstType.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
-  tsFeatures,
 }: {
   identifierType: ast.BlankNodeType | ast.IdentifierType | ast.IriType;
-  tsFeatures: ReadonlySet<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
   switch (identifierType.kind) {
@@ -42,7 +39,6 @@ function synthesizePartialAstObjectType({
     ),
     synthetic: true,
     toRdfTypes: [],
-    tsFeatures,
     tsImports: [],
   });
 }
@@ -278,7 +274,6 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         case "IriType":
           astPartialItemType = synthesizePartialAstObjectType({
             identifierType: astItemType,
-            tsFeatures: astResolveItemType.tsFeatures,
           });
           break;
         case "ObjectType":

@@ -1,10 +1,13 @@
 import { camelCase, trainCase } from "change-case";
 import plur from "plur";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { TsGenerator } from "../TsGenerator.js";
 
 export function NamedObjectType_objectSetMethodNames(this: {
+  readonly configuration: TsGenerator.Configuration;
   readonly name: string;
 }) {
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
   const prefixSingular = camelCase(this.name, {
     prefixCharacters: syntheticNamePrefix,
   });

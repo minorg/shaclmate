@@ -3965,31 +3965,6 @@ export interface Ontology {
   readonly $type: "Ontology";
   readonly comment: Maybe<string>;
   readonly label: Maybe<string>;
-  readonly tsFeatureExcludes: readonly NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-  >[];
-  readonly tsFeatureIncludes: readonly NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-  >[];
-  readonly tsImports: readonly string[];
 }
 
 export namespace Ontology {
@@ -4000,57 +3975,6 @@ export namespace Ontology {
       | string;
     readonly comment?: Maybe<string> | string;
     readonly label?: Maybe<string> | string;
-    readonly tsFeatureExcludes?:
-      | readonly NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >[]
-      | readonly (
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        )[];
-    readonly tsFeatureIncludes?:
-      | readonly NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >[]
-      | readonly (
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        )[];
-    readonly tsImports?: readonly string[];
   }): Ontology {
     const $identifierParameter = parameters?.$identifier;
     let $identifier: () => Ontology.Identifier;
@@ -4087,69 +4011,7 @@ export namespace Ontology {
     } else {
       label = parameters?.label satisfies never;
     }
-    let tsFeatureExcludes: readonly NamedNode<
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    >[];
-    if (parameters?.tsFeatureExcludes === undefined) {
-      tsFeatureExcludes = [];
-    } else if ($isReadonlyObjectArray(parameters?.tsFeatureExcludes)) {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes;
-    } else if ($isReadonlyStringArray(parameters?.tsFeatureExcludes)) {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes satisfies never;
-    }
-    let tsFeatureIncludes: readonly NamedNode<
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    >[];
-    if (parameters?.tsFeatureIncludes === undefined) {
-      tsFeatureIncludes = [];
-    } else if ($isReadonlyObjectArray(parameters?.tsFeatureIncludes)) {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes;
-    } else if ($isReadonlyStringArray(parameters?.tsFeatureIncludes)) {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes satisfies never;
-    }
-    let tsImports: readonly string[];
-    if (parameters?.tsImports === undefined) {
-      tsImports = [];
-    } else if (typeof parameters?.tsImports === "object") {
-      tsImports = parameters?.tsImports;
-    } else {
-      tsImports = parameters?.tsImports satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      comment,
-      label,
-      tsFeatureExcludes,
-      tsFeatureIncludes,
-      tsImports,
-    };
+    const $object = { $identifier, $type, comment, label };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -4188,55 +4050,6 @@ export namespace Ontology {
     ) {
       return false;
     }
-    if (
-      filter.tsFeatureExcludes !== undefined &&
-      !$filterArray<
-        NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >,
-        $IriFilter
-      >($filterIri)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
-    ) {
-      return false;
-    }
-    if (
-      filter.tsFeatureIncludes !== undefined &&
-      !$filterArray<
-        NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >,
-        $IriFilter
-      >($filterIri)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
-    ) {
-      return false;
-    }
-    if (
-      filter.tsImports !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.tsImports,
-        value.tsImports,
-      )
-    ) {
-      return false;
-    }
     return true;
   }
 
@@ -4244,9 +4057,6 @@ export namespace Ontology {
     readonly $identifier?: $IdentifierFilter;
     readonly comment?: $MaybeFilter<$StringFilter>;
     readonly label?: $MaybeFilter<$StringFilter>;
-    readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
-    readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
-    readonly tsImports?: $CollectionFilter<$StringFilter>;
   };
 
   export const _fromRdfResource: $_FromRdfResourceFunction<Ontology> = (
@@ -4340,132 +4150,6 @@ export namespace Ontology {
                     }),
               ),
         }),
-        tsFeatureExcludes: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.tsFeatureExcludes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    Ontology.schema.properties.tsFeatureExcludes.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
-        tsFeatureIncludes: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.tsFeatureIncludes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    Ontology.schema.properties.tsFeatureIncludes.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
-        tsImports: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.tsImports,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                $fromRdfPreferredLanguages(
-                  values,
-                  _$options.preferredLanguages,
-                ),
-              )
-              .chain((values) => values.chainMap((value) => value.toString()))
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath: Ontology.schema.properties.tsImports.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
       }).map((properties) => create(properties)),
     );
   };
@@ -4530,104 +4214,6 @@ export namespace Ontology {
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
       },
-      tsFeatureExcludes: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-              ),
-            ],
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#tsFeatureExclude",
-        ),
-      },
-      tsFeatureIncludes: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-              ),
-            ],
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#tsFeatureInclude",
-        ),
-      },
-      tsImports: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({ kind: "String" as const }),
-        }),
-        path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#tsImport",
-        ),
-      },
     },
   } as const;
 
@@ -4654,27 +4240,6 @@ export namespace Ontology {
       parameters.object.label
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
-      ),
-      parameters.object.tsFeatureExcludes.flatMap((item) => [item]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
-      ),
-      parameters.object.tsFeatureIncludes.flatMap((item) => [item]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
-      parameters.object.tsImports.flatMap((item) => [
-        $literalFactory.string(item),
-      ]),
       parameters.graph,
     );
     return parameters.resource;
@@ -4747,30 +4312,6 @@ export interface NodeShape {
   readonly shaclmateName: Maybe<string>;
   readonly subClassOf: readonly NamedNode[];
   readonly toRdfTypes: readonly NamedNode[];
-  readonly tsFeatureExcludes: readonly NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-  >[];
-  readonly tsFeatureIncludes: readonly NamedNode<
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-    | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-    | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-  >[];
   readonly tsImports: readonly string[];
   readonly types: readonly NamedNode[];
   readonly xone: Maybe<readonly (BlankNode | NamedNode)[]>;
@@ -4897,56 +4438,6 @@ export namespace NodeShape {
     readonly shaclmateName?: Maybe<string> | string;
     readonly subClassOf?: readonly NamedNode[] | readonly string[];
     readonly toRdfTypes?: readonly NamedNode[] | readonly string[];
-    readonly tsFeatureExcludes?:
-      | readonly NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >[]
-      | readonly (
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        )[];
-    readonly tsFeatureIncludes?:
-      | readonly NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >[]
-      | readonly (
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        )[];
     readonly tsImports?: readonly string[];
     readonly types?: readonly NamedNode[] | readonly string[];
     readonly xone?:
@@ -5452,52 +4943,6 @@ export namespace NodeShape {
     } else {
       toRdfTypes = parameters?.toRdfTypes satisfies never;
     }
-    let tsFeatureExcludes: readonly NamedNode<
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    >[];
-    if (parameters?.tsFeatureExcludes === undefined) {
-      tsFeatureExcludes = [];
-    } else if ($isReadonlyObjectArray(parameters?.tsFeatureExcludes)) {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes;
-    } else if ($isReadonlyStringArray(parameters?.tsFeatureExcludes)) {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      tsFeatureExcludes = parameters?.tsFeatureExcludes satisfies never;
-    }
-    let tsFeatureIncludes: readonly NamedNode<
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-      | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-      | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-    >[];
-    if (parameters?.tsFeatureIncludes === undefined) {
-      tsFeatureIncludes = [];
-    } else if ($isReadonlyObjectArray(parameters?.tsFeatureIncludes)) {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes;
-    } else if ($isReadonlyStringArray(parameters?.tsFeatureIncludes)) {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      tsFeatureIncludes = parameters?.tsFeatureIncludes satisfies never;
-    }
     let tsImports: readonly string[];
     if (parameters?.tsImports === undefined) {
       tsImports = [];
@@ -5568,8 +5013,6 @@ export namespace NodeShape {
       shaclmateName,
       subClassOf,
       toRdfTypes,
-      tsFeatureExcludes,
-      tsFeatureIncludes,
       tsImports,
       types,
       xone,
@@ -5922,46 +5365,6 @@ export namespace NodeShape {
       return false;
     }
     if (
-      filter.tsFeatureExcludes !== undefined &&
-      !$filterArray<
-        NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >,
-        $IriFilter
-      >($filterIri)(filter.tsFeatureExcludes, value.tsFeatureExcludes)
-    ) {
-      return false;
-    }
-    if (
-      filter.tsFeatureIncludes !== undefined &&
-      !$filterArray<
-        NamedNode<
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_All"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Create"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_Default"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Equals"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Graphql"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Hash"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Json"
-          | "http://purl.org/shaclmate/ontology#_TsFeatures_None"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Rdf"
-          | "http://purl.org/shaclmate/ontology#_TsFeature_Sparql"
-        >,
-        $IriFilter
-      >($filterIri)(filter.tsFeatureIncludes, value.tsFeatureIncludes)
-    ) {
-      return false;
-    }
-    if (
       filter.tsImports !== undefined &&
       !$filterArray<string, $StringFilter>($filterString)(
         filter.tsImports,
@@ -6032,8 +5435,6 @@ export namespace NodeShape {
     readonly shaclmateName?: $MaybeFilter<$StringFilter>;
     readonly subClassOf?: $CollectionFilter<$IriFilter>;
     readonly toRdfTypes?: $CollectionFilter<$IriFilter>;
-    readonly tsFeatureExcludes?: $CollectionFilter<$IriFilter>;
-    readonly tsFeatureIncludes?: $CollectionFilter<$IriFilter>;
     readonly tsImports?: $CollectionFilter<$StringFilter>;
     readonly types?: $CollectionFilter<$IriFilter>;
     readonly xone?: $MaybeFilter<$CollectionFilter<$IdentifierFilter>>;
@@ -6940,110 +6341,6 @@ export namespace NodeShape {
                 }),
               ),
         }),
-        tsFeatureExcludes: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.tsFeatureExcludes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    Ontology.schema.properties.tsFeatureExcludes.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
-        tsFeatureIncludes: $shaclPropertyFromRdf({
-          graph: _$options.graph,
-          resource: $resource,
-          propertySchema: schema.properties.tsFeatureIncludes,
-          typeFromRdf: (resourceValues) =>
-            resourceValues
-              .chain((values) =>
-                values.chainMap((value) =>
-                  value.toIri([
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-                    ),
-                    dataFactory.namedNode(
-                      "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-                    ),
-                  ]),
-                ),
-              )
-              .map((values) => values.toArray())
-              .map((valuesArray) =>
-                Resource.Values.fromValue({
-                  focusResource: $resource,
-                  propertyPath:
-                    Ontology.schema.properties.tsFeatureIncludes.path,
-                  value: valuesArray,
-                }),
-              ),
-        }),
         tsImports: $shaclPropertyFromRdf({
           graph: _$options.graph,
           resource: $resource,
@@ -7061,7 +6358,7 @@ export namespace NodeShape {
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $resource,
-                  propertyPath: Ontology.schema.properties.tsImports.path,
+                  propertyPath: NodeShape.schema.properties.tsImports.path,
                   value: valuesArray,
                 }),
               ),
@@ -7492,94 +6789,6 @@ export namespace NodeShape {
         }),
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#toRdfType",
-        ),
-      },
-      tsFeatureExcludes: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-              ),
-            ],
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#tsFeatureExclude",
-        ),
-      },
-      tsFeatureIncludes: {
-        kind: "Shacl" as const,
-        type: () => ({
-          kind: "Set" as const,
-          item: () => ({
-            kind: "Iri" as const,
-            in: [
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_All",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Create",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_Default",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Equals",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Graphql",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Hash",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Json",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeatures_None",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Rdf",
-              ),
-              dataFactory.namedNode(
-                "http://purl.org/shaclmate/ontology#_TsFeature_Sparql",
-              ),
-            ],
-          }),
-        }),
-        path: dataFactory.namedNode(
-          "http://purl.org/shaclmate/ontology#tsFeatureInclude",
         ),
       },
       tsImports: {
@@ -8092,20 +7301,6 @@ export namespace NodeShape {
     parameters.resource.add(
       dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
       parameters.object.toRdfTypes.flatMap((item) => [item]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#tsFeatureExclude",
-      ),
-      parameters.object.tsFeatureExcludes.flatMap((item) => [item]),
-      parameters.graph,
-    );
-    parameters.resource.add(
-      dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#tsFeatureInclude",
-      ),
-      parameters.object.tsFeatureIncludes.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(

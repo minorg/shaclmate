@@ -1,5 +1,4 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_toStringFunctionDeclarations(
@@ -33,6 +32,7 @@ export function NamedObjectType_toStringFunctionDeclarations(
   const toStringReturnExpression = (propertiesToStrings: Code) =>
     code`\`${this.name}(\${JSON.stringify(${propertiesToStrings})})\``;
 
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return [
     // Use overloads to allow the function to be attached to an instance or used freestanding
     code`\

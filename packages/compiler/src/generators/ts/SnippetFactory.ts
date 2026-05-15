@@ -3,9 +3,11 @@ import type { Logger } from "ts-log";
 import type { Imports } from "./Imports.js";
 import type { Snippet } from "./Snippet.js";
 import type { Snippets } from "./Snippets.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import type { Code } from "./ts-poet-wrapper.js";
 
 export type SnippetFactory = (parameters: {
+  configuration: TsGenerator.Configuration;
   imports: Imports;
   logger: Logger;
   rdfjsTermExpression: (

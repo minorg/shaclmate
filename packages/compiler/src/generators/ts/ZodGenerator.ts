@@ -5,6 +5,7 @@ import type { Generator } from "../Generator.js";
 import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
 import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
 import { Reusables } from "./Reusables.js";
+import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -13,8 +14,10 @@ export class ZodGenerator implements Generator {
   private readonly typeFactory: TypeFactory;
 
   constructor({ logger }: { logger: Logger }) {
-    this.reusables = new Reusables({ logger });
+    const configuration = TsGenerator.Configuration.default_;
+    this.reusables = new Reusables({ configuration, logger });
     this.typeFactory = new TypeFactory({
+      configuration,
       logger,
       reusables: this.reusables,
     });
@@ -30,10 +33,10 @@ export class ZodGenerator implements Generator {
     )) {
       declarations.push(code`\
 export namespace ${namedObjectType.name} {
-  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
+  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
 
   export namespace Json {
-    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(namedObjectType)().toList())}
+    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.call(namedObjectType).toList())}
   }
 }`);
     }

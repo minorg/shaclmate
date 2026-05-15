@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -16,6 +15,8 @@ function graphqlQueryObjectType(
     namedObjectUnionTypes: readonly NamedObjectUnionType[];
   },
 ): Code {
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
   return code`new ${this.reusables.imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
     ...namedObjectTypes,
     ...namedObjectUnionTypes,
@@ -92,22 +93,28 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${nam
 
 export function graphqlSchemaVariableStatement(
   this: TsGenerator,
-  parameters: {
+  {
+    namedObjectTypes,
+    namedObjectUnionTypes,
+  }: {
     namedObjectTypes: readonly NamedObjectType[];
     namedObjectUnionTypes: NamedObjectUnionType[];
   },
 ): Maybe<Code> {
-  const namedObjectTypes = parameters.namedObjectTypes.filter(
-    (namedObjectType) =>
-      namedObjectType.features.has("graphql") && !namedObjectType.synthetic,
-  );
-  const namedObjectUnionTypes = parameters.namedObjectUnionTypes.filter(
-    (namedObjectUnionType) => namedObjectUnionType.features.has("graphql"),
-  );
+  if (!this.configuration.features.has("graphql")) {
+    return Maybe.empty();
+  }
 
+  namedObjectTypes = namedObjectTypes.filter(
+    (namedObjectType) => !namedObjectType.synthetic,
+  );
   if (namedObjectTypes.length === 0) {
     return Maybe.empty();
   }
+
+  namedObjectUnionTypes = namedObjectUnionTypes.filter(
+    (namedObjectUnionType) => !namedObjectUnionType.synthetic,
+  );
 
   return Maybe.of(code`\
 export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType.call(this, { namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });

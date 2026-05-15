@@ -9,7 +9,6 @@ import type { IriType } from "./IriType.js";
 
 import { removeUndefined } from "./removeUndefined.js";
 
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -320,6 +319,7 @@ ${joinCode(
 
   @Memoize()
   protected get inlineFilterFunction(): Code {
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return code`\
 ((filter: ${this.filterType}, value: ${this.name}) => {
 ${joinCode([
@@ -347,6 +347,7 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 
   @Memoize()
   protected get inlineFilterType(): Code {
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
     return code`\
   {
    ${this.identifierType.map((identifierType) => code`readonly ${syntheticNamePrefix}identifier?: ${identifierType.filterType};`).orDefault(code``)}

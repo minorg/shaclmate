@@ -1,12 +1,11 @@
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_graphqlTypeVariableStatement(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.features.has("graphql")) {
+  if (!this.configuration.features.has("graphql")) {
     return Maybe.empty();
   }
 
@@ -15,7 +14,7 @@ export function NamedObjectType_graphqlTypeVariableStatement(
   }
 
   return Maybe.of(code`\
-export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.name}, { objectSet: ${syntheticNamePrefix}ObjectSet }>(${{
+export const GraphQL = new ${this.reusables.imports.GraphQLObjectType}<${this.name}, { objectSet: ${this.configuration.syntheticNamePrefix}ObjectSet }>(${{
     description: this.comment.extract(),
     fields: code`() => (${this.properties.reduce(
       (fields, property) => {
