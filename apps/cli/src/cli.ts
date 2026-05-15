@@ -7,7 +7,12 @@ import {
   ZodGenerator,
 } from "@shaclmate/compiler";
 import {
+  TS_FEATURES,
+  type TsFeature,
+} from "@shaclmate/compiler/dist/generators/ts/TsFeature.js";
+import {
   command,
+  multioption,
   option,
   restPositionals,
   run,
@@ -100,13 +105,49 @@ run(
             name: "ts",
             description: "generate TypeScript for the SHACL shapes graph",
             args: {
+              features: multioption({
+                defaultValue: () => [
+                  ...TsGenerator.Configuration.default_.features,
+                ],
+                long: "feature",
+                description: `features to generate: zero or more of [${TS_FEATURES.join(", ")}] (default: [${[...TsGenerator.Configuration.default_.features].join(", ")}])`,
+                type: {
+                  async from(strings: readonly string[]) {
+                    return strings.map((string) => {
+                      if (
+                        TS_FEATURES.some((tsFeature) => string === tsFeature)
+                      ) {
+                        return string as TsFeature;
+                      }
+                      throw new RangeError(`invalid feature: ${string}`);
+                    });
+                  },
+                },
+              }),
               inputPaths,
               outputFilePath,
+              syntheticNamePrefix: option({
+                defaultValue: () =>
+                  TsGenerator.Configuration.default_.syntheticNamePrefix,
+                description: `prefix to use for synthetic names in generated code (default: "${TsGenerator.Configuration.default_.syntheticNamePrefix}")`,
+                long: "synthetic-name-prefix",
+              }),
             },
-            handler: async ({ inputPaths, outputFilePath }) => {
+            handler: async ({
+              features,
+              inputPaths,
+              outputFilePath,
+              syntheticNamePrefix,
+            }) => {
               (
                 await generate({
-                  generator: new TsGenerator({ logger }),
+                  generator: new TsGenerator({
+                    configuration: {
+                      features: new Set(features),
+                      syntheticNamePrefix,
+                    },
+                    logger,
+                  }),
                   inputPaths,
                   outputFilePath,
                 })
