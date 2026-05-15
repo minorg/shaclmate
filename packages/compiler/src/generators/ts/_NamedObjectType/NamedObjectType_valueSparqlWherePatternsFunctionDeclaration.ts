@@ -5,7 +5,7 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function NamedObjectType_valueSparqlWherePatternsFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.features.has("sparql")) {
+  if (!this.configuration.features.has("sparql")) {
     return Maybe.empty();
   }
 

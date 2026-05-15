@@ -6,7 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports .
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsImports .
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
@@ -36,9 +36,6 @@ shaclmate:NodeShape-toRdfTypes
     a sh:PropertyShape ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
-
-shaclmate:Ontology
-    sh:property shaclmate:tsFeatureExcludes, shaclmate:tsFeatureIncludes, shaclmate:tsImports .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
@@ -71,38 +68,6 @@ shaclmate:Shape-shaclmateName
     sh:maxCount 1 ;
     sh:name "shaclmateName" ;
     sh:path shaclmate:name .
-
-shaclmate:tsFeatureExcludes
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_TsFeatures_All
-        shaclmate:_TsFeature_Create
-        shaclmate:_TsFeatures_Default
-        shaclmate:_TsFeature_Equals
-        shaclmate:_TsFeature_Graphql
-        shaclmate:_TsFeature_Hash
-        shaclmate:_TsFeature_Json
-        shaclmate:_TsFeatures_None
-        shaclmate:_TsFeature_Rdf
-        shaclmate:_TsFeature_Sparql
-    ) ;
-    sh:name "tsFeatureExcludes" ;
-    sh:path shaclmate:tsFeatureExclude .
-
-shaclmate:tsFeatureIncludes
-    a sh:PropertyShape ;
-    sh:in (shaclmate:_TsFeatures_All
-        shaclmate:_TsFeature_Create
-        shaclmate:_TsFeatures_Default
-        shaclmate:_TsFeature_Equals
-        shaclmate:_TsFeature_Graphql
-        shaclmate:_TsFeature_Hash
-        shaclmate:_TsFeature_Json
-        shaclmate:_TsFeatures_None
-        shaclmate:_TsFeature_Rdf
-        shaclmate:_TsFeature_Sparql
-    ) ;
-    sh:name "tsFeatureIncludes" ;
-    sh:path shaclmate:tsFeatureInclude .
 
 shaclmate:tsImports
     a sh:PropertyShape ;

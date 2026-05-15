@@ -33,10 +33,10 @@ export class ZodGenerator implements Generator {
     )) {
       declarations.push(code`\
 export namespace ${namedObjectType.name} {
-  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.bind(namedObjectType)().toList())}
+  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
 
   export namespace Json {
-    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.bind(namedObjectType)().toList())}
+    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.call(namedObjectType).toList())}
   }
 }`);
     }

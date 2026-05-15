@@ -2,7 +2,6 @@ import type { NodeKind } from "@shaclmate/shacl-ast";
 
 import { Memoize } from "typescript-memoize";
 
-import type { TsFeature } from "../generators/ts/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -32,24 +31,9 @@ export abstract class AbstractCompoundType<
   readonly #members: MemberT[] = [];
 
   /**
-   * TypeScript features to generate.
-   */
-  readonly #tsFeatures: ReadonlySet<TsFeature>;
-
-  /**
    * Type discriminant
    */
   abstract override readonly kind: "IntersectionType" | "UnionType";
-
-  constructor({
-    tsFeatures,
-    ...superParameters
-  }: {
-    tsFeatures: ReadonlySet<TsFeature>;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
-    super(superParameters);
-    this.#tsFeatures = tsFeatures;
-  }
 
   get members(): readonly MemberT[] {
     return this.#members;
@@ -68,47 +52,6 @@ export abstract class AbstractCompoundType<
 
   override get recursive(): boolean {
     return this.members.some((member) => member.type.recursive);
-  }
-
-  @Memoize()
-  get tsFeatures(): ReadonlySet<TsFeature> {
-    // Members of the compound type must have the same tsFeatures.
-    // They must also have distinct RDF types or no RDF types at all.
-    const mergedMemberTsFeatures = new Set<TsFeature>();
-    for (let memberI = 0; memberI < this.members.length; memberI++) {
-      const member = this.members[memberI];
-
-      switch (member.type.kind) {
-        case "IntersectionType":
-        case "ObjectType":
-        case "UnionType":
-          break;
-        default:
-          continue;
-      }
-
-      if (memberI === 0) {
-        for (const tsFeature of member.type.tsFeatures) {
-          mergedMemberTsFeatures.add(tsFeature);
-        }
-      }
-
-      if (member.type.tsFeatures.size !== mergedMemberTsFeatures.size) {
-        throw new Error(
-          `${this} has a member (${member}) with different tsFeatures than the other members`,
-        );
-      }
-
-      for (const tsFeature of member.type.tsFeatures) {
-        if (!mergedMemberTsFeatures.has(tsFeature)) {
-          throw new Error(
-            `${this} has a member (${member}) with different tsFeatures than the other members`,
-          );
-        }
-      }
-    }
-
-    return this.#tsFeatures;
   }
 
   addMember(member: MemberT): void {

@@ -139,7 +139,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       ...super.schemaObject,
       // comment: this.comment.map(JSON.stringify).extract(),
       // description: this.description.map(JSON.stringify).extract(),
-      path: this.namedObjectType.features.has("rdf")
+      path: this.configuration.features.has("rdf")
         ? this.propertyPathToCode(this.path)
         : undefined,
       // label: this.label.map(JSON.stringify).extract(),

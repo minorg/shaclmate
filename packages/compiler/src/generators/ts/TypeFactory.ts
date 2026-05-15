@@ -93,7 +93,6 @@ export class TypeFactory {
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
-      features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
       identifierType,
       label: astType.label,
@@ -203,7 +202,6 @@ export class TypeFactory {
     const namedObjectUnionType = new NamedObjectUnionType({
       comment: astType.comment,
       configuration: this.configuration,
-      features: astType.tsFeatures,
       identifierType: this.createIdentifierType(
         ast.ObjectCompoundType.identifierType(astType),
       ),
@@ -279,7 +277,6 @@ export class TypeFactory {
           new NamedUnionType({
             comment: astType.comment,
             configuration: this.configuration,
-            features: astType.tsFeatures,
             identifierType: Maybe.empty(),
             label: astType.label,
             logger: this.logger,

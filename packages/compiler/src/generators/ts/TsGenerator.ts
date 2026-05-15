@@ -31,7 +31,10 @@ export class TsGenerator implements Generator {
     if (!configuration) {
       configuration = TsGenerator.Configuration.default_;
     }
-    this.configuration = configuration;
+    this.configuration = {
+      ...configuration,
+      features: TsGenerator.Configuration.inferFeatures(configuration.features),
+    };
     this.logger = logger;
     this.reusables = new Reusables({ configuration, logger });
     this.typeFactory = new TypeFactory({
@@ -190,15 +193,7 @@ export class TsGenerator implements Generator {
     return new NamedObjectUnionType({
       comment: Maybe.empty(),
       configuration: this.configuration,
-      features: filteredNamedObjectTypes.reduce((features, namedObjectType) => {
-        for (const feature of namedObjectType.features) {
-          features.add(feature);
-        }
-        features.delete("graphql");
-        return features;
-      }, new Set<TsFeature>()),
       identifierType,
-
       label: Maybe.empty(),
       logger: this.logger,
       members: filteredNamedObjectTypes.map((namedObjectType) => ({
@@ -223,5 +218,19 @@ export namespace TsGenerator {
       features: new Set(["create", "equals", "hash", "json", "rdf"]),
       syntheticNamePrefix: "$",
     };
+
+    export function inferFeatures(features: ReadonlySet<TsFeature>) {
+      const inferredFeatures = new Set(features);
+
+      if (inferredFeatures.has("graphql") || inferredFeatures.has("sparql")) {
+        inferredFeatures.add("rdf");
+      }
+
+      if (inferredFeatures.has("json") || inferredFeatures.has("rdf")) {
+        inferredFeatures.add("create");
+      }
+
+      return inferredFeatures;
+    }
   }
 }

@@ -51,7 +51,7 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
 ${joinCode(
   [...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
     (namedObjectType): readonly Code[] => {
-      if (!namedObjectType.features.has("sparql")) {
+      if (!this.configuration.features.has("sparql")) {
         return Object.values(
           unsupportedObjectSetMethodDeclarations.call(this, {
             namedObjectType,

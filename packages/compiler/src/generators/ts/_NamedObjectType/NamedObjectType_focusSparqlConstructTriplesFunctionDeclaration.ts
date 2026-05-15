@@ -12,7 +12,7 @@ const variables = {
 export function NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.features.has("sparql")) {
+  if (!this.configuration.features.has("sparql")) {
     return Maybe.empty();
   }
 

@@ -78,16 +78,15 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
       ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
-        features: this.features,
+        configuration: this.configuration,
         filterType: this.filterType,
-
         name: this.name,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
         .orDefault({}),
       ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
-        features: this.features,
+        configuration: this.configuration,
         filterType: this.filterType,
         name: this.name,
         reusables: this.reusables,
@@ -102,7 +101,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
     string,
     Code
   > {
-    if (!this.features.has("sparql")) {
+    if (!this.configuration.features.has("sparql")) {
       return {};
     }
 
@@ -125,7 +124,7 @@ export function focusSparqlConstructTriples({ filter, focusIdentifier, variableP
     string,
     Code
   > {
-    if (!this.features.has("sparql")) {
+    if (!this.configuration.features.has("sparql")) {
       return {};
     }
 
@@ -164,7 +163,7 @@ if (focusIdentifier.termType === "Variable") {
   }
 
   private get fromRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.features.has("rdf")) {
+    if (!this.configuration.features.has("rdf")) {
       return {};
     }
 
@@ -185,7 +184,7 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
   }
 
   private get graphqlTypeVariableStatement(): Record<string, Code> {
-    if (!this.features.has("graphql")) {
+    if (!this.configuration.features.has("graphql")) {
       return {};
     }
 
@@ -297,7 +296,7 @@ ${{
   }
 
   private get toRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.features.has("rdf")) {
+    if (!this.configuration.features.has("rdf")) {
       return {};
     }
 

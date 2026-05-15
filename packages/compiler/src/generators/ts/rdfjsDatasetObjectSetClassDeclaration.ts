@@ -62,7 +62,7 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
     [
       ...[...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
         (namedObjectType): readonly Code[] => {
-          if (!namedObjectType.features.has("rdf")) {
+          if (!this.configuration.features.has("rdf")) {
             return Object.values(
               unsupportedObjectSetMethodDeclarations.call(this, {
                 namedObjectType,

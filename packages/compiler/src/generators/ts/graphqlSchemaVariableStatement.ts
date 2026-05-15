@@ -93,17 +93,16 @@ async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${nam
 
 export function graphqlSchemaVariableStatement(
   this: TsGenerator,
-  parameters: {
+  {
+    namedObjectTypes,
+    namedObjectUnionTypes,
+  }: {
     namedObjectTypes: readonly NamedObjectType[];
     namedObjectUnionTypes: NamedObjectUnionType[];
   },
 ): Maybe<Code> {
-  const namedObjectTypes = parameters.namedObjectTypes.filter(
-    (namedObjectType) =>
-      namedObjectType.features.has("graphql") && !namedObjectType.synthetic,
-  );
-  const namedObjectUnionTypes = parameters.namedObjectUnionTypes.filter(
-    (namedObjectUnionType) => namedObjectUnionType.features.has("graphql"),
+  namedObjectTypes = namedObjectTypes.filter(
+    (namedObjectType) => !namedObjectType.synthetic,
   );
 
   if (namedObjectTypes.length === 0) {

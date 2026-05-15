@@ -2,10 +2,8 @@ import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import type { TsFeature } from "../generators/ts/TsFeature.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeAstTypeName } from "./shapeAstTypeName.js";
 import { transformShapeToAstType } from "./transformShapeToAstType.js";
@@ -20,21 +18,19 @@ export function transformShapeToAstCompoundType(
 ): Either<Error, Maybe<ast.Type>> {
   shapeStack.push(shape);
   try {
-    return Eithers.chain3(
+    return Eithers.chain2(
       Either.sequence(
         shape.and
           .orDefault([])
           .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
-      shape.$type === "NodeShape"
-        ? nodeShapeTsFeatures.call(this, shape)
-        : Either.of(new Set<TsFeature>()),
+
       Either.sequence(
         shape.xone
           .orDefault([])
           .map((shapeIdentifier) => this.shapesGraph.shape(shapeIdentifier)),
       ),
-    ).chain(([andConstraintShapes, tsFeatures, xoneConstraintShapes]) => {
+    ).chain(([andConstraintShapes, xoneConstraintShapes]) => {
       let compoundTypeKind: "IntersectionType" | "UnionType";
       // Distinguish constraints that take arbitrary shapes from those that only take node shapes
       // With the latter we'll do special transformations.
@@ -62,7 +58,6 @@ export function transformShapeToAstCompoundType(
         label: shape.label,
         name: shapeAstTypeName(shape),
         shapeIdentifier: shape.$identifier(),
-        tsFeatures,
       });
 
       if (memberShapes.length === 1) {
