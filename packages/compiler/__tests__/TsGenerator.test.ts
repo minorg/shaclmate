@@ -98,11 +98,16 @@ describe("TsGenerator", () => {
       ...tsFeaturesAll.map((_, i) => tsFeaturesAll.filter((_, j) => i !== j)),
     ] as const) {
       it(tsFeatureCombination.join("+"), () => {
-        const source = new TsGenerator({ logger }).generate(
+        const source = new TsGenerator({
+          configuration: {
+            ...TsGenerator.Configuration.default_,
+            features: new Set(tsFeatureCombination),
+          },
+          logger,
+        }).generate(
           new ShapesGraphToAstTransformer({
             logger,
             shapesGraph,
-            tsFeaturesDefault: new Set(tsFeatureCombination),
           })
             .transform()
             .unsafeCoerce(),

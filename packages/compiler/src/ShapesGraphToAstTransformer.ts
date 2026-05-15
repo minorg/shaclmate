@@ -7,7 +7,6 @@ import type { Logger } from "ts-log";
 import { ShapeStack } from "./_ShapesGraphToAstTransformer/ShapeStack.js";
 import { transformShapeToAstType } from "./_ShapesGraphToAstTransformer/transformShapeToAstType.js";
 import type * as ast from "./ast/index.js";
-import type { TsFeature } from "./generators/ts/TsFeature.js";
 import type * as input from "./input/index.js";
 
 interface RelatedNodeShapes {
@@ -154,16 +153,13 @@ export class ShapesGraphToAstTransformer {
     BlankNode | NamedNode,
     RelatedNodeShapes
   > = new TermMap();
-  protected tsFeaturesDefault: ReadonlySet<TsFeature>;
 
   constructor({
     logger,
     shapesGraph,
-    tsFeaturesDefault,
   }: {
     logger: Logger;
     shapesGraph: input.ShapesGraph;
-    tsFeaturesDefault?: ReadonlySet<TsFeature>;
   }) {
     this.logger = logger;
     this.relatedNodeShapesByIdentifier = relatedNodeShapes({
@@ -171,9 +167,6 @@ export class ShapesGraphToAstTransformer {
       shapesGraph,
     });
     this.shapesGraph = shapesGraph;
-    this.tsFeaturesDefault =
-      tsFeaturesDefault ??
-      new Set(["create", "equals", "hash", "json", "rdf"] as const);
   }
 
   transform(): Either<Error, ast.Ast> {
