@@ -721,26 +721,6 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
     return Maybe.empty();
   }
 
-  protected inlineHashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return this.members.map(
-      ({ type, unwrap, typeCheck }) =>
-        code`if (${typeCheck(variables.value)}) { ${joinCode(
-          type
-            .hashStatements({
-              depth: depth + 1,
-              variables: {
-                hasher: variables.hasher,
-                value: unwrap(variables.value),
-              },
-            })
-            .concat(),
-        )} }`,
-    );
-  }
-
   private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];
 }
 

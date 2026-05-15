@@ -154,27 +154,6 @@ export class OptionType<
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`${variables.value}.ifJust((value${depth}) => { ${joinCode(
-        this.itemType
-          .hashStatements({
-            depth: depth + 1,
-            variables: {
-              hasher: variables.hasher,
-              value: code`value${depth}`,
-            },
-          })
-          .concat(),
-      )} });`,
-    ];
-  }
-
   @Memoize()
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],

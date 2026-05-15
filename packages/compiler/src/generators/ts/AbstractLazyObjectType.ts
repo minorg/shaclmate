@@ -121,19 +121,6 @@ export abstract class AbstractLazyObjectType<
     };
   }
 
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return this.partialType.hashStatements({
-      depth: depth + 1,
-      variables: {
-        ...variables,
-        value: code`${variables.value}.${this.runtimeClass.partialPropertyName}`,
-      },
-    });
-  }
-
   override jsonSchema(
     parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {

@@ -187,14 +187,6 @@ export class DefaultValueType<
     return this.itemType.graphqlResolveExpression(parameters);
   }
 
-  override hashStatements(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["hashStatements"]
-    >[0],
-  ): readonly Code[] {
-    return this.itemType.hashStatements(parameters);
-  }
-
   override jsonSchema(
     parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {

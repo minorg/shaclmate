@@ -29,17 +29,6 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
-    return [
-      ...super.hashStatements({ depth, variables }),
-      code`${variables.hasher}.update(${variables.value}.datatype.value);`,
-      code`${variables.hasher}.update(${variables.value}.language);`,
-    ];
-  }
-
   override jsonSchema({
     includeDiscriminantProperty,
   }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {

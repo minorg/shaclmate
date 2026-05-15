@@ -240,17 +240,6 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * Statements that use hasher.update to hash a property value of this type.
-   */
-  abstract hashStatements(parameters: {
-    depth: number;
-    variables: {
-      hasher: Code;
-      value: Code;
-    };
-  }): readonly Code[];
-
-  /**
    * Zod schema for the JSON type of this type.
    *
    * This method is called in two contexts:

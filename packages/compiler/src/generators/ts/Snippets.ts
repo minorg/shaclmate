@@ -47,6 +47,7 @@ import { snippets_fromRdfPreferredLanguages } from "./_snippets/snippets_fromRdf
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
 import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
 import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
+import { snippets_hashBigDecimal } from "./_snippets/snippets_hashBigDecimal.js";
 import { snippets_hashDate } from "./_snippets/snippets_hashDate.js";
 import { snippets_hashDateTime } from "./_snippets/snippets_hashDateTime.js";
 import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
@@ -523,8 +524,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get hashMaybe(): Snippet {
-    return this.snippet(snippets_hashMaybe);
+  get hashBigDecimal(): Snippet {
+    return this.snippet(snippets_hashBigDecimal);
   }
 
   @Memoize()
@@ -535,6 +536,11 @@ export class Snippets {
   @Memoize()
   get hashDateTime(): Snippet {
     return this.snippet(snippets_hashDateTime);
+  }
+
+  @Memoize()
+  get hashMaybe(): Snippet {
+    return this.snippet(snippets_hashMaybe);
   }
 
   @Memoize()

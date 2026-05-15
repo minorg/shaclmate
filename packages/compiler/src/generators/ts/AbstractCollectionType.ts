@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -225,27 +225,6 @@ export abstract class AbstractCollectionType<
     AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
   >[0]): Code {
     return variables.value;
-  }
-
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`for (const item${depth} of ${variables.value}) { ${joinCode(
-        this.itemType
-          .hashStatements({
-            depth: depth + 1,
-            variables: {
-              hasher: variables.hasher,
-              value: code`item${depth}`,
-            },
-          })
-          .concat(),
-      )} }`,
-    ];
   }
 
   override jsonSchema(

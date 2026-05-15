@@ -380,12 +380,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return variables.value;
   }
 
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return [code`${this.name}.hash(${variables.value}, ${variables.hasher});`];
-  }
-
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {

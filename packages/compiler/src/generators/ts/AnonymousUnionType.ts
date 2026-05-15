@@ -62,12 +62,6 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     throw new Error("not implemented");
   }
 
-  override hashStatements(
-    parameters: Parameters<AbstractType["hashStatements"]>[0],
-  ): readonly Code[] {
-    return this.inlineHashStatements(parameters);
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {
