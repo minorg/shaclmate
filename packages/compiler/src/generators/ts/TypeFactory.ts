@@ -35,6 +35,7 @@ import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
 
@@ -51,10 +52,20 @@ export class TypeFactory {
     BlankNode | NamedNode,
     NamedObjectType
   > = new TermMap();
+  private readonly configuration: TsGenerator.Configuration;
   private readonly logger: Logger;
   private readonly reusables: Reusables;
 
-  constructor({ logger, reusables }: { logger: Logger; reusables: Reusables }) {
+  constructor({
+    configuration,
+    logger,
+    reusables,
+  }: {
+    configuration: TsGenerator.Configuration;
+    logger: Logger;
+    reusables: Reusables;
+  }) {
+    this.configuration = configuration;
     this.logger = logger;
     this.reusables = reusables;
   }
@@ -74,11 +85,11 @@ export class TypeFactory {
 
     const namedObjectUnionType = new NamedObjectUnionType({
       comment: astType.comment,
+      configuration: this.configuration,
       features: astType.tsFeatures,
       identifierType: this.createIdentifierType(
         ast.ObjectCompoundType.identifierType(astType),
       ),
-
       label: astType.label,
       logger: this.logger,
       members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
@@ -118,10 +129,10 @@ export class TypeFactory {
 
     const namedObjectType = new NamedObjectType({
       comment: astType.comment,
+      configuration: this.configuration,
       extern: astType.extern,
       features: astType.tsFeatures,
       fromRdfType: astType.fromRdfType,
-
       identifierType,
       label: astType.label,
       lazyAncestorObjectTypes: () =>
@@ -260,9 +271,9 @@ export class TypeFactory {
         (name) =>
           new NamedUnionType({
             comment: astType.comment,
+            configuration: this.configuration,
             features: astType.tsFeatures,
             identifierType: Maybe.empty(),
-
             label: astType.label,
             logger: this.logger,
             members: astType.members.map((member) => ({
@@ -278,9 +289,9 @@ export class TypeFactory {
         () =>
           new AnonymousUnionType({
             comment: astType.comment,
+            configuration: this.configuration,
             label: astType.label,
             identifierType: Maybe.empty(),
-
             logger: this.logger,
             members: astType.members.map((member) => ({
               discriminantValue: member.discriminantValue,
@@ -295,7 +306,7 @@ export class TypeFactory {
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
     return new BlankNodeType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       label: astType.label,
       logger: this.logger,
       reusables: this.reusables,
@@ -309,8 +320,8 @@ export class TypeFactory {
     invariant(DefaultValueType.isItemType(itemType));
     return new DefaultValueType({
       comment: astType.comment,
+      configuration: this.configuration,
       defaultValue: astType.defaultValue,
-
       itemType,
       label: astType.label,
       logger: this.logger,
@@ -327,7 +338,7 @@ export class TypeFactory {
       case "IdentifierType":
         return new IdentifierType({
           comment: astType.comment,
-
+          configuration: this.configuration,
           label: astType.label,
           logger: this.logger,
           reusables: this.reusables,
@@ -340,8 +351,8 @@ export class TypeFactory {
   private createIriType(astType: ast.IriType): IriType {
     return new IriType({
       comment: astType.comment,
+      configuration: this.configuration,
       hasValues: astType.hasValues,
-
       in_: astType.in_,
       label: astType.label,
       logger: this.logger,
@@ -352,7 +363,7 @@ export class TypeFactory {
   private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
     return new LazyObjectOptionType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       label: astType.label,
       logger: this.logger,
       partialType: this.createOptionType(astType.partialType) as OptionType<
@@ -368,7 +379,7 @@ export class TypeFactory {
   private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
     return new LazyObjectSetType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       label: astType.label,
       logger: this.logger,
       partialType: this.createSetType(astType.partialType) as SetType<
@@ -384,7 +395,7 @@ export class TypeFactory {
   private createLazyObjectType(astType: ast.LazyObjectType): Type {
     return new LazyObjectType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       label: astType.label,
       logger: this.logger,
       partialType: this.createType(astType.partialType) as
@@ -402,8 +413,8 @@ export class TypeFactory {
     invariant(ListType.isItemType(itemType));
     return new ListType({
       comment: astType.comment,
+      configuration: this.configuration,
       identifierNodeKind: astType.identifierNodeKind,
-
       itemType,
       label: astType.label,
       logger: this.logger,
@@ -447,8 +458,8 @@ export class TypeFactory {
           case "bigdecimal":
             return new BigDecimalType({
               comment: astType.comment,
+              configuration: this.configuration,
               hasValues: astType.hasValues,
-
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
@@ -458,9 +469,9 @@ export class TypeFactory {
           case "bigint":
             return new BigIntType({
               comment: astType.comment,
+              configuration: this.configuration,
               datatype,
               hasValues: astType.hasValues,
-
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
@@ -473,9 +484,9 @@ export class TypeFactory {
           case "boolean":
             return new BooleanType({
               comment: astType.comment,
+              configuration: this.configuration,
               datatype,
               hasValues: astType.hasValues,
-
               label: astType.label,
               languageIn: [],
               in_: astType.in_,
@@ -491,9 +502,9 @@ export class TypeFactory {
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
             )({
               comment: astType.comment,
+              configuration: this.configuration,
               datatype,
               hasValues: astType.hasValues,
-
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
@@ -511,9 +522,9 @@ export class TypeFactory {
               datatypeDefinition.kind === "float" ? FloatType : IntType
             )({
               comment: astType.comment,
+              configuration: this.configuration,
               datatype,
               hasValues: astType.hasValues,
-
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
@@ -529,9 +540,9 @@ export class TypeFactory {
             if (!datatype.equals(rdf.langString)) {
               return new StringType({
                 comment: astType.comment,
+                configuration: this.configuration,
                 datatype,
                 hasValues: astType.hasValues,
-
                 in_: astType.in_,
                 label: astType.label,
                 languageIn: astType.languageIn,
@@ -561,8 +572,8 @@ export class TypeFactory {
 
     return new LiteralType({
       comment: astType.comment,
+      configuration: this.configuration,
       hasValues: astType.hasValues,
-
       in_: astType.in_,
       label: astType.label,
       languageIn: astType.languageIn,
@@ -617,7 +628,7 @@ export class TypeFactory {
     invariant(OptionType.isItemType(itemType));
     return new OptionType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       itemType,
       label: astType.label,
       logger: this.logger,
@@ -630,7 +641,7 @@ export class TypeFactory {
     invariant(SetType.isItemType(itemType));
     return new SetType({
       comment: astType.comment,
-
+      configuration: this.configuration,
       itemType,
       label: astType.label,
       logger: this.logger,
@@ -643,8 +654,8 @@ export class TypeFactory {
   private createTermType(astType: ast.TermType) {
     return new TermType({
       comment: astType.comment,
+      configuration: this.configuration,
       hasValues: astType.hasValues,
-
       in_: astType.in_,
       label: astType.label,
       logger: this.logger,

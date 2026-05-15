@@ -21,13 +21,22 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export class TsGenerator implements Generator {
   private readonly typeFactory: TypeFactory;
 
+  protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
 
-  constructor({ logger }: { logger: Logger }) {
+  constructor({
+    configuration,
+    logger,
+  }: { configuration?: TsGenerator.Configuration; logger: Logger }) {
+    if (!configuration) {
+      configuration = TsGenerator.Configuration.default_;
+    }
+    this.configuration = configuration;
     this.logger = logger;
-    this.reusables = new Reusables({ logger });
+    this.reusables = new Reusables({ configuration, logger });
     this.typeFactory = new TypeFactory({
+      configuration,
       logger,
       reusables: this.reusables,
     });
@@ -149,6 +158,7 @@ export class TsGenerator implements Generator {
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
         comment: Maybe.empty(),
+        configuration: this.configuration,
         label: Maybe.empty(),
         logger: this.logger,
         reusables: this.reusables,
@@ -158,6 +168,7 @@ export class TsGenerator implements Generator {
         case "BlankNode":
           identifierType = new BlankNodeType({
             comment: Maybe.empty(),
+            configuration: this.configuration,
             label: Maybe.empty(),
             logger: this.logger,
             reusables: this.reusables,
@@ -166,6 +177,7 @@ export class TsGenerator implements Generator {
         case "IRI":
           identifierType = new IriType({
             comment: Maybe.empty(),
+            configuration: this.configuration,
             hasValues: [],
             in_: [],
             label: Maybe.empty(),
@@ -178,6 +190,7 @@ export class TsGenerator implements Generator {
 
     return new NamedObjectUnionType({
       comment: Maybe.empty(),
+      configuration: this.configuration,
       features: filteredNamedObjectTypes.reduce((features, namedObjectType) => {
         for (const feature of namedObjectType.features) {
           features.add(feature);
@@ -197,5 +210,19 @@ export class TsGenerator implements Generator {
       recursive: false,
       reusables: this.reusables,
     });
+  }
+}
+
+export namespace TsGenerator {
+  export interface Configuration {
+    readonly features: ReadonlySet<TsFeature>;
+    readonly syntheticNamePrefix: string;
+  }
+
+  export namespace Configuration {
+    export const default_: Configuration = {
+      features: new Set(["create", "equals", "hash", "json", "rdf"]),
+      syntheticNamePrefix: "$",
+    };
   }
 }

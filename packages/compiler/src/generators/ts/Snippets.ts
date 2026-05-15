@@ -116,14 +116,24 @@ import type { Imports } from "./Imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Snippet } from "./Snippet.js";
 import type { SnippetFactory } from "./SnippetFactory.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class Snippets {
-  protected readonly imports: Imports;
-  protected readonly logger: Logger;
+  private readonly configuration: TsGenerator.Configuration;
+  private readonly imports: Imports;
+  private readonly logger: Logger;
 
-  constructor({ imports, logger }: { imports: Imports; logger: Logger }) {
+  constructor({
+    configuration,
+    imports,
+    logger,
+  }: {
+    configuration: TsGenerator.Configuration;
+    imports: Imports;
+    logger: Logger;
+  }) {
+    this.configuration = configuration;
     this.imports = imports;
     this.logger = logger;
   }
@@ -720,7 +730,7 @@ export class Snippets {
         snippets: this,
       }),
       snippets: this,
-      syntheticNamePrefix,
+      syntheticNamePrefix: this.configuration.syntheticNamePrefix,
     });
   }
 }
