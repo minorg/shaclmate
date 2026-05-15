@@ -3190,6 +3190,20 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
+  export const GraphQL = new GraphQLUnionType({
+    description: undefined,
+    name: "$Object",
+    resolveType: (value: $Object) => value.$type,
+    types: [
+      Child.GraphQL,
+      Parent.GraphQL,
+      Nested.GraphQL,
+      UnionMember1.GraphQL,
+      UnionMember2.GraphQL,
+      $DefaultPartial.GraphQL,
+    ],
+  });
+
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
@@ -4747,6 +4761,88 @@ export const graphqlSchema = new GraphQLSchema({
       unionCount: {
         resolve: async (_source, _args, { objectSet }): Promise<number> =>
           (await objectSet.unionCount()).unsafeCoerce(),
+        type: new GraphQLNonNull(GraphQLInt),
+      },
+      $object: {
+        args: { identifier: { type: new GraphQLNonNull(GraphQLID) } },
+        resolve: async (
+          _source,
+          args: { identifier: string },
+          { objectSet },
+        ): Promise<$Object> =>
+          (
+            await EitherAsync<Error, $Object>(async ({ liftEither }) =>
+              liftEither(
+                await objectSet.$object(
+                  await liftEither($Object.Identifier.parse(args.identifier)),
+                ),
+              ),
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull($Object.GraphQL),
+      },
+      $objectIdentifiers: {
+        args: { limit: { type: GraphQLInt }, offset: { type: GraphQLInt } },
+        resolve: async (
+          _source,
+          args: { limit: number | null; offset: number | null },
+          { objectSet },
+        ): Promise<readonly string[]> =>
+          (
+            await objectSet.$objectIdentifiers({
+              limit: args.limit !== null ? args.limit : undefined,
+              offset: args.offset !== null ? args.offset : undefined,
+            })
+          )
+            .unsafeCoerce()
+            .map($Object.Identifier.stringify),
+        type: new GraphQLNonNull(new GraphQLList(GraphQLString)),
+      },
+      $objects: {
+        args: {
+          identifiers: { type: new GraphQLList(new GraphQLNonNull(GraphQLID)) },
+          limit: { type: GraphQLInt },
+          offset: { type: GraphQLInt },
+        },
+        resolve: async (
+          _source,
+          args: {
+            identifiers: readonly string[] | null;
+            limit: number | null;
+            offset: number | null;
+          },
+          { objectSet },
+        ): Promise<readonly $Object[]> =>
+          (
+            await EitherAsync<Error, readonly $Object[]>(
+              async ({ liftEither }) => {
+                let filter: $Object.Filter | undefined;
+                if (args.identifiers) {
+                  const identifiers: $Object.Identifier[] = [];
+                  for (const identifierArg of args.identifiers) {
+                    identifiers.push(
+                      await liftEither($Object.Identifier.parse(identifierArg)),
+                    );
+                  }
+                  filter = { $identifier: { in: identifiers } };
+                }
+                return await liftEither(
+                  await objectSet.$objects({
+                    filter,
+                    limit: args.limit !== null ? args.limit : undefined,
+                    offset: args.offset !== null ? args.offset : undefined,
+                  }),
+                );
+              },
+            )
+          ).unsafeCoerce(),
+        type: new GraphQLNonNull(
+          new GraphQLList(new GraphQLNonNull($Object.GraphQL)),
+        ),
+      },
+      $objectCount: {
+        resolve: async (_source, _args, { objectSet }): Promise<number> =>
+          (await objectSet.$objectCount()).unsafeCoerce(),
         type: new GraphQLNonNull(GraphQLInt),
       },
     },

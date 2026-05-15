@@ -4,6 +4,7 @@ import type {
   DatasetCore,
   Literal,
   NamedNode,
+  Quad,
   Quad_Graph,
   Variable,
 } from "@rdfjs/types";
@@ -16,7 +17,15 @@ import {
 } from "@rdfx/resource";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
-import { Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
+import {
+  Either,
+  EitherAsync,
+  Left,
+  Maybe,
+  NonEmptyList,
+  Right,
+} from "purify-ts";
+import * as sparqljs from "sparqljs";
 import { z } from "zod";
 
 type $_FromRdfResourceFunction<T> = (
@@ -100,6 +109,36 @@ function $arrayEquals<T>(
   return $EqualsResult.Equal;
 }
 
+function $arrayIntersection<T>(
+  left: readonly T[],
+  right: readonly T[],
+): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }
+    }
+  }
+  return [...intersection];
+}
+
 /**
  * Create a Literal from a BigDecimal.
  */
@@ -107,7 +146,102 @@ function $bigDecimalLiteral(value: BigDecimal): Literal {
   return dataFactory.literal(value.toFixed(), $RdfVocabularies.xsd.decimal);
 }
 
+const $bigDecimalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $NumericFilter<BigDecimal>,
+  $NumericSchema<BigDecimal>
+> = ({ filter, propertyPatterns, schema, valueVariable }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.in !== undefined && filter.in.length > 0) {
+      filterPatterns.push({
+        expression: {
+          args: [valueVariable, filter.in.map($bigDecimalLiteral)],
+          operator: "in",
+          type: "operation",
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [valueVariable, $bigDecimalLiteral(filter.maxExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [valueVariable, $bigDecimalLiteral(filter.maxInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [valueVariable, $bigDecimalLiteral(filter.minExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [valueVariable, $bigDecimalLiteral(filter.minInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  const schemaPatterns: $SparqlPattern[] = [];
+  if (schema.in && schema.in.length > 0) {
+    schemaPatterns.push({
+      expression: {
+        args: [valueVariable, schema.in.map($bigDecimalLiteral)],
+        operator: "in",
+        type: "operation",
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  return (propertyPatterns as readonly $SparqlPattern[])
+    .concat(schemaPatterns)
+    .concat(filterPatterns);
+};
+
 interface $BlankNodeFilter {}
+
+interface $BlankNodeSchema {
+  readonly kind: "BlankNode";
+}
+
+const $blankNodeSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $BlankNodeFilter,
+  $BlankNodeSchema
+> = ({ propertyPatterns }) => propertyPatterns;
 
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
@@ -123,10 +257,46 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
+interface $BooleanSchema {
+  readonly kind: "Boolean";
+  readonly in?: readonly boolean[];
+}
+
+const $booleanSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $BooleanFilter,
+  $BooleanSchema
+> = ({ filter, valueVariable, ...otherParameters }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.value !== undefined) {
+      filterPatterns.push(
+        $sparqlValueInPattern({
+          lift: true,
+          valueVariable,
+          valueIn: [filter.value],
+        }),
+      );
+    }
+  }
+
+  return $termSchemaSparqlPatterns({
+    ...otherParameters,
+    filterPatterns,
+    valueVariable,
+  });
+};
+
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
+
+interface $CollectionSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "List" | "Set";
+  readonly minCount?: number;
+}
 
 /**
  * Remove undefined values from a record.
@@ -164,11 +334,182 @@ interface $DateFilter {
   readonly minInclusive?: Date;
 }
 
+interface $DateSchema {
+  in?: readonly Date[];
+  kind: "Date" | "DateTime";
+}
+
+const $dateSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $DateFilter,
+  $DateSchema
+> = ({ filter, schema, valueVariable, ...otherParameters }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.in !== undefined && filter.in.length > 0) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [
+            valueVariable,
+            filter.in.map((inValue) =>
+              $literalFactory.date(
+                inValue,
+                schema.kind === "Date"
+                  ? $RdfVocabularies.xsd.date
+                  : $RdfVocabularies.xsd.dateTime,
+              ),
+            ),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.maxExclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.maxInclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.minExclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [
+            valueVariable,
+            $literalFactory.date(
+              filter.minInclusive,
+              schema.kind === "Date"
+                ? $RdfVocabularies.xsd.date
+                : $RdfVocabularies.xsd.dateTime,
+            ),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  return $termSchemaSparqlPatterns({
+    ...otherParameters,
+    filterPatterns,
+    schema,
+    valueVariable,
+  });
+};
+
 /**
  * Decidoe a BigDecimal from a Literal.
  */
 function $decodeBigDecimalLiteral(literal: Literal): Either<Error, BigDecimal> {
   return Either.encase(() => new BigDecimal(literal.value));
+}
+
+function $deduplicateSparqlPatterns(
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const deduplicatedPatterns: $SparqlPattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}
+
+interface $DefaultValueSchema<ItemSchemaT> {
+  readonly defaultValue: Literal | NamedNode;
+  readonly item: () => ItemSchemaT;
+  readonly kind: "DefaultValue";
+}
+
+function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $ValueSparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlWherePatternsFunction<
+  ItemFilterT,
+  $DefaultValueSchema<ItemSchemaT>
+> {
+  return ({ schema, ...otherParameters }) => {
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
+      itemSparqlWherePatternsFunction({
+        ...otherParameters,
+        schema: schema.item(),
+      }),
+    );
+    return [
+      { patterns: itemSparqlWherePatterns.concat(), type: "optional" },
+      ...liftSparqlPatterns,
+    ];
+  };
 }
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
@@ -483,6 +824,21 @@ function $filterTerm(
   return true;
 }
 
+type $FocusSparqlConstructTriplesFunction<FilterT> = (parameters: {
+  filter: FilterT | undefined;
+  focusIdentifier: NamedNode | Variable;
+  ignoreRdfType: boolean;
+  variablePrefix: string;
+}) => readonly sparqljs.Triple[];
+
+type $FocusSparqlWherePatternsFunction<FilterT> = (parameters: {
+  filter: FilterT | undefined;
+  focusIdentifier: NamedNode | Variable;
+  ignoreRdfType: boolean;
+  preferredLanguages: readonly string[] | undefined;
+  variablePrefix: string;
+}) => readonly $SparqlPattern[];
+
 function $fromRdfLanguageIn(
   values: Resource.Values,
   languageIn: readonly string[],
@@ -566,6 +922,10 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
+interface $IdentifierSchema {
+  readonly kind: "Identifier";
+}
+
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -591,9 +951,67 @@ class $IdentifierSet {
   }
 }
 
+const $identifierSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $IdentifierFilter,
+  $IdentifierSchema
+> = ({ filter, propertyPatterns, valueVariable }) => {
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
+
+  if (filter) {
+    if (filter.in !== undefined) {
+      const valueIn = filter.in.filter(
+        (identifier) => identifier.termType === "NamedNode",
+      );
+      if (valueIn.length > 0) {
+        patterns.push(
+          $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
+        );
+      }
+    }
+
+    if (filter.type !== undefined) {
+      patterns.push({
+        expression: {
+          type: "operation",
+          operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
+          args: [valueVariable],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  return patterns;
+};
+
 interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
+
+interface $IriSchema {
+  readonly in?: readonly NamedNode[];
+  readonly kind: "Iri";
+}
+
+const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $IriFilter,
+  $IriSchema
+> = ({ filter, valueVariable, ...otherParameters }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter?.in !== undefined && filter.in.length > 0) {
+    filterPatterns.push(
+      $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
+    );
+  }
+
+  return $termSchemaSparqlPatterns({
+    ...otherParameters,
+    filterPatterns,
+    valueVariable,
+  });
+};
 
 function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
   return Array.isArray(x) && x.every((z) => typeof z === "bigint");
@@ -752,11 +1170,298 @@ export class $LazyObjectSet<
   }
 }
 
+function $liftSparqlPatterns(
+  patterns: Iterable<$SparqlPattern>,
+): [readonly $SparqlPattern[], readonly $SparqlFilterPattern[]] {
+  const liftedPatterns: $SparqlFilterPattern[] = [];
+  const unliftedPatterns: $SparqlPattern[] = [];
+  for (const pattern of patterns) {
+    if (pattern.type === "filter" && pattern.lift) {
+      liftedPatterns.push(pattern);
+    } else {
+      unliftedPatterns.push(pattern);
+    }
+  }
+  return [unliftedPatterns, liftedPatterns];
+}
+
+function $listSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
+  itemSparqlConstructTriplesFunction: $ValueSparqlConstructTriplesFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlConstructTriplesFunction<
+  $CollectionFilter<ItemFilterT>,
+  $CollectionSchema<ItemSchemaT>
+> {
+  return ({
+    filter,
+    schema,
+    valueVariable: listVariable,
+    variablePrefix: variablePrefixPrefix,
+  }) => {
+    let triples: sparqljs.Triple[] = [];
+    const variable = (suffix: string) =>
+      dataFactory.variable!(`${variablePrefixPrefix}${suffix}`);
+    const variablePrefix = (suffix: string) =>
+      `${variablePrefixPrefix}${suffix}`;
+
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      triples.push({
+        subject: listVariable,
+        predicate: $RdfVocabularies.rdf.first,
+        object: item0Variable,
+      });
+      triples = triples.concat(
+        itemSparqlConstructTriplesFunction({
+          filter,
+          ignoreRdfType: false,
+          schema: schema.item(),
+          valueVariable: item0Variable,
+          variablePrefix: variablePrefix("Item0"),
+        }),
+      );
+    }
+    // ?list rdf:rest ?rest0
+    triples.push({
+      subject: listVariable,
+      predicate: $RdfVocabularies.rdf.rest,
+      object: variable("Rest0"),
+    });
+
+    // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
+    const restNVariable = variable("RestN");
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      triples.push({
+        subject: restNVariable,
+        predicate: $RdfVocabularies.rdf.first,
+        object: itemNVariable,
+      });
+      triples = triples.concat(
+        itemSparqlConstructTriplesFunction({
+          filter,
+          ignoreRdfType: false,
+          schema: schema.item(),
+          valueVariable: itemNVariable,
+          variablePrefix: variablePrefix("ItemN"),
+        }),
+      );
+    }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    triples.push({
+      subject: restNVariable,
+      predicate: $RdfVocabularies.rdf.rest,
+      object: variable("RestNBasic"),
+    });
+
+    return triples;
+  };
+}
+
+function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $ValueSparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlWherePatternsFunction<
+  $CollectionFilter<ItemFilterT>,
+  $CollectionSchema<ItemSchemaT>
+> {
+  return (parameters) => {
+    // Need to handle two cases:
+    // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
+    // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
+    // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
+
+    const listVariable = parameters.valueVariable;
+    const patterns: $SparqlPattern[] = [];
+    const variable = (suffix: string) =>
+      dataFactory.variable!(`${parameters.variablePrefix}${suffix}`);
+    const variablePrefix = (suffix: string) =>
+      `${parameters.variablePrefix}${suffix}`;
+
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      patterns.push(
+        {
+          triples: [
+            {
+              subject: listVariable,
+              predicate: $RdfVocabularies.rdf.first,
+              object: item0Variable,
+            },
+          ],
+          type: "bgp",
+        },
+        ...itemSparqlWherePatternsFunction({
+          filter: parameters.filter,
+          ignoreRdfType: parameters.ignoreRdfType,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: parameters.schema.item(),
+          valueVariable: item0Variable,
+          variablePrefix: variablePrefix("Item0"),
+        }),
+      );
+    }
+
+    {
+      // ?list rdf:rest ?rest0
+      const rest0Variable = variable("Rest0");
+      patterns.push({
+        triples: [
+          {
+            subject: listVariable,
+            predicate: $RdfVocabularies.rdf.rest,
+            object: rest0Variable,
+          },
+        ],
+        type: "bgp",
+      });
+    }
+
+    const optionalPatterns: $SparqlPattern[] = [];
+
+    const restNVariable = variable("RestN");
+    // ?list rdf:rest+ ?restN
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
+        {
+          subject: listVariable,
+          predicate: {
+            type: "path",
+            pathType: "*",
+            items: [$RdfVocabularies.rdf.rest],
+          },
+          object: restNVariable,
+        },
+      ],
+    });
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      optionalPatterns.push(
+        {
+          triples: [
+            {
+              subject: restNVariable,
+              predicate: $RdfVocabularies.rdf.first,
+              object: itemNVariable,
+            },
+          ],
+          type: "bgp",
+        },
+        ...itemSparqlWherePatternsFunction({
+          filter: parameters.filter,
+          ignoreRdfType: parameters.ignoreRdfType,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: parameters.schema.item(),
+          valueVariable: itemNVariable,
+          variablePrefix: variablePrefix("ItemN"),
+        }),
+      );
+    }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    optionalPatterns.push({
+      triples: [
+        {
+          subject: restNVariable,
+          predicate: $RdfVocabularies.rdf.rest,
+          object: variable("RestNBasic"),
+        },
+      ],
+      type: "bgp",
+    });
+
+    patterns.push({ type: "optional", patterns: optionalPatterns });
+
+    // Having an optional around everything handles the rdf:nil case
+    return [...parameters.propertyPatterns, { patterns, type: "optional" }];
+  };
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
   readonly in?: readonly Literal[];
 }
+
+interface $LiteralSchema {
+  readonly in?: readonly Literal[];
+  readonly kind: "Literal";
+  readonly languageIn?: readonly string[];
+}
+
+function $literalSchemaSparqlPatterns({
+  filterPatterns,
+  preferredLanguages,
+  propertyPatterns,
+  schema,
+  valueVariable,
+}: {
+  filterPatterns: readonly $SparqlFilterPattern[];
+  preferredLanguages?: readonly string[];
+  propertyPatterns: readonly $SparqlPattern[];
+  schema: Readonly<{
+    languageIn?: readonly string[];
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
+  }>;
+  valueVariable: Variable;
+}): readonly $SparqlPattern[] {
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
+
+  if (schema.in && schema.in.length > 0) {
+    patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+  }
+
+  const languageIn = $arrayIntersection(
+    schema.languageIn ?? [],
+    preferredLanguages ?? [],
+  );
+  if (languageIn.length > 0) {
+    patterns.push({
+      expression: {
+        args: [
+          { args: [valueVariable], operator: "lang", type: "operation" },
+          languageIn.map((_) => dataFactory.literal(_)),
+        ],
+        operator: "in",
+        type: "operation",
+      },
+      type: "filter",
+    });
+  }
+
+  return patterns.concat(filterPatterns);
+}
+
+const $literalSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $LiteralFilter,
+  $LiteralSchema
+> = (parameters) =>
+  $literalSchemaSparqlPatterns({
+    filterPatterns: $termFilterSparqlPatterns(parameters),
+    ...parameters,
+  });
 
 function $maybeEquals<T>(
   leftMaybe: Maybe<T>,
@@ -783,12 +1488,287 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
+
+function $maybeSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
+  itemSparqlConstructTriplesFunction: $ValueSparqlConstructTriplesFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlConstructTriplesFunction<
+  $MaybeFilter<ItemFilterT>,
+  $MaybeSchema<ItemSchemaT>
+> {
+  return ({ filter, schema, ...otherParameters }) =>
+    itemSparqlConstructTriplesFunction({
+      ...otherParameters,
+      filter: filter ?? undefined,
+      schema: schema.item(),
+    });
+}
+
+function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $ValueSparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlWherePatternsFunction<
+  $MaybeFilter<ItemFilterT>,
+  $MaybeSchema<ItemSchemaT>
+> {
+  return ({ filter, schema, ...otherParameters }) => {
+    if (filter === undefined) {
+      // Treat the item's patterns as optional
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
+        itemSparqlWherePatternsFunction({
+          ...otherParameters,
+          filter,
+          schema: schema.item(),
+        }),
+      );
+      return [
+        { patterns: itemSparqlWherePatterns.concat(), type: "optional" },
+        ...liftSparqlPatterns,
+      ];
+    }
+
+    if (filter === null) {
+      // Use FILTER NOT EXISTS around the item's patterns
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
+        itemSparqlWherePatternsFunction({
+          ...otherParameters,
+          filter: undefined,
+          schema: schema.item(),
+        }),
+      );
+      return [
+        {
+          expression: {
+            args: itemSparqlWherePatterns.concat(),
+            operator: "notexists",
+            type: "operation",
+          },
+          lift: true,
+          type: "filter",
+        },
+        ...liftSparqlPatterns,
+      ];
+    }
+
+    // Treat the item as required.
+    return itemSparqlWherePatternsFunction({
+      ...otherParameters,
+      filter,
+      schema: schema.item(),
+    });
+  };
+}
+
+function $normalizeSparqlWherePatterns(
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
+  function normalizePatternsRecursive(
+    patternsRecursive: readonly $SparqlPattern[],
+  ): readonly $SparqlPattern[] {
+    if (patternsRecursive.length === 0) {
+      return patternsRecursive;
+    }
+
+    const compactedPatterns: $SparqlPattern[] = [];
+    for (const pattern of $deduplicateSparqlPatterns(patternsRecursive)) {
+      switch (pattern.type) {
+        case "bgp": {
+          if (pattern.triples.length === 0) {
+            continue;
+          }
+          const lastPattern = compactedPatterns.at(-1);
+          if (lastPattern && lastPattern.type === "bgp") {
+            // Coalesce adjacent BGP patterns without mutating lastPattern
+            compactedPatterns[compactedPatterns.length - 1] = {
+              triples: lastPattern.triples.concat(pattern.triples),
+              type: "bgp",
+            };
+          } else {
+            compactedPatterns.push(pattern);
+          }
+          break;
+        }
+        case "bind":
+        case "filter":
+        case "query":
+        case "values":
+          compactedPatterns.push(pattern);
+          break;
+        case "group":
+          // Flatten groups outside unions
+          compactedPatterns.push(
+            ...normalizePatternsRecursive(pattern.patterns),
+          );
+          break;
+        case "graph":
+        case "minus":
+        case "optional":
+        case "service": {
+          const patterns_ = normalizePatternsRecursive(pattern.patterns);
+          if (patterns_.length > 0) {
+            compactedPatterns.push({
+              ...pattern,
+              patterns: patterns_.concat(),
+            });
+          }
+          break;
+        }
+        case "union": {
+          const unionPatterns = $deduplicateSparqlPatterns(
+            pattern.patterns.flatMap((pattern) => {
+              switch (pattern.type) {
+                case "group":
+                // Don't flatten the groups in a union
+                case "graph":
+                case "minus":
+                case "optional":
+                case "service": {
+                  const patterns_ = normalizePatternsRecursive(
+                    pattern.patterns,
+                  );
+                  if (patterns_.length > 0) {
+                    return [{ ...pattern, patterns: patterns_.concat() }];
+                  }
+                  return [] as $SparqlPattern[];
+                }
+                default:
+                  return [pattern];
+              }
+            }),
+          );
+
+          switch (unionPatterns.length) {
+            case 0:
+              break;
+            case 1:
+              compactedPatterns.push(
+                ...normalizePatternsRecursive([unionPatterns[0]]),
+              );
+              break;
+            default:
+              compactedPatterns.push({
+                ...pattern,
+                patterns: unionPatterns.concat(),
+              });
+              break;
+          }
+          break;
+        }
+        default:
+          pattern satisfies never;
+      }
+    }
+
+    return $sortSparqlPatterns($deduplicateSparqlPatterns(compactedPatterns));
+  }
+
+  const normalizedPatterns = normalizePatternsRecursive(patterns);
+  if (!normalizedPatterns.some($SparqlPattern.isSolutionGenerating)) {
+    throw new Error(
+      "SPARQL WHERE patterns must have at least one solution-generating pattern",
+    );
+  }
+
+  return normalizedPatterns;
+}
+
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
+}
+
+interface $NumericSchema<T> {
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
+}
+
+function $numericSparqlWherePatterns<T extends bigint | number>({
+  filter,
+  valueVariable,
+  ...otherParameters
+}: Parameters<
+  $ValueSparqlWherePatternsFunction<$NumericFilter<T>, $NumericSchema<T>>
+>[0]): ReturnType<
+  $ValueSparqlWherePatternsFunction<$NumericFilter<T>, $NumericSchema<T>>
+> {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.in !== undefined && filter.in.length > 0) {
+      filterPatterns.push(
+        $sparqlValueInPattern({
+          lift: true,
+          valueVariable,
+          valueIn: filter.in,
+        }),
+      );
+    }
+
+    if (filter.maxExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [valueVariable, $literalFactory.primitive(filter.maxExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.maxInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [valueVariable, $literalFactory.primitive(filter.maxInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minExclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [valueVariable, $literalFactory.primitive(filter.minExclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minInclusive !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [valueVariable, $literalFactory.primitive(filter.minInclusive)],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  return $termSchemaSparqlPatterns({
+    ...otherParameters,
+    filterPatterns,
+    valueVariable,
+  });
 }
 
 export function $parseBlankNode(identifier: string): Either<Error, BlankNode> {
@@ -956,6 +1936,53 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
+function $setSparqlConstructTriples<ItemFilterT, ItemSchemaT>(
+  itemSparqlConstructTriplesFunction: $ValueSparqlConstructTriplesFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlConstructTriplesFunction<
+  $CollectionFilter<ItemFilterT>,
+  $CollectionSchema<ItemSchemaT>
+> {
+  return ({ schema, ...otherParameters }) =>
+    itemSparqlConstructTriplesFunction({
+      ...otherParameters,
+      schema: schema.item(),
+    });
+}
+
+function $setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $ValueSparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $ValueSparqlWherePatternsFunction<
+  $CollectionFilter<ItemFilterT>,
+  $CollectionSchema<ItemSchemaT>
+> {
+  return ({ filter, schema, ...otherParameters }) => {
+    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({
+      ...otherParameters,
+      filter,
+      schema: schema.item(),
+    });
+
+    const minCount = filter?.$minCount ?? schema.minCount ?? 0;
+    if (minCount > 0) {
+      // Required
+      return itemSparqlWherePatterns;
+    }
+
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] =
+      $liftSparqlPatterns(itemSparqlWherePatterns);
+    return [
+      { patterns: optionalSparqlWherePatterns.concat(), type: "optional" },
+      ...liftSparqlPatterns,
+    ];
+  };
+}
+
 function $shaclPropertyFromRdf<T>({
   graph,
   propertySchema,
@@ -980,6 +2007,484 @@ export interface $ShaclPropertySchema<TypeSchemaT = object> {
   readonly type: () => TypeSchemaT;
 }
 
+function $shaclPropertySparqlConstructTriples<FilterT, TypeSchemaT>({
+  filter,
+  focusIdentifier,
+  ignoreRdfType,
+  propertyName,
+  propertySchema,
+  typeSparqlConstructTriples,
+  variablePrefix,
+}: {
+  filter: FilterT | undefined;
+  focusIdentifier: NamedNode | Variable;
+  ignoreRdfType: boolean;
+  propertySchema: $ShaclPropertySchema<TypeSchemaT>;
+  propertyName: string;
+  typeSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    FilterT,
+    TypeSchemaT
+  >;
+  variablePrefix: string;
+}): readonly sparqljs.Triple[] {
+  const propertyPathSparqlConstructTriples = ({
+    end,
+    propertyPath,
+    start,
+    variableCounter,
+  }: {
+    variableCounter: { value: number };
+    end: Literal | NamedNode | Variable;
+    propertyPath: $PropertyPath;
+    start: NamedNode | Variable;
+  }): readonly sparqljs.Triple[] => {
+    switch (propertyPath.termType) {
+      case "AlternativePath": {
+        return propertyPath.members.flatMap((member) =>
+          propertyPathSparqlConstructTriples({
+            end,
+            propertyPath: member,
+            start,
+            variableCounter,
+          }),
+        );
+      }
+
+      case "InversePath": {
+        if (end.termType === "Literal") {
+          throw new Error(
+            `invalid term type for inverse path: ${end.termType}`,
+          );
+        }
+
+        return propertyPathSparqlConstructTriples({
+          end: start,
+          propertyPath: propertyPath.path,
+          start: end,
+          variableCounter,
+        });
+      }
+
+      case "NamedNode": {
+        return [
+          { subject: start, predicate: propertyPath as NamedNode, object: end },
+        ];
+      }
+
+      case "SequencePath": {
+        if (propertyPath.members.length === 0) {
+          return [];
+        }
+
+        if (propertyPath.members.length === 1) {
+          return propertyPathSparqlConstructTriples({
+            end,
+            propertyPath: propertyPath.members[0],
+            start,
+            variableCounter,
+          });
+        }
+
+        let triples: sparqljs.Triple[] = [];
+        let current: NamedNode | Variable = start;
+        for (
+          let memberI = 0;
+          memberI < propertyPath.members.length;
+          memberI++
+        ) {
+          const next: NamedNode | Literal | Variable =
+            memberI === propertyPath.members.length - 1
+              ? end
+              : dataFactory.variable(
+                  `${variablePrefix}${variableCounter.value++}`,
+                );
+          triples = triples.concat(
+            propertyPathSparqlConstructTriples({
+              end: next,
+              propertyPath: propertyPath.members[memberI],
+              start: current,
+              variableCounter,
+            }),
+          );
+          current = next as NamedNode | Variable;
+        }
+
+        return triples;
+      }
+
+      case "OneOrMorePath":
+      case "ZeroOrMorePath":
+      case "ZeroOrOnePath": {
+        throw new Error(
+          `${propertyName}: ${propertyPath.termType} property path cannot be represented as SPARQL CONSTRUCT triples`,
+        );
+      }
+
+      default: {
+        propertyPath satisfies never;
+        throw new Error(
+          `${propertyName}: unhandled property path termType: ${(propertyPath as any).termType}`,
+        );
+      }
+    }
+  };
+
+  const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
+  const valueVariable = dataFactory.variable!(valueString);
+
+  const variableCounter = { value: 0 };
+  return propertyPathSparqlConstructTriples({
+    end: valueVariable,
+    propertyPath: propertySchema.path,
+    start: focusIdentifier,
+    variableCounter,
+  }).concat(
+    typeSparqlConstructTriples({
+      filter,
+      ignoreRdfType,
+      schema: propertySchema.type(),
+      valueVariable,
+      variablePrefix: valueString,
+    }),
+  );
+}
+
+function $shaclPropertySparqlWherePatterns<FilterT, TypeSchemaT>({
+  filter,
+  focusIdentifier,
+  ignoreRdfType,
+  preferredLanguages,
+  propertyName,
+  propertySchema,
+  typeSparqlWherePatterns,
+  variablePrefix,
+}: {
+  filter: FilterT | undefined;
+  focusIdentifier: NamedNode | Variable;
+  ignoreRdfType: boolean;
+  preferredLanguages: readonly string[] | undefined;
+  propertySchema: $ShaclPropertySchema<TypeSchemaT>;
+  propertyName: string;
+  typeSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    FilterT,
+    TypeSchemaT
+  >;
+  variablePrefix: string;
+}): readonly $SparqlPattern[] {
+  const propertyPathSparqlWherePatterns = ({
+    end,
+    propertyPath,
+    start,
+    variableCounter,
+  }: {
+    end: Literal | NamedNode | Variable;
+    propertyPath: $PropertyPath;
+    start: NamedNode | Variable;
+    variableCounter: { value: number };
+  }): $SparqlPattern[] => {
+    switch (propertyPath.termType) {
+      case "AlternativePath": {
+        return [
+          {
+            patterns: propertyPath.members.map((member) => ({
+              patterns: propertyPathSparqlWherePatterns({
+                end,
+                propertyPath: member,
+                start,
+                variableCounter,
+              }),
+              type: "group" as const,
+            })),
+            type: "union",
+          },
+        ];
+      }
+
+      case "InversePath":
+      case "NamedNode":
+      case "OneOrMorePath":
+      case "ZeroOrMorePath":
+      case "ZeroOrOnePath": {
+        return [
+          {
+            triples: [
+              {
+                subject: start,
+                predicate: $sparqlPropertyPath(propertyPath),
+                object: end,
+              },
+            ],
+            type: "bgp",
+          },
+        ];
+      }
+
+      case "SequencePath": {
+        if (propertyPath.members.length === 0) {
+          return [];
+        }
+
+        if (propertyPath.members.length === 1) {
+          return propertyPathSparqlWherePatterns({
+            end,
+            propertyPath: propertyPath.members[0],
+            start,
+            variableCounter,
+          });
+        }
+
+        let patterns: $SparqlPattern[] = [];
+        let current: NamedNode | Variable = start;
+        for (
+          let memberI = 0;
+          memberI < propertyPath.members.length;
+          memberI++
+        ) {
+          const next: NamedNode | Literal | Variable =
+            memberI === propertyPath.members.length - 1
+              ? end
+              : dataFactory.variable(
+                  `${variablePrefix}${variableCounter.value++}`,
+                );
+          patterns = patterns.concat(
+            propertyPathSparqlWherePatterns({
+              end: next,
+              propertyPath: propertyPath.members[memberI],
+              start: current,
+              variableCounter,
+            }),
+          );
+          current = next as NamedNode | Variable;
+        }
+
+        return patterns;
+      }
+
+      default: {
+        propertyPath satisfies never;
+        throw new Error(
+          `${propertyName}: unhandled property path termType: ${(propertyPath as any).termType}`,
+        );
+      }
+    }
+  };
+
+  const valueString = `${variablePrefix}${propertyName[0].toUpperCase()}${propertyName.slice(1)}`;
+  const valueVariable = dataFactory.variable!(valueString);
+
+  const variableCounter = { value: 0 };
+  const propertyPatterns = propertyPathSparqlWherePatterns({
+    end: valueVariable,
+    propertyPath: propertySchema.path,
+    start: focusIdentifier,
+    variableCounter,
+  });
+
+  return typeSparqlWherePatterns({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    schema: propertySchema.type(),
+    valueVariable,
+    variablePrefix: valueString,
+  });
+}
+
+function $sortSparqlPatterns(
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
+  const filterPatterns: $SparqlPattern[] = [];
+  const otherPatterns: $SparqlPattern[] = [];
+  const valuesPatterns: $SparqlPattern[] = [];
+
+  for (const pattern of patterns) {
+    switch (pattern.type) {
+      case "filter":
+        filterPatterns.push(pattern);
+        break;
+      case "values":
+        valuesPatterns.push(pattern);
+        break;
+      default:
+        otherPatterns.push(pattern);
+        break;
+    }
+  }
+
+  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+}
+
+type $SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
+
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: NamedNode | Variable;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.BgpPattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
+
+type $SparqlPattern =
+  | Exclude<sparqljs.Pattern, sparqljs.FilterPattern>
+  | $SparqlFilterPattern;
+
+namespace $SparqlPattern {
+  export function isSolutionGenerating(pattern: $SparqlPattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":
+      case "service":
+      case "values":
+        return true;
+
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGenerating);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGenerating);
+
+      default:
+        throw new RangeError(
+          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
+        );
+    }
+  }
+}
+
+/**
+ * Convert a $PropertyPath to a sparqljs.PropertyPath.
+ */
+function $sparqlPropertyPath(
+  propertyPath: $PropertyPath,
+): NamedNode | sparqljs.PropertyPath {
+  switch (propertyPath.termType) {
+    case "AlternativePath":
+      return {
+        type: "path",
+        pathType: "|",
+        items: propertyPath.members.map($sparqlPropertyPath),
+      };
+
+    case "InversePath":
+      return {
+        type: "path",
+        pathType: "^",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "NamedNode":
+      return propertyPath;
+
+    case "OneOrMorePath":
+      return {
+        type: "path",
+        pathType: "+",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "SequencePath":
+      return {
+        type: "path",
+        pathType: "/",
+        items: propertyPath.members.map($sparqlPropertyPath),
+      };
+
+    case "ZeroOrMorePath":
+      return {
+        type: "path",
+        pathType: "*",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    case "ZeroOrOnePath":
+      return {
+        type: "path",
+        pathType: "?",
+        items: [$sparqlPropertyPath(propertyPath.path)],
+      };
+
+    default: {
+      propertyPath satisfies never;
+      throw new Error(
+        `unhandled property path termType: ${(propertyPath as any).termType}`,
+      );
+    }
+  }
+}
+
+function $sparqlValueInPattern({
+  lift,
+  valueIn,
+  valueVariable,
+}: {
+  lift?: boolean;
+  valueIn: readonly (
+    | bigint
+    | boolean
+    | Date
+    | number
+    | string
+    | Literal
+    | NamedNode
+  )[];
+  valueVariable: Variable;
+}): $SparqlFilterPattern {
+  if (valueIn.length === 0) {
+    throw new RangeError("expected valueIn not to be empty");
+  }
+
+  return {
+    expression: {
+      args: [
+        valueVariable,
+        valueIn.map((inValue) => {
+          if (typeof inValue !== "object" || inValue instanceof Date) {
+            return $literalFactory.primitive(inValue);
+          }
+          return inValue;
+        }),
+      ],
+      operator: "in",
+      type: "operation",
+    },
+    lift,
+    type: "filter",
+  };
+}
+
 /**
  * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
@@ -996,12 +2501,212 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
+interface $StringSchema {
+  readonly in?: readonly string[];
+  readonly kind: "String";
+}
+
+const $stringSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $StringFilter,
+  $StringSchema
+> = ({ filter, valueVariable, ...otherParameters }) => {
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter) {
+    if (filter.in !== undefined && filter.in.length > 0) {
+      filterPatterns.push(
+        $sparqlValueInPattern({
+          lift: true,
+          valueVariable,
+          valueIn: filter.in,
+        }),
+      );
+    }
+
+    if (filter.maxLength !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [
+            { args: [valueVariable], operator: "strlen", type: "operation" },
+            $literalFactory.number(filter.maxLength),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+
+    if (filter.minLength !== undefined) {
+      filterPatterns.push({
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [
+            { args: [valueVariable], operator: "strlen", type: "operation" },
+            $literalFactory.number(filter.minLength),
+          ],
+        },
+        lift: true,
+        type: "filter",
+      });
+    }
+  }
+
+  return $literalSchemaSparqlPatterns({
+    ...otherParameters,
+    filterPatterns,
+    valueVariable,
+  });
+};
+
 interface $TermFilter {
   readonly datatypeIn?: readonly NamedNode[];
   readonly in?: readonly (Literal | NamedNode)[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }
+
+function $termFilterSparqlPatterns({
+  filter,
+  valueVariable,
+}: {
+  filter?: $TermFilter;
+  valueVariable: Variable;
+}): readonly $SparqlFilterPattern[] {
+  if (!filter) {
+    return [];
+  }
+
+  const filterPatterns: $SparqlFilterPattern[] = [];
+
+  if (filter.datatypeIn !== undefined && filter.datatypeIn.length > 0) {
+    filterPatterns.push({
+      expression: {
+        type: "operation",
+        operator: "in",
+        args: [
+          { args: [valueVariable], operator: "datatype", type: "operation" },
+          filter.datatypeIn.concat(),
+        ],
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  if (filter.in !== undefined && filter.in.length > 0) {
+    filterPatterns.push(
+      $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
+    );
+  }
+
+  if (filter.languageIn !== undefined && filter.languageIn.length > 0) {
+    filterPatterns.push({
+      expression: {
+        type: "operation",
+        operator: "in",
+        args: [
+          { args: [valueVariable], operator: "lang", type: "operation" },
+          filter.languageIn.map((value) => dataFactory.literal(value)),
+        ],
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  if (filter.typeIn !== undefined) {
+    const typeInExpressions = filter.typeIn
+      .map((inType) => {
+        switch (inType) {
+          case "BlankNode":
+            return "isBlank";
+          case "Literal":
+            return "isLiteral";
+          case "NamedNode":
+            return "isIRI";
+          default:
+            inType satisfies never;
+            throw new RangeError(inType);
+        }
+      })
+      .map((operator) => ({
+        type: "operation" as const,
+        operator,
+        args: [valueVariable],
+      }));
+
+    switch (typeInExpressions.length) {
+      case 0:
+        break;
+      case 1:
+        filterPatterns.push({
+          expression: typeInExpressions[0],
+          lift: true,
+          type: "filter",
+        });
+        break;
+      default:
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "||",
+            args: typeInExpressions,
+          },
+          lift: true,
+          type: "filter",
+        });
+    }
+  }
+
+  return filterPatterns;
+}
+
+interface $TermSchema {
+  readonly in?: readonly (Literal | NamedNode)[];
+  readonly kind: "Term";
+}
+
+function $termSchemaSparqlPatterns({
+  filterPatterns,
+  propertyPatterns,
+  schema,
+  valueVariable,
+}: {
+  filterPatterns: readonly $SparqlFilterPattern[];
+  propertyPatterns: readonly $SparqlPattern[];
+  schema: Readonly<{
+    in?: readonly (
+      | bigint
+      | boolean
+      | Date
+      | string
+      | number
+      | Literal
+      | NamedNode
+    )[];
+  }>;
+  valueVariable: Variable;
+}): readonly $SparqlPattern[] {
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
+
+  if (schema.in && schema.in.length > 0) {
+    patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+  }
+
+  return patterns.concat(filterPatterns);
+}
+
+const $termSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+  $TermFilter,
+  $TermSchema
+> = (parameters) =>
+  $termSchemaSparqlPatterns({
+    filterPatterns: $termFilterSparqlPatterns(parameters),
+    ...parameters,
+  });
 
 export type $ToRdfResourceFunction<
   ObjectT,
@@ -1031,6 +2736,24 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+type $ValueSparqlConstructTriplesFunction<FilterT, SchemaT> = (parameters: {
+  filter: FilterT | undefined;
+  ignoreRdfType: boolean;
+  schema: SchemaT;
+  valueVariable: Variable;
+  variablePrefix: string;
+}) => readonly sparqljs.Triple[];
+
+type $ValueSparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: {
+  filter: FilterT | undefined;
+  ignoreRdfType: boolean;
+  preferredLanguages: readonly string[] | undefined;
+  propertyPatterns: readonly $SparqlPattern[];
+  schema: SchemaT;
+  valueVariable: Variable;
+  variablePrefix: string;
+}) => readonly $SparqlPattern[];
 
 function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
@@ -1238,6 +2961,114 @@ export namespace NamedUnion1 {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NamedUnion1>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NamedUnion1.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    NamedUnion1.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NamedUnion1.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $iriSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["object"],
+        ignoreRdfType: false,
+        schema: schema.members["object"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $stringSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["string"],
+        ignoreRdfType: false,
+        schema: schema.members["string"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    NamedUnion1.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly object: {
+          discriminantValues: readonly (number | string)[];
+          type: $IriSchema;
+        };
+        readonly string: {
+          discriminantValues: readonly (number | string)[];
+          type: $StringSchema;
+        };
+      };
+    }
+  >;
 }
 export type NamedUnion2 =
   | { type: "date"; value: Date }
@@ -1403,6 +3234,114 @@ export namespace NamedUnion2 {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NamedUnion2>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NamedUnion2.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }),
+    );
+    triples = triples.concat(
+      ((_: object) => [])({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    NamedUnion2.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NamedUnion2.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["date"],
+        ignoreRdfType: false,
+        schema: schema.members["date"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $dateSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["dateTime"],
+        ignoreRdfType: false,
+        schema: schema.members["dateTime"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    NamedUnion2.Filter,
+    {
+      kind: "NamedUnion";
+      members: {
+        readonly date: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+        readonly dateTime: {
+          discriminantValues: readonly (number | string)[];
+          type: $DateSchema;
+        };
+      };
+    }
+  >;
 }
 export interface $NamedDefaultPartial {
   readonly $identifier: () => $NamedDefaultPartial.Identifier;
@@ -1539,6 +3478,32 @@ export namespace $NamedDefaultPartial {
 
   export type Filter = { readonly $identifier?: $IriFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    $NamedDefaultPartial.Filter
+  > = (_parameters) => {
+    return [];
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    $NamedDefaultPartial.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $iriSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: $NamedDefaultPartial.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: $NamedDefaultPartial.Json,
   ): $NamedDefaultPartial {
@@ -1605,6 +3570,64 @@ export namespace $NamedDefaultPartial {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: $NamedDefaultPartial.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "namedDefaultPartial";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        $NamedDefaultPartial.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          $NamedDefaultPartial.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof $NamedDefaultPartial.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      $NamedDefaultPartial.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _namedDefaultPartial: $NamedDefaultPartial,
   ): $NamedDefaultPartial.Json {
@@ -1641,6 +3664,38 @@ export namespace $NamedDefaultPartial {
   ): string {
     return `$NamedDefaultPartial(${JSON.stringify(_propertiesToStrings((_namedDefaultPartial ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    $NamedDefaultPartial.Filter,
+    typeof $NamedDefaultPartial.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    $NamedDefaultPartial.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $NamedDefaultPartial.Filter,
+    typeof $NamedDefaultPartial.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      $NamedDefaultPartial.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface $DefaultPartial {
   readonly $identifier: () => $DefaultPartial.Identifier;
@@ -1780,6 +3835,32 @@ export namespace $DefaultPartial {
 
   export type Filter = { readonly $identifier?: $IdentifierFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    $DefaultPartial.Filter
+  > = (_parameters) => {
+    return [];
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    $DefaultPartial.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: $DefaultPartial.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: $DefaultPartial.Json): $DefaultPartial {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -1849,6 +3930,62 @@ export namespace $DefaultPartial {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: $DefaultPartial.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "defaultPartial";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        $DefaultPartial.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          $DefaultPartial.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof $DefaultPartial.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      $DefaultPartial.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _defaultPartial: $DefaultPartial,
   ): $DefaultPartial.Json {
@@ -1888,6 +4025,38 @@ export namespace $DefaultPartial {
   ): string {
     return `$DefaultPartial(${JSON.stringify(_propertiesToStrings((_defaultPartial ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    $DefaultPartial.Filter,
+    typeof $DefaultPartial.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    $DefaultPartial.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $DefaultPartial.Filter,
+    typeof $DefaultPartial.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      $DefaultPartial.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:xone (union) properties with different discriminant types (extrinsic, hybrid, intrinsic, typeof) x cardinality.
  */
@@ -3964,6 +6133,1758 @@ export namespace UnionDiscriminants {
     }>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    UnionDiscriminants.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalIriOrLiteralProperty",
+        propertySchema: schema.properties.optionalIriOrLiteralProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalIriOrStringProperty",
+        propertySchema: schema.properties.optionalIriOrStringProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalNodeOrLiteralProperty",
+        propertySchema: schema.properties.optionalNodeOrLiteralProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.optionalNodeOrNodeOrStringProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            UnionMember2.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredIriOrLiteralProperty",
+        propertySchema: schema.properties.requiredIriOrLiteralProperty,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredIriOrStringProperty",
+        propertySchema: schema.properties.requiredIriOrStringProperty,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredNodeOrLiteralProperty",
+        propertySchema: schema.properties.requiredNodeOrLiteralProperty,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.requiredNodeOrNodeOrStringProperty,
+        typeSparqlConstructTriples: (({
+          ignoreRdfType,
+          filter,
+          schema,
+          ...otherParameters
+        }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            UnionMember2.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setIriOrLiteralProperty",
+        propertySchema: schema.properties.setIriOrLiteralProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setIriOrStringProperty",
+        propertySchema: schema.properties.setIriOrStringProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setNodeOrLiteralProperty",
+        propertySchema: schema.properties.setNodeOrLiteralProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.setNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.setNodeOrNodeOrStringProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            UnionMember1.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }),
+          );
+          triples = triples.concat(
+            UnionMember2.valueSparqlConstructTriples({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    UnionDiscriminants.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: UnionDiscriminants.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalIriOrLiteralProperty",
+        propertySchema: schema.properties.optionalIriOrLiteralProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalIriOrStringProperty",
+        propertySchema: schema.properties.optionalIriOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalNodeOrLiteralProperty",
+        propertySchema: schema.properties.optionalNodeOrLiteralProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.optionalNodeOrNodeOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: UnionMember2.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredIriOrLiteralProperty",
+        propertySchema: schema.properties.requiredIriOrLiteralProperty,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredIriOrStringProperty",
+        propertySchema: schema.properties.requiredIriOrStringProperty,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredNodeOrLiteralProperty",
+        propertySchema: schema.properties.requiredNodeOrLiteralProperty,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.requiredNodeOrNodeOrStringProperty,
+        typeSparqlWherePatterns: (({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: UnionMember2.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setIriOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setIriOrLiteralProperty",
+        propertySchema: schema.properties.setIriOrLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["NamedNode"],
+              ignoreRdfType: false,
+              schema: schema.members["NamedNode"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly NamedNode?: $IriFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly NamedNode: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setIriOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setIriOrStringProperty",
+        propertySchema: schema.properties.setIriOrStringProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $iriSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["object"],
+              ignoreRdfType: false,
+              schema: schema.members["object"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly object?: $IriFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly object: {
+                discriminantValues: readonly (number | string)[];
+                type: $IriSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setNodeOrLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setNodeOrLiteralProperty",
+        propertySchema: schema.properties.setNodeOrLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $literalSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["Literal"],
+              ignoreRdfType: false,
+              schema: schema.members["Literal"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly Literal: {
+                discriminantValues: readonly (number | string)[];
+                type: $LiteralSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.setNodeOrNodeOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setNodeOrNodeOrStringProperty",
+        propertySchema: schema.properties.setNodeOrNodeOrStringProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: UnionMember1.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember1"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember1"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: UnionMember2.valueSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["UnionMember2"],
+              ignoreRdfType: false,
+              schema: schema.members["UnionMember2"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly UnionMember1?: UnionMember1.Filter;
+              readonly UnionMember2?: UnionMember2.Filter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly UnionMember1: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember1.schema;
+              };
+              readonly UnionMember2: {
+                discriminantValues: readonly (number | string)[];
+                type: typeof UnionMember2.schema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: UnionDiscriminants.Json): UnionDiscriminants {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -5879,6 +9800,62 @@ export namespace UnionDiscriminants {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: UnionDiscriminants.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "unionDiscriminants";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        UnionDiscriminants.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          UnionDiscriminants.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof UnionDiscriminants.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      UnionDiscriminants.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _unionDiscriminants: UnionDiscriminants,
   ): UnionDiscriminants.Json {
@@ -6653,6 +10630,38 @@ export namespace UnionDiscriminants {
   ): string {
     return `UnionDiscriminants(${JSON.stringify(_propertiesToStrings((_unionDiscriminants ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    UnionDiscriminants.Filter,
+    typeof UnionDiscriminants.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    UnionDiscriminants.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    UnionDiscriminants.Filter,
+    typeof UnionDiscriminants.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      UnionDiscriminants.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with properties that are not nested objects
  */
@@ -7304,6 +11313,350 @@ export namespace TermProperties {
     readonly termProperty?: $MaybeFilter<$TermFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    TermProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeTermProperty",
+        propertySchema: schema.properties.blankNodeTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BlankNodeFilter,
+          $BlankNodeSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.booleanTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "booleanTermProperty",
+        propertySchema: schema.properties.booleanTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BooleanFilter,
+          $BooleanSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTermProperty",
+        propertySchema: schema.properties.dateTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTimeTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTimeTermProperty",
+        propertySchema: schema.properties.dateTimeTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriTermProperty",
+        propertySchema: schema.properties.iriTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.literalTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "literalTermProperty",
+        propertySchema: schema.properties.literalTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.numberTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "numberTermProperty",
+        propertySchema: schema.properties.numberTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringTermProperty",
+        propertySchema: schema.properties.stringTermProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.termProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "termProperty",
+        propertySchema: schema.properties.termProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    TermProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: TermProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: TermProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeTermProperty",
+        propertySchema: schema.properties.blankNodeTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BlankNodeFilter,
+          $BlankNodeSchema
+        >($blankNodeSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.booleanTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "booleanTermProperty",
+        propertySchema: schema.properties.booleanTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTermProperty",
+        propertySchema: schema.properties.dateTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTimeTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTimeTermProperty",
+        propertySchema: schema.properties.dateTimeTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriTermProperty",
+        propertySchema: schema.properties.iriTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.literalTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "literalTermProperty",
+        propertySchema: schema.properties.literalTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.numberTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "numberTermProperty",
+        propertySchema: schema.properties.numberTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringTermProperty",
+        propertySchema: schema.properties.stringTermProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.termProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "termProperty",
+        propertySchema: schema.properties.termProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: TermProperties.Json): TermProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -7701,6 +12054,62 @@ export namespace TermProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: TermProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "termProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        TermProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          TermProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof TermProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      TermProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_termProperties: TermProperties): TermProperties.Json {
     return JSON.parse(
       JSON.stringify({
@@ -7858,6 +12267,38 @@ export namespace TermProperties {
   ): string {
     return `TermProperties(${JSON.stringify(_propertiesToStrings((_termProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    TermProperties.Filter,
+    typeof TermProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    TermProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    TermProperties.Filter,
+    typeof TermProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      TermProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface RecursiveUnionMember2 {
   readonly $identifier: () => RecursiveUnionMember2.Identifier;
@@ -8054,6 +12495,89 @@ export namespace RecursiveUnionMember2 {
     readonly recursiveUnionMember2Property?: $MaybeFilter<RecursiveUnion.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    RecursiveUnionMember2.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    RecursiveUnionMember2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: RecursiveUnionMember2.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: RecursiveUnionMember2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: RecursiveUnionMember2.Json,
   ): RecursiveUnionMember2 {
@@ -8198,6 +12722,64 @@ export namespace RecursiveUnionMember2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: RecursiveUnionMember2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "recursiveUnionMember2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveUnionMember2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          RecursiveUnionMember2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof RecursiveUnionMember2.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveUnionMember2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _recursiveUnionMember2: RecursiveUnionMember2,
   ): RecursiveUnionMember2.Json {
@@ -8266,6 +12848,38 @@ export namespace RecursiveUnionMember2 {
   ): string {
     return `RecursiveUnionMember2(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember2 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    RecursiveUnionMember2.Filter,
+    typeof RecursiveUnionMember2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    RecursiveUnionMember2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    RecursiveUnionMember2.Filter,
+    typeof RecursiveUnionMember2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      RecursiveUnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface RecursiveUnionMember1 {
   readonly $identifier: () => RecursiveUnionMember1.Identifier;
@@ -8462,6 +13076,89 @@ export namespace RecursiveUnionMember1 {
     readonly recursiveUnionMember1Property?: $MaybeFilter<RecursiveUnion.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    RecursiveUnionMember1.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    RecursiveUnionMember1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: RecursiveUnionMember1.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: RecursiveUnionMember1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: RecursiveUnionMember1.Json,
   ): RecursiveUnionMember1 {
@@ -8606,6 +13303,64 @@ export namespace RecursiveUnionMember1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: RecursiveUnionMember1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "recursiveUnionMember1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveUnionMember1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          RecursiveUnionMember1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof RecursiveUnionMember1.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveUnionMember1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _recursiveUnionMember1: RecursiveUnionMember1,
   ): RecursiveUnionMember1.Json {
@@ -8674,6 +13429,38 @@ export namespace RecursiveUnionMember1 {
   ): string {
     return `RecursiveUnionMember1(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember1 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    RecursiveUnionMember1.Filter,
+    typeof RecursiveUnionMember1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    RecursiveUnionMember1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    RecursiveUnionMember1.Filter,
+    typeof RecursiveUnionMember1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      RecursiveUnionMember1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that uses different property path types in its properties
  */
@@ -8919,6 +13706,147 @@ export namespace PropertyPaths {
     readonly predicatePathProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    PropertyPaths.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inversePathProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inversePathProperty",
+        propertySchema: schema.properties.inversePathProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.predicatePathProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "predicatePathProperty",
+        propertySchema: schema.properties.predicatePathProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    PropertyPaths.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PropertyPaths.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: PropertyPaths.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inversePathProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inversePathProperty",
+        propertySchema: schema.properties.inversePathProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.predicatePathProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "predicatePathProperty",
+        propertySchema: schema.properties.predicatePathProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: PropertyPaths.Json): PropertyPaths {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -9087,6 +14015,62 @@ export namespace PropertyPaths {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PropertyPaths.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "propertyPaths";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyPaths.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PropertyPaths.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof PropertyPaths.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyPaths.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_propertyPaths: PropertyPaths): PropertyPaths.Json {
     return JSON.parse(
       JSON.stringify({
@@ -9152,6 +14136,38 @@ export namespace PropertyPaths {
   ): string {
     return `PropertyPaths(${JSON.stringify(_propertiesToStrings((_propertyPaths ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PropertyPaths.Filter,
+    typeof PropertyPaths.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    PropertyPaths.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PropertyPaths.Filter,
+    typeof PropertyPaths.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      PropertyPaths.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that uses different methods to name properties
  */
@@ -9482,6 +14498,204 @@ export namespace PropertyNames {
     readonly actualPropertyName5?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    PropertyNames.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.actualPropertyName1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName1",
+        propertySchema: schema.properties.actualPropertyName1,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.actualPropertyName2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName2",
+        propertySchema: schema.properties.actualPropertyName2,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.actualPropertyName3,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName3",
+        propertySchema: schema.properties.actualPropertyName3,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.actualPropertyName4,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName4",
+        propertySchema: schema.properties.actualPropertyName4,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.actualPropertyName5,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "actualPropertyName5",
+        propertySchema: schema.properties.actualPropertyName5,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    PropertyNames.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PropertyNames.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: PropertyNames.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.actualPropertyName1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "actualPropertyName1",
+        propertySchema: schema.properties.actualPropertyName1,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.actualPropertyName2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "actualPropertyName2",
+        propertySchema: schema.properties.actualPropertyName2,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.actualPropertyName3,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "actualPropertyName3",
+        propertySchema: schema.properties.actualPropertyName3,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.actualPropertyName4,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "actualPropertyName4",
+        propertySchema: schema.properties.actualPropertyName4,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.actualPropertyName5,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "actualPropertyName5",
+        propertySchema: schema.properties.actualPropertyName5,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: PropertyNames.Json): PropertyNames {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -9683,6 +14897,62 @@ export namespace PropertyNames {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PropertyNames.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "propertyNames";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyNames.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PropertyNames.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof PropertyNames.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyNames.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_propertyNames: PropertyNames): PropertyNames.Json {
     return JSON.parse(
       JSON.stringify({
@@ -9757,6 +15027,38 @@ export namespace PropertyNames {
   ): string {
     return `PropertyNames(${JSON.stringify(_propertiesToStrings((_propertyNames ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PropertyNames.Filter,
+    typeof PropertyNames.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    PropertyNames.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PropertyNames.Filter,
+    typeof PropertyNames.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      PropertyNames.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that has properties with different cardinalities
  */
@@ -10094,6 +15396,143 @@ export namespace PropertyCardinalities {
     readonly requiredStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    PropertyCardinalities.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.emptyStringSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "emptyStringSetProperty",
+        propertySchema: schema.properties.emptyStringSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nonEmptyStringSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nonEmptyStringSetProperty",
+        propertySchema: schema.properties.nonEmptyStringSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalStringProperty",
+        propertySchema: schema.properties.optionalStringProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.requiredStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredStringProperty",
+        propertySchema: schema.properties.requiredStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    PropertyCardinalities.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: PropertyCardinalities.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.emptyStringSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "emptyStringSetProperty",
+        propertySchema: schema.properties.emptyStringSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nonEmptyStringSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nonEmptyStringSetProperty",
+        propertySchema: schema.properties.nonEmptyStringSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalStringProperty",
+        propertySchema: schema.properties.optionalStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.requiredStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredStringProperty",
+        propertySchema: schema.properties.requiredStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: PropertyCardinalities.Json,
   ): PropertyCardinalities {
@@ -10289,6 +15728,64 @@ export namespace PropertyCardinalities {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PropertyCardinalities.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "propertyCardinalities";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PropertyCardinalities.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PropertyCardinalities.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof PropertyCardinalities.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PropertyCardinalities.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _propertyCardinalities: PropertyCardinalities,
   ): PropertyCardinalities.Json {
@@ -10364,6 +15861,38 @@ export namespace PropertyCardinalities {
   ): string {
     return `PropertyCardinalities(${JSON.stringify(_propertiesToStrings((_propertyCardinalities ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PropertyCardinalities.Filter,
+    typeof PropertyCardinalities.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    PropertyCardinalities.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PropertyCardinalities.Filter,
+    typeof PropertyCardinalities.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      PropertyCardinalities.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface UnionMemberCommonParent {
   readonly $identifier: () => UnionMemberCommonParent.Identifier;
@@ -10547,6 +16076,127 @@ export namespace UnionMemberCommonParent {
     readonly unionMemberCommonParentProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    UnionMemberCommonParent.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unionMemberCommonParentProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unionMemberCommonParentProperty",
+        propertySchema: schema.properties.unionMemberCommonParentProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    UnionMemberCommonParent.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            UnionMemberCommonParent.fromRdfType,
+            UnionMember1.fromRdfType,
+            UnionMember2.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: UnionMemberCommonParent.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unionMemberCommonParentProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unionMemberCommonParentProperty",
+        propertySchema: schema.properties.unionMemberCommonParentProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: UnionMemberCommonParent.Json,
   ): UnionMemberCommonParent {
@@ -10678,6 +16328,66 @@ export namespace UnionMemberCommonParent {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: UnionMemberCommonParent.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "unionMemberCommonParent";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        UnionMemberCommonParent.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          UnionMemberCommonParent.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof UnionMemberCommonParent.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      UnionMemberCommonParent.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _unionMemberCommonParent: UnionMemberCommonParent,
   ): UnionMemberCommonParent.Json {
@@ -10739,6 +16449,38 @@ export namespace UnionMemberCommonParent {
   ): string {
     return `UnionMemberCommonParent(${JSON.stringify(_propertiesToStrings((_unionMemberCommonParent ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    UnionMemberCommonParent.Filter,
+    typeof UnionMemberCommonParent.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    UnionMemberCommonParent.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    UnionMemberCommonParent.Filter,
+    typeof UnionMemberCommonParent.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      UnionMemberCommonParent.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface UnionMember2 extends UnionMemberCommonParent {
   readonly $identifier: () => UnionMember2.Identifier;
@@ -10913,6 +16655,129 @@ export namespace UnionMember2 {
     readonly unionMember2Property?: $StringFilter;
   } & UnionMemberCommonParent.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    UnionMember2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      UnionMemberCommonParent.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unionMember2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unionMember2Property",
+        propertySchema: schema.properties.unionMember2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    UnionMember2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      UnionMemberCommonParent.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: UnionMember2.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: UnionMember2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unionMember2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unionMember2Property",
+        propertySchema: schema.properties.unionMember2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: UnionMember2.Json): UnionMember2 {
     return create({
       ...UnionMemberCommonParent.fromJson($json),
@@ -11040,6 +16905,62 @@ export namespace UnionMember2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: UnionMember2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "unionMember2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        UnionMember2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          UnionMember2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof UnionMember2.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      UnionMember2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_unionMember2: UnionMember2): UnionMember2.Json {
     return JSON.parse(
       JSON.stringify({
@@ -11096,6 +17017,38 @@ export namespace UnionMember2 {
   ): string {
     return `UnionMember2(${JSON.stringify(_propertiesToStrings((_unionMember2 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    UnionMember2.Filter,
+    typeof UnionMember2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    UnionMember2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    UnionMember2.Filter,
+    typeof UnionMember2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      UnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface PartialUnionMember2 {
   readonly $identifier: () => PartialUnionMember2.Identifier;
@@ -11269,6 +17222,112 @@ export namespace PartialUnionMember2 {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    PartialUnionMember2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    PartialUnionMember2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PartialUnionMember2.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: PartialUnionMember2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: PartialUnionMember2.Json,
   ): PartialUnionMember2 {
@@ -11395,6 +17454,62 @@ export namespace PartialUnionMember2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PartialUnionMember2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "partialUnionMember2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PartialUnionMember2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PartialUnionMember2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof PartialUnionMember2.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PartialUnionMember2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _partialUnionMember2: PartialUnionMember2,
   ): PartialUnionMember2.Json {
@@ -11448,6 +17563,38 @@ export namespace PartialUnionMember2 {
   ): string {
     return `PartialUnionMember2(${JSON.stringify(_propertiesToStrings((_partialUnionMember2 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PartialUnionMember2.Filter,
+    typeof PartialUnionMember2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    PartialUnionMember2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PartialUnionMember2.Filter,
+    typeof PartialUnionMember2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      PartialUnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface UnionMember1 extends UnionMemberCommonParent {
   readonly $identifier: () => UnionMember1.Identifier;
@@ -11622,6 +17769,129 @@ export namespace UnionMember1 {
     readonly unionMember1Property?: $StringFilter;
   } & UnionMemberCommonParent.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    UnionMember1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      UnionMemberCommonParent.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unionMember1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unionMember1Property",
+        propertySchema: schema.properties.unionMember1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    UnionMember1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      UnionMemberCommonParent.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: UnionMember1.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: UnionMember1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unionMember1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unionMember1Property",
+        propertySchema: schema.properties.unionMember1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: UnionMember1.Json): UnionMember1 {
     return create({
       ...UnionMemberCommonParent.fromJson($json),
@@ -11749,6 +18019,62 @@ export namespace UnionMember1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: UnionMember1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "unionMember1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        UnionMember1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          UnionMember1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof UnionMember1.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      UnionMember1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_unionMember1: UnionMember1): UnionMember1.Json {
     return JSON.parse(
       JSON.stringify({
@@ -11805,6 +18131,38 @@ export namespace UnionMember1 {
   ): string {
     return `UnionMember1(${JSON.stringify(_propertiesToStrings((_unionMember1 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    UnionMember1.Filter,
+    typeof UnionMember1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    UnionMember1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    UnionMember1.Filter,
+    typeof UnionMember1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      UnionMember1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface PartialUnionMember1 {
   readonly $identifier: () => PartialUnionMember1.Identifier;
@@ -11978,6 +18336,112 @@ export namespace PartialUnionMember1 {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    PartialUnionMember1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    PartialUnionMember1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: PartialUnionMember1.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: PartialUnionMember1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: PartialUnionMember1.Json,
   ): PartialUnionMember1 {
@@ -12104,6 +18568,62 @@ export namespace PartialUnionMember1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PartialUnionMember1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "partialUnionMember1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PartialUnionMember1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PartialUnionMember1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof PartialUnionMember1.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PartialUnionMember1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _partialUnionMember1: PartialUnionMember1,
   ): PartialUnionMember1.Json {
@@ -12157,6 +18677,38 @@ export namespace PartialUnionMember1 {
   ): string {
     return `PartialUnionMember1(${JSON.stringify(_propertiesToStrings((_partialUnionMember1 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PartialUnionMember1.Filter,
+    typeof PartialUnionMember1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    PartialUnionMember1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PartialUnionMember1.Filter,
+    typeof PartialUnionMember1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      PartialUnionMember1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that overrides its default name (derived from the identifier) using shaclmate:name; sh:name is only for property shapes
  */
@@ -12290,6 +18842,89 @@ export namespace NewName {
 
   export type Filter = { readonly $identifier?: $IdentifierFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NewName.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NewName.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NewName.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NewName.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: NewName.Json): NewName {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -12389,6 +19024,62 @@ export namespace NewName {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NewName.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "newName";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NewName.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NewName.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof NewName.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NewName.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_newName: NewName): NewName.Json {
     return JSON.parse(
       JSON.stringify({
@@ -12431,6 +19122,38 @@ export namespace NewName {
   ): string {
     return `NewName(${JSON.stringify(_propertiesToStrings((_newName ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NewName.Filter,
+    typeof NewName.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NewName.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NewName.Filter,
+    typeof NewName.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NewName.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.
  */
@@ -12667,6 +19390,102 @@ export namespace OrderedProperties {
     readonly orderedPropertyA?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    OrderedProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.orderedPropertyC,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "orderedPropertyC",
+        propertySchema: schema.properties.orderedPropertyC,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.orderedPropertyB,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "orderedPropertyB",
+        propertySchema: schema.properties.orderedPropertyB,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.orderedPropertyA,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "orderedPropertyA",
+        propertySchema: schema.properties.orderedPropertyA,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    OrderedProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: OrderedProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.orderedPropertyC,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "orderedPropertyC",
+        propertySchema: schema.properties.orderedPropertyC,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.orderedPropertyB,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "orderedPropertyB",
+        propertySchema: schema.properties.orderedPropertyB,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.orderedPropertyA,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "orderedPropertyA",
+        propertySchema: schema.properties.orderedPropertyA,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: OrderedProperties.Json): OrderedProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -12786,6 +19605,62 @@ export namespace OrderedProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: OrderedProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "orderedProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        OrderedProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          OrderedProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof OrderedProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      OrderedProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _orderedProperties: OrderedProperties,
   ): OrderedProperties.Json {
@@ -12843,6 +19718,38 @@ export namespace OrderedProperties {
   ): string {
     return `OrderedProperties(${JSON.stringify(_propertiesToStrings((_orderedProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    OrderedProperties.Filter,
+    typeof OrderedProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    OrderedProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    OrderedProperties.Filter,
+    typeof OrderedProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      OrderedProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with properties that have numeric sh:datatype's
  */
@@ -13776,6 +20683,553 @@ export namespace NumericProperties {
     >;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NumericProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.byteNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "byteNumericProperty",
+        propertySchema: schema.properties.byteNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.decimalNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "decimalNumericProperty",
+        propertySchema: schema.properties.decimalNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<BigDecimal>,
+          $NumericSchema<BigDecimal>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.doubleNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "doubleNumericProperty",
+        propertySchema: schema.properties.doubleNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.floatNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "floatNumericProperty",
+        propertySchema: schema.properties.floatNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.integerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "integerNumericProperty",
+        propertySchema: schema.properties.integerNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.intNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "intNumericProperty",
+        propertySchema: schema.properties.intNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.longNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "longNumericProperty",
+        propertySchema: schema.properties.longNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.negativeIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "negativeIntegerNumericProperty",
+        propertySchema: schema.properties.negativeIntegerNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nonNegativeIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nonNegativeIntegerNumericProperty",
+        propertySchema: schema.properties.nonNegativeIntegerNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nonPositiveIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nonPositiveIntegerNumericProperty",
+        propertySchema: schema.properties.nonPositiveIntegerNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.positiveIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "positiveIntegerNumericProperty",
+        propertySchema: schema.properties.positiveIntegerNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.shortNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "shortNumericProperty",
+        propertySchema: schema.properties.shortNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unsignedByteNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unsignedByteNumericProperty",
+        propertySchema: schema.properties.unsignedByteNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unsignedIntNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unsignedIntNumericProperty",
+        propertySchema: schema.properties.unsignedIntNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unsignedLongNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unsignedLongNumericProperty",
+        propertySchema: schema.properties.unsignedLongNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.unsignedShortNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "unsignedShortNumericProperty",
+        propertySchema: schema.properties.unsignedShortNumericProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NumericProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NumericProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NumericProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.byteNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "byteNumericProperty",
+        propertySchema: schema.properties.byteNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.decimalNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "decimalNumericProperty",
+        propertySchema: schema.properties.decimalNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<BigDecimal>,
+          $NumericSchema<BigDecimal>
+        >($bigDecimalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.doubleNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "doubleNumericProperty",
+        propertySchema: schema.properties.doubleNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.floatNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "floatNumericProperty",
+        propertySchema: schema.properties.floatNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.integerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "integerNumericProperty",
+        propertySchema: schema.properties.integerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.intNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "intNumericProperty",
+        propertySchema: schema.properties.intNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.longNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "longNumericProperty",
+        propertySchema: schema.properties.longNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.negativeIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "negativeIntegerNumericProperty",
+        propertySchema: schema.properties.negativeIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nonNegativeIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nonNegativeIntegerNumericProperty",
+        propertySchema: schema.properties.nonNegativeIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nonPositiveIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nonPositiveIntegerNumericProperty",
+        propertySchema: schema.properties.nonPositiveIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.positiveIntegerNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "positiveIntegerNumericProperty",
+        propertySchema: schema.properties.positiveIntegerNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.shortNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "shortNumericProperty",
+        propertySchema: schema.properties.shortNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unsignedByteNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unsignedByteNumericProperty",
+        propertySchema: schema.properties.unsignedByteNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unsignedIntNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unsignedIntNumericProperty",
+        propertySchema: schema.properties.unsignedIntNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unsignedLongNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unsignedLongNumericProperty",
+        propertySchema: schema.properties.unsignedLongNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.unsignedShortNumericProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "unsignedShortNumericProperty",
+        propertySchema: schema.properties.unsignedShortNumericProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: NumericProperties.Json): NumericProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -14378,6 +21832,62 @@ export namespace NumericProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NumericProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "numericProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NumericProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NumericProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof NumericProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NumericProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _numericProperties: NumericProperties,
   ): NumericProperties.Json {
@@ -14636,6 +22146,38 @@ export namespace NumericProperties {
   ): string {
     return `NumericProperties(${JSON.stringify(_propertiesToStrings((_numericProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NumericProperties.Filter,
+    typeof NumericProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NumericProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NumericProperties.Filter,
+    typeof NumericProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NumericProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that has properties with different sh:nodeKind combinations
  */
@@ -15170,6 +22712,227 @@ export namespace NodeKinds {
     readonly literalNodeKindProperty?: $LiteralFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NodeKinds.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeKindProperty",
+        propertySchema: schema.properties.blankNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeOrIriNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeOrIriNodeKindProperty",
+        propertySchema: schema.properties.blankNodeOrIriNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.blankNodeOrLiteralNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "blankNodeOrLiteralNodeKindProperty",
+        propertySchema: schema.properties.blankNodeOrLiteralNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriNodeKindProperty",
+        propertySchema: schema.properties.iriNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriOrLiteralNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriOrLiteralNodeKindProperty",
+        propertySchema: schema.properties.iriOrLiteralNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.literalNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "literalNodeKindProperty",
+        propertySchema: schema.properties.literalNodeKindProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NodeKinds.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NodeKinds.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NodeKinds.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeKindProperty",
+        propertySchema: schema.properties.blankNodeKindProperty,
+        typeSparqlWherePatterns: $blankNodeSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeOrIriNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeOrIriNodeKindProperty",
+        propertySchema: schema.properties.blankNodeOrIriNodeKindProperty,
+        typeSparqlWherePatterns: $identifierSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.blankNodeOrLiteralNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "blankNodeOrLiteralNodeKindProperty",
+        propertySchema: schema.properties.blankNodeOrLiteralNodeKindProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriNodeKindProperty",
+        propertySchema: schema.properties.iriNodeKindProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriOrLiteralNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriOrLiteralNodeKindProperty",
+        propertySchema: schema.properties.iriOrLiteralNodeKindProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.literalNodeKindProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "literalNodeKindProperty",
+        propertySchema: schema.properties.literalNodeKindProperty,
+        typeSparqlWherePatterns: $literalSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: NodeKinds.Json): NodeKinds {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -15455,6 +23218,62 @@ export namespace NodeKinds {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NodeKinds.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "nodeKinds";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NodeKinds.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NodeKinds.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof NodeKinds.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NodeKinds.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_nodeKinds: NodeKinds): NodeKinds.Json {
     return JSON.parse(
       JSON.stringify({
@@ -15591,6 +23410,38 @@ export namespace NodeKinds {
   ): string {
     return `NodeKinds(${JSON.stringify(_propertiesToStrings((_nodeKinds ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NodeKinds.Filter,
+    typeof NodeKinds.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NodeKinds.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NodeKinds.Filter,
+    typeof NodeKinds.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NodeKinds.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface NoRdfTypeUnionMember2 {
   readonly $identifier: () => NoRdfTypeUnionMember2.Identifier;
@@ -15764,6 +23615,56 @@ export namespace NoRdfTypeUnionMember2 {
     readonly noRdfTypeUnionMember2Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NoRdfTypeUnionMember2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.noRdfTypeUnionMember2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "noRdfTypeUnionMember2Property",
+        propertySchema: schema.properties.noRdfTypeUnionMember2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NoRdfTypeUnionMember2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NoRdfTypeUnionMember2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.noRdfTypeUnionMember2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "noRdfTypeUnionMember2Property",
+        propertySchema: schema.properties.noRdfTypeUnionMember2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: NoRdfTypeUnionMember2.Json,
   ): NoRdfTypeUnionMember2 {
@@ -15853,6 +23754,64 @@ export namespace NoRdfTypeUnionMember2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NoRdfTypeUnionMember2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "noRdfTypeUnionMember2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeUnionMember2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NoRdfTypeUnionMember2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof NoRdfTypeUnionMember2.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeUnionMember2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
   ): NoRdfTypeUnionMember2.Json {
@@ -15901,6 +23860,38 @@ export namespace NoRdfTypeUnionMember2 {
   ): string {
     return `NoRdfTypeUnionMember2(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember2 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NoRdfTypeUnionMember2.Filter,
+    typeof NoRdfTypeUnionMember2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NoRdfTypeUnionMember2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NoRdfTypeUnionMember2.Filter,
+    typeof NoRdfTypeUnionMember2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NoRdfTypeUnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface NoRdfTypeUnionMember1 {
   readonly $identifier: () => NoRdfTypeUnionMember1.Identifier;
@@ -16074,6 +24065,56 @@ export namespace NoRdfTypeUnionMember1 {
     readonly noRdfTypeUnionMember1Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NoRdfTypeUnionMember1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.noRdfTypeUnionMember1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "noRdfTypeUnionMember1Property",
+        propertySchema: schema.properties.noRdfTypeUnionMember1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NoRdfTypeUnionMember1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NoRdfTypeUnionMember1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.noRdfTypeUnionMember1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "noRdfTypeUnionMember1Property",
+        propertySchema: schema.properties.noRdfTypeUnionMember1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: NoRdfTypeUnionMember1.Json,
   ): NoRdfTypeUnionMember1 {
@@ -16163,6 +24204,64 @@ export namespace NoRdfTypeUnionMember1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NoRdfTypeUnionMember1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "noRdfTypeUnionMember1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeUnionMember1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NoRdfTypeUnionMember1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof NoRdfTypeUnionMember1.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeUnionMember1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
   ): NoRdfTypeUnionMember1.Json {
@@ -16211,6 +24310,38 @@ export namespace NoRdfTypeUnionMember1 {
   ): string {
     return `NoRdfTypeUnionMember1(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember1 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NoRdfTypeUnionMember1.Filter,
+    typeof NoRdfTypeUnionMember1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NoRdfTypeUnionMember1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NoRdfTypeUnionMember1.Filter,
+    typeof NoRdfTypeUnionMember1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NoRdfTypeUnionMember1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface NamedUnionProperties {
   readonly $identifier: () => NamedUnionProperties.Identifier;
@@ -16421,6 +24552,135 @@ export namespace NamedUnionProperties {
     readonly namedUnion2Property?: NamedUnion2.Filter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NamedUnionProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.namedUnion1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "namedUnion1Property",
+        propertySchema: schema.properties.namedUnion1Property,
+        typeSparqlConstructTriples: NamedUnion1.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.namedUnion2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "namedUnion2Property",
+        propertySchema: schema.properties.namedUnion2Property,
+        typeSparqlConstructTriples: NamedUnion2.valueSparqlConstructTriples,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NamedUnionProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: NamedUnionProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NamedUnionProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedUnion1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedUnion1Property",
+        propertySchema: schema.properties.namedUnion1Property,
+        typeSparqlWherePatterns: NamedUnion1.valueSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.namedUnion2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "namedUnion2Property",
+        propertySchema: schema.properties.namedUnion2Property,
+        typeSparqlWherePatterns: NamedUnion2.valueSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: NamedUnionProperties.Json,
   ): NamedUnionProperties {
@@ -16593,6 +24853,64 @@ export namespace NamedUnionProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NamedUnionProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "namedUnionProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NamedUnionProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NamedUnionProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof NamedUnionProperties.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NamedUnionProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _namedUnionProperties: NamedUnionProperties,
   ): NamedUnionProperties.Json {
@@ -16671,6 +24989,38 @@ export namespace NamedUnionProperties {
   ): string {
     return `NamedUnionProperties(${JSON.stringify(_propertiesToStrings((_namedUnionProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NamedUnionProperties.Filter,
+    typeof NamedUnionProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NamedUnionProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NamedUnionProperties.Filter,
+    typeof NamedUnionProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NamedUnionProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with shaclmate:mutable properties.
  */
@@ -16971,6 +25321,184 @@ export namespace MutableProperties {
     readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    MutableProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.mutableListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "mutableListProperty",
+        propertySchema: schema.properties.mutableListProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.mutableSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "mutableSetProperty",
+        propertySchema: schema.properties.mutableSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.mutableStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "mutableStringProperty",
+        propertySchema: schema.properties.mutableStringProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    MutableProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: MutableProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: MutableProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.mutableListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "mutableListProperty",
+        propertySchema: schema.properties.mutableListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+            $stringSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.mutableSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "mutableSetProperty",
+        propertySchema: schema.properties.mutableSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.mutableStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "mutableStringProperty",
+        propertySchema: schema.properties.mutableStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: MutableProperties.Json): MutableProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -17201,6 +25729,62 @@ export namespace MutableProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: MutableProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "mutableProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        MutableProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          MutableProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof MutableProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      MutableProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _mutableProperties: MutableProperties,
   ): MutableProperties.Json {
@@ -17325,6 +25909,38 @@ export namespace MutableProperties {
   ): string {
     return `MutableProperties(${JSON.stringify(_propertiesToStrings((_mutableProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    MutableProperties.Filter,
+    typeof MutableProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    MutableProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    MutableProperties.Filter,
+    typeof MutableProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      MutableProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassMultipleInheritanceParent2 {
   readonly $identifier: () => ClassMultipleInheritanceParent2.Identifier;
@@ -17514,6 +26130,129 @@ export namespace ClassMultipleInheritanceParent2 {
     readonly classMultipleInheritanceParent2Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceParent2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceParent2Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassMultipleInheritanceParent2.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceParent2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceParent2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceParent2Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: ClassMultipleInheritanceParent2.Json,
   ): ClassMultipleInheritanceParent2 {
@@ -17646,6 +26385,66 @@ export namespace ClassMultipleInheritanceParent2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceParent2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceParent2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceParent2.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceParent2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
   ): ClassMultipleInheritanceParent2.Json {
@@ -17712,6 +26511,38 @@ export namespace ClassMultipleInheritanceParent2 {
       _propertiesToStrings((_classMultipleInheritanceParent2 ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent2.Filter,
+    typeof ClassMultipleInheritanceParent2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent2.Filter,
+    typeof ClassMultipleInheritanceParent2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassMultipleInheritanceParent1 {
   readonly $identifier: () => ClassMultipleInheritanceParent1.Identifier;
@@ -17901,6 +26732,129 @@ export namespace ClassMultipleInheritanceParent1 {
     readonly classMultipleInheritanceParent1Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceParent1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceParent1Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent1Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassMultipleInheritanceParent1.fromRdfType,
+            ClassMultipleInheritanceChild.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceParent1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceParent1Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceParent1Property",
+        propertySchema:
+          schema.properties.classMultipleInheritanceParent1Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: ClassMultipleInheritanceParent1.Json,
   ): ClassMultipleInheritanceParent1 {
@@ -18033,6 +26987,66 @@ export namespace ClassMultipleInheritanceParent1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceParent1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceParent1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceParent1.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceParent1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
   ): ClassMultipleInheritanceParent1.Json {
@@ -18099,6 +27113,38 @@ export namespace ClassMultipleInheritanceParent1 {
       _propertiesToStrings((_classMultipleInheritanceParent1 ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceParent1.Filter,
+    typeof ClassMultipleInheritanceParent1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceParent1.Filter,
+    typeof ClassMultipleInheritanceParent1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassMultipleInheritanceChild
   extends ClassMultipleInheritanceParent1,
@@ -18301,6 +27347,147 @@ export namespace ClassMultipleInheritanceChild {
   } & ClassMultipleInheritanceParent1.Filter &
     ClassMultipleInheritanceParent2.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceChild.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classMultipleInheritanceChildProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classMultipleInheritanceChildProperty",
+        propertySchema: schema.properties.classMultipleInheritanceChildProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassMultipleInheritanceChild.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassMultipleInheritanceChild.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ClassMultipleInheritanceChild.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classMultipleInheritanceChildProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classMultipleInheritanceChildProperty",
+        propertySchema: schema.properties.classMultipleInheritanceChildProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: ClassMultipleInheritanceChild.Json,
   ): ClassMultipleInheritanceChild {
@@ -18449,6 +27636,66 @@ export namespace ClassMultipleInheritanceChild {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassMultipleInheritanceChild.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "classMultipleInheritanceChild";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ClassMultipleInheritanceChild.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassMultipleInheritanceChild.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
   ): ClassMultipleInheritanceChild.Json {
@@ -18534,6 +27781,38 @@ export namespace ClassMultipleInheritanceChild {
       _propertiesToStrings((_classMultipleInheritanceChild ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassMultipleInheritanceChild.Filter,
+    typeof ClassMultipleInheritanceChild.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassMultipleInheritanceChild.Filter,
+    typeof ClassMultipleInheritanceChild.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that uses the list shapes in properties.
  */
@@ -18853,6 +28132,200 @@ export namespace ListProperties {
     >;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ListProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriListProperty",
+        propertySchema: schema.properties.iriListProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema>
+        >(
+          $listSparqlConstructTriples<$IriFilter, $IriSchema>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.objectListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "objectListProperty",
+        propertySchema: schema.properties.objectListProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<NonClass.Filter>,
+          $CollectionSchema<typeof NonClass.schema>
+        >(
+          $listSparqlConstructTriples<NonClass.Filter, typeof NonClass.schema>(
+            NonClass.valueSparqlConstructTriples,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringListProperty",
+        propertySchema: schema.properties.stringListProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+            (_: object) => [],
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ListProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ListProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ListProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriListProperty",
+        propertySchema: schema.properties.iriListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$IriFilter>,
+          $CollectionSchema<$IriSchema>
+        >(
+          $listSparqlWherePatterns<$IriFilter, $IriSchema>(
+            $iriSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.objectListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "objectListProperty",
+        propertySchema: schema.properties.objectListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<NonClass.Filter>,
+          $CollectionSchema<typeof NonClass.schema>
+        >(
+          $listSparqlWherePatterns<NonClass.Filter, typeof NonClass.schema>(
+            NonClass.valueSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringListProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringListProperty",
+        propertySchema: schema.properties.stringListProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $CollectionFilter<$StringFilter>,
+          $CollectionSchema<$StringSchema>
+        >(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+            $stringSparqlWherePatterns,
+          ),
+        ),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ListProperties.Json): ListProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -19133,6 +28606,62 @@ export namespace ListProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ListProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "listProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ListProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ListProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ListProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ListProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_listProperties: ListProperties): ListProperties.Json {
     return JSON.parse(
       JSON.stringify({
@@ -19356,6 +28885,38 @@ export namespace ListProperties {
   ): string {
     return `ListProperties(${JSON.stringify(_propertiesToStrings((_listProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ListProperties.Filter,
+    typeof ListProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ListProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ListProperties.Filter,
+    typeof ListProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ListProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that has lazy properties.
  */
@@ -20703,6 +30264,439 @@ export namespace LazyProperties {
     readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty?: $CollectionFilter<Partial.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LazyProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter
+            ?.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlConstructTriples)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalLazyToResolvedIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalLazyToResolvedIriIdentifierProperty",
+        propertySchema:
+          schema.properties.optionalLazyToResolvedIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<
+            $NamedDefaultPartial.Filter,
+            typeof $NamedDefaultPartial.schema
+          >($NamedDefaultPartial.valueSparqlConstructTriples)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalLazyToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalLazyToResolvedUnionProperty",
+        propertySchema: schema.properties.optionalLazyToResolvedUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlConstructTriples)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter
+            ?.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName:
+          "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlConstructTriples,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalPartialToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalPartialToResolvedUnionProperty",
+        propertySchema:
+          schema.properties.optionalPartialToResolvedUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlConstructTriples,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.optionalPartialUnionToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "optionalPartialUnionToResolvedUnionProperty",
+        propertySchema:
+          schema.properties.optionalPartialUnionToResolvedUnionProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $maybeSparqlConstructTriples<
+            PartialUnion.Filter,
+            typeof PartialUnion.schema
+          >(PartialUnion.valueSparqlConstructTriples)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter
+            ?.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.valueSparqlConstructTriples({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter
+            ?.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName:
+          "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          Partial.valueSparqlConstructTriples({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter?.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $setSparqlConstructTriples<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlConstructTriples)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter:
+          parameters.filter
+            ?.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "setPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
+          $setSparqlConstructTriples<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlConstructTriples,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LazyProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: LazyProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter
+            ?.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlWherePatterns)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalLazyToResolvedIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalLazyToResolvedIriIdentifierProperty",
+        propertySchema:
+          schema.properties.optionalLazyToResolvedIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $NamedDefaultPartial.Filter,
+            typeof $NamedDefaultPartial.schema
+          >($NamedDefaultPartial.valueSparqlWherePatterns)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalLazyToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalLazyToResolvedUnionProperty",
+        propertySchema: schema.properties.optionalLazyToResolvedUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlWherePatterns)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter
+            ?.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName:
+          "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlWherePatterns,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalPartialToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalPartialToResolvedUnionProperty",
+        propertySchema:
+          schema.properties.optionalPartialToResolvedUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlWherePatterns,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.optionalPartialUnionToResolvedUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "optionalPartialUnionToResolvedUnionProperty",
+        propertySchema:
+          schema.properties.optionalPartialUnionToResolvedUnionProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $maybeSparqlWherePatterns<
+            PartialUnion.Filter,
+            typeof PartialUnion.schema
+          >(PartialUnion.valueSparqlWherePatterns)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter
+            ?.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $DefaultPartial.valueSparqlWherePatterns({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter
+            ?.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName:
+          "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          Partial.valueSparqlWherePatterns({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter?.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setLazyToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<
+            $DefaultPartial.Filter,
+            typeof $DefaultPartial.schema
+          >($DefaultPartial.valueSparqlWherePatterns)({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter:
+          parameters.filter
+            ?.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "setPartialToResolvedBlankNodeOrIriIdentifierProperty",
+        propertySchema:
+          schema.properties
+            .setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
+          $setSparqlWherePatterns<Partial.Filter, typeof Partial.schema>(
+            Partial.valueSparqlWherePatterns,
+          )({
+            ...otherParameters,
+            schema: schema.partial(),
+          }),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: LazyProperties.Json): LazyProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -21514,6 +31508,62 @@ export namespace LazyProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazyProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "lazyProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazyProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazyProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof LazyProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazyProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_lazyProperties: LazyProperties): LazyProperties.Json {
     return JSON.parse(
       JSON.stringify({
@@ -21739,6 +31789,38 @@ export namespace LazyProperties {
   ): string {
     return `LazyProperties(${JSON.stringify(_propertiesToStrings((_lazyProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazyProperties.Filter,
+    typeof LazyProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LazyProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazyProperties.Filter,
+    typeof LazyProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LazyProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape resolved by LazyProperties
  */
@@ -21917,6 +31999,57 @@ export namespace LazilyResolvedIriIdentifier {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LazilyResolvedIriIdentifier.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LazilyResolvedIriIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $iriSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            LazilyResolvedIriIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: LazilyResolvedIriIdentifier.Json,
   ): LazilyResolvedIriIdentifier {
@@ -22004,6 +32137,66 @@ export namespace LazilyResolvedIriIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedIriIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedIriIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedIriIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedIriIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedIriIdentifier.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedIriIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
   ): LazilyResolvedIriIdentifier.Json {
@@ -22051,6 +32244,38 @@ export namespace LazilyResolvedIriIdentifier {
       _propertiesToStrings((_lazilyResolvedIriIdentifier ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedIriIdentifier.Filter,
+    typeof LazilyResolvedIriIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LazilyResolvedIriIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazilyResolvedIriIdentifier.Filter,
+    typeof LazilyResolvedIriIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LazilyResolvedIriIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface LazilyResolvedUnionMember2 {
   readonly $identifier: () => LazilyResolvedUnionMember2.Identifier;
@@ -22227,6 +32452,113 @@ export namespace LazilyResolvedUnionMember2 {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LazilyResolvedUnionMember2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LazilyResolvedUnionMember2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedUnionMember2.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            LazilyResolvedUnionMember2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: LazilyResolvedUnionMember2.Json,
   ): LazilyResolvedUnionMember2 {
@@ -22353,6 +32685,66 @@ export namespace LazilyResolvedUnionMember2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedUnionMember2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedUnionMember2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedUnionMember2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedUnionMember2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedUnionMember2.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedUnionMember2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
   ): LazilyResolvedUnionMember2.Json {
@@ -22410,6 +32802,38 @@ export namespace LazilyResolvedUnionMember2 {
       _propertiesToStrings((_lazilyResolvedUnionMember2 ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedUnionMember2.Filter,
+    typeof LazilyResolvedUnionMember2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LazilyResolvedUnionMember2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazilyResolvedUnionMember2.Filter,
+    typeof LazilyResolvedUnionMember2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LazilyResolvedUnionMember2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface LazilyResolvedUnionMember1 {
   readonly $identifier: () => LazilyResolvedUnionMember1.Identifier;
@@ -22586,6 +33010,113 @@ export namespace LazilyResolvedUnionMember1 {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LazilyResolvedUnionMember1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LazilyResolvedUnionMember1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedUnionMember1.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            LazilyResolvedUnionMember1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: LazilyResolvedUnionMember1.Json,
   ): LazilyResolvedUnionMember1 {
@@ -22712,6 +33243,66 @@ export namespace LazilyResolvedUnionMember1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedUnionMember1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedUnionMember1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedUnionMember1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedUnionMember1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedUnionMember1.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedUnionMember1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
   ): LazilyResolvedUnionMember1.Json {
@@ -22769,6 +33360,38 @@ export namespace LazilyResolvedUnionMember1 {
       _propertiesToStrings((_lazilyResolvedUnionMember1 ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedUnionMember1.Filter,
+    typeof LazilyResolvedUnionMember1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LazilyResolvedUnionMember1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazilyResolvedUnionMember1.Filter,
+    typeof LazilyResolvedUnionMember1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LazilyResolvedUnionMember1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape resolved by LazyProperties
  */
@@ -22954,6 +33577,113 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LazilyResolvedBlankNodeOrIriIdentifier.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LazilyResolvedBlankNodeOrIriIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: LazilyResolvedBlankNodeOrIriIdentifier.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            LazilyResolvedBlankNodeOrIriIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
   ): LazilyResolvedBlankNodeOrIriIdentifier {
@@ -23084,6 +33814,66 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedBlankNodeOrIriIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "lazilyResolvedBlankNodeOrIriIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LazilyResolvedBlankNodeOrIriIdentifier.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedBlankNodeOrIriIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
   ): LazilyResolvedBlankNodeOrIriIdentifier.Json {
@@ -23148,6 +33938,38 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       _propertiesToStrings((_lazilyResolvedBlankNodeOrIriIdentifier ?? this)!),
     )})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+    typeof LazilyResolvedBlankNodeOrIriIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+    typeof LazilyResolvedBlankNodeOrIriIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that uses the StringList in a property.
  */
@@ -23347,6 +34169,62 @@ export namespace LanguageInProperties {
     readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    LanguageInProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.languageInLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "languageInLiteralProperty",
+        propertySchema: schema.properties.languageInLiteralProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    LanguageInProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: LanguageInProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.languageInLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "languageInLiteralProperty",
+        propertySchema: schema.properties.languageInLiteralProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: LanguageInProperties.Json,
   ): LanguageInProperties {
@@ -23468,6 +34346,64 @@ export namespace LanguageInProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LanguageInProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "languageInProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LanguageInProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LanguageInProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof LanguageInProperties.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LanguageInProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _languageInProperties: LanguageInProperties,
   ): LanguageInProperties.Json {
@@ -23523,6 +34459,38 @@ export namespace LanguageInProperties {
   ): string {
     return `LanguageInProperties(${JSON.stringify(_propertiesToStrings((_languageInProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LanguageInProperties.Filter,
+    typeof LanguageInProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    LanguageInProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LanguageInProperties.Filter,
+    typeof LanguageInProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      LanguageInProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.
  */
@@ -23808,6 +34776,273 @@ export namespace JsPrimitiveUnionProperty {
     }>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    JsPrimitiveUnionProperty.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.jsPrimitiveUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "jsPrimitiveUnionProperty",
+        propertySchema: schema.properties.jsPrimitiveUnionProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["boolean"],
+              ignoreRdfType: false,
+              schema: schema.members["boolean"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["number"],
+              ignoreRdfType: false,
+              schema: schema.members["number"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    JsPrimitiveUnionProperty.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: JsPrimitiveUnionProperty.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: JsPrimitiveUnionProperty.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.jsPrimitiveUnionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "jsPrimitiveUnionProperty",
+        propertySchema: schema.properties.jsPrimitiveUnionProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $booleanSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["boolean"],
+              ignoreRdfType: false,
+              schema: schema.members["boolean"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $numericSparqlWherePatterns<number>({
+              ...otherParameters,
+              filter: filter?.on?.["number"],
+              ignoreRdfType: false,
+              schema: schema.members["number"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumericFilter<number>;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly boolean: {
+                discriminantValues: readonly (number | string)[];
+                type: $BooleanSchema;
+              };
+              readonly number: {
+                discriminantValues: readonly (number | string)[];
+                type: $NumericSchema<number>;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: JsPrimitiveUnionProperty.Json,
   ): JsPrimitiveUnionProperty {
@@ -24024,6 +35259,66 @@ export namespace JsPrimitiveUnionProperty {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: JsPrimitiveUnionProperty.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "jsPrimitiveUnionProperty";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        JsPrimitiveUnionProperty.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          JsPrimitiveUnionProperty.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof JsPrimitiveUnionProperty.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      JsPrimitiveUnionProperty.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
   ): JsPrimitiveUnionProperty.Json {
@@ -24120,6 +35415,38 @@ export namespace JsPrimitiveUnionProperty {
   ): string {
     return `JsPrimitiveUnionProperty(${JSON.stringify(_propertiesToStrings((_jsPrimitiveUnionProperty ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    JsPrimitiveUnionProperty.Filter,
+    typeof JsPrimitiveUnionProperty.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    JsPrimitiveUnionProperty.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    JsPrimitiveUnionProperty.Filter,
+    typeof JsPrimitiveUnionProperty.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      JsPrimitiveUnionProperty.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * A node shape that only allows IRI identifiers.
  */
@@ -24258,6 +35585,89 @@ export namespace IriIdentifier {
 
   export type Filter = { readonly $identifier?: $IriFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    IriIdentifier.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    IriIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IriIdentifier.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $iriSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: IriIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: IriIdentifier.Json): IriIdentifier {
     return create({ $identifier: dataFactory.namedNode($json["@id"]) });
   }
@@ -24355,6 +35765,62 @@ export namespace IriIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: IriIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "iriIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IriIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          IriIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof IriIdentifier.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IriIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_iriIdentifier: IriIdentifier): IriIdentifier.Json {
     return JSON.parse(
       JSON.stringify({
@@ -24396,6 +35862,38 @@ export namespace IriIdentifier {
   ): string {
     return `IriIdentifier(${JSON.stringify(_propertiesToStrings((_iriIdentifier ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    IriIdentifier.Filter,
+    typeof IriIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    IriIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    IriIdentifier.Filter,
+    typeof IriIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      IriIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface IndirectRecursiveHelper {
   readonly $identifier: () => IndirectRecursiveHelper.Identifier;
@@ -24591,6 +36089,89 @@ export namespace IndirectRecursiveHelper {
     readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursive.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    IndirectRecursiveHelper.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    IndirectRecursiveHelper.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IndirectRecursiveHelper.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: IndirectRecursiveHelper.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: IndirectRecursiveHelper.Json,
   ): IndirectRecursiveHelper {
@@ -24735,6 +36316,66 @@ export namespace IndirectRecursiveHelper {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: IndirectRecursiveHelper.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "indirectRecursiveHelper";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IndirectRecursiveHelper.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          IndirectRecursiveHelper.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof IndirectRecursiveHelper.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IndirectRecursiveHelper.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _indirectRecursiveHelper: IndirectRecursiveHelper,
   ): IndirectRecursiveHelper.Json {
@@ -24797,6 +36438,38 @@ export namespace IndirectRecursiveHelper {
   ): string {
     return `IndirectRecursiveHelper(${JSON.stringify(_propertiesToStrings((_indirectRecursiveHelper ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    IndirectRecursiveHelper.Filter,
+    typeof IndirectRecursiveHelper.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    IndirectRecursiveHelper.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    IndirectRecursiveHelper.Filter,
+    typeof IndirectRecursiveHelper.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      IndirectRecursiveHelper.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface IndirectRecursive {
   readonly $identifier: () => IndirectRecursive.Identifier;
@@ -24996,6 +36669,89 @@ export namespace IndirectRecursive {
     readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelper.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    IndirectRecursive.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    IndirectRecursive.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IndirectRecursive.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: IndirectRecursive.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: IndirectRecursive.Json): IndirectRecursive {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -25138,6 +36894,62 @@ export namespace IndirectRecursive {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: IndirectRecursive.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "indirectRecursive";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        IndirectRecursive.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          IndirectRecursive.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof IndirectRecursive.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      IndirectRecursive.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _indirectRecursive: IndirectRecursive,
   ): IndirectRecursive.Json {
@@ -25202,6 +37014,38 @@ export namespace IndirectRecursive {
   ): string {
     return `IndirectRecursive(${JSON.stringify(_propertiesToStrings((_indirectRecursive ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    IndirectRecursive.Filter,
+    typeof IndirectRecursive.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    IndirectRecursive.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    IndirectRecursive.Filter,
+    typeof IndirectRecursive.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      IndirectRecursive.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:in properties.
  */
@@ -25662,6 +37506,263 @@ export namespace InProperties {
     readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    InProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inBooleansProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inBooleansProperty",
+        propertySchema: schema.properties.inBooleansProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $BooleanFilter,
+          $BooleanSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inDateTimesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inDateTimesProperty",
+        propertySchema: schema.properties.inDateTimesProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $DateFilter,
+          $DateSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inDoublesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inDoublesProperty",
+        propertySchema: schema.properties.inDoublesProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inIntegersProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inIntegersProperty",
+        propertySchema: schema.properties.inIntegersProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inIrisProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inIrisProperty",
+        propertySchema: schema.properties.inIrisProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inStringsProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inStringsProperty",
+        propertySchema: schema.properties.inStringsProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    InProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: InProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: InProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inBooleansProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inBooleansProperty",
+        propertySchema: schema.properties.inBooleansProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inDateTimesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inDateTimesProperty",
+        propertySchema: schema.properties.inDateTimesProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inDoublesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inDoublesProperty",
+        propertySchema: schema.properties.inDoublesProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inIntegersProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inIntegersProperty",
+        propertySchema: schema.properties.inIntegersProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $NumericFilter<bigint>,
+          $NumericSchema<bigint>
+        >($numericSparqlWherePatterns<bigint>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inIrisProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inIrisProperty",
+        propertySchema: schema.properties.inIrisProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inStringsProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inStringsProperty",
+        propertySchema: schema.properties.inStringsProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: InProperties.Json): InProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -25976,6 +38077,62 @@ export namespace InProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: InProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "inProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        InProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          InProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof InProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      InProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_inProperties: InProperties): InProperties.Json {
     return JSON.parse(
       JSON.stringify({
@@ -26086,6 +38243,38 @@ export namespace InProperties {
   ): string {
     return `InProperties(${JSON.stringify(_propertiesToStrings((_inProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    InProperties.Filter,
+    typeof InProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    InProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    InProperties.Filter,
+    typeof InProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      InProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:in constraining its identifier.
  */
@@ -26307,6 +38496,118 @@ export namespace InIdentifier {
     readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    InIdentifier.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.inIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "inIdentifierProperty",
+        propertySchema: schema.properties.inIdentifierProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $StringFilter,
+          $StringSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    InIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: InIdentifier.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $iriSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: InIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.inIdentifierProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "inIdentifierProperty",
+        propertySchema: schema.properties.inIdentifierProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: InIdentifier.Json): InIdentifier {
     return create({
       $identifier: dataFactory.namedNode($json["@id"]),
@@ -26455,6 +38756,62 @@ export namespace InIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: InIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "inIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        InIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          InIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof InIdentifier.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      InIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_inIdentifier: InIdentifier): InIdentifier.Json {
     return JSON.parse(
       JSON.stringify({
@@ -26506,6 +38863,38 @@ export namespace InIdentifier {
   ): string {
     return `InIdentifier(${JSON.stringify(_propertiesToStrings((_inIdentifier ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    InIdentifier.Filter,
+    typeof InIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    InIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    InIdentifier.Filter,
+    typeof InIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      InIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:hasValue properties.
  */
@@ -26727,6 +39116,79 @@ export namespace HasValueProperties {
     readonly hasLiteralValueProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    HasValueProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.hasIriValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "hasIriValueProperty",
+        propertySchema: schema.properties.hasIriValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.hasLiteralValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "hasLiteralValueProperty",
+        propertySchema: schema.properties.hasLiteralValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    HasValueProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: HasValueProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.hasIriValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "hasIriValueProperty",
+        propertySchema: schema.properties.hasIriValueProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.hasLiteralValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "hasLiteralValueProperty",
+        propertySchema: schema.properties.hasLiteralValueProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: HasValueProperties.Json): HasValueProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -26848,6 +39310,62 @@ export namespace HasValueProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: HasValueProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "hasValueProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        HasValueProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          HasValueProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof HasValueProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      HasValueProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _hasValueProperties: HasValueProperties,
   ): HasValueProperties.Json {
@@ -26901,6 +39419,38 @@ export namespace HasValueProperties {
   ): string {
     return `HasValueProperties(${JSON.stringify(_propertiesToStrings((_hasValueProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    HasValueProperties.Filter,
+    typeof HasValueProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    HasValueProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    HasValueProperties.Filter,
+    typeof HasValueProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      HasValueProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface FlattenUnionMember3 {
   readonly $identifier: () => FlattenUnionMember3.Identifier;
@@ -27073,6 +39623,112 @@ export namespace FlattenUnionMember3 {
     readonly flattenUnionMember3Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    FlattenUnionMember3.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.flattenUnionMember3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "flattenUnionMember3Property",
+        propertySchema: schema.properties.flattenUnionMember3Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    FlattenUnionMember3.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: FlattenUnionMember3.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: FlattenUnionMember3.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.flattenUnionMember3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "flattenUnionMember3Property",
+        propertySchema: schema.properties.flattenUnionMember3Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: FlattenUnionMember3.Json,
   ): FlattenUnionMember3 {
@@ -27199,6 +39855,62 @@ export namespace FlattenUnionMember3 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: FlattenUnionMember3.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "flattenUnionMember3";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        FlattenUnionMember3.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          FlattenUnionMember3.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof FlattenUnionMember3.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      FlattenUnionMember3.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _flattenUnionMember3: FlattenUnionMember3,
   ): FlattenUnionMember3.Json {
@@ -27252,6 +39964,38 @@ export namespace FlattenUnionMember3 {
   ): string {
     return `FlattenUnionMember3(${JSON.stringify(_propertiesToStrings((_flattenUnionMember3 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    FlattenUnionMember3.Filter,
+    typeof FlattenUnionMember3.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    FlattenUnionMember3.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    FlattenUnionMember3.Filter,
+    typeof FlattenUnionMember3.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      FlattenUnionMember3.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that references the Extern in a property.
  */
@@ -27439,6 +40183,118 @@ export namespace ExternProperty {
     readonly externProperty?: $MaybeFilter<Extern.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ExternProperty.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.externProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "externProperty",
+        propertySchema: schema.properties.externProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          Extern.Filter,
+          typeof Extern.schema
+        >(Extern.valueSparqlConstructTriples),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ExternProperty.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ExternProperty.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ExternProperty.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.externProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "externProperty",
+        propertySchema: schema.properties.externProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          Extern.Filter,
+          typeof Extern.schema
+        >(Extern.valueSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ExternProperty.Json): ExternProperty {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -27573,6 +40429,62 @@ export namespace ExternProperty {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ExternProperty.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "externProperty";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ExternProperty.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ExternProperty.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ExternProperty.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ExternProperty.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_externProperty: ExternProperty): ExternProperty.Json {
     return JSON.parse(
       JSON.stringify({
@@ -27630,6 +40542,38 @@ export namespace ExternProperty {
   ): string {
     return `ExternProperty(${JSON.stringify(_propertiesToStrings((_externProperty ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ExternProperty.Filter,
+    typeof ExternProperty.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ExternProperty.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ExternProperty.Filter,
+    typeof ExternProperty.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ExternProperty.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Base type for :Extern to reuse
  */
@@ -27804,6 +40748,125 @@ export namespace BaseForExtern {
     readonly baseForExternProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    BaseForExtern.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.baseForExternProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "baseForExternProperty",
+        propertySchema: schema.properties.baseForExternProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    BaseForExtern.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [BaseForExtern.fromRdfType, Extern.fromRdfType].map(
+            (identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+                identifier as NamedNode;
+              return valuePatternRow;
+            },
+          ),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: BaseForExtern.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.baseForExternProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "baseForExternProperty",
+        propertySchema: schema.properties.baseForExternProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: BaseForExtern.Json): BaseForExtern {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -27928,6 +40991,62 @@ export namespace BaseForExtern {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: BaseForExtern.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "baseForExtern";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BaseForExtern.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          BaseForExtern.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof BaseForExtern.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BaseForExtern.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_baseForExtern: BaseForExtern): BaseForExtern.Json {
     return JSON.parse(
       JSON.stringify({
@@ -27978,6 +41097,38 @@ export namespace BaseForExtern {
   ): string {
     return `BaseForExtern(${JSON.stringify(_propertiesToStrings((_baseForExtern ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    BaseForExtern.Filter,
+    typeof BaseForExtern.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    BaseForExtern.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    BaseForExtern.Filter,
+    typeof BaseForExtern.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      BaseForExtern.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with custom rdf:type's.
  *
@@ -28158,6 +41309,112 @@ export namespace ExplicitRdfType {
     readonly explicitRdfTypeProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ExplicitRdfType.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.explicitRdfTypeProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "explicitRdfTypeProperty",
+        propertySchema: schema.properties.explicitRdfTypeProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ExplicitRdfType.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ExplicitRdfType.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ExplicitRdfType.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.explicitRdfTypeProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "explicitRdfTypeProperty",
+        propertySchema: schema.properties.explicitRdfTypeProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ExplicitRdfType.Json): ExplicitRdfType {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -28283,6 +41540,62 @@ export namespace ExplicitRdfType {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ExplicitRdfType.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "explicitRdfType";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ExplicitRdfType.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ExplicitRdfType.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ExplicitRdfType.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ExplicitRdfType.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _explicitRdfType: ExplicitRdfType,
   ): ExplicitRdfType.Json {
@@ -28335,6 +41648,38 @@ export namespace ExplicitRdfType {
   ): string {
     return `ExplicitRdfType(${JSON.stringify(_propertiesToStrings((_explicitRdfType ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ExplicitRdfType.Filter,
+    typeof ExplicitRdfType.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ExplicitRdfType.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ExplicitRdfType.Filter,
+    typeof ExplicitRdfType.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ExplicitRdfType.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with custom rdf:type's.
  *
@@ -28520,6 +41865,112 @@ export namespace ExplicitFromToRdfTypes {
     readonly explicitFromToRdfTypesProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ExplicitFromToRdfTypes.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.explicitFromToRdfTypesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "explicitFromToRdfTypesProperty",
+        propertySchema: schema.properties.explicitFromToRdfTypesProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ExplicitFromToRdfTypes.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ExplicitFromToRdfTypes.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ExplicitFromToRdfTypes.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.explicitFromToRdfTypesProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "explicitFromToRdfTypesProperty",
+        propertySchema: schema.properties.explicitFromToRdfTypesProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: ExplicitFromToRdfTypes.Json,
   ): ExplicitFromToRdfTypes {
@@ -28646,6 +42097,66 @@ export namespace ExplicitFromToRdfTypes {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ExplicitFromToRdfTypes.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "explicitFromToRdfTypes";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ExplicitFromToRdfTypes.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ExplicitFromToRdfTypes.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ExplicitFromToRdfTypes.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ExplicitFromToRdfTypes.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
   ): ExplicitFromToRdfTypes.Json {
@@ -28712,6 +42223,38 @@ export namespace ExplicitFromToRdfTypes {
   ): string {
     return `ExplicitFromToRdfTypes(${JSON.stringify(_propertiesToStrings((_explicitFromToRdfTypes ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ExplicitFromToRdfTypes.Filter,
+    typeof ExplicitFromToRdfTypes.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ExplicitFromToRdfTypes.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ExplicitFromToRdfTypes.Filter,
+    typeof ExplicitFromToRdfTypes.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ExplicitFromToRdfTypes.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Demonstrates the use of shaclmate:display for excluding/including properties from toString()-type display representations
  */
@@ -28977,6 +42520,158 @@ export namespace DisplayProperties {
     readonly implicitFalseDisplayProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    DisplayProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.explicitFalseDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "explicitFalseDisplayProperty",
+        propertySchema: schema.properties.explicitFalseDisplayProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.explicitTrueDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "explicitTrueDisplayProperty",
+        propertySchema: schema.properties.explicitTrueDisplayProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.implicitFalseDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "implicitFalseDisplayProperty",
+        propertySchema: schema.properties.implicitFalseDisplayProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    DisplayProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DisplayProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: DisplayProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.explicitFalseDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "explicitFalseDisplayProperty",
+        propertySchema: schema.properties.explicitFalseDisplayProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.explicitTrueDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "explicitTrueDisplayProperty",
+        propertySchema: schema.properties.explicitTrueDisplayProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.implicitFalseDisplayProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "implicitFalseDisplayProperty",
+        propertySchema: schema.properties.implicitFalseDisplayProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: DisplayProperties.Json): DisplayProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -29145,6 +42840,62 @@ export namespace DisplayProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: DisplayProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "displayProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DisplayProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          DisplayProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof DisplayProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DisplayProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _displayProperties: DisplayProperties,
   ): DisplayProperties.Json {
@@ -29214,6 +42965,38 @@ export namespace DisplayProperties {
   ): string {
     return `DisplayProperties(${JSON.stringify(_propertiesToStrings((_displayProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DisplayProperties.Filter,
+    typeof DisplayProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    DisplayProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DisplayProperties.Filter,
+    typeof DisplayProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      DisplayProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface DirectRecursive {
   readonly $identifier: () => DirectRecursive.Identifier;
@@ -29402,6 +43185,89 @@ export namespace DirectRecursive {
     readonly directRecursiveProperty?: $MaybeFilter<DirectRecursive.Filter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    DirectRecursive.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    DirectRecursive.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DirectRecursive.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: DirectRecursive.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: DirectRecursive.Json): DirectRecursive {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -29544,6 +43410,62 @@ export namespace DirectRecursive {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: DirectRecursive.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "directRecursive";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DirectRecursive.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          DirectRecursive.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof DirectRecursive.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DirectRecursive.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _directRecursive: DirectRecursive,
   ): DirectRecursive.Json {
@@ -29603,6 +43525,38 @@ export namespace DirectRecursive {
   ): string {
     return `DirectRecursive(${JSON.stringify(_propertiesToStrings((_directRecursive ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DirectRecursive.Filter,
+    typeof DirectRecursive.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    DirectRecursive.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DirectRecursive.Filter,
+    typeof DirectRecursive.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      DirectRecursive.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:defaultValue properties.
  */
@@ -30018,6 +43972,245 @@ export namespace DefaultValueProperties {
     readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    DefaultValueProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateDefaultValueProperty",
+        propertySchema: schema.properties.dateDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTimeDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTimeDefaultValueProperty",
+        propertySchema: schema.properties.dateTimeDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.falseBooleanDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "falseBooleanDefaultValueProperty",
+        propertySchema: schema.properties.falseBooleanDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.numberDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "numberDefaultValueProperty",
+        propertySchema: schema.properties.numberDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringDefaultValueProperty",
+        propertySchema: schema.properties.stringDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.trueBooleanDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "trueBooleanDefaultValueProperty",
+        propertySchema: schema.properties.trueBooleanDefaultValueProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    DefaultValueProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DefaultValueProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: DefaultValueProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateDefaultValueProperty",
+        propertySchema: schema.properties.dateDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTimeDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTimeDefaultValueProperty",
+        propertySchema: schema.properties.dateTimeDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $DateFilter,
+          $DateSchema
+        >($dateSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.falseBooleanDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "falseBooleanDefaultValueProperty",
+        propertySchema: schema.properties.falseBooleanDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.numberDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "numberDefaultValueProperty",
+        propertySchema: schema.properties.numberDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $NumericFilter<number>,
+          $NumericSchema<number>
+        >($numericSparqlWherePatterns<number>),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringDefaultValueProperty",
+        propertySchema: schema.properties.stringDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $StringFilter,
+          $StringSchema
+        >($stringSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.trueBooleanDefaultValueProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "trueBooleanDefaultValueProperty",
+        propertySchema: schema.properties.trueBooleanDefaultValueProperty,
+        typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
+          $BooleanFilter,
+          $BooleanSchema
+        >($booleanSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: DefaultValueProperties.Json,
   ): DefaultValueProperties {
@@ -30355,6 +44548,66 @@ export namespace DefaultValueProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: DefaultValueProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "defaultValueProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DefaultValueProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          DefaultValueProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof DefaultValueProperties.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DefaultValueProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _defaultValueProperties: DefaultValueProperties,
   ): DefaultValueProperties.Json {
@@ -30500,6 +44753,38 @@ export namespace DefaultValueProperties {
   ): string {
     return `DefaultValueProperties(${JSON.stringify(_propertiesToStrings((_defaultValueProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DefaultValueProperties.Filter,
+    typeof DefaultValueProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    DefaultValueProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DefaultValueProperties.Filter,
+    typeof DefaultValueProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      DefaultValueProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
  */
@@ -31191,6 +45476,677 @@ export namespace DateUnionProperties {
     }>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    DateUnionProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateOrDateTimeProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateOrDateTimeProperty",
+        propertySchema: schema.properties.dateOrDateTimeProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["dateTime"],
+              ignoreRdfType: false,
+              schema: schema.members["dateTime"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateOrStringProperty",
+        propertySchema: schema.properties.dateOrStringProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.dateTimeOrDateProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "dateTimeOrDateProperty",
+        propertySchema: schema.properties.dateTimeOrDateProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["dateTime"],
+              ignoreRdfType: false,
+              schema: schema.members["dateTime"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.stringOrDateProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "stringOrDateProperty",
+        propertySchema: schema.properties.stringOrDateProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+          let triples: sparqljs.Triple[] = [];
+
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }),
+          );
+          triples = triples.concat(
+            ((_: object) => [])({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }),
+          );
+
+          return triples;
+        }) satisfies $ValueSparqlConstructTriplesFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    DateUnionProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DateUnionProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: DateUnionProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateOrDateTimeProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateOrDateTimeProperty",
+        propertySchema: schema.properties.dateOrDateTimeProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["dateTime"],
+              ignoreRdfType: false,
+              schema: schema.members["dateTime"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateOrStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateOrStringProperty",
+        propertySchema: schema.properties.dateOrStringProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.dateTimeOrDateProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "dateTimeOrDateProperty",
+        propertySchema: schema.properties.dateTimeOrDateProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["dateTime"],
+              ignoreRdfType: false,
+              schema: schema.members["dateTime"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly dateTime: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.stringOrDateProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "stringOrDateProperty",
+        propertySchema: schema.properties.stringOrDateProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >((({ filter, schema, ...otherParameters }) => {
+          const unionPatterns: sparqljs.GroupPattern[] = [];
+
+          unionPatterns.push({
+            patterns: $stringSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["string"],
+              ignoreRdfType: false,
+              schema: schema.members["string"].type,
+            }).concat(),
+            type: "group",
+          });
+          unionPatterns.push({
+            patterns: $dateSparqlWherePatterns({
+              ...otherParameters,
+              filter: filter?.on?.["date"],
+              ignoreRdfType: false,
+              schema: schema.members["date"].type,
+            }).concat(),
+            type: "group",
+          });
+
+          return [{ patterns: unionPatterns, type: "union" }];
+        }) satisfies $ValueSparqlWherePatternsFunction<
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          },
+          {
+            kind: "AnonymousUnion";
+            members: {
+              readonly string: {
+                discriminantValues: readonly (number | string)[];
+                type: $StringSchema;
+              };
+              readonly date: {
+                discriminantValues: readonly (number | string)[];
+                type: $DateSchema;
+              };
+            };
+          }
+        >),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: DateUnionProperties.Json,
   ): DateUnionProperties {
@@ -31847,6 +46803,62 @@ export namespace DateUnionProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: DateUnionProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "dateUnionProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DateUnionProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          DateUnionProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof DateUnionProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DateUnionProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _dateUnionProperties: DateUnionProperties,
   ): DateUnionProperties.Json {
@@ -32117,6 +47129,38 @@ export namespace DateUnionProperties {
   ): string {
     return `DateUnionProperties(${JSON.stringify(_propertiesToStrings((_dateUnionProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    DateUnionProperties.Filter,
+    typeof DateUnionProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    DateUnionProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    DateUnionProperties.Filter,
+    typeof DateUnionProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      DateUnionProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
@@ -33179,6 +48223,420 @@ export namespace ConvertibleTypeProperties {
     readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ConvertibleTypeProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleIriNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleIriNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleIriNonEmptySetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleIriOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleIriOptionProperty",
+        propertySchema: schema.properties.convertibleIriOptionProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleIriProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleIriProperty",
+        propertySchema: schema.properties.convertibleIriProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleIriSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleIriSetProperty",
+        propertySchema: schema.properties.convertibleIriSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleLiteralNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleLiteralNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleLiteralNonEmptySetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleLiteralOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleLiteralOptionProperty",
+        propertySchema: schema.properties.convertibleLiteralOptionProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleLiteralProperty",
+        propertySchema: schema.properties.convertibleLiteralProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleLiteralSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleLiteralSetProperty",
+        propertySchema: schema.properties.convertibleLiteralSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $LiteralFilter,
+          $LiteralSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleTermNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleTermNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleTermNonEmptySetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleTermOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleTermOptionProperty",
+        propertySchema: schema.properties.convertibleTermOptionProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleTermProperty",
+        propertySchema: schema.properties.convertibleTermProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.convertibleTermSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "convertibleTermSetProperty",
+        propertySchema: schema.properties.convertibleTermSetProperty,
+        typeSparqlConstructTriples: $setSparqlConstructTriples<
+          $TermFilter,
+          $TermSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ConvertibleTypeProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ConvertibleTypeProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema:
+            ConvertibleTypeProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleIriNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleIriNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleIriNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleIriOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleIriOptionProperty",
+        propertySchema: schema.properties.convertibleIriOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleIriProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleIriProperty",
+        propertySchema: schema.properties.convertibleIriProperty,
+        typeSparqlWherePatterns: $iriSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleIriSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleIriSetProperty",
+        propertySchema: schema.properties.convertibleIriSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleLiteralNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleLiteralNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleLiteralNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleLiteralOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleLiteralOptionProperty",
+        propertySchema: schema.properties.convertibleLiteralOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleLiteralProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleLiteralProperty",
+        propertySchema: schema.properties.convertibleLiteralProperty,
+        typeSparqlWherePatterns: $literalSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleLiteralSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleLiteralSetProperty",
+        propertySchema: schema.properties.convertibleLiteralSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $LiteralFilter,
+          $LiteralSchema
+        >($literalSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleTermNonEmptySetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleTermNonEmptySetProperty",
+        propertySchema: schema.properties.convertibleTermNonEmptySetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleTermOptionProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleTermOptionProperty",
+        propertySchema: schema.properties.convertibleTermOptionProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleTermProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleTermProperty",
+        propertySchema: schema.properties.convertibleTermProperty,
+        typeSparqlWherePatterns: $termSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.convertibleTermSetProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "convertibleTermSetProperty",
+        propertySchema: schema.properties.convertibleTermSetProperty,
+        typeSparqlWherePatterns: $setSparqlWherePatterns<
+          $TermFilter,
+          $TermSchema
+        >($termSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson(
     $json: ConvertibleTypeProperties.Json,
   ): ConvertibleTypeProperties {
@@ -33756,6 +49214,66 @@ export namespace ConvertibleTypeProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ConvertibleTypeProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "convertibleTypeProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ConvertibleTypeProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ConvertibleTypeProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof ConvertibleTypeProperties.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ConvertibleTypeProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _convertibleTypeProperties: ConvertibleTypeProperties,
   ): ConvertibleTypeProperties.Json {
@@ -34041,6 +49559,38 @@ export namespace ConvertibleTypeProperties {
   ): string {
     return `ConvertibleTypeProperties(${JSON.stringify(_propertiesToStrings((_convertibleTypeProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ConvertibleTypeProperties.Filter,
+    typeof ConvertibleTypeProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ConvertibleTypeProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ConvertibleTypeProperties.Filter,
+    typeof ConvertibleTypeProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ConvertibleTypeProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape used as a partial by LazyProperties
  */
@@ -34213,6 +49763,56 @@ export namespace Partial {
     readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    Partial.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    Partial.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: Partial.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.lazilyResolvedStringProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "lazilyResolvedStringProperty",
+        propertySchema: schema.properties.lazilyResolvedStringProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: Partial.Json): Partial {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -34297,6 +49897,62 @@ export namespace Partial {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: Partial.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "partial";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Partial.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          Partial.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof Partial.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Partial.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_partial: Partial): Partial.Json {
     return JSON.parse(
       JSON.stringify({
@@ -34338,6 +49994,38 @@ export namespace Partial {
   ): string {
     return `Partial(${JSON.stringify(_propertiesToStrings((_partial ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    Partial.Filter,
+    typeof Partial.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    Partial.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    Partial.Filter,
+    typeof Partial.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      Partial.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that isn't an rdfs:Class.
  */
@@ -34505,6 +50193,56 @@ export namespace NonClass {
     readonly nonClassProperty?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    NonClass.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nonClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nonClassProperty",
+        propertySchema: schema.properties.nonClassProperty,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    NonClass.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: NonClass.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nonClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nonClassProperty",
+        propertySchema: schema.properties.nonClassProperty,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: NonClass.Json): NonClass {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -34587,6 +50325,62 @@ export namespace NonClass {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NonClass.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "nonClass";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NonClass.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NonClass.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof NonClass.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NonClass.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(_nonClass: NonClass): NonClass.Json {
     return JSON.parse(
       JSON.stringify({
@@ -34628,6 +50422,38 @@ export namespace NonClass {
   ): string {
     return `NonClass(${JSON.stringify(_propertiesToStrings((_nonClass ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NonClass.Filter,
+    typeof NonClass.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    NonClass.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NonClass.Filter,
+    typeof NonClass.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      NonClass.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape with sh:class properties
  */
@@ -35052,6 +50878,234 @@ export namespace ClassProperties {
     readonly singleClassProperty?: $MaybeFilter<$IdentifierFilter>;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassProperties.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.iriClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "iriClassProperty",
+        propertySchema: schema.properties.iriClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IriFilter,
+          $IriSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.multiClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "multiClassProperty",
+        propertySchema: schema.properties.multiClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nodeClassProperty1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nodeClassProperty1",
+        propertySchema: schema.properties.nodeClassProperty1,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          NonClass.Filter,
+          typeof NonClass.schema
+        >(NonClass.valueSparqlConstructTriples),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.nodeClassProperty2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "nodeClassProperty2",
+        propertySchema: schema.properties.nodeClassProperty2,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          Partial.Filter,
+          typeof Partial.schema
+        >(Partial.valueSparqlConstructTriples),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.singleClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "singleClassProperty",
+        propertySchema: schema.properties.singleClassProperty,
+        typeSparqlConstructTriples: $maybeSparqlConstructTriples<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >((_: object) => []),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassProperties.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassProperties.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassProperties.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.iriClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "iriClassProperty",
+        propertySchema: schema.properties.iriClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IriFilter,
+          $IriSchema
+        >($iriSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.multiClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "multiClassProperty",
+        propertySchema: schema.properties.multiClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nodeClassProperty1,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nodeClassProperty1",
+        propertySchema: schema.properties.nodeClassProperty1,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          NonClass.Filter,
+          typeof NonClass.schema
+        >(NonClass.valueSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.nodeClassProperty2,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "nodeClassProperty2",
+        propertySchema: schema.properties.nodeClassProperty2,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          Partial.Filter,
+          typeof Partial.schema
+        >(Partial.valueSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.singleClassProperty,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "singleClassProperty",
+        propertySchema: schema.properties.singleClassProperty,
+        typeSparqlWherePatterns: $maybeSparqlWherePatterns<
+          $IdentifierFilter,
+          $IdentifierSchema
+        >($identifierSparqlWherePatterns),
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ClassProperties.Json): ClassProperties {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -35320,6 +51374,62 @@ export namespace ClassProperties {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassProperties.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classProperties";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassProperties.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassProperties.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassProperties.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassProperties.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classProperties: ClassProperties,
   ): ClassProperties.Json {
@@ -35424,6 +51534,38 @@ export namespace ClassProperties {
   ): string {
     return `ClassProperties(${JSON.stringify(_propertiesToStrings((_classProperties ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassProperties.Filter,
+    typeof ClassProperties.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassProperties.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassProperties.Filter,
+    typeof ClassProperties.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassProperties.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Root (level 0) of a class hierarchy
  */
@@ -35614,6 +51756,128 @@ export namespace ClassHierarchy0 {
     readonly classHierarchy0Property?: $StringFilter;
   };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy0.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy0Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy0Property",
+        propertySchema: schema.properties.classHierarchy0Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy0.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy0.fromRdfType,
+            ClassHierarchy1.fromRdfType,
+            ClassHierarchy2.fromRdfType,
+            ClassHierarchy3.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy0.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy0Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy0Property",
+        propertySchema: schema.properties.classHierarchy0Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ClassHierarchy0.Json): ClassHierarchy0 {
     return create({
       $identifier: $json["@id"].startsWith("_:")
@@ -35750,6 +52014,62 @@ export namespace ClassHierarchy0 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy0.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy0";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy0.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy0.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy0.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy0.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classHierarchy0: ClassHierarchy0,
   ): ClassHierarchy0.Json {
@@ -35802,6 +52122,38 @@ export namespace ClassHierarchy0 {
   ): string {
     return `ClassHierarchy0(${JSON.stringify(_propertiesToStrings((_classHierarchy0 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy0.Filter,
+    typeof ClassHierarchy0.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy0.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy0.Filter,
+    typeof ClassHierarchy0.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy0.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassHierarchy1 extends ClassHierarchy0 {
   readonly $identifier: () => ClassHierarchy1.Identifier;
@@ -35949,6 +52301,121 @@ export namespace ClassHierarchy1 {
     readonly $identifier?: $IdentifierFilter;
   } & ClassHierarchy0.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy1.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy0.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy1.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy0.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy1.fromRdfType,
+            ClassHierarchy2.fromRdfType,
+            ClassHierarchy3.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy1.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson($json: ClassHierarchy1.Json): ClassHierarchy1 {
     return create({
       ...ClassHierarchy0.fromJson($json),
@@ -36063,6 +52530,62 @@ export namespace ClassHierarchy1 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy1.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy1";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy1.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy1.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy1.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy1.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classHierarchy1: ClassHierarchy1,
   ): ClassHierarchy1.Json {
@@ -36112,6 +52635,38 @@ export namespace ClassHierarchy1 {
   ): string {
     return `ClassHierarchy1(${JSON.stringify(_propertiesToStrings((_classHierarchy1 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy1.Filter,
+    typeof ClassHierarchy1.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy1.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy1.Filter,
+    typeof ClassHierarchy1.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy1.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassHierarchy2 extends ClassHierarchy1 {
   readonly $identifier: () => ClassHierarchy2.Identifier;
@@ -36289,6 +52844,143 @@ export namespace ClassHierarchy2 {
     readonly classHierarchy2Property?: $StringFilter;
   } & ClassHierarchy1.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy2.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy1.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy2Property",
+        propertySchema: schema.properties.classHierarchy2Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy2.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy1.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        {
+          type: "values" as const,
+          values: [
+            ClassHierarchy2.fromRdfType,
+            ClassHierarchy3.fromRdfType,
+          ].map((identifier) => {
+            const valuePatternRow: sparqljs.ValuePatternRow = {};
+            valuePatternRow[`?${parameters.variablePrefix}FromRdfType`] =
+              identifier as NamedNode;
+            return valuePatternRow;
+          }),
+        },
+        $sparqlInstancesOfPattern({
+          rdfType: dataFactory.variable!(
+            `${parameters.variablePrefix}FromRdfType`,
+          ),
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy2.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy2Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy2Property",
+        propertySchema: schema.properties.classHierarchy2Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ClassHierarchy2.Json): ClassHierarchy2 {
     return create({
       ...ClassHierarchy1.fromJson($json),
@@ -36425,6 +53117,62 @@ export namespace ClassHierarchy2 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy2.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy2";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy2.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy2.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy2.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy2.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classHierarchy2: ClassHierarchy2,
   ): ClassHierarchy2.Json {
@@ -36480,6 +53228,38 @@ export namespace ClassHierarchy2 {
   ): string {
     return `ClassHierarchy2(${JSON.stringify(_propertiesToStrings((_classHierarchy2 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy2.Filter,
+    typeof ClassHierarchy2.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy2.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy2.Filter,
+    typeof ClassHierarchy2.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy2.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export interface ClassHierarchy3 extends ClassHierarchy2 {
   readonly $identifier: () => ClassHierarchy3.Identifier;
@@ -36657,6 +53437,129 @@ export namespace ClassHierarchy3 {
     readonly classHierarchy3Property?: $StringFilter;
   } & ClassHierarchy2.Filter;
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    ClassHierarchy3.Filter
+  > = (parameters) => {
+    let triples: sparqljs.Triple[] = [];
+    triples = triples.concat(
+      ClassHierarchy2.focusSparqlConstructTriples({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    triples = triples.concat(
+      $shaclPropertySparqlConstructTriples({
+        filter: parameters.filter?.classHierarchy3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        propertyName: "classHierarchy3Property",
+        propertySchema: schema.properties.classHierarchy3Property,
+        typeSparqlConstructTriples: (_: object) => [],
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    ClassHierarchy3.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    patterns = patterns.concat(
+      ClassHierarchy2.focusSparqlWherePatterns({
+        filter: parameters.filter,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ClassHierarchy3.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: ClassHierarchy3.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    patterns = patterns.concat(
+      $shaclPropertySparqlWherePatterns({
+        filter: parameters.filter?.classHierarchy3Property,
+        focusIdentifier: parameters.focusIdentifier,
+        ignoreRdfType: true,
+        preferredLanguages: parameters.preferredLanguages,
+        propertyName: "classHierarchy3Property",
+        propertySchema: schema.properties.classHierarchy3Property,
+        typeSparqlWherePatterns: $stringSparqlWherePatterns,
+        variablePrefix: parameters.variablePrefix,
+      }),
+    );
+    return patterns;
+  };
+
   export function fromJson($json: ClassHierarchy3.Json): ClassHierarchy3 {
     return create({
       ...ClassHierarchy2.fromJson($json),
@@ -36790,6 +53693,62 @@ export namespace ClassHierarchy3 {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: ClassHierarchy3.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "classHierarchy3";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        ClassHierarchy3.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          ClassHierarchy3.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof ClassHierarchy3.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      ClassHierarchy3.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _classHierarchy3: ClassHierarchy3,
   ): ClassHierarchy3.Json {
@@ -36845,6 +53804,38 @@ export namespace ClassHierarchy3 {
   ): string {
     return `ClassHierarchy3(${JSON.stringify(_propertiesToStrings((_classHierarchy3 ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    ClassHierarchy3.Filter,
+    typeof ClassHierarchy3.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    ClassHierarchy3.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    ClassHierarchy3.Filter,
+    typeof ClassHierarchy3.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      ClassHierarchy3.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that can have a blank node or IRI as an identifier
  */
@@ -36993,6 +53984,89 @@ export namespace BlankNodeOrIriIdentifier {
 
   export type Filter = { readonly $identifier?: $IdentifierFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    BlankNodeOrIriIdentifier.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    BlankNodeOrIriIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankNodeOrIriIdentifier.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: BlankNodeOrIriIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: BlankNodeOrIriIdentifier.Json,
   ): BlankNodeOrIriIdentifier {
@@ -37097,6 +54171,66 @@ export namespace BlankNodeOrIriIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: BlankNodeOrIriIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable"
+        ? subject.value
+        : "blankNodeOrIriIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          BlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<
+      typeof BlankNodeOrIriIdentifier.sparqlConstructQuery
+    >[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BlankNodeOrIriIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
   ): BlankNodeOrIriIdentifier.Json {
@@ -37145,6 +54279,38 @@ export namespace BlankNodeOrIriIdentifier {
   ): string {
     return `BlankNodeOrIriIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeOrIriIdentifier ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    BlankNodeOrIriIdentifier.Filter,
+    typeof BlankNodeOrIriIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    BlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    BlankNodeOrIriIdentifier.Filter,
+    typeof BlankNodeOrIriIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      BlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 } /**
  * Node shape that can only have a blank node as an identifier
  */
@@ -37285,6 +54451,89 @@ export namespace BlankNodeIdentifier {
 
   export type Filter = { readonly $identifier?: $BlankNodeFilter };
 
+  export const focusSparqlConstructTriples: $FocusSparqlConstructTriplesFunction<
+    BlankNodeIdentifier.Filter
+  > = (parameters) => {
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject: parameters.focusIdentifier,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${parameters.variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${parameters.variablePrefix}RdfClass`),
+        },
+      );
+    }
+    return triples;
+  };
+
+  export const focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<
+    BlankNodeIdentifier.Filter
+  > = (parameters) => {
+    let patterns: $SparqlPattern[] = [];
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters.variablePrefix}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankNodeIdentifier.fromRdfType,
+          subject: parameters.focusIdentifier,
+        }),
+        {
+          triples: [
+            {
+              subject: parameters.focusIdentifier,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters.variablePrefix}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+    if (parameters.focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $blankNodeSparqlWherePatterns({
+          filter: parameters.filter?.$identifier,
+          ignoreRdfType: true,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: BlankNodeIdentifier.schema.properties.$identifier.type(),
+          valueVariable: parameters.focusIdentifier,
+          variablePrefix: parameters.variablePrefix,
+        }),
+      );
+    }
+    return patterns;
+  };
+
   export function fromJson(
     $json: BlankNodeIdentifier.Json,
   ): BlankNodeIdentifier {
@@ -37387,6 +54636,62 @@ export namespace BlankNodeIdentifier {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: BlankNodeIdentifier.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "blankNodeIdentifier";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BlankNodeIdentifier.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          BlankNodeIdentifier.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof BlankNodeIdentifier.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BlankNodeIdentifier.sparqlConstructQuery(parameters),
+    );
+  }
+
   export function toJson(
     _blankNodeIdentifier: BlankNodeIdentifier,
   ): BlankNodeIdentifier.Json {
@@ -37430,6 +54735,38 @@ export namespace BlankNodeIdentifier {
   ): string {
     return `BlankNodeIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeIdentifier ?? this)!))})`;
   }
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    BlankNodeIdentifier.Filter,
+    typeof BlankNodeIdentifier.schema
+  > = ({ filter, ignoreRdfType, valueVariable, variablePrefix }) =>
+    BlankNodeIdentifier.focusSparqlConstructTriples({
+      filter,
+      focusIdentifier: valueVariable,
+      ignoreRdfType,
+      variablePrefix,
+    });
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    BlankNodeIdentifier.Filter,
+    typeof BlankNodeIdentifier.schema
+  > = ({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    propertyPatterns,
+    valueVariable,
+    variablePrefix,
+  }) =>
+    (propertyPatterns as readonly $SparqlPattern[]).concat(
+      BlankNodeIdentifier.focusSparqlWherePatterns({
+        filter,
+        focusIdentifier: valueVariable,
+        ignoreRdfType,
+        preferredLanguages,
+        variablePrefix,
+      }),
+    );
 }
 export type FlattenUnion = UnionMember1 | UnionMember2 | FlattenUnionMember3;
 
@@ -37529,6 +54866,102 @@ export namespace FlattenUnion {
       readonly FlattenUnionMember3?: FlattenUnionMember3.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: FlattenUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...UnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember1`,
+      }).concat(),
+      ...UnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember2`,
+      }).concat(),
+      ...FlattenUnionMember3.focusSparqlConstructTriples({
+        filter: filter?.on?.FlattenUnionMember3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}FlattenUnionMember3`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: FlattenUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: UnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenUnionMember3.focusSparqlWherePatterns({
+            filter: filter?.on?.FlattenUnionMember3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}FlattenUnionMember3`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: FlattenUnion.Json): FlattenUnion => {
     if (value["@type"] === "UnionMember1") {
@@ -37690,6 +55123,62 @@ export namespace FlattenUnion {
     properties: {},
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: FlattenUnion.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "flattenUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        FlattenUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          FlattenUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof FlattenUnion.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      FlattenUnion.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: FlattenUnion): FlattenUnion.Json => {
     if (UnionMember1.isUnionMember1(value)) {
       return UnionMember1.toJson(value);
@@ -37751,6 +55240,83 @@ export namespace FlattenUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<FlattenUnion>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    FlattenUnion.Filter,
+    typeof FlattenUnion.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      UnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      FlattenUnionMember3.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["FlattenUnionMember3"],
+        ignoreRdfType: false,
+        schema: schema.members["FlattenUnionMember3"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    FlattenUnion.Filter,
+    typeof FlattenUnion.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    FlattenUnion.Filter,
+    typeof FlattenUnion.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: UnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: FlattenUnionMember3.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["FlattenUnionMember3"],
+        ignoreRdfType: false,
+        schema: schema.members["FlattenUnionMember3"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    FlattenUnion.Filter,
+    typeof FlattenUnion.schema
+  >;
 }
 export type Union = UnionMember1 | UnionMember2;
 
@@ -37827,6 +55393,86 @@ export namespace Union {
       readonly UnionMember2?: UnionMember2.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: Union.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...UnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember1`,
+      }).concat(),
+      ...UnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember2`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: Union.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: UnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: Union.Json): Union => {
     if (value["@type"] === "UnionMember1") {
@@ -37962,6 +55608,62 @@ export namespace Union {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: Union.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "union";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        Union.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          Union.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof Union.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      Union.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: Union): Union.Json => {
     if (UnionMember1.isUnionMember1(value)) {
       return UnionMember1.toJson(value);
@@ -38009,6 +55711,66 @@ export namespace Union {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<Union>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    Union.Filter,
+    typeof Union.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      UnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    Union.Filter,
+    typeof Union.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    Union.Filter,
+    typeof Union.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: UnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    Union.Filter,
+    typeof Union.schema
+  >;
 }
 export type LazilyResolvedUnion =
   | LazilyResolvedUnionMember1
@@ -38109,6 +55871,86 @@ export namespace LazilyResolvedUnion {
       readonly LazilyResolvedUnionMember2?: LazilyResolvedUnionMember2.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...LazilyResolvedUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedUnionMember2`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: LazilyResolvedUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: LazilyResolvedUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (
     value: LazilyResolvedUnion.Json,
@@ -38255,6 +56097,62 @@ export namespace LazilyResolvedUnion {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: LazilyResolvedUnion.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "lazilyResolvedUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        LazilyResolvedUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          LazilyResolvedUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof LazilyResolvedUnion.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      LazilyResolvedUnion.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (
     value: LazilyResolvedUnion,
   ): LazilyResolvedUnion.Json => {
@@ -38304,6 +56202,66 @@ export namespace LazilyResolvedUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<LazilyResolvedUnion>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedUnion.Filter,
+    typeof LazilyResolvedUnion.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      LazilyResolvedUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazilyResolvedUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    LazilyResolvedUnion.Filter,
+    typeof LazilyResolvedUnion.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    LazilyResolvedUnion.Filter,
+    typeof LazilyResolvedUnion.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: LazilyResolvedUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazilyResolvedUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    LazilyResolvedUnion.Filter,
+    typeof LazilyResolvedUnion.schema
+  >;
 }
 export type PartialUnion = PartialUnionMember1 | PartialUnionMember2;
 
@@ -38390,6 +56348,86 @@ export namespace PartialUnion {
       readonly PartialUnionMember2?: PartialUnionMember2.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: PartialUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...PartialUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.PartialUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialUnionMember1`,
+      }).concat(),
+      ...PartialUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.PartialUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialUnionMember2`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: PartialUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: PartialUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.PartialUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.PartialUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: PartialUnion.Json): PartialUnion => {
     if (value["@type"] === "PartialUnionMember1") {
@@ -38524,6 +56562,62 @@ export namespace PartialUnion {
     },
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: PartialUnion.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "partialUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        PartialUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          PartialUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof PartialUnion.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      PartialUnion.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: PartialUnion): PartialUnion.Json => {
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
       return PartialUnionMember1.toJson(value);
@@ -38571,6 +56665,66 @@ export namespace PartialUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<PartialUnion>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    PartialUnion.Filter,
+    typeof PartialUnion.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      PartialUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      PartialUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    PartialUnion.Filter,
+    typeof PartialUnion.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    PartialUnion.Filter,
+    typeof PartialUnion.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: PartialUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PartialUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    PartialUnion.Filter,
+    typeof PartialUnion.schema
+  >;
 }
 export type NoRdfTypeUnion = NoRdfTypeUnionMember1 | NoRdfTypeUnionMember2;
 
@@ -38660,6 +56814,86 @@ export namespace NoRdfTypeUnion {
       readonly NoRdfTypeUnionMember2?: NoRdfTypeUnionMember2.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: NoRdfTypeUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...NoRdfTypeUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeUnionMember1`,
+      }).concat(),
+      ...NoRdfTypeUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeUnionMember2`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: NoRdfTypeUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: NoRdfTypeUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: NoRdfTypeUnion.Json): NoRdfTypeUnion => {
     if (value["@type"] === "NoRdfTypeUnionMember1") {
@@ -38790,6 +57024,62 @@ export namespace NoRdfTypeUnion {
     properties: {},
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: NoRdfTypeUnion.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "noRdfTypeUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          NoRdfTypeUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof NoRdfTypeUnion.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeUnion.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: NoRdfTypeUnion): NoRdfTypeUnion.Json => {
     if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(value)) {
       return NoRdfTypeUnionMember1.toJson(value);
@@ -38837,6 +57127,66 @@ export namespace NoRdfTypeUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<NoRdfTypeUnion>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    NoRdfTypeUnion.Filter,
+    typeof NoRdfTypeUnion.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      NoRdfTypeUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      NoRdfTypeUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    NoRdfTypeUnion.Filter,
+    typeof NoRdfTypeUnion.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    NoRdfTypeUnion.Filter,
+    typeof NoRdfTypeUnion.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: NoRdfTypeUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NoRdfTypeUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    NoRdfTypeUnion.Filter,
+    typeof NoRdfTypeUnion.schema
+  >;
 }
 export type RecursiveUnion = RecursiveUnionMember1 | RecursiveUnionMember2;
 
@@ -38926,6 +57276,86 @@ export namespace RecursiveUnion {
       readonly RecursiveUnionMember2?: RecursiveUnionMember2.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: RecursiveUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...RecursiveUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveUnionMember1`,
+      }).concat(),
+      ...RecursiveUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveUnionMember2`,
+      }).concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: RecursiveUnion.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: RecursiveUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: RecursiveUnion.Json): RecursiveUnion => {
     if (value["@type"] === "RecursiveUnionMember1") {
@@ -39056,6 +57486,62 @@ export namespace RecursiveUnion {
     properties: {},
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: RecursiveUnion.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "recursiveUnion";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        RecursiveUnion.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          RecursiveUnion.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof RecursiveUnion.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      RecursiveUnion.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: RecursiveUnion): RecursiveUnion.Json => {
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
       return RecursiveUnionMember1.toJson(value);
@@ -39103,6 +57589,66 @@ export namespace RecursiveUnion {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<RecursiveUnion>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    RecursiveUnion.Filter,
+    typeof RecursiveUnion.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      RecursiveUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      RecursiveUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember2"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    RecursiveUnion.Filter,
+    typeof RecursiveUnion.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    RecursiveUnion.Filter,
+    typeof RecursiveUnion.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: RecursiveUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: RecursiveUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    RecursiveUnion.Filter,
+    typeof RecursiveUnion.schema
+  >;
 }
 export type $Object =
   | BlankNodeIdentifier
@@ -40484,6 +59030,991 @@ export namespace $Object {
       readonly $NamedDefaultPartial?: $NamedDefaultPartial.Filter;
     };
   };
+
+  export function focusSparqlConstructTriples({
+    filter,
+    focusIdentifier,
+    variablePrefix,
+  }: {
+    filter: $Object.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    variablePrefix: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...BlankNodeIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeIdentifier`,
+      }).concat(),
+      ...BlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.BlankNodeOrIriIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifier`,
+      }).concat(),
+      ...ClassHierarchy3.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy3`,
+      }).concat(),
+      ...ClassHierarchy2.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy2`,
+      }).concat(),
+      ...ClassHierarchy1.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy1`,
+      }).concat(),
+      ...ClassHierarchy0.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassHierarchy0,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassHierarchy0`,
+      }).concat(),
+      ...ClassProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassProperties`,
+      }).concat(),
+      ...NonClass.focusSparqlConstructTriples({
+        filter: filter?.on?.NonClass,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NonClass`,
+      }).concat(),
+      ...Partial.focusSparqlConstructTriples({
+        filter: filter?.on?.Partial,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}Partial`,
+      }).concat(),
+      ...ConvertibleTypeProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.ConvertibleTypeProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ConvertibleTypeProperties`,
+      }).concat(),
+      ...DateUnionProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.DateUnionProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DateUnionProperties`,
+      }).concat(),
+      ...DefaultValueProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.DefaultValueProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DefaultValueProperties`,
+      }).concat(),
+      ...DirectRecursive.focusSparqlConstructTriples({
+        filter: filter?.on?.DirectRecursive,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DirectRecursive`,
+      }).concat(),
+      ...DisplayProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.DisplayProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}DisplayProperties`,
+      }).concat(),
+      ...ExplicitFromToRdfTypes.focusSparqlConstructTriples({
+        filter: filter?.on?.ExplicitFromToRdfTypes,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExplicitFromToRdfTypes`,
+      }).concat(),
+      ...ExplicitRdfType.focusSparqlConstructTriples({
+        filter: filter?.on?.ExplicitRdfType,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExplicitRdfType`,
+      }).concat(),
+      ...BaseForExtern.focusSparqlConstructTriples({
+        filter: filter?.on?.BaseForExtern,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}BaseForExtern`,
+      }).concat(),
+      ...ExternProperty.focusSparqlConstructTriples({
+        filter: filter?.on?.ExternProperty,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ExternProperty`,
+      }).concat(),
+      ...FlattenUnionMember3.focusSparqlConstructTriples({
+        filter: filter?.on?.FlattenUnionMember3,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}FlattenUnionMember3`,
+      }).concat(),
+      ...HasValueProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.HasValueProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}HasValueProperties`,
+      }).concat(),
+      ...InIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.InIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InIdentifier`,
+      }).concat(),
+      ...InProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.InProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}InProperties`,
+      }).concat(),
+      ...IndirectRecursive.focusSparqlConstructTriples({
+        filter: filter?.on?.IndirectRecursive,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IndirectRecursive`,
+      }).concat(),
+      ...IndirectRecursiveHelper.focusSparqlConstructTriples({
+        filter: filter?.on?.IndirectRecursiveHelper,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IndirectRecursiveHelper`,
+      }).concat(),
+      ...IriIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.IriIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}IriIdentifier`,
+      }).concat(),
+      ...JsPrimitiveUnionProperty.focusSparqlConstructTriples({
+        filter: filter?.on?.JsPrimitiveUnionProperty,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}JsPrimitiveUnionProperty`,
+      }).concat(),
+      ...LanguageInProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.LanguageInProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LanguageInProperties`,
+      }).concat(),
+      ...LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifier`,
+      }).concat(),
+      ...LazilyResolvedUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedUnionMember1`,
+      }).concat(),
+      ...LazilyResolvedUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedUnionMember2`,
+      }).concat(),
+      ...LazilyResolvedIriIdentifier.focusSparqlConstructTriples({
+        filter: filter?.on?.LazilyResolvedIriIdentifier,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifier`,
+      }).concat(),
+      ...LazyProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.LazyProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}LazyProperties`,
+      }).concat(),
+      ...ListProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.ListProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ListProperties`,
+      }).concat(),
+      ...ClassMultipleInheritanceChild.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceChild,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceChild`,
+      }).concat(),
+      ...ClassMultipleInheritanceParent1.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceParent1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent1`,
+      }).concat(),
+      ...ClassMultipleInheritanceParent2.focusSparqlConstructTriples({
+        filter: filter?.on?.ClassMultipleInheritanceParent2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent2`,
+      }).concat(),
+      ...MutableProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.MutableProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}MutableProperties`,
+      }).concat(),
+      ...NamedUnionProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.NamedUnionProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NamedUnionProperties`,
+      }).concat(),
+      ...NoRdfTypeUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeUnionMember1`,
+      }).concat(),
+      ...NoRdfTypeUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.NoRdfTypeUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NoRdfTypeUnionMember2`,
+      }).concat(),
+      ...NodeKinds.focusSparqlConstructTriples({
+        filter: filter?.on?.NodeKinds,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NodeKinds`,
+      }).concat(),
+      ...NumericProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.NumericProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NumericProperties`,
+      }).concat(),
+      ...OrderedProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.OrderedProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}OrderedProperties`,
+      }).concat(),
+      ...NewName.focusSparqlConstructTriples({
+        filter: filter?.on?.NewName,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}NewName`,
+      }).concat(),
+      ...PartialUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.PartialUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialUnionMember1`,
+      }).concat(),
+      ...UnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember1`,
+      }).concat(),
+      ...PartialUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.PartialUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PartialUnionMember2`,
+      }).concat(),
+      ...UnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMember2`,
+      }).concat(),
+      ...UnionMemberCommonParent.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionMemberCommonParent,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionMemberCommonParent`,
+      }).concat(),
+      ...PropertyCardinalities.focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyCardinalities,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyCardinalities`,
+      }).concat(),
+      ...PropertyNames.focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyNames,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyNames`,
+      }).concat(),
+      ...PropertyPaths.focusSparqlConstructTriples({
+        filter: filter?.on?.PropertyPaths,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}PropertyPaths`,
+      }).concat(),
+      ...RecursiveUnionMember1.focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveUnionMember1,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveUnionMember1`,
+      }).concat(),
+      ...RecursiveUnionMember2.focusSparqlConstructTriples({
+        filter: filter?.on?.RecursiveUnionMember2,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}RecursiveUnionMember2`,
+      }).concat(),
+      ...TermProperties.focusSparqlConstructTriples({
+        filter: filter?.on?.TermProperties,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}TermProperties`,
+      }).concat(),
+      ...UnionDiscriminants.focusSparqlConstructTriples({
+        filter: filter?.on?.UnionDiscriminants,
+        focusIdentifier,
+        ignoreRdfType: false,
+        variablePrefix: `${variablePrefix}UnionDiscriminants`,
+      }).concat(),
+      ...$DefaultPartial
+        .focusSparqlConstructTriples({
+          filter: filter?.on?.$DefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}DefaultPartial`,
+        })
+        .concat(),
+      ...$NamedDefaultPartial
+        .focusSparqlConstructTriples({
+          filter: filter?.on?.$NamedDefaultPartial,
+          focusIdentifier,
+          ignoreRdfType: false,
+          variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+        })
+        .concat(),
+    ];
+  }
+
+  export function focusSparqlWherePatterns({
+    filter,
+    focusIdentifier,
+    preferredLanguages,
+    variablePrefix,
+  }: {
+    filter: $Object.Filter | undefined;
+    focusIdentifier: NamedNode | Variable;
+    ignoreRdfType: boolean;
+    preferredLanguages: readonly string[] | undefined;
+    variablePrefix: string;
+  }): readonly $SparqlPattern[] {
+    let patterns: $SparqlPattern[] = [];
+    if (focusIdentifier.termType === "Variable") {
+      patterns = patterns.concat(
+        $identifierSparqlWherePatterns({
+          filter: filter?.$identifier,
+          ignoreRdfType: false,
+          preferredLanguages,
+          propertyPatterns: [],
+          schema: { kind: "Identifier" as const },
+          valueVariable: focusIdentifier,
+          variablePrefix,
+        }),
+      );
+    }
+    patterns.push({
+      patterns: [
+        {
+          patterns: BlankNodeIdentifier.focusSparqlWherePatterns({
+            filter: filter?.on?.BlankNodeIdentifier,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BlankNodeIdentifier`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+            filter: filter?.on?.BlankNodeOrIriIdentifier,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BlankNodeOrIriIdentifier`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy3.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy3`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy2.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy1.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassHierarchy0.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassHierarchy0,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassHierarchy0`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NonClass.focusSparqlWherePatterns({
+            filter: filter?.on?.NonClass,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NonClass`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: Partial.focusSparqlWherePatterns({
+            filter: filter?.on?.Partial,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}Partial`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConvertibleTypeProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.ConvertibleTypeProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ConvertibleTypeProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DateUnionProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.DateUnionProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DateUnionProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DefaultValueProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.DefaultValueProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DefaultValueProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DirectRecursive.focusSparqlWherePatterns({
+            filter: filter?.on?.DirectRecursive,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DirectRecursive`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DisplayProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.DisplayProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}DisplayProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitFromToRdfTypes.focusSparqlWherePatterns({
+            filter: filter?.on?.ExplicitFromToRdfTypes,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExplicitFromToRdfTypes`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitRdfType.focusSparqlWherePatterns({
+            filter: filter?.on?.ExplicitRdfType,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExplicitRdfType`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseForExtern.focusSparqlWherePatterns({
+            filter: filter?.on?.BaseForExtern,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}BaseForExtern`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExternProperty.focusSparqlWherePatterns({
+            filter: filter?.on?.ExternProperty,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ExternProperty`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenUnionMember3.focusSparqlWherePatterns({
+            filter: filter?.on?.FlattenUnionMember3,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}FlattenUnionMember3`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: HasValueProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.HasValueProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}HasValueProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InIdentifier.focusSparqlWherePatterns({
+            filter: filter?.on?.InIdentifier,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InIdentifier`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.InProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}InProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursive.focusSparqlWherePatterns({
+            filter: filter?.on?.IndirectRecursive,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IndirectRecursive`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursiveHelper.focusSparqlWherePatterns({
+            filter: filter?.on?.IndirectRecursiveHelper,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IndirectRecursiveHelper`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IriIdentifier.focusSparqlWherePatterns({
+            filter: filter?.on?.IriIdentifier,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}IriIdentifier`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: JsPrimitiveUnionProperty.focusSparqlWherePatterns({
+            filter: filter?.on?.JsPrimitiveUnionProperty,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}JsPrimitiveUnionProperty`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LanguageInProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.LanguageInProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LanguageInProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedBlankNodeOrIriIdentifier.focusSparqlWherePatterns({
+              filter: filter?.on?.LazilyResolvedBlankNodeOrIriIdentifier,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}LazilyResolvedBlankNodeOrIriIdentifier`,
+            }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedIriIdentifier.focusSparqlWherePatterns({
+            filter: filter?.on?.LazilyResolvedIriIdentifier,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazilyResolvedIriIdentifier`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazyProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.LazyProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}LazyProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ListProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.ListProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ListProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassMultipleInheritanceChild.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceChild,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceChild`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassMultipleInheritanceParent1.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceParent1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassMultipleInheritanceParent2.focusSparqlWherePatterns({
+            filter: filter?.on?.ClassMultipleInheritanceParent2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}ClassMultipleInheritanceParent2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: MutableProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.MutableProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}MutableProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NamedUnionProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.NamedUnionProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NamedUnionProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.NoRdfTypeUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NoRdfTypeUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NodeKinds.focusSparqlWherePatterns({
+            filter: filter?.on?.NodeKinds,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NodeKinds`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NumericProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.NumericProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NumericProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: OrderedProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.OrderedProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}OrderedProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NewName.focusSparqlWherePatterns({
+            filter: filter?.on?.NewName,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}NewName`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.PartialUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.PartialUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PartialUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionMemberCommonParent.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionMemberCommonParent,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionMemberCommonParent`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyCardinalities.focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyCardinalities,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyCardinalities`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyNames.focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyNames,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyNames`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyPaths.focusSparqlWherePatterns({
+            filter: filter?.on?.PropertyPaths,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}PropertyPaths`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveUnionMember1.focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveUnionMember1,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveUnionMember1`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveUnionMember2.focusSparqlWherePatterns({
+            filter: filter?.on?.RecursiveUnionMember2,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}RecursiveUnionMember2`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: TermProperties.focusSparqlWherePatterns({
+            filter: filter?.on?.TermProperties,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}TermProperties`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionDiscriminants.focusSparqlWherePatterns({
+            filter: filter?.on?.UnionDiscriminants,
+            focusIdentifier,
+            ignoreRdfType: false,
+            preferredLanguages,
+            variablePrefix: `${variablePrefix}UnionDiscriminants`,
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: $DefaultPartial
+            .focusSparqlWherePatterns({
+              filter: filter?.on?.$DefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}DefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
+        {
+          patterns: $NamedDefaultPartial
+            .focusSparqlWherePatterns({
+              filter: filter?.on?.$NamedDefaultPartial,
+              focusIdentifier,
+              ignoreRdfType: false,
+              preferredLanguages,
+              variablePrefix: `${variablePrefix}NamedDefaultPartial`,
+            })
+            .concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
+  }
 
   export const fromJson = (value: $Object.Json): $Object => {
     if (value["@type"] === "BlankNodeIdentifier") {
@@ -42394,6 +61925,62 @@ export namespace $Object {
     properties: {},
   } as const;
 
+  export function sparqlConstructQuery({
+    filter,
+    ignoreRdfType,
+    preferredLanguages,
+    prefixes,
+    subject,
+    ...queryParameters
+  }: {
+    filter?: $Object.Filter;
+    ignoreRdfType?: boolean;
+    prefixes?: { [prefix: string]: string };
+    preferredLanguages?: readonly string[];
+    subject: NamedNode | Variable;
+  } & Omit<
+    sparqljs.ConstructQuery,
+    "prefixes" | "queryType" | "type"
+  >): sparqljs.ConstructQuery {
+    const variablePrefix =
+      subject.termType === "Variable" ? subject.value : "object";
+
+    return {
+      ...queryParameters,
+      prefixes: prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        $Object.focusSparqlConstructTriples({
+          filter,
+          focusIdentifier: subject,
+          ignoreRdfType: !!ignoreRdfType,
+          variablePrefix,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $normalizeSparqlWherePatterns(
+          $Object.focusSparqlWherePatterns({
+            filter,
+            focusIdentifier: subject,
+            ignoreRdfType: !!ignoreRdfType,
+            preferredLanguages,
+            variablePrefix,
+          }),
+        ),
+      ),
+    };
+  }
+
+  export function sparqlConstructQueryString(
+    parameters: Parameters<typeof $Object.sparqlConstructQuery>[0] &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      $Object.sparqlConstructQuery(parameters),
+    );
+  }
+
   export const toJson = (value: $Object): $Object.Json => {
     if (BlankNodeIdentifier.isBlankNodeIdentifier(value)) {
       return BlankNodeIdentifier.toJson(value);
@@ -43252,6 +62839,1024 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
+
+  export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
+    $Object.Filter,
+    typeof $Object.schema
+  > = (({ ignoreRdfType, filter, schema, ...otherParameters }) => {
+    let triples: sparqljs.Triple[] = [];
+
+    triples = triples.concat(
+      BlankNodeIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BlankNodeIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["BlankNodeIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      BlankNodeOrIriIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BlankNodeOrIriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["BlankNodeOrIriIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy3.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy3"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy3"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy2"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy1"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassHierarchy0.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy0"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy0"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      NonClass.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NonClass"],
+        ignoreRdfType: false,
+        schema: schema.members["NonClass"].type,
+      }),
+    );
+    triples = triples.concat(
+      Partial.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["Partial"],
+        ignoreRdfType: false,
+        schema: schema.members["Partial"].type,
+      }),
+    );
+    triples = triples.concat(
+      ConvertibleTypeProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ConvertibleTypeProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ConvertibleTypeProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      DateUnionProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["DateUnionProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DateUnionProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      DefaultValueProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["DefaultValueProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DefaultValueProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      DirectRecursive.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["DirectRecursive"],
+        ignoreRdfType: false,
+        schema: schema.members["DirectRecursive"].type,
+      }),
+    );
+    triples = triples.concat(
+      DisplayProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["DisplayProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DisplayProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      ExplicitFromToRdfTypes.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ExplicitFromToRdfTypes"],
+        ignoreRdfType: false,
+        schema: schema.members["ExplicitFromToRdfTypes"].type,
+      }),
+    );
+    triples = triples.concat(
+      ExplicitRdfType.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ExplicitRdfType"],
+        ignoreRdfType: false,
+        schema: schema.members["ExplicitRdfType"].type,
+      }),
+    );
+    triples = triples.concat(
+      BaseForExtern.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["BaseForExtern"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseForExtern"].type,
+      }),
+    );
+    triples = triples.concat(
+      ExternProperty.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ExternProperty"],
+        ignoreRdfType: false,
+        schema: schema.members["ExternProperty"].type,
+      }),
+    );
+    triples = triples.concat(
+      FlattenUnionMember3.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["FlattenUnionMember3"],
+        ignoreRdfType: false,
+        schema: schema.members["FlattenUnionMember3"].type,
+      }),
+    );
+    triples = triples.concat(
+      HasValueProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["HasValueProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["HasValueProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      InIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["InIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["InIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      InProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["InProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["InProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      IndirectRecursive.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["IndirectRecursive"],
+        ignoreRdfType: false,
+        schema: schema.members["IndirectRecursive"].type,
+      }),
+    );
+    triples = triples.concat(
+      IndirectRecursiveHelper.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["IndirectRecursiveHelper"],
+        ignoreRdfType: false,
+        schema: schema.members["IndirectRecursiveHelper"].type,
+      }),
+    );
+    triples = triples.concat(
+      IriIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["IriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["IriIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      JsPrimitiveUnionProperty.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["JsPrimitiveUnionProperty"],
+        ignoreRdfType: false,
+        schema: schema.members["JsPrimitiveUnionProperty"].type,
+      }),
+    );
+    triples = triples.concat(
+      LanguageInProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LanguageInProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["LanguageInProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazilyResolvedBlankNodeOrIriIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedBlankNodeOrIriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedBlankNodeOrIriIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazilyResolvedUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazilyResolvedUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazilyResolvedIriIdentifier.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedIriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedIriIdentifier"].type,
+      }),
+    );
+    triples = triples.concat(
+      LazyProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["LazyProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["LazyProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      ListProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ListProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ListProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceChild.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceChild"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceChild"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent1"].type,
+      }),
+    );
+    triples = triples.concat(
+      ClassMultipleInheritanceParent2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent2"].type,
+      }),
+    );
+    triples = triples.concat(
+      MutableProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["MutableProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["MutableProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      NamedUnionProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NamedUnionProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["NamedUnionProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      NoRdfTypeUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      NoRdfTypeUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      NodeKinds.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NodeKinds"],
+        ignoreRdfType: false,
+        schema: schema.members["NodeKinds"].type,
+      }),
+    );
+    triples = triples.concat(
+      NumericProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NumericProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["NumericProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      OrderedProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["OrderedProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["OrderedProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      NewName.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["NewName"],
+        ignoreRdfType: false,
+        schema: schema.members["NewName"].type,
+      }),
+    );
+    triples = triples.concat(
+      PartialUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      PartialUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionMemberCommonParent.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMemberCommonParent"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMemberCommonParent"].type,
+      }),
+    );
+    triples = triples.concat(
+      PropertyCardinalities.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyCardinalities"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyCardinalities"].type,
+      }),
+    );
+    triples = triples.concat(
+      PropertyNames.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyNames"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyNames"].type,
+      }),
+    );
+    triples = triples.concat(
+      PropertyPaths.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyPaths"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyPaths"].type,
+      }),
+    );
+    triples = triples.concat(
+      RecursiveUnionMember1.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember1"].type,
+      }),
+    );
+    triples = triples.concat(
+      RecursiveUnionMember2.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember2"].type,
+      }),
+    );
+    triples = triples.concat(
+      TermProperties.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["TermProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["TermProperties"].type,
+      }),
+    );
+    triples = triples.concat(
+      UnionDiscriminants.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["UnionDiscriminants"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionDiscriminants"].type,
+      }),
+    );
+    triples = triples.concat(
+      $DefaultPartial.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["$DefaultPartial"],
+        ignoreRdfType: false,
+        schema: schema.members["$DefaultPartial"].type,
+      }),
+    );
+    triples = triples.concat(
+      $NamedDefaultPartial.valueSparqlConstructTriples({
+        ...otherParameters,
+        filter: filter?.on?.["$NamedDefaultPartial"],
+        ignoreRdfType: false,
+        schema: schema.members["$NamedDefaultPartial"].type,
+      }),
+    );
+
+    return triples;
+  }) satisfies $ValueSparqlConstructTriplesFunction<
+    $Object.Filter,
+    typeof $Object.schema
+  >;
+
+  export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
+    $Object.Filter,
+    typeof $Object.schema
+  > = (({ filter, schema, ...otherParameters }) => {
+    const unionPatterns: sparqljs.GroupPattern[] = [];
+
+    unionPatterns.push({
+      patterns: BlankNodeIdentifier.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BlankNodeIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["BlankNodeIdentifier"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: BlankNodeOrIriIdentifier.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BlankNodeOrIriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["BlankNodeOrIriIdentifier"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy3.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy3"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy3"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassHierarchy0.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassHierarchy0"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassHierarchy0"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NonClass.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NonClass"],
+        ignoreRdfType: false,
+        schema: schema.members["NonClass"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: Partial.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["Partial"],
+        ignoreRdfType: false,
+        schema: schema.members["Partial"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ConvertibleTypeProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ConvertibleTypeProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ConvertibleTypeProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: DateUnionProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["DateUnionProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DateUnionProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: DefaultValueProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["DefaultValueProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DefaultValueProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: DirectRecursive.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["DirectRecursive"],
+        ignoreRdfType: false,
+        schema: schema.members["DirectRecursive"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: DisplayProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["DisplayProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["DisplayProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ExplicitFromToRdfTypes.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ExplicitFromToRdfTypes"],
+        ignoreRdfType: false,
+        schema: schema.members["ExplicitFromToRdfTypes"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ExplicitRdfType.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ExplicitRdfType"],
+        ignoreRdfType: false,
+        schema: schema.members["ExplicitRdfType"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: BaseForExtern.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["BaseForExtern"],
+        ignoreRdfType: false,
+        schema: schema.members["BaseForExtern"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ExternProperty.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ExternProperty"],
+        ignoreRdfType: false,
+        schema: schema.members["ExternProperty"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: FlattenUnionMember3.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["FlattenUnionMember3"],
+        ignoreRdfType: false,
+        schema: schema.members["FlattenUnionMember3"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: HasValueProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["HasValueProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["HasValueProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: InIdentifier.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["InIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["InIdentifier"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: InProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["InProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["InProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: IndirectRecursive.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["IndirectRecursive"],
+        ignoreRdfType: false,
+        schema: schema.members["IndirectRecursive"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: IndirectRecursiveHelper.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["IndirectRecursiveHelper"],
+        ignoreRdfType: false,
+        schema: schema.members["IndirectRecursiveHelper"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: IriIdentifier.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["IriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["IriIdentifier"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: JsPrimitiveUnionProperty.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["JsPrimitiveUnionProperty"],
+        ignoreRdfType: false,
+        schema: schema.members["JsPrimitiveUnionProperty"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LanguageInProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LanguageInProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["LanguageInProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazilyResolvedBlankNodeOrIriIdentifier.valueSparqlWherePatterns(
+        {
+          ...otherParameters,
+          filter: filter?.on?.["LazilyResolvedBlankNodeOrIriIdentifier"],
+          ignoreRdfType: false,
+          schema: schema.members["LazilyResolvedBlankNodeOrIriIdentifier"].type,
+        },
+      ).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazilyResolvedUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazilyResolvedUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazilyResolvedIriIdentifier.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazilyResolvedIriIdentifier"],
+        ignoreRdfType: false,
+        schema: schema.members["LazilyResolvedIriIdentifier"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: LazyProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["LazyProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["LazyProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ListProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ListProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["ListProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassMultipleInheritanceChild.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceChild"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceChild"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassMultipleInheritanceParent1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent1"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: ClassMultipleInheritanceParent2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["ClassMultipleInheritanceParent2"],
+        ignoreRdfType: false,
+        schema: schema.members["ClassMultipleInheritanceParent2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: MutableProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["MutableProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["MutableProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NamedUnionProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NamedUnionProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["NamedUnionProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NoRdfTypeUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NoRdfTypeUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NoRdfTypeUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["NoRdfTypeUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NodeKinds.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NodeKinds"],
+        ignoreRdfType: false,
+        schema: schema.members["NodeKinds"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NumericProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NumericProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["NumericProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: OrderedProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["OrderedProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["OrderedProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: NewName.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["NewName"],
+        ignoreRdfType: false,
+        schema: schema.members["NewName"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PartialUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PartialUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PartialUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["PartialUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionMemberCommonParent.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionMemberCommonParent"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionMemberCommonParent"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PropertyCardinalities.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyCardinalities"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyCardinalities"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PropertyNames.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyNames"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyNames"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: PropertyPaths.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["PropertyPaths"],
+        ignoreRdfType: false,
+        schema: schema.members["PropertyPaths"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: RecursiveUnionMember1.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember1"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember1"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: RecursiveUnionMember2.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["RecursiveUnionMember2"],
+        ignoreRdfType: false,
+        schema: schema.members["RecursiveUnionMember2"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: TermProperties.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["TermProperties"],
+        ignoreRdfType: false,
+        schema: schema.members["TermProperties"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: UnionDiscriminants.valueSparqlWherePatterns({
+        ...otherParameters,
+        filter: filter?.on?.["UnionDiscriminants"],
+        ignoreRdfType: false,
+        schema: schema.members["UnionDiscriminants"].type,
+      }).concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $DefaultPartial
+        .valueSparqlWherePatterns({
+          ...otherParameters,
+          filter: filter?.on?.["$DefaultPartial"],
+          ignoreRdfType: false,
+          schema: schema.members["$DefaultPartial"].type,
+        })
+        .concat(),
+      type: "group",
+    });
+    unionPatterns.push({
+      patterns: $NamedDefaultPartial
+        .valueSparqlWherePatterns({
+          ...otherParameters,
+          filter: filter?.on?.["$NamedDefaultPartial"],
+          ignoreRdfType: false,
+          schema: schema.members["$NamedDefaultPartial"].type,
+        })
+        .concat(),
+      type: "group",
+    });
+
+    return [{ patterns: unionPatterns, type: "union" }];
+  }) satisfies $ValueSparqlWherePatternsFunction<
+    $Object.Filter,
+    typeof $Object.schema
+  >;
 }
 export interface $ObjectSet {
   baseForExtern(
@@ -50794,4 +71399,3457 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
     return Right(objects);
   }
+}
+export class $SparqlObjectSet implements $ObjectSet {
+  readonly #countVariable = dataFactory.variable!("count");
+  readonly #graph?: Exclude<Quad_Graph, Variable>;
+  readonly #objectVariable = dataFactory.variable!("object");
+  readonly #sparqlClient: {
+    queryBindings: (
+      query: string,
+    ) => Promise<readonly Record<string, BlankNode | Literal | NamedNode>[]>;
+    queryQuads: (query: string) => Promise<readonly Quad[]>;
+  };
+  readonly #sparqlGenerator = new sparqljs.Generator();
+
+  constructor(
+    sparqlClient: {
+      queryBindings: (
+        query: string,
+      ) => Promise<readonly Record<string, BlankNode | Literal | NamedNode>[]>;
+      queryQuads: (query: string) => Promise<readonly Quad[]>;
+    },
+    options?: { graph?: Exclude<Quad_Graph, Variable> },
+  ) {
+    this.#graph = options?.graph;
+    this.#sparqlClient = sparqlClient;
+  }
+
+  async baseForExtern(
+    identifier: BaseForExtern.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BaseForExtern>> {
+    return (
+      await this.baseForExterns({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async baseForExternCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BaseForExtern.Filter, BaseForExtern.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<BaseForExtern.Filter, BaseForExtern.Identifier>(
+      BaseForExtern,
+      query,
+    );
+  }
+
+  async baseForExternIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BaseForExtern.Filter,
+      BaseForExtern.Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseForExtern.Identifier[]>> {
+    return this.#objectIdentifiers<
+      BaseForExtern.Filter,
+      BaseForExtern.Identifier
+    >(BaseForExtern, query);
+  }
+
+  async baseForExterns(
+    query?: $SparqlObjectSet.Query<
+      BaseForExtern.Filter,
+      BaseForExtern.Identifier
+    >,
+  ): Promise<Either<Error, readonly BaseForExtern[]>> {
+    return this.#objects<
+      BaseForExtern,
+      BaseForExtern.Filter,
+      BaseForExtern.Identifier
+    >(BaseForExtern, query);
+  }
+
+  async blankNodeIdentifier(
+    identifier: BlankNodeIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BlankNodeIdentifier>> {
+    return (
+      await this.blankNodeIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async blankNodeIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        BlankNodeIdentifier.Filter,
+        BlankNodeIdentifier.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      BlankNodeIdentifier.Filter,
+      BlankNodeIdentifier.Identifier
+    >(BlankNodeIdentifier, query);
+  }
+
+  async blankNodeIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BlankNodeIdentifier.Filter,
+      BlankNodeIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly BlankNodeIdentifier.Identifier[]>> {
+    return this.#objectIdentifiers<
+      BlankNodeIdentifier.Filter,
+      BlankNodeIdentifier.Identifier
+    >(BlankNodeIdentifier, query);
+  }
+
+  async blankNodeIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BlankNodeIdentifier.Filter,
+      BlankNodeIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly BlankNodeIdentifier[]>> {
+    return this.#objects<
+      BlankNodeIdentifier,
+      BlankNodeIdentifier.Filter,
+      BlankNodeIdentifier.Identifier
+    >(BlankNodeIdentifier, query);
+  }
+
+  async blankNodeOrIriIdentifier(
+    identifier: BlankNodeOrIriIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, BlankNodeOrIriIdentifier>> {
+    return (
+      await this.blankNodeOrIriIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async blankNodeOrIriIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        BlankNodeOrIriIdentifier.Filter,
+        BlankNodeOrIriIdentifier.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      BlankNodeOrIriIdentifier.Filter,
+      BlankNodeOrIriIdentifier.Identifier
+    >(BlankNodeOrIriIdentifier, query);
+  }
+
+  async blankNodeOrIriIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BlankNodeOrIriIdentifier.Filter,
+      BlankNodeOrIriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly BlankNodeOrIriIdentifier.Identifier[]>> {
+    return this.#objectIdentifiers<
+      BlankNodeOrIriIdentifier.Filter,
+      BlankNodeOrIriIdentifier.Identifier
+    >(BlankNodeOrIriIdentifier, query);
+  }
+
+  async blankNodeOrIriIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      BlankNodeOrIriIdentifier.Filter,
+      BlankNodeOrIriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly BlankNodeOrIriIdentifier[]>> {
+    return this.#objects<
+      BlankNodeOrIriIdentifier,
+      BlankNodeOrIriIdentifier.Filter,
+      BlankNodeOrIriIdentifier.Identifier
+    >(BlankNodeOrIriIdentifier, query);
+  }
+
+  async classHierarchy0(
+    identifier: ClassHierarchy0.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy0>> {
+    return (
+      await this.classHierarchy0s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy0Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy0.Filter,
+        ClassHierarchy0.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassHierarchy0.Filter,
+      ClassHierarchy0.Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy0Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy0.Filter,
+      ClassHierarchy0.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ClassHierarchy0.Filter,
+      ClassHierarchy0.Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy0s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy0.Filter,
+      ClassHierarchy0.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy0[]>> {
+    return this.#objects<
+      ClassHierarchy0,
+      ClassHierarchy0.Filter,
+      ClassHierarchy0.Identifier
+    >(ClassHierarchy0, query);
+  }
+
+  async classHierarchy1(
+    identifier: ClassHierarchy1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy1>> {
+    return (
+      await this.classHierarchy1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy1.Filter,
+        ClassHierarchy1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassHierarchy1.Filter,
+      ClassHierarchy1.Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy1.Filter,
+      ClassHierarchy1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ClassHierarchy1.Filter,
+      ClassHierarchy1.Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy1s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy1.Filter,
+      ClassHierarchy1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy1[]>> {
+    return this.#objects<
+      ClassHierarchy1,
+      ClassHierarchy1.Filter,
+      ClassHierarchy1.Identifier
+    >(ClassHierarchy1, query);
+  }
+
+  async classHierarchy2(
+    identifier: ClassHierarchy2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy2>> {
+    return (
+      await this.classHierarchy2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy2.Filter,
+        ClassHierarchy2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassHierarchy2.Filter,
+      ClassHierarchy2.Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy2.Filter,
+      ClassHierarchy2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ClassHierarchy2.Filter,
+      ClassHierarchy2.Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy2s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy2.Filter,
+      ClassHierarchy2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy2[]>> {
+    return this.#objects<
+      ClassHierarchy2,
+      ClassHierarchy2.Filter,
+      ClassHierarchy2.Identifier
+    >(ClassHierarchy2, query);
+  }
+
+  async classHierarchy3(
+    identifier: ClassHierarchy3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassHierarchy3>> {
+    return (
+      await this.classHierarchy3s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classHierarchy3Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassHierarchy3.Filter,
+        ClassHierarchy3.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassHierarchy3.Filter,
+      ClassHierarchy3.Identifier
+    >(ClassHierarchy3, query);
+  }
+
+  async classHierarchy3Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy3.Filter,
+      ClassHierarchy3.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ClassHierarchy3.Filter,
+      ClassHierarchy3.Identifier
+    >(ClassHierarchy3, query);
+  }
+
+  async classHierarchy3s(
+    query?: $SparqlObjectSet.Query<
+      ClassHierarchy3.Filter,
+      ClassHierarchy3.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassHierarchy3[]>> {
+    return this.#objects<
+      ClassHierarchy3,
+      ClassHierarchy3.Filter,
+      ClassHierarchy3.Identifier
+    >(ClassHierarchy3, query);
+  }
+
+  async classMultipleInheritanceChild(
+    identifier: ClassMultipleInheritanceChild.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceChild>> {
+    return (
+      await this.classMultipleInheritanceChildren({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceChildCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceChild.Filter,
+        ClassMultipleInheritanceChild.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceChildIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceChild.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceChildren(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceChild[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceChild,
+      ClassMultipleInheritanceChild.Filter,
+      ClassMultipleInheritanceChild.Identifier
+    >(ClassMultipleInheritanceChild, query);
+  }
+
+  async classMultipleInheritanceParent1(
+    identifier: ClassMultipleInheritanceParent1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent1>> {
+    return (
+      await this.classMultipleInheritanceParent1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceParent1.Filter,
+        ClassMultipleInheritanceParent1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent1.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent1s(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent1[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceParent1,
+      ClassMultipleInheritanceParent1.Filter,
+      ClassMultipleInheritanceParent1.Identifier
+    >(ClassMultipleInheritanceParent1, query);
+  }
+
+  async classMultipleInheritanceParent2(
+    identifier: ClassMultipleInheritanceParent2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassMultipleInheritanceParent2>> {
+    return (
+      await this.classMultipleInheritanceParent2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classMultipleInheritanceParent2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassMultipleInheritanceParent2.Filter,
+        ClassMultipleInheritanceParent2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
+  }
+
+  async classMultipleInheritanceParent2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly ClassMultipleInheritanceParent2.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
+  }
+
+  async classMultipleInheritanceParent2s(
+    query?: $SparqlObjectSet.Query<
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassMultipleInheritanceParent2[]>> {
+    return this.#objects<
+      ClassMultipleInheritanceParent2,
+      ClassMultipleInheritanceParent2.Filter,
+      ClassMultipleInheritanceParent2.Identifier
+    >(ClassMultipleInheritanceParent2, query);
+  }
+
+  async classProperties(
+    identifier: ClassProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ClassProperties>> {
+    return (
+      await this.classPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async classPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ClassProperties.Filter,
+        ClassProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ClassProperties.Filter,
+      ClassProperties.Identifier
+    >(ClassProperties, query);
+  }
+
+  async classPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ClassProperties.Filter,
+      ClassProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ClassProperties.Filter,
+      ClassProperties.Identifier
+    >(ClassProperties, query);
+  }
+
+  async classPropertieses(
+    query?: $SparqlObjectSet.Query<
+      ClassProperties.Filter,
+      ClassProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ClassProperties[]>> {
+    return this.#objects<
+      ClassProperties,
+      ClassProperties.Filter,
+      ClassProperties.Identifier
+    >(ClassProperties, query);
+  }
+
+  async convertibleTypeProperties(
+    identifier: ConvertibleTypeProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ConvertibleTypeProperties>> {
+    return (
+      await this.convertibleTypePropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async convertibleTypePropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ConvertibleTypeProperties.Filter,
+        ConvertibleTypeProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ConvertibleTypeProperties.Filter,
+      ConvertibleTypeProperties.Identifier
+    >(ConvertibleTypeProperties, query);
+  }
+
+  async convertibleTypePropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ConvertibleTypeProperties.Filter,
+      ConvertibleTypeProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ConvertibleTypeProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ConvertibleTypeProperties.Filter,
+      ConvertibleTypeProperties.Identifier
+    >(ConvertibleTypeProperties, query);
+  }
+
+  async convertibleTypePropertieses(
+    query?: $SparqlObjectSet.Query<
+      ConvertibleTypeProperties.Filter,
+      ConvertibleTypeProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ConvertibleTypeProperties[]>> {
+    return this.#objects<
+      ConvertibleTypeProperties,
+      ConvertibleTypeProperties.Filter,
+      ConvertibleTypeProperties.Identifier
+    >(ConvertibleTypeProperties, query);
+  }
+
+  async dateUnionProperties(
+    identifier: DateUnionProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DateUnionProperties>> {
+    return (
+      await this.dateUnionPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async dateUnionPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        DateUnionProperties.Filter,
+        DateUnionProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      DateUnionProperties.Filter,
+      DateUnionProperties.Identifier
+    >(DateUnionProperties, query);
+  }
+
+  async dateUnionPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      DateUnionProperties.Filter,
+      DateUnionProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DateUnionProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      DateUnionProperties.Filter,
+      DateUnionProperties.Identifier
+    >(DateUnionProperties, query);
+  }
+
+  async dateUnionPropertieses(
+    query?: $SparqlObjectSet.Query<
+      DateUnionProperties.Filter,
+      DateUnionProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DateUnionProperties[]>> {
+    return this.#objects<
+      DateUnionProperties,
+      DateUnionProperties.Filter,
+      DateUnionProperties.Identifier
+    >(DateUnionProperties, query);
+  }
+
+  async defaultValueProperties(
+    identifier: DefaultValueProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DefaultValueProperties>> {
+    return (
+      await this.defaultValuePropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async defaultValuePropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        DefaultValueProperties.Filter,
+        DefaultValueProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      DefaultValueProperties.Filter,
+      DefaultValueProperties.Identifier
+    >(DefaultValueProperties, query);
+  }
+
+  async defaultValuePropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      DefaultValueProperties.Filter,
+      DefaultValueProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DefaultValueProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      DefaultValueProperties.Filter,
+      DefaultValueProperties.Identifier
+    >(DefaultValueProperties, query);
+  }
+
+  async defaultValuePropertieses(
+    query?: $SparqlObjectSet.Query<
+      DefaultValueProperties.Filter,
+      DefaultValueProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DefaultValueProperties[]>> {
+    return this.#objects<
+      DefaultValueProperties,
+      DefaultValueProperties.Filter,
+      DefaultValueProperties.Identifier
+    >(DefaultValueProperties, query);
+  }
+
+  async directRecursive(
+    identifier: DirectRecursive.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DirectRecursive>> {
+    return (
+      await this.directRecursives({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async directRecursiveCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        DirectRecursive.Filter,
+        DirectRecursive.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      DirectRecursive.Filter,
+      DirectRecursive.Identifier
+    >(DirectRecursive, query);
+  }
+
+  async directRecursiveIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      DirectRecursive.Filter,
+      DirectRecursive.Identifier
+    >,
+  ): Promise<Either<Error, readonly DirectRecursive.Identifier[]>> {
+    return this.#objectIdentifiers<
+      DirectRecursive.Filter,
+      DirectRecursive.Identifier
+    >(DirectRecursive, query);
+  }
+
+  async directRecursives(
+    query?: $SparqlObjectSet.Query<
+      DirectRecursive.Filter,
+      DirectRecursive.Identifier
+    >,
+  ): Promise<Either<Error, readonly DirectRecursive[]>> {
+    return this.#objects<
+      DirectRecursive,
+      DirectRecursive.Filter,
+      DirectRecursive.Identifier
+    >(DirectRecursive, query);
+  }
+
+  async displayProperties(
+    identifier: DisplayProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, DisplayProperties>> {
+    return (
+      await this.displayPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async displayPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        DisplayProperties.Filter,
+        DisplayProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      DisplayProperties.Filter,
+      DisplayProperties.Identifier
+    >(DisplayProperties, query);
+  }
+
+  async displayPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      DisplayProperties.Filter,
+      DisplayProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DisplayProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      DisplayProperties.Filter,
+      DisplayProperties.Identifier
+    >(DisplayProperties, query);
+  }
+
+  async displayPropertieses(
+    query?: $SparqlObjectSet.Query<
+      DisplayProperties.Filter,
+      DisplayProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly DisplayProperties[]>> {
+    return this.#objects<
+      DisplayProperties,
+      DisplayProperties.Filter,
+      DisplayProperties.Identifier
+    >(DisplayProperties, query);
+  }
+
+  async explicitFromToRdfTypes(
+    identifier: ExplicitFromToRdfTypes.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ExplicitFromToRdfTypes>> {
+    return (
+      await this.explicitFromToRdfTypeses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async explicitFromToRdfTypesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ExplicitFromToRdfTypes.Filter,
+        ExplicitFromToRdfTypes.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ExplicitFromToRdfTypes.Filter,
+      ExplicitFromToRdfTypes.Identifier
+    >(ExplicitFromToRdfTypes, query);
+  }
+
+  async explicitFromToRdfTypesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ExplicitFromToRdfTypes.Filter,
+      ExplicitFromToRdfTypes.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExplicitFromToRdfTypes.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ExplicitFromToRdfTypes.Filter,
+      ExplicitFromToRdfTypes.Identifier
+    >(ExplicitFromToRdfTypes, query);
+  }
+
+  async explicitFromToRdfTypeses(
+    query?: $SparqlObjectSet.Query<
+      ExplicitFromToRdfTypes.Filter,
+      ExplicitFromToRdfTypes.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExplicitFromToRdfTypes[]>> {
+    return this.#objects<
+      ExplicitFromToRdfTypes,
+      ExplicitFromToRdfTypes.Filter,
+      ExplicitFromToRdfTypes.Identifier
+    >(ExplicitFromToRdfTypes, query);
+  }
+
+  async explicitRdfType(
+    identifier: ExplicitRdfType.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ExplicitRdfType>> {
+    return (
+      await this.explicitRdfTypes({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async explicitRdfTypeCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        ExplicitRdfType.Filter,
+        ExplicitRdfType.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      ExplicitRdfType.Filter,
+      ExplicitRdfType.Identifier
+    >(ExplicitRdfType, query);
+  }
+
+  async explicitRdfTypeIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ExplicitRdfType.Filter,
+      ExplicitRdfType.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExplicitRdfType.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ExplicitRdfType.Filter,
+      ExplicitRdfType.Identifier
+    >(ExplicitRdfType, query);
+  }
+
+  async explicitRdfTypes(
+    query?: $SparqlObjectSet.Query<
+      ExplicitRdfType.Filter,
+      ExplicitRdfType.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExplicitRdfType[]>> {
+    return this.#objects<
+      ExplicitRdfType,
+      ExplicitRdfType.Filter,
+      ExplicitRdfType.Identifier
+    >(ExplicitRdfType, query);
+  }
+
+  async externProperty(
+    identifier: ExternProperty.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ExternProperty>> {
+    return (
+      await this.externProperties({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async externPropertyCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<ExternProperty.Filter, ExternProperty.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<ExternProperty.Filter, ExternProperty.Identifier>(
+      ExternProperty,
+      query,
+    );
+  }
+
+  async externPropertyIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ExternProperty.Filter,
+      ExternProperty.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExternProperty.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ExternProperty.Filter,
+      ExternProperty.Identifier
+    >(ExternProperty, query);
+  }
+
+  async externProperties(
+    query?: $SparqlObjectSet.Query<
+      ExternProperty.Filter,
+      ExternProperty.Identifier
+    >,
+  ): Promise<Either<Error, readonly ExternProperty[]>> {
+    return this.#objects<
+      ExternProperty,
+      ExternProperty.Filter,
+      ExternProperty.Identifier
+    >(ExternProperty, query);
+  }
+
+  async flattenUnionMember3(
+    identifier: FlattenUnionMember3.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, FlattenUnionMember3>> {
+    return (
+      await this.flattenUnionMember3s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async flattenUnionMember3Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        FlattenUnionMember3.Filter,
+        FlattenUnionMember3.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      FlattenUnionMember3.Filter,
+      FlattenUnionMember3.Identifier
+    >(FlattenUnionMember3, query);
+  }
+
+  async flattenUnionMember3Identifiers(
+    query?: $SparqlObjectSet.Query<
+      FlattenUnionMember3.Filter,
+      FlattenUnionMember3.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenUnionMember3.Identifier[]>> {
+    return this.#objectIdentifiers<
+      FlattenUnionMember3.Filter,
+      FlattenUnionMember3.Identifier
+    >(FlattenUnionMember3, query);
+  }
+
+  async flattenUnionMember3s(
+    query?: $SparqlObjectSet.Query<
+      FlattenUnionMember3.Filter,
+      FlattenUnionMember3.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenUnionMember3[]>> {
+    return this.#objects<
+      FlattenUnionMember3,
+      FlattenUnionMember3.Filter,
+      FlattenUnionMember3.Identifier
+    >(FlattenUnionMember3, query);
+  }
+
+  async hasValueProperties(
+    identifier: HasValueProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, HasValueProperties>> {
+    return (
+      await this.hasValuePropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async hasValuePropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        HasValueProperties.Filter,
+        HasValueProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      HasValueProperties.Filter,
+      HasValueProperties.Identifier
+    >(HasValueProperties, query);
+  }
+
+  async hasValuePropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      HasValueProperties.Filter,
+      HasValueProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly HasValueProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      HasValueProperties.Filter,
+      HasValueProperties.Identifier
+    >(HasValueProperties, query);
+  }
+
+  async hasValuePropertieses(
+    query?: $SparqlObjectSet.Query<
+      HasValueProperties.Filter,
+      HasValueProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly HasValueProperties[]>> {
+    return this.#objects<
+      HasValueProperties,
+      HasValueProperties.Filter,
+      HasValueProperties.Identifier
+    >(HasValueProperties, query);
+  }
+
+  async indirectRecursive(
+    identifier: IndirectRecursive.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IndirectRecursive>> {
+    return (
+      await this.indirectRecursives({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async indirectRecursiveCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        IndirectRecursive.Filter,
+        IndirectRecursive.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      IndirectRecursive.Filter,
+      IndirectRecursive.Identifier
+    >(IndirectRecursive, query);
+  }
+
+  async indirectRecursiveIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IndirectRecursive.Filter,
+      IndirectRecursive.Identifier
+    >,
+  ): Promise<Either<Error, readonly IndirectRecursive.Identifier[]>> {
+    return this.#objectIdentifiers<
+      IndirectRecursive.Filter,
+      IndirectRecursive.Identifier
+    >(IndirectRecursive, query);
+  }
+
+  async indirectRecursives(
+    query?: $SparqlObjectSet.Query<
+      IndirectRecursive.Filter,
+      IndirectRecursive.Identifier
+    >,
+  ): Promise<Either<Error, readonly IndirectRecursive[]>> {
+    return this.#objects<
+      IndirectRecursive,
+      IndirectRecursive.Filter,
+      IndirectRecursive.Identifier
+    >(IndirectRecursive, query);
+  }
+
+  async indirectRecursiveHelper(
+    identifier: IndirectRecursiveHelper.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IndirectRecursiveHelper>> {
+    return (
+      await this.indirectRecursiveHelpers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async indirectRecursiveHelperCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        IndirectRecursiveHelper.Filter,
+        IndirectRecursiveHelper.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      IndirectRecursiveHelper.Filter,
+      IndirectRecursiveHelper.Identifier
+    >(IndirectRecursiveHelper, query);
+  }
+
+  async indirectRecursiveHelperIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IndirectRecursiveHelper.Filter,
+      IndirectRecursiveHelper.Identifier
+    >,
+  ): Promise<Either<Error, readonly IndirectRecursiveHelper.Identifier[]>> {
+    return this.#objectIdentifiers<
+      IndirectRecursiveHelper.Filter,
+      IndirectRecursiveHelper.Identifier
+    >(IndirectRecursiveHelper, query);
+  }
+
+  async indirectRecursiveHelpers(
+    query?: $SparqlObjectSet.Query<
+      IndirectRecursiveHelper.Filter,
+      IndirectRecursiveHelper.Identifier
+    >,
+  ): Promise<Either<Error, readonly IndirectRecursiveHelper[]>> {
+    return this.#objects<
+      IndirectRecursiveHelper,
+      IndirectRecursiveHelper.Filter,
+      IndirectRecursiveHelper.Identifier
+    >(IndirectRecursiveHelper, query);
+  }
+
+  async inIdentifier(
+    identifier: InIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, InIdentifier>> {
+    return (
+      await this.inIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async inIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<InIdentifier.Filter, InIdentifier.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<InIdentifier.Filter, InIdentifier.Identifier>(
+      InIdentifier,
+      query,
+    );
+  }
+
+  async inIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      InIdentifier.Filter,
+      InIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly InIdentifier.Identifier[]>> {
+    return this.#objectIdentifiers<
+      InIdentifier.Filter,
+      InIdentifier.Identifier
+    >(InIdentifier, query);
+  }
+
+  async inIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      InIdentifier.Filter,
+      InIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly InIdentifier[]>> {
+    return this.#objects<
+      InIdentifier,
+      InIdentifier.Filter,
+      InIdentifier.Identifier
+    >(InIdentifier, query);
+  }
+
+  async inProperties(
+    identifier: InProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, InProperties>> {
+    return (
+      await this.inPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async inPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<InProperties.Filter, InProperties.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<InProperties.Filter, InProperties.Identifier>(
+      InProperties,
+      query,
+    );
+  }
+
+  async inPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      InProperties.Filter,
+      InProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly InProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      InProperties.Filter,
+      InProperties.Identifier
+    >(InProperties, query);
+  }
+
+  async inPropertieses(
+    query?: $SparqlObjectSet.Query<
+      InProperties.Filter,
+      InProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly InProperties[]>> {
+    return this.#objects<
+      InProperties,
+      InProperties.Filter,
+      InProperties.Identifier
+    >(InProperties, query);
+  }
+
+  async iriIdentifier(
+    identifier: IriIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, IriIdentifier>> {
+    return (
+      await this.iriIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async iriIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<IriIdentifier.Filter, IriIdentifier.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<IriIdentifier.Filter, IriIdentifier.Identifier>(
+      IriIdentifier,
+      query,
+    );
+  }
+
+  async iriIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IriIdentifier.Filter,
+      IriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly IriIdentifier.Identifier[]>> {
+    return this.#objectIdentifiers<
+      IriIdentifier.Filter,
+      IriIdentifier.Identifier
+    >(IriIdentifier, query);
+  }
+
+  async iriIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      IriIdentifier.Filter,
+      IriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly IriIdentifier[]>> {
+    return this.#objects<
+      IriIdentifier,
+      IriIdentifier.Filter,
+      IriIdentifier.Identifier
+    >(IriIdentifier, query);
+  }
+
+  async jsPrimitiveUnionProperty(
+    identifier: JsPrimitiveUnionProperty.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, JsPrimitiveUnionProperty>> {
+    return (
+      await this.jsPrimitiveUnionProperties({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async jsPrimitiveUnionPropertyCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        JsPrimitiveUnionProperty.Filter,
+        JsPrimitiveUnionProperty.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      JsPrimitiveUnionProperty.Filter,
+      JsPrimitiveUnionProperty.Identifier
+    >(JsPrimitiveUnionProperty, query);
+  }
+
+  async jsPrimitiveUnionPropertyIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      JsPrimitiveUnionProperty.Filter,
+      JsPrimitiveUnionProperty.Identifier
+    >,
+  ): Promise<Either<Error, readonly JsPrimitiveUnionProperty.Identifier[]>> {
+    return this.#objectIdentifiers<
+      JsPrimitiveUnionProperty.Filter,
+      JsPrimitiveUnionProperty.Identifier
+    >(JsPrimitiveUnionProperty, query);
+  }
+
+  async jsPrimitiveUnionProperties(
+    query?: $SparqlObjectSet.Query<
+      JsPrimitiveUnionProperty.Filter,
+      JsPrimitiveUnionProperty.Identifier
+    >,
+  ): Promise<Either<Error, readonly JsPrimitiveUnionProperty[]>> {
+    return this.#objects<
+      JsPrimitiveUnionProperty,
+      JsPrimitiveUnionProperty.Filter,
+      JsPrimitiveUnionProperty.Identifier
+    >(JsPrimitiveUnionProperty, query);
+  }
+
+  async languageInProperties(
+    identifier: LanguageInProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LanguageInProperties>> {
+    return (
+      await this.languageInPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async languageInPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LanguageInProperties.Filter,
+        LanguageInProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LanguageInProperties.Filter,
+      LanguageInProperties.Identifier
+    >(LanguageInProperties, query);
+  }
+
+  async languageInPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LanguageInProperties.Filter,
+      LanguageInProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly LanguageInProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LanguageInProperties.Filter,
+      LanguageInProperties.Identifier
+    >(LanguageInProperties, query);
+  }
+
+  async languageInPropertieses(
+    query?: $SparqlObjectSet.Query<
+      LanguageInProperties.Filter,
+      LanguageInProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly LanguageInProperties[]>> {
+    return this.#objects<
+      LanguageInProperties,
+      LanguageInProperties.Filter,
+      LanguageInProperties.Identifier
+    >(LanguageInProperties, query);
+  }
+
+  async lazilyResolvedBlankNodeOrIriIdentifier(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifier>> {
+    return (
+      await this.lazilyResolvedBlankNodeOrIriIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedBlankNodeOrIriIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+        LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+      LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifier, query);
+  }
+
+  async lazilyResolvedBlankNodeOrIriIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+      LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+    >,
+  ): Promise<
+    Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifier.Identifier[]>
+  > {
+    return this.#objectIdentifiers<
+      LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+      LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifier, query);
+  }
+
+  async lazilyResolvedBlankNodeOrIriIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+      LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifier[]>> {
+    return this.#objects<
+      LazilyResolvedBlankNodeOrIriIdentifier,
+      LazilyResolvedBlankNodeOrIriIdentifier.Filter,
+      LazilyResolvedBlankNodeOrIriIdentifier.Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifier, query);
+  }
+
+  async lazilyResolvedIriIdentifier(
+    identifier: LazilyResolvedIriIdentifier.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedIriIdentifier>> {
+    return (
+      await this.lazilyResolvedIriIdentifiers({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedIriIdentifierCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedIriIdentifier.Filter,
+        LazilyResolvedIriIdentifier.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedIriIdentifier.Filter,
+      LazilyResolvedIriIdentifier.Identifier
+    >(LazilyResolvedIriIdentifier, query);
+  }
+
+  async lazilyResolvedIriIdentifierIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedIriIdentifier.Filter,
+      LazilyResolvedIriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedIriIdentifier.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LazilyResolvedIriIdentifier.Filter,
+      LazilyResolvedIriIdentifier.Identifier
+    >(LazilyResolvedIriIdentifier, query);
+  }
+
+  async lazilyResolvedIriIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedIriIdentifier.Filter,
+      LazilyResolvedIriIdentifier.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedIriIdentifier[]>> {
+    return this.#objects<
+      LazilyResolvedIriIdentifier,
+      LazilyResolvedIriIdentifier.Filter,
+      LazilyResolvedIriIdentifier.Identifier
+    >(LazilyResolvedIriIdentifier, query);
+  }
+
+  async lazilyResolvedUnionMember1(
+    identifier: LazilyResolvedUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedUnionMember1>> {
+    return (
+      await this.lazilyResolvedUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedUnionMember1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedUnionMember1.Filter,
+        LazilyResolvedUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedUnionMember1.Filter,
+      LazilyResolvedUnionMember1.Identifier
+    >(LazilyResolvedUnionMember1, query);
+  }
+
+  async lazilyResolvedUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnionMember1.Filter,
+      LazilyResolvedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnionMember1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LazilyResolvedUnionMember1.Filter,
+      LazilyResolvedUnionMember1.Identifier
+    >(LazilyResolvedUnionMember1, query);
+  }
+
+  async lazilyResolvedUnionMember1s(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnionMember1.Filter,
+      LazilyResolvedUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnionMember1[]>> {
+    return this.#objects<
+      LazilyResolvedUnionMember1,
+      LazilyResolvedUnionMember1.Filter,
+      LazilyResolvedUnionMember1.Identifier
+    >(LazilyResolvedUnionMember1, query);
+  }
+
+  async lazilyResolvedUnionMember2(
+    identifier: LazilyResolvedUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedUnionMember2>> {
+    return (
+      await this.lazilyResolvedUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedUnionMember2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedUnionMember2.Filter,
+        LazilyResolvedUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedUnionMember2.Filter,
+      LazilyResolvedUnionMember2.Identifier
+    >(LazilyResolvedUnionMember2, query);
+  }
+
+  async lazilyResolvedUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnionMember2.Filter,
+      LazilyResolvedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnionMember2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LazilyResolvedUnionMember2.Filter,
+      LazilyResolvedUnionMember2.Identifier
+    >(LazilyResolvedUnionMember2, query);
+  }
+
+  async lazilyResolvedUnionMember2s(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnionMember2.Filter,
+      LazilyResolvedUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnionMember2[]>> {
+    return this.#objects<
+      LazilyResolvedUnionMember2,
+      LazilyResolvedUnionMember2.Filter,
+      LazilyResolvedUnionMember2.Identifier
+    >(LazilyResolvedUnionMember2, query);
+  }
+
+  async lazyProperties(
+    identifier: LazyProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazyProperties>> {
+    return (
+      await this.lazyPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazyPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<LazyProperties.Filter, LazyProperties.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<LazyProperties.Filter, LazyProperties.Identifier>(
+      LazyProperties,
+      query,
+    );
+  }
+
+  async lazyPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazyProperties.Filter,
+      LazyProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazyProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LazyProperties.Filter,
+      LazyProperties.Identifier
+    >(LazyProperties, query);
+  }
+
+  async lazyPropertieses(
+    query?: $SparqlObjectSet.Query<
+      LazyProperties.Filter,
+      LazyProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazyProperties[]>> {
+    return this.#objects<
+      LazyProperties,
+      LazyProperties.Filter,
+      LazyProperties.Identifier
+    >(LazyProperties, query);
+  }
+
+  async listProperties(
+    identifier: ListProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, ListProperties>> {
+    return (
+      await this.listPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async listPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<ListProperties.Filter, ListProperties.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<ListProperties.Filter, ListProperties.Identifier>(
+      ListProperties,
+      query,
+    );
+  }
+
+  async listPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      ListProperties.Filter,
+      ListProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ListProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      ListProperties.Filter,
+      ListProperties.Identifier
+    >(ListProperties, query);
+  }
+
+  async listPropertieses(
+    query?: $SparqlObjectSet.Query<
+      ListProperties.Filter,
+      ListProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly ListProperties[]>> {
+    return this.#objects<
+      ListProperties,
+      ListProperties.Filter,
+      ListProperties.Identifier
+    >(ListProperties, query);
+  }
+
+  async mutableProperties(
+    identifier: MutableProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, MutableProperties>> {
+    return (
+      await this.mutablePropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async mutablePropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        MutableProperties.Filter,
+        MutableProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      MutableProperties.Filter,
+      MutableProperties.Identifier
+    >(MutableProperties, query);
+  }
+
+  async mutablePropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      MutableProperties.Filter,
+      MutableProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly MutableProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      MutableProperties.Filter,
+      MutableProperties.Identifier
+    >(MutableProperties, query);
+  }
+
+  async mutablePropertieses(
+    query?: $SparqlObjectSet.Query<
+      MutableProperties.Filter,
+      MutableProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly MutableProperties[]>> {
+    return this.#objects<
+      MutableProperties,
+      MutableProperties.Filter,
+      MutableProperties.Identifier
+    >(MutableProperties, query);
+  }
+
+  async namedUnionProperties(
+    identifier: NamedUnionProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NamedUnionProperties>> {
+    return (
+      await this.namedUnionPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async namedUnionPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NamedUnionProperties.Filter,
+        NamedUnionProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      NamedUnionProperties.Filter,
+      NamedUnionProperties.Identifier
+    >(NamedUnionProperties, query);
+  }
+
+  async namedUnionPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NamedUnionProperties.Filter,
+      NamedUnionProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly NamedUnionProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NamedUnionProperties.Filter,
+      NamedUnionProperties.Identifier
+    >(NamedUnionProperties, query);
+  }
+
+  async namedUnionPropertieses(
+    query?: $SparqlObjectSet.Query<
+      NamedUnionProperties.Filter,
+      NamedUnionProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly NamedUnionProperties[]>> {
+    return this.#objects<
+      NamedUnionProperties,
+      NamedUnionProperties.Filter,
+      NamedUnionProperties.Identifier
+    >(NamedUnionProperties, query);
+  }
+
+  async newName(
+    identifier: NewName.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NewName>> {
+    return (
+      await this.newNames({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async newNameCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NewName.Filter, NewName.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<NewName.Filter, NewName.Identifier>(
+      NewName,
+      query,
+    );
+  }
+
+  async newNameIdentifiers(
+    query?: $SparqlObjectSet.Query<NewName.Filter, NewName.Identifier>,
+  ): Promise<Either<Error, readonly NewName.Identifier[]>> {
+    return this.#objectIdentifiers<NewName.Filter, NewName.Identifier>(
+      NewName,
+      query,
+    );
+  }
+
+  async newNames(
+    query?: $SparqlObjectSet.Query<NewName.Filter, NewName.Identifier>,
+  ): Promise<Either<Error, readonly NewName[]>> {
+    return this.#objects<NewName, NewName.Filter, NewName.Identifier>(
+      NewName,
+      query,
+    );
+  }
+
+  async nodeKinds(
+    identifier: NodeKinds.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NodeKinds>> {
+    return (
+      await this.nodeKindses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async nodeKindsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NodeKinds.Filter, NodeKinds.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<NodeKinds.Filter, NodeKinds.Identifier>(
+      NodeKinds,
+      query,
+    );
+  }
+
+  async nodeKindsIdentifiers(
+    query?: $SparqlObjectSet.Query<NodeKinds.Filter, NodeKinds.Identifier>,
+  ): Promise<Either<Error, readonly NodeKinds.Identifier[]>> {
+    return this.#objectIdentifiers<NodeKinds.Filter, NodeKinds.Identifier>(
+      NodeKinds,
+      query,
+    );
+  }
+
+  async nodeKindses(
+    query?: $SparqlObjectSet.Query<NodeKinds.Filter, NodeKinds.Identifier>,
+  ): Promise<Either<Error, readonly NodeKinds[]>> {
+    return this.#objects<NodeKinds, NodeKinds.Filter, NodeKinds.Identifier>(
+      NodeKinds,
+      query,
+    );
+  }
+
+  async nonClass(
+    identifier: NonClass.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NonClass>> {
+    return (
+      await this.nonClasses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async nonClassCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NonClass.Filter, NonClass.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<NonClass.Filter, NonClass.Identifier>(
+      NonClass,
+      query,
+    );
+  }
+
+  async nonClassIdentifiers(
+    query?: $SparqlObjectSet.Query<NonClass.Filter, NonClass.Identifier>,
+  ): Promise<Either<Error, readonly NonClass.Identifier[]>> {
+    return this.#objectIdentifiers<NonClass.Filter, NonClass.Identifier>(
+      NonClass,
+      query,
+    );
+  }
+
+  async nonClasses(
+    query?: $SparqlObjectSet.Query<NonClass.Filter, NonClass.Identifier>,
+  ): Promise<Either<Error, readonly NonClass[]>> {
+    return this.#objects<NonClass, NonClass.Filter, NonClass.Identifier>(
+      NonClass,
+      query,
+    );
+  }
+
+  async noRdfTypeUnionMember1(
+    identifier: NoRdfTypeUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeUnionMember1>> {
+    return (
+      await this.noRdfTypeUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeUnionMember1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NoRdfTypeUnionMember1.Filter,
+        NoRdfTypeUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      NoRdfTypeUnionMember1.Filter,
+      NoRdfTypeUnionMember1.Identifier
+    >(NoRdfTypeUnionMember1, query);
+  }
+
+  async noRdfTypeUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnionMember1.Filter,
+      NoRdfTypeUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnionMember1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NoRdfTypeUnionMember1.Filter,
+      NoRdfTypeUnionMember1.Identifier
+    >(NoRdfTypeUnionMember1, query);
+  }
+
+  async noRdfTypeUnionMember1s(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnionMember1.Filter,
+      NoRdfTypeUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnionMember1[]>> {
+    return this.#objects<
+      NoRdfTypeUnionMember1,
+      NoRdfTypeUnionMember1.Filter,
+      NoRdfTypeUnionMember1.Identifier
+    >(NoRdfTypeUnionMember1, query);
+  }
+
+  async noRdfTypeUnionMember2(
+    identifier: NoRdfTypeUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeUnionMember2>> {
+    return (
+      await this.noRdfTypeUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeUnionMember2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NoRdfTypeUnionMember2.Filter,
+        NoRdfTypeUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      NoRdfTypeUnionMember2.Filter,
+      NoRdfTypeUnionMember2.Identifier
+    >(NoRdfTypeUnionMember2, query);
+  }
+
+  async noRdfTypeUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnionMember2.Filter,
+      NoRdfTypeUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnionMember2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NoRdfTypeUnionMember2.Filter,
+      NoRdfTypeUnionMember2.Identifier
+    >(NoRdfTypeUnionMember2, query);
+  }
+
+  async noRdfTypeUnionMember2s(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnionMember2.Filter,
+      NoRdfTypeUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnionMember2[]>> {
+    return this.#objects<
+      NoRdfTypeUnionMember2,
+      NoRdfTypeUnionMember2.Filter,
+      NoRdfTypeUnionMember2.Identifier
+    >(NoRdfTypeUnionMember2, query);
+  }
+
+  async numericProperties(
+    identifier: NumericProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NumericProperties>> {
+    return (
+      await this.numericPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async numericPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        NumericProperties.Filter,
+        NumericProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      NumericProperties.Filter,
+      NumericProperties.Identifier
+    >(NumericProperties, query);
+  }
+
+  async numericPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NumericProperties.Filter,
+      NumericProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NumericProperties.Filter,
+      NumericProperties.Identifier
+    >(NumericProperties, query);
+  }
+
+  async numericPropertieses(
+    query?: $SparqlObjectSet.Query<
+      NumericProperties.Filter,
+      NumericProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly NumericProperties[]>> {
+    return this.#objects<
+      NumericProperties,
+      NumericProperties.Filter,
+      NumericProperties.Identifier
+    >(NumericProperties, query);
+  }
+
+  async orderedProperties(
+    identifier: OrderedProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, OrderedProperties>> {
+    return (
+      await this.orderedPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async orderedPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        OrderedProperties.Filter,
+        OrderedProperties.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      OrderedProperties.Filter,
+      OrderedProperties.Identifier
+    >(OrderedProperties, query);
+  }
+
+  async orderedPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      OrderedProperties.Filter,
+      OrderedProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly OrderedProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      OrderedProperties.Filter,
+      OrderedProperties.Identifier
+    >(OrderedProperties, query);
+  }
+
+  async orderedPropertieses(
+    query?: $SparqlObjectSet.Query<
+      OrderedProperties.Filter,
+      OrderedProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly OrderedProperties[]>> {
+    return this.#objects<
+      OrderedProperties,
+      OrderedProperties.Filter,
+      OrderedProperties.Identifier
+    >(OrderedProperties, query);
+  }
+
+  async partial(
+    identifier: Partial.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Partial>> {
+    return (
+      await this.partials({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async partialCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<Partial.Filter, Partial.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<Partial.Filter, Partial.Identifier>(
+      Partial,
+      query,
+    );
+  }
+
+  async partialIdentifiers(
+    query?: $SparqlObjectSet.Query<Partial.Filter, Partial.Identifier>,
+  ): Promise<Either<Error, readonly Partial.Identifier[]>> {
+    return this.#objectIdentifiers<Partial.Filter, Partial.Identifier>(
+      Partial,
+      query,
+    );
+  }
+
+  async partials(
+    query?: $SparqlObjectSet.Query<Partial.Filter, Partial.Identifier>,
+  ): Promise<Either<Error, readonly Partial[]>> {
+    return this.#objects<Partial, Partial.Filter, Partial.Identifier>(
+      Partial,
+      query,
+    );
+  }
+
+  async partialUnionMember1(
+    identifier: PartialUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialUnionMember1>> {
+    return (
+      await this.partialUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async partialUnionMember1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PartialUnionMember1.Filter,
+        PartialUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      PartialUnionMember1.Filter,
+      PartialUnionMember1.Identifier
+    >(PartialUnionMember1, query);
+  }
+
+  async partialUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      PartialUnionMember1.Filter,
+      PartialUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnionMember1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PartialUnionMember1.Filter,
+      PartialUnionMember1.Identifier
+    >(PartialUnionMember1, query);
+  }
+
+  async partialUnionMember1s(
+    query?: $SparqlObjectSet.Query<
+      PartialUnionMember1.Filter,
+      PartialUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnionMember1[]>> {
+    return this.#objects<
+      PartialUnionMember1,
+      PartialUnionMember1.Filter,
+      PartialUnionMember1.Identifier
+    >(PartialUnionMember1, query);
+  }
+
+  async partialUnionMember2(
+    identifier: PartialUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialUnionMember2>> {
+    return (
+      await this.partialUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async partialUnionMember2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PartialUnionMember2.Filter,
+        PartialUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      PartialUnionMember2.Filter,
+      PartialUnionMember2.Identifier
+    >(PartialUnionMember2, query);
+  }
+
+  async partialUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      PartialUnionMember2.Filter,
+      PartialUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnionMember2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PartialUnionMember2.Filter,
+      PartialUnionMember2.Identifier
+    >(PartialUnionMember2, query);
+  }
+
+  async partialUnionMember2s(
+    query?: $SparqlObjectSet.Query<
+      PartialUnionMember2.Filter,
+      PartialUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnionMember2[]>> {
+    return this.#objects<
+      PartialUnionMember2,
+      PartialUnionMember2.Filter,
+      PartialUnionMember2.Identifier
+    >(PartialUnionMember2, query);
+  }
+
+  async propertyCardinalities(
+    identifier: PropertyCardinalities.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PropertyCardinalities>> {
+    return (
+      await this.propertyCardinalitieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async propertyCardinalitiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        PropertyCardinalities.Filter,
+        PropertyCardinalities.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      PropertyCardinalities.Filter,
+      PropertyCardinalities.Identifier
+    >(PropertyCardinalities, query);
+  }
+
+  async propertyCardinalitiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PropertyCardinalities.Filter,
+      PropertyCardinalities.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyCardinalities.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PropertyCardinalities.Filter,
+      PropertyCardinalities.Identifier
+    >(PropertyCardinalities, query);
+  }
+
+  async propertyCardinalitieses(
+    query?: $SparqlObjectSet.Query<
+      PropertyCardinalities.Filter,
+      PropertyCardinalities.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyCardinalities[]>> {
+    return this.#objects<
+      PropertyCardinalities,
+      PropertyCardinalities.Filter,
+      PropertyCardinalities.Identifier
+    >(PropertyCardinalities, query);
+  }
+
+  async propertyNames(
+    identifier: PropertyNames.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PropertyNames>> {
+    return (
+      await this.propertyNameses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async propertyNamesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<PropertyNames.Filter, PropertyNames.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<PropertyNames.Filter, PropertyNames.Identifier>(
+      PropertyNames,
+      query,
+    );
+  }
+
+  async propertyNamesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PropertyNames.Filter,
+      PropertyNames.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNames.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PropertyNames.Filter,
+      PropertyNames.Identifier
+    >(PropertyNames, query);
+  }
+
+  async propertyNameses(
+    query?: $SparqlObjectSet.Query<
+      PropertyNames.Filter,
+      PropertyNames.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyNames[]>> {
+    return this.#objects<
+      PropertyNames,
+      PropertyNames.Filter,
+      PropertyNames.Identifier
+    >(PropertyNames, query);
+  }
+
+  async propertyPaths(
+    identifier: PropertyPaths.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PropertyPaths>> {
+    return (
+      await this.propertyPathses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async propertyPathsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<PropertyPaths.Filter, PropertyPaths.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<PropertyPaths.Filter, PropertyPaths.Identifier>(
+      PropertyPaths,
+      query,
+    );
+  }
+
+  async propertyPathsIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PropertyPaths.Filter,
+      PropertyPaths.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPaths.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PropertyPaths.Filter,
+      PropertyPaths.Identifier
+    >(PropertyPaths, query);
+  }
+
+  async propertyPathses(
+    query?: $SparqlObjectSet.Query<
+      PropertyPaths.Filter,
+      PropertyPaths.Identifier
+    >,
+  ): Promise<Either<Error, readonly PropertyPaths[]>> {
+    return this.#objects<
+      PropertyPaths,
+      PropertyPaths.Filter,
+      PropertyPaths.Identifier
+    >(PropertyPaths, query);
+  }
+
+  async recursiveUnionMember1(
+    identifier: RecursiveUnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveUnionMember1>> {
+    return (
+      await this.recursiveUnionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveUnionMember1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        RecursiveUnionMember1.Filter,
+        RecursiveUnionMember1.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      RecursiveUnionMember1.Filter,
+      RecursiveUnionMember1.Identifier
+    >(RecursiveUnionMember1, query);
+  }
+
+  async recursiveUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnionMember1.Filter,
+      RecursiveUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnionMember1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      RecursiveUnionMember1.Filter,
+      RecursiveUnionMember1.Identifier
+    >(RecursiveUnionMember1, query);
+  }
+
+  async recursiveUnionMember1s(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnionMember1.Filter,
+      RecursiveUnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnionMember1[]>> {
+    return this.#objects<
+      RecursiveUnionMember1,
+      RecursiveUnionMember1.Filter,
+      RecursiveUnionMember1.Identifier
+    >(RecursiveUnionMember1, query);
+  }
+
+  async recursiveUnionMember2(
+    identifier: RecursiveUnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveUnionMember2>> {
+    return (
+      await this.recursiveUnionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveUnionMember2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        RecursiveUnionMember2.Filter,
+        RecursiveUnionMember2.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      RecursiveUnionMember2.Filter,
+      RecursiveUnionMember2.Identifier
+    >(RecursiveUnionMember2, query);
+  }
+
+  async recursiveUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnionMember2.Filter,
+      RecursiveUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnionMember2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      RecursiveUnionMember2.Filter,
+      RecursiveUnionMember2.Identifier
+    >(RecursiveUnionMember2, query);
+  }
+
+  async recursiveUnionMember2s(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnionMember2.Filter,
+      RecursiveUnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnionMember2[]>> {
+    return this.#objects<
+      RecursiveUnionMember2,
+      RecursiveUnionMember2.Filter,
+      RecursiveUnionMember2.Identifier
+    >(RecursiveUnionMember2, query);
+  }
+
+  async termProperties(
+    identifier: TermProperties.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, TermProperties>> {
+    return (
+      await this.termPropertieses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async termPropertiesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<TermProperties.Filter, TermProperties.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<TermProperties.Filter, TermProperties.Identifier>(
+      TermProperties,
+      query,
+    );
+  }
+
+  async termPropertiesIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      TermProperties.Filter,
+      TermProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly TermProperties.Identifier[]>> {
+    return this.#objectIdentifiers<
+      TermProperties.Filter,
+      TermProperties.Identifier
+    >(TermProperties, query);
+  }
+
+  async termPropertieses(
+    query?: $SparqlObjectSet.Query<
+      TermProperties.Filter,
+      TermProperties.Identifier
+    >,
+  ): Promise<Either<Error, readonly TermProperties[]>> {
+    return this.#objects<
+      TermProperties,
+      TermProperties.Filter,
+      TermProperties.Identifier
+    >(TermProperties, query);
+  }
+
+  async unionDiscriminants(
+    identifier: UnionDiscriminants.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionDiscriminants>> {
+    return (
+      await this.unionDiscriminantses({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionDiscriminantsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        UnionDiscriminants.Filter,
+        UnionDiscriminants.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      UnionDiscriminants.Filter,
+      UnionDiscriminants.Identifier
+    >(UnionDiscriminants, query);
+  }
+
+  async unionDiscriminantsIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      UnionDiscriminants.Filter,
+      UnionDiscriminants.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionDiscriminants.Identifier[]>> {
+    return this.#objectIdentifiers<
+      UnionDiscriminants.Filter,
+      UnionDiscriminants.Identifier
+    >(UnionDiscriminants, query);
+  }
+
+  async unionDiscriminantses(
+    query?: $SparqlObjectSet.Query<
+      UnionDiscriminants.Filter,
+      UnionDiscriminants.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionDiscriminants[]>> {
+    return this.#objects<
+      UnionDiscriminants,
+      UnionDiscriminants.Filter,
+      UnionDiscriminants.Identifier
+    >(UnionDiscriminants, query);
+  }
+
+  async unionMember1(
+    identifier: UnionMember1.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMember1>> {
+    return (
+      await this.unionMember1s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionMember1Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<UnionMember1.Filter, UnionMember1.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<UnionMember1.Filter, UnionMember1.Identifier>(
+      UnionMember1,
+      query,
+    );
+  }
+
+  async unionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<
+      UnionMember1.Filter,
+      UnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMember1.Identifier[]>> {
+    return this.#objectIdentifiers<
+      UnionMember1.Filter,
+      UnionMember1.Identifier
+    >(UnionMember1, query);
+  }
+
+  async unionMember1s(
+    query?: $SparqlObjectSet.Query<
+      UnionMember1.Filter,
+      UnionMember1.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMember1[]>> {
+    return this.#objects<
+      UnionMember1,
+      UnionMember1.Filter,
+      UnionMember1.Identifier
+    >(UnionMember1, query);
+  }
+
+  async unionMember2(
+    identifier: UnionMember2.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMember2>> {
+    return (
+      await this.unionMember2s({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionMember2Count(
+    query?: Pick<
+      $SparqlObjectSet.Query<UnionMember2.Filter, UnionMember2.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<UnionMember2.Filter, UnionMember2.Identifier>(
+      UnionMember2,
+      query,
+    );
+  }
+
+  async unionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<
+      UnionMember2.Filter,
+      UnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMember2.Identifier[]>> {
+    return this.#objectIdentifiers<
+      UnionMember2.Filter,
+      UnionMember2.Identifier
+    >(UnionMember2, query);
+  }
+
+  async unionMember2s(
+    query?: $SparqlObjectSet.Query<
+      UnionMember2.Filter,
+      UnionMember2.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMember2[]>> {
+    return this.#objects<
+      UnionMember2,
+      UnionMember2.Filter,
+      UnionMember2.Identifier
+    >(UnionMember2, query);
+  }
+
+  async unionMemberCommonParent(
+    identifier: UnionMemberCommonParent.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, UnionMemberCommonParent>> {
+    return (
+      await this.unionMemberCommonParents({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionMemberCommonParentCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        UnionMemberCommonParent.Filter,
+        UnionMemberCommonParent.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      UnionMemberCommonParent.Filter,
+      UnionMemberCommonParent.Identifier
+    >(UnionMemberCommonParent, query);
+  }
+
+  async unionMemberCommonParentIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      UnionMemberCommonParent.Filter,
+      UnionMemberCommonParent.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent.Identifier[]>> {
+    return this.#objectIdentifiers<
+      UnionMemberCommonParent.Filter,
+      UnionMemberCommonParent.Identifier
+    >(UnionMemberCommonParent, query);
+  }
+
+  async unionMemberCommonParents(
+    query?: $SparqlObjectSet.Query<
+      UnionMemberCommonParent.Filter,
+      UnionMemberCommonParent.Identifier
+    >,
+  ): Promise<Either<Error, readonly UnionMemberCommonParent[]>> {
+    return this.#objects<
+      UnionMemberCommonParent,
+      UnionMemberCommonParent.Filter,
+      UnionMemberCommonParent.Identifier
+    >(UnionMemberCommonParent, query);
+  }
+
+  async flattenUnion(
+    identifier: FlattenUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, FlattenUnion>> {
+    return (
+      await this.flattenUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async flattenUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<FlattenUnion.Filter, FlattenUnion.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<FlattenUnion.Filter, FlattenUnion.Identifier>(
+      FlattenUnion,
+      query,
+    );
+  }
+
+  async flattenUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      FlattenUnion.Filter,
+      FlattenUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      FlattenUnion.Filter,
+      FlattenUnion.Identifier
+    >(FlattenUnion, query);
+  }
+
+  async flattenUnions(
+    query?: $SparqlObjectSet.Query<
+      FlattenUnion.Filter,
+      FlattenUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly FlattenUnion[]>> {
+    return this.#objects<
+      FlattenUnion,
+      FlattenUnion.Filter,
+      FlattenUnion.Identifier
+    >(FlattenUnion, query);
+  }
+
+  async lazilyResolvedUnion(
+    identifier: LazilyResolvedUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, LazilyResolvedUnion>> {
+    return (
+      await this.lazilyResolvedUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async lazilyResolvedUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<
+        LazilyResolvedUnion.Filter,
+        LazilyResolvedUnion.Identifier
+      >,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<
+      LazilyResolvedUnion.Filter,
+      LazilyResolvedUnion.Identifier
+    >(LazilyResolvedUnion, query);
+  }
+
+  async lazilyResolvedUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnion.Filter,
+      LazilyResolvedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      LazilyResolvedUnion.Filter,
+      LazilyResolvedUnion.Identifier
+    >(LazilyResolvedUnion, query);
+  }
+
+  async lazilyResolvedUnions(
+    query?: $SparqlObjectSet.Query<
+      LazilyResolvedUnion.Filter,
+      LazilyResolvedUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly LazilyResolvedUnion[]>> {
+    return this.#objects<
+      LazilyResolvedUnion,
+      LazilyResolvedUnion.Filter,
+      LazilyResolvedUnion.Identifier
+    >(LazilyResolvedUnion, query);
+  }
+
+  async noRdfTypeUnion(
+    identifier: NoRdfTypeUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, NoRdfTypeUnion>> {
+    return (
+      await this.noRdfTypeUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NoRdfTypeUnion.Filter, NoRdfTypeUnion.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<NoRdfTypeUnion.Filter, NoRdfTypeUnion.Identifier>(
+      NoRdfTypeUnion,
+      query,
+    );
+  }
+
+  async noRdfTypeUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnion.Filter,
+      NoRdfTypeUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      NoRdfTypeUnion.Filter,
+      NoRdfTypeUnion.Identifier
+    >(NoRdfTypeUnion, query);
+  }
+
+  async noRdfTypeUnions(
+    query?: $SparqlObjectSet.Query<
+      NoRdfTypeUnion.Filter,
+      NoRdfTypeUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly NoRdfTypeUnion[]>> {
+    return this.#objects<
+      NoRdfTypeUnion,
+      NoRdfTypeUnion.Filter,
+      NoRdfTypeUnion.Identifier
+    >(NoRdfTypeUnion, query);
+  }
+
+  async partialUnion(
+    identifier: PartialUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, PartialUnion>> {
+    return (
+      await this.partialUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async partialUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<PartialUnion.Filter, PartialUnion.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<PartialUnion.Filter, PartialUnion.Identifier>(
+      PartialUnion,
+      query,
+    );
+  }
+
+  async partialUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      PartialUnion.Filter,
+      PartialUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      PartialUnion.Filter,
+      PartialUnion.Identifier
+    >(PartialUnion, query);
+  }
+
+  async partialUnions(
+    query?: $SparqlObjectSet.Query<
+      PartialUnion.Filter,
+      PartialUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly PartialUnion[]>> {
+    return this.#objects<
+      PartialUnion,
+      PartialUnion.Filter,
+      PartialUnion.Identifier
+    >(PartialUnion, query);
+  }
+
+  async recursiveUnion(
+    identifier: RecursiveUnion.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, RecursiveUnion>> {
+    return (
+      await this.recursiveUnions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async recursiveUnionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<RecursiveUnion.Filter, RecursiveUnion.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<RecursiveUnion.Filter, RecursiveUnion.Identifier>(
+      RecursiveUnion,
+      query,
+    );
+  }
+
+  async recursiveUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnion.Filter,
+      RecursiveUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnion.Identifier[]>> {
+    return this.#objectIdentifiers<
+      RecursiveUnion.Filter,
+      RecursiveUnion.Identifier
+    >(RecursiveUnion, query);
+  }
+
+  async recursiveUnions(
+    query?: $SparqlObjectSet.Query<
+      RecursiveUnion.Filter,
+      RecursiveUnion.Identifier
+    >,
+  ): Promise<Either<Error, readonly RecursiveUnion[]>> {
+    return this.#objects<
+      RecursiveUnion,
+      RecursiveUnion.Filter,
+      RecursiveUnion.Identifier
+    >(RecursiveUnion, query);
+  }
+
+  async union(
+    identifier: Union.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, Union>> {
+    return (
+      await this.unions({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async unionCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<Union.Filter, Union.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<Union.Filter, Union.Identifier>(Union, query);
+  }
+
+  async unionIdentifiers(
+    query?: $SparqlObjectSet.Query<Union.Filter, Union.Identifier>,
+  ): Promise<Either<Error, readonly Union.Identifier[]>> {
+    return this.#objectIdentifiers<Union.Filter, Union.Identifier>(
+      Union,
+      query,
+    );
+  }
+
+  async unions(
+    query?: $SparqlObjectSet.Query<Union.Filter, Union.Identifier>,
+  ): Promise<Either<Error, readonly Union[]>> {
+    return this.#objects<Union, Union.Filter, Union.Identifier>(Union, query);
+  }
+
+  async $object(
+    identifier: $Object.Identifier,
+    options?: { preferredLanguages?: readonly string[] },
+  ): Promise<Either<Error, $Object>> {
+    return (
+      await this.$objects({
+        identifiers: [identifier],
+        preferredLanguages: options?.preferredLanguages,
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async $objectCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
+      "filter"
+    >,
+  ): Promise<Either<Error, number>> {
+    return this.#objectCount<$Object.Filter, $Object.Identifier>(
+      $Object,
+      query,
+    );
+  }
+
+  async $objectIdentifiers(
+    query?: $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
+  ): Promise<Either<Error, readonly $Object.Identifier[]>> {
+    return this.#objectIdentifiers<$Object.Filter, $Object.Identifier>(
+      $Object,
+      query,
+    );
+  }
+
+  async $objects(
+    query?: $SparqlObjectSet.Query<$Object.Filter, $Object.Identifier>,
+  ): Promise<Either<Error, readonly $Object[]>> {
+    return this.#objects<$Object, $Object.Filter, $Object.Identifier>(
+      $Object,
+      query,
+    );
+  }
+
+  #mapBindingsToCount(
+    bindings: readonly Record<string, BlankNode | Literal | NamedNode>[],
+    variable: string,
+  ): Either<Error, number> {
+    if (bindings.length === 0) {
+      return Left(new Error("empty result rows"));
+    }
+    if (bindings.length > 1) {
+      return Left(new Error("more than one result row"));
+    }
+    const count = bindings[0][variable];
+    if (count === undefined) {
+      return Left(new Error("no 'count' variable in result row"));
+    }
+    if (count.termType !== "Literal") {
+      return Left(new Error("'count' variable is not a Literal"));
+    }
+    const parsedCount = Number.parseInt(count.value, 10);
+    if (Number.isNaN(parsedCount)) {
+      return Left(new Error("'count' variable is NaN"));
+    }
+    return Right(parsedCount);
+  }
+
+  #mapBindingsToIdentifiers(
+    bindings: readonly Record<string, BlankNode | Literal | NamedNode>[],
+    variable: string,
+  ): readonly NamedNode[] {
+    const identifiers: NamedNode[] = [];
+    for (const bindings_ of bindings) {
+      const identifier = bindings_[variable];
+      if (identifier !== undefined && identifier.termType === "NamedNode") {
+        identifiers.push(identifier);
+      }
+    }
+    return identifiers;
+  }
+
+  async #objectIdentifiers<
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  >(
+    namedObjectType: {
+      focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
+    },
+    query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
+  ): Promise<Either<Error, readonly ObjectIdentifierT[]>> {
+    if (query?.identifiers) {
+      return Right(query.identifiers);
+    }
+
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return Right([]);
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    const wherePatterns = this.#wherePatterns(namedObjectType, query);
+    if (wherePatterns.length === 0) {
+      return Left(new Error("no SPARQL WHERE patterns for identifiers"));
+    }
+
+    const selectQueryString = this.#sparqlGenerator.stringify({
+      distinct: true,
+      limit: limit < Number.MAX_SAFE_INTEGER ? limit : undefined,
+      offset,
+      order: query?.order
+        ? query.order(this.#objectVariable).concat()
+        : [{ expression: this.#objectVariable }],
+      prefixes: {},
+      queryType: "SELECT",
+      type: "query",
+      variables: [this.#objectVariable],
+      where: wherePatterns.concat(),
+    });
+
+    return EitherAsync(
+      async () =>
+        this.#mapBindingsToIdentifiers(
+          await this.#sparqlClient.queryBindings(selectQueryString),
+          this.#objectVariable.value,
+        ) as readonly ObjectIdentifierT[],
+    );
+  }
+
+  async #objects<
+    ObjectT extends { readonly $identifier: () => ObjectIdentifierT },
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  >(
+    namedObjectType: {
+      focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
+      fromRdfResource: $FromRdfResourceFunction<ObjectT>;
+      sparqlConstructQueryString: (
+        parameters: {
+          filter?: ObjectFilterT;
+          subject: NamedNode | Variable;
+        } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+          sparqljs.GeneratorOptions,
+      ) => string;
+    },
+    query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
+  ): Promise<Either<Error, readonly ObjectT[]>> {
+    return EitherAsync(async ({ liftEither }) => {
+      const identifiers = await liftEither(
+        await this.#objectIdentifiers<ObjectFilterT, ObjectIdentifierT>(
+          namedObjectType,
+          query,
+        ),
+      );
+      if (identifiers.length === 0) {
+        return [];
+      }
+
+      const constructQueryString = namedObjectType.sparqlConstructQueryString({
+        subject: this.#objectVariable,
+        where: [
+          {
+            type: "values" as const,
+            values: identifiers.map((identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow["?object"] = identifier as NamedNode;
+              return valuePatternRow;
+            }),
+          },
+        ],
+      });
+
+      const quads = await this.#sparqlClient.queryQuads(constructQueryString);
+
+      const dataset = datasetFactory.dataset(quads.concat());
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        objects.push(
+          await liftEither(
+            namedObjectType.fromRdfResource(
+              new Resource({
+                dataFactory: dataFactory,
+                dataset: dataset,
+                identifier: identifier as NamedNode,
+              }),
+              {
+                objectSet: this,
+                preferredLanguages: query?.preferredLanguages,
+              },
+            ),
+          ),
+        );
+      }
+      return objects;
+    });
+  }
+
+  async #objectCount<
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  >(
+    namedObjectType: {
+      focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
+    },
+    query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
+  ): Promise<Either<Error, number>> {
+    const wherePatterns = this.#wherePatterns(namedObjectType, query);
+    if (wherePatterns.length === 0) {
+      return Left(new Error("no SPARQL WHERE patterns for count"));
+    }
+
+    const selectQueryString = this.#sparqlGenerator.stringify({
+      prefixes: {},
+      queryType: "SELECT",
+      type: "query",
+      variables: [
+        {
+          expression: {
+            aggregation: "COUNT",
+            distinct: true,
+            expression: this.#objectVariable,
+            type: "aggregate",
+          },
+          variable: this.#countVariable,
+        },
+      ],
+      where: wherePatterns.concat(),
+    });
+
+    return EitherAsync(async ({ liftEither }) =>
+      liftEither(
+        this.#mapBindingsToCount(
+          await this.#sparqlClient.queryBindings(selectQueryString),
+          this.#countVariable.value,
+        ),
+      ),
+    );
+  }
+
+  #wherePatterns<
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  >(
+    namedObjectType: {
+      focusSparqlWherePatterns: $FocusSparqlWherePatternsFunction<ObjectFilterT>;
+    },
+    query?: $SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>,
+  ): readonly sparqljs.Pattern[] {
+    // Patterns should be most to least specific.
+    let patterns: sparqljs.Pattern[] = [];
+
+    if (query?.where) {
+      patterns = patterns.concat(query.where(this.#objectVariable));
+    }
+
+    patterns = patterns.concat(
+      namedObjectType.focusSparqlWherePatterns({
+        filter: query?.filter,
+        focusIdentifier: this.#objectVariable,
+        ignoreRdfType: false,
+        preferredLanguages: query?.preferredLanguages,
+        variablePrefix: this.#objectVariable.value,
+      }),
+    );
+
+    patterns = $normalizeSparqlWherePatterns(patterns).concat();
+
+    const graph = query?.graph ?? this.#graph;
+    if (graph) {
+      switch (graph.termType) {
+        case "DefaultGraph":
+          return patterns; // Patterns without a GRAPH pattern around them query the default graph
+        case "NamedNode":
+          return [{ name: graph, patterns, type: "graph" }];
+      }
+    }
+    // Union of all graphs: { ... patterns covering default graph ... } UNION { GRAPH ?g { ... patterns covering named graphs ... } }
+    return [
+      {
+        patterns: [
+          { patterns, type: "group" },
+          { name: dataFactory.variable!("g"), patterns, type: "graph" },
+        ],
+        type: "union",
+      },
+    ];
+  }
+}
+
+export namespace $SparqlObjectSet {
+  export type Query<
+    ObjectFilterT,
+    ObjectIdentifierT extends BlankNode | NamedNode,
+  > = $ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & {
+    readonly order?: (objectVariable: Variable) => readonly sparqljs.Ordering[];
+    readonly where?: (objectVariable: Variable) => readonly sparqljs.Pattern[];
+  };
 }

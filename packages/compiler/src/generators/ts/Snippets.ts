@@ -722,6 +722,7 @@ export class Snippets {
 
   private snippet(snippetFactory: SnippetFactory): Snippet {
     return snippetFactory({
+      configuration: this.configuration,
       imports: this.imports,
       logger: this.logger,
       rdfjsTermExpression: rdfjsTermExpression.bind({
