@@ -12,8 +12,11 @@ import { testData } from "./testData.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function generate(shapesGraph: ShapesGraph): string {
-  const source = new TsGenerator({ logger }).generate(
+function generate(
+  shapesGraph: ShapesGraph,
+  configuration?: TsGenerator.Configuration,
+): string {
+  const source = new TsGenerator({ configuration, logger }).generate(
     new ShapesGraphToAstTransformer({ logger, shapesGraph })
       .transform()
       .unsafeCoerce(),
@@ -31,9 +34,14 @@ describe("TsGenerator", () => {
     }
 
     it(id, () => {
+      let configuration: TsGenerator.Configuration | undefined;
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "compilerInput":
+          configuration = {
+            ...TsGenerator.Configuration.default_,
+            features: new Set(["rdf"]),
+          };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
             "..",
@@ -42,6 +50,13 @@ describe("TsGenerator", () => {
           );
           break;
         case "kitchenSink":
+          configuration = {
+            ...TsGenerator.Configuration.default_,
+            features: new Set([
+              ...TsGenerator.Configuration.default_.features,
+              "sparql",
+            ]),
+          };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
             "..",
@@ -53,6 +68,10 @@ describe("TsGenerator", () => {
           );
           break;
         case "shaclAst":
+          configuration = {
+            ...TsGenerator.Configuration.default_,
+            features: new Set(["rdf"]),
+          };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
             "..",
@@ -63,14 +82,17 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "propertyShapeNameConflicts") {
+      // if (id !== "compilerInput") {
       //   return;
       // }
 
       const diagnostics = compileTs(
-        generate(shapesGraphEither.unsafeCoerce()),
+        generate(shapesGraphEither.unsafeCoerce(), configuration),
         sourceDirectoryPath,
       );
+      if (diagnostics.length > 0) {
+        console.log("b");
+      }
       expect(diagnostics).toHaveLength(0);
     }, 60000);
   }

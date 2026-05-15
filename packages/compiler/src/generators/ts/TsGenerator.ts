@@ -36,9 +36,12 @@ export class TsGenerator implements Generator {
       features: TsGenerator.Configuration.inferFeatures(configuration.features),
     };
     this.logger = logger;
-    this.reusables = new Reusables({ configuration, logger });
+    this.reusables = new Reusables({
+      configuration: this.configuration,
+      logger,
+    });
     this.typeFactory = new TypeFactory({
-      configuration,
+      configuration: this.configuration,
       logger,
       reusables: this.reusables,
     });
