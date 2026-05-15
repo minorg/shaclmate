@@ -6,7 +6,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <http://purl.org/shaclmate/ontology#>
-    shaclmate:tsFeatureInclude shaclmate:_TsFeature_Create, shaclmate:_TsFeature_Rdf ;
     a owl:Ontology ;
     rdfs:comment "The shapes in this ontology are modeled after shacl-shacl but are intended for code generation with shaclmate rather than validation." ;
     rdfs:label "SHACL for shacl-ast" ;

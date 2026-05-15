@@ -6,7 +6,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 shaclmate:NodeShape
-    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName, shaclmate:tsImports .
+    sh:property shaclmate:NodeShape-discriminantValue, shaclmate:NodeShape-extern, shaclmate:NodeShape-fromRdfType, shaclmate:NodeShape-rdfType, shaclmate:NodeShape-toRdfTypes, shaclmate:NodeShape-tsImports, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
 
 shaclmate:NodeShape-discriminantValue
     a sh:PropertyShape ;
@@ -36,6 +36,12 @@ shaclmate:NodeShape-toRdfTypes
     a sh:PropertyShape ;
     sh:nodeKind sh:IRI ;
     sh:path shaclmate:toRdfType .
+
+shaclmate:NodeShape-tsImports
+    a sh:PropertyShape ;
+    sh:datatype xsd:string ;
+    sh:name "tsImports" ;
+    sh:path shaclmate:tsImport .
 
 shaclmate:PropertyShape
     sh:property shaclmate:PropertyShape-display, shaclmate:PropertyShape-resolve, shaclmate:Shape-mutable, shaclmate:Shape-shaclmateName .
@@ -68,10 +74,4 @@ shaclmate:Shape-shaclmateName
     sh:maxCount 1 ;
     sh:name "shaclmateName" ;
     sh:path shaclmate:name .
-
-shaclmate:tsImports
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:name "tsImports" ;
-    sh:path shaclmate:tsImport .
 
