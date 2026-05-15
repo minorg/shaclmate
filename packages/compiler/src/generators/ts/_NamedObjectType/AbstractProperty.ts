@@ -6,12 +6,14 @@ import type { NamedObjectType } from "../NamedObjectType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { removeUndefined } from "../removeUndefined.js";
+import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
 import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
+  protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
   protected readonly reusables: Reusables;
@@ -94,18 +96,21 @@ export abstract class AbstractProperty<
   readonly type: TypeT;
 
   constructor({
+    configuration,
     logger,
     name,
     namedObjectType,
     reusables,
     type,
   }: {
+    configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
     namedObjectType: NamedObjectType;
     reusables: Reusables;
     type: TypeT;
   }) {
+    this.configuration = configuration;
     this.logger = logger;
     this.name = name;
     this.namedObjectType = namedObjectType;

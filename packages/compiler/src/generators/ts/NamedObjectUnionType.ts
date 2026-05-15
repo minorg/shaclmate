@@ -14,7 +14,6 @@ import type { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -52,7 +51,10 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
 
   @Memoize()
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
-    return NamedObjectType_objectSetMethodNames.call(this);
+    return NamedObjectType_objectSetMethodNames.call({
+      configuration: this.configuration,
+      name: this.name,
+    });
   }
 
   @Memoize()
@@ -136,7 +138,7 @@ ${joinCode([
   code`\
 if (focusIdentifier.termType === "Variable") {
   patterns = patterns.concat(${this.#identifierType.valueSparqlWherePatternsFunction}({
-      filter: filter?.${syntheticNamePrefix}identifier,
+      filter: filter?.${this.configuration.syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
@@ -193,7 +195,7 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
 export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
         name: this.name,
-        resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
+        resolveType: code`(value: ${this.name}) => value.${this.configuration.syntheticNamePrefix}type`,
         types: code`[${joinCode(
           this.members.map((member) => member.type.graphqlType.nullableName),
           { on: ", " },
@@ -215,14 +217,14 @@ export namespace Identifier {
   }
 
   private get isTypeFunctionDeclaration(): Record<string, Code> {
-    if (this._name === `${syntheticNamePrefix}Object`) {
+    if (this._name === `${this.configuration.syntheticNamePrefix}Object`) {
       return {};
     }
 
     return singleEntryRecord(
       `is${this._name}`,
       code`\
-    export function is${this._name}(object: ${syntheticNamePrefix}Object): object is ${this.name} {
+    export function is${this._name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
         this.members.map(
           (member) => code`${member.type.name}.is${member.type.name}(object)`,

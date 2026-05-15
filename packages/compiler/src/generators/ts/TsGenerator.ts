@@ -13,7 +13,6 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { Reusables } from "./Reusables.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsFeature } from "./TsFeature.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -94,7 +93,7 @@ export class TsGenerator implements Generator {
         break;
       case 1:
         declarations.push(
-          code`type ${syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
+          code`type ${this.configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
         );
         break;
       default: {
@@ -206,7 +205,7 @@ export class TsGenerator implements Generator {
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
-      name: `${syntheticNamePrefix}Object`,
+      name: `${this.configuration.syntheticNamePrefix}Object`,
       recursive: false,
       reusables: this.reusables,
     });

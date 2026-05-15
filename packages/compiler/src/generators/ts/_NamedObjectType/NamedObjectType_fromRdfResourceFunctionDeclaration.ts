@@ -1,27 +1,7 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
-
-const optionsVariable = `_${syntheticNamePrefix}options`;
-
-const variables = {
-  context: code`${optionsVariable}.context`,
-  graph: code`${optionsVariable}.graph`,
-  ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
-  objectSet: code`${optionsVariable}.objectSet`,
-  preferredLanguages: code`${optionsVariable}.preferredLanguages`,
-  resource: code`${syntheticNamePrefix}resource`,
-};
-
-const propertyFromRdfResourceValuesExpressionVariable = {
-  context: variables.context,
-  graph: variables.graph,
-  objectSet: variables.objectSet,
-  preferredLanguages: variables.preferredLanguages,
-  resource: variables.resource,
-};
 
 export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   this: NamedObjectType,
@@ -29,6 +9,27 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
   if (!this.features.has("rdf")) {
     return Maybe.empty();
   }
+
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
+  const optionsVariable = `_${syntheticNamePrefix}options`;
+
+  const variables = {
+    context: code`${optionsVariable}.context`,
+    graph: code`${optionsVariable}.graph`,
+    ignoreRdfType: code`${optionsVariable}.ignoreRdfType`,
+    objectSet: code`${optionsVariable}.objectSet`,
+    preferredLanguages: code`${optionsVariable}.preferredLanguages`,
+    resource: code`${syntheticNamePrefix}resource`,
+  };
+
+  const propertyFromRdfResourceValuesExpressionVariable = {
+    context: variables.context,
+    graph: variables.graph,
+    objectSet: variables.objectSet,
+    preferredLanguages: variables.preferredLanguages,
+    resource: variables.resource,
+  };
 
   const chains: { expression: Code; variable: string }[] = [];
   const partials: string[] = [];

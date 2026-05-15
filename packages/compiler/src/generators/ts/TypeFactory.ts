@@ -4,11 +4,14 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { LiteralDecoder, literalDatatypeDefinitions } from "@rdfx/literal";
 import base62 from "@sindresorhus/base62";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import reservedTsIdentifiers_ from "reserved-identifiers";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
+
 import * as ast from "../../ast/index.js";
+
 import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
@@ -33,13 +36,16 @@ import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
 
 export class TypeFactory {
+  private readonly configuration: TsGenerator.Configuration;
+  private readonly logger: Logger;
+  private readonly reusables: Reusables;
+
   private cachedNamedObjectUnionTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     NamedObjectUnionType
@@ -52,9 +58,6 @@ export class TypeFactory {
     BlankNode | NamedNode,
     NamedObjectType
   > = new TermMap();
-  private readonly configuration: TsGenerator.Configuration;
-  private readonly logger: Logger;
-  private readonly reusables: Reusables;
 
   constructor({
     configuration,
@@ -70,47 +73,6 @@ export class TypeFactory {
     this.reusables = reusables;
   }
 
-  createNamedObjectUnionType(
-    astType: ast.ObjectUnionType,
-  ): NamedObjectUnionType {
-    {
-      const cachedNamedObjectUnionType =
-        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
-          astType.shapeIdentifier,
-        );
-      if (cachedNamedObjectUnionType) {
-        return cachedNamedObjectUnionType;
-      }
-    }
-
-    const namedObjectUnionType = new NamedObjectUnionType({
-      comment: astType.comment,
-      configuration: this.configuration,
-      features: astType.tsFeatures,
-      identifierType: this.createIdentifierType(
-        ast.ObjectCompoundType.identifierType(astType),
-      ),
-      label: astType.label,
-      logger: this.logger,
-      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
-        (namedObjectType) => ({
-          discriminantValue: Maybe.empty(),
-          type: this.createNamedObjectType(namedObjectType),
-        }),
-      ),
-      name: tsName(astType.name.unsafeCoerce()),
-      recursive: astType.recursive,
-      reusables: this.reusables,
-    });
-
-    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
-      astType.shapeIdentifier,
-      namedObjectUnionType,
-    );
-
-    return namedObjectUnionType;
-  }
-
   createNamedObjectType(astType: ast.ObjectType): NamedObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
@@ -123,7 +85,7 @@ export class TypeFactory {
 
     const identifierType = this.createIdentifierType(astType.identifierType);
 
-    const name = tsName(astType.name.unsafeCoerce(), {
+    const name = this.tsName(astType.name.unsafeCoerce(), {
       synthetic: astType.synthetic,
     });
 
@@ -157,8 +119,9 @@ export class TypeFactory {
         }
 
         return new NamedObjectType.DiscriminantProperty({
+          configuration: this.configuration,
           logger: this.logger,
-          name: `${syntheticNamePrefix}type`,
+          name: `${this.configuration.syntheticNamePrefix}type`,
           namedObjectType,
           reusables: this.reusables,
           type: new NamedObjectType.DiscriminantProperty.Type({
@@ -181,7 +144,9 @@ export class TypeFactory {
             if (left.order > right.order) {
               return 1;
             }
-            return tsName(left.name).localeCompare(tsName(right.name));
+            return this.tsName(left.name).localeCompare(
+              this.tsName(right.name),
+            );
           })
           .map((astProperty) =>
             this.createObjectTypeProperty({
@@ -196,8 +161,9 @@ export class TypeFactory {
           0,
           0,
           new NamedObjectType.IdentifierProperty({
+            configuration: this.configuration,
             logger: this.logger,
-            name: `${syntheticNamePrefix}identifier`,
+            name: `${this.configuration.syntheticNamePrefix}identifier`,
             namedObjectType,
             reusables: this.reusables,
             type: identifierType,
@@ -219,6 +185,47 @@ export class TypeFactory {
       namedObjectType,
     );
     return namedObjectType;
+  }
+
+  createNamedObjectUnionType(
+    astType: ast.ObjectUnionType,
+  ): NamedObjectUnionType {
+    {
+      const cachedNamedObjectUnionType =
+        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
+          astType.shapeIdentifier,
+        );
+      if (cachedNamedObjectUnionType) {
+        return cachedNamedObjectUnionType;
+      }
+    }
+
+    const namedObjectUnionType = new NamedObjectUnionType({
+      comment: astType.comment,
+      configuration: this.configuration,
+      features: astType.tsFeatures,
+      identifierType: this.createIdentifierType(
+        ast.ObjectCompoundType.identifierType(astType),
+      ),
+      label: astType.label,
+      logger: this.logger,
+      members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
+        (namedObjectType) => ({
+          discriminantValue: Maybe.empty(),
+          type: this.createNamedObjectType(namedObjectType),
+        }),
+      ),
+      name: this.tsName(astType.name.unsafeCoerce()),
+      recursive: astType.recursive,
+      reusables: this.reusables,
+    });
+
+    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
+      astType.shapeIdentifier,
+      namedObjectUnionType,
+    );
+
+    return namedObjectUnionType;
   }
 
   createType(
@@ -601,14 +608,14 @@ export class TypeFactory {
 
     const property = new NamedObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
+      configuration: this.configuration,
       description: astObjectTypeProperty.description,
       display: astObjectTypeProperty.display,
-
       label: astObjectTypeProperty.label,
       logger: this.logger,
       mutable: astObjectTypeProperty.mutable,
       namedObjectType,
-      name: tsName(astObjectTypeProperty.name),
+      name: this.tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
       reusables: this.reusables,
@@ -663,27 +670,27 @@ export class TypeFactory {
       reusables: this.reusables,
     });
   }
-}
 
-function tsName(name: string, options?: { synthetic?: boolean }): string {
-  if (name[0] === "$") {
-    return name;
-  }
+  private tsName(name: string, options?: { synthetic?: boolean }): string {
+    if (name[0] === "$") {
+      return name;
+    }
 
-  // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
-  if (reservedTsIdentifiers.has(name)) {
-    // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
-    return `$_${name}$`;
-  }
+    // Adapted from https://github.com/sindresorhus/to-valid-identifier , MIT license
+    if (reservedTsIdentifiers.has(name)) {
+      // We prefix with underscore to avoid any potential conflicts with the Base62 encoded string.
+      return `$_${name}$`;
+    }
 
-  let tsName = name.replaceAll(
-    /\P{ID_Continue}/gu,
-    (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
-  );
-  if (options?.synthetic) {
-    tsName = `${syntheticNamePrefix}${tsName}`;
+    let tsName = name.replaceAll(
+      /\P{ID_Continue}/gu,
+      (x) => `$${base62.encodeInteger(x.codePointAt(0)!)}$`,
+    );
+    if (options?.synthetic) {
+      tsName = `${this.configuration.syntheticNamePrefix}${tsName}`;
+    }
+    return tsName;
   }
-  return tsName;
 }
 
 const reservedTsIdentifiers = reservedTsIdentifiers_({

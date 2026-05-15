@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -16,6 +15,8 @@ function graphqlQueryObjectType(
     namedObjectUnionTypes: readonly NamedObjectUnionType[];
   },
 ): Code {
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
   return code`new ${this.reusables.imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
     ...namedObjectTypes,
     ...namedObjectUnionTypes,

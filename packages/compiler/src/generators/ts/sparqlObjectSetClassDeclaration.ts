@@ -2,7 +2,6 @@ import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
@@ -17,6 +16,8 @@ export function sparqlObjectSetClassDeclaration(
     namedObjectUnionTypes: readonly NamedObjectUnionType[];
   },
 ): Code {
+  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+
   const parameters = {
     constructObjectType: code`namedObjectType: {\
   focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;

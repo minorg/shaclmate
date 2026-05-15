@@ -1,5 +1,4 @@
 import type { NamedObjectType } from "./NamedObjectType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -27,7 +26,9 @@ export function objectSetMethodSignatures(
 > {
   const { namedObjectType } = parameters;
   const parameterNamePrefix = parameters?.parameterNamePrefix ?? "";
-  const queryT = parameters.queryT ?? `${syntheticNamePrefix}ObjectSet.Query`;
+  const queryT =
+    parameters.queryT ??
+    `${this.configuration.syntheticNamePrefix}ObjectSet.Query`;
 
   const methodNames = namedObjectType.objectSetMethodNames;
   return {
