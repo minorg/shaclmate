@@ -15,6 +15,10 @@ export const snippets_PropertyPath: SnippetFactory = ({
 export type ${syntheticNamePrefix}PropertyPath = ${imports.RdfxResourcePropertyPath};
 
 export namespace ${syntheticNamePrefix}PropertyPath {
+  export function equals(left: ${syntheticNamePrefix}PropertyPath, right: ${syntheticNamePrefix}PropertyPath): ${snippets.EqualsResult} {
+    return ${snippets.EqualsResult}.fromBooleanEqualsResult(left, right, ${imports.RdfxResourcePropertyPath}.equals(left, right));
+  }
+
   export type Filter = object;
 
   export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
