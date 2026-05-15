@@ -191,6 +191,10 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
       return {};
     }
 
+    if (this.synthetic) {
+      return {};
+    }
+
     return singleEntryRecord(
       `GraphQL`,
       code`\

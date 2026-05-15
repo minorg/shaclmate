@@ -3190,20 +3190,6 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
-  export const GraphQL = new GraphQLUnionType({
-    description: undefined,
-    name: "$Object",
-    resolveType: (value: $Object) => value.$type,
-    types: [
-      Child.GraphQL,
-      Parent.GraphQL,
-      Nested.GraphQL,
-      UnionMember1.GraphQL,
-      UnionMember2.GraphQL,
-      $DefaultPartial.GraphQL,
-    ],
-  });
-
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
     export const parse = $parseIdentifier;
