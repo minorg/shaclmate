@@ -8,7 +8,6 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
-
 import type { Type } from "./Type.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -59,6 +58,10 @@ export class DefaultValueType<
 
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return this.itemType.graphqlType;
+  }
+
+  override get hashFunction(): Code {
+    return this.itemType.hashFunction;
   }
 
   override get mutable(): boolean {

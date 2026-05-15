@@ -45,8 +45,11 @@ import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_fromRdfLanguageIn } from "./_snippets/snippets_fromRdfLanguageIn.js";
 import { snippets_fromRdfPreferredLanguages } from "./_snippets/snippets_fromRdfPreferredLanguages.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
+import { snippets_HashFunction } from "./_snippets/snippets_HashFunction.js";
+import { snippets_hashArray } from "./_snippets/snippets_hashArray.js";
 import { snippets_hashDate } from "./_snippets/snippets_hashDate.js";
 import { snippets_hashDateTime } from "./_snippets/snippets_hashDateTime.js";
+import { snippets_hashMaybe } from "./_snippets/snippets_hashMaybe.js";
 import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
 import { snippets_hashString } from "./_snippets/snippets_hashString.js";
 import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
@@ -212,6 +215,11 @@ export class Snippets {
   @Memoize()
   get FromRdfResourceValuesFunction(): Snippet {
     return this.snippet(snippets_FromRdfResourceValuesFunction);
+  }
+
+  @Memoize()
+  get HashFunction(): Snippet {
+    return this.snippet(snippets_HashFunction);
   }
 
   @Memoize()
@@ -507,6 +515,16 @@ export class Snippets {
   @Memoize()
   get fromRdfPreferredLanguages(): Snippet {
     return this.snippet(snippets_fromRdfPreferredLanguages);
+  }
+
+  @Memoize()
+  get hashArray(): Snippet {
+    return this.snippet(snippets_hashArray);
+  }
+
+  @Memoize()
+  get hashMaybe(): Snippet {
+    return this.snippet(snippets_hashMaybe);
   }
 
   @Memoize()

@@ -70,6 +70,11 @@ export class OptionType<
   }
 
   @Memoize()
+  get hashFunction(): Code {
+    return code`${this.reusables.snippets.hashMaybe}<${this.itemType.name}>(${this.itemType.hashFunction})`;
+  }
+
+  @Memoize()
   get filterType(): Code {
     return code`${this.reusables.snippets.MaybeFilter}<${this.itemType.filterType}>`;
   }

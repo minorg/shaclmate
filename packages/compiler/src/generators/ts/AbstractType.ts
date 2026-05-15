@@ -72,7 +72,7 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
-   * A function (reference or declaration) that takes a value of this type and a Hasher, calls hasher.update on the value, and returns the Hasher.
+   * A function (reference or declaration) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
    */
   abstract readonly hashFunction: Code;
 

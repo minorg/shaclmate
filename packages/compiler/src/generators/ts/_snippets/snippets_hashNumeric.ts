@@ -8,7 +8,7 @@ export const snippets_hashNumeric: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}hashNumeric`,
     code`\
-function ${syntheticNamePrefix}hashNumeric<HasherT extends ${snippets.Hasher}>(value: bigint | number, hasher: HasherT): HasherT {
+function ${syntheticNamePrefix}hashNumeric<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: bigint | number): HasherT {
   return hasher.update(value.toString());
 }`,
   );

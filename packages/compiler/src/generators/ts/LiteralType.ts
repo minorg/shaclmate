@@ -7,7 +7,6 @@ export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
-  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
   override readonly kind = "LiteralType";
   override readonly name = code`${this.reusables.imports.Literal}`;
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;

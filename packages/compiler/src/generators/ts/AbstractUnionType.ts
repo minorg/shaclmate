@@ -594,6 +594,21 @@ ${joinCode(
 })`;
   }
 
+  protected get inlineHashFunction(): Code {
+    return code`\
+(
+    <HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.name}) => {
+${joinCode(
+  this.members.map(
+    ({ type, typeCheck, unwrap, wrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${wrap(
+        code`${type.hashFunction}(hasher, ${unwrap(code`value`)})`,
+      )}; }`,
+  ),
+)} } satisfies ${this.reusables.snippets.HashFunction}<HasherT, ${this.name}>
+)`;
+  }
+
   protected get inlineToRdfResourceValuesFunction(): Code {
     return code`\
 (((value, _options): (${joinCode(

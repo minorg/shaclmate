@@ -59,6 +59,11 @@ export abstract class AbstractLazyObjectType<
   }
 
   @Memoize()
+  override get hashFunction(): Code {
+    return code`((hasher, value) => ${this.partialType.hashFunction}(hasher, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  @Memoize()
   get filterFunction(): Code {
     return code`((filter: ${this.filterType}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
   }

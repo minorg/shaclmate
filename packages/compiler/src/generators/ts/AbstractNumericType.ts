@@ -1,7 +1,6 @@
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -10,6 +9,7 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
+  override readonly hashFunction = code`${this.reusables.snippets.hashNumeric}`;
   abstract override readonly kind: "BigIntType" | "FloatType" | "IntType";
 
   @Memoize()
