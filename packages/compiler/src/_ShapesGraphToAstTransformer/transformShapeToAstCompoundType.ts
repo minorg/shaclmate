@@ -58,6 +58,7 @@ export function transformShapeToAstCompoundType(
         label: shape.label,
         name: shapeAstTypeName(shape),
         shapeIdentifier: shape.$identifier(),
+        synthetic: false,
       });
 
       if (memberShapes.length === 1) {

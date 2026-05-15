@@ -206,6 +206,7 @@ export class TsGenerator implements Generator {
       name: `${this.configuration.syntheticNamePrefix}Object`,
       recursive: false,
       reusables: this.reusables,
+      synthetic: true,
     });
   }
 }

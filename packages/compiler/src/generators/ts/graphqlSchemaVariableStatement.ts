@@ -108,10 +108,13 @@ export function graphqlSchemaVariableStatement(
   namedObjectTypes = namedObjectTypes.filter(
     (namedObjectType) => !namedObjectType.synthetic,
   );
-
   if (namedObjectTypes.length === 0) {
     return Maybe.empty();
   }
+
+  namedObjectUnionTypes = namedObjectUnionTypes.filter(
+    (namedObjectUnionType) => !namedObjectUnionType.synthetic,
+  );
 
   return Maybe.of(code`\
 export const graphqlSchema = new ${this.reusables.imports.GraphQLSchema}({ query: ${graphqlQueryObjectType.call(this, { namedObjectTypes: namedObjectTypes, namedObjectUnionTypes })} });

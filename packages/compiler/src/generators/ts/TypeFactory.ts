@@ -216,6 +216,7 @@ export class TypeFactory {
       name: this.tsName(astType.name.unsafeCoerce()),
       recursive: astType.recursive,
       reusables: this.reusables,
+      synthetic: astType.synthetic,
     });
 
     this.cachedNamedObjectUnionTypesByShapeIdentifier.set(

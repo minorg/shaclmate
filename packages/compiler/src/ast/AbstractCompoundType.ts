@@ -35,6 +35,21 @@ export abstract class AbstractCompoundType<
    */
   abstract override readonly kind: "IntersectionType" | "UnionType";
 
+  /**
+   * Was this type synthesized or did it come from SHACL?
+   */
+  readonly synthetic: boolean;
+
+  constructor({
+    synthetic,
+    ...superParameters
+  }: {
+    synthetic: boolean;
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
+    this.synthetic = synthetic;
+  }
+
   get members(): readonly MemberT[] {
     return this.#members;
   }

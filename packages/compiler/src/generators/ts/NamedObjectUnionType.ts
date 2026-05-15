@@ -1,4 +1,5 @@
 import { PropertyPath } from "@rdfx/resource";
+
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -10,10 +11,8 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
-
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
@@ -22,18 +21,22 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "NamedObjectUnionType";
+  readonly synthetic: boolean;
 
   constructor({
     identifierType,
+    synthetic,
     ...superParameters
   }: {
     identifierType: BlankNodeType | IdentifierType | IriType;
+    synthetic: boolean;
   } & Omit<
     ConstructorParameters<typeof AbstractNamedUnionType<NamedObjectType>>[0],
     "identifierType"
   >) {
     super({ ...superParameters, identifierType: Maybe.of(identifierType) });
     this.#identifierType = identifierType;
+    this.synthetic = synthetic;
   }
 
   @Memoize()
