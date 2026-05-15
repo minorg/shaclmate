@@ -101,6 +101,10 @@ export function graphqlSchemaVariableStatement(
     namedObjectUnionTypes: NamedObjectUnionType[];
   },
 ): Maybe<Code> {
+  if (!this.configuration.features.has("graphql")) {
+    return Maybe.empty();
+  }
+
   namedObjectTypes = namedObjectTypes.filter(
     (namedObjectType) => !namedObjectType.synthetic,
   );
