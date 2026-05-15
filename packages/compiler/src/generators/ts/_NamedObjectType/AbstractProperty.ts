@@ -71,7 +71,7 @@ export abstract class AbstractProperty<
   abstract readonly jsonSignature: Maybe<Code>;
 
   /**
-   * Property type discriminator e.g., "ShaclProperty".
+   * Property type discriminant e.g., "ShaclProperty".
    */
   abstract readonly kind: string;
 

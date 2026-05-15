@@ -1,13 +1,13 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
+  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
   override readonly kind = "LiteralType";
   override readonly name = code`${this.reusables.imports.Literal}`;
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
@@ -41,6 +41,16 @@ export class LiteralType extends AbstractLiteralType {
     ];
   }
 
+  override jsonSchema({
+    includeDiscriminantProperty,
+  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
+    const discriminantProperty = includeDiscriminantProperty
+      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
+      : "";
+
+    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
+  }
+
   override jsonType(
     parameters?: Parameters<AbstractLiteralType["jsonType"]>[0],
   ): AbstractLiteralType.JsonType {
@@ -50,16 +60,6 @@ export class LiteralType extends AbstractLiteralType {
     return new AbstractLiteralType.JsonType(
       code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
   }
 
   override toJsonExpression({

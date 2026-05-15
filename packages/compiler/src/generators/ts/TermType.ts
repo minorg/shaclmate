@@ -17,6 +17,7 @@ export class TermType<
   override readonly filterFunction =
     code`${this.reusables.snippets.filterTerm}`;
   override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
+  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
   override readonly kind = "TermType";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly schemaType = code`${this.reusables.snippets.TermSchema}`;

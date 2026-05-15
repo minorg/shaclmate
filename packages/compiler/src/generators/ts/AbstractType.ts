@@ -72,7 +72,12 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
-   * Type discriminator.
+   * A function (reference or declaration) that takes a value of this type and a Hasher, calls hasher.update on the value, and returns the Hasher.
+   */
+  abstract readonly hashFunction: Code;
+
+  /**
+   * Type discriminant.
    */
   abstract readonly kind: string;
 

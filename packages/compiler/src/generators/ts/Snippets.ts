@@ -45,6 +45,11 @@ import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
 import { snippets_fromRdfLanguageIn } from "./_snippets/snippets_fromRdfLanguageIn.js";
 import { snippets_fromRdfPreferredLanguages } from "./_snippets/snippets_fromRdfPreferredLanguages.js";
 import { snippets_Hasher } from "./_snippets/snippets_Hasher.js";
+import { snippets_hashDate } from "./_snippets/snippets_hashDate.js";
+import { snippets_hashDateTime } from "./_snippets/snippets_hashDateTime.js";
+import { snippets_hashNumeric } from "./_snippets/snippets_hashNumeric.js";
+import { snippets_hashString } from "./_snippets/snippets_hashString.js";
+import { snippets_hashTerm } from "./_snippets/snippets_hashTerm.js";
 import { snippets_IdentifierFilter } from "./_snippets/snippets_IdentifierFilter.js";
 import { snippets_IdentifierSchema } from "./_snippets/snippets_IdentifierSchema.js";
 import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
@@ -107,6 +112,7 @@ import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdf
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
+import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
@@ -504,6 +510,31 @@ export class Snippets {
   }
 
   @Memoize()
+  get hashDate(): Snippet {
+    return this.snippet(snippets_hashDate);
+  }
+
+  @Memoize()
+  get hashDateTime(): Snippet {
+    return this.snippet(snippets_hashDateTime);
+  }
+
+  @Memoize()
+  get hashNumeric(): Snippet {
+    return this.snippet(snippets_hashNumeric);
+  }
+
+  @Memoize()
+  get hashString(): Snippet {
+    return this.snippet(snippets_hashString);
+  }
+
+  @Memoize()
+  get hashTerm(): Snippet {
+    return this.snippet(snippets_hashTerm);
+  }
+
+  @Memoize()
   get identifierSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_identifierSparqlWherePatterns);
   }
@@ -704,6 +735,11 @@ export class Snippets {
   @Memoize()
   get termSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_termSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get toIsoDateString(): Snippet {
+    return this.snippet(snippets_toIsoDateString);
   }
 
   @Memoize()

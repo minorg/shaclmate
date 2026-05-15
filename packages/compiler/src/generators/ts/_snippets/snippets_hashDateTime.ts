@@ -1,0 +1,14 @@
+import type { SnippetFactory } from "../SnippetFactory.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+
+export const snippets_hashDateTime: SnippetFactory = ({
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}hashDateTime`,
+    code`\
+function ${syntheticNamePrefix}hashDateTime<HasherT extends ${snippets.Hasher}>(value: Date, hasher: HasherT): HasherT {
+  return hasher.update(value.toISOString());
+}`,
+  );
