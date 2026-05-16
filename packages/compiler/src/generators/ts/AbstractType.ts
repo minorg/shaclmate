@@ -72,7 +72,12 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
-   * Type discriminator.
+   * A function (reference or declaration) that takes a  Hasher and a value of this type, calls hasher.update on the value, and returns the Hasher.
+   */
+  abstract readonly hashFunction: Code;
+
+  /**
+   * Type discriminant.
    */
   abstract readonly kind: string;
 
@@ -233,17 +238,6 @@ export abstract class AbstractType {
       value: Code;
     };
   }): Code;
-
-  /**
-   * Statements that use hasher.update to hash a property value of this type.
-   */
-  abstract hashStatements(parameters: {
-    depth: number;
-    variables: {
-      hasher: Code;
-      value: Code;
-    };
-  }): readonly Code[];
 
   /**
    * Zod schema for the JSON type of this type.

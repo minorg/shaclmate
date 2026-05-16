@@ -10,19 +10,16 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterString}`;
   override readonly filterType = code`${this.reusables.snippets.StringFilter}`;
+  override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
+    code`${this.reusables.imports.GraphQLString}`,
+    this.reusables,
+  );
+  override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
   override readonly kind = "StringType";
   override readonly schemaType = code`${this.reusables.snippets.StringSchema}`;
   override readonly typeofs = NonEmptyList(["string" as const]);
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
-
-  @Memoize()
-  override get graphqlType() {
-    return new AbstractPrimitiveType.GraphqlType(
-      code`${this.reusables.imports.GraphQLString}`,
-      this.reusables,
-    );
-  }
 
   @Memoize()
   override get name(): string {
@@ -40,14 +37,6 @@ export class StringType extends AbstractPrimitiveType<string> {
           ? this.primitiveIn.map(literalOf).concat()
           : undefined,
     };
-  }
-
-  override hashStatements({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value});`];
   }
 
   override jsonSchema(

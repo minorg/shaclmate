@@ -86,14 +86,7 @@ export namespace Extern {
   };
 
   // Called by interface functions
-  export function hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(instance: Extern, hasher: HasherT): HasherT {
-    BaseForExtern.hash(instance, hasher);
-    return hasher;
-  }
+  export const hash = BaseForExtern.hash;
 
   export function isExtern(object: $Object): object is Extern {
     return object.$type === "Extern";

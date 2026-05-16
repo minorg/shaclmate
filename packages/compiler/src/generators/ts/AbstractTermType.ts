@@ -5,9 +5,7 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-
 import { removeUndefined } from "./removeUndefined.js";
-
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -30,6 +28,7 @@ export abstract class AbstractTermType<
   readonly equalsFunction = code`${this.reusables.snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
+  override readonly hashFunction = code`${this.reusables.snippets.hashTerm}`;
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
@@ -166,15 +165,6 @@ export abstract class AbstractTermType<
       ].filter((_) => _ !== undefined),
       { on: "." },
     );
-  }
-
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return [
-      code`${variables.hasher}.update(${variables.value}.termType);`,
-      code`${variables.hasher}.update(${variables.value}.value);`,
-    ];
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {

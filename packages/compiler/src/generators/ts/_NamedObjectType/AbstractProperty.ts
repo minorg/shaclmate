@@ -71,7 +71,7 @@ export abstract class AbstractProperty<
   abstract readonly jsonSignature: Maybe<Code>;
 
   /**
-   * Property type discriminator e.g., "ShaclProperty".
+   * Property type discriminant e.g., "ShaclProperty".
    */
   abstract readonly kind: string;
 
@@ -182,9 +182,9 @@ export abstract class AbstractProperty<
   /**
    * Statements to hash this property using a hasher instance.
    */
-  abstract hashStatements(
-    parameters: Parameters<Type["hashStatements"]>[0],
-  ): readonly Code[];
+  abstract hashStatements(parameters: {
+    variables: { hasher: Code; value: Code };
+  }): readonly Code[];
 
   /**
    * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.

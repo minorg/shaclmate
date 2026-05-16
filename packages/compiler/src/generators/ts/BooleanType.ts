@@ -1,26 +1,23 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
+  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
+  override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
+    code`${this.reusables.imports.GraphQLBoolean}`,
+    this.reusables,
+  );
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${this.reusables.snippets.BooleanSchema}`;
+  override readonly typeofs = NonEmptyList(["boolean" as const]);
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
-  override readonly typeofs = NonEmptyList(["boolean" as const]);
-
-  @Memoize()
-  override get graphqlType() {
-    return new AbstractPrimitiveType.GraphqlType(
-      code`${this.reusables.imports.GraphQLBoolean}`,
-      this.reusables,
-    );
-  }
 
   @Memoize()
   override get name(): string {

@@ -8,6 +8,8 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
+  override readonly hashFunction =
+    code`${this.reusables.snippets.hashBigDecimal}`;
   override readonly kind = "BigDecimalType";
   override readonly name = code`${this.reusables.imports.BigDecimal}`;
   override readonly schemaType =
@@ -70,12 +72,6 @@ export class BigDecimalType extends AbstractLiteralType {
     variables,
   }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): Code {
     return code`${variables.value}.toFixed()`;
-  }
-
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value}.toFixed());`];
   }
 
   @Memoize()

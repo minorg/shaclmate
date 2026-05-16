@@ -26,6 +26,10 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     throw new Error("GraphQL doesn't support scalar unions");
   }
 
+  override get hashFunction(): Code {
+    return this.inlineHashFunction;
+  }
+
   override get name(): Code {
     return this.inlineName;
   }
@@ -56,12 +60,6 @@ export class AnonymousUnionType extends AbstractUnionType<Type> {
     _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): Code {
     throw new Error("not implemented");
-  }
-
-  override hashStatements(
-    parameters: Parameters<AbstractType["hashStatements"]>[0],
-  ): readonly Code[] {
-    return this.inlineHashStatements(parameters);
   }
 
   override jsonSchema(

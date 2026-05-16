@@ -594,6 +594,19 @@ ${joinCode(
 })`;
   }
 
+  protected get inlineHashFunction(): Code {
+    return code`\
+(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.name}): HasherT => {
+${joinCode(
+  this.members.map(
+    ({ type, typeCheck, unwrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.hashFunction}(hasher, ${unwrap(code`value`)}); }`,
+  ),
+)}
+  return hasher;
+})`;
+  }
+
   protected get inlineToRdfResourceValuesFunction(): Code {
     return code`\
 (((value, _options): (${joinCode(
@@ -704,26 +717,6 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
 
   override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
-  }
-
-  protected inlineHashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return this.members.map(
-      ({ type, unwrap, typeCheck }) =>
-        code`if (${typeCheck(variables.value)}) { ${joinCode(
-          type
-            .hashStatements({
-              depth: depth + 1,
-              variables: {
-                hasher: variables.hasher,
-                value: unwrap(variables.value),
-              },
-            })
-            .concat(),
-        )} }`,
-    );
   }
 
   private readonly lazyMembers: () => readonly AbstractUnionType.Member<MemberTypeT>[];

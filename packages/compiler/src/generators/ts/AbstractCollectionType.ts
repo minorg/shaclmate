@@ -1,11 +1,11 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
-
 import type { Typeof } from "./Typeof.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -166,6 +166,11 @@ export abstract class AbstractCollectionType<
     );
   }
 
+  @Memoize()
+  get hashFunction(): Code {
+    return code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`;
+  }
+
   override get mutable(): boolean {
     return this._mutable || this.itemType.mutable;
   }
@@ -222,35 +227,6 @@ export abstract class AbstractCollectionType<
     return variables.value;
   }
 
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`for (const item${depth} of ${variables.value}) { ${joinCode(
-        this.itemType
-          .hashStatements({
-            depth: depth + 1,
-            variables: {
-              hasher: variables.hasher,
-              value: code`item${depth}`,
-            },
-          })
-          .concat(),
-      )} }`,
-    ];
-  }
-
-  override jsonUiSchemaElement(
-    parameters: Parameters<
-      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
-    >[0],
-  ): Maybe<Code> {
-    return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
   override jsonSchema(
     parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
   ): Code {
@@ -264,6 +240,14 @@ export abstract class AbstractCollectionType<
       schema = code`${schema}.readonly()`;
     }
     return schema;
+  }
+
+  override jsonUiSchemaElement(
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
+    >[0],
+  ): Maybe<Code> {
+    return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override toJsonExpression({

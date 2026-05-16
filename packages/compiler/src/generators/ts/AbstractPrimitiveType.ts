@@ -64,12 +64,6 @@ export abstract class AbstractPrimitiveType<
     return variables.value;
   }
 
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
-    return [code`${variables.hasher}.update(${variables.value}.toString());`];
-  }
-
   @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
     return new AbstractLiteralType.JsonType(this.name);

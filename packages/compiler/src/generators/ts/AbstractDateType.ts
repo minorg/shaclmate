@@ -49,16 +49,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return code`new Date(${variables.value})`;
   }
 
-  override hashStatements({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<Date>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`${variables.hasher}.update(${variables.value}.toISOString());`,
-    ];
-  }
-
   @Memoize()
   override jsonType(): AbstractPrimitiveType.JsonType {
     return new AbstractPrimitiveType.JsonType(code`string`);

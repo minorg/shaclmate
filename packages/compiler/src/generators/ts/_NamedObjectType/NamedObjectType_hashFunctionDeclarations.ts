@@ -1,7 +1,7 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-const hasherVariable = code`_hasher`;
+const hasherVariable = code`hasher`;
 
 export function NamedObjectType_hashFunctionDeclarations(
   this: NamedObjectType,
@@ -14,7 +14,6 @@ export function NamedObjectType_hashFunctionDeclarations(
     (property) =>
       property.kind === "ShaclProperty"
         ? property.hashStatements({
-            depth: 0,
             variables: {
               hasher: hasherVariable,
               value: property.accessExpression({
@@ -29,11 +28,11 @@ export function NamedObjectType_hashFunctionDeclarations(
   const hashStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     hashShaclPropertiesStatements.push(
-      code`${parentObjectType.name}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+      code`${parentObjectType.name}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
     );
   }
   hashStatements.push(
-    code`${this.name}.hashShaclProperties(${this.thisVariable}, ${hasherVariable});`,
+    code`${this.name}.hashShaclProperties(${hasherVariable}, ${this.thisVariable});`,
   );
 
   hashShaclPropertiesStatements.push(...hashOwnShaclPropertiesStatements);
@@ -44,7 +43,6 @@ export function NamedObjectType_hashFunctionDeclarations(
       .filter((property) => property.kind !== "ShaclProperty")
       .flatMap((property) =>
         property.hashStatements({
-          depth: 0,
           variables: {
             hasher: hasherVariable,
             value: code`${property.accessExpression({ variables: { object: this.thisVariable } })}`,
@@ -56,11 +54,11 @@ export function NamedObjectType_hashFunctionDeclarations(
 
   return [
     code`\
-export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.name}): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-export function hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function hashShaclProperties<HasherT extends ${this.reusables.snippets.Hasher}>(${hasherVariable}: HasherT, ${this.thisVariable}: ${this.name}): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

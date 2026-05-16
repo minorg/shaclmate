@@ -350,9 +350,52 @@ export type $FromRdfResourceValuesFunction<T> = (
   },
 ) => Either<Error, Resource.Values<T>>;
 
+function $hashArray<HasherT extends $Hasher, ItemT>(
+  hashItem: $HashFunction<HasherT, ItemT>,
+): $HashFunction<HasherT, readonly ItemT[]> {
+  return (hasher, value) => {
+    for (const item of value) {
+      hashItem(hasher, item);
+    }
+    return hasher;
+  };
+}
+
 type $Hasher = {
   update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
 };
+
+export type $HashFunction<HasherT extends $Hasher, ValueT> = (
+  hasher: HasherT,
+  value: ValueT,
+) => HasherT;
+
+function $hashMaybe<HasherT extends $Hasher, ItemT>(
+  hashItem: $HashFunction<HasherT, ItemT>,
+): $HashFunction<HasherT, Maybe<ItemT>> {
+  return (hasher, value) => {
+    value.ifJust((value) => {
+      hashItem(hasher, value);
+    });
+    return hasher;
+  };
+}
+
+function $hashNumeric<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: bigint | number,
+): HasherT {
+  hasher.update(value.toString());
+  return hasher;
+}
+
+function $hashString<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: string,
+): HasherT {
+  hasher.update(value);
+  return hasher;
+}
 
 interface $IdentifierFilter {
   readonly in?: readonly (BlankNode | NamedNode)[];
@@ -753,21 +796,21 @@ export namespace NestedNodeShape {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nestedNodeShape: NestedNodeShape,
-    _hasher: HasherT,
   ): HasherT {
-    NestedNodeShape.hashShaclProperties(_nestedNodeShape, _hasher);
-    _hasher.update(_nestedNodeShape.$identifier().value);
-    _hasher.update(_nestedNodeShape.$type);
-    return _hasher;
+    NestedNodeShape.hashShaclProperties(hasher, _nestedNodeShape);
+    hasher.update(_nestedNodeShape.$identifier().value);
+    hasher.update(_nestedNodeShape.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nestedNodeShape: NestedNodeShape,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_nestedNodeShape.requiredStringProperty);
-    return _hasher;
+    $hashString(hasher, _nestedNodeShape.requiredStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -1182,32 +1225,26 @@ export namespace FormNodeShape {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _formNodeShape: FormNodeShape,
-    _hasher: HasherT,
   ): HasherT {
-    FormNodeShape.hashShaclProperties(_formNodeShape, _hasher);
-    _hasher.update(_formNodeShape.$identifier().value);
-    _hasher.update(_formNodeShape.$type);
-    return _hasher;
+    FormNodeShape.hashShaclProperties(hasher, _formNodeShape);
+    hasher.update(_formNodeShape.$identifier().value);
+    hasher.update(_formNodeShape.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _formNodeShape: FormNodeShape,
-    _hasher: HasherT,
   ): HasherT {
-    for (const item0 of _formNodeShape.emptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-    NestedNodeShape.hash(_formNodeShape.nestedObjectProperty, _hasher);
-    for (const item0 of _formNodeShape.nonEmptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-    _formNodeShape.optionalStringProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    _hasher.update(_formNodeShape.requiredIntegerProperty.toString());
-    _hasher.update(_formNodeShape.requiredStringProperty);
-    return _hasher;
+    $hashArray($hashString)(hasher, _formNodeShape.emptyStringSetProperty);
+    NestedNodeShape.hash(hasher, _formNodeShape.nestedObjectProperty);
+    $hashArray($hashString)(hasher, _formNodeShape.nonEmptyStringSetProperty);
+    $hashMaybe($hashString)(hasher, _formNodeShape.optionalStringProperty);
+    $hashNumeric(hasher, _formNodeShape.requiredIntegerProperty);
+    $hashString(hasher, _formNodeShape.requiredStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -1876,18 +1913,18 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: $Object,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: $Object,
+  ): HasherT => {
     if (FormNodeShape.isFormNodeShape(value)) {
-      FormNodeShape.hash(value, hasher);
+      return FormNodeShape.hash(hasher, value);
     }
     if (NestedNodeShape.isNestedNodeShape(value)) {
-      NestedNodeShape.hash(value, hasher);
+      return NestedNodeShape.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {

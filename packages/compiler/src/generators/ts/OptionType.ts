@@ -6,7 +6,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
@@ -67,6 +67,11 @@ export class OptionType<
   @Memoize()
   get filterFunction(): Code {
     return code`${this.reusables.snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  }
+
+  @Memoize()
+  get hashFunction(): Code {
+    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
   }
 
   @Memoize()
@@ -147,27 +152,6 @@ export class OptionType<
     >[0],
   ): Code {
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
-  }
-
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly Code[] {
-    return [
-      code`${variables.value}.ifJust((value${depth}) => { ${joinCode(
-        this.itemType
-          .hashStatements({
-            depth: depth + 1,
-            variables: {
-              hasher: variables.hasher,
-              value: code`value${depth}`,
-            },
-          })
-          .concat(),
-      )} });`,
-    ];
   }
 
   @Memoize()

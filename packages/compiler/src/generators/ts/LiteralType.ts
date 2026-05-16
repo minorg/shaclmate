@@ -1,7 +1,6 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
@@ -30,15 +29,14 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
-    return [
-      ...super.hashStatements({ depth, variables }),
-      code`${variables.hasher}.update(${variables.value}.datatype.value);`,
-      code`${variables.hasher}.update(${variables.value}.language);`,
-    ];
+  override jsonSchema({
+    includeDiscriminantProperty,
+  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
+    const discriminantProperty = includeDiscriminantProperty
+      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
+      : "";
+
+    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
   }
 
   override jsonType(
@@ -50,16 +48,6 @@ export class LiteralType extends AbstractLiteralType {
     return new AbstractLiteralType.JsonType(
       code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
-  }
-
-  override jsonSchema({
-    includeDiscriminantProperty,
-  }: Parameters<AbstractLiteralType["jsonSchema"]>[0]): Code {
-    const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${this.reusables.imports.z}.literal("Literal")`
-      : "";
-
-    return code`${this.reusables.imports.z}.object({ "@language": ${this.reusables.imports.z}.string().optional()${discriminantProperty}, "@type": ${this.reusables.imports.z}.string().optional(), "@value": ${this.reusables.imports.z}.string() })`;
   }
 
   override toJsonExpression({

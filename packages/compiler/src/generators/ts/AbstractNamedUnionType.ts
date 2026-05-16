@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { AbstractUnionType } from "./AbstractUnionType.js";
 import type { Type } from "./Type.js";
@@ -46,10 +47,7 @@ ${joinCode(
 
   @Memoize()
   override get equalsFunction(): Code {
-    if (this.configuration.features.has("equals")) {
-      return code`${this.name}.equals`;
-    }
-    return this.inlineEqualsFunction;
+    return code`${this.name}.equals`;
   }
 
   @Memoize()
@@ -60,6 +58,11 @@ ${joinCode(
   @Memoize()
   get filterType(): Code {
     return code`${this.name}.Filter`;
+  }
+
+  @Memoize()
+  override get hashFunction(): Code {
+    return code`${this.name}.hash`;
   }
 
   get jsonSchemaFunctionDeclaration(): Code {
@@ -87,18 +90,12 @@ ${joinCode(
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
-    if (this.configuration.features.has("sparql")) {
-      return code`${this.name}.valueSparqlConstructTriples`;
-    }
-    return this.inlineValueSparqlConstructTriplesFunction;
+    return code`${this.name}.valueSparqlConstructTriples`;
   }
 
   @Memoize()
   override get valueSparqlWherePatternsFunction(): Code {
-    if (this.configuration.features.has("sparql")) {
-      return code`${this.name}.valueSparqlWherePatterns`;
-    }
-    return this.inlineValueSparqlWherePatternsFunction;
+    return code`${this.name}.valueSparqlWherePatterns`;
   }
 
   protected get staticModuleDeclarations(): Record<string, Code> {
@@ -116,7 +113,7 @@ ${joinCode(
 
     if (this.configuration.features.has("hash")) {
       staticModuleDeclarations[`hash`] =
-        code`export function hash<HasherT extends ${this.reusables.snippets.Hasher}>(value: ${this._name}, hasher: HasherT): HasherT { ${this.inlineHashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`value` } })} return hasher; }`;
+        code`export const hash = ${this.inlineHashFunction};`;
     }
 
     if (this.configuration.features.has("json")) {
@@ -166,10 +163,7 @@ export namespace Json {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
-    if (this.configuration.features.has("json")) {
-      return code`${this.name}.fromJson(${variables.value})`;
-    }
-    return code`${this.inlineFromJsonFunction}(${variables.value})`;
+    return code`${this.name}.fromJson(${variables.value})`;
   }
 
   override fromRdfResourceValuesExpression({
@@ -177,62 +171,35 @@ export namespace Json {
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
     const { resourceValues: resourceValuesVariable, ...otherVariables } =
       variables;
-    if (this.configuration.features.has("rdf")) {
-      return code`${this.name}.fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
-    }
-    return code`${this.inlineFromRdfResourceValuesFunction}(${resourceValuesVariable}, ${otherVariables})`;
-  }
-
-  override hashStatements({
-    depth,
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    if (this.configuration.features.has("hash")) {
-      return [
-        code`${this.name}.hash(${variables.value}, ${variables.hasher});`,
-      ];
-    }
-    return this.inlineHashStatements({ depth, variables });
+    return code`${this.name}.fromRdfResourceValues(${resourceValuesVariable}, ${otherVariables})`;
   }
 
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
-    if (this.configuration.features.has("json")) {
-      const expression = code`${this.name}.Json.schema()`;
-      if (context === "property" && this.recursive) {
-        return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.Json> => ${expression})`;
-      }
-      return expression;
+    const expression = code`${this.name}.Json.schema()`;
+    if (context === "property" && this.recursive) {
+      return code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.name}.Json> => ${expression})`;
     }
-    return this.inlineJsonSchema;
+    return expression;
   }
 
   @Memoize()
   override jsonType(): AbstractType.JsonType {
-    if (this.configuration.features.has("json")) {
-      return new AbstractType.JsonType(`${this.name}.Json`);
-    }
-    return this.inlineJsonType;
+    return new AbstractType.JsonType(`${this.name}.Json`);
   }
 
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
-    if (this.configuration.features.has("json")) {
-      return code`${this.name}.toJson(${variables.value})`;
-    }
-    return code`${this.inlineToJsonFunction}(${variables.value})`;
+    return code`${this.name}.toJson(${variables.value})`;
   }
 
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     const { value: valueVariable, ...otherVariables } = variables;
-    if (this.configuration.features.has("rdf")) {
-      return code`${this.name}.toRdfResourceValues(${valueVariable}, ${otherVariables})`;
-    }
-    return code`${this.inlineToRdfResourceValuesFunction}(${valueVariable}, ${otherVariables})`;
+    return code`${this.name}.toRdfResourceValues(${valueVariable}, ${otherVariables})`;
   }
 
   override toStringExpression({

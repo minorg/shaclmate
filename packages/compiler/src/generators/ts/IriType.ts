@@ -1,8 +1,9 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-
 import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
@@ -15,14 +16,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     code`${this.reusables.snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
-  get parseFunction(): Code {
-    if (this.in_.length > 0) {
-      return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.name});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
-    }
-    return code`${this.reusables.snippets.parseIri}`;
-  }
-
-  @Memoize()
   override get name(): Code {
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
@@ -33,6 +26,14 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     }
 
     return code`${this.reusables.imports.NamedNode}`;
+  }
+
+  @Memoize()
+  get parseFunction(): Code {
+    if (this.in_.length > 0) {
+      return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.name});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
+    }
+    return code`${this.reusables.snippets.parseIri}`;
   }
 
   protected override get schemaObject() {
@@ -51,27 +52,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
     return code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
-  ): AbstractTermType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "NamedNode"`
-      : "";
-
-    if (this.in_.length > 0) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new AbstractTermType.JsonType(
-        code`{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
-      );
-    }
-
-    return new AbstractTermType.JsonType(
-      code`{ readonly "@id": string${discriminantProperty} }`,
-    );
   }
 
   override jsonSchema({
@@ -93,6 +73,27 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       : "";
 
     return code`${this.reusables.imports.z}.object({ "@id": ${idSchema}${discriminantProperty} })`;
+  }
+
+  @Memoize()
+  override jsonType(
+    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
+  ): AbstractTermType.JsonType {
+    const discriminantProperty = parameters?.includeDiscriminantProperty
+      ? `, readonly termType: "NamedNode"`
+      : "";
+
+    if (this.in_.length > 0) {
+      // Treat sh:in as a union of the IRIs
+      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
+      return new AbstractTermType.JsonType(
+        code`{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
+      );
+    }
+
+    return new AbstractTermType.JsonType(
+      code`{ readonly "@id": string${discriminantProperty} }`,
+    );
   }
 
   override toJsonExpression({

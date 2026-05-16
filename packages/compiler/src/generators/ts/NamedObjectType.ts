@@ -280,6 +280,11 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   }
 
   @Memoize()
+  override get hashFunction(): Code {
+    return code`${this.name}.hash`;
+  }
+
+  @Memoize()
   get identifierTypeAlias(): Code {
     return code`${this.name}.Identifier`;
   }
@@ -375,12 +380,6 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return variables.value;
   }
 
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
-    return [code`${this.name}.hash(${variables.value}, ${variables.hasher});`];
-  }
-
   override jsonSchema({
     context,
   }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
@@ -413,16 +412,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
     return code`${this.name}.toJson(${variables.value})`;
   }
 
-  override toStringExpression({
-    variables,
-  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
-    return code`${this.name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
-  }
-
   override toRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
     return code`[${this.name}.toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.name}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
   }
 
   private readonly lazyAncestorObjectTypes: () => readonly NamedObjectType[];
