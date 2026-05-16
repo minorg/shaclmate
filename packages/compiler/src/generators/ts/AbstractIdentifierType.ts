@@ -51,3 +51,8 @@ export abstract class AbstractIdentifierType<
     return code`${this.reusables.imports.NTriplesTerm}.stringify(${value})`;
   }
 }
+
+export namespace AbstractIdentifierType {
+  export type ConversionFunction = AbstractTermType.ConversionFunction;
+  export type JsonType = AbstractTermType.JsonType;
+}

@@ -138,9 +138,9 @@ export class IdentifierProperty extends AbstractProperty<
     } else {
       invariant(nodeKinds.size === 1);
       if (nodeKinds.has("BlankNode")) {
-        conversionFunction = code`${this.reusables.snippets.convertToBlankIdentifierProperty}`;
+        conversionFunction = code`${this.reusables.snippets.convertToBlankNodeIdentifierProperty}`;
       } else {
-        conversionFunction = code`${this.reusables.snippets.convertToNamedIdentifierProperty}<${this.type.name}>`;
+        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}<${this.type.name}>`;
       }
     }
 

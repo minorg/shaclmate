@@ -8,7 +8,7 @@ export const snippets_convertToString: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToString`,
     code`\
-function ${syntheticNamePrefix}convertToString<ValueT extends string>(schema: ${snippets.StringSchema}, value: ValueT) {
+function ${syntheticNamePrefix}convertToString<ValueT extends string>(schema: ${snippets.StringSchema}, value: ValueT): ValueT {
   return value;
 }`,
   );

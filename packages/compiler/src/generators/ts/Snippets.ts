@@ -17,9 +17,12 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
-import { snippets_convertToBlankIdentifierProperty } from "./_snippets/snippets_convertToBlankIdentifierProperty copy.js";
+import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
+import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty copy.js";
+import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
-import { snippets_convertToNamedIdentifierProperty } from "./_snippets/snippets_convertToNamedIdentifierProperty.js";
+import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
+import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
@@ -430,8 +433,18 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToBlankIdentifierProperty(): Snippet {
-    return this.snippet(snippets_convertToBlankIdentifierProperty);
+  get convertToBlankNode(): Snippet {
+    return this.snippet(snippets_convertToBlankNode);
+  }
+
+  @Memoize()
+  get convertToBlankNodeIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToBlankNodeIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToIdentifier(): Snippet {
+    return this.snippet(snippets_convertToIdentifier);
   }
 
   @Memoize()
@@ -440,8 +453,13 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToNamedIdentifierProperty(): Snippet {
-    return this.snippet(snippets_convertToNamedIdentifierProperty);
+  get convertToIri(): Snippet {
+    return this.snippet(snippets_convertToIri);
+  }
+
+  @Memoize()
+  get convertToIriIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToIriIdentifierProperty);
   }
 
   @Memoize()
