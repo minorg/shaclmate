@@ -24,7 +24,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   @Memoize()
   override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
     return {
-      code: code`${this.reusables.snippets.convertToString}`,
+      code: code`${this.reusables.snippets.convertToString}<${this.name}>`,
       sourceTypes: [
         {
           name: this.name,

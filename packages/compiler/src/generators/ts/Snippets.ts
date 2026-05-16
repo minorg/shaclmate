@@ -19,6 +19,7 @@ import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty copy.js";
+import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
@@ -440,6 +441,11 @@ export class Snippets {
   @Memoize()
   get convertToBlankNodeIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToBlankNodeIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToBoolean(): Snippet {
+    return this.snippet(snippets_convertToBoolean);
   }
 
   @Memoize()

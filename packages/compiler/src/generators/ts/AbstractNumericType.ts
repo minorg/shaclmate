@@ -23,7 +23,7 @@ export abstract class AbstractNumericType<
   @Memoize()
   override get conversionFunction() {
     return {
-      code: code`${this.reusables.snippets.convertToNumeric}<${this.typeofs[0]}>`,
+      code: code`${this.reusables.snippets.convertToNumeric}<${this.name}>`,
       sourceTypes: [
         {
           name: this.name,

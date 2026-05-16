@@ -8,16 +8,29 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
-  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
   );
+  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${this.reusables.snippets.BooleanSchema}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
+
+  @Memoize()
+  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToBoolean}<${this.name}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "boolean",
+        },
+      ],
+    };
+  }
 
   @Memoize()
   override get name(): string {
