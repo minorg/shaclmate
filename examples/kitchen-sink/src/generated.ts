@@ -913,9 +913,97 @@ export type $FromRdfResourceValuesFunction<T> = (
   },
 ) => Either<Error, Resource.Values<T>>;
 
+function $hashArray<HasherT extends $Hasher, ItemT>(
+  hashItem: $HashFunction<HasherT, ItemT>,
+): $HashFunction<HasherT, readonly ItemT[]> {
+  return (hasher, value) => {
+    for (const item of value) {
+      hashItem(hasher, item);
+    }
+    return hasher;
+  };
+}
+
+function $hashBigDecimal<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: BigDecimal,
+): HasherT {
+  hasher.update(value.toFixed());
+  return hasher;
+}
+
+function $hashBoolean<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: boolean,
+): HasherT {
+  hasher.update(value.toString());
+  return hasher;
+}
+
+function $hashDate<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: Date,
+): HasherT {
+  hasher.update($toIsoDateString(value));
+  return hasher;
+}
+
+function $hashDateTime<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: Date,
+): HasherT {
+  hasher.update(value.toISOString());
+  return hasher;
+}
+
 type $Hasher = {
   update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
 };
+
+export type $HashFunction<HasherT extends $Hasher, ValueT> = (
+  hasher: HasherT,
+  value: ValueT,
+) => HasherT;
+
+function $hashMaybe<HasherT extends $Hasher, ItemT>(
+  hashItem: $HashFunction<HasherT, ItemT>,
+): $HashFunction<HasherT, Maybe<ItemT>> {
+  return (hasher, value) => {
+    value.ifJust((value) => {
+      hashItem(hasher, value);
+    });
+    return hasher;
+  };
+}
+
+function $hashNumeric<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: bigint | number,
+): HasherT {
+  hasher.update(value.toString());
+  return hasher;
+}
+
+function $hashString<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: string,
+): HasherT {
+  hasher.update(value);
+  return hasher;
+}
+
+function $hashTerm<HasherT extends $Hasher>(
+  hasher: HasherT,
+  value: BlankNode | Literal | NamedNode,
+): HasherT {
+  hasher.update(value.termType);
+  hasher.update(value.value);
+  if (value.termType === "Literal") {
+    hasher.update(value.datatype.value);
+    hasher.update(value.language);
+  }
+  return hasher;
+}
 
 interface $IdentifierFilter {
   readonly in?: readonly (BlankNode | NamedNode)[];
@@ -2708,6 +2796,10 @@ const $termSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     ...parameters,
   });
 
+export function $toIsoDateString(date: Date): string {
+  return date.toISOString().replace(/T.*$/, "");
+}
+
 export type $ToRdfResourceFunction<
   ObjectT,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
@@ -2903,19 +2995,18 @@ export namespace NamedUnion1 {
         }),
       )) satisfies $FromRdfResourceValuesFunction<NamedUnion1>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: NamedUnion1,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: NamedUnion1,
+  ): HasherT => {
     if (typeof value === "object") {
-      hasher.update(value.termType);
-      hasher.update(value.value);
+      return $hashTerm(hasher, value);
     }
     if (typeof value === "string") {
-      hasher.update(value);
+      return $hashString(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Json = { readonly "@id": string } | string;
 
@@ -3174,18 +3265,18 @@ export namespace NamedUnion2 {
         }),
       )) satisfies $FromRdfResourceValuesFunction<NamedUnion2>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: NamedUnion2,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: NamedUnion2,
+  ): HasherT => {
     if (value["type"] === "date") {
-      hasher.update(value.value.toISOString());
+      return $hashDate(hasher, value.value);
     }
     if (value["type"] === "dateTime") {
-      hasher.update(value.value.toISOString());
+      return $hashDateTime(hasher, value.value);
     }
     return hasher;
-  }
+  };
 
   export type Json =
     | { type: "date"; value: string }
@@ -3212,10 +3303,7 @@ export namespace NamedUnion2 {
 
   export const toJson = (value: NamedUnion2): NamedUnion2.Json => {
     if (value["type"] === "date") {
-      return {
-        type: "date" as const,
-        value: value.value.toISOString().replace(/T.*$/, ""),
-      };
+      return { type: "date" as const, value: $toIsoDateString(value.value) };
     }
     if (value["type"] === "dateTime") {
       return { type: "dateTime" as const, value: value.value.toISOString() };
@@ -3390,20 +3478,20 @@ export namespace $NamedDefaultPartial {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _namedDefaultPartial: $NamedDefaultPartial,
-    _hasher: HasherT,
   ): HasherT {
-    $NamedDefaultPartial.hashShaclProperties(_namedDefaultPartial, _hasher);
-    _hasher.update(_namedDefaultPartial.$identifier().value);
-    _hasher.update(_namedDefaultPartial.$type);
-    return _hasher;
+    $NamedDefaultPartial.hashShaclProperties(hasher, _namedDefaultPartial);
+    hasher.update(_namedDefaultPartial.$identifier().value);
+    hasher.update(_namedDefaultPartial.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _namedDefaultPartial: $NamedDefaultPartial,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = NamedNode;
@@ -3747,20 +3835,20 @@ export namespace $DefaultPartial {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _defaultPartial: $DefaultPartial,
-    _hasher: HasherT,
   ): HasherT {
-    $DefaultPartial.hashShaclProperties(_defaultPartial, _hasher);
-    _hasher.update(_defaultPartial.$identifier().value);
-    _hasher.update(_defaultPartial.$type);
-    return _hasher;
+    $DefaultPartial.hashShaclProperties(hasher, _defaultPartial);
+    hasher.update(_defaultPartial.$identifier().value);
+    hasher.update(_defaultPartial.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _defaultPartial: $DefaultPartial,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -4947,180 +5035,207 @@ export namespace UnionDiscriminants {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionDiscriminants: UnionDiscriminants,
-    _hasher: HasherT,
   ): HasherT {
-    UnionDiscriminants.hashShaclProperties(_unionDiscriminants, _hasher);
-    _hasher.update(_unionDiscriminants.$identifier().value);
-    _hasher.update(_unionDiscriminants.$type);
-    return _hasher;
+    UnionDiscriminants.hashShaclProperties(hasher, _unionDiscriminants);
+    hasher.update(_unionDiscriminants.$identifier().value);
+    hasher.update(_unionDiscriminants.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionDiscriminants: UnionDiscriminants,
-    _hasher: HasherT,
   ): HasherT {
-    _unionDiscriminants.optionalIriOrLiteralProperty.ifJust((value0) => {
-      if (value0["termType"] === "NamedNode") {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: NamedNode | Literal,
+      ): HasherT => {
+        if (value["termType"] === "NamedNode") {
+          return $hashTerm(hasher, value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.optionalIriOrLiteralProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: NamedNode | string,
+      ): HasherT => {
+        if (typeof value === "object") {
+          return $hashTerm(hasher, value);
+        }
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.optionalIriOrStringProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
+      ): HasherT => {
+        if (value["termType"] === "UnionMember1") {
+          return UnionMember1.hash(hasher, value.value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.optionalNodeOrLiteralProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            },
+      ): HasherT => {
+        if (value["type"] === "UnionMember1") {
+          return UnionMember1.hash(hasher, value.value);
+        }
+        if (value["type"] === "UnionMember2") {
+          return UnionMember2.hash(hasher, value.value);
+        }
+        if (value["type"] === "string") {
+          return $hashString(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.optionalNodeOrNodeOrStringProperty);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: NamedNode | Literal,
+    ): HasherT => {
+      if (value["termType"] === "NamedNode") {
+        return $hashTerm(hasher, value);
       }
-      if (value0["termType"] === "Literal") {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
-        _hasher.update(value0.datatype.value);
-        _hasher.update(value0.language);
+      if (value["termType"] === "Literal") {
+        return $hashTerm(hasher, value);
       }
-    });
-    _unionDiscriminants.optionalIriOrStringProperty.ifJust((value0) => {
-      if (typeof value0 === "object") {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
+      return hasher;
+    })(hasher, _unionDiscriminants.requiredIriOrLiteralProperty);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: NamedNode | string,
+    ): HasherT => {
+      if (typeof value === "object") {
+        return $hashTerm(hasher, value);
       }
-      if (typeof value0 === "string") {
-        _hasher.update(value0);
+      if (typeof value === "string") {
+        return $hashString(hasher, value);
       }
-    });
-    _unionDiscriminants.optionalNodeOrLiteralProperty.ifJust((value0) => {
-      if (value0["termType"] === "UnionMember1") {
-        UnionMember1.hash(value0.value, _hasher);
+      return hasher;
+    })(hasher, _unionDiscriminants.requiredIriOrStringProperty);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
+    ): HasherT => {
+      if (value["termType"] === "UnionMember1") {
+        return UnionMember1.hash(hasher, value.value);
       }
-      if (value0["termType"] === "Literal") {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
-        _hasher.update(value0.datatype.value);
-        _hasher.update(value0.language);
+      if (value["termType"] === "Literal") {
+        return $hashTerm(hasher, value);
       }
-    });
-    _unionDiscriminants.optionalNodeOrNodeOrStringProperty.ifJust((value0) => {
-      if (value0["type"] === "UnionMember1") {
-        UnionMember1.hash(value0.value, _hasher);
+      return hasher;
+    })(hasher, _unionDiscriminants.requiredNodeOrLiteralProperty);
+    (<HasherT extends $Hasher>(
+      hasher: HasherT,
+      value:
+        | { type: "UnionMember1"; value: UnionMember1 }
+        | { type: "UnionMember2"; value: UnionMember2 }
+        | {
+            type: "string";
+            value: string;
+          },
+    ): HasherT => {
+      if (value["type"] === "UnionMember1") {
+        return UnionMember1.hash(hasher, value.value);
       }
-      if (value0["type"] === "UnionMember2") {
-        UnionMember2.hash(value0.value, _hasher);
+      if (value["type"] === "UnionMember2") {
+        return UnionMember2.hash(hasher, value.value);
       }
-      if (value0["type"] === "string") {
-        _hasher.update(value0.value);
+      if (value["type"] === "string") {
+        return $hashString(hasher, value.value);
       }
-    });
-    if (
-      _unionDiscriminants.requiredIriOrLiteralProperty["termType"] ===
-      "NamedNode"
-    ) {
-      _hasher.update(_unionDiscriminants.requiredIriOrLiteralProperty.termType);
-      _hasher.update(_unionDiscriminants.requiredIriOrLiteralProperty.value);
-    }
-    if (
-      _unionDiscriminants.requiredIriOrLiteralProperty["termType"] === "Literal"
-    ) {
-      _hasher.update(_unionDiscriminants.requiredIriOrLiteralProperty.termType);
-      _hasher.update(_unionDiscriminants.requiredIriOrLiteralProperty.value);
-      _hasher.update(
-        _unionDiscriminants.requiredIriOrLiteralProperty.datatype.value,
-      );
-      _hasher.update(_unionDiscriminants.requiredIriOrLiteralProperty.language);
-    }
-    if (typeof _unionDiscriminants.requiredIriOrStringProperty === "object") {
-      _hasher.update(_unionDiscriminants.requiredIriOrStringProperty.termType);
-      _hasher.update(_unionDiscriminants.requiredIriOrStringProperty.value);
-    }
-    if (typeof _unionDiscriminants.requiredIriOrStringProperty === "string") {
-      _hasher.update(_unionDiscriminants.requiredIriOrStringProperty);
-    }
-    if (
-      _unionDiscriminants.requiredNodeOrLiteralProperty["termType"] ===
-      "UnionMember1"
-    ) {
-      UnionMember1.hash(
-        _unionDiscriminants.requiredNodeOrLiteralProperty.value,
-        _hasher,
-      );
-    }
-    if (
-      _unionDiscriminants.requiredNodeOrLiteralProperty["termType"] ===
-      "Literal"
-    ) {
-      _hasher.update(
-        _unionDiscriminants.requiredNodeOrLiteralProperty.termType,
-      );
-      _hasher.update(_unionDiscriminants.requiredNodeOrLiteralProperty.value);
-      _hasher.update(
-        _unionDiscriminants.requiredNodeOrLiteralProperty.datatype.value,
-      );
-      _hasher.update(
-        _unionDiscriminants.requiredNodeOrLiteralProperty.language,
-      );
-    }
-    if (
-      _unionDiscriminants.requiredNodeOrNodeOrStringProperty["type"] ===
-      "UnionMember1"
-    ) {
-      UnionMember1.hash(
-        _unionDiscriminants.requiredNodeOrNodeOrStringProperty.value,
-        _hasher,
-      );
-    }
-    if (
-      _unionDiscriminants.requiredNodeOrNodeOrStringProperty["type"] ===
-      "UnionMember2"
-    ) {
-      UnionMember2.hash(
-        _unionDiscriminants.requiredNodeOrNodeOrStringProperty.value,
-        _hasher,
-      );
-    }
-    if (
-      _unionDiscriminants.requiredNodeOrNodeOrStringProperty["type"] ===
-      "string"
-    ) {
-      _hasher.update(
-        _unionDiscriminants.requiredNodeOrNodeOrStringProperty.value,
-      );
-    }
-    for (const item0 of _unionDiscriminants.setIriOrLiteralProperty) {
-      if (item0["termType"] === "NamedNode") {
-        _hasher.update(item0.termType);
-        _hasher.update(item0.value);
-      }
-      if (item0["termType"] === "Literal") {
-        _hasher.update(item0.termType);
-        _hasher.update(item0.value);
-        _hasher.update(item0.datatype.value);
-        _hasher.update(item0.language);
-      }
-    }
-    for (const item0 of _unionDiscriminants.setIriOrStringProperty) {
-      if (typeof item0 === "object") {
-        _hasher.update(item0.termType);
-        _hasher.update(item0.value);
-      }
-      if (typeof item0 === "string") {
-        _hasher.update(item0);
-      }
-    }
-    for (const item0 of _unionDiscriminants.setNodeOrLiteralProperty) {
-      if (item0["termType"] === "UnionMember1") {
-        UnionMember1.hash(item0.value, _hasher);
-      }
-      if (item0["termType"] === "Literal") {
-        _hasher.update(item0.termType);
-        _hasher.update(item0.value);
-        _hasher.update(item0.datatype.value);
-        _hasher.update(item0.language);
-      }
-    }
-    for (const item0 of _unionDiscriminants.setNodeOrNodeOrStringProperty) {
-      if (item0["type"] === "UnionMember1") {
-        UnionMember1.hash(item0.value, _hasher);
-      }
-      if (item0["type"] === "UnionMember2") {
-        UnionMember2.hash(item0.value, _hasher);
-      }
-      if (item0["type"] === "string") {
-        _hasher.update(item0.value);
-      }
-    }
-    return _hasher;
+      return hasher;
+    })(hasher, _unionDiscriminants.requiredNodeOrNodeOrStringProperty);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: NamedNode | Literal,
+      ): HasherT => {
+        if (value["termType"] === "NamedNode") {
+          return $hashTerm(hasher, value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.setIriOrLiteralProperty);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: NamedNode | string,
+      ): HasherT => {
+        if (typeof value === "object") {
+          return $hashTerm(hasher, value);
+        }
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.setIriOrStringProperty);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
+      ): HasherT => {
+        if (value["termType"] === "UnionMember1") {
+          return UnionMember1.hash(hasher, value.value);
+        }
+        if (value["termType"] === "Literal") {
+          return $hashTerm(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.setNodeOrLiteralProperty);
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            },
+      ): HasherT => {
+        if (value["type"] === "UnionMember1") {
+          return UnionMember1.hash(hasher, value.value);
+        }
+        if (value["type"] === "UnionMember2") {
+          return UnionMember2.hash(hasher, value.value);
+        }
+        if (value["type"] === "string") {
+          return $hashString(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _unionDiscriminants.setNodeOrNodeOrStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -11005,53 +11120,29 @@ export namespace TermProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _termProperties: TermProperties,
-    _hasher: HasherT,
   ): HasherT {
-    TermProperties.hashShaclProperties(_termProperties, _hasher);
-    _hasher.update(_termProperties.$identifier().value);
-    _hasher.update(_termProperties.$type);
-    return _hasher;
+    TermProperties.hashShaclProperties(hasher, _termProperties);
+    hasher.update(_termProperties.$identifier().value);
+    hasher.update(_termProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _termProperties: TermProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _termProperties.blankNodeTermProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _termProperties.booleanTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _termProperties.dateTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toISOString());
-    });
-    _termProperties.dateTimeTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toISOString());
-    });
-    _termProperties.iriTermProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _termProperties.literalTermProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-      _hasher.update(value0.datatype.value);
-      _hasher.update(value0.language);
-    });
-    _termProperties.numberTermProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _termProperties.stringTermProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    _termProperties.termProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    return _hasher;
+    $hashMaybe($hashTerm)(hasher, _termProperties.blankNodeTermProperty);
+    $hashMaybe($hashBoolean)(hasher, _termProperties.booleanTermProperty);
+    $hashMaybe($hashDate)(hasher, _termProperties.dateTermProperty);
+    $hashMaybe($hashDateTime)(hasher, _termProperties.dateTimeTermProperty);
+    $hashMaybe($hashTerm)(hasher, _termProperties.iriTermProperty);
+    $hashMaybe($hashTerm)(hasher, _termProperties.literalTermProperty);
+    $hashMaybe($hashNumeric)(hasher, _termProperties.numberTermProperty);
+    $hashMaybe($hashString)(hasher, _termProperties.stringTermProperty);
+    $hashMaybe($hashTerm)(hasher, _termProperties.termProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -12125,7 +12216,7 @@ export namespace TermProperties {
           .map((item) => item)
           .extract(),
         dateTermProperty: _termProperties.dateTermProperty
-          .map((item) => item.toISOString().replace(/T.*$/, ""))
+          .map((item) => $toIsoDateString(item))
           .extract(),
         dateTimeTermProperty: _termProperties.dateTimeTermProperty
           .map((item) => item.toISOString())
@@ -12378,23 +12469,24 @@ export namespace RecursiveUnionMember2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _recursiveUnionMember2: RecursiveUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    RecursiveUnionMember2.hashShaclProperties(_recursiveUnionMember2, _hasher);
-    _hasher.update(_recursiveUnionMember2.$identifier().value);
-    _hasher.update(_recursiveUnionMember2.$type);
-    return _hasher;
+    RecursiveUnionMember2.hashShaclProperties(hasher, _recursiveUnionMember2);
+    hasher.update(_recursiveUnionMember2.$identifier().value);
+    hasher.update(_recursiveUnionMember2.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _recursiveUnionMember2: RecursiveUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    _recursiveUnionMember2.recursiveUnionMember2Property.ifJust((value0) => {
-      RecursiveUnion.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(RecursiveUnion.hash)(
+      hasher,
+      _recursiveUnionMember2.recursiveUnionMember2Property,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -12959,23 +13051,24 @@ export namespace RecursiveUnionMember1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _recursiveUnionMember1: RecursiveUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    RecursiveUnionMember1.hashShaclProperties(_recursiveUnionMember1, _hasher);
-    _hasher.update(_recursiveUnionMember1.$identifier().value);
-    _hasher.update(_recursiveUnionMember1.$type);
-    return _hasher;
+    RecursiveUnionMember1.hashShaclProperties(hasher, _recursiveUnionMember1);
+    hasher.update(_recursiveUnionMember1.$identifier().value);
+    hasher.update(_recursiveUnionMember1.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _recursiveUnionMember1: RecursiveUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    _recursiveUnionMember1.recursiveUnionMember1Property.ifJust((value0) => {
-      RecursiveUnion.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(RecursiveUnion.hash)(
+      hasher,
+      _recursiveUnionMember1.recursiveUnionMember1Property,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -13571,27 +13664,22 @@ export namespace PropertyPaths {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyPaths: PropertyPaths,
-    _hasher: HasherT,
   ): HasherT {
-    PropertyPaths.hashShaclProperties(_propertyPaths, _hasher);
-    _hasher.update(_propertyPaths.$identifier().value);
-    _hasher.update(_propertyPaths.$type);
-    return _hasher;
+    PropertyPaths.hashShaclProperties(hasher, _propertyPaths);
+    hasher.update(_propertyPaths.$identifier().value);
+    hasher.update(_propertyPaths.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyPaths: PropertyPaths,
-    _hasher: HasherT,
   ): HasherT {
-    _propertyPaths.inversePathProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _propertyPaths.predicatePathProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    return _hasher;
+    $hashMaybe($hashTerm)(hasher, _propertyPaths.inversePathProperty);
+    $hashMaybe($hashString)(hasher, _propertyPaths.predicatePathProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -14319,25 +14407,25 @@ export namespace PropertyNames {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyNames: PropertyNames,
-    _hasher: HasherT,
   ): HasherT {
-    PropertyNames.hashShaclProperties(_propertyNames, _hasher);
-    _hasher.update(_propertyNames.$identifier().value);
-    _hasher.update(_propertyNames.$type);
-    return _hasher;
+    PropertyNames.hashShaclProperties(hasher, _propertyNames);
+    hasher.update(_propertyNames.$identifier().value);
+    hasher.update(_propertyNames.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyNames: PropertyNames,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_propertyNames.actualPropertyName1);
-    _hasher.update(_propertyNames.actualPropertyName2);
-    _hasher.update(_propertyNames.actualPropertyName3);
-    _hasher.update(_propertyNames.actualPropertyName4);
-    _hasher.update(_propertyNames.actualPropertyName5);
-    return _hasher;
+    $hashString(hasher, _propertyNames.actualPropertyName1);
+    $hashString(hasher, _propertyNames.actualPropertyName2);
+    $hashString(hasher, _propertyNames.actualPropertyName3);
+    $hashString(hasher, _propertyNames.actualPropertyName4);
+    $hashString(hasher, _propertyNames.actualPropertyName5);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -15209,30 +15297,33 @@ export namespace PropertyCardinalities {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyCardinalities: PropertyCardinalities,
-    _hasher: HasherT,
   ): HasherT {
-    PropertyCardinalities.hashShaclProperties(_propertyCardinalities, _hasher);
-    _hasher.update(_propertyCardinalities.$identifier().value);
-    _hasher.update(_propertyCardinalities.$type);
-    return _hasher;
+    PropertyCardinalities.hashShaclProperties(hasher, _propertyCardinalities);
+    hasher.update(_propertyCardinalities.$identifier().value);
+    hasher.update(_propertyCardinalities.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _propertyCardinalities: PropertyCardinalities,
-    _hasher: HasherT,
   ): HasherT {
-    for (const item0 of _propertyCardinalities.emptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-    for (const item0 of _propertyCardinalities.nonEmptyStringSetProperty) {
-      _hasher.update(item0);
-    }
-    _propertyCardinalities.optionalStringProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    _hasher.update(_propertyCardinalities.requiredStringProperty);
-    return _hasher;
+    $hashArray($hashString)(
+      hasher,
+      _propertyCardinalities.emptyStringSetProperty,
+    );
+    $hashArray($hashString)(
+      hasher,
+      _propertyCardinalities.nonEmptyStringSetProperty,
+    );
+    $hashMaybe($hashString)(
+      hasher,
+      _propertyCardinalities.optionalStringProperty,
+    );
+    $hashString(hasher, _propertyCardinalities.requiredStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -15959,24 +16050,27 @@ export namespace UnionMemberCommonParent {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMemberCommonParent: UnionMemberCommonParent,
-    _hasher: HasherT,
   ): HasherT {
     UnionMemberCommonParent.hashShaclProperties(
+      hasher,
       _unionMemberCommonParent,
-      _hasher,
     );
-    _hasher.update(_unionMemberCommonParent.$identifier().value);
-    _hasher.update(_unionMemberCommonParent.$type);
-    return _hasher;
+    hasher.update(_unionMemberCommonParent.$identifier().value);
+    hasher.update(_unionMemberCommonParent.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMemberCommonParent: UnionMemberCommonParent,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_unionMemberCommonParent.unionMemberCommonParentProperty);
-    return _hasher;
+    $hashString(
+      hasher,
+      _unionMemberCommonParent.unionMemberCommonParentProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -16557,21 +16651,21 @@ export namespace UnionMember2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMember2: UnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    UnionMember2.hashShaclProperties(_unionMember2, _hasher);
-    _hasher.update(_unionMember2.$identifier().value);
-    return _hasher;
+    UnionMember2.hashShaclProperties(hasher, _unionMember2);
+    hasher.update(_unionMember2.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMember2: UnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    UnionMemberCommonParent.hashShaclProperties(_unionMember2, _hasher);
-    _hasher.update(_unionMember2.unionMember2Property);
-    return _hasher;
+    UnionMemberCommonParent.hashShaclProperties(hasher, _unionMember2);
+    $hashString(hasher, _unionMember2.unionMember2Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -17115,21 +17209,21 @@ export namespace PartialUnionMember2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partialUnionMember2: PartialUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    PartialUnionMember2.hashShaclProperties(_partialUnionMember2, _hasher);
-    _hasher.update(_partialUnionMember2.$identifier().value);
-    _hasher.update(_partialUnionMember2.$type);
-    return _hasher;
+    PartialUnionMember2.hashShaclProperties(hasher, _partialUnionMember2);
+    hasher.update(_partialUnionMember2.$identifier().value);
+    hasher.update(_partialUnionMember2.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partialUnionMember2: PartialUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_partialUnionMember2.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(hasher, _partialUnionMember2.lazilyResolvedStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -17671,21 +17765,21 @@ export namespace UnionMember1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMember1: UnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    UnionMember1.hashShaclProperties(_unionMember1, _hasher);
-    _hasher.update(_unionMember1.$identifier().value);
-    return _hasher;
+    UnionMember1.hashShaclProperties(hasher, _unionMember1);
+    hasher.update(_unionMember1.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _unionMember1: UnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    UnionMemberCommonParent.hashShaclProperties(_unionMember1, _hasher);
-    _hasher.update(_unionMember1.unionMember1Property);
-    return _hasher;
+    UnionMemberCommonParent.hashShaclProperties(hasher, _unionMember1);
+    $hashString(hasher, _unionMember1.unionMember1Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -18229,21 +18323,21 @@ export namespace PartialUnionMember1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partialUnionMember1: PartialUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    PartialUnionMember1.hashShaclProperties(_partialUnionMember1, _hasher);
-    _hasher.update(_partialUnionMember1.$identifier().value);
-    _hasher.update(_partialUnionMember1.$type);
-    return _hasher;
+    PartialUnionMember1.hashShaclProperties(hasher, _partialUnionMember1);
+    hasher.update(_partialUnionMember1.$identifier().value);
+    hasher.update(_partialUnionMember1.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partialUnionMember1: PartialUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_partialUnionMember1.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(hasher, _partialUnionMember1.lazilyResolvedStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -18760,20 +18854,20 @@ export namespace NewName {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _newName: NewName,
-    _hasher: HasherT,
   ): HasherT {
-    NewName.hashShaclProperties(_newName, _hasher);
-    _hasher.update(_newName.$identifier().value);
-    _hasher.update(_newName.$type);
-    return _hasher;
+    NewName.hashShaclProperties(hasher, _newName);
+    hasher.update(_newName.$identifier().value);
+    hasher.update(_newName.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _newName: NewName,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -19255,23 +19349,23 @@ export namespace OrderedProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _orderedProperties: OrderedProperties,
-    _hasher: HasherT,
   ): HasherT {
-    OrderedProperties.hashShaclProperties(_orderedProperties, _hasher);
-    _hasher.update(_orderedProperties.$identifier().value);
-    _hasher.update(_orderedProperties.$type);
-    return _hasher;
+    OrderedProperties.hashShaclProperties(hasher, _orderedProperties);
+    hasher.update(_orderedProperties.$identifier().value);
+    hasher.update(_orderedProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _orderedProperties: OrderedProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_orderedProperties.orderedPropertyC);
-    _hasher.update(_orderedProperties.orderedPropertyB);
-    _hasher.update(_orderedProperties.orderedPropertyA);
-    return _hasher;
+    $hashString(hasher, _orderedProperties.orderedPropertyC);
+    $hashString(hasher, _orderedProperties.orderedPropertyB);
+    $hashString(hasher, _orderedProperties.orderedPropertyA);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -20276,68 +20370,63 @@ export namespace NumericProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _numericProperties: NumericProperties,
-    _hasher: HasherT,
   ): HasherT {
-    NumericProperties.hashShaclProperties(_numericProperties, _hasher);
-    _hasher.update(_numericProperties.$identifier().value);
-    _hasher.update(_numericProperties.$type);
-    return _hasher;
+    NumericProperties.hashShaclProperties(hasher, _numericProperties);
+    hasher.update(_numericProperties.$identifier().value);
+    hasher.update(_numericProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _numericProperties: NumericProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _numericProperties.byteNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.decimalNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toFixed());
-    });
-    _numericProperties.doubleNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.floatNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.integerNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.intNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.longNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.negativeIntegerNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.nonNegativeIntegerNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.nonPositiveIntegerNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.positiveIntegerNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.shortNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.unsignedByteNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.unsignedIntNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.unsignedLongNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _numericProperties.unsignedShortNumericProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    return _hasher;
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.byteNumericProperty);
+    $hashMaybe($hashBigDecimal)(
+      hasher,
+      _numericProperties.decimalNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.doubleNumericProperty);
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.floatNumericProperty);
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.integerNumericProperty);
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.intNumericProperty);
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.longNumericProperty);
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.negativeIntegerNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.nonNegativeIntegerNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.nonPositiveIntegerNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.positiveIntegerNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(hasher, _numericProperties.shortNumericProperty);
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.unsignedByteNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.unsignedIntNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.unsignedLongNumericProperty,
+    );
+    $hashMaybe($hashNumeric)(
+      hasher,
+      _numericProperties.unsignedShortNumericProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -22461,34 +22550,26 @@ export namespace NodeKinds {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nodeKinds: NodeKinds,
-    _hasher: HasherT,
   ): HasherT {
-    NodeKinds.hashShaclProperties(_nodeKinds, _hasher);
-    _hasher.update(_nodeKinds.$identifier().value);
-    _hasher.update(_nodeKinds.$type);
-    return _hasher;
+    NodeKinds.hashShaclProperties(hasher, _nodeKinds);
+    hasher.update(_nodeKinds.$identifier().value);
+    hasher.update(_nodeKinds.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nodeKinds: NodeKinds,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_nodeKinds.blankNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.blankNodeKindProperty.value);
-    _hasher.update(_nodeKinds.blankNodeOrIriNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.blankNodeOrIriNodeKindProperty.value);
-    _hasher.update(_nodeKinds.blankNodeOrLiteralNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.blankNodeOrLiteralNodeKindProperty.value);
-    _hasher.update(_nodeKinds.iriNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.iriNodeKindProperty.value);
-    _hasher.update(_nodeKinds.iriOrLiteralNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.iriOrLiteralNodeKindProperty.value);
-    _hasher.update(_nodeKinds.literalNodeKindProperty.termType);
-    _hasher.update(_nodeKinds.literalNodeKindProperty.value);
-    _hasher.update(_nodeKinds.literalNodeKindProperty.datatype.value);
-    _hasher.update(_nodeKinds.literalNodeKindProperty.language);
-    return _hasher;
+    $hashTerm(hasher, _nodeKinds.blankNodeKindProperty);
+    $hashTerm(hasher, _nodeKinds.blankNodeOrIriNodeKindProperty);
+    $hashTerm(hasher, _nodeKinds.blankNodeOrLiteralNodeKindProperty);
+    $hashTerm(hasher, _nodeKinds.iriNodeKindProperty);
+    $hashTerm(hasher, _nodeKinds.iriOrLiteralNodeKindProperty);
+    $hashTerm(hasher, _nodeKinds.literalNodeKindProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -23508,21 +23589,21 @@ export namespace NoRdfTypeUnionMember2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    NoRdfTypeUnionMember2.hashShaclProperties(_noRdfTypeUnionMember2, _hasher);
-    _hasher.update(_noRdfTypeUnionMember2.$identifier().value);
-    _hasher.update(_noRdfTypeUnionMember2.$type);
-    return _hasher;
+    NoRdfTypeUnionMember2.hashShaclProperties(hasher, _noRdfTypeUnionMember2);
+    hasher.update(_noRdfTypeUnionMember2.$identifier().value);
+    hasher.update(_noRdfTypeUnionMember2.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_noRdfTypeUnionMember2.noRdfTypeUnionMember2Property);
-    return _hasher;
+    $hashString(hasher, _noRdfTypeUnionMember2.noRdfTypeUnionMember2Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -23958,21 +24039,21 @@ export namespace NoRdfTypeUnionMember1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    NoRdfTypeUnionMember1.hashShaclProperties(_noRdfTypeUnionMember1, _hasher);
-    _hasher.update(_noRdfTypeUnionMember1.$identifier().value);
-    _hasher.update(_noRdfTypeUnionMember1.$type);
-    return _hasher;
+    NoRdfTypeUnionMember1.hashShaclProperties(hasher, _noRdfTypeUnionMember1);
+    hasher.update(_noRdfTypeUnionMember1.$identifier().value);
+    hasher.update(_noRdfTypeUnionMember1.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_noRdfTypeUnionMember1.noRdfTypeUnionMember1Property);
-    return _hasher;
+    $hashString(hasher, _noRdfTypeUnionMember1.noRdfTypeUnionMember1Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -24434,22 +24515,22 @@ export namespace NamedUnionProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _namedUnionProperties: NamedUnionProperties,
-    _hasher: HasherT,
   ): HasherT {
-    NamedUnionProperties.hashShaclProperties(_namedUnionProperties, _hasher);
-    _hasher.update(_namedUnionProperties.$identifier().value);
-    _hasher.update(_namedUnionProperties.$type);
-    return _hasher;
+    NamedUnionProperties.hashShaclProperties(hasher, _namedUnionProperties);
+    hasher.update(_namedUnionProperties.$identifier().value);
+    hasher.update(_namedUnionProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _namedUnionProperties: NamedUnionProperties,
-    _hasher: HasherT,
   ): HasherT {
-    NamedUnion1.hash(_namedUnionProperties.namedUnion1Property, _hasher);
-    NamedUnion2.hash(_namedUnionProperties.namedUnion2Property, _hasher);
-    return _hasher;
+    NamedUnion1.hash(hasher, _namedUnionProperties.namedUnion1Property);
+    NamedUnion2.hash(hasher, _namedUnionProperties.namedUnion2Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -25161,31 +25242,26 @@ export namespace MutableProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _mutableProperties: MutableProperties,
-    _hasher: HasherT,
   ): HasherT {
-    MutableProperties.hashShaclProperties(_mutableProperties, _hasher);
-    _hasher.update(_mutableProperties.$identifier().value);
-    _hasher.update(_mutableProperties.$type);
-    return _hasher;
+    MutableProperties.hashShaclProperties(hasher, _mutableProperties);
+    hasher.update(_mutableProperties.$identifier().value);
+    hasher.update(_mutableProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _mutableProperties: MutableProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _mutableProperties.mutableListProperty.ifJust((value0) => {
-      for (const item1 of value0) {
-        _hasher.update(item1);
-      }
-    });
-    for (const item0 of _mutableProperties.mutableSetProperty) {
-      _hasher.update(item0);
-    }
-    _mutableProperties.mutableStringProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    return _hasher;
+    $hashMaybe($hashArray($hashString))(
+      hasher,
+      _mutableProperties.mutableListProperty,
+    );
+    $hashArray($hashString)(hasher, _mutableProperties.mutableSetProperty);
+    $hashMaybe($hashString)(hasher, _mutableProperties.mutableStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -26013,26 +26089,27 @@ export namespace ClassMultipleInheritanceParent2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
-    _hasher: HasherT,
   ): HasherT {
     ClassMultipleInheritanceParent2.hashShaclProperties(
+      hasher,
       _classMultipleInheritanceParent2,
-      _hasher,
     );
-    _hasher.update(_classMultipleInheritanceParent2.$identifier().value);
-    _hasher.update(_classMultipleInheritanceParent2.$type);
-    return _hasher;
+    hasher.update(_classMultipleInheritanceParent2.$identifier().value);
+    hasher.update(_classMultipleInheritanceParent2.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(
+    $hashString(
+      hasher,
       _classMultipleInheritanceParent2.classMultipleInheritanceParent2Property,
     );
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -26615,26 +26692,27 @@ export namespace ClassMultipleInheritanceParent1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
-    _hasher: HasherT,
   ): HasherT {
     ClassMultipleInheritanceParent1.hashShaclProperties(
+      hasher,
       _classMultipleInheritanceParent1,
-      _hasher,
     );
-    _hasher.update(_classMultipleInheritanceParent1.$identifier().value);
-    _hasher.update(_classMultipleInheritanceParent1.$type);
-    return _hasher;
+    hasher.update(_classMultipleInheritanceParent1.$identifier().value);
+    hasher.update(_classMultipleInheritanceParent1.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(
+    $hashString(
+      hasher,
       _classMultipleInheritanceParent1.classMultipleInheritanceParent1Property,
     );
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -27227,33 +27305,34 @@ export namespace ClassMultipleInheritanceChild {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
-    _hasher: HasherT,
   ): HasherT {
     ClassMultipleInheritanceChild.hashShaclProperties(
+      hasher,
       _classMultipleInheritanceChild,
-      _hasher,
     );
-    _hasher.update(_classMultipleInheritanceChild.$identifier().value);
-    return _hasher;
+    hasher.update(_classMultipleInheritanceChild.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
-    _hasher: HasherT,
   ): HasherT {
     ClassMultipleInheritanceParent1.hashShaclProperties(
+      hasher,
       _classMultipleInheritanceChild,
-      _hasher,
     );
     ClassMultipleInheritanceParent2.hashShaclProperties(
+      hasher,
       _classMultipleInheritanceChild,
-      _hasher,
     );
-    _hasher.update(
+    $hashString(
+      hasher,
       _classMultipleInheritanceChild.classMultipleInheritanceChildProperty,
     );
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -27959,36 +28038,29 @@ export namespace ListProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _listProperties: ListProperties,
-    _hasher: HasherT,
   ): HasherT {
-    ListProperties.hashShaclProperties(_listProperties, _hasher);
-    _hasher.update(_listProperties.$identifier().value);
-    _hasher.update(_listProperties.$type);
-    return _hasher;
+    ListProperties.hashShaclProperties(hasher, _listProperties);
+    hasher.update(_listProperties.$identifier().value);
+    hasher.update(_listProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _listProperties: ListProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _listProperties.iriListProperty.ifJust((value0) => {
-      for (const item1 of value0) {
-        _hasher.update(item1.termType);
-        _hasher.update(item1.value);
-      }
-    });
-    _listProperties.objectListProperty.ifJust((value0) => {
-      for (const item1 of value0) {
-        NonClass.hash(item1, _hasher);
-      }
-    });
-    _listProperties.stringListProperty.ifJust((value0) => {
-      for (const item1 of value0) {
-        _hasher.update(item1);
-      }
-    });
-    return _hasher;
+    $hashMaybe($hashArray($hashTerm))(hasher, _listProperties.iriListProperty);
+    $hashMaybe($hashArray(NonClass.hash))(
+      hasher,
+      _listProperties.objectListProperty,
+    );
+    $hashMaybe($hashArray($hashString))(
+      hasher,
+      _listProperties.stringListProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -29854,68 +29926,64 @@ export namespace LazyProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazyProperties: LazyProperties,
-    _hasher: HasherT,
   ): HasherT {
-    LazyProperties.hashShaclProperties(_lazyProperties, _hasher);
-    _hasher.update(_lazyProperties.$identifier().value);
-    _hasher.update(_lazyProperties.$type);
-    return _hasher;
+    LazyProperties.hashShaclProperties(hasher, _lazyProperties);
+    hasher.update(_lazyProperties.$identifier().value);
+    hasher.update(_lazyProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazyProperties: LazyProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _lazyProperties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.partial.ifJust(
-      (value1) => {
-        $DefaultPartial.hash(value1, _hasher);
-      },
+    ((hasher, value) =>
+      $hashMaybe($DefaultPartial.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
     );
-    _lazyProperties.optionalLazyToResolvedIriIdentifierProperty.partial.ifJust(
-      (value1) => {
-        $NamedDefaultPartial.hash(value1, _hasher);
-      },
+    ((hasher, value) =>
+      $hashMaybe($NamedDefaultPartial.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalLazyToResolvedIriIdentifierProperty,
     );
-    _lazyProperties.optionalLazyToResolvedUnionProperty.partial.ifJust(
-      (value1) => {
-        $DefaultPartial.hash(value1, _hasher);
-      },
+    ((hasher, value) =>
+      $hashMaybe($DefaultPartial.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalLazyToResolvedUnionProperty,
     );
-    _lazyProperties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.partial.ifJust(
-      (value1) => {
-        Partial.hash(value1, _hasher);
-      },
+    ((hasher, value) => $hashMaybe(Partial.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
     );
-    _lazyProperties.optionalPartialToResolvedUnionProperty.partial.ifJust(
-      (value1) => {
-        Partial.hash(value1, _hasher);
-      },
+    ((hasher, value) => $hashMaybe(Partial.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalPartialToResolvedUnionProperty,
     );
-    _lazyProperties.optionalPartialUnionToResolvedUnionProperty.partial.ifJust(
-      (value1) => {
-        PartialUnion.hash(value1, _hasher);
-      },
+    ((hasher, value) => $hashMaybe(PartialUnion.hash)(hasher, value.partial))(
+      hasher,
+      _lazyProperties.optionalPartialUnionToResolvedUnionProperty,
     );
-    $DefaultPartial.hash(
-      _lazyProperties.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty
-        .partial,
-      _hasher,
+    ((hasher, value) => $DefaultPartial.hash(hasher, value.partial))(
+      hasher,
+      _lazyProperties.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
     );
-    Partial.hash(
-      _lazyProperties.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty
-        .partial,
-      _hasher,
+    ((hasher, value) => Partial.hash(hasher, value.partial))(
+      hasher,
+      _lazyProperties.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
     );
-    for (const item1 of _lazyProperties
-      .setLazyToResolvedBlankNodeOrIriIdentifierProperty.partials) {
-      $DefaultPartial.hash(item1, _hasher);
-    }
-    for (const item1 of _lazyProperties
-      .setPartialToResolvedBlankNodeOrIriIdentifierProperty.partials) {
-      Partial.hash(item1, _hasher);
-    }
-    return _hasher;
+    ((hasher, value) =>
+      $hashArray($DefaultPartial.hash)(hasher, value.partials))(
+      hasher,
+      _lazyProperties.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+    );
+    ((hasher, value) => $hashArray(Partial.hash)(hasher, value.partials))(
+      hasher,
+      _lazyProperties.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -31887,24 +31955,27 @@ export namespace LazilyResolvedIriIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
     LazilyResolvedIriIdentifier.hashShaclProperties(
+      hasher,
       _lazilyResolvedIriIdentifier,
-      _hasher,
     );
-    _hasher.update(_lazilyResolvedIriIdentifier.$identifier().value);
-    _hasher.update(_lazilyResolvedIriIdentifier.$type);
-    return _hasher;
+    hasher.update(_lazilyResolvedIriIdentifier.$identifier().value);
+    hasher.update(_lazilyResolvedIriIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedIriIdentifier.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(
+      hasher,
+      _lazilyResolvedIriIdentifier.lazilyResolvedStringProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = NamedNode;
@@ -32342,24 +32413,27 @@ export namespace LazilyResolvedUnionMember2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
     LazilyResolvedUnionMember2.hashShaclProperties(
+      hasher,
       _lazilyResolvedUnionMember2,
-      _hasher,
     );
-    _hasher.update(_lazilyResolvedUnionMember2.$identifier().value);
-    _hasher.update(_lazilyResolvedUnionMember2.$type);
-    return _hasher;
+    hasher.update(_lazilyResolvedUnionMember2.$identifier().value);
+    hasher.update(_lazilyResolvedUnionMember2.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedUnionMember2.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(
+      hasher,
+      _lazilyResolvedUnionMember2.lazilyResolvedStringProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -32900,24 +32974,27 @@ export namespace LazilyResolvedUnionMember1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
     LazilyResolvedUnionMember1.hashShaclProperties(
+      hasher,
       _lazilyResolvedUnionMember1,
-      _hasher,
     );
-    _hasher.update(_lazilyResolvedUnionMember1.$identifier().value);
-    _hasher.update(_lazilyResolvedUnionMember1.$type);
-    return _hasher;
+    hasher.update(_lazilyResolvedUnionMember1.$identifier().value);
+    hasher.update(_lazilyResolvedUnionMember1.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_lazilyResolvedUnionMember1.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(
+      hasher,
+      _lazilyResolvedUnionMember1.lazilyResolvedStringProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -33461,26 +33538,27 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
     LazilyResolvedBlankNodeOrIriIdentifier.hashShaclProperties(
+      hasher,
       _lazilyResolvedBlankNodeOrIriIdentifier,
-      _hasher,
     );
-    _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value);
-    _hasher.update(_lazilyResolvedBlankNodeOrIriIdentifier.$type);
-    return _hasher;
+    hasher.update(_lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value);
+    hasher.update(_lazilyResolvedBlankNodeOrIriIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(
+    $hashString(
+      hasher,
       _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedStringProperty,
     );
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -34041,26 +34119,24 @@ export namespace LanguageInProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _languageInProperties: LanguageInProperties,
-    _hasher: HasherT,
   ): HasherT {
-    LanguageInProperties.hashShaclProperties(_languageInProperties, _hasher);
-    _hasher.update(_languageInProperties.$identifier().value);
-    _hasher.update(_languageInProperties.$type);
-    return _hasher;
+    LanguageInProperties.hashShaclProperties(hasher, _languageInProperties);
+    hasher.update(_languageInProperties.$identifier().value);
+    hasher.update(_languageInProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _languageInProperties: LanguageInProperties,
-    _hasher: HasherT,
   ): HasherT {
-    for (const item0 of _languageInProperties.languageInLiteralProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-      _hasher.update(item0.datatype.value);
-      _hasher.update(item0.language);
-    }
-    return _hasher;
+    $hashArray($hashTerm)(
+      hasher,
+      _languageInProperties.languageInLiteralProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -34597,34 +34673,40 @@ export namespace JsPrimitiveUnionProperty {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
-    _hasher: HasherT,
   ): HasherT {
     JsPrimitiveUnionProperty.hashShaclProperties(
+      hasher,
       _jsPrimitiveUnionProperty,
-      _hasher,
     );
-    _hasher.update(_jsPrimitiveUnionProperty.$identifier().value);
-    _hasher.update(_jsPrimitiveUnionProperty.$type);
-    return _hasher;
+    hasher.update(_jsPrimitiveUnionProperty.$identifier().value);
+    hasher.update(_jsPrimitiveUnionProperty.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
-    _hasher: HasherT,
   ): HasherT {
-    for (const item0 of _jsPrimitiveUnionProperty.jsPrimitiveUnionProperty) {
-      if (typeof item0 === "boolean") {
-        _hasher.update(item0.toString());
-      }
-      if (typeof item0 === "number") {
-        _hasher.update(item0.toString());
-      }
-      if (typeof item0 === "string") {
-        _hasher.update(item0);
-      }
-    }
-    return _hasher;
+    $hashArray(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value: boolean | number | string,
+      ): HasherT => {
+        if (typeof value === "boolean") {
+          return $hashBoolean(hasher, value);
+        }
+        if (typeof value === "number") {
+          return $hashNumeric(hasher, value);
+        }
+        if (typeof value === "string") {
+          return $hashString(hasher, value);
+        }
+        return hasher;
+      },
+    )(hasher, _jsPrimitiveUnionProperty.jsPrimitiveUnionProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -35495,20 +35577,20 @@ export namespace IriIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _iriIdentifier: IriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    IriIdentifier.hashShaclProperties(_iriIdentifier, _hasher);
-    _hasher.update(_iriIdentifier.$identifier().value);
-    _hasher.update(_iriIdentifier.$type);
-    return _hasher;
+    IriIdentifier.hashShaclProperties(hasher, _iriIdentifier);
+    hasher.update(_iriIdentifier.$identifier().value);
+    hasher.update(_iriIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _iriIdentifier: IriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = NamedNode;
@@ -35973,26 +36055,27 @@ export namespace IndirectRecursiveHelper {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _indirectRecursiveHelper: IndirectRecursiveHelper,
-    _hasher: HasherT,
   ): HasherT {
     IndirectRecursiveHelper.hashShaclProperties(
+      hasher,
       _indirectRecursiveHelper,
-      _hasher,
     );
-    _hasher.update(_indirectRecursiveHelper.$identifier().value);
-    _hasher.update(_indirectRecursiveHelper.$type);
-    return _hasher;
+    hasher.update(_indirectRecursiveHelper.$identifier().value);
+    hasher.update(_indirectRecursiveHelper.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _indirectRecursiveHelper: IndirectRecursiveHelper,
-    _hasher: HasherT,
   ): HasherT {
-    _indirectRecursiveHelper.indirectRecursiveProperty.ifJust((value0) => {
-      IndirectRecursive.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(IndirectRecursive.hash)(
+      hasher,
+      _indirectRecursiveHelper.indirectRecursiveProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -36553,23 +36636,24 @@ export namespace IndirectRecursive {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _indirectRecursive: IndirectRecursive,
-    _hasher: HasherT,
   ): HasherT {
-    IndirectRecursive.hashShaclProperties(_indirectRecursive, _hasher);
-    _hasher.update(_indirectRecursive.$identifier().value);
-    _hasher.update(_indirectRecursive.$type);
-    return _hasher;
+    IndirectRecursive.hashShaclProperties(hasher, _indirectRecursive);
+    hasher.update(_indirectRecursive.$identifier().value);
+    hasher.update(_indirectRecursive.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _indirectRecursive: IndirectRecursive,
-    _hasher: HasherT,
   ): HasherT {
-    _indirectRecursive.indirectRecursiveHelperProperty.ifJust((value0) => {
-      IndirectRecursiveHelper.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(IndirectRecursiveHelper.hash)(
+      hasher,
+      _indirectRecursive.indirectRecursiveHelperProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -37281,39 +37365,26 @@ export namespace InProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _inProperties: InProperties,
-    _hasher: HasherT,
   ): HasherT {
-    InProperties.hashShaclProperties(_inProperties, _hasher);
-    _hasher.update(_inProperties.$identifier().value);
-    _hasher.update(_inProperties.$type);
-    return _hasher;
+    InProperties.hashShaclProperties(hasher, _inProperties);
+    hasher.update(_inProperties.$identifier().value);
+    hasher.update(_inProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _inProperties: InProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _inProperties.inBooleansProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _inProperties.inDateTimesProperty.ifJust((value0) => {
-      _hasher.update(value0.toISOString());
-    });
-    _inProperties.inDoublesProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _inProperties.inIntegersProperty.ifJust((value0) => {
-      _hasher.update(value0.toString());
-    });
-    _inProperties.inIrisProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _inProperties.inStringsProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    return _hasher;
+    $hashMaybe($hashBoolean)(hasher, _inProperties.inBooleansProperty);
+    $hashMaybe($hashDateTime)(hasher, _inProperties.inDateTimesProperty);
+    $hashMaybe($hashNumeric)(hasher, _inProperties.inDoublesProperty);
+    $hashMaybe($hashNumeric)(hasher, _inProperties.inIntegersProperty);
+    $hashMaybe($hashTerm)(hasher, _inProperties.inIrisProperty);
+    $hashMaybe($hashString)(hasher, _inProperties.inStringsProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -38353,23 +38424,21 @@ export namespace InIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _inIdentifier: InIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    InIdentifier.hashShaclProperties(_inIdentifier, _hasher);
-    _hasher.update(_inIdentifier.$identifier().value);
-    _hasher.update(_inIdentifier.$type);
-    return _hasher;
+    InIdentifier.hashShaclProperties(hasher, _inIdentifier);
+    hasher.update(_inIdentifier.$identifier().value);
+    hasher.update(_inIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _inIdentifier: InIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    _inIdentifier.inIdentifierProperty.ifJust((value0) => {
-      _hasher.update(value0);
-    });
-    return _hasher;
+    $hashMaybe($hashString)(hasher, _inIdentifier.inIdentifierProperty);
+    return hasher;
   }
 
   export type Identifier = NamedNode<
@@ -38992,23 +39061,22 @@ export namespace HasValueProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _hasValueProperties: HasValueProperties,
-    _hasher: HasherT,
   ): HasherT {
-    HasValueProperties.hashShaclProperties(_hasValueProperties, _hasher);
-    _hasher.update(_hasValueProperties.$identifier().value);
-    _hasher.update(_hasValueProperties.$type);
-    return _hasher;
+    HasValueProperties.hashShaclProperties(hasher, _hasValueProperties);
+    hasher.update(_hasValueProperties.$identifier().value);
+    hasher.update(_hasValueProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _hasValueProperties: HasValueProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_hasValueProperties.hasIriValueProperty.termType);
-    _hasher.update(_hasValueProperties.hasIriValueProperty.value);
-    _hasher.update(_hasValueProperties.hasLiteralValueProperty);
-    return _hasher;
+    $hashTerm(hasher, _hasValueProperties.hasIriValueProperty);
+    $hashString(hasher, _hasValueProperties.hasLiteralValueProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -39516,21 +39584,21 @@ export namespace FlattenUnionMember3 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _flattenUnionMember3: FlattenUnionMember3,
-    _hasher: HasherT,
   ): HasherT {
-    FlattenUnionMember3.hashShaclProperties(_flattenUnionMember3, _hasher);
-    _hasher.update(_flattenUnionMember3.$identifier().value);
-    _hasher.update(_flattenUnionMember3.$type);
-    return _hasher;
+    FlattenUnionMember3.hashShaclProperties(hasher, _flattenUnionMember3);
+    hasher.update(_flattenUnionMember3.$identifier().value);
+    hasher.update(_flattenUnionMember3.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _flattenUnionMember3: FlattenUnionMember3,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_flattenUnionMember3.flattenUnionMember3Property);
-    return _hasher;
+    $hashString(hasher, _flattenUnionMember3.flattenUnionMember3Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -40073,23 +40141,21 @@ export namespace ExternProperty {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _externProperty: ExternProperty,
-    _hasher: HasherT,
   ): HasherT {
-    ExternProperty.hashShaclProperties(_externProperty, _hasher);
-    _hasher.update(_externProperty.$identifier().value);
-    _hasher.update(_externProperty.$type);
-    return _hasher;
+    ExternProperty.hashShaclProperties(hasher, _externProperty);
+    hasher.update(_externProperty.$identifier().value);
+    hasher.update(_externProperty.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _externProperty: ExternProperty,
-    _hasher: HasherT,
   ): HasherT {
-    _externProperty.externProperty.ifJust((value0) => {
-      Extern.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(Extern.hash)(hasher, _externProperty.externProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -40642,21 +40708,21 @@ export namespace BaseForExtern {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _baseForExtern: BaseForExtern,
-    _hasher: HasherT,
   ): HasherT {
-    BaseForExtern.hashShaclProperties(_baseForExtern, _hasher);
-    _hasher.update(_baseForExtern.$identifier().value);
-    _hasher.update(_baseForExtern.$type);
-    return _hasher;
+    BaseForExtern.hashShaclProperties(hasher, _baseForExtern);
+    hasher.update(_baseForExtern.$identifier().value);
+    hasher.update(_baseForExtern.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _baseForExtern: BaseForExtern,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_baseForExtern.baseForExternProperty);
-    return _hasher;
+    $hashString(hasher, _baseForExtern.baseForExternProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -41199,21 +41265,21 @@ export namespace ExplicitRdfType {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _explicitRdfType: ExplicitRdfType,
-    _hasher: HasherT,
   ): HasherT {
-    ExplicitRdfType.hashShaclProperties(_explicitRdfType, _hasher);
-    _hasher.update(_explicitRdfType.$identifier().value);
-    _hasher.update(_explicitRdfType.$type);
-    return _hasher;
+    ExplicitRdfType.hashShaclProperties(hasher, _explicitRdfType);
+    hasher.update(_explicitRdfType.$identifier().value);
+    hasher.update(_explicitRdfType.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _explicitRdfType: ExplicitRdfType,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_explicitRdfType.explicitRdfTypeProperty);
-    return _hasher;
+    $hashString(hasher, _explicitRdfType.explicitRdfTypeProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -41752,24 +41818,21 @@ export namespace ExplicitFromToRdfTypes {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
-    _hasher: HasherT,
   ): HasherT {
-    ExplicitFromToRdfTypes.hashShaclProperties(
-      _explicitFromToRdfTypes,
-      _hasher,
-    );
-    _hasher.update(_explicitFromToRdfTypes.$identifier().value);
-    _hasher.update(_explicitFromToRdfTypes.$type);
-    return _hasher;
+    ExplicitFromToRdfTypes.hashShaclProperties(hasher, _explicitFromToRdfTypes);
+    hasher.update(_explicitFromToRdfTypes.$identifier().value);
+    hasher.update(_explicitFromToRdfTypes.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_explicitFromToRdfTypes.explicitFromToRdfTypesProperty);
-    return _hasher;
+    $hashString(hasher, _explicitFromToRdfTypes.explicitFromToRdfTypesProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -42370,23 +42433,23 @@ export namespace DisplayProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _displayProperties: DisplayProperties,
-    _hasher: HasherT,
   ): HasherT {
-    DisplayProperties.hashShaclProperties(_displayProperties, _hasher);
-    _hasher.update(_displayProperties.$identifier().value);
-    _hasher.update(_displayProperties.$type);
-    return _hasher;
+    DisplayProperties.hashShaclProperties(hasher, _displayProperties);
+    hasher.update(_displayProperties.$identifier().value);
+    hasher.update(_displayProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _displayProperties: DisplayProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_displayProperties.explicitFalseDisplayProperty);
-    _hasher.update(_displayProperties.explicitTrueDisplayProperty);
-    _hasher.update(_displayProperties.implicitFalseDisplayProperty);
-    return _hasher;
+    $hashString(hasher, _displayProperties.explicitFalseDisplayProperty);
+    $hashString(hasher, _displayProperties.explicitTrueDisplayProperty);
+    $hashString(hasher, _displayProperties.implicitFalseDisplayProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -43072,23 +43135,24 @@ export namespace DirectRecursive {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _directRecursive: DirectRecursive,
-    _hasher: HasherT,
   ): HasherT {
-    DirectRecursive.hashShaclProperties(_directRecursive, _hasher);
-    _hasher.update(_directRecursive.$identifier().value);
-    _hasher.update(_directRecursive.$type);
-    return _hasher;
+    DirectRecursive.hashShaclProperties(hasher, _directRecursive);
+    hasher.update(_directRecursive.$identifier().value);
+    hasher.update(_directRecursive.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _directRecursive: DirectRecursive,
-    _hasher: HasherT,
   ): HasherT {
-    _directRecursive.directRecursiveProperty.ifJust((value0) => {
-      DirectRecursive.hash(value0, _hasher);
-    });
-    return _hasher;
+    $hashMaybe(DirectRecursive.hash)(
+      hasher,
+      _directRecursive.directRecursiveProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -43765,39 +43829,32 @@ export namespace DefaultValueProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _defaultValueProperties: DefaultValueProperties,
-    _hasher: HasherT,
   ): HasherT {
-    DefaultValueProperties.hashShaclProperties(
-      _defaultValueProperties,
-      _hasher,
-    );
-    _hasher.update(_defaultValueProperties.$identifier().value);
-    _hasher.update(_defaultValueProperties.$type);
-    return _hasher;
+    DefaultValueProperties.hashShaclProperties(hasher, _defaultValueProperties);
+    hasher.update(_defaultValueProperties.$identifier().value);
+    hasher.update(_defaultValueProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _defaultValueProperties: DefaultValueProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(
-      _defaultValueProperties.dateDefaultValueProperty.toISOString(),
+    $hashDate(hasher, _defaultValueProperties.dateDefaultValueProperty);
+    $hashDateTime(hasher, _defaultValueProperties.dateTimeDefaultValueProperty);
+    $hashBoolean(
+      hasher,
+      _defaultValueProperties.falseBooleanDefaultValueProperty,
     );
-    _hasher.update(
-      _defaultValueProperties.dateTimeDefaultValueProperty.toISOString(),
+    $hashNumeric(hasher, _defaultValueProperties.numberDefaultValueProperty);
+    $hashString(hasher, _defaultValueProperties.stringDefaultValueProperty);
+    $hashBoolean(
+      hasher,
+      _defaultValueProperties.trueBooleanDefaultValueProperty,
     );
-    _hasher.update(
-      _defaultValueProperties.falseBooleanDefaultValueProperty.toString(),
-    );
-    _hasher.update(
-      _defaultValueProperties.numberDefaultValueProperty.toString(),
-    );
-    _hasher.update(_defaultValueProperties.stringDefaultValueProperty);
-    _hasher.update(
-      _defaultValueProperties.trueBooleanDefaultValueProperty.toString(),
-    );
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -44618,10 +44675,9 @@ export namespace DefaultValueProperties {
             ? `_:${_defaultValueProperties.$identifier().value}`
             : _defaultValueProperties.$identifier().value,
         "@type": _defaultValueProperties.$type,
-        dateDefaultValueProperty:
-          _defaultValueProperties.dateDefaultValueProperty
-            .toISOString()
-            .replace(/T.*$/, ""),
+        dateDefaultValueProperty: $toIsoDateString(
+          _defaultValueProperties.dateDefaultValueProperty,
+        ),
         dateTimeDefaultValueProperty:
           _defaultValueProperties.dateTimeDefaultValueProperty.toISOString(),
         falseBooleanDefaultValueProperty:
@@ -45093,52 +45149,84 @@ export namespace DateUnionProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _dateUnionProperties: DateUnionProperties,
-    _hasher: HasherT,
   ): HasherT {
-    DateUnionProperties.hashShaclProperties(_dateUnionProperties, _hasher);
-    _hasher.update(_dateUnionProperties.$identifier().value);
-    _hasher.update(_dateUnionProperties.$type);
-    return _hasher;
+    DateUnionProperties.hashShaclProperties(hasher, _dateUnionProperties);
+    hasher.update(_dateUnionProperties.$identifier().value);
+    hasher.update(_dateUnionProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _dateUnionProperties: DateUnionProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _dateUnionProperties.dateOrDateTimeProperty.ifJust((value0) => {
-      if (value0["type"] === "date") {
-        _hasher.update(value0.value.toISOString());
-      }
-      if (value0["type"] === "dateTime") {
-        _hasher.update(value0.value.toISOString());
-      }
-    });
-    _dateUnionProperties.dateOrStringProperty.ifJust((value0) => {
-      if (value0["type"] === "date") {
-        _hasher.update(value0.value.toISOString());
-      }
-      if (value0["type"] === "string") {
-        _hasher.update(value0.value);
-      }
-    });
-    _dateUnionProperties.dateTimeOrDateProperty.ifJust((value0) => {
-      if (value0["type"] === "dateTime") {
-        _hasher.update(value0.value.toISOString());
-      }
-      if (value0["type"] === "date") {
-        _hasher.update(value0.value.toISOString());
-      }
-    });
-    _dateUnionProperties.stringOrDateProperty.ifJust((value0) => {
-      if (value0["type"] === "string") {
-        _hasher.update(value0.value);
-      }
-      if (value0["type"] === "date") {
-        _hasher.update(value0.value.toISOString());
-      }
-    });
-    return _hasher;
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "date"; value: Date }
+          | { type: "dateTime"; value: Date },
+      ): HasherT => {
+        if (value["type"] === "date") {
+          return $hashDate(hasher, value.value);
+        }
+        if (value["type"] === "dateTime") {
+          return $hashDateTime(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _dateUnionProperties.dateOrDateTimeProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "date"; value: Date }
+          | { type: "string"; value: string },
+      ): HasherT => {
+        if (value["type"] === "date") {
+          return $hashDate(hasher, value.value);
+        }
+        if (value["type"] === "string") {
+          return $hashString(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _dateUnionProperties.dateOrStringProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "dateTime"; value: Date }
+          | { type: "date"; value: Date },
+      ): HasherT => {
+        if (value["type"] === "dateTime") {
+          return $hashDateTime(hasher, value.value);
+        }
+        if (value["type"] === "date") {
+          return $hashDate(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _dateUnionProperties.dateTimeOrDateProperty);
+    $hashMaybe(
+      <HasherT extends $Hasher>(
+        hasher: HasherT,
+        value:
+          | { type: "string"; value: string }
+          | { type: "date"; value: Date },
+      ): HasherT => {
+        if (value["type"] === "string") {
+          return $hashString(hasher, value.value);
+        }
+        if (value["type"] === "date") {
+          return $hashDate(hasher, value.value);
+        }
+        return hasher;
+      },
+    )(hasher, _dateUnionProperties.stringOrDateProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -46881,7 +46969,7 @@ export namespace DateUnionProperties {
               if (value["type"] === "date") {
                 return {
                   type: "date" as const,
-                  value: value.value.toISOString().replace(/T.*$/, ""),
+                  value: $toIsoDateString(value.value),
                 };
               }
               if (value["type"] === "dateTime") {
@@ -46907,7 +46995,7 @@ export namespace DateUnionProperties {
               if (value["type"] === "date") {
                 return {
                   type: "date" as const,
-                  value: value.value.toISOString().replace(/T.*$/, ""),
+                  value: $toIsoDateString(value.value),
                 };
               }
               if (value["type"] === "string") {
@@ -46936,7 +47024,7 @@ export namespace DateUnionProperties {
               if (value["type"] === "date") {
                 return {
                   type: "date" as const,
-                  value: value.value.toISOString().replace(/T.*$/, ""),
+                  value: $toIsoDateString(value.value),
                 };
               }
 
@@ -46959,7 +47047,7 @@ export namespace DateUnionProperties {
               if (value["type"] === "date") {
                 return {
                   type: "date" as const,
-                  value: value.value.toISOString().replace(/T.*$/, ""),
+                  value: $toIsoDateString(value.value),
                 };
               }
 
@@ -47706,83 +47794,62 @@ export namespace ConvertibleTypeProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _convertibleTypeProperties: ConvertibleTypeProperties,
-    _hasher: HasherT,
   ): HasherT {
     ConvertibleTypeProperties.hashShaclProperties(
+      hasher,
       _convertibleTypeProperties,
-      _hasher,
     );
-    _hasher.update(_convertibleTypeProperties.$identifier().value);
-    _hasher.update(_convertibleTypeProperties.$type);
-    return _hasher;
+    hasher.update(_convertibleTypeProperties.$identifier().value);
+    hasher.update(_convertibleTypeProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _convertibleTypeProperties: ConvertibleTypeProperties,
-    _hasher: HasherT,
   ): HasherT {
-    for (const item0 of _convertibleTypeProperties.convertibleIriNonEmptySetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-    }
-    _convertibleTypeProperties.convertibleIriOptionProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _hasher.update(_convertibleTypeProperties.convertibleIriProperty.termType);
-    _hasher.update(_convertibleTypeProperties.convertibleIriProperty.value);
-    for (const item0 of _convertibleTypeProperties.convertibleIriSetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-    }
-    for (const item0 of _convertibleTypeProperties.convertibleLiteralNonEmptySetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-      _hasher.update(item0.datatype.value);
-      _hasher.update(item0.language);
-    }
-    _convertibleTypeProperties.convertibleLiteralOptionProperty.ifJust(
-      (value0) => {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
-        _hasher.update(value0.datatype.value);
-        _hasher.update(value0.language);
-      },
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleIriNonEmptySetProperty,
     );
-    _hasher.update(
-      _convertibleTypeProperties.convertibleLiteralProperty.termType,
+    $hashMaybe($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleIriOptionProperty,
     );
-    _hasher.update(_convertibleTypeProperties.convertibleLiteralProperty.value);
-    _hasher.update(
-      _convertibleTypeProperties.convertibleLiteralProperty.datatype.value,
+    $hashTerm(hasher, _convertibleTypeProperties.convertibleIriProperty);
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleIriSetProperty,
     );
-    _hasher.update(
-      _convertibleTypeProperties.convertibleLiteralProperty.language,
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleLiteralNonEmptySetProperty,
     );
-    for (const item0 of _convertibleTypeProperties.convertibleLiteralSetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-      _hasher.update(item0.datatype.value);
-      _hasher.update(item0.language);
-    }
-    for (const item0 of _convertibleTypeProperties.convertibleTermNonEmptySetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-    }
-    _convertibleTypeProperties.convertibleTermOptionProperty.ifJust(
-      (value0) => {
-        _hasher.update(value0.termType);
-        _hasher.update(value0.value);
-      },
+    $hashMaybe($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleLiteralOptionProperty,
     );
-    _hasher.update(_convertibleTypeProperties.convertibleTermProperty.termType);
-    _hasher.update(_convertibleTypeProperties.convertibleTermProperty.value);
-    for (const item0 of _convertibleTypeProperties.convertibleTermSetProperty) {
-      _hasher.update(item0.termType);
-      _hasher.update(item0.value);
-    }
-    return _hasher;
+    $hashTerm(hasher, _convertibleTypeProperties.convertibleLiteralProperty);
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleLiteralSetProperty,
+    );
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleTermNonEmptySetProperty,
+    );
+    $hashMaybe($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleTermOptionProperty,
+    );
+    $hashTerm(hasher, _convertibleTypeProperties.convertibleTermProperty);
+    $hashArray($hashTerm)(
+      hasher,
+      _convertibleTypeProperties.convertibleTermSetProperty,
+    );
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -49657,21 +49724,21 @@ export namespace Partial {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partial: Partial,
-    _hasher: HasherT,
   ): HasherT {
-    Partial.hashShaclProperties(_partial, _hasher);
-    _hasher.update(_partial.$identifier().value);
-    _hasher.update(_partial.$type);
-    return _hasher;
+    Partial.hashShaclProperties(hasher, _partial);
+    hasher.update(_partial.$identifier().value);
+    hasher.update(_partial.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _partial: Partial,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_partial.lazilyResolvedStringProperty);
-    return _hasher;
+    $hashString(hasher, _partial.lazilyResolvedStringProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -50090,21 +50157,21 @@ export namespace NonClass {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nonClass: NonClass,
-    _hasher: HasherT,
   ): HasherT {
-    NonClass.hashShaclProperties(_nonClass, _hasher);
-    _hasher.update(_nonClass.$identifier().value);
-    _hasher.update(_nonClass.$type);
-    return _hasher;
+    NonClass.hashShaclProperties(hasher, _nonClass);
+    hasher.update(_nonClass.$identifier().value);
+    hasher.update(_nonClass.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _nonClass: NonClass,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_nonClass.nonClassProperty);
-    return _hasher;
+    $hashString(hasher, _nonClass.nonClassProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -50668,38 +50735,25 @@ export namespace ClassProperties {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classProperties: ClassProperties,
-    _hasher: HasherT,
   ): HasherT {
-    ClassProperties.hashShaclProperties(_classProperties, _hasher);
-    _hasher.update(_classProperties.$identifier().value);
-    _hasher.update(_classProperties.$type);
-    return _hasher;
+    ClassProperties.hashShaclProperties(hasher, _classProperties);
+    hasher.update(_classProperties.$identifier().value);
+    hasher.update(_classProperties.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classProperties: ClassProperties,
-    _hasher: HasherT,
   ): HasherT {
-    _classProperties.iriClassProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _classProperties.multiClassProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    _classProperties.nodeClassProperty1.ifJust((value0) => {
-      NonClass.hash(value0, _hasher);
-    });
-    _classProperties.nodeClassProperty2.ifJust((value0) => {
-      Partial.hash(value0, _hasher);
-    });
-    _classProperties.singleClassProperty.ifJust((value0) => {
-      _hasher.update(value0.termType);
-      _hasher.update(value0.value);
-    });
-    return _hasher;
+    $hashMaybe($hashTerm)(hasher, _classProperties.iriClassProperty);
+    $hashMaybe($hashTerm)(hasher, _classProperties.multiClassProperty);
+    $hashMaybe(NonClass.hash)(hasher, _classProperties.nodeClassProperty1);
+    $hashMaybe(Partial.hash)(hasher, _classProperties.nodeClassProperty2);
+    $hashMaybe($hashTerm)(hasher, _classProperties.singleClassProperty);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -51638,21 +51692,21 @@ export namespace ClassHierarchy0 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy0: ClassHierarchy0,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy0.hashShaclProperties(_classHierarchy0, _hasher);
-    _hasher.update(_classHierarchy0.$identifier().value);
-    _hasher.update(_classHierarchy0.$type);
-    return _hasher;
+    ClassHierarchy0.hashShaclProperties(hasher, _classHierarchy0);
+    hasher.update(_classHierarchy0.$identifier().value);
+    hasher.update(_classHierarchy0.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy0: ClassHierarchy0,
-    _hasher: HasherT,
   ): HasherT {
-    _hasher.update(_classHierarchy0.classHierarchy0Property);
-    return _hasher;
+    $hashString(hasher, _classHierarchy0.classHierarchy0Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -52213,20 +52267,20 @@ export namespace ClassHierarchy1 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy1: ClassHierarchy1,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy1.hashShaclProperties(_classHierarchy1, _hasher);
-    _hasher.update(_classHierarchy1.$identifier().value);
-    return _hasher;
+    ClassHierarchy1.hashShaclProperties(hasher, _classHierarchy1);
+    hasher.update(_classHierarchy1.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy1: ClassHierarchy1,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy0.hashShaclProperties(_classHierarchy1, _hasher);
-    return _hasher;
+    ClassHierarchy0.hashShaclProperties(hasher, _classHierarchy1);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -52743,21 +52797,21 @@ export namespace ClassHierarchy2 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy2: ClassHierarchy2,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy2.hashShaclProperties(_classHierarchy2, _hasher);
-    _hasher.update(_classHierarchy2.$identifier().value);
-    return _hasher;
+    ClassHierarchy2.hashShaclProperties(hasher, _classHierarchy2);
+    hasher.update(_classHierarchy2.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy2: ClassHierarchy2,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy1.hashShaclProperties(_classHierarchy2, _hasher);
-    _hasher.update(_classHierarchy2.classHierarchy2Property);
-    return _hasher;
+    ClassHierarchy1.hashShaclProperties(hasher, _classHierarchy2);
+    $hashString(hasher, _classHierarchy2.classHierarchy2Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -53336,21 +53390,21 @@ export namespace ClassHierarchy3 {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy3: ClassHierarchy3,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy3.hashShaclProperties(_classHierarchy3, _hasher);
-    _hasher.update(_classHierarchy3.$identifier().value);
-    return _hasher;
+    ClassHierarchy3.hashShaclProperties(hasher, _classHierarchy3);
+    hasher.update(_classHierarchy3.$identifier().value);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _classHierarchy3: ClassHierarchy3,
-    _hasher: HasherT,
   ): HasherT {
-    ClassHierarchy2.hashShaclProperties(_classHierarchy3, _hasher);
-    _hasher.update(_classHierarchy3.classHierarchy3Property);
-    return _hasher;
+    ClassHierarchy2.hashShaclProperties(hasher, _classHierarchy3);
+    $hashString(hasher, _classHierarchy3.classHierarchy3Property);
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -53890,23 +53944,23 @@ export namespace BlankNodeOrIriIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
     BlankNodeOrIriIdentifier.hashShaclProperties(
+      hasher,
       _blankNodeOrIriIdentifier,
-      _hasher,
     );
-    _hasher.update(_blankNodeOrIriIdentifier.$identifier().value);
-    _hasher.update(_blankNodeOrIriIdentifier.$type);
-    return _hasher;
+    hasher.update(_blankNodeOrIriIdentifier.$identifier().value);
+    hasher.update(_blankNodeOrIriIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -54360,20 +54414,20 @@ export namespace BlankNodeIdentifier {
   }
 
   export function hash<HasherT extends $Hasher>(
+    hasher: HasherT,
     _blankNodeIdentifier: BlankNodeIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    BlankNodeIdentifier.hashShaclProperties(_blankNodeIdentifier, _hasher);
-    _hasher.update(_blankNodeIdentifier.$identifier().value);
-    _hasher.update(_blankNodeIdentifier.$type);
-    return _hasher;
+    BlankNodeIdentifier.hashShaclProperties(hasher, _blankNodeIdentifier);
+    hasher.update(_blankNodeIdentifier.$identifier().value);
+    hasher.update(_blankNodeIdentifier.$type);
+    return hasher;
   }
 
   export function hashShaclProperties<HasherT extends $Hasher>(
+    hasher: HasherT,
     _blankNodeIdentifier: BlankNodeIdentifier,
-    _hasher: HasherT,
   ): HasherT {
-    return _hasher;
+    return hasher;
   }
 
   export type Identifier = BlankNode;
@@ -55046,21 +55100,21 @@ export namespace FlattenUnion {
         }),
       )) satisfies $FromRdfResourceValuesFunction<FlattenUnion>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: FlattenUnion,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: FlattenUnion,
+  ): HasherT => {
     if (UnionMember1.isUnionMember1(value)) {
-      UnionMember1.hash(value, hasher);
+      return UnionMember1.hash(hasher, value);
     }
     if (UnionMember2.isUnionMember2(value)) {
-      UnionMember2.hash(value, hasher);
+      return UnionMember2.hash(hasher, value);
     }
     if (FlattenUnionMember3.isFlattenUnionMember3(value)) {
-      FlattenUnionMember3.hash(value, hasher);
+      return FlattenUnionMember3.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -55536,18 +55590,18 @@ export namespace Union {
       }),
     )) satisfies $FromRdfResourceValuesFunction<Union>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: Union,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: Union,
+  ): HasherT => {
     if (UnionMember1.isUnionMember1(value)) {
-      UnionMember1.hash(value, hasher);
+      return UnionMember1.hash(hasher, value);
     }
     if (UnionMember2.isUnionMember2(value)) {
-      UnionMember2.hash(value, hasher);
+      return UnionMember2.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -56020,18 +56074,18 @@ export namespace LazilyResolvedUnion {
         }),
       )) satisfies $FromRdfResourceValuesFunction<LazilyResolvedUnion>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: LazilyResolvedUnion,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: LazilyResolvedUnion,
+  ): HasherT => {
     if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(value)) {
-      LazilyResolvedUnionMember1.hash(value, hasher);
+      return LazilyResolvedUnionMember1.hash(hasher, value);
     }
     if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(value)) {
-      LazilyResolvedUnionMember2.hash(value, hasher);
+      return LazilyResolvedUnionMember2.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -56489,18 +56543,18 @@ export namespace PartialUnion {
         }),
       )) satisfies $FromRdfResourceValuesFunction<PartialUnion>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: PartialUnion,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: PartialUnion,
+  ): HasherT => {
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
-      PartialUnionMember1.hash(value, hasher);
+      return PartialUnionMember1.hash(hasher, value);
     }
     if (PartialUnionMember2.isPartialUnionMember2(value)) {
-      PartialUnionMember2.hash(value, hasher);
+      return PartialUnionMember2.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -56959,18 +57013,18 @@ export namespace NoRdfTypeUnion {
         }),
       )) satisfies $FromRdfResourceValuesFunction<NoRdfTypeUnion>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: NoRdfTypeUnion,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: NoRdfTypeUnion,
+  ): HasherT => {
     if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(value)) {
-      NoRdfTypeUnionMember1.hash(value, hasher);
+      return NoRdfTypeUnionMember1.hash(hasher, value);
     }
     if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(value)) {
-      NoRdfTypeUnionMember2.hash(value, hasher);
+      return NoRdfTypeUnionMember2.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -57421,18 +57475,18 @@ export namespace RecursiveUnion {
         }),
       )) satisfies $FromRdfResourceValuesFunction<RecursiveUnion>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: RecursiveUnion,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: RecursiveUnion,
+  ): HasherT => {
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
-      RecursiveUnionMember1.hash(value, hasher);
+      return RecursiveUnionMember1.hash(hasher, value);
     }
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
-      RecursiveUnionMember2.hash(value, hasher);
+      return RecursiveUnionMember2.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {
@@ -61368,194 +61422,194 @@ export namespace $Object {
         }),
       )) satisfies $FromRdfResourceValuesFunction<$Object>;
 
-  export function hash<HasherT extends $Hasher>(
-    value: $Object,
+  export const hash = <HasherT extends $Hasher>(
     hasher: HasherT,
-  ): HasherT {
+    value: $Object,
+  ): HasherT => {
     if (BlankNodeIdentifier.isBlankNodeIdentifier(value)) {
-      BlankNodeIdentifier.hash(value, hasher);
+      return BlankNodeIdentifier.hash(hasher, value);
     }
     if (BlankNodeOrIriIdentifier.isBlankNodeOrIriIdentifier(value)) {
-      BlankNodeOrIriIdentifier.hash(value, hasher);
+      return BlankNodeOrIriIdentifier.hash(hasher, value);
     }
     if (ClassHierarchy3.isClassHierarchy3(value)) {
-      ClassHierarchy3.hash(value, hasher);
+      return ClassHierarchy3.hash(hasher, value);
     }
     if (ClassHierarchy2.isClassHierarchy2(value)) {
-      ClassHierarchy2.hash(value, hasher);
+      return ClassHierarchy2.hash(hasher, value);
     }
     if (ClassHierarchy1.isClassHierarchy1(value)) {
-      ClassHierarchy1.hash(value, hasher);
+      return ClassHierarchy1.hash(hasher, value);
     }
     if (ClassHierarchy0.isClassHierarchy0(value)) {
-      ClassHierarchy0.hash(value, hasher);
+      return ClassHierarchy0.hash(hasher, value);
     }
     if (ClassProperties.isClassProperties(value)) {
-      ClassProperties.hash(value, hasher);
+      return ClassProperties.hash(hasher, value);
     }
     if (NonClass.isNonClass(value)) {
-      NonClass.hash(value, hasher);
+      return NonClass.hash(hasher, value);
     }
     if (Partial.isPartial(value)) {
-      Partial.hash(value, hasher);
+      return Partial.hash(hasher, value);
     }
     if (ConvertibleTypeProperties.isConvertibleTypeProperties(value)) {
-      ConvertibleTypeProperties.hash(value, hasher);
+      return ConvertibleTypeProperties.hash(hasher, value);
     }
     if (DateUnionProperties.isDateUnionProperties(value)) {
-      DateUnionProperties.hash(value, hasher);
+      return DateUnionProperties.hash(hasher, value);
     }
     if (DefaultValueProperties.isDefaultValueProperties(value)) {
-      DefaultValueProperties.hash(value, hasher);
+      return DefaultValueProperties.hash(hasher, value);
     }
     if (DirectRecursive.isDirectRecursive(value)) {
-      DirectRecursive.hash(value, hasher);
+      return DirectRecursive.hash(hasher, value);
     }
     if (DisplayProperties.isDisplayProperties(value)) {
-      DisplayProperties.hash(value, hasher);
+      return DisplayProperties.hash(hasher, value);
     }
     if (ExplicitFromToRdfTypes.isExplicitFromToRdfTypes(value)) {
-      ExplicitFromToRdfTypes.hash(value, hasher);
+      return ExplicitFromToRdfTypes.hash(hasher, value);
     }
     if (ExplicitRdfType.isExplicitRdfType(value)) {
-      ExplicitRdfType.hash(value, hasher);
+      return ExplicitRdfType.hash(hasher, value);
     }
     if (BaseForExtern.isBaseForExtern(value)) {
-      BaseForExtern.hash(value, hasher);
+      return BaseForExtern.hash(hasher, value);
     }
     if (ExternProperty.isExternProperty(value)) {
-      ExternProperty.hash(value, hasher);
+      return ExternProperty.hash(hasher, value);
     }
     if (FlattenUnionMember3.isFlattenUnionMember3(value)) {
-      FlattenUnionMember3.hash(value, hasher);
+      return FlattenUnionMember3.hash(hasher, value);
     }
     if (HasValueProperties.isHasValueProperties(value)) {
-      HasValueProperties.hash(value, hasher);
+      return HasValueProperties.hash(hasher, value);
     }
     if (InIdentifier.isInIdentifier(value)) {
-      InIdentifier.hash(value, hasher);
+      return InIdentifier.hash(hasher, value);
     }
     if (InProperties.isInProperties(value)) {
-      InProperties.hash(value, hasher);
+      return InProperties.hash(hasher, value);
     }
     if (IndirectRecursive.isIndirectRecursive(value)) {
-      IndirectRecursive.hash(value, hasher);
+      return IndirectRecursive.hash(hasher, value);
     }
     if (IndirectRecursiveHelper.isIndirectRecursiveHelper(value)) {
-      IndirectRecursiveHelper.hash(value, hasher);
+      return IndirectRecursiveHelper.hash(hasher, value);
     }
     if (IriIdentifier.isIriIdentifier(value)) {
-      IriIdentifier.hash(value, hasher);
+      return IriIdentifier.hash(hasher, value);
     }
     if (JsPrimitiveUnionProperty.isJsPrimitiveUnionProperty(value)) {
-      JsPrimitiveUnionProperty.hash(value, hasher);
+      return JsPrimitiveUnionProperty.hash(hasher, value);
     }
     if (LanguageInProperties.isLanguageInProperties(value)) {
-      LanguageInProperties.hash(value, hasher);
+      return LanguageInProperties.hash(hasher, value);
     }
     if (
       LazilyResolvedBlankNodeOrIriIdentifier.isLazilyResolvedBlankNodeOrIriIdentifier(
         value,
       )
     ) {
-      LazilyResolvedBlankNodeOrIriIdentifier.hash(value, hasher);
+      return LazilyResolvedBlankNodeOrIriIdentifier.hash(hasher, value);
     }
     if (LazilyResolvedUnionMember1.isLazilyResolvedUnionMember1(value)) {
-      LazilyResolvedUnionMember1.hash(value, hasher);
+      return LazilyResolvedUnionMember1.hash(hasher, value);
     }
     if (LazilyResolvedUnionMember2.isLazilyResolvedUnionMember2(value)) {
-      LazilyResolvedUnionMember2.hash(value, hasher);
+      return LazilyResolvedUnionMember2.hash(hasher, value);
     }
     if (LazilyResolvedIriIdentifier.isLazilyResolvedIriIdentifier(value)) {
-      LazilyResolvedIriIdentifier.hash(value, hasher);
+      return LazilyResolvedIriIdentifier.hash(hasher, value);
     }
     if (LazyProperties.isLazyProperties(value)) {
-      LazyProperties.hash(value, hasher);
+      return LazyProperties.hash(hasher, value);
     }
     if (ListProperties.isListProperties(value)) {
-      ListProperties.hash(value, hasher);
+      return ListProperties.hash(hasher, value);
     }
     if (ClassMultipleInheritanceChild.isClassMultipleInheritanceChild(value)) {
-      ClassMultipleInheritanceChild.hash(value, hasher);
+      return ClassMultipleInheritanceChild.hash(hasher, value);
     }
     if (
       ClassMultipleInheritanceParent1.isClassMultipleInheritanceParent1(value)
     ) {
-      ClassMultipleInheritanceParent1.hash(value, hasher);
+      return ClassMultipleInheritanceParent1.hash(hasher, value);
     }
     if (
       ClassMultipleInheritanceParent2.isClassMultipleInheritanceParent2(value)
     ) {
-      ClassMultipleInheritanceParent2.hash(value, hasher);
+      return ClassMultipleInheritanceParent2.hash(hasher, value);
     }
     if (MutableProperties.isMutableProperties(value)) {
-      MutableProperties.hash(value, hasher);
+      return MutableProperties.hash(hasher, value);
     }
     if (NamedUnionProperties.isNamedUnionProperties(value)) {
-      NamedUnionProperties.hash(value, hasher);
+      return NamedUnionProperties.hash(hasher, value);
     }
     if (NoRdfTypeUnionMember1.isNoRdfTypeUnionMember1(value)) {
-      NoRdfTypeUnionMember1.hash(value, hasher);
+      return NoRdfTypeUnionMember1.hash(hasher, value);
     }
     if (NoRdfTypeUnionMember2.isNoRdfTypeUnionMember2(value)) {
-      NoRdfTypeUnionMember2.hash(value, hasher);
+      return NoRdfTypeUnionMember2.hash(hasher, value);
     }
     if (NodeKinds.isNodeKinds(value)) {
-      NodeKinds.hash(value, hasher);
+      return NodeKinds.hash(hasher, value);
     }
     if (NumericProperties.isNumericProperties(value)) {
-      NumericProperties.hash(value, hasher);
+      return NumericProperties.hash(hasher, value);
     }
     if (OrderedProperties.isOrderedProperties(value)) {
-      OrderedProperties.hash(value, hasher);
+      return OrderedProperties.hash(hasher, value);
     }
     if (NewName.isNewName(value)) {
-      NewName.hash(value, hasher);
+      return NewName.hash(hasher, value);
     }
     if (PartialUnionMember1.isPartialUnionMember1(value)) {
-      PartialUnionMember1.hash(value, hasher);
+      return PartialUnionMember1.hash(hasher, value);
     }
     if (UnionMember1.isUnionMember1(value)) {
-      UnionMember1.hash(value, hasher);
+      return UnionMember1.hash(hasher, value);
     }
     if (PartialUnionMember2.isPartialUnionMember2(value)) {
-      PartialUnionMember2.hash(value, hasher);
+      return PartialUnionMember2.hash(hasher, value);
     }
     if (UnionMember2.isUnionMember2(value)) {
-      UnionMember2.hash(value, hasher);
+      return UnionMember2.hash(hasher, value);
     }
     if (UnionMemberCommonParent.isUnionMemberCommonParent(value)) {
-      UnionMemberCommonParent.hash(value, hasher);
+      return UnionMemberCommonParent.hash(hasher, value);
     }
     if (PropertyCardinalities.isPropertyCardinalities(value)) {
-      PropertyCardinalities.hash(value, hasher);
+      return PropertyCardinalities.hash(hasher, value);
     }
     if (PropertyNames.isPropertyNames(value)) {
-      PropertyNames.hash(value, hasher);
+      return PropertyNames.hash(hasher, value);
     }
     if (PropertyPaths.isPropertyPaths(value)) {
-      PropertyPaths.hash(value, hasher);
+      return PropertyPaths.hash(hasher, value);
     }
     if (RecursiveUnionMember1.isRecursiveUnionMember1(value)) {
-      RecursiveUnionMember1.hash(value, hasher);
+      return RecursiveUnionMember1.hash(hasher, value);
     }
     if (RecursiveUnionMember2.isRecursiveUnionMember2(value)) {
-      RecursiveUnionMember2.hash(value, hasher);
+      return RecursiveUnionMember2.hash(hasher, value);
     }
     if (TermProperties.isTermProperties(value)) {
-      TermProperties.hash(value, hasher);
+      return TermProperties.hash(hasher, value);
     }
     if (UnionDiscriminants.isUnionDiscriminants(value)) {
-      UnionDiscriminants.hash(value, hasher);
+      return UnionDiscriminants.hash(hasher, value);
     }
     if ($DefaultPartial.is$DefaultPartial(value)) {
-      $DefaultPartial.hash(value, hasher);
+      return $DefaultPartial.hash(hasher, value);
     }
     if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      $NamedDefaultPartial.hash(value, hasher);
+      return $NamedDefaultPartial.hash(hasher, value);
     }
     return hasher;
-  }
+  };
 
   export type Identifier = BlankNode | NamedNode;
   export namespace Identifier {

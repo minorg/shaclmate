@@ -29,8 +29,8 @@ export class Harness<
           ) => void;
         },
       >(
-        value: T,
         hasher: HasherT,
+        value: T,
       ) => HasherT;
       sparqlConstructQueryString: (parameters: {
         subject: NamedNode | Variable;

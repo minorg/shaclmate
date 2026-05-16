@@ -599,10 +599,8 @@ ${joinCode(
 (<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.name}): HasherT => {
 ${joinCode(
   this.members.map(
-    ({ type, typeCheck, unwrap, wrap }) =>
-      code`if (${typeCheck(code`value`)}) { return ${wrap(
-        code`${type.hashFunction}(hasher, ${unwrap(code`value`)})`,
-      )}; }`,
+    ({ type, typeCheck, unwrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.hashFunction}(hasher, ${unwrap(code`value`)}); }`,
   ),
 )}
   return hasher;
