@@ -130,39 +130,21 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorInitializer"]
   >[0]): Code {
-    const parameterVariable = code`${this.name}Parameter`;
-    const statements: Code[] = [
-      // Pull out the parameter so the function can capture it if necessary.
-      code`const ${parameterVariable} = ${variables.parameter};`,
-      code`let ${this.name}: () => ${this.typeAlias};`,
-    ];
-    const typeConversions = this.type.conversions;
-    const conversionBranches: Code[] = [
-      code`if (typeof ${parameterVariable} === "function") { ${this.name} = ${parameterVariable}; }`,
-    ];
-    for (const conversion of typeConversions) {
-      invariant(conversion.sourceTypeof !== "function");
-      invariant(conversion.sourceTypeof !== "undefined");
-      conversionBranches.push(
-        code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${this.name} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
-      );
-    }
-    if (
-      (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
-    ) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      conversionBranches.push(
-        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${this.reusables.imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
-      );
+    const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
+
+    let conversionFunction: Code;
+    if (nodeKinds.size === 2) {
+      conversionFunction = code`${this.reusables.snippets.convertToIdentifierProperty}`;
+    } else {
+      invariant(nodeKinds.size === 1);
+      if (nodeKinds.has("BlankNode")) {
+        conversionFunction = code`${this.reusables.snippets.convertToBlankIdentifierProperty}`;
+      } else {
+        conversionFunction = code`${this.reusables.snippets.convertToNamedIdentifierProperty}<${this.type.name}>`;
+      }
     }
 
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      code`{ ${this.name} = (${parameterVariable}) satisfies never;\n }`,
-    );
-    statements.push(joinCode(conversionBranches, { on: " else " }));
-
-    return statements;
+    return code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name})`;
   }
 
   override fromJsonInitializer({

@@ -17,6 +17,9 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
+import { snippets_convertToBlankIdentifierProperty } from "./_snippets/snippets_convertToBlankIdentifierProperty copy.js";
+import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
+import { snippets_convertToNamedIdentifierProperty } from "./_snippets/snippets_convertToNamedIdentifierProperty.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
@@ -423,6 +426,21 @@ export class Snippets {
   @Memoize()
   get compactRecord(): Snippet {
     return this.snippet(snippets_compactRecord);
+  }
+
+  @Memoize()
+  get convertToBlankIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToBlankIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToNamedIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToNamedIdentifierProperty);
   }
 
   @Memoize()
