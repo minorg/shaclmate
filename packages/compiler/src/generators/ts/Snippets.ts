@@ -20,6 +20,7 @@ import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToBlankIdentifierProperty } from "./_snippets/snippets_convertToBlankIdentifierProperty copy.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToNamedIdentifierProperty } from "./_snippets/snippets_convertToNamedIdentifierProperty.js";
+import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
@@ -441,6 +442,11 @@ export class Snippets {
   @Memoize()
   get convertToNamedIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToNamedIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToNumeric(): Snippet {
+    return this.snippet(snippets_convertToNumeric);
   }
 
   @Memoize()

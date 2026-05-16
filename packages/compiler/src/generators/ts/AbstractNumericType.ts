@@ -9,17 +9,28 @@ import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 export abstract class AbstractNumericType<
   ValueT extends bigint | number,
 > extends AbstractPrimitiveType<ValueT> {
+  override readonly filterFunction =
+    code`${this.reusables.snippets.filterNumeric}<${this.typeofs[0]}>`;
+  override readonly filterType =
+    code`${this.reusables.snippets.NumericFilter}<${this.typeofs[0]}>`;
   override readonly hashFunction = code`${this.reusables.snippets.hashNumeric}`;
   abstract override readonly kind: "BigIntType" | "FloatType" | "IntType";
+  override readonly schemaType =
+    code`${this.reusables.snippets.NumericSchema}<${this.typeofs[0]}>`;
+  override readonly valueSparqlWherePatternsFunction =
+    code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
 
   @Memoize()
-  override get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterNumeric}<${this.typeofs[0]}>`;
-  }
-
-  @Memoize()
-  override get filterType(): Code {
-    return code`${this.reusables.snippets.NumericFilter}<${this.typeofs[0]}>`;
+  override get conversionFunction() {
+    return {
+      code: code`${this.reusables.snippets.convertToNumeric}<${this.typeofs[0]}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: this.typeofs[0],
+        },
+      ],
+    };
   }
 
   @Memoize()
@@ -28,16 +39,6 @@ export abstract class AbstractNumericType<
       return `${this.primitiveIn.map((value) => this.literalOf(value)).join(" | ")}`;
     }
     return this.typeofs[0];
-  }
-
-  @Memoize()
-  override get schemaType(): Code {
-    return code`${this.reusables.snippets.NumericSchema}<${this.typeofs[0]}>`;
-  }
-
-  @Memoize()
-  override get valueSparqlWherePatternsFunction(): Code {
-    return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
   }
 
   protected override get schemaObject() {
