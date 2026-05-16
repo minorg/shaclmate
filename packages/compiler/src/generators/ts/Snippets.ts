@@ -29,6 +29,7 @@ import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_co
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
+import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
@@ -494,6 +495,11 @@ export class Snippets {
   @Memoize()
   get convertToString(): Snippet {
     return this.snippet(snippets_convertToString);
+  }
+
+  @Memoize()
+  get convertToTerm(): Snippet {
+    return this.snippet(snippets_convertToTerm);
   }
 
   @Memoize()

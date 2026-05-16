@@ -5,6 +5,7 @@ import type { Typeof } from "./Typeof.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
+  override readonly name = code`${this.reusables.imports.Literal}`;
   override readonly conversionFunction: AbstractLiteralType.ConversionFunction =
     {
       code: code`${this.reusables.snippets.convertToLiteral}`,
@@ -29,13 +30,19 @@ export class LiteralType extends AbstractLiteralType {
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
   override readonly kind = "LiteralType";
-  override readonly name = code`${this.reusables.imports.Literal}`;
   override readonly schemaType = code`${this.reusables.snippets.LiteralSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.literalSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in: this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+    };
   }
 
   override fromJsonExpression({

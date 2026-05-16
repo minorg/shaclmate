@@ -40,6 +40,19 @@ export class TermType<
     );
   }
 
+  @Memoize()
+  override get conversionFunction(): AbstractTermType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToTerm}<${this.name}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
+
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
   }
