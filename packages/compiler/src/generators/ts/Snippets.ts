@@ -26,6 +26,7 @@ import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIden
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
+import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
@@ -478,6 +479,11 @@ export class Snippets {
   @Memoize()
   get convertToIriIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToIriIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToLiteral(): Snippet {
+    return this.snippet(snippets_convertToLiteral);
   }
 
   @Memoize()

@@ -54,6 +54,13 @@ export abstract class AbstractTermType<
     return this.hasValues.length > 0 || this.in_.length > 0;
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in: this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+    };
+  }
+
   @Memoize()
   get conversions(): readonly AbstractType.Conversion[] {
     const conversions: AbstractType.Conversion[] = [];

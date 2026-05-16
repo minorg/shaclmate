@@ -1,9 +1,30 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import type { Typeof } from "./Typeof.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
+  override readonly conversionFunction: AbstractLiteralType.ConversionFunction =
+    {
+      code: code`${this.reusables.snippets.convertToLiteral}`,
+      sourceTypes: [
+        ...(
+          ["bigint", "boolean", "number", "string"] satisfies readonly Typeof[]
+        ).map((typeof_) => ({
+          name: typeof_,
+          typeof: typeof_,
+        })),
+        {
+          name: code`Date`,
+          typeof: "object",
+        },
+        {
+          name: code`${this.reusables.imports.Literal}`,
+          typeof: "object",
+        },
+      ],
+    };
   override readonly filterFunction =
     code`${this.reusables.snippets.filterLiteral}`;
   override readonly filterType = code`${this.reusables.snippets.LiteralFilter}`;
