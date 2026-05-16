@@ -17,6 +17,7 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
+import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty copy.js";
 import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
@@ -435,6 +436,11 @@ export class Snippets {
   @Memoize()
   get compactRecord(): Snippet {
     return this.snippet(snippets_compactRecord);
+  }
+
+  @Memoize()
+  get convertToBigDecimal(): Snippet {
+    return this.snippet(snippets_convertToBigDecimal);
   }
 
   @Memoize()

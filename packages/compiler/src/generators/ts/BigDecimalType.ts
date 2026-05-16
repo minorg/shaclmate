@@ -4,6 +4,16 @@ import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
+  override readonly conversionFunction: AbstractLiteralType.ConversionFunction =
+    {
+      code: code`${this.reusables.snippets.convertToBigDecimal}`,
+      sourceTypes: [
+        {
+          name: code`${this.reusables.imports.BigDecimal}`,
+          typeof: "object",
+        },
+      ],
+    };
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =

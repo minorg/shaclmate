@@ -1,0 +1,15 @@
+import type { SnippetFactory } from "../SnippetFactory.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
+
+export const snippets_convertToBigDecimal: SnippetFactory = ({
+  imports,
+  snippets,
+  syntheticNamePrefix,
+}) =>
+  conditionalOutput(
+    `${syntheticNamePrefix}convertToBigDecimal`,
+    code`\
+function ${syntheticNamePrefix}convertToBigDecimal(schema: ${snippets.NumericSchema}<${imports.BigDecimal}>, value: ${imports.BigDecimal}): ${imports.BigDecimal} {
+  return value;
+}`,
+  );
