@@ -15,7 +15,7 @@ export function NamedObjectType_toStringFunctionDeclarations(
 
   for (const property of this.properties) {
     property
-      .toStringExpression({
+      .toStringInitializer({
         variables: {
           value: property.accessExpression({
             variables: { object: this.thisVariable },

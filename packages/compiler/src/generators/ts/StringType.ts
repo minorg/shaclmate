@@ -22,6 +22,19 @@ export class StringType extends AbstractPrimitiveType<string> {
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 
   @Memoize()
+  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToString}`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "string",
+        },
+      ],
+    };
+  }
+
+  @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
       return `${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;

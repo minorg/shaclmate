@@ -53,6 +53,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
 
 export namespace AbstractLiteralType {
   export type Conversion = AbstractTermType.Conversion;
+  export type ConversionFunction = AbstractTermType.ConversionFunction;
   export type DiscriminantProperty = AbstractTermType.DiscriminantProperty;
   export const GraphqlType = AbstractTermType.GraphqlType;
   export type GraphqlType = AbstractTermType.GraphqlType;

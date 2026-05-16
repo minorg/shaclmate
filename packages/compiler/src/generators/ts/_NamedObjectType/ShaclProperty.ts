@@ -48,18 +48,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get constructorParametersSignature(): Maybe<Code> {
+  override get constructorParameter(): Maybe<Code> {
     let hasQuestionToken = false;
+
     const typeNames: Code[] = [];
-    for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeof === "undefined") {
+    for (const type of this.type.conversionFunction.sourceTypes) {
+      if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else if (
-        !typeNames.some((typeName) =>
-          codeEquals(typeName, conversion.sourceTypeName),
-        )
+        !typeNames.some((typeName) => codeEquals(typeName, type.name))
       ) {
-        typeNames.push(code`${conversion.sourceTypeName}`);
+        typeNames.push(code`${type.name}`);
       }
     }
 
@@ -152,40 +151,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     };
   }
 
-  override constructorStatements({
+  override constructorInitializer({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["constructorStatements"]
-  >[0]): readonly Code[] {
-    const typeConversions = this.type.conversions;
-    if (typeConversions.length === 1) {
-      return [code`const ${this.name} = ${variables.parameter};`];
-    }
-
-    const statements: Code[] = [code`let ${this.name}: ${this.type.name};`];
-
-    statements.push(
-      joinCode(
-        typeConversions
-          .map(
-            (conversion) =>
-              code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${this.name} = ${conversion.conversionExpression(variables.parameter)}; }`,
-          )
-          // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-          .concat(
-            code`{ ${this.name} = (${variables.parameter}) satisfies never; }`,
-          ),
-        { on: " else " },
-      ),
-    );
-
-    return statements;
+  }: Parameters<AbstractProperty<TypeT>["constructorInitializer"]>[0]): Code {
+    return code`${this.name}: ${this.type.conversionFunction}(schema.properties.${this.name}.type(), ${variables.parameter})`;
   }
 
-  override fromJsonExpression({
+  override fromJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<TypeT>["fromJsonExpression"]
+    AbstractProperty<TypeT>["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
       this.type.fromJsonExpression({
@@ -194,10 +169,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  override fromRdfResourceValuesExpression({
+  override fromRdfResourceValuesInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<TypeT>["fromRdfResourceValuesExpression"]
+    AbstractProperty<TypeT>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     // Assume the property has the correct range and ignore the object's RDF type.
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
@@ -289,10 +264,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  override toJsonObjectMemberExpression(
-    parameters: Parameters<
-      AbstractProperty<TypeT>["toJsonObjectMemberExpression"]
-    >[0],
+  override toJsonInitializer(
+    parameters: Parameters<AbstractProperty<TypeT>["toJsonInitializer"]>[0],
   ): Maybe<Code> {
     return Maybe.of(
       code`${this.name}: ${this.type.toJsonExpression(parameters)}`,
@@ -326,13 +299,15 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     ];
   }
 
-  override toStringExpression(
-    parameters: Parameters<AbstractProperty<TypeT>["toStringExpression"]>[0],
+  override toStringInitializer(
+    parameters: Parameters<AbstractProperty<TypeT>["toStringInitializer"]>[0],
   ): Maybe<Code> {
     if (!this.display) {
       return Maybe.empty();
     }
-    return Maybe.of(this.type.toStringExpression(parameters));
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+    );
   }
 
   private propertyPathToCode(propertyPath: PropertyPath): Code {

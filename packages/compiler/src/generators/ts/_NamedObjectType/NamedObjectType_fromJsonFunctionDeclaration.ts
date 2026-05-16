@@ -9,7 +9,7 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const initializers: Code[] = [];
+  let initializers: Code[] = [];
   const statements: Code[] = [];
   const variables = {
     jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
@@ -21,17 +21,11 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     );
   });
 
-  for (const property of this.properties) {
-    property
-      .fromJsonExpression({
-        variables,
-      })
-      .ifJust((propertyFromJsonExpression) => {
-        initializers.push(
-          code`${property.name}: ${propertyFromJsonExpression}`,
-        );
-      });
-  }
+  initializers = initializers.concat(
+    this.properties.flatMap((property) =>
+      property.fromJsonInitializer({ variables }).toList(),
+    ),
+  );
 
   statements.push(
     code`return create({ ${joinCode(initializers, { on: ", " })} });`,

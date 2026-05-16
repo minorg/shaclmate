@@ -72,20 +72,17 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
     });
   });
 
-  const propertyFromRdfResourceValuesExpressions: Record<string, Code> = {};
-  for (const property of this.properties) {
-    property
-      .fromRdfResourceValuesExpression({
-        variables: propertyFromRdfResourceValuesExpressionVariable,
-      })
-      .ifJust((propertyFromRdfResourceValuesExpression) => {
-        propertyFromRdfResourceValuesExpressions[property.name] =
-          propertyFromRdfResourceValuesExpression;
-      });
-  }
-  if (Object.keys(propertyFromRdfResourceValuesExpressions).length > 0) {
+  const propertyFromRdfResourceValuesInitializers: Code[] =
+    this.properties.flatMap((property) =>
+      property
+        .fromRdfResourceValuesInitializer({
+          variables: propertyFromRdfResourceValuesExpressionVariable,
+        })
+        .toList(),
+    );
+  if (Object.keys(propertyFromRdfResourceValuesInitializers).length > 0) {
     chains.push({
-      expression: code`${this.reusables.snippets.sequenceRecord}(${propertyFromRdfResourceValuesExpressions})`,
+      expression: code`${this.reusables.snippets.sequenceRecord}({ ${propertyFromRdfResourceValuesInitializers} })`,
       variable: "properties",
     });
     partials.push("properties");

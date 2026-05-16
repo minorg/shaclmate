@@ -28,6 +28,17 @@ export abstract class AbstractType {
   abstract readonly conversions: readonly AbstractType.Conversion[];
 
   /**
+   * Function that converts one or more source types to this type.
+   *
+   * The function takes two parameters:
+   *  - an instance of this.schemaType
+   *  - a value with one of the source types
+   *
+   * The source types should include this type.
+   */
+  abstract readonly conversionFunction: AbstractType.ConversionFunction;
+
+  /**
    * The declaration of named types.
    */
   abstract readonly declaration: Maybe<Code>;
@@ -315,6 +326,14 @@ export namespace AbstractType {
     readonly sourceTypeCheckExpression: (value: Code) => Code;
     readonly sourceTypeName: Code | string;
     readonly sourceTypeof: Typeof;
+  }
+
+  export interface ConversionFunction {
+    readonly code: Code;
+    readonly sourceTypes: {
+      readonly name: Code | string;
+      readonly typeof: Typeof;
+    }[];
   }
 
   export interface DiscriminantProperty {

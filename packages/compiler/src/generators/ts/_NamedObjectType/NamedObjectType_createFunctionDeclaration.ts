@@ -11,7 +11,7 @@ export function NamedObjectType_createFunctionDeclaration(
   }
 
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersSignature.toList(),
+    property.constructorParameter.toList(),
   );
 
   const parametersType: Code[] = [];
@@ -27,11 +27,9 @@ export function NamedObjectType_createFunctionDeclaration(
     parametersType.push(code`object`);
   }
 
-  const propertyInitializers: string[] = [];
-  const omitPropertyNames: string[] = [];
-  const propertyStatements: Code[] = [];
+  let initializers: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
-    propertyInitializers.push(`...${parentObjectType.name}.create(parameters)`);
+    initializers.push(code`...${parentObjectType.name}.create(parameters)`);
   }
   const parametersHasQuestionToken =
     this.parentObjectTypes.length === 0 &&
@@ -40,28 +38,19 @@ export function NamedObjectType_createFunctionDeclaration(
         propertySignature.toCodeString([]).indexOf("?:") !== -1,
     );
   const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
-  for (const property of this.properties) {
-    const thisPropertyStatements = property.constructorStatements({
-      variables: {
-        parameter: code`${parametersVariable}.${property.name}`,
-        parameters: parametersVariable,
-      },
-    });
-    if (thisPropertyStatements.length > 0) {
-      propertyInitializers.push(property.name);
-      propertyStatements.push(...thisPropertyStatements);
-    } else {
-      omitPropertyNames.push(property.name);
-    }
-  }
-  invariant(propertyInitializers.length > 0);
-  invariant(propertyStatements.length > 0);
+  initializers = initializers.concat(
+    this.properties.map((property) =>
+      property.constructorInitializer({
+        variables: { parameters: parametersVariable },
+      }),
+    ),
+  );
+  invariant(initializers.length > 0);
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of(code`\
-export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
-  ${joinCode(propertyStatements)}
-  const ${syntheticNamePrefix}object = { ${propertyInitializers.join(", ")} };
+export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${this.name} {
+  const ${syntheticNamePrefix}object = { ${joinCode(initializers, { on: "," })};
   if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
     (${syntheticNamePrefix}object as any).toString = ${syntheticNamePrefix}toString;
   }
