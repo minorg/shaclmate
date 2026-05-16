@@ -3,6 +3,15 @@ import { DateTimeType } from "./DateTimeType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateType extends AbstractDateType {
+  override readonly conversionFunction: AbstractDateType.ConversionFunction = {
+    code: code`${this.reusables.snippets.convertToDate}`,
+    sourceTypes: [
+      {
+        name: code`Date`,
+        typeof: "object",
+      },
+    ],
+  };
   override readonly graphqlType = new DateTimeType.GraphqlType(
     code`${this.reusables.imports.GraphQLDate}`,
     this.reusables,

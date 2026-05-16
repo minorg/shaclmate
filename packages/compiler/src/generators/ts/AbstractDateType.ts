@@ -85,3 +85,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     };
   }): Code;
 }
+
+export namespace AbstractDateType {
+  export type ConversionFunction = AbstractPrimitiveType.ConversionFunction;
+}

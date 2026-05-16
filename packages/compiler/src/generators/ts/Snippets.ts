@@ -20,6 +20,8 @@ import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty copy.js";
 import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
+import { snippets_convertToDate } from "./_snippets/snippets_convertToDate.js";
+import { snippets_convertToDateTime } from "./_snippets/snippets_convertToDateTime.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
@@ -446,6 +448,16 @@ export class Snippets {
   @Memoize()
   get convertToBoolean(): Snippet {
     return this.snippet(snippets_convertToBoolean);
+  }
+
+  @Memoize()
+  get convertToDate(): Snippet {
+    return this.snippet(snippets_convertToDate);
+  }
+
+  @Memoize()
+  get convertToDateTime(): Snippet {
+    return this.snippet(snippets_convertToDateTime);
   }
 
   @Memoize()
