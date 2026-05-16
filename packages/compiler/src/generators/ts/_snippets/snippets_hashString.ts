@@ -9,6 +9,7 @@ export const snippets_hashString: SnippetFactory = ({
     `${syntheticNamePrefix}hashString`,
     code`\
 function ${syntheticNamePrefix}hashString<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: string): HasherT {
-  return hasher.update(value);
+  hasher.update(value);
+  return hasher;
 }`,
   );

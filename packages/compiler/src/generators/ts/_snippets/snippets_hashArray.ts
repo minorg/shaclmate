@@ -10,7 +10,9 @@ export const snippets_hashArray: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}hashArray<HasherT extends ${snippets.Hasher}, ItemT>(hashItem: ${snippets.HashFunction}<HasherT, ItemT>): ${snippets.HashFunction}<HasherT, readonly ItemT[]> {
   return (hasher, value) => {
-    value.forEach(hashItem);
+    for (const item of value) {
+      hashItem(hasher, item);
+    }
     return hasher;
   }
 }`,

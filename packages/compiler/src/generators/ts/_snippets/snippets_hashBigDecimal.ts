@@ -10,6 +10,7 @@ export const snippets_hashBigDecimal: SnippetFactory = ({
     `${syntheticNamePrefix}hashBigDecimal`,
     code`\
 function ${syntheticNamePrefix}hashBigDecimal<HasherT extends ${snippets.Hasher}>(hasher: HasherT, value: ${imports.BigDecimal}): HasherT {
-  return hasher.update(value.toFixed());
+  hasher.update(value.toFixed());
+  return hasher;
 }`,
   );

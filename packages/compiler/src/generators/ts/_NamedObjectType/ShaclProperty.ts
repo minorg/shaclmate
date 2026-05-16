@@ -222,10 +222,14 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  override hashStatements(
-    parameters: Parameters<AbstractProperty<TypeT>["hashStatements"]>[0],
-  ): readonly Code[] {
-    return this.type.hashStatements(parameters);
+  override hashStatements({
+    variables,
+  }: Parameters<
+    AbstractProperty<TypeT>["hashStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`${this.type.hashFunction}(${variables.hasher}, ${variables.value});`,
+    ];
   }
 
   jsonUiSchemaElement({

@@ -168,7 +168,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashArray}<${this.itemType.name}>(${this.itemType.hashFunction})`;
+    return code`${this.reusables.snippets.hashArray}(${this.itemType.hashFunction})`;
   }
 
   override get mutable(): boolean {

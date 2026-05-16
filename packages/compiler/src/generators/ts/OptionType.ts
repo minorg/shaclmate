@@ -6,7 +6,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
@@ -71,7 +71,7 @@ export class OptionType<
 
   @Memoize()
   get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashMaybe}<${this.itemType.name}>(${this.itemType.hashFunction})`;
+    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
   }
 
   @Memoize()
