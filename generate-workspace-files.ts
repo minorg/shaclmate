@@ -106,6 +106,7 @@ const tsconfigDefault: Tsconfig = {
     exactOptionalPropertyTypes: false,
     experimentalDecorators: true,
     forceConsistentCasingInFileNames: true,
+    incremental: false,
     noUncheckedIndexedAccess: false,
     outDir: "dist",
     rootDir: "src",
