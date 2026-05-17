@@ -22,6 +22,27 @@ export class LazyObjectOptionType extends Super {
   override readonly kind = "LazyObjectOptionType";
 
   @Memoize()
+  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToLazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.itemType.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
+
+  @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 

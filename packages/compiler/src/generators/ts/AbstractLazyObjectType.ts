@@ -236,6 +236,7 @@ export namespace AbstractLazyObjectType {
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
   export type Conversion = AbstractType.Conversion;
+  export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;
