@@ -5,7 +5,6 @@ import {
 import { JsonForms } from "@jsonforms/react";
 import {Grid, Typography} from "@mui/material";
 import dataFactory from "@rdfx/data-factory";
-import { NonEmptyList } from "purify-ts";
 import { type FC, useMemo, useState } from "react";
 import * as generated from "./generated.js";
 import { Writer } from "n3";
@@ -44,8 +43,8 @@ const initialData = generated.FormNodeShape.toJson(
       $identifier: dataFactory.namedNode("http://example.com/nested"),
       requiredStringProperty: "required/nested",
     }),
-    nonEmptyStringSetProperty: NonEmptyList(["test"]),
-    requiredIntegerProperty: 1,
+    nonEmptyStringSetProperty: ["test"],
+    requiredIntProperty: 1,
     requiredStringProperty: "required/form",
   }),
 );

@@ -204,13 +204,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   override get name(): Code {
-    if (this._mutable) {
-      return code`(${this.itemType.name})[]`;
-    }
-    if (this.minCount === 0n) {
-      return code`readonly (${this.itemType.name})[]`;
-    }
-    return code`${this.reusables.imports.NonEmptyList}<${this.itemType.name}>`;
+    return code`${!this._mutable ? "readonly " : ""}(${this.itemType.name})[]`;
   }
 
   @Memoize()

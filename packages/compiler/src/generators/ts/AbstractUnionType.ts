@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -314,9 +314,7 @@ export abstract class AbstractUnionType<
 
   @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
-    return NonEmptyList.fromArray(
-      this.members.flatMap((member) => member.type.typeofs),
-    ).unsafeCoerce();
+    return [...new Set(this.members.flatMap((member) => member.type.typeofs))];
   }
 
   @Memoize()
