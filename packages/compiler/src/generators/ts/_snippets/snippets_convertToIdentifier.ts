@@ -9,7 +9,7 @@ export const snippets_convertToIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifier`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifier(schema: ${snippets.IdentifierSchema}, value: ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): ${imports.BlankNode} | ${imports.NamedNode} {
+function ${syntheticNamePrefix}convertToIdentifier(_schema: ${snippets.IdentifierSchema}, value: ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): ${imports.BlankNode} | ${imports.NamedNode} {
   switch (typeof value) {
     case "object":
       return value;

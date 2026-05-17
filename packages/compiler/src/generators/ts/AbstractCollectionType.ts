@@ -43,6 +43,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get conversionFunction(): AbstractType.ConversionFunction {
     const itemConversionFunction = this.itemType.conversionFunction;
+
     const sourceTypes: AbstractType.ConversionFunction["sourceTypes"] = [
       {
         name: code`readonly (${joinCode(
@@ -60,8 +61,9 @@ export abstract class AbstractCollectionType<
         typeof: "undefined",
       });
     }
+
     return {
-      code: code`${this.reusables.snippets.convertToArray}(${itemConversionFunction.code})`,
+      code: code`${this._mutable ? this.reusables.snippets.convertToMutableArray : this.reusables.snippets.convertToReadonlyArray}(${itemConversionFunction.code})`,
       sourceTypes,
     };
   }

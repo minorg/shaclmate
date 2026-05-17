@@ -8,7 +8,7 @@ export const snippets_convertWithDefaultValue: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertWithDefaultValue`,
     code`\
-function ${syntheticNamePrefix}convertWithDefaultValue<DefaulValueT, ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT) {
+function ${syntheticNamePrefix}convertWithDefaultValue<DefaultValueT extends ItemSourceT, ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT) {
   return (schema: ${snippets.DefaultValueSchema}<DefaultValueT, ItemSchemaT>, value: ItemSourceT | undefined): ItemTargetT => {
     if (typeof value === "undefined") {
       return convertToItem(schema.item(), schema.defaultValue);

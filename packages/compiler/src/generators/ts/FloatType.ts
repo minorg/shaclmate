@@ -18,8 +18,8 @@ export class FloatType extends AbstractNumericType<number> {
     );
   }
 
-  override literalExpression(literal: Literal): Code {
-    return code`${LiteralDecoder.decodeFloatLiteral(literal).unsafeCoerce()}`;
+  override literalExpression(literal: Literal | number): Code {
+    return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeFloatLiteral(literal).unsafeCoerce()}`;
   }
 
   protected override fromRdfResourceValueExpression({
@@ -28,9 +28,5 @@ export class FloatType extends AbstractNumericType<number> {
     AbstractNumericType<number>["fromRdfResourceValueExpression"]
   >[0]): Code {
     return code`${variables.value}.toFloat(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
-  }
-
-  protected override literalOf(value: number): string {
-    return value.toString();
   }
 }

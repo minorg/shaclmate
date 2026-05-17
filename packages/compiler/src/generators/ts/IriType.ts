@@ -67,16 +67,6 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return code`${this.reusables.snippets.parseIri}`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? this.in_.map((in_) => this.rdfjsTermExpression(in_)).concat()
-          : undefined,
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<

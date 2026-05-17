@@ -128,6 +128,16 @@ export abstract class AbstractTermType<
     return code`${removeUndefined(this.schemaObject)}`;
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in:
+        this.in_.length > 0
+          ? code`[${joinCode(this.in_.map((in_) => this.rdfjsTermExpression(in_), { on: ", " }))}] as const`
+          : undefined,
+    };
+  }
+
   @Memoize()
   get termTypes(): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
     return new Set([...this.nodeKinds].map(NodeKind.toTermType));

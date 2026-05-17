@@ -7,7 +7,7 @@ export const snippets_convertToUnion: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToUnion`,
     code`\
-function ${syntheticNamePrefix}convertToUnion<ValueT extends object>(schema: unknown, value: ValueT): ValueT {
+function ${syntheticNamePrefix}convertToUnion<ValueT>(_schema: unknown, value: ValueT): ValueT {
   return value;
 }`,
   );

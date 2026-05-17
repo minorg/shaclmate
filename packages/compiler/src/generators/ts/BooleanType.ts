@@ -42,13 +42,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return `boolean`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
-    };
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractPrimitiveType<number>["jsonSchema"]>[0],
   ): Code {
@@ -58,8 +51,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return code`${this.reusables.imports.z}.boolean()`;
   }
 
-  override literalExpression(literal: Literal): Code {
-    return code`${LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
+  override literalExpression(literal: boolean | Literal): Code {
+    return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }
 
   override toRdfResourceValuesExpression({

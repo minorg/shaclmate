@@ -79,16 +79,6 @@ export class TermType<
     )})`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? this.in_.map((in_) => this.rdfjsTermExpression(in_))
-          : undefined,
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {

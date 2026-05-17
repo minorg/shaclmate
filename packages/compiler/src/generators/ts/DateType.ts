@@ -28,8 +28,8 @@ export class DateType extends AbstractDateType {
     return code`${this.reusables.imports.z}.iso.date()`;
   }
 
-  override literalExpression(literal: Literal): Code {
-    return code`new Date("${LiteralDecoder.decodeDateLiteral(literal).unsafeCoerce().toISOString()}")`;
+  override literalExpression(literal: Date | Literal): Code {
+    return code`new Date("${(literal instanceof Date ? literal : LiteralDecoder.decodeDateLiteral(literal).unsafeCoerce()).toISOString()}")`;
   }
 
   override toJsonExpression({

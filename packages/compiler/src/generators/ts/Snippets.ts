@@ -17,7 +17,6 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
-import { snippets_convertToArray } from "./_snippets/snippets_convertToArray.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
@@ -33,8 +32,10 @@ import { snippets_convertToLazyObjectOption } from "./_snippets/snippets_convert
 import { snippets_convertToLazyObjectSet } from "./_snippets/snippets_convertToLazyObjectSet.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
+import { snippets_convertToMutableArray } from "./_snippets/snippets_convertToMutableArray.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
+import { snippets_convertToReadonlyArray } from "./_snippets/snippets_convertToReadonlyArray.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
 import { snippets_convertToUnion } from "./_snippets/snippets_convertToUnion.js";
@@ -447,11 +448,6 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToArray(): Snippet {
-    return this.snippet(snippets_convertToArray);
-  }
-
-  @Memoize()
   get convertToBigDecimal(): Snippet {
     return this.snippet(snippets_convertToBigDecimal);
   }
@@ -527,6 +523,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get convertToMutableArray(): Snippet {
+    return this.snippet(snippets_convertToMutableArray);
+  }
+
+  @Memoize()
   get convertToNumeric(): Snippet {
     return this.snippet(snippets_convertToNumeric);
   }
@@ -534,6 +535,11 @@ export class Snippets {
   @Memoize()
   get convertToObject(): Snippet {
     return this.snippet(snippets_convertToObject);
+  }
+
+  @Memoize()
+  get convertToReadonlyArray(): Snippet {
+    return this.snippet(snippets_convertToReadonlyArray);
   }
 
   @Memoize()

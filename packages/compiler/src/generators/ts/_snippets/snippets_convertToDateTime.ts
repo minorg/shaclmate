@@ -8,7 +8,7 @@ export const snippets_convertToDateTime: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToDateTime`,
     code`\
-function ${syntheticNamePrefix}convertToDateTime(schema: ${snippets.DateSchema}, value: Date): Date {
+function ${syntheticNamePrefix}convertToDateTime(_schema: ${snippets.DateSchema}, value: Date): Date {
   return value;
 }`,
   );

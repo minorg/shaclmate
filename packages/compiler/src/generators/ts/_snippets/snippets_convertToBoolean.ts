@@ -8,7 +8,7 @@ export const snippets_convertToBoolean: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToBoolean`,
     code`\
-function ${syntheticNamePrefix}convertToBoolean<ValueT extends boolean>(schema: ${snippets.BooleanSchema}, value: ValueT): ValueT {
+function ${syntheticNamePrefix}convertToBoolean<ValueT extends boolean>(_schema: ${snippets.BooleanSchema}, value: ValueT): ValueT {
   return value;
 }`,
   );

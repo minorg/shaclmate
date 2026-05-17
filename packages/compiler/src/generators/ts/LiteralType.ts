@@ -39,13 +39,6 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in: this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {

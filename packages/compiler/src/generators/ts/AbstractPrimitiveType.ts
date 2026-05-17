@@ -1,14 +1,16 @@
-import type { NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractLiteralType } from "./AbstractLiteralType.js";
 
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
+
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:
@@ -52,6 +54,16 @@ export abstract class AbstractPrimitiveType<
     return Maybe.empty();
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in:
+        this.primitiveIn.length > 0
+          ? code`[${joinCode(this.primitiveIn.map((in_) => this.literalExpression(in_), { on: ", " }))}] as const`
+          : undefined,
+    };
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
@@ -68,6 +80,8 @@ export abstract class AbstractPrimitiveType<
   override jsonType(): AbstractLiteralType.JsonType {
     return new AbstractLiteralType.JsonType(this.name);
   }
+
+  abstract override literalExpression(literal: Literal | ValueT): Code;
 
   override toJsonExpression({
     variables,

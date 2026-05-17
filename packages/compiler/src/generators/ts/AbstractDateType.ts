@@ -1,7 +1,7 @@
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly equalsFunction =
@@ -28,18 +28,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
         sourceTypeof: "object",
       },
     ];
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map(
-              (inValue) => code`new Date(${literalOf(inValue.toISOString())})`,
-            )
-          : undefined,
-    };
   }
 
   override fromJsonExpression({

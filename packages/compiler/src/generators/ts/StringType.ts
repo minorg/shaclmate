@@ -42,16 +42,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     return `string`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map(literalOf).concat()
-          : undefined,
-    };
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractPrimitiveType<string>["jsonSchema"]>[0],
   ): Code {
@@ -65,8 +55,8 @@ export class StringType extends AbstractPrimitiveType<string> {
     }
   }
 
-  override literalExpression(literal: Literal): Code {
-    return code`${literalOf(literal.value)}`;
+  override literalExpression(literal: Literal | string): Code {
+    return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
   }
 
   override toRdfResourceValuesExpression({

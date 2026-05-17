@@ -23,13 +23,15 @@ export class OptionType<
     const itemConversionFunction = this.itemType.conversionFunction;
     return {
       code: code`${this.reusables.snippets.convertToMaybe}(${itemConversionFunction.code})`,
-      sourceTypes: itemConversionFunction.sourceTypes.concat(
+      sourceTypes: (
+        itemConversionFunction.sourceTypes as AbstractContainerType.ConversionFunction["sourceTypes"]
+      ).concat(
         {
           name: this.name,
           typeof: "object",
         },
         {
-          name: "undefined",
+          name: code`undefined`,
           typeof: "undefined",
         },
       ),

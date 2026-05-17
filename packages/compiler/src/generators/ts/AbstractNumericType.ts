@@ -36,9 +36,12 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get name(): string {
+  override get name(): Code | string {
     if (this.primitiveIn.length > 0) {
-      return `${this.primitiveIn.map((value) => this.literalOf(value)).join(" | ")}`;
+      return code`${joinCode(
+        this.primitiveIn.map((value) => this.literalExpression(value)),
+        { on: " | " },
+      )}`;
     }
     return this.typeofs[0];
   }
@@ -53,16 +56,6 @@ export abstract class AbstractNumericType<
     return code`${this.reusables.snippets.numericSparqlWherePatterns}<${this.typeofs[0]}>`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map((_) => code`${this.literalOf(_)}`)
-          : undefined,
-    };
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractPrimitiveType<ValueT>["jsonSchema"]>[0],
   ): Code {
@@ -70,12 +63,12 @@ export abstract class AbstractNumericType<
       case 0:
         return code`${this.reusables.imports.z}.${this.typeofs[0]}()`;
       case 1:
-        return code`${this.reusables.imports.z}.literal(${this.literalOf(this.primitiveIn[0])})`;
+        return code`${this.reusables.imports.z}.literal(${this.literalExpression(this.primitiveIn[0])})`;
       default:
         return code`${this.reusables.imports.z}.union([${joinCode(
           this.primitiveIn.map(
             (value) =>
-              code`${this.reusables.imports.z}.literal(${this.literalOf(value)})`,
+              code`${this.reusables.imports.z}.literal(${this.literalExpression(value)})`,
           ),
           { on: "," },
         )}])`;
@@ -112,8 +105,6 @@ export abstract class AbstractNumericType<
       value: Code;
     };
   }): Code;
-
-  protected abstract literalOf(value: ValueT): string;
 }
 
 export namespace AbstractNumericType {

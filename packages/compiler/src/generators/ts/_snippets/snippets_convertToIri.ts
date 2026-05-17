@@ -9,7 +9,7 @@ export const snippets_convertToIri: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIri`,
     code`\
-function ${syntheticNamePrefix}convertToIri<IriT extends string = string>(schema: ${snippets.IriSchema}, value: IriT | ${imports.NamedNode}<IriT>): ${imports.NamedNode}<IriT> {
+function ${syntheticNamePrefix}convertToIri<IriT extends string = string>(_schema: ${snippets.IriSchema}, value: IriT | ${imports.NamedNode}<IriT>): ${imports.NamedNode}<IriT> {
   switch (typeof value) {
     case "object":
       return value;

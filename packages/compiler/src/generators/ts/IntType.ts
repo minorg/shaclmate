@@ -16,8 +16,8 @@ export class IntType extends AbstractNumericType<number> {
     );
   }
 
-  override literalExpression(literal: Literal): Code {
-    return code`${LiteralDecoder.decodeIntLiteral(literal).unsafeCoerce()}`;
+  override literalExpression(literal: Literal | number): Code {
+    return code`${typeof literal === "number" ? literal : LiteralDecoder.decodeIntLiteral(literal).unsafeCoerce()}`;
   }
 
   protected override fromRdfResourceValueExpression({
@@ -26,9 +26,5 @@ export class IntType extends AbstractNumericType<number> {
     AbstractNumericType<number>["fromRdfResourceValueExpression"]
   >[0]): Code {
     return code`${variables.value}.toInt(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})`;
-  }
-
-  protected override literalOf(value: number): string {
-    return value.toString();
   }
 }

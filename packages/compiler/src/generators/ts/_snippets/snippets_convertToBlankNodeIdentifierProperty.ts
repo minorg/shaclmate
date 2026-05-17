@@ -12,11 +12,13 @@ function ${syntheticNamePrefix}convertToBlankNodeIdentifierProperty(identifier: 
   switch (typeof identifier) {
     case "function":
       return identifier;
-    case "object":
-      return () => identifier;
+    case "object": {
+      const captureIdentifier = identifier;
+      return () => captureIdentifier;
+    }
     case "undefined": {
-      identifier = ${imports.dataFactory}.blankNode();
-      return identifier;
+      const captureIdentifier = ${imports.dataFactory}.blankNode();
+      return () => captureIdentifier;
     }
   }
 }`,
