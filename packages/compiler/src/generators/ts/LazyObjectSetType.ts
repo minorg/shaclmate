@@ -22,6 +22,23 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override readonly kind = "LazyObjectSetType";
 
   @Memoize()
+  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToLazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
+
+  @Memoize()
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
