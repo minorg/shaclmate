@@ -37,6 +37,7 @@ import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric
 import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
+import { snippets_convertToUnion } from "./_snippets/snippets_convertToUnion.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
@@ -543,6 +544,11 @@ export class Snippets {
   @Memoize()
   get convertToTerm(): Snippet {
     return this.snippet(snippets_convertToTerm);
+  }
+
+  @Memoize()
+  get convertToUnion(): Snippet {
+    return this.snippet(snippets_convertToUnion);
   }
 
   @Memoize()
