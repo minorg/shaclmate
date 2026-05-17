@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -12,6 +13,23 @@ export class LazyObjectType extends AbstractLazyObjectType<
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
   override readonly kind = "LazyObjectType";
+
+  @Memoize()
+  override get conversionFunction(): AbstractType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
 
   override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();

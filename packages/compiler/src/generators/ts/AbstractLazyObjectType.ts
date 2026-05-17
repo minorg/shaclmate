@@ -194,6 +194,37 @@ export abstract class AbstractLazyObjectType<
     );
     return code`switch (${variables.resolvedObjectUnion}.${resolvedNamedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
+
+  protected resolveToPartialFunction<
+    ObjectTypeT extends AbstractLazyObjectType.ObjectTypeConstraint,
+  >({
+    partialType,
+    resolveType,
+  }: {
+    partialType: ObjectTypeT;
+    resolveType: ObjectTypeT;
+  }): Code {
+    if (partialType.kind === "NamedObjectType") {
+      return code`${partialType.name}.create`;
+    }
+
+    invariant(partialType.kind === "NamedObjectUnionType");
+    invariant(resolveType.kind === "NamedObjectUnionType");
+
+    invariant(partialType.members.length === resolveType.members.length);
+
+    const caseBlocks = resolveType.members.map(
+      ({ discriminantValues }, memberI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.create(resolved);`;
+      },
+    );
+
+    caseBlocks.push(
+      code`default: resolved satisfies never; throw new Error("unrecognized type");`,
+    );
+
+    return code`((resolved: ${resolveType.name}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
+  }
 }
 
 export namespace AbstractLazyObjectType {
