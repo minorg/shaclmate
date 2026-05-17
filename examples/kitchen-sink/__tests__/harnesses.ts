@@ -1,4 +1,5 @@
 import dataFactory from "@rdfx/data-factory";
+import { LiteralFactory } from "@rdfx/literal";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
@@ -6,6 +7,7 @@ import { NonEmptyList } from "purify-ts";
 import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
+const literalFactory = new LiteralFactory({ dataFactory });
 
 const jsPrimitiveValues = [true, 1, "test"];
 
@@ -121,12 +123,12 @@ export const harnesses = {
       convertibleLiteralProperty: 1,
       convertibleLiteralOptionProperty: true,
       convertibleLiteralSetProperty: ["test"],
-      convertibleTermOptionProperty: 1,
-      convertibleTermProperty: new Date(1523268000000),
+      convertibleTermOptionProperty: literalFactory.number(1),
+      convertibleTermProperty: literalFactory.date(new Date(1523268000000)),
       convertibleTermNonEmptySetProperty: NonEmptyList([
         dataFactory.blankNode(),
       ]),
-      convertibleTermSetProperty: [true],
+      convertibleTermSetProperty: [literalFactory.boolean(true)],
     }),
     kitchenSink.ConvertibleTypeProperties,
   ),

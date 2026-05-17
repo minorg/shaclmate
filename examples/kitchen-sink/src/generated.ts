@@ -28471,7 +28471,7 @@ export namespace LazyProperties {
       | (() => LazyProperties.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
+    readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectOption<
           LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
           $DefaultPartial,
@@ -28479,7 +28479,7 @@ export namespace LazyProperties {
         >
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
       | LazilyResolvedBlankNodeOrIriIdentifier;
-    readonly optionalLazyToResolvedIriIdentifierProperty:
+    readonly optionalLazyToResolvedIriIdentifierProperty?:
       | $LazyObjectOption<
           LazilyResolvedIriIdentifier.Identifier,
           $NamedDefaultPartial,
@@ -28487,7 +28487,7 @@ export namespace LazyProperties {
         >
       | Maybe<LazilyResolvedIriIdentifier>
       | LazilyResolvedIriIdentifier;
-    readonly optionalLazyToResolvedUnionProperty:
+    readonly optionalLazyToResolvedUnionProperty?:
       | $LazyObjectOption<
           LazilyResolvedUnion.Identifier,
           $DefaultPartial,
@@ -28495,7 +28495,7 @@ export namespace LazyProperties {
         >
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
-    readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+    readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectOption<
           LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
           Partial,
@@ -28503,7 +28503,7 @@ export namespace LazyProperties {
         >
       | Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
       | LazilyResolvedBlankNodeOrIriIdentifier;
-    readonly optionalPartialToResolvedUnionProperty:
+    readonly optionalPartialToResolvedUnionProperty?:
       | $LazyObjectOption<
           LazilyResolvedUnion.Identifier,
           Partial,
@@ -28511,7 +28511,7 @@ export namespace LazyProperties {
         >
       | Maybe<LazilyResolvedUnion>
       | LazilyResolvedUnion;
-    readonly optionalPartialUnionToResolvedUnionProperty:
+    readonly optionalPartialUnionToResolvedUnionProperty?:
       | $LazyObjectOption<
           LazilyResolvedUnion.Identifier,
           PartialUnion,
@@ -28533,14 +28533,14 @@ export namespace LazyProperties {
           LazilyResolvedBlankNodeOrIriIdentifier
         >
       | LazilyResolvedBlankNodeOrIriIdentifier;
-    readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty:
+    readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >
       | readonly LazilyResolvedBlankNodeOrIriIdentifier[];
-    readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty:
+    readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
           Partial,

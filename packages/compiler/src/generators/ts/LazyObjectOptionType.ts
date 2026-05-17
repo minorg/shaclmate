@@ -38,6 +38,10 @@ export class LazyObjectOptionType extends Super {
           name: this.resolveType.itemType.name,
           typeof: "object",
         },
+        {
+          name: "undefined",
+          typeof: "undefined",
+        },
       ],
     };
   }

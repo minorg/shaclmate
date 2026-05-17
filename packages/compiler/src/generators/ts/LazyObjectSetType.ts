@@ -34,6 +34,10 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
           name: this.resolveType.name,
           typeof: "object",
         },
+        {
+          name: "undefined",
+          typeof: "undefined",
+        },
       ],
     };
   }
