@@ -8,15 +8,21 @@ export const snippets_convertToIdentifierProperty: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifierProperty(identifier: (() => ${imports.BlankNode} | ${imports.NamedNode}) | ${imports.BlankNode} | ${imports.NamedNode} | undefined): () => ${imports.BlankNode} | ${imports.NamedNode} {
+function ${syntheticNamePrefix}convertToIdentifierProperty(identifier: (() => ${imports.BlankNode} | ${imports.NamedNode}) | ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): () => ${imports.BlankNode} | ${imports.NamedNode} {
   switch (typeof identifier) {
     case "function":
       return identifier;
-    case "object":
-      return () => identifier;
+    case "object": {
+      const captureIdentifier = identifier;
+      return () => captureIdentifier;
+    }
+    case "string": {
+      const captureIdentifier = ${imports.dataFactory}.namedNode(identifier);
+      return () => captureIdentifier;
+    }
     case "undefined": {
-      identifier = ${imports.dataFactory}.blankNode();
-      return () => identifier;
+      const captureIdentifier = ${imports.dataFactory}.blankNode();
+      return () => captureIdentifier;
     }
   }
 }`,

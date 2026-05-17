@@ -45,12 +45,12 @@ export abstract class AbstractCollectionType<
     const itemConversionFunction = this.itemType.conversionFunction;
     const sourceTypes: AbstractType.ConversionFunction["sourceTypes"] = [
       {
-        name: `readonly (${joinCode(
+        name: code`readonly (${joinCode(
           itemConversionFunction.sourceTypes.map(
             (itemSourceType) => code`${itemSourceType.name}`,
           ),
           { on: " | " },
-        )})`,
+        )})[]`,
         typeof: "object",
       },
     ];

@@ -4,31 +4,30 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 export function NamedObjectType_toStringFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
-  const propertiesToStringRecordProperties: Code[] = [];
+  let propertiesToStringInitializers: Code[] = [];
   if (this.parentObjectTypes.length > 0) {
     for (const parentObjectType of this.parentObjectTypes) {
-      propertiesToStringRecordProperties.push(
+      propertiesToStringInitializers.push(
         code`...${parentObjectType.name}._propertiesToStrings(${this.thisVariable})`,
       );
     }
   }
 
-  for (const property of this.properties) {
-    property
-      .toStringInitializer({
-        variables: {
-          value: property.accessExpression({
-            variables: { object: this.thisVariable },
-          }),
-        },
-      })
-      .ifJust((propertyToStringExpression) => {
-        propertiesToStringRecordProperties.push(
-          code`${literalOf(property.name)}: ${propertyToStringExpression}`,
-        );
-      });
-  }
-  const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(propertiesToStringRecordProperties, { on: "," })}})`;
+  propertiesToStringInitializers = propertiesToStringInitializers.concat(
+    this.properties.flatMap((property) =>
+      property
+        .toStringInitializer({
+          variables: {
+            value: property.accessExpression({
+              variables: { object: this.thisVariable },
+            }),
+          },
+        })
+        .toList(),
+    ),
+  );
+
+  const propertiesToStringsReturnExpression = code`${this.reusables.snippets.compactRecord}({${joinCode(propertiesToStringInitializers, { on: "," })}})`;
   const toStringReturnExpression = (propertiesToStrings: Code) =>
     code`\`${this.name}(\${JSON.stringify(${propertiesToStrings})})\``;
 

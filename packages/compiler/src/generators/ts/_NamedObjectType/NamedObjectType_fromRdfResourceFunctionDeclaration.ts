@@ -82,7 +82,7 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
     );
   if (Object.keys(propertyFromRdfResourceValuesInitializers).length > 0) {
     chains.push({
-      expression: code`${this.reusables.snippets.sequenceRecord}({ ${propertyFromRdfResourceValuesInitializers} })`,
+      expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyFromRdfResourceValuesInitializers, { on: ", " })} })`,
       variable: "properties",
     });
     partials.push("properties");

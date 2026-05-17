@@ -114,6 +114,12 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $minCount?: number;
 };
 
+interface $CollectionSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "List" | "Set";
+  readonly minCount?: number;
+}
+
 /**
  * Remove undefined values from a record.
  */
@@ -129,6 +135,89 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
     },
     {} as Record<KeyT, ValueT>,
   );
+}
+
+function $convertToArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+) {
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    value: readonly ItemSourceT[] | undefined,
+  ): readonly ItemTargetT[] => {
+    if (typeof value === "undefined") {
+      return [];
+    }
+    return value.map((item) => convertToItem(schema.item(), item));
+  };
+}
+
+function $convertToIdentifierProperty(
+  identifier:
+    | (() => BlankNode | NamedNode)
+    | BlankNode
+    | NamedNode
+    | string
+    | undefined,
+): () => BlankNode | NamedNode {
+  switch (typeof identifier) {
+    case "function":
+      return identifier;
+    case "object": {
+      const captureIdentifier = identifier;
+      return () => captureIdentifier;
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode(identifier);
+      return () => captureIdentifier;
+    }
+    case "undefined": {
+      const captureIdentifier = dataFactory.blankNode();
+      return () => captureIdentifier;
+    }
+  }
+}
+
+function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
+  ): Maybe<ItemTargetT> => {
+    switch (typeof value) {
+      case "object": {
+        if (Maybe.isMaybe(value)) {
+          return value as Maybe<ItemTargetT>;
+        }
+        break;
+      }
+      case "undefined":
+        return Maybe.empty();
+    }
+
+    return Maybe.of(convertToItem(schema.item(), value));
+  };
+}
+
+function $convertToNumeric<ValueT extends bigint | number>(
+  _schema: $NumericSchema<ValueT>,
+  value: ValueT,
+): ValueT {
+  return value;
+}
+
+function $convertToObject<ValueT extends object>(
+  _schema: unknown,
+  value: ValueT,
+): ValueT {
+  return value;
+}
+
+function $convertToString<ValueT extends string>(
+  _schema: $StringSchema,
+  value: ValueT,
+): ValueT {
+  return value;
 }
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
@@ -454,12 +543,22 @@ function $maybeEquals<T>(
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
+
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
+}
+
+interface $NumericSchema<T> {
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -651,6 +750,11 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
+interface $StringSchema {
+  readonly in?: readonly string[];
+  readonly kind: "String";
+}
+
 export type $ToRdfResourceFunction<
   ObjectT,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
@@ -746,23 +850,14 @@ export namespace NestedNodeShape {
       | string;
     readonly requiredStringProperty: string;
   }): NestedNodeShape {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NestedNodeShape.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NestedNodeShape" as const;
-    const requiredStringProperty = parameters.requiredStringProperty;
-    const $object = { $identifier, $type, requiredStringProperty };
+    const $object = {
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $type: "NestedNodeShape" as const,
+      requiredStringProperty: $convertToString<string>(
+        schema.properties.requiredStringProperty.type(),
+        parameters.requiredStringProperty,
+      ),
+    };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -1078,59 +1173,38 @@ export namespace FormNodeShape {
       | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nestedObjectProperty: NestedNodeShape;
-    readonly nonEmptyStringSetProperty: NonEmptyList<string>;
-    readonly optionalStringProperty?: Maybe<string> | string;
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntegerProperty: number;
     readonly requiredStringProperty: string;
   }): FormNodeShape {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => FormNodeShape.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "FormNodeShape" as const;
-    let emptyStringSetProperty: readonly string[];
-    if (parameters.emptyStringSetProperty === undefined) {
-      emptyStringSetProperty = [];
-    } else if (typeof parameters.emptyStringSetProperty === "object") {
-      emptyStringSetProperty = parameters.emptyStringSetProperty;
-    } else {
-      emptyStringSetProperty =
-        parameters.emptyStringSetProperty satisfies never;
-    }
-    const nestedObjectProperty = parameters.nestedObjectProperty;
-    const nonEmptyStringSetProperty = parameters.nonEmptyStringSetProperty;
-    let optionalStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
-      optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
-      optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (parameters.optionalStringProperty === undefined) {
-      optionalStringProperty = Maybe.empty();
-    } else {
-      optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
-    }
-    const requiredIntegerProperty = parameters.requiredIntegerProperty;
-    const requiredStringProperty = parameters.requiredStringProperty;
     const $object = {
-      $identifier,
-      $type,
-      emptyStringSetProperty,
-      nestedObjectProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredIntegerProperty,
-      requiredStringProperty,
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $type: "FormNodeShape" as const,
+      emptyStringSetProperty: $convertToArray($convertToString<string>)(
+        schema.properties.emptyStringSetProperty.type(),
+        parameters.emptyStringSetProperty,
+      ),
+      nestedObjectProperty: $convertToObject(
+        schema.properties.nestedObjectProperty.type(),
+        parameters.nestedObjectProperty,
+      ),
+      nonEmptyStringSetProperty: $convertToArray($convertToString<string>)(
+        schema.properties.nonEmptyStringSetProperty.type(),
+        parameters.nonEmptyStringSetProperty,
+      ),
+      optionalStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.optionalStringProperty.type(),
+        parameters.optionalStringProperty,
+      ),
+      requiredIntegerProperty: $convertToNumeric<number>(
+        schema.properties.requiredIntegerProperty.type(),
+        parameters.requiredIntegerProperty,
+      ),
+      requiredStringProperty: $convertToString<string>(
+        schema.properties.requiredStringProperty.type(),
+        parameters.requiredStringProperty,
+      ),
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
@@ -1412,7 +1486,7 @@ export namespace FormNodeShape {
     }
     if (
       filter.requiredIntegerProperty !== undefined &&
-      !$filterNumeric<number>(
+      !$filterNumeric<object>(
         filter.requiredIntegerProperty,
         value.requiredIntegerProperty,
       )
@@ -1437,7 +1511,7 @@ export namespace FormNodeShape {
     readonly nestedObjectProperty?: NestedNodeShape.Filter;
     readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredIntegerProperty?: $NumericFilter<number>;
+    readonly requiredIntegerProperty?: $NumericFilter<object>;
     readonly requiredStringProperty?: $StringFilter;
   };
 

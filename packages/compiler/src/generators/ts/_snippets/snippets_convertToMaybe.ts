@@ -22,7 +22,7 @@ function ${syntheticNamePrefix}convertToMaybe<ItemSchemaT, ItemSourceT, ItemTarg
         return ${imports.Maybe}.empty();
     }
 
-    return ${imports.Maybe}.of(convertToItem(value));
+    return ${imports.Maybe}.of(convertToItem(schema.item(), value));
   }
 }`,
   );

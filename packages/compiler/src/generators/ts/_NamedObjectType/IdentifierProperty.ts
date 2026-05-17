@@ -153,9 +153,9 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      this.type.fromJsonExpression({
+      code`${this.name}: ${this.type.fromJsonExpression({
         variables: { value: variables.jsonObject },
-      }),
+      })}`,
     );
   }
 
@@ -165,7 +165,7 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.fromRdfResourceValuesExpression({
+      code`${this.name}: ${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
           propertyPath: this.rdfjsTermExpression(rdf.subject),

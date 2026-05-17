@@ -50,7 +50,7 @@ export function NamedObjectType_createFunctionDeclaration(
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of(code`\
 export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${this.name} {
-  const ${syntheticNamePrefix}object = { ${joinCode(initializers, { on: "," })};
+  const ${syntheticNamePrefix}object = { ${joinCode(initializers, { on: "," })} };
   if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
     (${syntheticNamePrefix}object as any).toString = ${syntheticNamePrefix}toString;
   }

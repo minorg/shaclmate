@@ -8,7 +8,7 @@ export const snippets_convertToNumeric: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToNumeric`,
     code`\
-function ${syntheticNamePrefix}convertToNumeric<ValueT extends bigint | number>(schema: ${snippets.NumericSchema}<ValueT>, value: ValueT): ValueT {
+function ${syntheticNamePrefix}convertToNumeric<ValueT extends bigint | number>(_schema: ${snippets.NumericSchema}<ValueT>, value: ValueT): ValueT {
   return value;
 }`,
   );

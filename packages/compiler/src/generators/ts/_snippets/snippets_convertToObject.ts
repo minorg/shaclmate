@@ -7,7 +7,7 @@ export const snippets_convertToObject: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToObject`,
     code`\
-function ${syntheticNamePrefix}convertToObject<ValueT extends object>(schema: unknown, value: ValueT): ValueT {
+function ${syntheticNamePrefix}convertToObject<ValueT extends object>(_schema: unknown, value: ValueT): ValueT {
   return value;
 }`,
   );
