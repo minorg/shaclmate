@@ -29,6 +29,7 @@ import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_conve
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
+import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
 import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
@@ -499,6 +500,11 @@ export class Snippets {
   @Memoize()
   get convertToLiteral(): Snippet {
     return this.snippet(snippets_convertToLiteral);
+  }
+
+  @Memoize()
+  get convertToMaybe(): Snippet {
+    return this.snippet(snippets_convertToMaybe);
   }
 
   @Memoize()

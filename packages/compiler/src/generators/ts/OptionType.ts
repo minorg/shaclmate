@@ -19,6 +19,24 @@ export class OptionType<
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
+  override get conversionFunction(): AbstractContainerType.ConversionFunction {
+    const itemConversionFunction = this.itemType.conversionFunction;
+    return {
+      code: code`${this.reusables.snippets.convertToMaybe}(${itemConversionFunction.code})`,
+      sourceTypes: itemConversionFunction.sourceTypes.concat(
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: "undefined",
+          typeof: "undefined",
+        },
+      ),
+    };
+  }
+
+  @Memoize()
   override get conversions(): readonly AbstractContainerType.Conversion[] {
     const conversions: AbstractContainerType.Conversion[] = [];
     conversions.push({
