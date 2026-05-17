@@ -1,3 +1,4 @@
+import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { NonEmptyList } from "purify-ts";
@@ -63,6 +64,10 @@ export class StringType extends AbstractPrimitiveType<string> {
       default:
         return code`${this.reusables.imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
     }
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`${literalOf(literal.value)}`;
   }
 
   override toRdfResourceValuesExpression({

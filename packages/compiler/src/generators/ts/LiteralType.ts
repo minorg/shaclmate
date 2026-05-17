@@ -1,3 +1,4 @@
+import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
@@ -17,7 +18,7 @@ export class LiteralType extends AbstractLiteralType {
           typeof: typeof_,
         })),
         {
-          name: code`Date`,
+          name: "Date",
           typeof: "object",
         },
         {
@@ -76,6 +77,10 @@ export class LiteralType extends AbstractLiteralType {
     return new AbstractLiteralType.JsonType(
       code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return this.rdfjsTermExpression(literal);
   }
 
   override toJsonExpression({

@@ -1,5 +1,9 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractNumericType } from "./AbstractNumericType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -13,6 +17,10 @@ export class FloatType extends AbstractNumericType<number> {
       code`${this.reusables.imports.GraphQLFloat}`,
       this.reusables,
     );
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`${LiteralDecoder.decodeFloatLiteral(literal).unsafeCoerce()}`;
   }
 
   protected override fromRdfResourceValueExpression({

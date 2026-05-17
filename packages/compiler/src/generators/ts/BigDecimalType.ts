@@ -1,9 +1,12 @@
+import type { Literal } from "@rdfjs/types";
+
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
+  override readonly name = code`${this.reusables.imports.BigDecimal}`;
   override readonly conversionFunction: AbstractLiteralType.ConversionFunction =
     {
       code: code`${this.reusables.snippets.convertToBigDecimal}`,
@@ -21,7 +24,6 @@ export class BigDecimalType extends AbstractLiteralType {
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
   override readonly kind = "BigDecimalType";
-  override readonly name = code`${this.reusables.imports.BigDecimal}`;
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
   override readonly valueSparqlWherePatternsFunction =
@@ -92,6 +94,10 @@ export class BigDecimalType extends AbstractLiteralType {
   @Memoize()
   override jsonType(): AbstractLiteralType.JsonType {
     return new AbstractLiteralType.JsonType("string");
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`new ${this.reusables.imports.BigDecimal}(${literalOf(literal.value)})`;
   }
 
   override toJsonExpression({

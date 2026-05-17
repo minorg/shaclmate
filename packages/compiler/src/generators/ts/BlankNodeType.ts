@@ -14,7 +14,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
           typeof: "object",
         },
         {
-          name: code`undefined`,
+          name: "undefined",
           typeof: "undefined",
         },
       ],

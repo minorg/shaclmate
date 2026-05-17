@@ -1,3 +1,5 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractNumericType } from "./AbstractNumericType.js";
@@ -13,6 +15,10 @@ export class IntType extends AbstractNumericType<number> {
       code`${this.reusables.imports.GraphQLInt}`,
       this.reusables,
     );
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`${LiteralDecoder.decodeIntLiteral(literal).unsafeCoerce()}`;
   }
 
   protected override fromRdfResourceValueExpression({

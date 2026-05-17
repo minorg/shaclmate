@@ -1,21 +1,15 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigIntType";
   override readonly typeofs = NonEmptyList(["bigint" as const]);
-
-  @Memoize()
-  override get graphqlType() {
-    return new AbstractNumericType.GraphqlType(
-      code`${this.reusables.imports.GraphQLBigInt}`,
-      this.reusables,
-    );
-  }
 
   override get conversions(): readonly AbstractNumericType.Conversion[] {
     if (this.in_.length > 0) {
@@ -28,6 +22,14 @@ export class BigIntType extends AbstractNumericType<bigint> {
       sourceTypeName: "number",
       sourceTypeof: "number",
     });
+  }
+
+  @Memoize()
+  override get graphqlType() {
+    return new AbstractNumericType.GraphqlType(
+      code`${this.reusables.imports.GraphQLBigInt}`,
+      this.reusables,
+    );
   }
 
   override fromJsonExpression({
@@ -59,6 +61,10 @@ export class BigIntType extends AbstractNumericType<bigint> {
   @Memoize()
   override jsonType(): AbstractNumericType.JsonType {
     return new AbstractNumericType.JsonType(code`string`);
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`${LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
   }
 
   override toJsonExpression({

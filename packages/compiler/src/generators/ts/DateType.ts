@@ -1,3 +1,6 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -7,7 +10,7 @@ export class DateType extends AbstractDateType {
     code: code`${this.reusables.snippets.convertToDate}`,
     sourceTypes: [
       {
-        name: code`Date`,
+        name: "Date",
         typeof: "object",
       },
     ],
@@ -23,6 +26,10 @@ export class DateType extends AbstractDateType {
     _parameters: Parameters<DateTimeType["jsonSchema"]>[0],
   ): Code {
     return code`${this.reusables.imports.z}.iso.date()`;
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`new Date("${LiteralDecoder.decodeDateLiteral(literal).unsafeCoerce().toISOString()}")`;
   }
 
   override toJsonExpression({

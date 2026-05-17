@@ -1,3 +1,6 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
@@ -54,6 +57,10 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       return code`${this.reusables.imports.z}.literal(${this.primitiveIn[0]})`;
     }
     return code`${this.reusables.imports.z}.boolean()`;
+  }
+
+  override literalExpression(literal: Literal): Code {
+    return code`${LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }
 
   override toRdfResourceValuesExpression({

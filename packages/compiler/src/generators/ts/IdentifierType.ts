@@ -21,11 +21,11 @@ export class IdentifierType extends AbstractIdentifierType<
           typeof: "object",
         },
         {
-          name: code`string`,
+          name: "string",
           typeof: "string",
         },
         {
-          name: code`undefined`,
+          name: "undefined",
           typeof: "undefined",
         },
       ],

@@ -1,14 +1,15 @@
 import type { Literal } from "@rdfjs/types";
-import { AbstractTermType } from "./AbstractTermType.js";
 
-import { code, literalOf } from "./ts-poet-wrapper.js";
+import { AbstractTermType } from "./AbstractTermType.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
   Literal
 > {
-  override readonly nodeKinds = nodeKinds;
   protected readonly languageIn: readonly string[];
+
+  override readonly nodeKinds = nodeKinds;
 
   constructor({
     languageIn,
@@ -31,6 +32,13 @@ export abstract class AbstractLiteralType extends AbstractTermType<
         this.languageIn.length > 0 ? this.languageIn.map(literalOf) : undefined,
     };
   }
+
+  /**
+   * An expression that converts a compile-time RDF/JS Literal into a runtime TypeScript literal.
+   *
+   * For example, a string would be converted to "thestring".
+   */
+  abstract literalExpression(literal: Literal): Code;
 
   protected override fromRdfExpressionChain({
     variables,
