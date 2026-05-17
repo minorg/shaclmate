@@ -30,6 +30,7 @@ import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
 import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
+import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
 import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
 import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
@@ -503,6 +504,11 @@ export class Snippets {
   @Memoize()
   get convertToNumeric(): Snippet {
     return this.snippet(snippets_convertToNumeric);
+  }
+
+  @Memoize()
+  get convertToObject(): Snippet {
+    return this.snippet(snippets_convertToObject);
   }
 
   @Memoize()

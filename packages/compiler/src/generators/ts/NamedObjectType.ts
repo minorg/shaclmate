@@ -125,6 +125,19 @@ export class NamedObjectType extends AbstractType {
   }
 
   @Memoize()
+  override get conversionFunction(): AbstractType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToObject}`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
+
+  @Memoize()
   override get conversions(): readonly AbstractType.Conversion[] {
     return [
       {
