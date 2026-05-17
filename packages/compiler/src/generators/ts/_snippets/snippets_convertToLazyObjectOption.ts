@@ -10,7 +10,7 @@ export const snippets_convertToLazyObjectOption: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazyObjectOption`,
     code`\
 function ${syntheticNamePrefix}convertToLazyObjectOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
-  return (schema: unknown, value: ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ${imports.Maybe}<ResolvedObjectT> | ResolvedObjectT | undefined): ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> {
+  return (_schema: unknown, value: ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ${imports.Maybe}<ResolvedObjectT> | ResolvedObjectT | undefined): ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
     switch (typeof value) {
       case "object": {
         if (value instanceof ${snippets.LazyObjectOption}) {
@@ -18,21 +18,21 @@ function ${syntheticNamePrefix}convertToLazyObjectOption<ObjectIdentifierT exten
         }
 
         if (${imports.Maybe}.isMaybe(value)) {
-          return new ${snippets.LazyObjectOption}({
+          return new ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
             partial: value.map(resolvedToPartial),
-            resolver: async () => ${imports.Right}(value)
+            resolver: async () => ${imports.Right}(value.unsafeCoerce())
           });
         }
 
-        return new ${snippets.LazyObjectOption}({
+        return new ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
           partial: ${imports.Maybe}.of(resolvedToPartial(value)),
-          resolver: async () => ${imports.Right}(${imports.Maybe}.of(value))
+          resolver: async () => ${imports.Right}(value)
         });
       }
       case "undefined":
         return new ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
           partial: ${imports.Maybe}.empty(),
-          resolver: async () => ${imports.Right}(${imports.Maybe}.empty())
+          resolver: async () => { throw new Error("should never be called"); }
         });
     }
   };

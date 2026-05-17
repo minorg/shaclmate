@@ -140,7 +140,14 @@ export class IdentifierProperty extends AbstractProperty<
       if (nodeKinds.has("BlankNode")) {
         conversionFunction = code`${this.reusables.snippets.convertToBlankNodeIdentifierProperty}`;
       } else {
-        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}<${this.type.name}>`;
+        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}<${
+          this.type.in_.length > 0
+            ? joinCode(
+                this.type.in_.map((in_) => code`${literalOf(in_.value)}`),
+                { on: " | " },
+              )
+            : "string"
+        }>`;
       }
     }
 

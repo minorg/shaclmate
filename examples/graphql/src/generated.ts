@@ -72,6 +72,187 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
+function $convertToIdentifierProperty(
+  identifier:
+    | (() => BlankNode | NamedNode)
+    | BlankNode
+    | NamedNode
+    | string
+    | undefined,
+): () => BlankNode | NamedNode {
+  switch (typeof identifier) {
+    case "function":
+      return identifier;
+    case "object": {
+      const captureIdentifier = identifier;
+      return () => captureIdentifier;
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode(identifier);
+      return () => captureIdentifier;
+    }
+    case "undefined": {
+      const captureIdentifier = dataFactory.blankNode();
+      return () => captureIdentifier;
+    }
+  }
+}
+
+function $convertToIriIdentifierProperty<IriT extends string = string>(
+  identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
+): () => NamedNode<IriT> {
+  switch (typeof identifier) {
+    case "function":
+      return identifier;
+    case "object": {
+      const captureIdentifier = identifier;
+      return () => captureIdentifier;
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
+      return () => captureIdentifier;
+    }
+  }
+}
+
+function $convertToLazyObjectOption<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+  return (
+    _schema: unknown,
+    value:
+      | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+      | Maybe<ResolvedObjectT>
+      | ResolvedObjectT
+      | undefined,
+  ): $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
+    switch (typeof value) {
+      case "object": {
+        if (value instanceof $LazyObjectOption) {
+          return value;
+        }
+
+        if (Maybe.isMaybe(value)) {
+          return new $LazyObjectOption<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partial: value.map(resolvedToPartial),
+            resolver: async () => Right(value.unsafeCoerce()),
+          });
+        }
+
+        return new $LazyObjectOption<
+          ObjectIdentifierT,
+          PartialObjectT,
+          ResolvedObjectT
+        >({
+          partial: Maybe.of(resolvedToPartial(value)),
+          resolver: async () => Right(value),
+        });
+      }
+      case "undefined":
+        return new $LazyObjectOption<
+          ObjectIdentifierT,
+          PartialObjectT,
+          ResolvedObjectT
+        >({
+          partial: Maybe.empty(),
+          resolver: async () => {
+            throw new Error("should never be called");
+          },
+        });
+    }
+  };
+}
+
+function $convertToLazyObjectSet<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+  return (
+    _schema: unknown,
+    value:
+      | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+      | readonly ResolvedObjectT[]
+      | undefined,
+  ): $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
+    switch (typeof value) {
+      case "object": {
+        if (value instanceof $LazyObjectSet) {
+          return value;
+        }
+
+        const captureValue = value;
+        return new $LazyObjectSet<
+          ObjectIdentifierT,
+          PartialObjectT,
+          ResolvedObjectT
+        >({
+          partials: value.map(resolvedToPartial),
+          resolver: async () => Right(captureValue),
+        });
+      }
+      case "undefined":
+        return new $LazyObjectSet<
+          ObjectIdentifierT,
+          PartialObjectT,
+          ResolvedObjectT
+        >({
+          partials: [],
+          resolver: async () => Right([]),
+        });
+    }
+  };
+}
+
+function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
+  ): Maybe<ItemTargetT> => {
+    switch (typeof value) {
+      case "object": {
+        if (Maybe.isMaybe(value)) {
+          return value as Maybe<ItemTargetT>;
+        }
+        break;
+      }
+      case "undefined":
+        return Maybe.empty();
+    }
+
+    return Maybe.of(convertToItem(schema.item(), value));
+  };
+}
+
+function $convertToNumeric<ValueT extends bigint | number>(
+  _schema: $NumericSchema<ValueT>,
+  value: ValueT,
+): ValueT {
+  return value;
+}
+
+function $convertToObject<ValueT extends object>(
+  _schema: unknown,
+  value: ValueT,
+): ValueT {
+  return value;
+}
+
+function $convertToString<ValueT extends string>(
+  _schema: $StringSchema,
+  value: ValueT,
+): ValueT {
+  return value;
+}
+
 function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
 ) {
@@ -391,12 +572,22 @@ const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
 
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
+
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
+}
+
+interface $NumericSchema<T> {
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -575,6 +766,11 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
+interface $StringSchema {
+  readonly in?: readonly string[];
+  readonly kind: "String";
+}
+
 export type $ToRdfResourceFunction<
   ObjectT,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
@@ -665,22 +861,10 @@ export namespace $DefaultPartial {
       | (BlankNode | NamedNode)
       | string;
   }): $DefaultPartial {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => $DefaultPartial.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "$DefaultPartial" as const;
-    const $object = { $identifier, $type };
+    const $object = {
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $type: "$DefaultPartial" as const,
+    };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -814,35 +998,16 @@ export namespace UnionMember2 {
       | (() => UnionMember2.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly optionalStringProperty?: Maybe<string> | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
   }): UnionMember2 {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => UnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionMember2" as const;
-    let optionalStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.optionalStringProperty)) {
-      optionalStringProperty = parameters?.optionalStringProperty;
-    } else if (typeof parameters?.optionalStringProperty === "string") {
-      optionalStringProperty = Maybe.of(parameters?.optionalStringProperty);
-    } else if (parameters?.optionalStringProperty === undefined) {
-      optionalStringProperty = Maybe.empty();
-    } else {
-      optionalStringProperty =
-        parameters?.optionalStringProperty satisfies never;
-    }
-    const $object = { $identifier, $type, optionalStringProperty };
+    const $object = {
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $type: "UnionMember2" as const,
+      optionalStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.optionalStringProperty.type(),
+        parameters?.optionalStringProperty,
+      ),
+    };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -1093,35 +1258,16 @@ export namespace UnionMember1 {
       | (() => UnionMember1.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly optionalNumberProperty?: Maybe<number> | number;
+    readonly optionalNumberProperty?: number | Maybe<number>;
   }): UnionMember1 {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => UnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionMember1" as const;
-    let optionalNumberProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.optionalNumberProperty)) {
-      optionalNumberProperty = parameters?.optionalNumberProperty;
-    } else if (typeof parameters?.optionalNumberProperty === "number") {
-      optionalNumberProperty = Maybe.of(parameters?.optionalNumberProperty);
-    } else if (parameters?.optionalNumberProperty === undefined) {
-      optionalNumberProperty = Maybe.empty();
-    } else {
-      optionalNumberProperty =
-        parameters?.optionalNumberProperty satisfies never;
-    }
-    const $object = { $identifier, $type, optionalNumberProperty };
+    const $object = {
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      $type: "UnionMember1" as const,
+      optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.optionalNumberProperty.type(),
+        parameters?.optionalNumberProperty,
+      ),
+    };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -1376,54 +1522,25 @@ export namespace Nested {
       | (() => Nested.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly optionalNumberProperty?: Maybe<number> | number;
-    readonly optionalStringProperty?: Maybe<string> | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): Nested {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => Nested.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "Nested" as const;
-    let optionalNumberProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters.optionalNumberProperty)) {
-      optionalNumberProperty = parameters.optionalNumberProperty;
-    } else if (typeof parameters.optionalNumberProperty === "number") {
-      optionalNumberProperty = Maybe.of(parameters.optionalNumberProperty);
-    } else if (parameters.optionalNumberProperty === undefined) {
-      optionalNumberProperty = Maybe.empty();
-    } else {
-      optionalNumberProperty =
-        parameters.optionalNumberProperty satisfies never;
-    }
-    let optionalStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
-      optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
-      optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (parameters.optionalStringProperty === undefined) {
-      optionalStringProperty = Maybe.empty();
-    } else {
-      optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
-    }
-    const requiredStringProperty = parameters.requiredStringProperty;
     const $object = {
-      $identifier,
-      $type,
-      optionalNumberProperty,
-      optionalStringProperty,
-      requiredStringProperty,
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      $type: "Nested" as const,
+      optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.optionalNumberProperty.type(),
+        parameters.optionalNumberProperty,
+      ),
+      optionalStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.optionalStringProperty.type(),
+        parameters.optionalStringProperty,
+      ),
+      requiredStringProperty: $convertToString<string>(
+        schema.properties.requiredStringProperty.type(),
+        parameters.requiredStringProperty,
+      ),
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
@@ -1766,31 +1883,18 @@ export interface Parent {
 export namespace Parent {
   export function create(parameters: {
     readonly $identifier: (() => Parent.Identifier) | NamedNode | string;
-    readonly parentStringProperty?: Maybe<string> | string;
+    readonly parentStringProperty?: string | Maybe<string>;
   }): Parent {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => Parent.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "Parent" as const;
-    let parentStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.parentStringProperty)) {
-      parentStringProperty = parameters.parentStringProperty;
-    } else if (typeof parameters.parentStringProperty === "string") {
-      parentStringProperty = Maybe.of(parameters.parentStringProperty);
-    } else if (parameters.parentStringProperty === undefined) {
-      parentStringProperty = Maybe.empty();
-    } else {
-      parentStringProperty = parameters.parentStringProperty satisfies never;
-    }
-    const $object = { $identifier, $type, parentStringProperty };
+    const $object = {
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+      $type: "Parent" as const,
+      parentStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.parentStringProperty.type(),
+        parameters.parentStringProperty,
+      ),
+    };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;
     }
@@ -2062,161 +2166,57 @@ export namespace Child {
   export function create(
     parameters: {
       readonly $identifier: (() => Child.Identifier) | NamedNode | string;
-      readonly childStringProperty?: Maybe<string> | string;
-      readonly lazyObjectSetProperty?:
+      readonly childStringProperty?: string | Maybe<string>;
+      readonly lazyObjectSetProperty:
         | $LazyObjectSet<Nested.Identifier, $DefaultPartial, Nested>
         | readonly Nested[];
-      readonly optionalLazyObjectProperty?:
+      readonly optionalLazyObjectProperty:
         | $LazyObjectOption<Nested.Identifier, $DefaultPartial, Nested>
         | Maybe<Nested>
         | Nested;
-      readonly optionalObjectProperty?: Maybe<Nested> | Nested;
-      readonly optionalStringProperty?: Maybe<string> | string;
+      readonly optionalObjectProperty?: Nested | Maybe<Nested>;
+      readonly optionalStringProperty?: string | Maybe<string>;
       readonly requiredStringProperty: string;
     } & Parameters<typeof Parent.create>[0],
   ): Child {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => Child.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "Child" as const;
-    let childStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.childStringProperty)) {
-      childStringProperty = parameters.childStringProperty;
-    } else if (typeof parameters.childStringProperty === "string") {
-      childStringProperty = Maybe.of(parameters.childStringProperty);
-    } else if (parameters.childStringProperty === undefined) {
-      childStringProperty = Maybe.empty();
-    } else {
-      childStringProperty = parameters.childStringProperty satisfies never;
-    }
-    let lazyObjectSetProperty: $LazyObjectSet<
-      Nested.Identifier,
-      $DefaultPartial,
-      Nested
-    >;
-    if (
-      typeof parameters.lazyObjectSetProperty === "object" &&
-      parameters.lazyObjectSetProperty instanceof $LazyObjectSet
-    ) {
-      lazyObjectSetProperty = parameters.lazyObjectSetProperty;
-    } else if (typeof parameters.lazyObjectSetProperty === "object") {
-      lazyObjectSetProperty = new $LazyObjectSet<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partials: parameters.lazyObjectSetProperty.map($DefaultPartial.create),
-        resolver: async () =>
-          Right(parameters.lazyObjectSetProperty as readonly Nested[]),
-      });
-    } else if (parameters.lazyObjectSetProperty === undefined) {
-      lazyObjectSetProperty = new $LazyObjectSet<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partials: [],
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      lazyObjectSetProperty = parameters.lazyObjectSetProperty satisfies never;
-    }
-    let optionalLazyObjectProperty: $LazyObjectOption<
-      Nested.Identifier,
-      $DefaultPartial,
-      Nested
-    >;
-    if (
-      typeof parameters.optionalLazyObjectProperty === "object" &&
-      parameters.optionalLazyObjectProperty instanceof $LazyObjectOption
-    ) {
-      optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
-    } else if (Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
-      optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: parameters.optionalLazyObjectProperty.map(
-          $DefaultPartial.create,
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalLazyObjectProperty as Maybe<Nested>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (typeof parameters.optionalLazyObjectProperty === "object") {
-      optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: Maybe.of(
-          $DefaultPartial.create(parameters.optionalLazyObjectProperty),
-        ),
-        resolver: async () =>
-          Right(parameters.optionalLazyObjectProperty as Nested),
-      });
-    } else if (parameters.optionalLazyObjectProperty === undefined) {
-      optionalLazyObjectProperty = new $LazyObjectOption<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      optionalLazyObjectProperty =
-        parameters.optionalLazyObjectProperty satisfies never;
-    }
-    let optionalObjectProperty: Maybe<Nested>;
-    if (Maybe.isMaybe(parameters.optionalObjectProperty)) {
-      optionalObjectProperty = parameters.optionalObjectProperty;
-    } else if (typeof parameters.optionalObjectProperty === "object") {
-      optionalObjectProperty = Maybe.of(parameters.optionalObjectProperty);
-    } else if (parameters.optionalObjectProperty === undefined) {
-      optionalObjectProperty = Maybe.empty();
-    } else {
-      optionalObjectProperty =
-        parameters.optionalObjectProperty satisfies never;
-    }
-    let optionalStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
-      optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
-      optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (parameters.optionalStringProperty === undefined) {
-      optionalStringProperty = Maybe.empty();
-    } else {
-      optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
-    }
-    const requiredStringProperty = parameters.requiredStringProperty;
     const $object = {
       ...Parent.create(parameters),
-      $identifier,
-      $type,
-      childStringProperty,
-      lazyObjectSetProperty,
-      optionalLazyObjectProperty,
-      optionalObjectProperty,
-      optionalStringProperty,
-      requiredStringProperty,
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+      $type: "Child" as const,
+      childStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.childStringProperty.type(),
+        parameters.childStringProperty,
+      ),
+      lazyObjectSetProperty: $convertToLazyObjectSet<
+        Nested.Identifier,
+        $DefaultPartial,
+        Nested
+      >($DefaultPartial.create)(
+        schema.properties.lazyObjectSetProperty.type(),
+        parameters.lazyObjectSetProperty,
+      ),
+      optionalLazyObjectProperty: $convertToLazyObjectOption<
+        Nested.Identifier,
+        $DefaultPartial,
+        Nested
+      >($DefaultPartial.create)(
+        schema.properties.optionalLazyObjectProperty.type(),
+        parameters.optionalLazyObjectProperty,
+      ),
+      optionalObjectProperty: $convertToMaybe($convertToObject)(
+        schema.properties.optionalObjectProperty.type(),
+        parameters.optionalObjectProperty,
+      ),
+      optionalStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.optionalStringProperty.type(),
+        parameters.optionalStringProperty,
+      ),
+      requiredStringProperty: $convertToString<string>(
+        schema.properties.requiredStringProperty.type(),
+        parameters.requiredStringProperty,
+      ),
     };
     if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
       ($object as any).toString = $toString;

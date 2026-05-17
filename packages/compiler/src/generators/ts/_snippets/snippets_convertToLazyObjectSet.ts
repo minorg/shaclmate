@@ -10,22 +10,23 @@ export const snippets_convertToLazyObjectSet: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazyObjectSet`,
     code`\
 function ${syntheticNamePrefix}convertToLazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
-  return (schema: unknown, value: ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | readonly ResolvedObjectT[] | undefined): ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> {
+  return (_schema: unknown, value: ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | readonly ResolvedObjectT[] | undefined): ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
     switch (typeof value) {
       case "object": {
         if (value instanceof ${snippets.LazyObjectSet}) {
           return value;
         }
 
-        return new ${snippets.LazyObjectSet}({
+        const captureValue = value;
+        return new ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
           partials: value.map(resolvedToPartial),
-          resolver: async () => ${imports.Right}(value)
+          resolver: async () => ${imports.Right}(captureValue)
         });
       }
       case "undefined":
         return new ${snippets.LazyObjectSet}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>({
           partials: [],
-          resolver: async () => ${imports.Right}([]])
+          resolver: async () => ${imports.Right}([])
         });
     }
   };
