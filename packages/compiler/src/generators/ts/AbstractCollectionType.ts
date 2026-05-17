@@ -3,9 +3,10 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -37,6 +38,32 @@ export abstract class AbstractCollectionType<
     if (mutable) {
       invariant(this.minCount === 0n);
     }
+  }
+
+  @Memoize()
+  override get conversionFunction(): AbstractType.ConversionFunction {
+    const itemConversionFunction = this.itemType.conversionFunction;
+    const sourceTypes: AbstractType.ConversionFunction["sourceTypes"] = [
+      {
+        name: `readonly (${joinCode(
+          itemConversionFunction.sourceTypes.map(
+            (itemSourceType) => code`${itemSourceType.name}`,
+          ),
+          { on: " | " },
+        )})`,
+        typeof: "object",
+      },
+    ];
+    if (this.minCount === 0n) {
+      sourceTypes.push({
+        name: "undefined",
+        typeof: "undefined",
+      });
+    }
+    return {
+      code: code`${this.reusables.snippets.convertToArray}(${itemConversionFunction.code})`,
+      sourceTypes,
+    };
   }
 
   @Memoize()
