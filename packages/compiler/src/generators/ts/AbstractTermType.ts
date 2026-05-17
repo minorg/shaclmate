@@ -133,7 +133,10 @@ export abstract class AbstractTermType<
       ...super.schemaObject,
       in:
         this.in_.length > 0
-          ? code`[${joinCode(this.in_.map((in_) => this.rdfjsTermExpression(in_), { on: ", " }))}] as const`
+          ? code`[${joinCode(
+              this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+              { on: ", " },
+            )}] as const`
           : undefined,
     };
   }

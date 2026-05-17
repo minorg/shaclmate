@@ -59,7 +59,10 @@ export abstract class AbstractPrimitiveType<
       ...super.schemaObject,
       in:
         this.primitiveIn.length > 0
-          ? code`[${joinCode(this.primitiveIn.map((in_) => this.literalExpression(in_), { on: ", " }))}] as const`
+          ? code`[${joinCode(
+              this.primitiveIn.map((in_) => this.literalExpression(in_)),
+              { on: ", " },
+            )}] as const`
           : undefined,
     };
   }
