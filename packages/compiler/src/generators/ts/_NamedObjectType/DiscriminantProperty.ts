@@ -54,7 +54,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override constructorInitializer(): Code {
-    return code`${literalOf(this.name)}: ${this.constValue}`;
+    return code`${literalOf(this.name)}: ${this.reusables.imports.Right}(${this.constValue})`;
   }
 
   override fromJsonInitializer(): Maybe<Code> {

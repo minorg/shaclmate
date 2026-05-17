@@ -3,7 +3,6 @@ import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
-import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
 import type { ObjectSetFactory } from "./ObjectSetFactory.js";
 import { objectDataset } from "./objectDataset.js";
@@ -644,7 +643,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
           kitchenSink.PropertyCardinalities.create({
             $identifier: identifiers[0],
             emptyStringSetProperty: [value],
-            nonEmptyStringSetProperty: NonEmptyList([value]),
+            nonEmptyStringSetProperty: [value],
             requiredStringProperty: value,
           }),
         ]),

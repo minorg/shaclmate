@@ -227,9 +227,6 @@ export abstract class AbstractCollectionType<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     let expression = variables.value;
-    if (!this._mutable && this.minCount > 0n) {
-      expression = code`${this.reusables.imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
-    }
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }

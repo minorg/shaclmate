@@ -15,7 +15,7 @@ import {
   ResourceSet,
 } from "@rdfx/resource";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
-import { type Either, Left, Maybe, NonEmptyList, Right } from "purify-ts";
+import { Either, Left, Maybe, Right } from "purify-ts";
 import { z } from "zod";
 
 type $_FromRdfResourceFunction<T> = (
@@ -144,80 +144,88 @@ function $convertToIdentifierProperty(
     | NamedNode
     | string
     | undefined,
-): () => BlankNode | NamedNode {
+): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
-      return identifier;
+      return Either.of(identifier);
     case "object": {
       const captureIdentifier = identifier;
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
     case "string": {
       const captureIdentifier = dataFactory.namedNode(identifier);
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
     case "undefined": {
       const captureIdentifier = dataFactory.blankNode();
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
   }
 }
 
 function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
 ) {
   return (
     schema: $MaybeSchema<ItemSchemaT>,
     value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Maybe<ItemTargetT> => {
+  ): Either<Error, Maybe<ItemTargetT>> => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
-          return value as Maybe<ItemTargetT>;
+          return Either.of(value as Maybe<ItemTargetT>);
         }
         break;
       }
       case "undefined":
-        return Maybe.empty();
+        return Either.of(Maybe.empty());
     }
 
-    return Maybe.of(convertToItem(schema.item(), value));
+    return convertToItem(schema.item(), value).map(Maybe.of);
   };
 }
 
 function $convertToNumeric<ValueT extends bigint | number>(
   _schema: $NumericSchema<ValueT>,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 function $convertToObject<ValueT extends object>(
   _schema: unknown,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
 ) {
   return (
     schema: $CollectionSchema<ItemSchemaT>,
     value: readonly ItemSourceT[] | undefined,
-  ): readonly ItemTargetT[] => {
+  ): Either<Error, readonly ItemTargetT[]> => {
     if (typeof value === "undefined") {
-      return [];
+      return Either.of([]);
     }
-    return value.map((item) => convertToItem(schema.item(), item));
+    return Either.sequence(
+      value.map((item) => convertToItem(schema.item(), item)),
+    );
   };
 }
 
 function $convertToString<ValueT extends string>(
   _schema: $StringSchema,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
@@ -852,7 +860,7 @@ export namespace NestedNodeShape {
   }): Either<Error, NestedNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      $type: "NestedNodeShape" as const,
+      $type: Right("NestedNodeShape" as const),
       requiredStringProperty: $convertToString<string>(
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
@@ -1008,7 +1016,7 @@ export namespace NestedNodeShape {
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
       requiredStringProperty: $json["requiredStringProperty"],
-    });
+    }).unsafeCoerce();
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NestedNodeShape> = (
@@ -1037,7 +1045,7 @@ export namespace NestedNodeShape {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -1183,7 +1191,7 @@ export namespace FormNodeShape {
   }): Either<Error, FormNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      $type: "FormNodeShape" as const,
+      $type: Right("FormNodeShape" as const),
       emptyStringSetProperty: $convertToReadonlyArray($convertToString<string>)(
         schema.properties.emptyStringSetProperty.type(),
         parameters.emptyStringSetProperty,
@@ -1530,15 +1538,13 @@ export namespace FormNodeShape {
       nestedObjectProperty: NestedNodeShape.fromJson(
         $json["nestedObjectProperty"],
       ),
-      nonEmptyStringSetProperty: NonEmptyList.fromArray(
-        $json["nonEmptyStringSetProperty"],
-      ).unsafeCoerce(),
+      nonEmptyStringSetProperty: $json["nonEmptyStringSetProperty"],
       optionalStringProperty: Maybe.fromNullable(
         $json["optionalStringProperty"],
       ),
       requiredIntProperty: $json["requiredIntProperty"],
       requiredStringProperty: $json["requiredStringProperty"],
-    });
+    }).unsafeCoerce();
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<FormNodeShape> = (
@@ -1655,7 +1661,7 @@ export namespace FormNodeShape {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =

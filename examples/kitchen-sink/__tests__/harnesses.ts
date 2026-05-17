@@ -3,7 +3,6 @@ import { LiteralFactory } from "@rdfx/literal";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
-import { NonEmptyList } from "purify-ts";
 import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
@@ -111,23 +110,19 @@ export const harnesses = {
   ),
   convertibleTypeProperties: new Harness(
     kitchenSink.ConvertibleTypeProperties.create({
-      convertibleIriNonEmptySetProperty: NonEmptyList([
+      convertibleIriNonEmptySetProperty: [
         dataFactory.namedNode("http://example.com"),
-      ]),
+      ],
       convertibleIriOptionProperty: "http://example.com",
       convertibleIriProperty: "http://example.com",
       convertibleIriSetProperty: ["http://example.com"],
-      convertibleLiteralNonEmptySetProperty: NonEmptyList([
-        dataFactory.literal("test"),
-      ]),
+      convertibleLiteralNonEmptySetProperty: [dataFactory.literal("test")],
       convertibleLiteralProperty: 1,
       convertibleLiteralOptionProperty: true,
       convertibleLiteralSetProperty: ["test"],
       convertibleTermOptionProperty: literalFactory.number(1),
       convertibleTermProperty: literalFactory.date(new Date(1523268000000)),
-      convertibleTermNonEmptySetProperty: NonEmptyList([
-        dataFactory.blankNode(),
-      ]),
+      convertibleTermNonEmptySetProperty: [dataFactory.blankNode()],
       convertibleTermSetProperty: [literalFactory.boolean(true)],
     }),
     kitchenSink.ConvertibleTypeProperties,
@@ -342,10 +337,10 @@ export const harnesses = {
   languageInProperties: new Harness(
     kitchenSink.LanguageInProperties.create({
       $identifier,
-      languageInLiteralProperty: NonEmptyList([
+      languageInLiteralProperty: [
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
-      ]),
+      ],
     }),
     kitchenSink.LanguageInProperties,
   ),
@@ -575,7 +570,7 @@ export const harnesses = {
     kitchenSink.PropertyCardinalities.create({
       $identifier,
       emptyStringSetProperty: undefined,
-      nonEmptyStringSetProperty: NonEmptyList(["test1"]),
+      nonEmptyStringSetProperty: ["test1"],
       optionalStringProperty: undefined,
       requiredStringProperty: "test",
     }),

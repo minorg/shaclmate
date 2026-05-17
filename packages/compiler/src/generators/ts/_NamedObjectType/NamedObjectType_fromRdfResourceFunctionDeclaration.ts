@@ -112,8 +112,8 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
       code`return ${chains
         .reverse()
         .reduce(
-          (acc, { expression, variable }, chainI) =>
-            code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+          (acc, { expression, variable }) =>
+            code`(${expression}).chain(${variable} => ${acc})`,
           code`(${resultExpression})`,
         )}`,
     );
