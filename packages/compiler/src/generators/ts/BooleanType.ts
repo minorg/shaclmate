@@ -1,7 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -18,7 +17,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${this.reusables.snippets.BooleanSchema}`;
-  override readonly typeofs = NonEmptyList(["boolean" as const]);
+  override readonly typeofs = ["boolean" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
 

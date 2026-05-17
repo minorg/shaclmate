@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -26,7 +26,7 @@ export abstract class AbstractLazyObjectType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     partialType,

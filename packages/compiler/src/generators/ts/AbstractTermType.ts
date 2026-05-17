@@ -1,12 +1,13 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { Type } from "./Type.js";
+import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -33,9 +34,7 @@ export abstract class AbstractTermType<
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
-    "object" as const,
-  ]);
+  override readonly typeofs: readonly Typeof[] = ["object" as const];
 
   constructor({
     hasValues,

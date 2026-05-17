@@ -1,7 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -18,7 +17,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
   override readonly kind = "StringType";
   override readonly schemaType = code`${this.reusables.snippets.StringSchema}`;
-  override readonly typeofs = NonEmptyList(["string" as const]);
+  override readonly typeofs = ["string" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
 

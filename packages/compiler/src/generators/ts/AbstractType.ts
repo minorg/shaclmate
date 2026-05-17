@@ -1,4 +1,4 @@
-import type { Maybe, NonEmptyList } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
@@ -132,7 +132,7 @@ export abstract class AbstractType {
   /**
    * JavaScript typeof(s) the type.
    */
-  abstract readonly typeofs: NonEmptyList<Typeof>;
+  abstract readonly typeofs: readonly Typeof[];
 
   /**
    * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.

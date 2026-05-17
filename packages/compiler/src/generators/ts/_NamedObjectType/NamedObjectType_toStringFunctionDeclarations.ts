@@ -1,5 +1,5 @@
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_toStringFunctionDeclarations(
   this: NamedObjectType,

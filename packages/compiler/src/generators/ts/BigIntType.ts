@@ -1,7 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { LiteralDecoder } from "@rdfx/literal";
 
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
@@ -9,7 +8,7 @@ import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigIntType";
-  override readonly typeofs = NonEmptyList(["bigint" as const]);
+  override readonly typeofs = ["bigint" as const];
 
   override get conversions(): readonly AbstractNumericType.Conversion[] {
     if (this.in_.length > 0) {

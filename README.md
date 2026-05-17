@@ -192,8 +192,7 @@ SHACLmate uses [`sh:minCount`](https://www.w3.org/TR/shacl/#MinCountConstraintCo
 
 * `sh:minCount 1` and `sh:maxCount 1` would generate a required `string` in TypeScript.
 * `sh:minCount 0` and `sh:maxCount 0` would generate an [option type](https://en.wikipedia.org/wiki/Option_type) e.g., a `purify-ts` `Maybe<string>` in TypeScript.
-* `sh:minCount 1` with `sh:maxCount` greater than 1 would generate a non-empty list type e.g., a `purify-ts` `NonEmptyList<string>` in TypeScript.
-* All other combinations generate a possibly empty list e.g., `string[]` in TypeScript.
+* All other combinations generate an array e.g., `string[]` in TypeScript.
 
 Note that:
 * A property shape without an `sh:minCount` has an implicit `sh:minCount` of 0.

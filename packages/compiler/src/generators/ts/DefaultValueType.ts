@@ -1,6 +1,6 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -18,7 +18,7 @@ export class DefaultValueType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "DefaultValueType";
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     defaultValue,

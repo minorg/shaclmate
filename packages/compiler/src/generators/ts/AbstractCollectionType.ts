@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -21,7 +21,7 @@ export abstract class AbstractCollectionType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     minCount,

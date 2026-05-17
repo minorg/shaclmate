@@ -1,4 +1,3 @@
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 
@@ -16,7 +15,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   @Memoize()
   override get conversions(): readonly AbstractPrimitiveType.Conversion[] {

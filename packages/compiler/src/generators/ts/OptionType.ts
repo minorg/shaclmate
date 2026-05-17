@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -16,7 +16,7 @@ export class OptionType<
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
   override readonly kind = "OptionType";
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   @Memoize()
   override get conversionFunction(): AbstractContainerType.ConversionFunction {
