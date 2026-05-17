@@ -9,7 +9,7 @@ export const snippets_convertToTerm: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToTerm`,
     code`\
-function ${syntheticNamePrefix}convertToTerm<ValueT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(_schema: ${snippets.TermSchema}, value: ValueT): ValueT {
-  return value;
+function ${syntheticNamePrefix}convertToTerm<ValueT extends ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(_schema: ${snippets.TermSchema}, value: ValueT): ${imports.Either}<Error, ValueT> {
+  return ${imports.Either}.of(value);
 }`,
   );

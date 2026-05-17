@@ -9,12 +9,12 @@ export const snippets_convertToBlankNode: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToBlankNode`,
     code`\
-function ${syntheticNamePrefix}convertToBlankNode(_schema: ${snippets.BlankNodeSchema}, value: ${imports.BlankNode} | undefined): ${imports.BlankNode} {
+function ${syntheticNamePrefix}convertToBlankNode(_schema: ${snippets.BlankNodeSchema}, value: ${imports.BlankNode} | undefined): ${imports.Either}<Error, ${imports.BlankNode}> {
   switch (typeof value) {
     case "object":
-      return value;
+      return ${imports.Either}.of(value);
     case "undefined":
-      return ${imports.dataFactory}.blankNode();
+      return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }
 }`,
   );

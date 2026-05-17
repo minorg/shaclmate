@@ -28,7 +28,7 @@ export abstract class AbstractType {
   abstract readonly conversions: readonly AbstractType.Conversion[];
 
   /**
-   * Function that converts one or more source types to this type.
+   * Function that converts one or more source types to this type and returns Either<Error, ThisType>.
    *
    * The function takes two parameters:
    *  - an instance of this.schemaType

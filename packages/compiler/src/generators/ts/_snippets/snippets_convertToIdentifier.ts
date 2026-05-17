@@ -9,14 +9,14 @@ export const snippets_convertToIdentifier: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIdentifier`,
     code`\
-function ${syntheticNamePrefix}convertToIdentifier(_schema: ${snippets.IdentifierSchema}, value: ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): ${imports.BlankNode} | ${imports.NamedNode} {
+function ${syntheticNamePrefix}convertToIdentifier(_schema: ${snippets.IdentifierSchema}, value: ${imports.BlankNode} | ${imports.NamedNode} | string | undefined): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
   switch (typeof value) {
     case "object":
-      return value;
+      return ${imports.Either}.of(value);
     case "string":
-      return ${imports.dataFactory}.namedNode(value);
+      return ${imports.Either}.of(${imports.dataFactory}.namedNode(value));
     case "undefined":
-      return ${imports.dataFactory}.blankNode();
+      return ${imports.Either}.of(${imports.dataFactory}.blankNode());
   }
 }`,
   );

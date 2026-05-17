@@ -49,11 +49,12 @@ export function NamedObjectType_createFunctionDeclaration(
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of(code`\
-export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${this.name} {
-  const ${syntheticNamePrefix}object = { ${joinCode(initializers, { on: "," })} };
-  if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
-    (${syntheticNamePrefix}object as any).toString = ${syntheticNamePrefix}toString;
-  }
-  return ${syntheticNamePrefix}object;
+export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${this.reusables.snippets.sequenceRecord}({ ${joinCode(initializers, { on: "," })} }).map(object => {
+    if (!globalThis.Object.prototype.hasOwnProperty.call(object, "toString")) {
+      (object as any).toString = ${syntheticNamePrefix}toString;
+    }
+    return object;
+  });
 }`);
 }

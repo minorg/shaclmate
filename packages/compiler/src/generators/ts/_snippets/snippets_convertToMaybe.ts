@@ -9,20 +9,20 @@ export const snippets_convertToMaybe: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToMaybe`,
     code`\
-function ${syntheticNamePrefix}convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT) {
-  return (schema: ${snippets.MaybeSchema}<ItemSchemaT>, value: ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined): ${imports.Maybe}<ItemTargetT> => {
+function ${syntheticNamePrefix}convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ${imports.Either}<Error, ItemTargetT>) {
+  return (schema: ${snippets.MaybeSchema}<ItemSchemaT>, value: ItemSourceT | ${imports.Maybe}<ItemTargetT> | undefined): ${imports.Either}<Error, ${imports.Maybe}<ItemTargetT>> => {
     switch (typeof value) {
       case "object": {
         if (${imports.Maybe}.isMaybe(value)) {
-          return value as ${imports.Maybe}<ItemTargetT>;
+          return ${imports.Either}.of(value as ${imports.Maybe}<ItemTargetT>);
         }
         break;
       }
       case "undefined":
-        return ${imports.Maybe}.empty();
+        return ${imports.Either}.of(${imports.Maybe}.empty());
     }
 
-    return ${imports.Maybe}.of(convertToItem(schema.item(), value));
+    return ${imports.Either}.of(${imports.Maybe}.of(convertToItem(schema.item(), value)));
   }
 }`,
   );

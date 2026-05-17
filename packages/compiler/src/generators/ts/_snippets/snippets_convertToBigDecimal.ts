@@ -9,7 +9,7 @@ export const snippets_convertToBigDecimal: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToBigDecimal`,
     code`\
-function ${syntheticNamePrefix}convertToBigDecimal(_schema: ${snippets.NumericSchema}<${imports.BigDecimal}>, value: ${imports.BigDecimal}): ${imports.BigDecimal} {
-  return value;
+function ${syntheticNamePrefix}convertToBigDecimal(_schema: ${snippets.NumericSchema}<${imports.BigDecimal}>, value: ${imports.BigDecimal}): ${imports.Either}<Error, ${imports.BigDecimal}> {
+  return ${imports.Either}.of(value);
 }`,
   );

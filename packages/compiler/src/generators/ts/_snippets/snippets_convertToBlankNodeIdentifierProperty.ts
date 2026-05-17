@@ -8,17 +8,17 @@ export const snippets_convertToBlankNodeIdentifierProperty: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToBlankNodeIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToBlankNodeIdentifierProperty(identifier: (() => ${imports.BlankNode}) | ${imports.BlankNode} | undefined): () => ${imports.BlankNode} {
+function ${syntheticNamePrefix}convertToBlankNodeIdentifierProperty(identifier: (() => ${imports.BlankNode}) | ${imports.BlankNode} | undefined): ${imports.Either}<Error, (() => ${imports.BlankNode})> {
   switch (typeof identifier) {
     case "function":
-      return identifier;
+      return ${imports.Either}.of(identifier);
     case "object": {
       const captureIdentifier = identifier;
-      return () => captureIdentifier;
+      return ${imports.Either}.of(() => captureIdentifier);
     }
     case "undefined": {
       const captureIdentifier = ${imports.dataFactory}.blankNode();
-      return () => captureIdentifier;
+      return ${imports.Either}.of(() => captureIdentifier);
     }
   }
 }`,

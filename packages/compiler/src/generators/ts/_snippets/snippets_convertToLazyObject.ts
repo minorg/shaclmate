@@ -10,15 +10,15 @@ export const snippets_convertToLazyObject: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazyObject`,
     code`\
 function ${syntheticNamePrefix}convertToLazyObject<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
-  return (_schema: unknown, value: ${snippets.LazyObject}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ResolvedObjectT): ${snippets.LazyObject}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
+  return (_schema: unknown, value: ${snippets.LazyObject}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ResolvedObjectT): ${imports.Either}<Error, ${snippets.LazyObject}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>> => {
     if (value instanceof ${snippets.LazyObject}) {
-      return value;
+      return ${imports.Either}.of(value);
     }
 
-    return new ${snippets.LazyObject}({
+    return ${imports.Either}.of(new ${snippets.LazyObject}({
       partial: resolvedToPartial(value),
       resolver: async () => ${imports.Right}(value)
-    });
+    }));
   };
 }`,
   );

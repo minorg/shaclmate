@@ -9,12 +9,12 @@ export const snippets_convertToIri: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIri`,
     code`\
-function ${syntheticNamePrefix}convertToIri<IriT extends string = string>(_schema: ${snippets.IriSchema}, value: IriT | ${imports.NamedNode}<IriT>): ${imports.NamedNode}<IriT> {
+function ${syntheticNamePrefix}convertToIri<IriT extends string = string>(_schema: ${snippets.IriSchema}, value: IriT | ${imports.NamedNode}<IriT>): ${imports.Either}<Error, ${imports.NamedNode}<IriT>> {
   switch (typeof value) {
     case "object":
-      return value;
+      return ${imports.Either}.of(value);
     case "string":
-      return ${imports.dataFactory}.namedNode<IriT>(value);
+      return ${imports.Either}.of(${imports.dataFactory}.namedNode<IriT>(value));
   }
 }`,
   );

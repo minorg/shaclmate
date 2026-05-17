@@ -137,20 +137,6 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-function $convertToArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
-) {
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    value: readonly ItemSourceT[] | undefined,
-  ): readonly ItemTargetT[] => {
-    if (typeof value === "undefined") {
-      return [];
-    }
-    return value.map((item) => convertToItem(schema.item(), item));
-  };
-}
-
 function $convertToIdentifierProperty(
   identifier:
     | (() => BlankNode | NamedNode)
@@ -211,6 +197,20 @@ function $convertToObject<ValueT extends object>(
   value: ValueT,
 ): ValueT {
   return value;
+}
+
+function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+) {
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    value: readonly ItemSourceT[] | undefined,
+  ): readonly ItemTargetT[] => {
+    if (typeof value === "undefined") {
+      return [];
+    }
+    return value.map((item) => convertToItem(schema.item(), item));
+  };
 }
 
 function $convertToString<ValueT extends string>(
@@ -849,19 +849,22 @@ export namespace NestedNodeShape {
       | (BlankNode | NamedNode)
       | string;
     readonly requiredStringProperty: string;
-  }): NestedNodeShape {
-    const $object = {
+  }): Either<Error, NestedNodeShape> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       $type: "NestedNodeShape" as const,
       requiredStringProperty: $convertToString<string>(
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((object) => {
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(object, "toString")
+      ) {
+        (object as any).toString = $toString;
+      }
+      return object;
+    });
   }
 
   export function equals(
@@ -1177,11 +1180,11 @@ export namespace FormNodeShape {
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredIntProperty: number;
     readonly requiredStringProperty: string;
-  }): FormNodeShape {
-    const $object = {
+  }): Either<Error, FormNodeShape> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       $type: "FormNodeShape" as const,
-      emptyStringSetProperty: $convertToArray($convertToString<string>)(
+      emptyStringSetProperty: $convertToReadonlyArray($convertToString<string>)(
         schema.properties.emptyStringSetProperty.type(),
         parameters.emptyStringSetProperty,
       ),
@@ -1189,7 +1192,9 @@ export namespace FormNodeShape {
         schema.properties.nestedObjectProperty.type(),
         parameters.nestedObjectProperty,
       ),
-      nonEmptyStringSetProperty: $convertToArray($convertToString<string>)(
+      nonEmptyStringSetProperty: $convertToReadonlyArray(
+        $convertToString<string>,
+      )(
         schema.properties.nonEmptyStringSetProperty.type(),
         parameters.nonEmptyStringSetProperty,
       ),
@@ -1205,11 +1210,14 @@ export namespace FormNodeShape {
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((object) => {
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(object, "toString")
+      ) {
+        (object as any).toString = $toString;
+      }
+      return object;
+    });
   }
 
   export function equals(

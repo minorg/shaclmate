@@ -8,17 +8,17 @@ export const snippets_convertToIriIdentifierProperty: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToIriIdentifierProperty`,
     code`\
-function ${syntheticNamePrefix}convertToIriIdentifierProperty<IriT extends string = string>(identifier: (() => ${imports.NamedNode}<IriT>) | ${imports.NamedNode}<IriT> | IriT): () => ${imports.NamedNode}<IriT> {
+function ${syntheticNamePrefix}convertToIriIdentifierProperty<IriT extends string = string>(identifier: (() => ${imports.NamedNode}<IriT>) | ${imports.NamedNode}<IriT> | IriT): ${imports.Either}<Error, (() => ${imports.NamedNode}<IriT>)> {
   switch (typeof identifier) {
     case "function":
-      return identifier;
+      return ${imports.Either}.of(identifier);
     case "object": {
       const captureIdentifier = identifier;
-      return () => captureIdentifier;
+      return ${imports.Either}.of(() => captureIdentifier);
     }
     case "string": {
       const captureIdentifier = ${imports.dataFactory}.namedNode<IriT>(identifier);
-      return () => captureIdentifier;
+      return ${imports.Either}.of(() => captureIdentifier);
     }
   }
 }`,
