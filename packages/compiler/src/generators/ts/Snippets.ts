@@ -20,7 +20,7 @@ import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
 import { snippets_convertToArray } from "./_snippets/snippets_convertToArray.js";
 import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
-import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty copy.js";
+import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
 import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
 import { snippets_convertToDate } from "./_snippets/snippets_convertToDate.js";
 import { snippets_convertToDateTime } from "./_snippets/snippets_convertToDateTime.js";
