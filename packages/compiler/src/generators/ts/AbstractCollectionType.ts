@@ -111,6 +111,15 @@ export abstract class AbstractCollectionType<
     return code`${this.reusables.snippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
+  @Memoize()
+  override get validationFunction(): Maybe<Code> {
+    return Maybe.of(
+      code`${this.reusables.snippets.validateArray}(${this.itemType.validationFunction.orDefault(
+        this.itemValidationFunctionDefault,
+      )}, ${literalOf(!this._mutable)})`,
+    );
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,

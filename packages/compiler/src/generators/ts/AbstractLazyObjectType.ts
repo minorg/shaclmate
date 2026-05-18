@@ -27,6 +27,7 @@ export abstract class AbstractLazyObjectType<
     Maybe.empty();
   override readonly mutable = false;
   override readonly typeofs = ["object" as const];
+  override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
     partialType,

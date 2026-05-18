@@ -57,6 +57,7 @@ export class NamedObjectType extends AbstractType {
   override readonly recursive: boolean;
   readonly synthetic: boolean;
   override readonly typeofs = ["object" as const];
+  override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
     extern,

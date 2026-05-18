@@ -130,6 +130,19 @@ export abstract class AbstractType {
   abstract readonly typeofs: readonly Typeof[];
 
   /**
+   * Function that takes
+   * - a schema of this.schemaType
+   * - a value of this.type
+   *
+   * and validates the value against the schema, returning
+   * - Left(Error) if validation fails or
+   * - Right(the value) if validatios succeeds
+   *
+   * If unspecified, uses an identity function (i.e., function identity(schema: unknown, value: ThisType): Either<Error, ThisType>).
+   */
+  abstract readonly validationFunction: Maybe<Code>;
+
+  /**
    * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
    *
    * The function takes a parameters object with the following parameters:

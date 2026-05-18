@@ -19,6 +19,8 @@ export class DefaultValueType<
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "DefaultValueType";
   override readonly typeofs = ["object" as const];
+  override readonly validationFunction: Maybe<Code> =
+    this.itemType.validationFunction;
 
   constructor({
     defaultValue,

@@ -35,6 +35,7 @@ export abstract class AbstractTermType<
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
   override readonly typeofs: readonly Typeof[] = ["object" as const];
+  override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
     hasValues,

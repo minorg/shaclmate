@@ -76,6 +76,7 @@ import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
+import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
 import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
@@ -129,8 +130,11 @@ import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSche
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
+import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
+import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
+import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
@@ -377,6 +381,11 @@ export class Snippets {
   @Memoize()
   get UnwrapR(): Snippet {
     return this.snippet(snippets_UnwrapR);
+  }
+
+  @Memoize()
+  get ValidationFunction(): Snippet {
+    return this.snippet(snippets_ValidationFunction);
   }
 
   @Memoize()
@@ -654,6 +663,11 @@ export class Snippets {
     return this.snippet(snippets_identityConversionFunction);
   }
 
+  @Memoize()
+  get identityValidationFunction(): Snippet {
+    return this.snippet(snippets_identityValidationFunction);
+  }
+
   get ifUsed(): Code[] {
     return Object.entries(
       Object.getOwnPropertyDescriptors(Object.getPrototypeOf(this)),
@@ -830,6 +844,16 @@ export class Snippets {
   @Memoize()
   get toIsoDateString(): Snippet {
     return this.snippet(snippets_toIsoDateString);
+  }
+
+  @Memoize()
+  get validateArray(): Snippet {
+    return this.snippet(snippets_validateArray);
+  }
+
+  @Memoize()
+  get validateMaybe(): Snippet {
+    return this.snippet(snippets_validateMaybe);
   }
 
   @Memoize()

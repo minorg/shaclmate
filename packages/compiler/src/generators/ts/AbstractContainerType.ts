@@ -80,6 +80,11 @@ export abstract class AbstractContainerType<
     };
   }
 
+  @Memoize()
+  protected get itemValidationFunctionDefault(): Code {
+    return code`${this.reusables.snippets.identityValidationFunction}`;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
