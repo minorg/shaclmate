@@ -11,10 +11,13 @@ export const snippets_convertToReadonlyArray: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ${imports.Either}<Error, ItemTargetT>) {
   return (schema: ${snippets.CollectionSchema}<ItemSchemaT>, value: readonly ItemSourceT[] | undefined): ${imports.Either}<Error, readonly ItemTargetT[]> => {
-    if (typeof value === "undefined") {
-      return ${imports.Either}.of([]);
-    }
-    return ${imports.Either}.sequence(value.map(item => convertToItem(schema.item(), item)));
+    return (typeof value === "undefined" ? ${imports.Either}.of<Error, readonly ItemTargetT[]>([]) : ${imports.Either}.sequence(value.map(item => convertToItem(schema.item(), item))))
+      .chain(array => {
+        if (schema.minCount !== undefined && array.length < schema.minCount) {
+          return ${imports.Left}(new Error(\`array has length (\${array.length}) less than minCount (\${schema.minCount})\`));
+        }
+        return ${imports.Either}.of(array);
+      });
   }
 }`,
   );

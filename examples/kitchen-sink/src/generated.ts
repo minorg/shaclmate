@@ -621,12 +621,22 @@ function $convertToMutableArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
     schema: $CollectionSchema<ItemSchemaT>,
     value: readonly ItemSourceT[] | undefined,
   ): Either<Error, ItemTargetT[]> => {
-    if (typeof value === "undefined") {
-      return Either.of([]);
-    }
-    return Either.sequence(
-      value.map((item) => convertToItem(schema.item(), item)),
-    );
+    return (
+      typeof value === "undefined"
+        ? Either.of<Error, ItemTargetT[]>([])
+        : Either.sequence(
+            value.map((item) => convertToItem(schema.item(), item)),
+          )
+    ).chain((array) => {
+      if (schema.minCount !== undefined && array.length < schema.minCount) {
+        return Left(
+          new Error(
+            `array has length (${array.length}) less than minCount (${schema.minCount})`,
+          ),
+        );
+      }
+      return Either.of(array);
+    });
   };
 }
 
@@ -654,12 +664,22 @@ function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
     schema: $CollectionSchema<ItemSchemaT>,
     value: readonly ItemSourceT[] | undefined,
   ): Either<Error, readonly ItemTargetT[]> => {
-    if (typeof value === "undefined") {
-      return Either.of([]);
-    }
-    return Either.sequence(
-      value.map((item) => convertToItem(schema.item(), item)),
-    );
+    return (
+      typeof value === "undefined"
+        ? Either.of<Error, readonly ItemTargetT[]>([])
+        : Either.sequence(
+            value.map((item) => convertToItem(schema.item(), item)),
+          )
+    ).chain((array) => {
+      if (schema.minCount !== undefined && array.length < schema.minCount) {
+        return Left(
+          new Error(
+            `array has length (${array.length}) less than minCount (${schema.minCount})`,
+          ),
+        );
+      }
+      return Either.of(array);
+    });
   };
 }
 
