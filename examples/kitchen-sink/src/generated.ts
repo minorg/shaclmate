@@ -1363,6 +1363,13 @@ function $identityConversionFunction<T>(value: T): Either<Error, T> {
   return Either.of(value);
 }
 
+function $identityValidationFunction<T>(
+  _schema: unknown,
+  value: T,
+): Either<Error, T> {
+  return Either.of(value);
+}
+
 interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
@@ -3099,6 +3106,48 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
+function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  _readonly: Readonly,
+) {
+  type EitherR = Readonly extends true
+    ? ReadonlyArray<ItemValueT>
+    : Array<ItemValueT>;
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    valueArray: readonly ItemValueT[],
+  ): Either<Error, EitherR> => {
+    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
+      return Left(
+        new Error(
+          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+        ),
+      ) as Either<Error, EitherR>;
+    }
+
+    return Either.sequence(
+      valueArray.map((value) => validateItem(schema.item(), value)),
+    ) as Either<Error, EitherR>;
+  };
+}
+
+function $validateMaybe<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    valueMaybe: Maybe<ItemValueT>,
+  ): Either<Error, Maybe<ItemValueT>> =>
+    valueMaybe
+      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .orDefault(Either.of(valueMaybe));
+}
+
+type $ValidationFunction<SchemaT, ValueT> = (
+  schema: SchemaT,
+  value: ValueT,
+) => Either<Error, ValueT>;
+
 type $ValueSparqlConstructTriplesFunction<FilterT, SchemaT> = (parameters: {
   filter: FilterT | undefined;
   ignoreRdfType: boolean;
@@ -4580,16 +4629,36 @@ export namespace UnionDiscriminants {
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalIriOrLiteralProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters.optionalIriOrLiteralProperty),
+      )(parameters.optionalIriOrLiteralProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionDiscriminants.schema.properties.optionalIriOrLiteralProperty.type(),
+          value,
+        ),
+      ),
       optionalIriOrStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionDiscriminants.schema.properties.optionalIriOrStringProperty.type(),
+          value,
+        ),
       ),
       optionalNodeOrLiteralProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters.optionalNodeOrLiteralProperty),
+      )(parameters.optionalNodeOrLiteralProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionDiscriminants.schema.properties.optionalNodeOrLiteralProperty.type(),
+          value,
+        ),
+      ),
       optionalNodeOrNodeOrStringProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters.optionalNodeOrNodeOrStringProperty),
+      )(parameters.optionalNodeOrNodeOrStringProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionDiscriminants.schema.properties.optionalNodeOrNodeOrStringProperty.type(),
+          value,
+        ),
+      ),
       requiredIriOrLiteralProperty: $identityConversionFunction(
         parameters.requiredIriOrLiteralProperty,
       ),
@@ -4605,19 +4674,39 @@ export namespace UnionDiscriminants {
       setIriOrLiteralProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.setIriOrLiteralProperty),
+      )(parameters.setIriOrLiteralProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          UnionDiscriminants.schema.properties.setIriOrLiteralProperty.type(),
+          value,
+        ),
+      ),
       setIriOrStringProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.setIriOrStringProperty),
+      )(parameters.setIriOrStringProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          UnionDiscriminants.schema.properties.setIriOrStringProperty.type(),
+          value,
+        ),
+      ),
       setNodeOrLiteralProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.setNodeOrLiteralProperty),
+      )(parameters.setNodeOrLiteralProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          UnionDiscriminants.schema.properties.setNodeOrLiteralProperty.type(),
+          value,
+        ),
+      ),
       setNodeOrNodeOrStringProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.setNodeOrNodeOrStringProperty),
+      )(parameters.setNodeOrNodeOrStringProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          UnionDiscriminants.schema.properties.setNodeOrNodeOrStringProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -11068,30 +11157,75 @@ export namespace TermProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       blankNodeTermProperty: $convertToMaybe($convertToBlankNode)(
         parameters?.blankNodeTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.blankNodeTermProperty.type(),
+          value,
+        ),
       ),
       booleanTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.booleanTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.booleanTermProperty.type(),
+          value,
+        ),
       ),
       dateTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.dateTermProperty.type(),
+          value,
+        ),
       ),
       dateTimeTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.dateTimeTermProperty.type(),
+          value,
+        ),
       ),
       iriTermProperty: $convertToMaybe($convertToIri<string>)(
         parameters?.iriTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.iriTermProperty.type(),
+          value,
+        ),
       ),
       literalTermProperty: $convertToMaybe($convertToLiteral)(
         parameters?.literalTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.literalTermProperty.type(),
+          value,
+        ),
       ),
       numberTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.numberTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.numberTermProperty.type(),
+          value,
+        ),
       ),
       stringTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.stringTermProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.stringTermProperty.type(),
+          value,
+        ),
       ),
       termProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.termProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          TermProperties.schema.properties.termProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "TermProperties" as const };
@@ -12550,7 +12684,12 @@ export namespace RecursiveUnionMember2 {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       recursiveUnionMember2Property: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.recursiveUnionMember2Property),
+      )(parameters?.recursiveUnionMember2Property).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          RecursiveUnionMember2.schema.properties.recursiveUnionMember2Property.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -13133,7 +13272,12 @@ export namespace RecursiveUnionMember1 {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       recursiveUnionMember1Property: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.recursiveUnionMember1Property),
+      )(parameters?.recursiveUnionMember1Property).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          RecursiveUnionMember1.schema.properties.recursiveUnionMember1Property.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -13719,9 +13863,19 @@ export namespace PropertyPaths {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       inversePathProperty: $convertToMaybe($convertToIri<string>)(
         parameters?.inversePathProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyPaths.schema.properties.inversePathProperty.type(),
+          value,
+        ),
       ),
       predicatePathProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.predicatePathProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyPaths.schema.properties.predicatePathProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "PropertyPaths" as const };
@@ -14424,21 +14578,11 @@ export namespace PropertyNames {
   }): Either<Error, PropertyNames> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      actualPropertyName1: $identityConversionFunction(
-        parameters.actualPropertyName1,
-      ),
-      actualPropertyName2: $identityConversionFunction(
-        parameters.actualPropertyName2,
-      ),
-      actualPropertyName3: $identityConversionFunction(
-        parameters.actualPropertyName3,
-      ),
-      actualPropertyName4: $identityConversionFunction(
-        parameters.actualPropertyName4,
-      ),
-      actualPropertyName5: $identityConversionFunction(
-        parameters.actualPropertyName5,
-      ),
+      actualPropertyName1: Either.of(parameters.actualPropertyName1),
+      actualPropertyName2: Either.of(parameters.actualPropertyName2),
+      actualPropertyName3: Either.of(parameters.actualPropertyName3),
+      actualPropertyName4: Either.of(parameters.actualPropertyName4),
+      actualPropertyName5: Either.of(parameters.actualPropertyName5),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "PropertyNames" as const };
       if (
@@ -15325,17 +15469,30 @@ export namespace PropertyCardinalities {
       emptyStringSetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.emptyStringSetProperty),
+      )(parameters.emptyStringSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyCardinalities.schema.properties.emptyStringSetProperty.type(),
+          value,
+        ),
+      ),
       nonEmptyStringSetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.nonEmptyStringSetProperty),
+      )(parameters.nonEmptyStringSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyCardinalities.schema.properties.nonEmptyStringSetProperty.type(),
+          value,
+        ),
+      ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyCardinalities.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
-      requiredStringProperty: $identityConversionFunction(
-        parameters.requiredStringProperty,
-      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -16129,7 +16286,7 @@ export namespace UnionMemberCommonParent {
   }): Either<Error, UnionMemberCommonParent> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMemberCommonParentProperty: $identityConversionFunction(
+      unionMemberCommonParentProperty: Either.of(
         parameters.unionMemberCommonParentProperty,
       ),
     }).map((properties) => {
@@ -16733,9 +16890,7 @@ export namespace UnionMember2 {
     return UnionMemberCommonParent.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        unionMember2Property: $identityConversionFunction(
-          parameters.unionMember2Property,
-        ),
+        unionMember2Property: Either.of(parameters.unionMember2Property),
       }).map((properties) => {
         const finalObject = {
           ...super0,
@@ -17309,7 +17464,7 @@ export namespace PartialUnionMember2 {
   }): Either<Error, PartialUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -17868,9 +18023,7 @@ export namespace UnionMember1 {
     return UnionMemberCommonParent.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        unionMember1Property: $identityConversionFunction(
-          parameters.unionMember1Property,
-        ),
+        unionMember1Property: Either.of(parameters.unionMember1Property),
       }).map((properties) => {
         const finalObject = {
           ...super0,
@@ -18444,7 +18597,7 @@ export namespace PartialUnionMember1 {
   }): Either<Error, PartialUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -19457,15 +19610,9 @@ export namespace OrderedProperties {
   }): Either<Error, OrderedProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      orderedPropertyC: $identityConversionFunction(
-        parameters.orderedPropertyC,
-      ),
-      orderedPropertyB: $identityConversionFunction(
-        parameters.orderedPropertyB,
-      ),
-      orderedPropertyA: $identityConversionFunction(
-        parameters.orderedPropertyA,
-      ),
+      orderedPropertyC: Either.of(parameters.orderedPropertyC),
+      orderedPropertyB: Either.of(parameters.orderedPropertyB),
+      orderedPropertyA: Either.of(parameters.orderedPropertyA),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -20092,52 +20239,132 @@ export namespace NumericProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       byteNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.byteNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.byteNumericProperty.type(),
+          value,
+        ),
       ),
       decimalNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.decimalNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.decimalNumericProperty.type(),
+          value,
+        ),
       ),
       doubleNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.doubleNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.doubleNumericProperty.type(),
+          value,
+        ),
       ),
       floatNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.floatNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.floatNumericProperty.type(),
+          value,
+        ),
       ),
       integerNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.integerNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.integerNumericProperty.type(),
+          value,
+        ),
       ),
       intNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.intNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.intNumericProperty.type(),
+          value,
+        ),
       ),
       longNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.longNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.longNumericProperty.type(),
+          value,
+        ),
       ),
       negativeIntegerNumericProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.negativeIntegerNumericProperty),
+      )(parameters?.negativeIntegerNumericProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.negativeIntegerNumericProperty.type(),
+          value,
+        ),
+      ),
       nonNegativeIntegerNumericProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.nonNegativeIntegerNumericProperty),
+      )(parameters?.nonNegativeIntegerNumericProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.nonNegativeIntegerNumericProperty.type(),
+          value,
+        ),
+      ),
       nonPositiveIntegerNumericProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.nonPositiveIntegerNumericProperty),
+      )(parameters?.nonPositiveIntegerNumericProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.nonPositiveIntegerNumericProperty.type(),
+          value,
+        ),
+      ),
       positiveIntegerNumericProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.positiveIntegerNumericProperty),
+      )(parameters?.positiveIntegerNumericProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.positiveIntegerNumericProperty.type(),
+          value,
+        ),
+      ),
       shortNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.shortNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.shortNumericProperty.type(),
+          value,
+        ),
       ),
       unsignedByteNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedByteNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.unsignedByteNumericProperty.type(),
+          value,
+        ),
       ),
       unsignedIntNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedIntNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.unsignedIntNumericProperty.type(),
+          value,
+        ),
       ),
       unsignedLongNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedLongNumericProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.unsignedLongNumericProperty.type(),
+          value,
+        ),
       ),
       unsignedShortNumericProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.unsignedShortNumericProperty),
+      )(parameters?.unsignedShortNumericProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NumericProperties.schema.properties.unsignedShortNumericProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -22328,13 +22555,13 @@ export namespace NodeKinds {
       blankNodeOrIriNodeKindProperty: $convertToIdentifier(
         parameters.blankNodeOrIriNodeKindProperty,
       ),
-      blankNodeOrLiteralNodeKindProperty: $identityConversionFunction(
+      blankNodeOrLiteralNodeKindProperty: Either.of(
         parameters.blankNodeOrLiteralNodeKindProperty,
       ),
       iriNodeKindProperty: $convertToIri<string>(
         parameters.iriNodeKindProperty,
       ),
-      iriOrLiteralNodeKindProperty: $identityConversionFunction(
+      iriOrLiteralNodeKindProperty: Either.of(
         parameters.iriOrLiteralNodeKindProperty,
       ),
       literalNodeKindProperty: $convertToLiteral(
@@ -23451,7 +23678,7 @@ export namespace NoRdfTypeUnionMember2 {
   }): Either<Error, NoRdfTypeUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      noRdfTypeUnionMember2Property: $identityConversionFunction(
+      noRdfTypeUnionMember2Property: Either.of(
         parameters.noRdfTypeUnionMember2Property,
       ),
     }).map((properties) => {
@@ -23911,7 +24138,7 @@ export namespace NoRdfTypeUnionMember1 {
   }): Either<Error, NoRdfTypeUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      noRdfTypeUnionMember1Property: $identityConversionFunction(
+      noRdfTypeUnionMember1Property: Either.of(
         parameters.noRdfTypeUnionMember1Property,
       ),
     }).map((properties) => {
@@ -25070,13 +25297,28 @@ export namespace MutableProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableListProperty: $convertToMaybe(
         $convertToArray($identityConversionFunction, false),
-      )(parameters?.mutableListProperty),
+      )(parameters?.mutableListProperty).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, false))(
+          MutableProperties.schema.properties.mutableListProperty.type(),
+          value,
+        ),
+      ),
       mutableSetProperty: $convertToArray(
         $identityConversionFunction,
         false,
-      )(parameters?.mutableSetProperty),
+      )(parameters?.mutableSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, false)(
+          MutableProperties.schema.properties.mutableSetProperty.type(),
+          value,
+        ),
+      ),
       mutableStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.mutableStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          MutableProperties.schema.properties.mutableStringProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = {
@@ -25956,7 +26198,7 @@ export namespace ClassMultipleInheritanceParent2 {
   }): Either<Error, ClassMultipleInheritanceParent2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classMultipleInheritanceParent2Property: $identityConversionFunction(
+      classMultipleInheritanceParent2Property: Either.of(
         parameters.classMultipleInheritanceParent2Property,
       ),
     }).map((properties) => {
@@ -26565,7 +26807,7 @@ export namespace ClassMultipleInheritanceParent1 {
   }): Either<Error, ClassMultipleInheritanceParent1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classMultipleInheritanceParent1Property: $identityConversionFunction(
+      classMultipleInheritanceParent1Property: Either.of(
         parameters.classMultipleInheritanceParent1Property,
       ),
     }).map((properties) => {
@@ -27179,7 +27421,7 @@ export namespace ClassMultipleInheritanceChild {
       ClassMultipleInheritanceParent2.create(parameters).chain((super1) =>
         $sequenceRecord({
           $identifier: $convertToIdentifierProperty(parameters.$identifier),
-          classMultipleInheritanceChildProperty: $identityConversionFunction(
+          classMultipleInheritanceChildProperty: Either.of(
             parameters.classMultipleInheritanceChildProperty,
           ),
         }).map((properties) => {
@@ -27867,13 +28109,28 @@ export namespace ListProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriListProperty: $convertToMaybe(
         $convertToArray($convertToIri<string>, true),
-      )(parameters?.iriListProperty),
+      )(parameters?.iriListProperty).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListProperties.schema.properties.iriListProperty.type(),
+          value,
+        ),
+      ),
       objectListProperty: $convertToMaybe(
         $convertToArray($identityConversionFunction, true),
-      )(parameters?.objectListProperty),
+      )(parameters?.objectListProperty).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListProperties.schema.properties.objectListProperty.type(),
+          value,
+        ),
+      ),
       stringListProperty: $convertToMaybe(
         $convertToArray($identityConversionFunction, true),
-      )(parameters?.stringListProperty),
+      )(parameters?.stringListProperty).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          ListProperties.schema.properties.stringListProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ListProperties" as const };
       if (
@@ -31399,7 +31656,7 @@ export namespace LazilyResolvedIriIdentifier {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -31866,7 +32123,7 @@ export namespace LazilyResolvedUnionMember2 {
   }): Either<Error, LazilyResolvedUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -32437,7 +32694,7 @@ export namespace LazilyResolvedUnionMember1 {
   }): Either<Error, LazilyResolvedUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -33011,7 +33268,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -33613,7 +33870,12 @@ export namespace LanguageInProperties {
       languageInLiteralProperty: $convertToArray(
         $convertToLiteral,
         true,
-      )(parameters.languageInLiteralProperty),
+      )(parameters.languageInLiteralProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          LanguageInProperties.schema.properties.languageInLiteralProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -34141,7 +34403,12 @@ export namespace JsPrimitiveUnionProperty {
       jsPrimitiveUnionProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters?.jsPrimitiveUnionProperty),
+      )(parameters?.jsPrimitiveUnionProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          JsPrimitiveUnionProperty.schema.properties.jsPrimitiveUnionProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -35557,6 +35824,11 @@ export namespace IndirectRecursiveHelper {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       indirectRecursiveProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursiveProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          IndirectRecursiveHelper.schema.properties.indirectRecursiveProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = {
@@ -36135,7 +36407,12 @@ export namespace IndirectRecursive {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       indirectRecursiveHelperProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters?.indirectRecursiveHelperProperty),
+      )(parameters?.indirectRecursiveHelperProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          IndirectRecursive.schema.properties.indirectRecursiveHelperProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -36738,24 +37015,54 @@ export namespace InProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       inBooleansProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inBooleansProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inBooleansProperty.type(),
+          value,
+        ),
       ),
       inDateTimesProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inDateTimesProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inDateTimesProperty.type(),
+          value,
+        ),
       ),
       inDoublesProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inDoublesProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inDoublesProperty.type(),
+          value,
+        ),
       ),
       inIntegersProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inIntegersProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inIntegersProperty.type(),
+          value,
+        ),
       ),
       inIrisProperty: $convertToMaybe(
         $convertToIri<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >,
-      )(parameters?.inIrisProperty),
+      )(parameters?.inIrisProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inIrisProperty.type(),
+          value,
+        ),
+      ),
       inStringsProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inStringsProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InProperties.schema.properties.inStringsProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "InProperties" as const };
@@ -37899,6 +38206,11 @@ export namespace InIdentifier {
       >(parameters.$identifier),
       inIdentifierProperty: $convertToMaybe($identityConversionFunction)(
         parameters.inIdentifierProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          InIdentifier.schema.properties.inIdentifierProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "InIdentifier" as const };
@@ -38521,9 +38833,7 @@ export namespace HasValueProperties {
       hasIriValueProperty: $convertToIri<string>(
         parameters.hasIriValueProperty,
       ),
-      hasLiteralValueProperty: $identityConversionFunction(
-        parameters.hasLiteralValueProperty,
-      ),
+      hasLiteralValueProperty: Either.of(parameters.hasLiteralValueProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -39068,7 +39378,7 @@ export namespace FlattenUnionMember3 {
   }): Either<Error, FlattenUnionMember3> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      flattenUnionMember3Property: $identityConversionFunction(
+      flattenUnionMember3Property: Either.of(
         parameters.flattenUnionMember3Property,
       ),
     }).map((properties) => {
@@ -39629,6 +39939,11 @@ export namespace ExternProperty {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       externProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.externProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ExternProperty.schema.properties.externProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ExternProperty" as const };
@@ -40202,9 +40517,7 @@ export namespace BaseForExtern {
   }): Either<Error, BaseForExtern> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      baseForExternProperty: $identityConversionFunction(
-        parameters.baseForExternProperty,
-      ),
+      baseForExternProperty: Either.of(parameters.baseForExternProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "BaseForExtern" as const };
       if (
@@ -40767,9 +41080,7 @@ export namespace ExplicitRdfType {
   }): Either<Error, ExplicitRdfType> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitRdfTypeProperty: $identityConversionFunction(
-        parameters.explicitRdfTypeProperty,
-      ),
+      explicitRdfTypeProperty: Either.of(parameters.explicitRdfTypeProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ExplicitRdfType" as const };
       if (
@@ -41327,7 +41638,7 @@ export namespace ExplicitFromToRdfTypes {
   }): Either<Error, ExplicitFromToRdfTypes> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitFromToRdfTypesProperty: $identityConversionFunction(
+      explicitFromToRdfTypesProperty: Either.of(
         parameters.explicitFromToRdfTypesProperty,
       ),
     }).map((properties) => {
@@ -41919,13 +42230,13 @@ export namespace DisplayProperties {
   }): Either<Error, DisplayProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitFalseDisplayProperty: $identityConversionFunction(
+      explicitFalseDisplayProperty: Either.of(
         parameters.explicitFalseDisplayProperty,
       ),
-      explicitTrueDisplayProperty: $identityConversionFunction(
+      explicitTrueDisplayProperty: Either.of(
         parameters.explicitTrueDisplayProperty,
       ),
-      implicitFalseDisplayProperty: $identityConversionFunction(
+      implicitFalseDisplayProperty: Either.of(
         parameters.implicitFalseDisplayProperty,
       ),
     }).map((properties) => {
@@ -42656,6 +42967,11 @@ export namespace DirectRecursive {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       directRecursiveProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.directRecursiveProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DirectRecursive.schema.properties.directRecursiveProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "DirectRecursive" as const };
@@ -44420,15 +44736,35 @@ export namespace DateUnionProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       dateOrDateTimeProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateOrDateTimeProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DateUnionProperties.schema.properties.dateOrDateTimeProperty.type(),
+          value,
+        ),
       ),
       dateOrStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateOrStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DateUnionProperties.schema.properties.dateOrStringProperty.type(),
+          value,
+        ),
       ),
       dateTimeOrDateProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeOrDateProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DateUnionProperties.schema.properties.dateTimeOrDateProperty.type(),
+          value,
+        ),
       ),
       stringOrDateProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.stringOrDateProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          DateUnionProperties.schema.properties.stringOrDateProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = {
@@ -46862,9 +47198,19 @@ export namespace ConvertibleTypeProperties {
       convertibleIriNonEmptySetProperty: $convertToArray(
         $convertToIri<string>,
         true,
-      )(parameters.convertibleIriNonEmptySetProperty),
+      )(parameters.convertibleIriNonEmptySetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleIriNonEmptySetProperty.type(),
+          value,
+        ),
+      ),
       convertibleIriOptionProperty: $convertToMaybe($convertToIri<string>)(
         parameters.convertibleIriOptionProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ConvertibleTypeProperties.schema.properties.convertibleIriOptionProperty.type(),
+          value,
+        ),
       ),
       convertibleIriProperty: $convertToIri<string>(
         parameters.convertibleIriProperty,
@@ -46872,13 +47218,28 @@ export namespace ConvertibleTypeProperties {
       convertibleIriSetProperty: $convertToArray(
         $convertToIri<string>,
         true,
-      )(parameters.convertibleIriSetProperty),
+      )(parameters.convertibleIriSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleIriSetProperty.type(),
+          value,
+        ),
+      ),
       convertibleLiteralNonEmptySetProperty: $convertToArray(
         $convertToLiteral,
         true,
-      )(parameters.convertibleLiteralNonEmptySetProperty),
+      )(parameters.convertibleLiteralNonEmptySetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleLiteralNonEmptySetProperty.type(),
+          value,
+        ),
+      ),
       convertibleLiteralOptionProperty: $convertToMaybe($convertToLiteral)(
         parameters.convertibleLiteralOptionProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ConvertibleTypeProperties.schema.properties.convertibleLiteralOptionProperty.type(),
+          value,
+        ),
       ),
       convertibleLiteralProperty: $convertToLiteral(
         parameters.convertibleLiteralProperty,
@@ -46886,21 +47247,39 @@ export namespace ConvertibleTypeProperties {
       convertibleLiteralSetProperty: $convertToArray(
         $convertToLiteral,
         true,
-      )(parameters.convertibleLiteralSetProperty),
+      )(parameters.convertibleLiteralSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleLiteralSetProperty.type(),
+          value,
+        ),
+      ),
       convertibleTermNonEmptySetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.convertibleTermNonEmptySetProperty),
+      )(parameters.convertibleTermNonEmptySetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleTermNonEmptySetProperty.type(),
+          value,
+        ),
+      ),
       convertibleTermOptionProperty: $convertToMaybe(
         $identityConversionFunction,
-      )(parameters.convertibleTermOptionProperty),
-      convertibleTermProperty: $identityConversionFunction(
-        parameters.convertibleTermProperty,
+      )(parameters.convertibleTermOptionProperty).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ConvertibleTypeProperties.schema.properties.convertibleTermOptionProperty.type(),
+          value,
+        ),
       ),
+      convertibleTermProperty: Either.of(parameters.convertibleTermProperty),
       convertibleTermSetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.convertibleTermSetProperty),
+      )(parameters.convertibleTermSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          ConvertibleTypeProperties.schema.properties.convertibleTermSetProperty.type(),
+          value,
+        ),
+      ),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -49006,7 +49385,7 @@ export namespace Partial {
   }): Either<Error, Partial> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $identityConversionFunction(
+      lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -49448,9 +49827,7 @@ export namespace NonClass {
   }): Either<Error, NonClass> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      nonClassProperty: $identityConversionFunction(
-        parameters.nonClassProperty,
-      ),
+      nonClassProperty: Either.of(parameters.nonClassProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "NonClass" as const };
       if (
@@ -49917,18 +50294,43 @@ export namespace ClassProperties {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriClassProperty: $convertToMaybe($convertToIri<string>)(
         parameters?.iriClassProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ClassProperties.schema.properties.iriClassProperty.type(),
+          value,
+        ),
       ),
       multiClassProperty: $convertToMaybe($convertToIdentifier)(
         parameters?.multiClassProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ClassProperties.schema.properties.multiClassProperty.type(),
+          value,
+        ),
       ),
       nodeClassProperty1: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClassProperty1,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ClassProperties.schema.properties.nodeClassProperty1.type(),
+          value,
+        ),
       ),
       nodeClassProperty2: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClassProperty2,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ClassProperties.schema.properties.nodeClassProperty2.type(),
+          value,
+        ),
       ),
       singleClassProperty: $convertToMaybe($convertToIdentifier)(
         parameters?.singleClassProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          ClassProperties.schema.properties.singleClassProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ClassProperties" as const };
@@ -50952,9 +51354,7 @@ export namespace ClassHierarchy0 {
   }): Either<Error, ClassHierarchy0> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classHierarchy0Property: $identityConversionFunction(
-        parameters.classHierarchy0Property,
-      ),
+      classHierarchy0Property: Either.of(parameters.classHierarchy0Property),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ClassHierarchy0" as const };
       if (
@@ -52066,9 +52466,7 @@ export namespace ClassHierarchy2 {
     return ClassHierarchy1.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        classHierarchy2Property: $identityConversionFunction(
-          parameters.classHierarchy2Property,
-        ),
+        classHierarchy2Property: Either.of(parameters.classHierarchy2Property),
       }).map((properties) => {
         const finalObject = {
           ...super0,
@@ -52670,9 +53068,7 @@ export namespace ClassHierarchy3 {
     return ClassHierarchy2.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        classHierarchy3Property: $identityConversionFunction(
-          parameters.classHierarchy3Property,
-        ),
+        classHierarchy3Property: Either.of(parameters.classHierarchy3Property),
       }).map((properties) => {
         const finalObject = {
           ...super0,
