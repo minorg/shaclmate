@@ -37,19 +37,6 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "${this.typeofs[0]}"`,
-        sourceTypeName: this.name,
-        sourceTypeof: this.typeofs[0],
-      },
-    ];
-  }
-
   override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
     return Maybe.empty();
   }
@@ -94,7 +81,6 @@ export abstract class AbstractPrimitiveType<
 }
 
 export namespace AbstractPrimitiveType {
-  export type Conversion = AbstractLiteralType.Conversion;
   export type ConversionFunction = AbstractLiteralType.ConversionFunction;
   export type DiscriminantProperty = AbstractLiteralType.DiscriminantProperty;
   export const GraphqlType = AbstractLiteralType.GraphqlType;

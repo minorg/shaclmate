@@ -3831,8 +3831,8 @@ export namespace $NamedDefaultPartial {
   export function create(parameters: {
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
   }): Either<Error, $NamedDefaultPartial> {
     return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
@@ -3858,8 +3858,8 @@ export namespace $NamedDefaultPartial {
   export function createUnsafe(parameters: {
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
   }): $NamedDefaultPartial {
     return create(parameters).unsafeCoerce();
   }
@@ -4196,7 +4196,8 @@ export namespace $DefaultPartial {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): Either<Error, $DefaultPartial> {
     return $sequenceRecord({
@@ -4218,7 +4219,8 @@ export namespace $DefaultPartial {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): $DefaultPartial {
     return create(parameters).unsafeCoerce();
@@ -4638,7 +4640,8 @@ export namespace UnionDiscriminants {
   export function create(parameters: {
     readonly $identifier?:
       | (() => UnionDiscriminants.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalIriOrLiteralProperty?:
       | (NamedNode | Literal)
@@ -4764,7 +4767,8 @@ export namespace UnionDiscriminants {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => UnionDiscriminants.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalIriOrLiteralProperty?:
       | (NamedNode | Literal)
@@ -11167,7 +11171,8 @@ export namespace TermProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => TermProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly blankNodeTermProperty?: BlankNode | Maybe<BlankNode>;
     readonly booleanTermProperty?: boolean | Maybe<boolean>;
@@ -11242,7 +11247,8 @@ export namespace TermProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => TermProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly blankNodeTermProperty?: BlankNode | Maybe<BlankNode>;
     readonly booleanTermProperty?: boolean | Maybe<boolean>;
@@ -12670,7 +12676,8 @@ export namespace RecursiveUnionMember2 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember2Property?:
       | RecursiveUnion
@@ -12702,7 +12709,8 @@ export namespace RecursiveUnionMember2 {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember2Property?:
       | RecursiveUnion
@@ -13252,7 +13260,8 @@ export namespace RecursiveUnionMember1 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember1Property?:
       | RecursiveUnion
@@ -13284,7 +13293,8 @@ export namespace RecursiveUnionMember1 {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember1Property?:
       | RecursiveUnion
@@ -13838,7 +13848,8 @@ export namespace PropertyPaths {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => PropertyPaths.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly inversePathProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly predicatePathProperty?: string | Maybe<string>;
@@ -13870,7 +13881,8 @@ export namespace PropertyPaths {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => PropertyPaths.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly inversePathProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly predicatePathProperty?: string | Maybe<string>;
@@ -14542,7 +14554,8 @@ export namespace PropertyNames {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PropertyNames.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
@@ -14589,7 +14602,8 @@ export namespace PropertyNames {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => PropertyNames.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
@@ -15444,7 +15458,8 @@ export namespace PropertyCardinalities {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PropertyCardinalities.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
@@ -15491,7 +15506,8 @@ export namespace PropertyCardinalities {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => PropertyCardinalities.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly emptyStringSetProperty?: readonly string[];
     readonly nonEmptyStringSetProperty: readonly string[];
@@ -16256,7 +16272,8 @@ export namespace UnionMemberCommonParent {
   export function create(parameters: {
     readonly $identifier?:
       | (() => UnionMemberCommonParent.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly unionMemberCommonParentProperty: string;
   }): Either<Error, UnionMemberCommonParent> {
@@ -16286,7 +16303,8 @@ export namespace UnionMemberCommonParent {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => UnionMemberCommonParent.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly unionMemberCommonParentProperty: string;
   }): UnionMemberCommonParent {
@@ -16857,7 +16875,8 @@ export namespace UnionMember2 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember2Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
@@ -16892,7 +16911,8 @@ export namespace UnionMember2 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember2Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
@@ -17434,7 +17454,8 @@ export namespace PartialUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, PartialUnionMember2> {
@@ -17464,7 +17485,8 @@ export namespace PartialUnionMember2 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialUnionMember2 {
@@ -17990,7 +18012,8 @@ export namespace UnionMember1 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember1Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
@@ -18025,7 +18048,8 @@ export namespace UnionMember1 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember1Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
@@ -18567,7 +18591,8 @@ export namespace PartialUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, PartialUnionMember1> {
@@ -18597,7 +18622,8 @@ export namespace PartialUnionMember1 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialUnionMember1 {
@@ -19124,7 +19150,8 @@ export namespace NewName {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => NewName.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): Either<Error, NewName> {
     return $sequenceRecord({
@@ -19146,7 +19173,8 @@ export namespace NewName {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => NewName.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): NewName {
     return create(parameters).unsafeCoerce();
@@ -19575,7 +19603,8 @@ export namespace OrderedProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => OrderedProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
@@ -19615,7 +19644,8 @@ export namespace OrderedProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => OrderedProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
@@ -20196,7 +20226,8 @@ export namespace NumericProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => NumericProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly byteNumericProperty?: number | Maybe<number>;
     readonly decimalNumericProperty?: BigDecimal | Maybe<BigDecimal>;
@@ -20309,7 +20340,8 @@ export namespace NumericProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => NumericProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly byteNumericProperty?: number | Maybe<number>;
     readonly decimalNumericProperty?: BigDecimal | Maybe<BigDecimal>;
@@ -22454,7 +22486,8 @@ export namespace NodeKinds {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NodeKinds.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly blankNodeKindProperty?: BlankNode;
     readonly blankNodeOrIriNodeKindProperty?: BlankNode | NamedNode | string;
@@ -22512,7 +22545,8 @@ export namespace NodeKinds {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => NodeKinds.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly blankNodeKindProperty?: BlankNode;
     readonly blankNodeOrIriNodeKindProperty?: BlankNode | NamedNode | string;
@@ -23598,7 +23632,8 @@ export namespace NoRdfTypeUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember2Property: string;
   }): Either<Error, NoRdfTypeUnionMember2> {
@@ -23628,7 +23663,8 @@ export namespace NoRdfTypeUnionMember2 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember2Property: string;
   }): NoRdfTypeUnionMember2 {
@@ -24057,7 +24093,8 @@ export namespace NoRdfTypeUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember1Property: string;
   }): Either<Error, NoRdfTypeUnionMember1> {
@@ -24087,7 +24124,8 @@ export namespace NoRdfTypeUnionMember1 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember1Property: string;
   }): NoRdfTypeUnionMember1 {
@@ -24517,7 +24555,8 @@ export namespace NamedUnionProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NamedUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property: NamedUnion2;
@@ -24552,7 +24591,8 @@ export namespace NamedUnionProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => NamedUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property: NamedUnion2;
@@ -25211,7 +25251,8 @@ export namespace MutableProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => MutableProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
     readonly mutableSetProperty?: readonly string[];
@@ -25253,7 +25294,8 @@ export namespace MutableProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => MutableProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
     readonly mutableSetProperty?: readonly string[];
@@ -26103,7 +26145,8 @@ export namespace ClassMultipleInheritanceParent2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent2Property: string;
   }): Either<Error, ClassMultipleInheritanceParent2> {
@@ -26133,7 +26176,8 @@ export namespace ClassMultipleInheritanceParent2 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent2Property: string;
   }): ClassMultipleInheritanceParent2 {
@@ -26711,7 +26755,8 @@ export namespace ClassMultipleInheritanceParent1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent1Property: string;
   }): Either<Error, ClassMultipleInheritanceParent1> {
@@ -26741,7 +26786,8 @@ export namespace ClassMultipleInheritanceParent1 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent1Property: string;
   }): ClassMultipleInheritanceParent1 {
@@ -27320,7 +27366,8 @@ export namespace ClassMultipleInheritanceChild {
     parameters: {
       readonly $identifier?:
         | (() => ClassMultipleInheritanceChild.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classMultipleInheritanceChildProperty: string;
     } & Parameters<typeof ClassMultipleInheritanceParent1.create>[0] &
@@ -27359,7 +27406,8 @@ export namespace ClassMultipleInheritanceChild {
     parameters: {
       readonly $identifier?:
         | (() => ClassMultipleInheritanceChild.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classMultipleInheritanceChildProperty: string;
     } & Parameters<typeof ClassMultipleInheritanceParent1.create>[0] &
@@ -28003,7 +28051,8 @@ export namespace ListProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ListProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly iriListProperty?:
       | readonly (string | NamedNode)[]
@@ -28047,7 +28096,8 @@ export namespace ListProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => ListProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly iriListProperty?:
       | readonly (string | NamedNode)[]
@@ -29131,7 +29181,8 @@ export namespace LazyProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazyProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectOption<
@@ -29325,7 +29376,8 @@ export namespace LazyProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => LazyProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectOption<
@@ -31556,8 +31608,8 @@ export namespace LazilyResolvedIriIdentifier {
   export function create(parameters: {
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifier.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, LazilyResolvedIriIdentifier> {
     return $sequenceRecord({
@@ -31588,8 +31640,8 @@ export namespace LazilyResolvedIriIdentifier {
   export function createUnsafe(parameters: {
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifier.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedIriIdentifier {
     return create(parameters).unsafeCoerce();
@@ -32025,7 +32077,8 @@ export namespace LazilyResolvedUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, LazilyResolvedUnionMember2> {
@@ -32055,7 +32108,8 @@ export namespace LazilyResolvedUnionMember2 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedUnionMember2 {
@@ -32595,7 +32649,8 @@ export namespace LazilyResolvedUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, LazilyResolvedUnionMember1> {
@@ -32625,7 +32680,8 @@ export namespace LazilyResolvedUnionMember1 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedUnionMember1 {
@@ -33168,7 +33224,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
@@ -33198,7 +33255,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifier {
@@ -33759,7 +33817,8 @@ export namespace LanguageInProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LanguageInProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly languageInLiteralProperty: readonly (
       | bigint
@@ -33796,7 +33855,8 @@ export namespace LanguageInProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => LanguageInProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly languageInLiteralProperty: readonly (
       | bigint
@@ -34292,7 +34352,8 @@ export namespace JsPrimitiveUnionProperty {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => JsPrimitiveUnionProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }): Either<Error, JsPrimitiveUnionProperty> {
@@ -34322,7 +34383,8 @@ export namespace JsPrimitiveUnionProperty {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => JsPrimitiveUnionProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }): JsPrimitiveUnionProperty {
@@ -35253,7 +35315,7 @@ export interface IriIdentifier {
 
 export namespace IriIdentifier {
   export function create(parameters: {
-    readonly $identifier: (() => IriIdentifier.Identifier) | NamedNode | string;
+    readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
   }): Either<Error, IriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
@@ -35274,7 +35336,7 @@ export namespace IriIdentifier {
   }
 
   export function createUnsafe(parameters: {
-    readonly $identifier: (() => IriIdentifier.Identifier) | NamedNode | string;
+    readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
   }): IriIdentifier {
     return create(parameters).unsafeCoerce();
   }
@@ -35705,7 +35767,8 @@ export namespace IndirectRecursiveHelper {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursiveHelper.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveProperty?:
       | IndirectRecursive
@@ -35737,7 +35800,8 @@ export namespace IndirectRecursiveHelper {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursiveHelper.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveProperty?:
       | IndirectRecursive
@@ -36282,7 +36346,8 @@ export namespace IndirectRecursive {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveHelperProperty?:
       | IndirectRecursiveHelper
@@ -36314,7 +36379,8 @@ export namespace IndirectRecursive {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveHelperProperty?:
       | IndirectRecursiveHelper
@@ -36869,7 +36935,8 @@ export namespace InProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => InProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly inBooleansProperty?: true | Maybe<true>;
     readonly inDateTimesProperty?: Date | Maybe<Date>;
@@ -36935,7 +37002,8 @@ export namespace InProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => InProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly inBooleansProperty?: true | Maybe<true>;
     readonly inDateTimesProperty?: Date | Maybe<Date>;
@@ -38044,12 +38112,12 @@ export namespace InIdentifier {
   export function create(parameters: {
     readonly $identifier:
       | (() => InIdentifier.Identifier)
+      | "http://example.com/InIdentifierInstance1"
+      | "http://example.com/InIdentifierInstance2"
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
-        >
-      | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2";
+        >;
     readonly inIdentifierProperty?: string | Maybe<string>;
   }): Either<Error, InIdentifier> {
     return $sequenceRecord({
@@ -38078,12 +38146,12 @@ export namespace InIdentifier {
   export function createUnsafe(parameters: {
     readonly $identifier:
       | (() => InIdentifier.Identifier)
+      | "http://example.com/InIdentifierInstance1"
+      | "http://example.com/InIdentifierInstance2"
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
-        >
-      | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2";
+        >;
     readonly inIdentifierProperty?: string | Maybe<string>;
   }): InIdentifier {
     return create(parameters).unsafeCoerce();
@@ -38671,7 +38739,8 @@ export namespace HasValueProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => HasValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly hasIriValueProperty: string | NamedNode;
     readonly hasLiteralValueProperty: string;
@@ -38706,7 +38775,8 @@ export namespace HasValueProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => HasValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly hasIriValueProperty: string | NamedNode;
     readonly hasLiteralValueProperty: string;
@@ -39222,7 +39292,8 @@ export namespace FlattenUnionMember3 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => FlattenUnionMember3.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly flattenUnionMember3Property: string;
   }): Either<Error, FlattenUnionMember3> {
@@ -39252,7 +39323,8 @@ export namespace FlattenUnionMember3 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => FlattenUnionMember3.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly flattenUnionMember3Property: string;
   }): FlattenUnionMember3 {
@@ -39780,7 +39852,8 @@ export namespace ExternProperty {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ExternProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly externProperty?: Extern | Maybe<Extern>;
   }): Either<Error, ExternProperty> {
@@ -39807,7 +39880,8 @@ export namespace ExternProperty {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => ExternProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly externProperty?: Extern | Maybe<Extern>;
   }): ExternProperty {
@@ -40354,7 +40428,8 @@ export namespace BaseForExtern {
   export function create(parameters: {
     readonly $identifier?:
       | (() => BaseForExtern.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly baseForExternProperty: string;
   }): Either<Error, BaseForExtern> {
@@ -40381,7 +40456,8 @@ export namespace BaseForExtern {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => BaseForExtern.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly baseForExternProperty: string;
   }): BaseForExtern {
@@ -40918,7 +40994,8 @@ export namespace ExplicitRdfType {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ExplicitRdfType.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitRdfTypeProperty: string;
   }): Either<Error, ExplicitRdfType> {
@@ -40945,7 +41022,8 @@ export namespace ExplicitRdfType {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ExplicitRdfType.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitRdfTypeProperty: string;
   }): ExplicitRdfType {
@@ -41477,7 +41555,8 @@ export namespace ExplicitFromToRdfTypes {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypes.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFromToRdfTypesProperty: string;
   }): Either<Error, ExplicitFromToRdfTypes> {
@@ -41507,7 +41586,8 @@ export namespace ExplicitFromToRdfTypes {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypes.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFromToRdfTypesProperty: string;
   }): ExplicitFromToRdfTypes {
@@ -42066,7 +42146,8 @@ export namespace DisplayProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => DisplayProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFalseDisplayProperty: string;
     readonly explicitTrueDisplayProperty: string;
@@ -42106,7 +42187,8 @@ export namespace DisplayProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => DisplayProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFalseDisplayProperty: string;
     readonly explicitTrueDisplayProperty: string;
@@ -42804,7 +42886,8 @@ export namespace DirectRecursive {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly directRecursiveProperty?: DirectRecursive | Maybe<DirectRecursive>;
   }): Either<Error, DirectRecursive> {
@@ -42831,7 +42914,8 @@ export namespace DirectRecursive {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => DirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly directRecursiveProperty?: DirectRecursive | Maybe<DirectRecursive>;
   }): DirectRecursive {
@@ -43370,7 +43454,8 @@ export namespace DefaultValueProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DefaultValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateDefaultValueProperty?: Date;
     readonly dateTimeDefaultValueProperty?: Date;
@@ -43435,7 +43520,8 @@ export namespace DefaultValueProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => DefaultValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateDefaultValueProperty?: Date;
     readonly dateTimeDefaultValueProperty?: Date;
@@ -44556,7 +44642,8 @@ export namespace DateUnionProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DateUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateOrDateTimeProperty?:
       | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
@@ -44617,7 +44704,8 @@ export namespace DateUnionProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => DateUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateOrDateTimeProperty?:
       | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
@@ -46967,7 +47055,8 @@ export namespace ConvertibleTypeProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ConvertibleTypeProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
@@ -47102,7 +47191,8 @@ export namespace ConvertibleTypeProperties {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ConvertibleTypeProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
     readonly convertibleIriOptionProperty?:
@@ -49179,7 +49269,8 @@ export namespace Partial {
   export function create(parameters: {
     readonly $identifier?:
       | (() => Partial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Either<Error, Partial> {
@@ -49206,7 +49297,8 @@ export namespace Partial {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => Partial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Partial {
@@ -49620,7 +49712,8 @@ export namespace NonClass {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NonClass.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly nonClassProperty: string;
   }): Either<Error, NonClass> {
@@ -49647,7 +49740,8 @@ export namespace NonClass {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => NonClass.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly nonClassProperty: string;
   }): NonClass {
@@ -50074,7 +50168,8 @@ export namespace ClassProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ClassProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly iriClassProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly multiClassProperty?:
@@ -50129,7 +50224,8 @@ export namespace ClassProperties {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => ClassProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly iriClassProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly multiClassProperty?:
@@ -51126,7 +51222,8 @@ export namespace ClassHierarchy0 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassHierarchy0.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classHierarchy0Property: string;
   }): Either<Error, ClassHierarchy0> {
@@ -51153,7 +51250,8 @@ export namespace ClassHierarchy0 {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => ClassHierarchy0.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classHierarchy0Property: string;
   }): ClassHierarchy0 {
@@ -51714,7 +51812,8 @@ export namespace ClassHierarchy1 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
     } & Parameters<typeof ClassHierarchy0.create>[0],
   ): Either<Error, ClassHierarchy1> {
@@ -51744,7 +51843,8 @@ export namespace ClassHierarchy1 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
     } & Parameters<typeof ClassHierarchy0.create>[0],
   ): ClassHierarchy1 {
@@ -52235,7 +52335,8 @@ export namespace ClassHierarchy2 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy2Property: string;
     } & Parameters<typeof ClassHierarchy1.create>[0],
@@ -52270,7 +52371,8 @@ export namespace ClassHierarchy2 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy2Property: string;
     } & Parameters<typeof ClassHierarchy1.create>[0],
@@ -52838,7 +52940,8 @@ export namespace ClassHierarchy3 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy3.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy3Property: string;
     } & Parameters<typeof ClassHierarchy2.create>[0],
@@ -52873,7 +52976,8 @@ export namespace ClassHierarchy3 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy3.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy3Property: string;
     } & Parameters<typeof ClassHierarchy2.create>[0],
@@ -53425,7 +53529,8 @@ export namespace BlankNodeOrIriIdentifier {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): Either<Error, BlankNodeOrIriIdentifier> {
     return $sequenceRecord({
@@ -53450,7 +53555,8 @@ export namespace BlankNodeOrIriIdentifier {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): BlankNodeOrIriIdentifier {
     return create(parameters).unsafeCoerce();

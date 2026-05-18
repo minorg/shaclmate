@@ -85,11 +85,6 @@ import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
-import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
-import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
-import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
-import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
-import { snippets_isReadonlyStringArray } from "./_snippets/snippets_isReadonlyStringArray.js";
 import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
 import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
 import { snippets_LazyObjectSet } from "./_snippets/snippets_LazyObjectSet.js";
@@ -734,31 +729,6 @@ export class Snippets {
   @Memoize()
   get iriSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_iriSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get isReadonlyBigIntArray(): Snippet {
-    return this.snippet(snippets_isReadonlyBigIntArray);
-  }
-
-  @Memoize()
-  get isReadonlyBooleanArray(): Snippet {
-    return this.snippet(snippets_isReadonlyBooleanArray);
-  }
-
-  @Memoize()
-  get isReadonlyNumberArray(): Snippet {
-    return this.snippet(snippets_isReadonlyNumberArray);
-  }
-
-  @Memoize()
-  get isReadonlyObjectArray(): Snippet {
-    return this.snippet(snippets_isReadonlyObjectArray);
-  }
-
-  @Memoize()
-  get isReadonlyStringArray(): Snippet {
-    return this.snippet(snippets_isReadonlyStringArray);
   }
 
   @Memoize()

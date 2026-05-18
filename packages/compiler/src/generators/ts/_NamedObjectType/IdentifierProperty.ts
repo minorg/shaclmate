@@ -40,19 +40,13 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get constructorParameter(): Maybe<Code> {
-    const hasQuestionToken = (
-      this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>
-    ).has("BlankNode");
-
+    let hasQuestionToken: boolean = false;
     const typeNames: Code[] = [code`(() => ${this.typeAlias})`];
-    for (const conversion of this.type.conversions) {
-      if (
-        conversion.sourceTypeof !== "undefined" &&
-        !typeNames.some((typeName) =>
-          codeEquals(typeName, conversion.sourceTypeName),
-        )
-      ) {
-        typeNames.push(code`${conversion.sourceTypeName}`);
+    for (const type of this.type.conversionFunction.sourceTypes) {
+      if (type.typeof === "undefined") {
+        hasQuestionToken = true;
+      } else {
+        typeNames.push(code`${type.name}`);
       }
     }
 

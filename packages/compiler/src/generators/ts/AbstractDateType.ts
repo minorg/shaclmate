@@ -17,19 +17,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
   override readonly typeofs = ["object" as const];
 
-  @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof Date`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      },
-    ];
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["fromJsonExpression"]>[0]): Code {

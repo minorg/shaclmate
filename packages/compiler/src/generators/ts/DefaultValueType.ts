@@ -44,15 +44,6 @@ export class DefaultValueType<
     };
   }
 
-  get conversions(): readonly AbstractContainerType.Conversion[] {
-    return this.itemType.conversions.concat({
-      conversionExpression: () => this.defaultValueExpression,
-      sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-      sourceTypeName: code`undefined`,
-      sourceTypeof: "undefined",
-    });
-  }
-
   override get equalsFunction(): Code {
     return this.itemType.equalsFunction;
   }

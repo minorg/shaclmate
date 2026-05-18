@@ -41,18 +41,6 @@ export abstract class AbstractLazyObjectType<
     this.resolveType = resolveType;
   }
 
-  override get conversions(): readonly AbstractType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      } satisfies AbstractType.Conversion,
-    ];
-  }
-
   @Memoize()
   override get equalsFunction(): Code {
     return code`((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
@@ -235,7 +223,6 @@ export namespace AbstractLazyObjectType {
     | SetType<ObjectTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
-  export type Conversion = AbstractType.Conversion;
   export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;

@@ -55,9 +55,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     for (const type of this.type.conversionFunction.sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
-      } else if (
-        !typeNames.some((typeName) => codeEquals(typeName, type.name))
-      ) {
+      } else {
         typeNames.push(code`${type.name}`);
       }
     }

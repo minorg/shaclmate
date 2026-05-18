@@ -10,19 +10,6 @@ export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigIntType";
   override readonly typeofs = ["bigint" as const];
 
-  override get conversions(): readonly AbstractNumericType.Conversion[] {
-    if (this.in_.length > 0) {
-      return super.conversions;
-    }
-
-    return super.conversions.concat({
-      conversionExpression: (value) => code`BigInt(${value})`,
-      sourceTypeCheckExpression: (value) => code`typeof ${value} === "number"`,
-      sourceTypeName: "number",
-      sourceTypeof: "number",
-    });
-  }
-
   @Memoize()
   override get graphqlType() {
     return new AbstractNumericType.GraphqlType(

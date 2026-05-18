@@ -2,8 +2,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -44,72 +42,6 @@ export class LazyObjectOptionType extends Super {
         },
       ],
     };
-  }
-
-  @Memoize()
-  override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
-    const conversions = super.conversions.concat();
-
-    if (this.partialType.itemType.kind === "NamedObjectType") {
-      conversions.push(
-        {
-          conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.create), resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
-          sourceTypeCheckExpression: (value) =>
-            code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>`,
-          sourceTypeof: "object",
-        },
-        {
-          conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${(this.partialType.itemType as NamedObjectType).name}.create(${value})), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
-          // Don't check instanceof value since the NamedObjectUnionType may be an interface
-          // Rely on the fact that this will be the last type check on an object
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "object"`,
-          sourceTypeName: this.resolveType.itemType.name,
-          sourceTypeof: "object",
-        },
-      );
-    } else if (
-      this.resolveType.itemType.kind === "NamedObjectUnionType" &&
-      this.partialType.itemType.kind === "NamedObjectUnionType" &&
-      this.resolveType.itemType.members.length ===
-        this.partialType.itemType.members.length
-    ) {
-      const maybeMap = code`.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })`;
-
-      conversions.push(
-        {
-          conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}${maybeMap}, resolver: async () => ${this.reusables.imports.Right}((${value} as ${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>).unsafeCoerce()) })`,
-          sourceTypeCheckExpression: (value) =>
-            code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
-          sourceTypeName: code`${this.reusables.imports.Maybe}<${this.resolveType.itemType.name}>`,
-          sourceTypeof: "object",
-        },
-        {
-          conversionExpression: (value) =>
-            code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.of(${value})${maybeMap}, resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.itemType.name}) })`,
-          // Don't check instanceof value since the NamedObjectUnionType may be an interface
-          // Rely on the fact that this will be the last type check on an object
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "object"`,
-          sourceTypeName: this.resolveType.itemType.name,
-          sourceTypeof: "object",
-        },
-      );
-    }
-
-    conversions.push({
-      conversionExpression: () =>
-        code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.reusables.imports.Maybe}.empty(), resolver: async () => { throw new Error("should never be called"); } })`,
-      sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-      sourceTypeName: code`undefined`,
-      sourceTypeof: "undefined",
-    });
-
-    return conversions;
   }
 
   @Memoize()

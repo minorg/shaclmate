@@ -12,20 +12,6 @@ export class SetType<
     Maybe.empty();
   override readonly kind = "SetType";
 
-  override get conversions(): readonly AbstractCollectionType.Conversion[] {
-    const conversions: AbstractCollectionType.Conversion[] = [];
-    if (this.minCount === 0n) {
-      conversions.push({
-        conversionExpression: () => code`[]`,
-        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-        sourceTypeName: code`undefined`,
-        sourceTypeof: "undefined",
-      });
-    }
-
-    return conversions.concat(super.conversions);
-  }
-
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;

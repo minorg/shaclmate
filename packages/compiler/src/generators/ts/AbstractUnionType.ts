@@ -204,35 +204,6 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    switch (this.discriminant.kind) {
-      case "extrinsic":
-      case "hybrid":
-      case "intrinsic":
-        return [
-          {
-            conversionExpression: (value) => value,
-            sourceTypeCheckExpression: (value) =>
-              code`typeof ${value} === "object"`,
-            sourceTypeName: this.name,
-            sourceTypeof: "object",
-          },
-        ];
-      case "typeof":
-        return this.members.map(
-          ({ primaryDiscriminantValue, type, typeCheck }) => ({
-            conversionExpression: (value) => value,
-            sourceTypeCheckExpression: (value) => typeCheck(value),
-            sourceTypeName: type.name,
-            sourceTypeof: primaryDiscriminantValue as Typeof,
-          }),
-        );
-      default:
-        throw this.discriminant satisfies never;
-    }
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     switch (this.discriminant.kind) {
       case "extrinsic":

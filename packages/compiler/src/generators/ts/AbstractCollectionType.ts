@@ -5,7 +5,6 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
-import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -66,110 +65,6 @@ export abstract class AbstractCollectionType<
       code: code`${this._mutable ? this.reusables.snippets.convertToMutableArray : this.reusables.snippets.convertToReadonlyArray}(${itemConversionFunction.code})`,
       sourceTypes,
     };
-  }
-
-  @Memoize()
-  override get conversions(): readonly AbstractContainerType.Conversion[] {
-    const conversions: AbstractContainerType.Conversion[] = [];
-
-    // Try to do some conversions from types itemType can be converted to
-    // For example, if itemType is a NamedNode, it can be converted from a string, so here we'd accept:
-    // readonly NamedNode[] (no conversion)
-    // readonly string[] (map to NamedNodes)
-
-    // We only consider discriminating by (item) typeof. For example, the types above could be discriminated by the branches
-    // array.every(item => typeof item === "object")
-    // array.every(item => typeof item === "string")
-
-    const itemTypeConversionsByTypeof = {} as Record<
-      Typeof,
-      AbstractContainerType.Conversion
-    >;
-    if (this.itemType.typeofs.length === 1) {
-      itemTypeConversionsByTypeof[this.itemType.typeofs[0]] = {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === ${this.itemType.typeofs[0]}`,
-        sourceTypeName: this.itemType.name,
-        sourceTypeof: this.itemType.typeofs[0],
-      };
-
-      for (const itemTypeConversion of this.itemType.conversions) {
-        if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof]) {
-          itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof] =
-            itemTypeConversion;
-        }
-      }
-    }
-
-    if (this.minCount === 0n) {
-      if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
-        // There were no additional conversions with different item typeof's, so we don't need to check .every or do .map
-        // Just check that the original value is an array with typeof "object". Array.isArray() doesn't narrow types for some reason.
-        conversions.push({
-          conversionExpression: (value) =>
-            // Defensive copy
-            code`${value}${this.mutable ? ".concat()" : ""}`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "object"`,
-          sourceTypeName: code`readonly (${this.itemType.name})[]`,
-          sourceTypeof: "object",
-        });
-      } else {
-        // There were additional conversions with different item typeof's.
-        // We do .every (per above) to discriminate array types with different item typeof's and .map to convert the array at runtime.
-        for (const [itemTypeof, itemTypeofConversion] of Object.entries(
-          itemTypeConversionsByTypeof,
-        )) {
-          const itemVariable = code`item`;
-
-          conversions.push({
-            conversionExpression: (value) => {
-              const itemTypeConversionExpression =
-                itemTypeofConversion.conversionExpression(itemVariable);
-              return !codeEquals(itemTypeConversionExpression, itemVariable)
-                ? code`${value}.map(item => ${itemTypeConversionExpression})`
-                : // Defensive copy
-                  code`${value}${this.mutable ? ".concat()" : ""}`;
-            },
-            sourceTypeCheckExpression: (value) => {
-              switch (itemTypeof as Typeof) {
-                case "bigint":
-                  return code`${this.reusables.snippets.isReadonlyBigIntArray}(${value})`;
-                case "boolean":
-                  return code`${this.reusables.snippets.isReadonlyBooleanArray}(${value})`;
-                case "number":
-                  return code`${this.reusables.snippets.isReadonlyNumberArray}(${value})`;
-                case "object":
-                  return code`${this.reusables.snippets.isReadonlyObjectArray}(${value})`;
-                case "string":
-                  return code`${this.reusables.snippets.isReadonlyStringArray}(${value})`;
-                case "function":
-                case "symbol":
-                case "undefined":
-                  throw new Error(
-                    `source type check on ${itemTypeof} not implemented`,
-                  );
-              }
-            },
-            sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
-            sourceTypeof: itemTypeofConversion.sourceTypeof,
-          });
-        }
-      }
-    } else {
-      // minCount > 0
-      // Don't try to do any item type conversions here (yet).
-      conversions.push({
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`${this.reusables.imports.NonEmptyList}.isNonEmpty(${value})`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      });
-    }
-
-    return conversions;
   }
 
   @Memoize()
@@ -280,7 +175,6 @@ export abstract class AbstractCollectionType<
 }
 
 export namespace AbstractCollectionType {
-  export type Conversion = AbstractContainerType.Conversion;
   export type DiscriminantProperty = AbstractContainerType.DiscriminantProperty;
   export const GraphqlType = AbstractContainerType.GraphqlType;
   export type GraphqlType = AbstractContainerType.GraphqlType;

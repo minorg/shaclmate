@@ -54,65 +54,6 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
-
-    if (this.nodeKinds.has("Literal")) {
-      conversions.push(
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.bigint(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "bigint"`,
-          sourceTypeName: code`bigint`,
-          sourceTypeof: "bigint",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.boolean(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "boolean"`,
-          sourceTypeName: code`boolean`,
-          sourceTypeof: "boolean",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.date(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "object" && ${value} instanceof Date`,
-          sourceTypeName: code`Date`,
-          sourceTypeof: "object",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.number(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "number"`,
-          sourceTypeName: code`number`,
-          sourceTypeof: "number",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.string(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "string"`,
-          sourceTypeName: code`string`,
-          sourceTypeof: "string",
-        },
-      );
-    }
-
-    conversions.push({
-      conversionExpression: (value) => value,
-      sourceTypeCheckExpression: (value) => code`typeof ${value} === "object"`,
-      sourceTypeName: this.name,
-      sourceTypeof: "object",
-    });
-
-    return conversions;
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       descendantValues: [],
@@ -246,7 +187,6 @@ chain(values => ${this.reusables.imports.Either}.sequence([${joinCode(
 }
 
 export namespace AbstractTermType {
-  export type Conversion = AbstractType.Conversion;
   export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;

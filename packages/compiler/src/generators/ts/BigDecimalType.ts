@@ -30,43 +30,6 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.bigDecimalSparqlWherePatterns}`;
 
   @Memoize()
-  override get conversions(): readonly AbstractLiteralType.Conversion[] {
-    return [
-      // {
-      //   conversionExpression: (value) =>
-      //     code`new ${this.reusables.imports.BigDecimal}(${value}.toString())`,
-      //   sourceTypeCheckExpression: (value) =>
-      //     code`typeof ${value} === "bigint"`,
-      //   sourceTypeName: code`bigint`,
-      //   sourceTypeof: "bigint",
-      // },
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: code`${this.reusables.imports.BigDecimal}`,
-        sourceTypeof: "object",
-      },
-      // {
-      //   conversionExpression: (value) =>
-      //     code`new ${this.reusables.imports.BigDecimal}(${value})`,
-      //   sourceTypeCheckExpression: (value) =>
-      //     code`typeof ${value} === "number"`,
-      //   sourceTypeName: code`number`,
-      //   sourceTypeof: "number",
-      // },
-      // {
-      //   conversionExpression: (value) =>
-      //     code`new ${this.reusables.imports.BigDecimal}(${value})`,
-      //   sourceTypeCheckExpression: (value) =>
-      //     code`typeof ${value} === "string"`,
-      //   sourceTypeName: code`string`,
-      //   sourceTypeof: "string",
-      // },
-    ];
-  }
-
-  @Memoize()
   override get graphqlType() {
     return new AbstractLiteralType.GraphqlType(
       code`${this.reusables.imports.GraphQLString}`,

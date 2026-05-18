@@ -23,11 +23,6 @@ export abstract class AbstractType {
   readonly comment: Maybe<string>;
 
   /**
-   * Expressions that convert a source type or types to this type. It should include the type itself.
-   */
-  abstract readonly conversions: readonly AbstractType.Conversion[];
-
-  /**
    * Function that converts one or more source types to this type and returns Either<Error, ThisType>.
    *
    * The function takes two parameters:
@@ -321,13 +316,6 @@ export abstract class AbstractType {
 }
 
 export namespace AbstractType {
-  export interface Conversion {
-    readonly conversionExpression: (value: Code) => Code;
-    readonly sourceTypeCheckExpression: (value: Code) => Code;
-    readonly sourceTypeName: Code | string;
-    readonly sourceTypeof: Typeof;
-  }
-
   export interface ConversionFunction {
     readonly code: Code;
     readonly sourceTypes: {

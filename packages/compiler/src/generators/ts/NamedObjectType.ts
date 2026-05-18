@@ -137,19 +137,6 @@ export class NamedObjectType extends AbstractType {
     };
   }
 
-  @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      },
-    ];
-  }
-
   override get declaration(): Maybe<Code> {
     const declarations: Code[] = [];
 
