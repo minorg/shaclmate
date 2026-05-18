@@ -860,19 +860,32 @@ export namespace NestedNodeShape {
   }): Either<Error, NestedNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      $type: Right("NestedNodeShape" as const),
       requiredStringProperty: $convertToString<string>(
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
       ),
-    }).map((object) => {
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "NestedNodeShape" as const };
       if (
-        !globalThis.Object.prototype.hasOwnProperty.call(object, "toString")
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
       ) {
-        (object as any).toString = $toString;
+        (finalObject as any).toString = $toString;
       }
-      return object;
+      return finalObject;
     });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NestedNodeShape.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly requiredStringProperty: string;
+  }): NestedNodeShape {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -1191,7 +1204,6 @@ export namespace FormNodeShape {
   }): Either<Error, FormNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      $type: Right("FormNodeShape" as const),
       emptyStringSetProperty: $convertToReadonlyArray($convertToString<string>)(
         schema.properties.emptyStringSetProperty.type(),
         parameters.emptyStringSetProperty,
@@ -1218,14 +1230,33 @@ export namespace FormNodeShape {
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
       ),
-    }).map((object) => {
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "FormNodeShape" as const };
       if (
-        !globalThis.Object.prototype.hasOwnProperty.call(object, "toString")
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
       ) {
-        (object as any).toString = $toString;
+        (finalObject as any).toString = $toString;
       }
-      return object;
+      return finalObject;
     });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => FormNodeShape.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nestedObjectProperty: NestedNodeShape;
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredIntProperty: number;
+    readonly requiredStringProperty: string;
+  }): FormNodeShape {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(

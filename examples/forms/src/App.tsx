@@ -37,9 +37,9 @@ const classes = {
 };
 
 const initialData = generated.FormNodeShape.toJson(
-  generated.FormNodeShape.create({
+  generated.FormNodeShape.createUnsafe({
     $identifier: dataFactory.namedNode("http://example.com/form"),
-    nestedObjectProperty: generated.NestedNodeShape.create({
+    nestedObjectProperty: generated.NestedNodeShape.createUnsafe({
       $identifier: dataFactory.namedNode("http://example.com/nested"),
       requiredStringProperty: "required/nested",
     }),
