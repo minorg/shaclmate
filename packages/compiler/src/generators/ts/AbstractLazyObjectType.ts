@@ -205,7 +205,7 @@ export abstract class AbstractLazyObjectType<
     resolveType: ObjectTypeT;
   }): Code {
     if (partialType.kind === "NamedObjectType") {
-      return code`${partialType.name}.create`;
+      return code`${partialType.name}.createUnsafe`;
     }
 
     invariant(partialType.kind === "NamedObjectUnionType");

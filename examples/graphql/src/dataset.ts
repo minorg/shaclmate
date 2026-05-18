@@ -15,7 +15,7 @@ const resourceSet = new ResourceSet({
   dataset,
 });
 for (let i = 0; i < 4; i++) {
-  const lazyObject = Nested.create({
+  const lazyObject = Nested.createUnsafe({
     $identifier: dataFactory.namedNode(`http://example.com/child${i}/lazy`),
     optionalNumberProperty: 2,
     optionalStringProperty: "optional string (nested)",
@@ -24,12 +24,12 @@ for (let i = 0; i < 4; i++) {
   Nested.toRdfResource(lazyObject, { resourceSet });
 
   Child.toRdfResource(
-    Child.create({
+    Child.createUnsafe({
       $identifier: dataFactory.namedNode(`http://example.com/child${i}`),
       childStringProperty: "child string property",
       lazyObjectSetProperty: [lazyObject],
       optionalLazyObjectProperty: lazyObject,
-      optionalObjectProperty: Nested.create({
+      optionalObjectProperty: Nested.createUnsafe({
         $identifier: dataFactory.namedNode(
           `http://example.com/child${i}/nested`,
         ),
@@ -45,7 +45,7 @@ for (let i = 0; i < 4; i++) {
   );
 
   Parent.toRdfResource(
-    Parent.create({
+    Parent.createUnsafe({
       $identifier: dataFactory.namedNode(`http://example.com/parent${i}`),
       parentStringProperty: "parent string",
     }),
@@ -54,7 +54,7 @@ for (let i = 0; i < 4; i++) {
 
   if (i % 2 === 0) {
     UnionMember1.toRdfResource(
-      UnionMember1.create({
+      UnionMember1.createUnsafe({
         $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
         optionalNumberProperty: 1,
       }),
@@ -62,7 +62,7 @@ for (let i = 0; i < 4; i++) {
     );
   } else {
     UnionMember2.toRdfResource(
-      UnionMember2.create({
+      UnionMember2.createUnsafe({
         $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
         optionalStringProperty: "test",
       }),

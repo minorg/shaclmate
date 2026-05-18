@@ -150,7 +150,7 @@ export abstract class AbstractProperty<
    */
   abstract constructorInitializer(parameters: {
     variables: { parameters: Code };
-  }): Code;
+  }): Maybe<Code>;
 
   /**
    * Initializer (name: value) from a JSON object.

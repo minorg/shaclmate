@@ -153,8 +153,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override constructorInitializer({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["constructorInitializer"]>[0]): Code {
-    return code`${this.name}: ${this.type.conversionFunction.code}(schema.properties.${this.name}.type(), ${variables.parameters}.${this.name})`;
+  }: Parameters<
+    AbstractProperty<TypeT>["constructorInitializer"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.name}: ${this.type.conversionFunction.code}(schema.properties.${this.name}.type(), ${variables.parameters}.${this.name})`,
+    );
   }
 
   override fromJsonInitializer({

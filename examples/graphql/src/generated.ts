@@ -26,7 +26,7 @@ import {
   GraphQLString,
   GraphQLUnionType,
 } from "graphql";
-import { type Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
+import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
 
 type $_FromRdfResourceFunction<T> = (
   resource: Resource,
@@ -79,38 +79,38 @@ function $convertToIdentifierProperty(
     | NamedNode
     | string
     | undefined,
-): () => BlankNode | NamedNode {
+): Either<Error, () => BlankNode | NamedNode> {
   switch (typeof identifier) {
     case "function":
-      return identifier;
+      return Either.of(identifier);
     case "object": {
       const captureIdentifier = identifier;
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
     case "string": {
       const captureIdentifier = dataFactory.namedNode(identifier);
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
     case "undefined": {
       const captureIdentifier = dataFactory.blankNode();
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
   }
 }
 
 function $convertToIriIdentifierProperty<IriT extends string = string>(
   identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
-): () => NamedNode<IriT> {
+): Either<Error, () => NamedNode<IriT>> {
   switch (typeof identifier) {
     case "function":
-      return identifier;
+      return Either.of(identifier);
     case "object": {
       const captureIdentifier = identifier;
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
     case "string": {
       const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
-      return () => captureIdentifier;
+      return Either.of(() => captureIdentifier);
     }
   }
 }
@@ -127,44 +127,53 @@ function $convertToLazyObjectOption<
       | Maybe<ResolvedObjectT>
       | ResolvedObjectT
       | undefined,
-  ): $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
+  ): Either<
+    Error,
+    $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+  > => {
     switch (typeof value) {
       case "object": {
         if (value instanceof $LazyObjectOption) {
-          return value;
+          return Either.of(value);
         }
 
         if (Maybe.isMaybe(value)) {
-          return new $LazyObjectOption<
+          return Either.of(
+            new $LazyObjectOption<
+              ObjectIdentifierT,
+              PartialObjectT,
+              ResolvedObjectT
+            >({
+              partial: value.map(resolvedToPartial),
+              resolver: async () => Right(value.unsafeCoerce()),
+            }),
+          );
+        }
+
+        return Either.of(
+          new $LazyObjectOption<
             ObjectIdentifierT,
             PartialObjectT,
             ResolvedObjectT
           >({
-            partial: value.map(resolvedToPartial),
-            resolver: async () => Right(value.unsafeCoerce()),
-          });
-        }
-
-        return new $LazyObjectOption<
-          ObjectIdentifierT,
-          PartialObjectT,
-          ResolvedObjectT
-        >({
-          partial: Maybe.of(resolvedToPartial(value)),
-          resolver: async () => Right(value),
-        });
+            partial: Maybe.of(resolvedToPartial(value)),
+            resolver: async () => Right(value),
+          }),
+        );
       }
       case "undefined":
-        return new $LazyObjectOption<
-          ObjectIdentifierT,
-          PartialObjectT,
-          ResolvedObjectT
-        >({
-          partial: Maybe.empty(),
-          resolver: async () => {
-            throw new Error("should never be called");
-          },
-        });
+        return Either.of(
+          new $LazyObjectOption<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partial: Maybe.empty(),
+            resolver: async () => {
+              throw new Error("should never be called");
+            },
+          }),
+        );
     }
   };
 }
@@ -180,77 +189,87 @@ function $convertToLazyObjectSet<
       | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | readonly ResolvedObjectT[]
       | undefined,
-  ): $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> => {
+  ): Either<
+    Error,
+    $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+  > => {
     switch (typeof value) {
       case "object": {
         if (value instanceof $LazyObjectSet) {
-          return value;
+          return Either.of(value);
         }
 
         const captureValue = value;
-        return new $LazyObjectSet<
-          ObjectIdentifierT,
-          PartialObjectT,
-          ResolvedObjectT
-        >({
-          partials: value.map(resolvedToPartial),
-          resolver: async () => Right(captureValue),
-        });
+        return Either.of(
+          new $LazyObjectSet<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partials: value.map(resolvedToPartial),
+            resolver: async () => Right(captureValue),
+          }),
+        );
       }
       case "undefined":
-        return new $LazyObjectSet<
-          ObjectIdentifierT,
-          PartialObjectT,
-          ResolvedObjectT
-        >({
-          partials: [],
-          resolver: async () => Right([]),
-        });
+        return Either.of(
+          new $LazyObjectSet<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partials: [],
+            resolver: async () => Right([]),
+          }),
+        );
     }
   };
 }
 
 function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ItemTargetT,
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
 ) {
   return (
     schema: $MaybeSchema<ItemSchemaT>,
     value: ItemSourceT | Maybe<ItemTargetT> | undefined,
-  ): Maybe<ItemTargetT> => {
+  ): Either<Error, Maybe<ItemTargetT>> => {
     switch (typeof value) {
       case "object": {
         if (Maybe.isMaybe(value)) {
-          return value as Maybe<ItemTargetT>;
+          return Either.of(value as Maybe<ItemTargetT>);
         }
         break;
       }
       case "undefined":
-        return Maybe.empty();
+        return Either.of(Maybe.empty());
     }
 
-    return Maybe.of(convertToItem(schema.item(), value));
+    return convertToItem(schema.item(), value).map(Maybe.of);
   };
 }
 
 function $convertToNumeric<ValueT extends bigint | number>(
   _schema: $NumericSchema<ValueT>,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 function $convertToObject<ValueT extends object>(
   _schema: unknown,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 function $convertToString<ValueT extends string>(
   _schema: $StringSchema,
   value: ValueT,
-): ValueT {
-  return value;
+): Either<Error, ValueT> {
+  return Either.of(value);
 }
 
 function $filterArray<ItemT, ItemFilterT>(
@@ -860,15 +879,30 @@ export namespace $DefaultPartial {
       | (() => $DefaultPartial.Identifier)
       | (BlankNode | NamedNode)
       | string;
-  }): $DefaultPartial {
-    const $object = {
+  }): Either<Error, $DefaultPartial> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      $type: "$DefaultPartial" as const,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "$DefaultPartial" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => $DefaultPartial.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+  }): $DefaultPartial {
+    return create(parameters).unsafeCoerce();
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -908,7 +942,7 @@ export namespace $DefaultPartial {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head()),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -999,19 +1033,35 @@ export namespace UnionMember2 {
       | (BlankNode | NamedNode)
       | string;
     readonly optionalStringProperty?: string | Maybe<string>;
-  }): UnionMember2 {
-    const $object = {
+  }): Either<Error, UnionMember2> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      $type: "UnionMember2" as const,
       optionalStringProperty: $convertToMaybe($convertToString<string>)(
         schema.properties.optionalStringProperty.type(),
         parameters?.optionalStringProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "UnionMember2" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember2.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly optionalStringProperty?: string | Maybe<string>;
+  }): UnionMember2 {
+    return create(parameters).unsafeCoerce();
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1143,7 +1193,7 @@ export namespace UnionMember2 {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -1259,19 +1309,35 @@ export namespace UnionMember1 {
       | (BlankNode | NamedNode)
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
-  }): UnionMember1 {
-    const $object = {
+  }): Either<Error, UnionMember1> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      $type: "UnionMember1" as const,
       optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
         schema.properties.optionalNumberProperty.type(),
         parameters?.optionalNumberProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "UnionMember1" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => UnionMember1.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+  }): UnionMember1 {
+    return create(parameters).unsafeCoerce();
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1397,7 +1463,7 @@ export namespace UnionMember1 {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -1525,10 +1591,9 @@ export namespace Nested {
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
-  }): Nested {
-    const $object = {
+  }): Either<Error, Nested> {
+    return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      $type: "Nested" as const,
       optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
         schema.properties.optionalNumberProperty.type(),
         parameters.optionalNumberProperty,
@@ -1541,11 +1606,30 @@ export namespace Nested {
         schema.properties.requiredStringProperty.type(),
         parameters.requiredStringProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "Nested" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => Nested.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly optionalNumberProperty?: number | Maybe<number>;
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): Nested {
+    return create(parameters).unsafeCoerce();
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -1741,7 +1825,7 @@ export namespace Nested {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -1884,21 +1968,34 @@ export namespace Parent {
   export function create(parameters: {
     readonly $identifier: (() => Parent.Identifier) | NamedNode | string;
     readonly parentStringProperty?: string | Maybe<string>;
-  }): Parent {
-    const $object = {
+  }): Either<Error, Parent> {
+    return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      $type: "Parent" as const,
       parentStringProperty: $convertToMaybe($convertToString<string>)(
         schema.properties.parentStringProperty.type(),
         parameters.parentStringProperty,
       ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "Parent" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier: (() => Parent.Identifier) | NamedNode | string;
+    readonly parentStringProperty?: string | Maybe<string>;
+  }): Parent {
+    return create(parameters).unsafeCoerce();
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -2026,7 +2123,7 @@ export namespace Parent {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -2167,10 +2264,82 @@ export namespace Child {
     parameters: {
       readonly $identifier: (() => Child.Identifier) | NamedNode | string;
       readonly childStringProperty?: string | Maybe<string>;
-      readonly lazyObjectSetProperty:
+      readonly lazyObjectSetProperty?:
         | $LazyObjectSet<Nested.Identifier, $DefaultPartial, Nested>
         | readonly Nested[];
-      readonly optionalLazyObjectProperty:
+      readonly optionalLazyObjectProperty?:
+        | $LazyObjectOption<Nested.Identifier, $DefaultPartial, Nested>
+        | Maybe<Nested>
+        | Nested;
+      readonly optionalObjectProperty?: Nested | Maybe<Nested>;
+      readonly optionalStringProperty?: string | Maybe<string>;
+      readonly requiredStringProperty: string;
+    } & Parameters<typeof Parent.create>[0],
+  ): Either<Error, Child> {
+    return Parent.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIriIdentifierProperty<string>(
+          parameters.$identifier,
+        ),
+        childStringProperty: $convertToMaybe($convertToString<string>)(
+          schema.properties.childStringProperty.type(),
+          parameters.childStringProperty,
+        ),
+        lazyObjectSetProperty: $convertToLazyObjectSet<
+          Nested.Identifier,
+          $DefaultPartial,
+          Nested
+        >($DefaultPartial.createUnsafe)(
+          schema.properties.lazyObjectSetProperty.type(),
+          parameters.lazyObjectSetProperty,
+        ),
+        optionalLazyObjectProperty: $convertToLazyObjectOption<
+          Nested.Identifier,
+          $DefaultPartial,
+          Nested
+        >($DefaultPartial.createUnsafe)(
+          schema.properties.optionalLazyObjectProperty.type(),
+          parameters.optionalLazyObjectProperty,
+        ),
+        optionalObjectProperty: $convertToMaybe($convertToObject)(
+          schema.properties.optionalObjectProperty.type(),
+          parameters.optionalObjectProperty,
+        ),
+        optionalStringProperty: $convertToMaybe($convertToString<string>)(
+          schema.properties.optionalStringProperty.type(),
+          parameters.optionalStringProperty,
+        ),
+        requiredStringProperty: $convertToString<string>(
+          schema.properties.requiredStringProperty.type(),
+          parameters.requiredStringProperty,
+        ),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "Child" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier: (() => Child.Identifier) | NamedNode | string;
+      readonly childStringProperty?: string | Maybe<string>;
+      readonly lazyObjectSetProperty?:
+        | $LazyObjectSet<Nested.Identifier, $DefaultPartial, Nested>
+        | readonly Nested[];
+      readonly optionalLazyObjectProperty?:
         | $LazyObjectOption<Nested.Identifier, $DefaultPartial, Nested>
         | Maybe<Nested>
         | Nested;
@@ -2179,49 +2348,7 @@ export namespace Child {
       readonly requiredStringProperty: string;
     } & Parameters<typeof Parent.create>[0],
   ): Child {
-    const $object = {
-      ...Parent.create(parameters),
-      $identifier: $convertToIriIdentifierProperty<string>(
-        parameters.$identifier,
-      ),
-      $type: "Child" as const,
-      childStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.childStringProperty.type(),
-        parameters.childStringProperty,
-      ),
-      lazyObjectSetProperty: $convertToLazyObjectSet<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >($DefaultPartial.create)(
-        schema.properties.lazyObjectSetProperty.type(),
-        parameters.lazyObjectSetProperty,
-      ),
-      optionalLazyObjectProperty: $convertToLazyObjectOption<
-        Nested.Identifier,
-        $DefaultPartial,
-        Nested
-      >($DefaultPartial.create)(
-        schema.properties.optionalLazyObjectProperty.type(),
-        parameters.optionalLazyObjectProperty,
-      ),
-      optionalObjectProperty: $convertToMaybe($convertToObject)(
-        schema.properties.optionalObjectProperty.type(),
-        parameters.optionalObjectProperty,
-      ),
-      optionalStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.optionalStringProperty.type(),
-        parameters.optionalStringProperty,
-      ),
-      requiredStringProperty: $convertToString<string>(
-        schema.properties.requiredStringProperty.type(),
-        parameters.requiredStringProperty,
-      ),
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export const GraphQL = new GraphQLObjectType<
@@ -2612,7 +2739,7 @@ export namespace Child {
                   values.chainMap((value) => value.toString()),
                 ),
           }),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };

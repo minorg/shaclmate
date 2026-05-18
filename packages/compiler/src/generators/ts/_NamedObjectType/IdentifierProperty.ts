@@ -129,7 +129,7 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorInitializer"]
-  >[0]): Code {
+  >[0]): Maybe<Code> {
     const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
 
     let conversionFunction: Code;
@@ -151,7 +151,9 @@ export class IdentifierProperty extends AbstractProperty<
       }
     }
 
-    return code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name})`;
+    return Maybe.of(
+      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name})`,
+    );
   }
 
   override fromJsonInitializer({

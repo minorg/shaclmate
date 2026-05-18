@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_createFunctionDeclaration(
   this: NamedObjectType,
@@ -27,10 +27,6 @@ export function NamedObjectType_createFunctionDeclaration(
     parametersType.push(code`object`);
   }
 
-  let initializers: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    initializers.push(code`...${parentObjectType.name}.create(parameters)`);
-  }
   const parametersHasQuestionToken =
     this.parentObjectTypes.length === 0 &&
     parametersPropertySignatures.every(
@@ -38,23 +34,53 @@ export function NamedObjectType_createFunctionDeclaration(
         propertySignature.toCodeString([]).indexOf("?:") !== -1,
     );
   const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
-  initializers = initializers.concat(
-    this.properties.map((property) =>
-      property.constructorInitializer({
+
+  const parametersSignature = code`parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}`;
+
+  const chains: { expression: Code; variable: string }[] = [];
+
+  this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
+    chains.push({
+      expression: code`${parentObjectType.name}.create(parameters)`,
+      variable: `super${parentObjectTypeI}`,
+    });
+  });
+
+  const propertyInitializers = this.properties.flatMap((property) =>
+    property
+      .constructorInitializer({
         variables: { parameters: parametersVariable },
-      }),
-    ),
+      })
+      .toList(),
   );
-  invariant(initializers.length > 0);
+  invariant(propertyInitializers.length > 0);
+  chains.push({
+    expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} })`,
+    variable: "properties",
+  });
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of(code`\
-export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${this.reusables.imports.Either}<Error, ${this.name}> {
-  return ${this.reusables.snippets.sequenceRecord}({ ${joinCode(initializers, { on: "," })} }).map(object => {
-    if (!globalThis.Object.prototype.hasOwnProperty.call(object, "toString")) {
-      (object as any).toString = ${syntheticNamePrefix}toString;
-    }
-    return object;
-  });
+export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${chains.toReversed().reduce(
+    (acc, { expression, variable }, chainI) =>
+      code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+    code`\
+{
+  const finalObject = { ${chains
+    .map((chain) => `...${chain.variable}`)
+    .join(
+      ", ",
+    )}, ${this._discriminantProperty.name}: ${literalOf(this.discriminantValue)} as const };
+  if (!globalThis.Object.prototype.hasOwnProperty.call(finalObject, "toString")) {
+    (finalObject as any).toString = ${syntheticNamePrefix}toString;
+  }
+  return finalObject;
+}`,
+  )};
+}
+  
+export function createUnsafe(${parametersSignature}): ${this.name} {
+  return create(parameters).unsafeCoerce();
 }`);
 }
