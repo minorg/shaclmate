@@ -13,8 +13,8 @@ const ExampleNodeShape1 = builder.nodeShape({
       .propertyShape({
         $identifier: ex("ExampleNodeShape-stringProperty"),
         datatype: xsd.string,
-        maxCount: 1,
-        minCount: 1,
+        maxCount: 1n,
+        minCount: 1n,
         path: ex("stringProperty"),
       })
       .$identifier(),
@@ -29,8 +29,8 @@ builder.nodeShape({
       .propertyShape({
         $identifier: ex("ExampleNodeShape-nodeProperty"),
         node: ExampleNodeShape1.$identifier(),
-        maxCount: 1,
-        minCount: 1,
+        maxCount: 1n,
+        minCount: 1n,
         path: ex("nodeProperty"),
       })
       .$identifier(),

@@ -43,10 +43,21 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
+interface $BooleanSchema {
+  readonly kind: "Boolean";
+  readonly in?: readonly boolean[];
+}
+
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
 };
+
+interface $CollectionSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "List" | "Set";
+  readonly minCount?: number;
+}
 
 /**
  * Remove undefined values from a record.
@@ -63,6 +74,189 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
     },
     {} as Record<KeyT, ValueT>,
   );
+}
+
+function $convertToBoolean<ValueT extends boolean>(
+  _schema: $BooleanSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToIdentifier(
+  _schema: $IdentifierSchema,
+  value: BlankNode | NamedNode | string | undefined,
+): Either<Error, BlankNode | NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode(value));
+    case "undefined":
+      return Either.of(dataFactory.blankNode());
+  }
+}
+
+function $convertToIdentifierProperty(
+  identifier:
+    | (() => BlankNode | NamedNode)
+    | BlankNode
+    | NamedNode
+    | string
+    | undefined,
+): Either<Error, () => BlankNode | NamedNode> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode(identifier);
+      return Either.of(() => captureIdentifier);
+    }
+    case "undefined": {
+      const captureIdentifier = dataFactory.blankNode();
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
+function $convertToIri<IriT extends string = string>(
+  _schema: $IriSchema,
+  value: IriT | NamedNode<IriT>,
+): Either<Error, NamedNode<IriT>> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode<IriT>(value));
+  }
+}
+
+function $convertToLiteral(
+  _schema: $LiteralSchema,
+  value: bigint | boolean | Date | number | string | Literal,
+): Either<Error, Literal> {
+  if (typeof value === "object") {
+    if (value instanceof Date) {
+      return Either.of($literalFactory.date(value));
+    }
+    return Either.of(value);
+  }
+
+  return Either.of($literalFactory.primitive(value));
+}
+
+function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
+  ): Either<Error, Maybe<ItemTargetT>> => {
+    switch (typeof value) {
+      case "object": {
+        if (Maybe.isMaybe(value)) {
+          return Either.of(value as Maybe<ItemTargetT>);
+        }
+        break;
+      }
+      case "undefined":
+        return Either.of(Maybe.empty());
+    }
+
+    return convertToItem(schema.item(), value).map(Maybe.of);
+  };
+}
+
+function $convertToNumeric<ValueT extends bigint | number>(
+  _schema: $NumericSchema<ValueT>,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToObject<ValueT extends object>(
+  _schema: unknown,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    value: readonly ItemSourceT[] | undefined,
+  ): Either<Error, readonly ItemTargetT[]> => {
+    return (
+      typeof value === "undefined"
+        ? Either.of<Error, readonly ItemTargetT[]>([])
+        : Either.sequence(
+            value.map((item) => convertToItem(schema.item(), item)),
+          )
+    ).chain((array) => {
+      if (schema.minCount !== undefined && array.length < schema.minCount) {
+        return Left(
+          new Error(
+            `array has length (${array.length}) less than minCount (${schema.minCount})`,
+          ),
+        );
+      }
+      return Either.of(array);
+    });
+  };
+}
+
+function $convertToString<ValueT extends string>(
+  _schema: $StringSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToTerm<ValueT extends BlankNode | Literal | NamedNode>(
+  _schema: $TermSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertWithDefaultValue<
+  DefaultValueT extends ItemSourceT,
+  ItemSchemaT,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $DefaultValueSchema<DefaultValueT, ItemSchemaT>,
+    value: ItemSourceT | undefined,
+  ): Either<Error, ItemTargetT> => {
+    if (typeof value === "undefined") {
+      return convertToItem(schema.item(), schema.defaultValue);
+    }
+    return convertToItem(schema.item(), value);
+  };
+}
+
+interface $DefaultValueSchema<DefaultValueT, ItemSchemaT> {
+  readonly defaultValue: DefaultValueT;
+  readonly item: () => ItemSchemaT;
+  readonly kind: "DefaultValue";
 }
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
@@ -351,6 +545,10 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
+interface $IdentifierSchema {
+  readonly kind: "Identifier";
+}
+
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -380,24 +578,9 @@ interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
 
-function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "bigint");
-}
-
-function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
-}
-
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
-}
-
-function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "object");
-}
-
-function $isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "string");
+interface $IriSchema {
+  readonly in?: readonly NamedNode[];
+  readonly kind: "Iri";
 }
 
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
@@ -406,7 +589,18 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
   readonly in?: readonly Literal[];
 }
 
+interface $LiteralSchema {
+  readonly in?: readonly Literal[];
+  readonly kind: "Literal";
+  readonly languageIn?: readonly string[];
+}
+
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
+
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
 
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
@@ -414,6 +608,11 @@ interface $NumericFilter<T> {
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
+}
+
+interface $NumericSchema<T> {
+  readonly in?: readonly T[];
+  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -594,11 +793,21 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
+interface $StringSchema {
+  readonly in?: readonly string[];
+  readonly kind: "String";
+}
+
 interface $TermFilter {
   readonly datatypeIn?: readonly NamedNode[];
   readonly in?: readonly (Literal | NamedNode)[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
+}
+
+interface $TermSchema {
+  readonly in?: readonly (Literal | NamedNode)[];
+  readonly kind: "Term";
 }
 
 export type $ToRdfResourceFunction<
@@ -739,87 +948,86 @@ export namespace PropertyShape {
       | (BlankNode | NamedNode)
       | string;
     readonly and?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
-    readonly classes?: readonly NamedNode[] | readonly string[];
-    readonly comment?: Maybe<string> | string;
-    readonly datatype?: Maybe<NamedNode> | NamedNode | string;
-    readonly deactivated?: Maybe<boolean> | boolean;
-    readonly defaultValue?:
-      | Maybe<NamedNode | Literal>
-      | bigint
-      | boolean
-      | Date
-      | number
-      | string
-      | (NamedNode | Literal);
-    readonly description?: Maybe<string> | string;
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly classes?: readonly (string | NamedNode)[];
+    readonly comment?: string | Maybe<string>;
+    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly deactivated?: boolean | Maybe<boolean>;
+    readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
+    readonly description?: string | Maybe<string>;
     readonly display?: boolean;
     readonly flags?: readonly string[];
-    readonly groups?: readonly (BlankNode | NamedNode)[] | readonly string[];
-    readonly hasValues?:
-      | readonly (NamedNode | Literal)[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
+    readonly groups?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly hasValues?: readonly (NamedNode | Literal)[];
     readonly in_?:
-      | Maybe<readonly (NamedNode | Literal)[]>
       | readonly (NamedNode | Literal)[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
+      | Maybe<readonly (NamedNode | Literal)[]>;
     readonly isDefinedBy?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
-    readonly label?: Maybe<string> | string;
-    readonly languageIn?: Maybe<readonly string[]> | readonly string[];
-    readonly maxCount?: Maybe<bigint> | bigint | number;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly label?: string | Maybe<string>;
+    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly maxInclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
-    readonly maxLength?: Maybe<bigint> | bigint | number;
-    readonly minCount?: Maybe<bigint> | bigint | number;
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly minInclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
-    readonly minLength?: Maybe<bigint> | bigint | number;
-    readonly mutable?: Maybe<boolean> | boolean;
-    readonly name?: Maybe<string> | string;
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minLength?: bigint | Maybe<bigint>;
+    readonly mutable?: boolean | Maybe<boolean>;
+    readonly name?: string | Maybe<string>;
     readonly node?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal"
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >
       | Maybe<
           NamedNode<
             | "http://www.w3.org/ns/shacl#BlankNode"
@@ -829,7 +1037,264 @@ export namespace PropertyShape {
             | "http://www.w3.org/ns/shacl#IRIOrLiteral"
             | "http://www.w3.org/ns/shacl#Literal"
           >
-        >
+        >;
+    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly or?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly order?: number | Maybe<number>;
+    readonly path: $PropertyPath;
+    readonly patterns?: readonly string[];
+    readonly resolve?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly shaclmateName?: string | Maybe<string>;
+    readonly uniqueLang?: boolean | Maybe<boolean>;
+    readonly xone?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+  }): Either<Error, PropertyShape> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      and: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.and.type(),
+        parameters.and,
+      ),
+      classes: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.classes.type(),
+        parameters.classes,
+      ),
+      comment: $convertToMaybe($convertToString<string>)(
+        schema.properties.comment.type(),
+        parameters.comment,
+      ),
+      datatype: $convertToMaybe($convertToIri<string>)(
+        schema.properties.datatype.type(),
+        parameters.datatype,
+      ),
+      deactivated: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.deactivated.type(),
+        parameters.deactivated,
+      ),
+      defaultValue: $convertToMaybe($convertToTerm<NamedNode | Literal>)(
+        schema.properties.defaultValue.type(),
+        parameters.defaultValue,
+      ),
+      description: $convertToMaybe($convertToString<string>)(
+        schema.properties.description.type(),
+        parameters.description,
+      ),
+      display: $convertWithDefaultValue($convertToBoolean<boolean>)(
+        schema.properties.display.type(),
+        parameters.display,
+      ),
+      flags: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.flags.type(),
+        parameters.flags,
+      ),
+      groups: $convertToReadonlyArray($convertToIdentifier)(
+        schema.properties.groups.type(),
+        parameters.groups,
+      ),
+      hasValues: $convertToReadonlyArray($convertToTerm<NamedNode | Literal>)(
+        schema.properties.hasValues.type(),
+        parameters.hasValues,
+      ),
+      in_: $convertToMaybe(
+        $convertToReadonlyArray($convertToTerm<NamedNode | Literal>),
+      )(schema.properties.in_.type(), parameters.in_),
+      isDefinedBy: $convertToMaybe($convertToIdentifier)(
+        schema.properties.isDefinedBy.type(),
+        parameters.isDefinedBy,
+      ),
+      label: $convertToMaybe($convertToString<string>)(
+        schema.properties.label.type(),
+        parameters.label,
+      ),
+      languageIn: $convertToMaybe(
+        $convertToReadonlyArray($convertToString<string>),
+      )(schema.properties.languageIn.type(), parameters.languageIn),
+      maxCount: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.maxCount.type(),
+        parameters.maxCount,
+      ),
+      maxExclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.maxExclusive.type(),
+        parameters.maxExclusive,
+      ),
+      maxInclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.maxInclusive.type(),
+        parameters.maxInclusive,
+      ),
+      maxLength: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.maxLength.type(),
+        parameters.maxLength,
+      ),
+      minCount: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.minCount.type(),
+        parameters.minCount,
+      ),
+      minExclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.minExclusive.type(),
+        parameters.minExclusive,
+      ),
+      minInclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.minInclusive.type(),
+        parameters.minInclusive,
+      ),
+      minLength: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.minLength.type(),
+        parameters.minLength,
+      ),
+      mutable: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.mutable.type(),
+        parameters.mutable,
+      ),
+      name: $convertToMaybe($convertToString<string>)(
+        schema.properties.name.type(),
+        parameters.name,
+      ),
+      node: $convertToMaybe($convertToIdentifier)(
+        schema.properties.node.type(),
+        parameters.node,
+      ),
+      nodeKind: $convertToMaybe(
+        $convertToIri<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >,
+      )(schema.properties.nodeKind.type(), parameters.nodeKind),
+      not: $convertToReadonlyArray($convertToIdentifier)(
+        schema.properties.not.type(),
+        parameters.not,
+      ),
+      or: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.or.type(),
+        parameters.or,
+      ),
+      order: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.order.type(),
+        parameters.order,
+      ),
+      path: $convertToObject(schema.properties.path.type(), parameters.path),
+      patterns: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.patterns.type(),
+        parameters.patterns,
+      ),
+      resolve: $convertToMaybe($convertToIdentifier)(
+        schema.properties.resolve.type(),
+        parameters.resolve,
+      ),
+      shaclmateName: $convertToMaybe($convertToString<string>)(
+        schema.properties.shaclmateName.type(),
+        parameters.shaclmateName,
+      ),
+      uniqueLang: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.uniqueLang.type(),
+        parameters.uniqueLang,
+      ),
+      xone: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.xone.type(),
+        parameters.xone,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "PropertyShape" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => PropertyShape.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly and?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly classes?: readonly (string | NamedNode)[];
+    readonly comment?: string | Maybe<string>;
+    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly deactivated?: boolean | Maybe<boolean>;
+    readonly defaultValue?: (NamedNode | Literal) | Maybe<NamedNode | Literal>;
+    readonly description?: string | Maybe<string>;
+    readonly display?: boolean;
+    readonly flags?: readonly string[];
+    readonly groups?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly in_?:
+      | readonly (NamedNode | Literal)[]
+      | Maybe<readonly (NamedNode | Literal)[]>;
+    readonly isDefinedBy?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly label?: string | Maybe<string>;
+    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly maxCount?: bigint | Maybe<bigint>;
+    readonly maxExclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxInclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | Maybe<bigint>;
+    readonly minExclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minInclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minLength?: bigint | Maybe<bigint>;
+    readonly mutable?: boolean | Maybe<boolean>;
+    readonly name?: string | Maybe<string>;
+    readonly node?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly nodeKind?:
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal"
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -838,565 +1303,35 @@ export namespace PropertyShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal";
-    readonly not?: readonly (BlankNode | NamedNode)[] | readonly string[];
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >;
+    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
     readonly or?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
-    readonly order?: Maybe<number> | number;
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly order?: number | Maybe<number>;
     readonly path: $PropertyPath;
     readonly patterns?: readonly string[];
     readonly resolve?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
-    readonly shaclmateName?: Maybe<string> | string;
-    readonly uniqueLang?: Maybe<boolean> | boolean;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly shaclmateName?: string | Maybe<string>;
+    readonly uniqueLang?: boolean | Maybe<boolean>;
     readonly xone?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
   }): PropertyShape {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PropertyShape.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyShape" as const;
-    let and: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters.and)) {
-      and = parameters.and;
-    } else if ($isReadonlyObjectArray(parameters.and)) {
-      and = Maybe.of(parameters.and);
-    } else if ($isReadonlyStringArray(parameters.and)) {
-      and = Maybe.of(parameters.and.map((item) => dataFactory.namedNode(item)));
-    } else if (parameters.and === undefined) {
-      and = Maybe.empty();
-    } else {
-      and = parameters.and satisfies never;
-    }
-    let classes: readonly NamedNode[];
-    if (parameters.classes === undefined) {
-      classes = [];
-    } else if ($isReadonlyObjectArray(parameters.classes)) {
-      classes = parameters.classes;
-    } else if ($isReadonlyStringArray(parameters.classes)) {
-      classes = parameters.classes.map((item) => dataFactory.namedNode(item));
-    } else {
-      classes = parameters.classes satisfies never;
-    }
-    let comment: Maybe<string>;
-    if (Maybe.isMaybe(parameters.comment)) {
-      comment = parameters.comment;
-    } else if (typeof parameters.comment === "string") {
-      comment = Maybe.of(parameters.comment);
-    } else if (parameters.comment === undefined) {
-      comment = Maybe.empty();
-    } else {
-      comment = parameters.comment satisfies never;
-    }
-    let datatype: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters.datatype)) {
-      datatype = parameters.datatype;
-    } else if (typeof parameters.datatype === "object") {
-      datatype = Maybe.of(parameters.datatype);
-    } else if (typeof parameters.datatype === "string") {
-      datatype = Maybe.of(dataFactory.namedNode(parameters.datatype));
-    } else if (parameters.datatype === undefined) {
-      datatype = Maybe.empty();
-    } else {
-      datatype = parameters.datatype satisfies never;
-    }
-    let deactivated: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters.deactivated)) {
-      deactivated = parameters.deactivated;
-    } else if (typeof parameters.deactivated === "boolean") {
-      deactivated = Maybe.of(parameters.deactivated);
-    } else if (parameters.deactivated === undefined) {
-      deactivated = Maybe.empty();
-    } else {
-      deactivated = parameters.deactivated satisfies never;
-    }
-    let defaultValue: Maybe<NamedNode | Literal>;
-    if (Maybe.isMaybe(parameters.defaultValue)) {
-      defaultValue = parameters.defaultValue;
-    } else if (typeof parameters.defaultValue === "bigint") {
-      defaultValue = Maybe.of($literalFactory.bigint(parameters.defaultValue));
-    } else if (typeof parameters.defaultValue === "boolean") {
-      defaultValue = Maybe.of($literalFactory.boolean(parameters.defaultValue));
-    } else if (
-      typeof parameters.defaultValue === "object" &&
-      parameters.defaultValue instanceof Date
-    ) {
-      defaultValue = Maybe.of($literalFactory.date(parameters.defaultValue));
-    } else if (typeof parameters.defaultValue === "number") {
-      defaultValue = Maybe.of($literalFactory.number(parameters.defaultValue));
-    } else if (typeof parameters.defaultValue === "string") {
-      defaultValue = Maybe.of($literalFactory.string(parameters.defaultValue));
-    } else if (typeof parameters.defaultValue === "object") {
-      defaultValue = Maybe.of(parameters.defaultValue);
-    } else if (parameters.defaultValue === undefined) {
-      defaultValue = Maybe.empty();
-    } else {
-      defaultValue = parameters.defaultValue satisfies never;
-    }
-    let description: Maybe<string>;
-    if (Maybe.isMaybe(parameters.description)) {
-      description = parameters.description;
-    } else if (typeof parameters.description === "string") {
-      description = Maybe.of(parameters.description);
-    } else if (parameters.description === undefined) {
-      description = Maybe.empty();
-    } else {
-      description = parameters.description satisfies never;
-    }
-    let display: boolean;
-    if (typeof parameters.display === "boolean") {
-      display = parameters.display;
-    } else if (parameters.display === undefined) {
-      display = false;
-    } else {
-      display = parameters.display satisfies never;
-    }
-    let flags: readonly string[];
-    if (parameters.flags === undefined) {
-      flags = [];
-    } else if (typeof parameters.flags === "object") {
-      flags = parameters.flags;
-    } else {
-      flags = parameters.flags satisfies never;
-    }
-    let groups: readonly (BlankNode | NamedNode)[];
-    if (parameters.groups === undefined) {
-      groups = [];
-    } else if ($isReadonlyObjectArray(parameters.groups)) {
-      groups = parameters.groups;
-    } else if ($isReadonlyStringArray(parameters.groups)) {
-      groups = parameters.groups.map((item) => dataFactory.namedNode(item));
-    } else {
-      groups = parameters.groups satisfies never;
-    }
-    let hasValues: readonly (NamedNode | Literal)[];
-    if (parameters.hasValues === undefined) {
-      hasValues = [];
-    } else if ($isReadonlyObjectArray(parameters.hasValues)) {
-      hasValues = parameters.hasValues;
-    } else if ($isReadonlyBigIntArray(parameters.hasValues)) {
-      hasValues = parameters.hasValues.map((item) =>
-        $literalFactory.bigint(item),
-      );
-    } else if ($isReadonlyBooleanArray(parameters.hasValues)) {
-      hasValues = parameters.hasValues.map((item) =>
-        $literalFactory.boolean(item),
-      );
-    } else if ($isReadonlyNumberArray(parameters.hasValues)) {
-      hasValues = parameters.hasValues.map((item) =>
-        $literalFactory.number(item),
-      );
-    } else if ($isReadonlyStringArray(parameters.hasValues)) {
-      hasValues = parameters.hasValues.map((item) =>
-        $literalFactory.string(item),
-      );
-    } else {
-      hasValues = parameters.hasValues satisfies never;
-    }
-    let in_: Maybe<readonly (NamedNode | Literal)[]>;
-    if (Maybe.isMaybe(parameters.in_)) {
-      in_ = parameters.in_;
-    } else if ($isReadonlyObjectArray(parameters.in_)) {
-      in_ = Maybe.of(parameters.in_);
-    } else if ($isReadonlyBigIntArray(parameters.in_)) {
-      in_ = Maybe.of(
-        parameters.in_.map((item) => $literalFactory.bigint(item)),
-      );
-    } else if ($isReadonlyBooleanArray(parameters.in_)) {
-      in_ = Maybe.of(
-        parameters.in_.map((item) => $literalFactory.boolean(item)),
-      );
-    } else if ($isReadonlyNumberArray(parameters.in_)) {
-      in_ = Maybe.of(
-        parameters.in_.map((item) => $literalFactory.number(item)),
-      );
-    } else if ($isReadonlyStringArray(parameters.in_)) {
-      in_ = Maybe.of(
-        parameters.in_.map((item) => $literalFactory.string(item)),
-      );
-    } else if (parameters.in_ === undefined) {
-      in_ = Maybe.empty();
-    } else {
-      in_ = parameters.in_ satisfies never;
-    }
-    let isDefinedBy: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters.isDefinedBy)) {
-      isDefinedBy = parameters.isDefinedBy;
-    } else if (typeof parameters.isDefinedBy === "object") {
-      isDefinedBy = Maybe.of(parameters.isDefinedBy);
-    } else if (typeof parameters.isDefinedBy === "string") {
-      isDefinedBy = Maybe.of(dataFactory.namedNode(parameters.isDefinedBy));
-    } else if (parameters.isDefinedBy === undefined) {
-      isDefinedBy = Maybe.empty();
-    } else {
-      isDefinedBy = parameters.isDefinedBy satisfies never;
-    }
-    let label: Maybe<string>;
-    if (Maybe.isMaybe(parameters.label)) {
-      label = parameters.label;
-    } else if (typeof parameters.label === "string") {
-      label = Maybe.of(parameters.label);
-    } else if (parameters.label === undefined) {
-      label = Maybe.empty();
-    } else {
-      label = parameters.label satisfies never;
-    }
-    let languageIn: Maybe<readonly string[]>;
-    if (Maybe.isMaybe(parameters.languageIn)) {
-      languageIn = parameters.languageIn;
-    } else if (typeof parameters.languageIn === "object") {
-      languageIn = Maybe.of(parameters.languageIn);
-    } else if (parameters.languageIn === undefined) {
-      languageIn = Maybe.empty();
-    } else {
-      languageIn = parameters.languageIn satisfies never;
-    }
-    let maxCount: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters.maxCount)) {
-      maxCount = parameters.maxCount;
-    } else if (typeof parameters.maxCount === "bigint") {
-      maxCount = Maybe.of(parameters.maxCount);
-    } else if (typeof parameters.maxCount === "number") {
-      maxCount = Maybe.of(BigInt(parameters.maxCount));
-    } else if (parameters.maxCount === undefined) {
-      maxCount = Maybe.empty();
-    } else {
-      maxCount = parameters.maxCount satisfies never;
-    }
-    let maxExclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters.maxExclusive)) {
-      maxExclusive = parameters.maxExclusive;
-    } else if (typeof parameters.maxExclusive === "bigint") {
-      maxExclusive = Maybe.of($literalFactory.bigint(parameters.maxExclusive));
-    } else if (typeof parameters.maxExclusive === "boolean") {
-      maxExclusive = Maybe.of($literalFactory.boolean(parameters.maxExclusive));
-    } else if (
-      typeof parameters.maxExclusive === "object" &&
-      parameters.maxExclusive instanceof Date
-    ) {
-      maxExclusive = Maybe.of($literalFactory.date(parameters.maxExclusive));
-    } else if (typeof parameters.maxExclusive === "number") {
-      maxExclusive = Maybe.of($literalFactory.number(parameters.maxExclusive));
-    } else if (typeof parameters.maxExclusive === "string") {
-      maxExclusive = Maybe.of($literalFactory.string(parameters.maxExclusive));
-    } else if (typeof parameters.maxExclusive === "object") {
-      maxExclusive = Maybe.of(parameters.maxExclusive);
-    } else if (parameters.maxExclusive === undefined) {
-      maxExclusive = Maybe.empty();
-    } else {
-      maxExclusive = parameters.maxExclusive satisfies never;
-    }
-    let maxInclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters.maxInclusive)) {
-      maxInclusive = parameters.maxInclusive;
-    } else if (typeof parameters.maxInclusive === "bigint") {
-      maxInclusive = Maybe.of($literalFactory.bigint(parameters.maxInclusive));
-    } else if (typeof parameters.maxInclusive === "boolean") {
-      maxInclusive = Maybe.of($literalFactory.boolean(parameters.maxInclusive));
-    } else if (
-      typeof parameters.maxInclusive === "object" &&
-      parameters.maxInclusive instanceof Date
-    ) {
-      maxInclusive = Maybe.of($literalFactory.date(parameters.maxInclusive));
-    } else if (typeof parameters.maxInclusive === "number") {
-      maxInclusive = Maybe.of($literalFactory.number(parameters.maxInclusive));
-    } else if (typeof parameters.maxInclusive === "string") {
-      maxInclusive = Maybe.of($literalFactory.string(parameters.maxInclusive));
-    } else if (typeof parameters.maxInclusive === "object") {
-      maxInclusive = Maybe.of(parameters.maxInclusive);
-    } else if (parameters.maxInclusive === undefined) {
-      maxInclusive = Maybe.empty();
-    } else {
-      maxInclusive = parameters.maxInclusive satisfies never;
-    }
-    let maxLength: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters.maxLength)) {
-      maxLength = parameters.maxLength;
-    } else if (typeof parameters.maxLength === "bigint") {
-      maxLength = Maybe.of(parameters.maxLength);
-    } else if (typeof parameters.maxLength === "number") {
-      maxLength = Maybe.of(BigInt(parameters.maxLength));
-    } else if (parameters.maxLength === undefined) {
-      maxLength = Maybe.empty();
-    } else {
-      maxLength = parameters.maxLength satisfies never;
-    }
-    let minCount: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters.minCount)) {
-      minCount = parameters.minCount;
-    } else if (typeof parameters.minCount === "bigint") {
-      minCount = Maybe.of(parameters.minCount);
-    } else if (typeof parameters.minCount === "number") {
-      minCount = Maybe.of(BigInt(parameters.minCount));
-    } else if (parameters.minCount === undefined) {
-      minCount = Maybe.empty();
-    } else {
-      minCount = parameters.minCount satisfies never;
-    }
-    let minExclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters.minExclusive)) {
-      minExclusive = parameters.minExclusive;
-    } else if (typeof parameters.minExclusive === "bigint") {
-      minExclusive = Maybe.of($literalFactory.bigint(parameters.minExclusive));
-    } else if (typeof parameters.minExclusive === "boolean") {
-      minExclusive = Maybe.of($literalFactory.boolean(parameters.minExclusive));
-    } else if (
-      typeof parameters.minExclusive === "object" &&
-      parameters.minExclusive instanceof Date
-    ) {
-      minExclusive = Maybe.of($literalFactory.date(parameters.minExclusive));
-    } else if (typeof parameters.minExclusive === "number") {
-      minExclusive = Maybe.of($literalFactory.number(parameters.minExclusive));
-    } else if (typeof parameters.minExclusive === "string") {
-      minExclusive = Maybe.of($literalFactory.string(parameters.minExclusive));
-    } else if (typeof parameters.minExclusive === "object") {
-      minExclusive = Maybe.of(parameters.minExclusive);
-    } else if (parameters.minExclusive === undefined) {
-      minExclusive = Maybe.empty();
-    } else {
-      minExclusive = parameters.minExclusive satisfies never;
-    }
-    let minInclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters.minInclusive)) {
-      minInclusive = parameters.minInclusive;
-    } else if (typeof parameters.minInclusive === "bigint") {
-      minInclusive = Maybe.of($literalFactory.bigint(parameters.minInclusive));
-    } else if (typeof parameters.minInclusive === "boolean") {
-      minInclusive = Maybe.of($literalFactory.boolean(parameters.minInclusive));
-    } else if (
-      typeof parameters.minInclusive === "object" &&
-      parameters.minInclusive instanceof Date
-    ) {
-      minInclusive = Maybe.of($literalFactory.date(parameters.minInclusive));
-    } else if (typeof parameters.minInclusive === "number") {
-      minInclusive = Maybe.of($literalFactory.number(parameters.minInclusive));
-    } else if (typeof parameters.minInclusive === "string") {
-      minInclusive = Maybe.of($literalFactory.string(parameters.minInclusive));
-    } else if (typeof parameters.minInclusive === "object") {
-      minInclusive = Maybe.of(parameters.minInclusive);
-    } else if (parameters.minInclusive === undefined) {
-      minInclusive = Maybe.empty();
-    } else {
-      minInclusive = parameters.minInclusive satisfies never;
-    }
-    let minLength: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters.minLength)) {
-      minLength = parameters.minLength;
-    } else if (typeof parameters.minLength === "bigint") {
-      minLength = Maybe.of(parameters.minLength);
-    } else if (typeof parameters.minLength === "number") {
-      minLength = Maybe.of(BigInt(parameters.minLength));
-    } else if (parameters.minLength === undefined) {
-      minLength = Maybe.empty();
-    } else {
-      minLength = parameters.minLength satisfies never;
-    }
-    let mutable: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters.mutable)) {
-      mutable = parameters.mutable;
-    } else if (typeof parameters.mutable === "boolean") {
-      mutable = Maybe.of(parameters.mutable);
-    } else if (parameters.mutable === undefined) {
-      mutable = Maybe.empty();
-    } else {
-      mutable = parameters.mutable satisfies never;
-    }
-    let name: Maybe<string>;
-    if (Maybe.isMaybe(parameters.name)) {
-      name = parameters.name;
-    } else if (typeof parameters.name === "string") {
-      name = Maybe.of(parameters.name);
-    } else if (parameters.name === undefined) {
-      name = Maybe.empty();
-    } else {
-      name = parameters.name satisfies never;
-    }
-    let node: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters.node)) {
-      node = parameters.node;
-    } else if (typeof parameters.node === "object") {
-      node = Maybe.of(parameters.node);
-    } else if (typeof parameters.node === "string") {
-      node = Maybe.of(dataFactory.namedNode(parameters.node));
-    } else if (parameters.node === undefined) {
-      node = Maybe.empty();
-    } else {
-      node = parameters.node satisfies never;
-    }
-    let nodeKind: Maybe<
-      NamedNode<
-        | "http://www.w3.org/ns/shacl#BlankNode"
-        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-        | "http://www.w3.org/ns/shacl#IRI"
-        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-        | "http://www.w3.org/ns/shacl#Literal"
-      >
-    >;
-    if (Maybe.isMaybe(parameters.nodeKind)) {
-      nodeKind = parameters.nodeKind;
-    } else if (typeof parameters.nodeKind === "object") {
-      nodeKind = Maybe.of(parameters.nodeKind);
-    } else if (typeof parameters.nodeKind === "string") {
-      nodeKind = Maybe.of(dataFactory.namedNode(parameters.nodeKind));
-    } else if (parameters.nodeKind === undefined) {
-      nodeKind = Maybe.empty();
-    } else {
-      nodeKind = parameters.nodeKind satisfies never;
-    }
-    let not: readonly (BlankNode | NamedNode)[];
-    if (parameters.not === undefined) {
-      not = [];
-    } else if ($isReadonlyObjectArray(parameters.not)) {
-      not = parameters.not;
-    } else if ($isReadonlyStringArray(parameters.not)) {
-      not = parameters.not.map((item) => dataFactory.namedNode(item));
-    } else {
-      not = parameters.not satisfies never;
-    }
-    let or: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters.or)) {
-      or = parameters.or;
-    } else if ($isReadonlyObjectArray(parameters.or)) {
-      or = Maybe.of(parameters.or);
-    } else if ($isReadonlyStringArray(parameters.or)) {
-      or = Maybe.of(parameters.or.map((item) => dataFactory.namedNode(item)));
-    } else if (parameters.or === undefined) {
-      or = Maybe.empty();
-    } else {
-      or = parameters.or satisfies never;
-    }
-    let order: Maybe<number>;
-    if (Maybe.isMaybe(parameters.order)) {
-      order = parameters.order;
-    } else if (typeof parameters.order === "number") {
-      order = Maybe.of(parameters.order);
-    } else if (parameters.order === undefined) {
-      order = Maybe.empty();
-    } else {
-      order = parameters.order satisfies never;
-    }
-    const path = parameters.path;
-    let patterns: readonly string[];
-    if (parameters.patterns === undefined) {
-      patterns = [];
-    } else if (typeof parameters.patterns === "object") {
-      patterns = parameters.patterns;
-    } else {
-      patterns = parameters.patterns satisfies never;
-    }
-    let resolve: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters.resolve)) {
-      resolve = parameters.resolve;
-    } else if (typeof parameters.resolve === "object") {
-      resolve = Maybe.of(parameters.resolve);
-    } else if (typeof parameters.resolve === "string") {
-      resolve = Maybe.of(dataFactory.namedNode(parameters.resolve));
-    } else if (parameters.resolve === undefined) {
-      resolve = Maybe.empty();
-    } else {
-      resolve = parameters.resolve satisfies never;
-    }
-    let shaclmateName: Maybe<string>;
-    if (Maybe.isMaybe(parameters.shaclmateName)) {
-      shaclmateName = parameters.shaclmateName;
-    } else if (typeof parameters.shaclmateName === "string") {
-      shaclmateName = Maybe.of(parameters.shaclmateName);
-    } else if (parameters.shaclmateName === undefined) {
-      shaclmateName = Maybe.empty();
-    } else {
-      shaclmateName = parameters.shaclmateName satisfies never;
-    }
-    let uniqueLang: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters.uniqueLang)) {
-      uniqueLang = parameters.uniqueLang;
-    } else if (typeof parameters.uniqueLang === "boolean") {
-      uniqueLang = Maybe.of(parameters.uniqueLang);
-    } else if (parameters.uniqueLang === undefined) {
-      uniqueLang = Maybe.empty();
-    } else {
-      uniqueLang = parameters.uniqueLang satisfies never;
-    }
-    let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters.xone)) {
-      xone = parameters.xone;
-    } else if ($isReadonlyObjectArray(parameters.xone)) {
-      xone = Maybe.of(parameters.xone);
-    } else if ($isReadonlyStringArray(parameters.xone)) {
-      xone = Maybe.of(
-        parameters.xone.map((item) => dataFactory.namedNode(item)),
-      );
-    } else if (parameters.xone === undefined) {
-      xone = Maybe.empty();
-    } else {
-      xone = parameters.xone satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      and,
-      classes,
-      comment,
-      datatype,
-      deactivated,
-      defaultValue,
-      description,
-      display,
-      flags,
-      groups,
-      hasValues,
-      in_,
-      isDefinedBy,
-      label,
-      languageIn,
-      maxCount,
-      maxExclusive,
-      maxInclusive,
-      maxLength,
-      minCount,
-      minExclusive,
-      minInclusive,
-      minLength,
-      mutable,
-      name,
-      node,
-      nodeKind,
-      not,
-      or,
-      order,
-      path,
-      patterns,
-      resolve,
-      shaclmateName,
-      uniqueLang,
-      xone,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -2746,7 +2681,7 @@ export namespace PropertyShape {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -2858,10 +2793,7 @@ export namespace PropertyShape {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "Boolean" as const }),
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: false,
         }),
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#display",
@@ -3040,7 +2972,7 @@ export namespace PropertyShape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ],
+            ] as const,
           }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
@@ -3663,49 +3595,42 @@ export namespace PropertyGroup {
       | (() => PropertyGroup.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly comment?: Maybe<string> | string;
-    readonly label?: Maybe<string> | string;
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
+  }): Either<Error, PropertyGroup> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      comment: $convertToMaybe($convertToString<string>)(
+        schema.properties.comment.type(),
+        parameters?.comment,
+      ),
+      label: $convertToMaybe($convertToString<string>)(
+        schema.properties.label.type(),
+        parameters?.label,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "PropertyGroup" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => PropertyGroup.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
   }): PropertyGroup {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => PropertyGroup.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyGroup" as const;
-    let comment: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.comment)) {
-      comment = parameters?.comment;
-    } else if (typeof parameters?.comment === "string") {
-      comment = Maybe.of(parameters?.comment);
-    } else if (parameters?.comment === undefined) {
-      comment = Maybe.empty();
-    } else {
-      comment = parameters?.comment satisfies never;
-    }
-    let label: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.label)) {
-      label = parameters?.label;
-    } else if (typeof parameters?.label === "string") {
-      label = Maybe.of(parameters?.label);
-    } else if (parameters?.label === undefined) {
-      label = Maybe.empty();
-    } else {
-      label = parameters?.label satisfies never;
-    }
-    const $object = { $identifier, $type, comment, label };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -3843,7 +3768,7 @@ export namespace PropertyGroup {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -3973,49 +3898,42 @@ export namespace Ontology {
       | (() => Ontology.Identifier)
       | (BlankNode | NamedNode)
       | string;
-    readonly comment?: Maybe<string> | string;
-    readonly label?: Maybe<string> | string;
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
+  }): Either<Error, Ontology> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      comment: $convertToMaybe($convertToString<string>)(
+        schema.properties.comment.type(),
+        parameters?.comment,
+      ),
+      label: $convertToMaybe($convertToString<string>)(
+        schema.properties.label.type(),
+        parameters?.label,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "Ontology" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => Ontology.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly comment?: string | Maybe<string>;
+    readonly label?: string | Maybe<string>;
   }): Ontology {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => Ontology.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "Ontology" as const;
-    let comment: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.comment)) {
-      comment = parameters?.comment;
-    } else if (typeof parameters?.comment === "string") {
-      comment = Maybe.of(parameters?.comment);
-    } else if (parameters?.comment === undefined) {
-      comment = Maybe.empty();
-    } else {
-      comment = parameters?.comment satisfies never;
-    }
-    let label: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.label)) {
-      label = parameters?.label;
-    } else if (typeof parameters?.label === "string") {
-      label = Maybe.of(parameters?.label);
-    } else if (parameters?.label === undefined) {
-      label = Maybe.empty();
-    } else {
-      label = parameters?.label satisfies never;
-    }
-    const $object = { $identifier, $type, comment, label };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -4150,7 +4068,7 @@ export namespace Ontology {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -4324,83 +4242,88 @@ export namespace NodeShape {
       | (BlankNode | NamedNode)
       | string;
     readonly and?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
-    readonly classes?: readonly NamedNode[] | readonly string[];
-    readonly closed?: Maybe<boolean> | boolean;
-    readonly comment?: Maybe<string> | string;
-    readonly datatype?: Maybe<NamedNode> | NamedNode | string;
-    readonly deactivated?: Maybe<boolean> | boolean;
-    readonly discriminantValue?: Maybe<string> | string;
-    readonly extern?: Maybe<boolean> | boolean;
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly classes?: readonly (string | NamedNode)[];
+    readonly closed?: boolean | Maybe<boolean>;
+    readonly comment?: string | Maybe<string>;
+    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly deactivated?: boolean | Maybe<boolean>;
+    readonly discriminantValue?: string | Maybe<string>;
+    readonly extern?: boolean | Maybe<boolean>;
     readonly flags?: readonly string[];
-    readonly fromRdfType?: Maybe<NamedNode> | NamedNode | string;
-    readonly hasValues?:
-      | readonly (NamedNode | Literal)[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
+    readonly fromRdfType?: string | NamedNode | Maybe<NamedNode>;
+    readonly hasValues?: readonly (NamedNode | Literal)[];
     readonly ignoredProperties?:
-      | Maybe<readonly NamedNode[]>
-      | readonly NamedNode[]
-      | readonly string[];
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
     readonly in_?:
-      | Maybe<readonly (NamedNode | Literal)[]>
       | readonly (NamedNode | Literal)[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
+      | Maybe<readonly (NamedNode | Literal)[]>;
     readonly isDefinedBy?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
-    readonly label?: Maybe<string> | string;
-    readonly languageIn?: Maybe<readonly string[]> | readonly string[];
-    readonly maxCount?: Maybe<bigint> | bigint | number;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly label?: string | Maybe<string>;
+    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly maxCount?: bigint | Maybe<bigint>;
     readonly maxExclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly maxInclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
-    readonly maxLength?: Maybe<bigint> | bigint | number;
-    readonly minCount?: Maybe<bigint> | bigint | number;
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | Maybe<bigint>;
     readonly minExclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly minInclusive?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
-    readonly minLength?: Maybe<bigint> | bigint | number;
-    readonly mutable?: Maybe<boolean> | boolean;
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minLength?: bigint | Maybe<bigint>;
+    readonly mutable?: boolean | Maybe<boolean>;
     readonly node?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal"
+      | NamedNode<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >
       | Maybe<
           NamedNode<
             | "http://www.w3.org/ns/shacl#BlankNode"
@@ -4410,7 +4333,282 @@ export namespace NodeShape {
             | "http://www.w3.org/ns/shacl#IRIOrLiteral"
             | "http://www.w3.org/ns/shacl#Literal"
           >
-        >
+        >;
+    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
+    readonly or?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly patterns?: readonly string[];
+    readonly properties?: readonly (
+      | BlankNode
+      | NamedNode
+      | string
+      | undefined
+    )[];
+    readonly rdfType?: string | NamedNode | Maybe<NamedNode>;
+    readonly shaclmateName?: string | Maybe<string>;
+    readonly subClassOf?: readonly (string | NamedNode)[];
+    readonly toRdfTypes?: readonly (string | NamedNode)[];
+    readonly tsImports?: readonly string[];
+    readonly types?: readonly (string | NamedNode)[];
+    readonly xone?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+  }): Either<Error, NodeShape> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      and: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.and.type(),
+        parameters?.and,
+      ),
+      classes: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.classes.type(),
+        parameters?.classes,
+      ),
+      closed: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.closed.type(),
+        parameters?.closed,
+      ),
+      comment: $convertToMaybe($convertToString<string>)(
+        schema.properties.comment.type(),
+        parameters?.comment,
+      ),
+      datatype: $convertToMaybe($convertToIri<string>)(
+        schema.properties.datatype.type(),
+        parameters?.datatype,
+      ),
+      deactivated: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.deactivated.type(),
+        parameters?.deactivated,
+      ),
+      discriminantValue: $convertToMaybe($convertToString<string>)(
+        schema.properties.discriminantValue.type(),
+        parameters?.discriminantValue,
+      ),
+      extern: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.extern.type(),
+        parameters?.extern,
+      ),
+      flags: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.flags.type(),
+        parameters?.flags,
+      ),
+      fromRdfType: $convertToMaybe($convertToIri<string>)(
+        schema.properties.fromRdfType.type(),
+        parameters?.fromRdfType,
+      ),
+      hasValues: $convertToReadonlyArray($convertToTerm<NamedNode | Literal>)(
+        schema.properties.hasValues.type(),
+        parameters?.hasValues,
+      ),
+      ignoredProperties: $convertToMaybe(
+        $convertToReadonlyArray($convertToIri<string>),
+      )(
+        schema.properties.ignoredProperties.type(),
+        parameters?.ignoredProperties,
+      ),
+      in_: $convertToMaybe(
+        $convertToReadonlyArray($convertToTerm<NamedNode | Literal>),
+      )(schema.properties.in_.type(), parameters?.in_),
+      isDefinedBy: $convertToMaybe($convertToIdentifier)(
+        schema.properties.isDefinedBy.type(),
+        parameters?.isDefinedBy,
+      ),
+      label: $convertToMaybe($convertToString<string>)(
+        schema.properties.label.type(),
+        parameters?.label,
+      ),
+      languageIn: $convertToMaybe(
+        $convertToReadonlyArray($convertToString<string>),
+      )(schema.properties.languageIn.type(), parameters?.languageIn),
+      maxCount: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.maxCount.type(),
+        parameters?.maxCount,
+      ),
+      maxExclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.maxExclusive.type(),
+        parameters?.maxExclusive,
+      ),
+      maxInclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.maxInclusive.type(),
+        parameters?.maxInclusive,
+      ),
+      maxLength: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.maxLength.type(),
+        parameters?.maxLength,
+      ),
+      minCount: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.minCount.type(),
+        parameters?.minCount,
+      ),
+      minExclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.minExclusive.type(),
+        parameters?.minExclusive,
+      ),
+      minInclusive: $convertToMaybe($convertToLiteral)(
+        schema.properties.minInclusive.type(),
+        parameters?.minInclusive,
+      ),
+      minLength: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.minLength.type(),
+        parameters?.minLength,
+      ),
+      mutable: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.mutable.type(),
+        parameters?.mutable,
+      ),
+      node: $convertToMaybe($convertToIdentifier)(
+        schema.properties.node.type(),
+        parameters?.node,
+      ),
+      nodeKind: $convertToMaybe(
+        $convertToIri<
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        >,
+      )(schema.properties.nodeKind.type(), parameters?.nodeKind),
+      not: $convertToReadonlyArray($convertToIdentifier)(
+        schema.properties.not.type(),
+        parameters?.not,
+      ),
+      or: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.or.type(),
+        parameters?.or,
+      ),
+      patterns: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.patterns.type(),
+        parameters?.patterns,
+      ),
+      properties: $convertToReadonlyArray($convertToIdentifier)(
+        schema.properties.properties.type(),
+        parameters?.properties,
+      ),
+      rdfType: $convertToMaybe($convertToIri<string>)(
+        schema.properties.rdfType.type(),
+        parameters?.rdfType,
+      ),
+      shaclmateName: $convertToMaybe($convertToString<string>)(
+        schema.properties.shaclmateName.type(),
+        parameters?.shaclmateName,
+      ),
+      subClassOf: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.subClassOf.type(),
+        parameters?.subClassOf,
+      ),
+      toRdfTypes: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.toRdfTypes.type(),
+        parameters?.toRdfTypes,
+      ),
+      tsImports: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.tsImports.type(),
+        parameters?.tsImports,
+      ),
+      types: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.types.type(),
+        parameters?.types,
+      ),
+      xone: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
+        schema.properties.xone.type(),
+        parameters?.xone,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "NodeShape" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => NodeShape.Identifier)
+      | (BlankNode | NamedNode)
+      | string;
+    readonly and?:
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
+    readonly classes?: readonly (string | NamedNode)[];
+    readonly closed?: boolean | Maybe<boolean>;
+    readonly comment?: string | Maybe<string>;
+    readonly datatype?: string | NamedNode | Maybe<NamedNode>;
+    readonly deactivated?: boolean | Maybe<boolean>;
+    readonly discriminantValue?: string | Maybe<string>;
+    readonly extern?: boolean | Maybe<boolean>;
+    readonly flags?: readonly string[];
+    readonly fromRdfType?: string | NamedNode | Maybe<NamedNode>;
+    readonly hasValues?: readonly (NamedNode | Literal)[];
+    readonly ignoredProperties?:
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly in_?:
+      | readonly (NamedNode | Literal)[]
+      | Maybe<readonly (NamedNode | Literal)[]>;
+    readonly isDefinedBy?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly label?: string | Maybe<string>;
+    readonly languageIn?: readonly string[] | Maybe<readonly string[]>;
+    readonly maxCount?: bigint | Maybe<bigint>;
+    readonly maxExclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxInclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly maxLength?: bigint | Maybe<bigint>;
+    readonly minCount?: bigint | Maybe<bigint>;
+    readonly minExclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minInclusive?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly minLength?: bigint | Maybe<bigint>;
+    readonly mutable?: boolean | Maybe<boolean>;
+    readonly node?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly nodeKind?:
+      | "http://www.w3.org/ns/shacl#BlankNode"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+      | "http://www.w3.org/ns/shacl#IRI"
+      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+      | "http://www.w3.org/ns/shacl#Literal"
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -4419,608 +4617,38 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal";
-    readonly not?: readonly (BlankNode | NamedNode)[] | readonly string[];
+      | Maybe<
+          NamedNode<
+            | "http://www.w3.org/ns/shacl#BlankNode"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+            | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+            | "http://www.w3.org/ns/shacl#IRI"
+            | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+            | "http://www.w3.org/ns/shacl#Literal"
+          >
+        >;
+    readonly not?: readonly (BlankNode | NamedNode | string | undefined)[];
     readonly or?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
     readonly patterns?: readonly string[];
-    readonly properties?:
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
-    readonly rdfType?: Maybe<NamedNode> | NamedNode | string;
-    readonly shaclmateName?: Maybe<string> | string;
-    readonly subClassOf?: readonly NamedNode[] | readonly string[];
-    readonly toRdfTypes?: readonly NamedNode[] | readonly string[];
+    readonly properties?: readonly (
+      | BlankNode
+      | NamedNode
+      | string
+      | undefined
+    )[];
+    readonly rdfType?: string | NamedNode | Maybe<NamedNode>;
+    readonly shaclmateName?: string | Maybe<string>;
+    readonly subClassOf?: readonly (string | NamedNode)[];
+    readonly toRdfTypes?: readonly (string | NamedNode)[];
     readonly tsImports?: readonly string[];
-    readonly types?: readonly NamedNode[] | readonly string[];
+    readonly types?: readonly (string | NamedNode)[];
     readonly xone?:
-      | Maybe<readonly (BlankNode | NamedNode)[]>
-      | readonly (BlankNode | NamedNode)[]
-      | readonly string[];
+      | readonly (BlankNode | NamedNode | string | undefined)[]
+      | Maybe<readonly (BlankNode | NamedNode)[]>;
   }): NodeShape {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => NodeShape.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NodeShape" as const;
-    let and: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters?.and)) {
-      and = parameters?.and;
-    } else if ($isReadonlyObjectArray(parameters?.and)) {
-      and = Maybe.of(parameters?.and);
-    } else if ($isReadonlyStringArray(parameters?.and)) {
-      and = Maybe.of(
-        parameters?.and.map((item) => dataFactory.namedNode(item)),
-      );
-    } else if (parameters?.and === undefined) {
-      and = Maybe.empty();
-    } else {
-      and = parameters?.and satisfies never;
-    }
-    let classes: readonly NamedNode[];
-    if (parameters?.classes === undefined) {
-      classes = [];
-    } else if ($isReadonlyObjectArray(parameters?.classes)) {
-      classes = parameters?.classes;
-    } else if ($isReadonlyStringArray(parameters?.classes)) {
-      classes = parameters?.classes.map((item) => dataFactory.namedNode(item));
-    } else {
-      classes = parameters?.classes satisfies never;
-    }
-    let closed: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters?.closed)) {
-      closed = parameters?.closed;
-    } else if (typeof parameters?.closed === "boolean") {
-      closed = Maybe.of(parameters?.closed);
-    } else if (parameters?.closed === undefined) {
-      closed = Maybe.empty();
-    } else {
-      closed = parameters?.closed satisfies never;
-    }
-    let comment: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.comment)) {
-      comment = parameters?.comment;
-    } else if (typeof parameters?.comment === "string") {
-      comment = Maybe.of(parameters?.comment);
-    } else if (parameters?.comment === undefined) {
-      comment = Maybe.empty();
-    } else {
-      comment = parameters?.comment satisfies never;
-    }
-    let datatype: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.datatype)) {
-      datatype = parameters?.datatype;
-    } else if (typeof parameters?.datatype === "object") {
-      datatype = Maybe.of(parameters?.datatype);
-    } else if (typeof parameters?.datatype === "string") {
-      datatype = Maybe.of(dataFactory.namedNode(parameters?.datatype));
-    } else if (parameters?.datatype === undefined) {
-      datatype = Maybe.empty();
-    } else {
-      datatype = parameters?.datatype satisfies never;
-    }
-    let deactivated: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters?.deactivated)) {
-      deactivated = parameters?.deactivated;
-    } else if (typeof parameters?.deactivated === "boolean") {
-      deactivated = Maybe.of(parameters?.deactivated);
-    } else if (parameters?.deactivated === undefined) {
-      deactivated = Maybe.empty();
-    } else {
-      deactivated = parameters?.deactivated satisfies never;
-    }
-    let discriminantValue: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.discriminantValue)) {
-      discriminantValue = parameters?.discriminantValue;
-    } else if (typeof parameters?.discriminantValue === "string") {
-      discriminantValue = Maybe.of(parameters?.discriminantValue);
-    } else if (parameters?.discriminantValue === undefined) {
-      discriminantValue = Maybe.empty();
-    } else {
-      discriminantValue = parameters?.discriminantValue satisfies never;
-    }
-    let extern: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters?.extern)) {
-      extern = parameters?.extern;
-    } else if (typeof parameters?.extern === "boolean") {
-      extern = Maybe.of(parameters?.extern);
-    } else if (parameters?.extern === undefined) {
-      extern = Maybe.empty();
-    } else {
-      extern = parameters?.extern satisfies never;
-    }
-    let flags: readonly string[];
-    if (parameters?.flags === undefined) {
-      flags = [];
-    } else if (typeof parameters?.flags === "object") {
-      flags = parameters?.flags;
-    } else {
-      flags = parameters?.flags satisfies never;
-    }
-    let fromRdfType: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.fromRdfType)) {
-      fromRdfType = parameters?.fromRdfType;
-    } else if (typeof parameters?.fromRdfType === "object") {
-      fromRdfType = Maybe.of(parameters?.fromRdfType);
-    } else if (typeof parameters?.fromRdfType === "string") {
-      fromRdfType = Maybe.of(dataFactory.namedNode(parameters?.fromRdfType));
-    } else if (parameters?.fromRdfType === undefined) {
-      fromRdfType = Maybe.empty();
-    } else {
-      fromRdfType = parameters?.fromRdfType satisfies never;
-    }
-    let hasValues: readonly (NamedNode | Literal)[];
-    if (parameters?.hasValues === undefined) {
-      hasValues = [];
-    } else if ($isReadonlyObjectArray(parameters?.hasValues)) {
-      hasValues = parameters?.hasValues;
-    } else if ($isReadonlyBigIntArray(parameters?.hasValues)) {
-      hasValues = parameters?.hasValues.map((item) =>
-        $literalFactory.bigint(item),
-      );
-    } else if ($isReadonlyBooleanArray(parameters?.hasValues)) {
-      hasValues = parameters?.hasValues.map((item) =>
-        $literalFactory.boolean(item),
-      );
-    } else if ($isReadonlyNumberArray(parameters?.hasValues)) {
-      hasValues = parameters?.hasValues.map((item) =>
-        $literalFactory.number(item),
-      );
-    } else if ($isReadonlyStringArray(parameters?.hasValues)) {
-      hasValues = parameters?.hasValues.map((item) =>
-        $literalFactory.string(item),
-      );
-    } else {
-      hasValues = parameters?.hasValues satisfies never;
-    }
-    let ignoredProperties: Maybe<readonly NamedNode[]>;
-    if (Maybe.isMaybe(parameters?.ignoredProperties)) {
-      ignoredProperties = parameters?.ignoredProperties;
-    } else if ($isReadonlyObjectArray(parameters?.ignoredProperties)) {
-      ignoredProperties = Maybe.of(parameters?.ignoredProperties);
-    } else if ($isReadonlyStringArray(parameters?.ignoredProperties)) {
-      ignoredProperties = Maybe.of(
-        parameters?.ignoredProperties.map((item) =>
-          dataFactory.namedNode(item),
-        ),
-      );
-    } else if (parameters?.ignoredProperties === undefined) {
-      ignoredProperties = Maybe.empty();
-    } else {
-      ignoredProperties = parameters?.ignoredProperties satisfies never;
-    }
-    let in_: Maybe<readonly (NamedNode | Literal)[]>;
-    if (Maybe.isMaybe(parameters?.in_)) {
-      in_ = parameters?.in_;
-    } else if ($isReadonlyObjectArray(parameters?.in_)) {
-      in_ = Maybe.of(parameters?.in_);
-    } else if ($isReadonlyBigIntArray(parameters?.in_)) {
-      in_ = Maybe.of(
-        parameters?.in_.map((item) => $literalFactory.bigint(item)),
-      );
-    } else if ($isReadonlyBooleanArray(parameters?.in_)) {
-      in_ = Maybe.of(
-        parameters?.in_.map((item) => $literalFactory.boolean(item)),
-      );
-    } else if ($isReadonlyNumberArray(parameters?.in_)) {
-      in_ = Maybe.of(
-        parameters?.in_.map((item) => $literalFactory.number(item)),
-      );
-    } else if ($isReadonlyStringArray(parameters?.in_)) {
-      in_ = Maybe.of(
-        parameters?.in_.map((item) => $literalFactory.string(item)),
-      );
-    } else if (parameters?.in_ === undefined) {
-      in_ = Maybe.empty();
-    } else {
-      in_ = parameters?.in_ satisfies never;
-    }
-    let isDefinedBy: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters?.isDefinedBy)) {
-      isDefinedBy = parameters?.isDefinedBy;
-    } else if (typeof parameters?.isDefinedBy === "object") {
-      isDefinedBy = Maybe.of(parameters?.isDefinedBy);
-    } else if (typeof parameters?.isDefinedBy === "string") {
-      isDefinedBy = Maybe.of(dataFactory.namedNode(parameters?.isDefinedBy));
-    } else if (parameters?.isDefinedBy === undefined) {
-      isDefinedBy = Maybe.empty();
-    } else {
-      isDefinedBy = parameters?.isDefinedBy satisfies never;
-    }
-    let label: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.label)) {
-      label = parameters?.label;
-    } else if (typeof parameters?.label === "string") {
-      label = Maybe.of(parameters?.label);
-    } else if (parameters?.label === undefined) {
-      label = Maybe.empty();
-    } else {
-      label = parameters?.label satisfies never;
-    }
-    let languageIn: Maybe<readonly string[]>;
-    if (Maybe.isMaybe(parameters?.languageIn)) {
-      languageIn = parameters?.languageIn;
-    } else if (typeof parameters?.languageIn === "object") {
-      languageIn = Maybe.of(parameters?.languageIn);
-    } else if (parameters?.languageIn === undefined) {
-      languageIn = Maybe.empty();
-    } else {
-      languageIn = parameters?.languageIn satisfies never;
-    }
-    let maxCount: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.maxCount)) {
-      maxCount = parameters?.maxCount;
-    } else if (typeof parameters?.maxCount === "bigint") {
-      maxCount = Maybe.of(parameters?.maxCount);
-    } else if (typeof parameters?.maxCount === "number") {
-      maxCount = Maybe.of(BigInt(parameters?.maxCount));
-    } else if (parameters?.maxCount === undefined) {
-      maxCount = Maybe.empty();
-    } else {
-      maxCount = parameters?.maxCount satisfies never;
-    }
-    let maxExclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters?.maxExclusive)) {
-      maxExclusive = parameters?.maxExclusive;
-    } else if (typeof parameters?.maxExclusive === "bigint") {
-      maxExclusive = Maybe.of($literalFactory.bigint(parameters?.maxExclusive));
-    } else if (typeof parameters?.maxExclusive === "boolean") {
-      maxExclusive = Maybe.of(
-        $literalFactory.boolean(parameters?.maxExclusive),
-      );
-    } else if (
-      typeof parameters?.maxExclusive === "object" &&
-      parameters?.maxExclusive instanceof Date
-    ) {
-      maxExclusive = Maybe.of($literalFactory.date(parameters?.maxExclusive));
-    } else if (typeof parameters?.maxExclusive === "number") {
-      maxExclusive = Maybe.of($literalFactory.number(parameters?.maxExclusive));
-    } else if (typeof parameters?.maxExclusive === "string") {
-      maxExclusive = Maybe.of($literalFactory.string(parameters?.maxExclusive));
-    } else if (typeof parameters?.maxExclusive === "object") {
-      maxExclusive = Maybe.of(parameters?.maxExclusive);
-    } else if (parameters?.maxExclusive === undefined) {
-      maxExclusive = Maybe.empty();
-    } else {
-      maxExclusive = parameters?.maxExclusive satisfies never;
-    }
-    let maxInclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters?.maxInclusive)) {
-      maxInclusive = parameters?.maxInclusive;
-    } else if (typeof parameters?.maxInclusive === "bigint") {
-      maxInclusive = Maybe.of($literalFactory.bigint(parameters?.maxInclusive));
-    } else if (typeof parameters?.maxInclusive === "boolean") {
-      maxInclusive = Maybe.of(
-        $literalFactory.boolean(parameters?.maxInclusive),
-      );
-    } else if (
-      typeof parameters?.maxInclusive === "object" &&
-      parameters?.maxInclusive instanceof Date
-    ) {
-      maxInclusive = Maybe.of($literalFactory.date(parameters?.maxInclusive));
-    } else if (typeof parameters?.maxInclusive === "number") {
-      maxInclusive = Maybe.of($literalFactory.number(parameters?.maxInclusive));
-    } else if (typeof parameters?.maxInclusive === "string") {
-      maxInclusive = Maybe.of($literalFactory.string(parameters?.maxInclusive));
-    } else if (typeof parameters?.maxInclusive === "object") {
-      maxInclusive = Maybe.of(parameters?.maxInclusive);
-    } else if (parameters?.maxInclusive === undefined) {
-      maxInclusive = Maybe.empty();
-    } else {
-      maxInclusive = parameters?.maxInclusive satisfies never;
-    }
-    let maxLength: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.maxLength)) {
-      maxLength = parameters?.maxLength;
-    } else if (typeof parameters?.maxLength === "bigint") {
-      maxLength = Maybe.of(parameters?.maxLength);
-    } else if (typeof parameters?.maxLength === "number") {
-      maxLength = Maybe.of(BigInt(parameters?.maxLength));
-    } else if (parameters?.maxLength === undefined) {
-      maxLength = Maybe.empty();
-    } else {
-      maxLength = parameters?.maxLength satisfies never;
-    }
-    let minCount: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.minCount)) {
-      minCount = parameters?.minCount;
-    } else if (typeof parameters?.minCount === "bigint") {
-      minCount = Maybe.of(parameters?.minCount);
-    } else if (typeof parameters?.minCount === "number") {
-      minCount = Maybe.of(BigInt(parameters?.minCount));
-    } else if (parameters?.minCount === undefined) {
-      minCount = Maybe.empty();
-    } else {
-      minCount = parameters?.minCount satisfies never;
-    }
-    let minExclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters?.minExclusive)) {
-      minExclusive = parameters?.minExclusive;
-    } else if (typeof parameters?.minExclusive === "bigint") {
-      minExclusive = Maybe.of($literalFactory.bigint(parameters?.minExclusive));
-    } else if (typeof parameters?.minExclusive === "boolean") {
-      minExclusive = Maybe.of(
-        $literalFactory.boolean(parameters?.minExclusive),
-      );
-    } else if (
-      typeof parameters?.minExclusive === "object" &&
-      parameters?.minExclusive instanceof Date
-    ) {
-      minExclusive = Maybe.of($literalFactory.date(parameters?.minExclusive));
-    } else if (typeof parameters?.minExclusive === "number") {
-      minExclusive = Maybe.of($literalFactory.number(parameters?.minExclusive));
-    } else if (typeof parameters?.minExclusive === "string") {
-      minExclusive = Maybe.of($literalFactory.string(parameters?.minExclusive));
-    } else if (typeof parameters?.minExclusive === "object") {
-      minExclusive = Maybe.of(parameters?.minExclusive);
-    } else if (parameters?.minExclusive === undefined) {
-      minExclusive = Maybe.empty();
-    } else {
-      minExclusive = parameters?.minExclusive satisfies never;
-    }
-    let minInclusive: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters?.minInclusive)) {
-      minInclusive = parameters?.minInclusive;
-    } else if (typeof parameters?.minInclusive === "bigint") {
-      minInclusive = Maybe.of($literalFactory.bigint(parameters?.minInclusive));
-    } else if (typeof parameters?.minInclusive === "boolean") {
-      minInclusive = Maybe.of(
-        $literalFactory.boolean(parameters?.minInclusive),
-      );
-    } else if (
-      typeof parameters?.minInclusive === "object" &&
-      parameters?.minInclusive instanceof Date
-    ) {
-      minInclusive = Maybe.of($literalFactory.date(parameters?.minInclusive));
-    } else if (typeof parameters?.minInclusive === "number") {
-      minInclusive = Maybe.of($literalFactory.number(parameters?.minInclusive));
-    } else if (typeof parameters?.minInclusive === "string") {
-      minInclusive = Maybe.of($literalFactory.string(parameters?.minInclusive));
-    } else if (typeof parameters?.minInclusive === "object") {
-      minInclusive = Maybe.of(parameters?.minInclusive);
-    } else if (parameters?.minInclusive === undefined) {
-      minInclusive = Maybe.empty();
-    } else {
-      minInclusive = parameters?.minInclusive satisfies never;
-    }
-    let minLength: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.minLength)) {
-      minLength = parameters?.minLength;
-    } else if (typeof parameters?.minLength === "bigint") {
-      minLength = Maybe.of(parameters?.minLength);
-    } else if (typeof parameters?.minLength === "number") {
-      minLength = Maybe.of(BigInt(parameters?.minLength));
-    } else if (parameters?.minLength === undefined) {
-      minLength = Maybe.empty();
-    } else {
-      minLength = parameters?.minLength satisfies never;
-    }
-    let mutable: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters?.mutable)) {
-      mutable = parameters?.mutable;
-    } else if (typeof parameters?.mutable === "boolean") {
-      mutable = Maybe.of(parameters?.mutable);
-    } else if (parameters?.mutable === undefined) {
-      mutable = Maybe.empty();
-    } else {
-      mutable = parameters?.mutable satisfies never;
-    }
-    let node: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters?.node)) {
-      node = parameters?.node;
-    } else if (typeof parameters?.node === "object") {
-      node = Maybe.of(parameters?.node);
-    } else if (typeof parameters?.node === "string") {
-      node = Maybe.of(dataFactory.namedNode(parameters?.node));
-    } else if (parameters?.node === undefined) {
-      node = Maybe.empty();
-    } else {
-      node = parameters?.node satisfies never;
-    }
-    let nodeKind: Maybe<
-      NamedNode<
-        | "http://www.w3.org/ns/shacl#BlankNode"
-        | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-        | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-        | "http://www.w3.org/ns/shacl#IRI"
-        | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-        | "http://www.w3.org/ns/shacl#Literal"
-      >
-    >;
-    if (Maybe.isMaybe(parameters?.nodeKind)) {
-      nodeKind = parameters?.nodeKind;
-    } else if (typeof parameters?.nodeKind === "object") {
-      nodeKind = Maybe.of(parameters?.nodeKind);
-    } else if (typeof parameters?.nodeKind === "string") {
-      nodeKind = Maybe.of(dataFactory.namedNode(parameters?.nodeKind));
-    } else if (parameters?.nodeKind === undefined) {
-      nodeKind = Maybe.empty();
-    } else {
-      nodeKind = parameters?.nodeKind satisfies never;
-    }
-    let not: readonly (BlankNode | NamedNode)[];
-    if (parameters?.not === undefined) {
-      not = [];
-    } else if ($isReadonlyObjectArray(parameters?.not)) {
-      not = parameters?.not;
-    } else if ($isReadonlyStringArray(parameters?.not)) {
-      not = parameters?.not.map((item) => dataFactory.namedNode(item));
-    } else {
-      not = parameters?.not satisfies never;
-    }
-    let or: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters?.or)) {
-      or = parameters?.or;
-    } else if ($isReadonlyObjectArray(parameters?.or)) {
-      or = Maybe.of(parameters?.or);
-    } else if ($isReadonlyStringArray(parameters?.or)) {
-      or = Maybe.of(parameters?.or.map((item) => dataFactory.namedNode(item)));
-    } else if (parameters?.or === undefined) {
-      or = Maybe.empty();
-    } else {
-      or = parameters?.or satisfies never;
-    }
-    let patterns: readonly string[];
-    if (parameters?.patterns === undefined) {
-      patterns = [];
-    } else if (typeof parameters?.patterns === "object") {
-      patterns = parameters?.patterns;
-    } else {
-      patterns = parameters?.patterns satisfies never;
-    }
-    let properties: readonly (BlankNode | NamedNode)[];
-    if (parameters?.properties === undefined) {
-      properties = [];
-    } else if ($isReadonlyObjectArray(parameters?.properties)) {
-      properties = parameters?.properties;
-    } else if ($isReadonlyStringArray(parameters?.properties)) {
-      properties = parameters?.properties.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      properties = parameters?.properties satisfies never;
-    }
-    let rdfType: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.rdfType)) {
-      rdfType = parameters?.rdfType;
-    } else if (typeof parameters?.rdfType === "object") {
-      rdfType = Maybe.of(parameters?.rdfType);
-    } else if (typeof parameters?.rdfType === "string") {
-      rdfType = Maybe.of(dataFactory.namedNode(parameters?.rdfType));
-    } else if (parameters?.rdfType === undefined) {
-      rdfType = Maybe.empty();
-    } else {
-      rdfType = parameters?.rdfType satisfies never;
-    }
-    let shaclmateName: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.shaclmateName)) {
-      shaclmateName = parameters?.shaclmateName;
-    } else if (typeof parameters?.shaclmateName === "string") {
-      shaclmateName = Maybe.of(parameters?.shaclmateName);
-    } else if (parameters?.shaclmateName === undefined) {
-      shaclmateName = Maybe.empty();
-    } else {
-      shaclmateName = parameters?.shaclmateName satisfies never;
-    }
-    let subClassOf: readonly NamedNode[];
-    if (parameters?.subClassOf === undefined) {
-      subClassOf = [];
-    } else if ($isReadonlyObjectArray(parameters?.subClassOf)) {
-      subClassOf = parameters?.subClassOf;
-    } else if ($isReadonlyStringArray(parameters?.subClassOf)) {
-      subClassOf = parameters?.subClassOf.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      subClassOf = parameters?.subClassOf satisfies never;
-    }
-    let toRdfTypes: readonly NamedNode[];
-    if (parameters?.toRdfTypes === undefined) {
-      toRdfTypes = [];
-    } else if ($isReadonlyObjectArray(parameters?.toRdfTypes)) {
-      toRdfTypes = parameters?.toRdfTypes;
-    } else if ($isReadonlyStringArray(parameters?.toRdfTypes)) {
-      toRdfTypes = parameters?.toRdfTypes.map((item) =>
-        dataFactory.namedNode(item),
-      );
-    } else {
-      toRdfTypes = parameters?.toRdfTypes satisfies never;
-    }
-    let tsImports: readonly string[];
-    if (parameters?.tsImports === undefined) {
-      tsImports = [];
-    } else if (typeof parameters?.tsImports === "object") {
-      tsImports = parameters?.tsImports;
-    } else {
-      tsImports = parameters?.tsImports satisfies never;
-    }
-    let types: readonly NamedNode[];
-    if (parameters?.types === undefined) {
-      types = [];
-    } else if ($isReadonlyObjectArray(parameters?.types)) {
-      types = parameters?.types;
-    } else if ($isReadonlyStringArray(parameters?.types)) {
-      types = parameters?.types.map((item) => dataFactory.namedNode(item));
-    } else {
-      types = parameters?.types satisfies never;
-    }
-    let xone: Maybe<readonly (BlankNode | NamedNode)[]>;
-    if (Maybe.isMaybe(parameters?.xone)) {
-      xone = parameters?.xone;
-    } else if ($isReadonlyObjectArray(parameters?.xone)) {
-      xone = Maybe.of(parameters?.xone);
-    } else if ($isReadonlyStringArray(parameters?.xone)) {
-      xone = Maybe.of(
-        parameters?.xone.map((item) => dataFactory.namedNode(item)),
-      );
-    } else if (parameters?.xone === undefined) {
-      xone = Maybe.empty();
-    } else {
-      xone = parameters?.xone satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      and,
-      classes,
-      closed,
-      comment,
-      datatype,
-      deactivated,
-      discriminantValue,
-      extern,
-      flags,
-      fromRdfType,
-      hasValues,
-      ignoredProperties,
-      in_,
-      isDefinedBy,
-      label,
-      languageIn,
-      maxCount,
-      maxExclusive,
-      maxInclusive,
-      maxLength,
-      minCount,
-      minExclusive,
-      minInclusive,
-      minLength,
-      mutable,
-      node,
-      nodeKind,
-      not,
-      or,
-      patterns,
-      properties,
-      rdfType,
-      shaclmateName,
-      subClassOf,
-      toRdfTypes,
-      tsImports,
-      types,
-      xone,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export type Identifier = BlankNode | NamedNode;
@@ -6418,7 +6046,7 @@ export namespace NodeShape {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -6715,7 +6343,7 @@ export namespace NodeShape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ],
+            ] as const,
           }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
@@ -7720,7 +7348,7 @@ export namespace Shape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ],
+            ] as const,
           }),
         }),
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
