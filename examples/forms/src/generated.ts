@@ -114,6 +114,12 @@ type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $minCount?: number;
 };
 
+interface $CollectionSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "List" | "Set";
+  readonly minCount?: number;
+}
+
 /**
  * Remove undefined values from a record.
  */
@@ -495,6 +501,13 @@ function $identityConversionFunction<T>(value: T): Either<Error, T> {
   return Either.of(value);
 }
 
+function $identityValidationFunction<T>(
+  _schema: unknown,
+  value: T,
+): Either<Error, T> {
+  return Either.of(value);
+}
+
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 function $maybeEquals<T>(
@@ -521,6 +534,11 @@ function $maybeEquals<T>(
 }
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
+
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
 
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
@@ -748,6 +766,48 @@ export type $ToRdfResourceValuesFunction<
   },
 ) => ReturnT[];
 
+function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  _readonly: Readonly,
+) {
+  type EitherR = Readonly extends true
+    ? ReadonlyArray<ItemValueT>
+    : Array<ItemValueT>;
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    valueArray: readonly ItemValueT[],
+  ): Either<Error, EitherR> => {
+    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
+      return Left(
+        new Error(
+          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+        ),
+      ) as Either<Error, EitherR>;
+    }
+
+    return Either.sequence(
+      valueArray.map((value) => validateItem(schema.item(), value)),
+    ) as Either<Error, EitherR>;
+  };
+}
+
+function $validateMaybe<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    valueMaybe: Maybe<ItemValueT>,
+  ): Either<Error, Maybe<ItemValueT>> =>
+    valueMaybe
+      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .orDefault(Either.of(valueMaybe));
+}
+
+type $ValidationFunction<SchemaT, ValueT> = (
+  schema: SchemaT,
+  value: ValueT,
+) => Either<Error, ValueT>;
+
 function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
 ): $FromRdfResourceFunction<T> {
@@ -817,9 +877,7 @@ export namespace NestedNodeShape {
   }): Either<Error, NestedNodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      requiredStringProperty: $identityConversionFunction(
-        parameters.requiredStringProperty,
-      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "NestedNodeShape" as const };
       if (
@@ -1165,23 +1223,32 @@ export namespace FormNodeShape {
       emptyStringSetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.emptyStringSetProperty),
-      nestedObjectProperty: $identityConversionFunction(
-        parameters.nestedObjectProperty,
+      )(parameters.emptyStringSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          FormNodeShape.schema.properties.emptyStringSetProperty.type(),
+          value,
+        ),
       ),
+      nestedObjectProperty: Either.of(parameters.nestedObjectProperty),
       nonEmptyStringSetProperty: $convertToArray(
         $identityConversionFunction,
         true,
-      )(parameters.nonEmptyStringSetProperty),
+      )(parameters.nonEmptyStringSetProperty).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          FormNodeShape.schema.properties.nonEmptyStringSetProperty.type(),
+          value,
+        ),
+      ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          FormNodeShape.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
-      requiredIntProperty: $identityConversionFunction(
-        parameters.requiredIntProperty,
-      ),
-      requiredStringProperty: $identityConversionFunction(
-        parameters.requiredStringProperty,
-      ),
+      requiredIntProperty: Either.of(parameters.requiredIntProperty),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "FormNodeShape" as const };
       if (

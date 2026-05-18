@@ -8,5 +8,5 @@ export const snippets_ValidationFunction: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}ValidationFunction`,
     code`\
-type ${syntheticNamePrefix}ValidationFunction<SchemaT, ValueT> = (schema: SchemaT, ValueT) => ${imports.Either}<Error, ValueT>;`,
+type ${syntheticNamePrefix}ValidationFunction<SchemaT, ValueT> = (schema: SchemaT, value: ValueT) => ${imports.Either}<Error, ValueT>;`,
   );
