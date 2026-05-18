@@ -137,7 +137,7 @@ describe("toRdf", async () => {
   });
 
   it("should not serialize empty lists", ({ expect }) => {
-    const instance = kitchenSink.ListProperties.create();
+    const instance = kitchenSink.ListProperties.createUnsafe();
     expect(instance.iriListProperty.extract()).toBeUndefined();
     expect(instance.objectListProperty.extract()).toBeUndefined();
     expect(instance.stringListProperty.extract()).toBeUndefined();

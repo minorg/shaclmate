@@ -464,7 +464,7 @@ describe("fromRdf", () => {
   });
 
   it("accept known child type", ({ expect }) => {
-    const classHierarchy3 = kitchenSink.ClassHierarchy3.create({
+    const classHierarchy3 = kitchenSink.ClassHierarchy3.createUnsafe({
       classHierarchy0Property: "abcWith",
       classHierarchy3Property: "child",
       classHierarchy2Property: "parent",
@@ -486,7 +486,7 @@ describe("fromRdf", () => {
   });
 
   it("accept unknown child type", ({ expect }) => {
-    const child = kitchenSink.ClassHierarchy3.create({
+    const child = kitchenSink.ClassHierarchy3.createUnsafe({
       classHierarchy0Property: "abcWith",
       classHierarchy3Property: "child",
       classHierarchy2Property: "parent",

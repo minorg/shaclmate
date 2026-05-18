@@ -13,7 +13,7 @@ function $identifier(this: kitchenSink.MutableProperties) {
 
 describe("mutable", () => {
   it("mutable list", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.create({
+    const instance = kitchenSink.MutableProperties.createUnsafe({
       $identifier,
       mutableListProperty: ["test1", "test2"],
     });
@@ -32,7 +32,7 @@ describe("mutable", () => {
   });
 
   it("mutable property", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.create({
+    const instance = kitchenSink.MutableProperties.createUnsafe({
       $identifier,
       mutableStringProperty: "test",
     });
@@ -48,7 +48,7 @@ describe("mutable", () => {
   });
 
   it("mutable set", ({ expect }) => {
-    const instance = kitchenSink.MutableProperties.create({
+    const instance = kitchenSink.MutableProperties.createUnsafe({
       $identifier,
       mutableSetProperty: ["test1", "test2"],
     });
