@@ -107,7 +107,7 @@ export abstract class AbstractTermType<
     //   "IdentifierType and LiteralType should override",
     // );
 
-    const chain = this.fromRdfExpressionChain(parameters);
+    const chain = this.fromRdfResourceValuesExpressionChain(parameters);
     const { variables } = parameters;
     return joinCode(
       [
@@ -146,7 +146,7 @@ export abstract class AbstractTermType<
    *
    * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
    */
-  protected fromRdfExpressionChain({
+  protected fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<Type["fromRdfResourceValuesExpression"]>[0]): {
     hasValues?: Code;

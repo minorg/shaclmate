@@ -52,13 +52,15 @@ export class StringType extends AbstractPrimitiveType<string> {
     return code`[${this.reusables.snippets.literalFactory}.string(${variables.value}${!this.datatype.equals(xsd.string) ? `, ${this.rdfjsTermExpression(this.datatype)}` : ""})]`;
   }
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractPrimitiveType<string>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
+    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
+  >[0]): ReturnType<
+    AbstractPrimitiveType<string>["fromRdfResourceValuesExpressionChain"]
+  > {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       valueTo: code`chain(values => values.chainMap(value => value.toString(${this.primitiveIn.length > 0 ? `${JSON.stringify(this.primitiveIn)} as const` : ""})))`,
     };
   }

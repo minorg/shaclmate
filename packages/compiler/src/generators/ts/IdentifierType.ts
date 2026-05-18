@@ -109,15 +109,19 @@ export class IdentifierType extends AbstractIdentifierType<
     return code`(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
   }
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode | NamedNode>["fromRdfExpressionChain"]
+    AbstractIdentifierType<
+      BlankNode | NamedNode
+    >["fromRdfResourceValuesExpressionChain"]
   >[0]): ReturnType<
-    AbstractIdentifierType<BlankNode | NamedNode>["fromRdfExpressionChain"]
+    AbstractIdentifierType<
+      BlankNode | NamedNode
+    >["fromRdfResourceValuesExpressionChain"]
   > {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       valueTo: code`chain(values => values.chainMap(value => value.toIdentifier()))`,
     };
   }

@@ -126,15 +126,15 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return code`{ "@id": ${variables.value}.value${discriminantProperty} }`;
   }
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractIdentifierType<NamedNode>["fromRdfExpressionChain"]
+    AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
   >[0]): ReturnType<
-    AbstractIdentifierType<NamedNode>["fromRdfExpressionChain"]
+    AbstractIdentifierType<NamedNode>["fromRdfResourceValuesExpressionChain"]
   > {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       valueTo: code`chain(values => values.chainMap(value => value.toIri(${
         this.in_.length > 0
           ? code`[${joinCode(

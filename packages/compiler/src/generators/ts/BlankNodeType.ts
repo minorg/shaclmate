@@ -89,13 +89,13 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     return code`{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
   }
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractIdentifierType<BlankNode>["fromRdfExpressionChain"]
+    AbstractIdentifierType<BlankNode>["fromRdfResourceValuesExpressionChain"]
   >[0]) {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,
     };
   }

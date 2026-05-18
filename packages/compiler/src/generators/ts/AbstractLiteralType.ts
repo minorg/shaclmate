@@ -40,15 +40,15 @@ export abstract class AbstractLiteralType extends AbstractTermType<
    */
   abstract literalExpression(literal: Literal): Code;
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+    AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
   >[0]): ReturnType<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+    AbstractTermType<Literal, Literal>["fromRdfResourceValuesExpressionChain"]
   > {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
           ? code`chain(values => ${this.reusables.snippets.fromRdfLanguageIn}(values, ${JSON.stringify(this.languageIn)}))`

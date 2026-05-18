@@ -69,13 +69,15 @@ export abstract class AbstractNumericType<
     return code`[${this.reusables.snippets.literalFactory}.${this.typeofs[0]}(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
-  protected override fromRdfExpressionChain({
+  protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
-    AbstractPrimitiveType<ValueT>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractPrimitiveType<ValueT>["fromRdfExpressionChain"]> {
+    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
+  >[0]): ReturnType<
+    AbstractPrimitiveType<ValueT>["fromRdfResourceValuesExpressionChain"]
+  > {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.fromRdfResourceValuesExpressionChain({ variables }),
       languageIn: undefined,
       preferredLanguages: undefined,
       valueTo: code`chain(values => values.chainMap(value => ${this.fromRdfResourceValueExpression(
