@@ -65,7 +65,7 @@ export class IdentifierType extends AbstractIdentifierType<
   }: Parameters<
     AbstractIdentifierType<BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`(${variables.value}["@id"].startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
+    return code`${this.reusables.imports.Either}.of((${variables.value}["@id"].startsWith("_:") ? ${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])))`;
   }
 
   @Memoize()

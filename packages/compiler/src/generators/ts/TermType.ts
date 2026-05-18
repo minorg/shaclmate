@@ -71,7 +71,9 @@ export class TermType<
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
-    return [...this.nodeKinds].reduce(
+    return code`${this.reusables.imports.Either}.of(${[
+      ...this.nodeKinds,
+    ].reduce(
       (expression, nodeKind) => {
         let valueToNodeKind: Code;
         switch (nodeKind) {
@@ -92,7 +94,7 @@ export class TermType<
           : code`((${variables.value}.termType === "${NodeKind.toTermType(nodeKind)}") ? (${valueToNodeKind}) : (${expression}))`;
       },
       null as Code | null,
-    )!;
+    )!})`;
   }
 
   override graphqlResolveExpression(

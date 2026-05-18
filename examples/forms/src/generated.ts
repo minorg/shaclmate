@@ -1038,13 +1038,15 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson($json: NestedNodeShape.Json): NestedNodeShape {
-    return createUnsafe({
+  export function fromJson(
+    $json: NestedNodeShape.Json,
+  ): Either<Error, NestedNodeShape> {
+    return $sequenceRecord({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
       requiredStringProperty: $json["requiredStringProperty"],
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NestedNodeShape> = (
@@ -1580,8 +1582,10 @@ export namespace FormNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson($json: FormNodeShape.Json): FormNodeShape {
-    return createUnsafe({
+  export function fromJson(
+    $json: FormNodeShape.Json,
+  ): Either<Error, FormNodeShape> {
+    return $sequenceRecord({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -1595,7 +1599,7 @@ export namespace FormNodeShape {
       ),
       requiredIntProperty: $json["requiredIntProperty"],
       requiredStringProperty: $json["requiredStringProperty"],
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<FormNodeShape> = (

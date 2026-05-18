@@ -59,7 +59,7 @@ export abstract class AbstractPrimitiveType<
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return variables.value;
+    return code`${this.reusables.imports.Either}.of(${variables.value});
   }
 
   override graphqlResolveExpression({

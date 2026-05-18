@@ -25,7 +25,7 @@ export class BigIntType extends AbstractNumericType<bigint> {
     if (this.primitiveIn.length > 0) {
       expression = code`${expression} as ${this.name}`;
     }
-    return expression;
+    return code`${this.reusables.imports.Either}.encase(() => ${expression})`;
   }
 
   override jsonSchema(

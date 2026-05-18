@@ -10,7 +10,6 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
   }
 
   let initializers: Code[] = [];
-  const statements: Code[] = [];
   const variables = {
     jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
   };
@@ -27,12 +26,8 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     ),
   );
 
-  statements.push(
-    code`return createUnsafe({ ${joinCode(initializers, { on: ", " })} });`,
-  );
-
   return Maybe.of(code`\
-export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.name} {
-${joinCode(statements, { on: "\n" })}
+export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${this.reusables.snippets.sequenceRecord}({ ${joinCode(initializers, { on: ", " })} }).chain(create);
 }`);
 }

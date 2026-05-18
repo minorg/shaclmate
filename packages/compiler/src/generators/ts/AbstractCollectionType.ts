@@ -136,13 +136,11 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
-    const valueVariable = code`item`;
-    const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: valueVariable },
-    });
-    return codeEquals(itemFromJsonExpression, valueVariable)
-      ? expression
-      : code`${expression}.map(item => (${itemFromJsonExpression}))`;
+    return code`${this.reusables.imports.Either}.sequence(${expression}.map(item => (${this.itemType.fromJsonExpression(
+      {
+        variables: { value: code`item` },
+      },
+    )})))`;
   }
 
   override graphqlResolveExpression({
