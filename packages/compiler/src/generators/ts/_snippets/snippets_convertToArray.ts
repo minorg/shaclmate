@@ -9,8 +9,9 @@ export const snippets_convertToArray: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToArray`,
     code`\
-function ${syntheticNamePrefix}convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, readonly: Readonly) {
-  return (value: readonly ItemSourceT[] | undefined): ${imports.Either}<Error, Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>> => 
-    typeof value === "undefined" ? ${imports.Either}.of<Error, Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>>([]) : ${imports.Either}.sequence(value.map(convertToItem));
+function ${syntheticNamePrefix}convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, _readonly: Readonly) {
+  type EitherR = Readonly extends true ? ReadonlyArray<ItemTargetT> : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[] | undefined): ${imports.Either}<Error, EitherR> => 
+    (typeof value === "undefined" ? ${imports.Either}.of([]) : ${imports.Either}.sequence(value.map(convertToItem))) as ${imports.Either}<Error, EitherR>;
 }`,
   );

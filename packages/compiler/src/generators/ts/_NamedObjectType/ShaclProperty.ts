@@ -51,7 +51,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const conversionFunction = this.type.conversionFunction.extract();
 
     if (!conversionFunction) {
-      return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
+      return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
     }
 
     let hasQuestionToken = false;
