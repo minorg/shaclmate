@@ -20,7 +20,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of(new Date(${variables.value}))`;
+    return code`${this.reusables.imports.Either}.of<Error, Date>(new Date(${variables.value}))`;
   }
 
   @Memoize()

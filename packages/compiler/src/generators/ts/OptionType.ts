@@ -116,13 +116,10 @@ export class OptionType<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     const expression = code`${this.reusables.imports.Maybe}.fromNullable(${variables.value})`;
-    const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: valueVariable },
+      variables: { value: code`item` },
     });
-    return codeEquals(itemFromJsonExpression, valueVariable)
-      ? expression
-      : code`${expression}.map(item => (${itemFromJsonExpression}))`;
+    return code`${expression}.map(item => (${itemFromJsonExpression}).map(${this.reusables.imports.Maybe}.of)).orDefault(${this.reusables.imports.Either}.of(${this.reusables.imports.Maybe}.empty()))`;
   }
 
   override fromRdfResourceValuesExpression(

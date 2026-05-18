@@ -31,7 +31,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.encase(() => new ${this.reusables.imports.BigDecimal}(${variables.value}))`;
+    return code`${this.reusables.imports.Either}.encase<Error, ${this.name}>(() => new ${this.name}(${variables.value}))`;
   }
 
   override graphqlResolveExpression({

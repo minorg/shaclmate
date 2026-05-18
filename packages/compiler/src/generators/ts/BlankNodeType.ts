@@ -51,7 +51,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   }: Parameters<
     AbstractIdentifierType<BlankNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)))`;
   }
 
   @Memoize()

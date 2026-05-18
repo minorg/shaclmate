@@ -71,7 +71,7 @@ export class TermType<
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of(${[
+    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${[
       ...this.nodeKinds,
     ].reduce(
       (expression, nodeKind) => {

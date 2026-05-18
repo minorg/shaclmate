@@ -71,7 +71,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   }: Parameters<
     AbstractIdentifierType<NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${this.reusables.imports.Either}.of(${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
   }
 
   override jsonSchema({
