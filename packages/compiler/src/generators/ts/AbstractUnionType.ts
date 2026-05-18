@@ -185,9 +185,9 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
-  override get conversionFunction(): AbstractType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToUnion}`,
+  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+    return Maybe.of({
+      code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes:
         this.discriminant.kind === "typeof"
           ? this.members.map(({ primaryDiscriminantValue, type }) => ({
@@ -200,7 +200,7 @@ export abstract class AbstractUnionType<
                 typeof: "object",
               },
             ],
-    };
+    });
   }
 
   @Memoize()

@@ -11,6 +11,8 @@ export abstract class AbstractPrimitiveType<
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
 
+  override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
+    Maybe.empty();
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:

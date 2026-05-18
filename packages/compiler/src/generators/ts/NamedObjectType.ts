@@ -46,6 +46,8 @@ import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 export class NamedObjectType extends AbstractType {
   protected readonly toRdfTypes: readonly NamedNode[];
 
+  override readonly conversionFunction: Maybe<AbstractType.ConversionFunction> =
+    Maybe.empty();
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
@@ -122,19 +124,6 @@ export class NamedObjectType extends AbstractType {
   @Memoize()
   get childObjectTypes(): readonly NamedObjectType[] {
     return this.lazyChildObjectTypes();
-  }
-
-  @Memoize()
-  override get conversionFunction(): AbstractType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToObject}`,
-      sourceTypes: [
-        {
-          name: this.name,
-          typeof: "object",
-        },
-      ],
-    };
   }
 
   override get declaration(): Maybe<Code> {

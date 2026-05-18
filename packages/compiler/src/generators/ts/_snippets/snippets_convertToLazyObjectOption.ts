@@ -10,7 +10,7 @@ export const snippets_convertToLazyObjectOption: SnippetFactory = ({
     `${syntheticNamePrefix}convertToLazyObjectOption`,
     code`\
 function ${syntheticNamePrefix}convertToLazyObjectOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: () => ObjectIdentifierT }>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
-  return (_schema: unknown, value: ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ${imports.Maybe}<ResolvedObjectT> | ResolvedObjectT | undefined): ${imports.Either}<Error, ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>> => {
+  return (value: ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT> | ${imports.Maybe}<ResolvedObjectT> | ResolvedObjectT | undefined): ${imports.Either}<Error, ${snippets.LazyObjectOption}<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>> => {
     switch (typeof value) {
       case "object": {
         if (value instanceof ${snippets.LazyObjectOption}) {

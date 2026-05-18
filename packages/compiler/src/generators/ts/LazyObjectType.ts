@@ -12,8 +12,8 @@ export class LazyObjectType extends AbstractLazyObjectType<
   override readonly kind = "LazyObjectType";
 
   @Memoize()
-  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
-    return {
+  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
       sourceTypes: [
         {
@@ -25,7 +25,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
           typeof: "object",
         },
       ],
-    };
+    });
   }
 
   @Memoize()

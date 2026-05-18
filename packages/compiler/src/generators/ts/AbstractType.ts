@@ -23,15 +23,15 @@ export abstract class AbstractType {
   readonly comment: Maybe<string>;
 
   /**
-   * Function that converts one or more source types to this type and returns Either<Error, ThisType>.
-   *
-   * The function takes two parameters:
-   *  - an instance of this.schemaType
-   *  - a value with one of the source types
+   * Function that takes a value of one or more source types to this type and returns Either<Error, ThisType>.
    *
    * The source types should include this type.
+   *
+   * The function should not perform validation (e.g., checking array lengths). That will be done by validationFunction in conjunction with this function.
+   *
+   * If unspecified, uses an identity function (i.e., function identity(value: ThisType): Either<Error, ThisType>).
    */
-  abstract readonly conversionFunction: AbstractType.ConversionFunction;
+  abstract readonly conversionFunction: Maybe<AbstractType.ConversionFunction>;
 
   /**
    * The declaration of named types.

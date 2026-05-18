@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.
@@ -40,8 +40,10 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get conversionFunction(): AbstractType.ConversionFunction {
-    const itemConversionFunction = this.itemType.conversionFunction;
+  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
 
     const sourceTypes: AbstractType.ConversionFunction["sourceTypes"] = [
       {
@@ -61,10 +63,10 @@ export abstract class AbstractCollectionType<
       });
     }
 
-    return {
-      code: code`${this._mutable ? this.reusables.snippets.convertToMutableArray : this.reusables.snippets.convertToReadonlyArray}(${itemConversionFunction.code})`,
+    return Maybe.of({
+      code: code`${this.reusables.snippets.convertToArray}(${itemConversionFunction.code}, ${literalOf(!this._mutable)})`,
       sourceTypes,
-    };
+    });
   }
 
   @Memoize()

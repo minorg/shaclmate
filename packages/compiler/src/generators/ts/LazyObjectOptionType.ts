@@ -20,8 +20,8 @@ export class LazyObjectOptionType extends Super {
   override readonly kind = "LazyObjectOptionType";
 
   @Memoize()
-  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
-    return {
+  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToLazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
@@ -41,7 +41,7 @@ export class LazyObjectOptionType extends Super {
           typeof: "undefined",
         },
       ],
-    };
+    });
   }
 
   @Memoize()

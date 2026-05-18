@@ -48,10 +48,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get constructorParameter(): Maybe<Code> {
+    const conversionFunction = this.type.conversionFunction.extract();
+
+    if (!conversionFunction) {
+      return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
+    }
+
     let hasQuestionToken = false;
 
     const typeNames: Code[] = [];
-    for (const type of this.type.conversionFunction.sourceTypes) {
+    for (const type of conversionFunction.sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
@@ -154,7 +160,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["constructorInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.name}: ${this.type.conversionFunction.code}(schema.properties.${this.name}.type(), ${variables.parameters}.${this.name})`,
+      code`${this.name}: ${this.type.conversionFunction.map((conversionFunction) => conversionFunction.code).orDefault(code`${this.reusables.snippets.identityConversionFunction}`)}(${variables.parameters}.${this.name})`,
     );
   }
 

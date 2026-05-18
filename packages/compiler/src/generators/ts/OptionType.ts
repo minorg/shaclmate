@@ -18,9 +18,11 @@ export class OptionType<
   override readonly typeofs = ["object" as const];
 
   @Memoize()
-  override get conversionFunction(): AbstractContainerType.ConversionFunction {
-    const itemConversionFunction = this.itemType.conversionFunction;
-    return {
+  override get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToMaybe}(${itemConversionFunction.code})`,
       sourceTypes: (
         itemConversionFunction.sourceTypes as AbstractContainerType.ConversionFunction["sourceTypes"]
@@ -34,7 +36,7 @@ export class OptionType<
           typeof: "undefined",
         },
       ),
-    };
+    });
   }
 
   @Memoize()

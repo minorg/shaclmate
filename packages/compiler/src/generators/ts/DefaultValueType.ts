@@ -31,17 +31,19 @@ export class DefaultValueType<
   }
 
   @Memoize()
-  get conversionFunction(): AbstractContainerType.ConversionFunction {
-    const itemConversionFunction = this.itemType.conversionFunction;
-    return {
-      code: code`${this.reusables.snippets.convertWithDefaultValue}(${itemConversionFunction.code})`,
+  get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
+    return Maybe.of({
+      code: code`${this.reusables.snippets.convertWithDefaultValue}(${itemConversionFunction.code}, ${this.defaultValueExpression})`,
       sourceTypes: itemConversionFunction.sourceTypes
         .filter((sourceType) => sourceType.typeof !== "undefined")
         .concat({
           name: "undefined",
           typeof: "undefined",
         }),
-    };
+    });
   }
 
   override get equalsFunction(): Code {

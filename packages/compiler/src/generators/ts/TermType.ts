@@ -1,10 +1,10 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
-
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
@@ -14,6 +14,8 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
+  override readonly conversionFunction: Maybe<AbstractTermType.ConversionFunction> =
+    Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterTerm}`;
   override readonly filterType = code`${this.reusables.snippets.TermFilter}`;
@@ -38,19 +40,6 @@ export class TermType<
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("IRI")),
       "should be IdentifierType or LiteralType",
     );
-  }
-
-  @Memoize()
-  override get conversionFunction(): AbstractTermType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToTerm}<${this.name}>`,
-      sourceTypes: [
-        {
-          name: this.name,
-          typeof: "object",
-        },
-      ],
-    };
   }
 
   override get graphqlType(): AbstractTermType.GraphqlType {

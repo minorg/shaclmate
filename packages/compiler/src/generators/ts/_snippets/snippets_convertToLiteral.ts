@@ -9,7 +9,7 @@ export const snippets_convertToLiteral: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertToLiteral`,
     code`\
-function ${syntheticNamePrefix}convertToLiteral(_schema: ${snippets.LiteralSchema}, value: bigint | boolean | Date | number | string | ${imports.Literal}): ${imports.Either}<Error, ${imports.Literal}> {
+function ${syntheticNamePrefix}convertToLiteral(value: bigint | boolean | Date | number | string | ${imports.Literal}): ${imports.Either}<Error, ${imports.Literal}> {
   if (typeof value === "object") {
     if (value instanceof Date) {
       return ${imports.Either}.of(${snippets.literalFactory}.date(value));

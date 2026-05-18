@@ -1,22 +1,13 @@
 import type { Literal } from "@rdfjs/types";
-
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
   override readonly name = code`${this.reusables.imports.BigDecimal}`;
-  override readonly conversionFunction: AbstractLiteralType.ConversionFunction =
-    {
-      code: code`${this.reusables.snippets.convertToBigDecimal}`,
-      sourceTypes: [
-        {
-          name: code`${this.reusables.imports.BigDecimal}`,
-          typeof: "object",
-        },
-      ],
-    };
+  override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
+    Maybe.empty();
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =

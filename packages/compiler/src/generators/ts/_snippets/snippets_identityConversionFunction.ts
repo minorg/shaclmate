@@ -1,15 +1,14 @@
 import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
-export const snippets_convertToDate: SnippetFactory = ({
+export const snippets_identityConversionFunction: SnippetFactory = ({
   imports,
-  snippets,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
-    `${syntheticNamePrefix}convertToDate`,
+    `${syntheticNamePrefix}identityConversionFunction`,
     code`\
-function ${syntheticNamePrefix}convertToDate(_schema: ${snippets.DateSchema}, value: Date): ${imports.Either}<Error, Date> {
+function ${syntheticNamePrefix}identityConversionFunction<T>(value: T): ${imports.Either}<Error, T> {
   return ${imports.Either}.of(value);
 }`,
   );
