@@ -28,7 +28,7 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
   );
 
   statements.push(
-    code`return create({ ${joinCode(initializers, { on: ", " })} }).unsafeCoerce();`,
+    code`return createUnsafe({ ${joinCode(initializers, { on: ", " })} });`,
   );
 
   return Maybe.of(code`\

@@ -215,7 +215,7 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolveType.members.map(
       ({ discriminantValues }, memberI) => {
-        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.create(resolved);`;
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.createUnsafe(resolved);`;
       },
     );
 
