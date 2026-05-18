@@ -2,7 +2,6 @@ import type { PropertyPath } from "@rdfx/resource";
 
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { codeEquals } from "../codeEquals.js";
 import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";

@@ -6,7 +6,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { BlankNodeType } from "../BlankNodeType.js";
-import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
 import {
