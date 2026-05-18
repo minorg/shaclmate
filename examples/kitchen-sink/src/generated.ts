@@ -308,15 +308,24 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-function $convertToBigDecimal(
-  _schema: $NumericSchema<BigDecimal>,
-  value: BigDecimal,
-): Either<Error, BigDecimal> {
-  return Either.of(value);
+type $ConversionFunction<SourceT, TargetT> = (
+  source: SourceT,
+) => Either<Error, TargetT>;
+
+function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type EitherR = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
+    (typeof value === "undefined"
+      ? Either.of([])
+      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
 }
 
 function $convertToBlankNode(
-  _schema: $BlankNodeSchema,
   value: BlankNode | undefined,
 ): Either<Error, BlankNode> {
   switch (typeof value) {
@@ -344,29 +353,7 @@ function $convertToBlankNodeIdentifierProperty(
   }
 }
 
-function $convertToBoolean<ValueT extends boolean>(
-  _schema: $BooleanSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToDate(
-  _schema: $DateSchema,
-  value: Date,
-): Either<Error, Date> {
-  return Either.of(value);
-}
-
-function $convertToDateTime(
-  _schema: $DateSchema,
-  value: Date,
-): Either<Error, Date> {
-  return Either.of(value);
-}
-
 function $convertToIdentifier(
-  _schema: $IdentifierSchema,
   value: BlankNode | NamedNode | string | undefined,
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
@@ -406,7 +393,6 @@ function $convertToIdentifierProperty(
 }
 
 function $convertToIri<IriT extends string = string>(
-  _schema: $IriSchema,
   value: IriT | NamedNode<IriT>,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
@@ -440,7 +426,6 @@ function $convertToLazyObject<
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
   return (
-    _schema: unknown,
     value:
       | $LazyObject<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | ResolvedObjectT,
@@ -467,7 +452,6 @@ function $convertToLazyObjectOption<
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
   return (
-    _schema: unknown,
     value:
       | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | Maybe<ResolvedObjectT>
@@ -530,7 +514,6 @@ function $convertToLazyObjectSet<
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
   return (
-    _schema: unknown,
     value:
       | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | readonly ResolvedObjectT[]
@@ -573,7 +556,6 @@ function $convertToLazyObjectSet<
 }
 
 function $convertToLiteral(
-  _schema: $LiteralSchema,
   value: bigint | boolean | Date | number | string | Literal,
 ): Either<Error, Literal> {
   if (typeof value === "object") {
@@ -586,14 +568,10 @@ function $convertToLiteral(
   return Either.of($literalFactory.primitive(value));
 }
 
-function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
+function $convertToMaybe<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
 ) {
   return (
-    schema: $MaybeSchema<ItemSchemaT>,
     value: ItemSourceT | Maybe<ItemTargetT> | undefined,
   ): Either<Error, Maybe<ItemTargetT>> => {
     switch (typeof value) {
@@ -607,122 +585,19 @@ function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(schema.item(), value).map(Maybe.of);
+    return convertToItem(value).map(Maybe.of);
   };
 }
 
-function $convertToMutableArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
+function $convertWithDefaultValue<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  defaultValue: ItemSourceT,
 ) {
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    value: readonly ItemSourceT[] | undefined,
-  ): Either<Error, ItemTargetT[]> => {
-    return (
-      typeof value === "undefined"
-        ? Either.of<Error, ItemTargetT[]>([])
-        : Either.sequence(
-            value.map((item) => convertToItem(schema.item(), item)),
-          )
-    ).chain((array) => {
-      if (schema.minCount !== undefined && array.length < schema.minCount) {
-        return Left(
-          new Error(
-            `array has length (${array.length}) less than minCount (${schema.minCount})`,
-          ),
-        );
-      }
-      return Either.of(array);
-    });
-  };
-}
-
-function $convertToNumeric<ValueT extends bigint | number>(
-  _schema: $NumericSchema<ValueT>,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToObject<ValueT extends object>(
-  _schema: unknown,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
-) {
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    value: readonly ItemSourceT[] | undefined,
-  ): Either<Error, readonly ItemTargetT[]> => {
-    return (
-      typeof value === "undefined"
-        ? Either.of<Error, readonly ItemTargetT[]>([])
-        : Either.sequence(
-            value.map((item) => convertToItem(schema.item(), item)),
-          )
-    ).chain((array) => {
-      if (schema.minCount !== undefined && array.length < schema.minCount) {
-        return Left(
-          new Error(
-            `array has length (${array.length}) less than minCount (${schema.minCount})`,
-          ),
-        );
-      }
-      return Either.of(array);
-    });
-  };
-}
-
-function $convertToString<ValueT extends string>(
-  _schema: $StringSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToTerm<ValueT extends BlankNode | Literal | NamedNode>(
-  _schema: $TermSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToUnion<ValueT>(
-  _schema: unknown,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertWithDefaultValue<
-  DefaultValueT extends ItemSourceT,
-  ItemSchemaT,
-  ItemSourceT,
-  ItemTargetT,
->(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
-) {
-  return (
-    schema: $DefaultValueSchema<DefaultValueT, ItemSchemaT>,
-    value: ItemSourceT | undefined,
-  ): Either<Error, ItemTargetT> => {
+  return (value: ItemSourceT | undefined): Either<Error, ItemTargetT> => {
     if (typeof value === "undefined") {
-      return convertToItem(schema.item(), schema.defaultValue);
+      return convertToItem(defaultValue);
     }
-    return convertToItem(schema.item(), value);
+    return convertToItem(value);
   };
 }
 
@@ -1483,6 +1358,10 @@ const $identifierSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
 
   return patterns;
 };
+
+function $identityConversionFunction<T>(value: T): Either<Error, T> {
+  return Either.of(value);
+}
 
 interface $IriFilter {
   readonly in?: readonly NamedNode[];
@@ -4699,54 +4578,46 @@ export namespace UnionDiscriminants {
   }): Either<Error, UnionDiscriminants> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      optionalIriOrLiteralProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.optionalIriOrLiteralProperty.type(),
-        parameters.optionalIriOrLiteralProperty,
-      ),
-      optionalIriOrStringProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.optionalIriOrStringProperty.type(),
+      optionalIriOrLiteralProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters.optionalIriOrLiteralProperty),
+      optionalIriOrStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalIriOrStringProperty,
       ),
-      optionalNodeOrLiteralProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.optionalNodeOrLiteralProperty.type(),
-        parameters.optionalNodeOrLiteralProperty,
-      ),
-      optionalNodeOrNodeOrStringProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.optionalNodeOrNodeOrStringProperty.type(),
-        parameters.optionalNodeOrNodeOrStringProperty,
-      ),
-      requiredIriOrLiteralProperty: $convertToUnion(
-        schema.properties.requiredIriOrLiteralProperty.type(),
+      optionalNodeOrLiteralProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters.optionalNodeOrLiteralProperty),
+      optionalNodeOrNodeOrStringProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters.optionalNodeOrNodeOrStringProperty),
+      requiredIriOrLiteralProperty: $identityConversionFunction(
         parameters.requiredIriOrLiteralProperty,
       ),
-      requiredIriOrStringProperty: $convertToUnion(
-        schema.properties.requiredIriOrStringProperty.type(),
+      requiredIriOrStringProperty: $identityConversionFunction(
         parameters.requiredIriOrStringProperty,
       ),
-      requiredNodeOrLiteralProperty: $convertToUnion(
-        schema.properties.requiredNodeOrLiteralProperty.type(),
+      requiredNodeOrLiteralProperty: $identityConversionFunction(
         parameters.requiredNodeOrLiteralProperty,
       ),
-      requiredNodeOrNodeOrStringProperty: $convertToUnion(
-        schema.properties.requiredNodeOrNodeOrStringProperty.type(),
+      requiredNodeOrNodeOrStringProperty: $identityConversionFunction(
         parameters.requiredNodeOrNodeOrStringProperty,
       ),
-      setIriOrLiteralProperty: $convertToReadonlyArray($convertToUnion)(
-        schema.properties.setIriOrLiteralProperty.type(),
-        parameters.setIriOrLiteralProperty,
-      ),
-      setIriOrStringProperty: $convertToReadonlyArray($convertToUnion)(
-        schema.properties.setIriOrStringProperty.type(),
-        parameters.setIriOrStringProperty,
-      ),
-      setNodeOrLiteralProperty: $convertToReadonlyArray($convertToUnion)(
-        schema.properties.setNodeOrLiteralProperty.type(),
-        parameters.setNodeOrLiteralProperty,
-      ),
-      setNodeOrNodeOrStringProperty: $convertToReadonlyArray($convertToUnion)(
-        schema.properties.setNodeOrNodeOrStringProperty.type(),
-        parameters.setNodeOrNodeOrStringProperty,
-      ),
+      setIriOrLiteralProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.setIriOrLiteralProperty),
+      setIriOrStringProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.setIriOrStringProperty),
+      setNodeOrLiteralProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.setNodeOrLiteralProperty),
+      setNodeOrNodeOrStringProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.setNodeOrNodeOrStringProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -11196,40 +11067,32 @@ export namespace TermProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       blankNodeTermProperty: $convertToMaybe($convertToBlankNode)(
-        schema.properties.blankNodeTermProperty.type(),
         parameters?.blankNodeTermProperty,
       ),
-      booleanTermProperty: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.booleanTermProperty.type(),
+      booleanTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.booleanTermProperty,
       ),
-      dateTermProperty: $convertToMaybe($convertToDate)(
-        schema.properties.dateTermProperty.type(),
+      dateTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTermProperty,
       ),
-      dateTimeTermProperty: $convertToMaybe($convertToDateTime)(
-        schema.properties.dateTimeTermProperty.type(),
+      dateTimeTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeTermProperty,
       ),
       iriTermProperty: $convertToMaybe($convertToIri<string>)(
-        schema.properties.iriTermProperty.type(),
         parameters?.iriTermProperty,
       ),
       literalTermProperty: $convertToMaybe($convertToLiteral)(
-        schema.properties.literalTermProperty.type(),
         parameters?.literalTermProperty,
       ),
-      numberTermProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.numberTermProperty.type(),
+      numberTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.numberTermProperty,
       ),
-      stringTermProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.stringTermProperty.type(),
+      stringTermProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.stringTermProperty,
       ),
-      termProperty: $convertToMaybe(
-        $convertToTerm<BlankNode | NamedNode | Literal>,
-      )(schema.properties.termProperty.type(), parameters?.termProperty),
+      termProperty: $convertToMaybe($identityConversionFunction)(
+        parameters?.termProperty,
+      ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "TermProperties" as const };
       if (
@@ -12685,10 +12548,9 @@ export namespace RecursiveUnionMember2 {
   }): Either<Error, RecursiveUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      recursiveUnionMember2Property: $convertToMaybe($convertToUnion)(
-        schema.properties.recursiveUnionMember2Property.type(),
-        parameters?.recursiveUnionMember2Property,
-      ),
+      recursiveUnionMember2Property: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters?.recursiveUnionMember2Property),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -13269,10 +13131,9 @@ export namespace RecursiveUnionMember1 {
   }): Either<Error, RecursiveUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      recursiveUnionMember1Property: $convertToMaybe($convertToUnion)(
-        schema.properties.recursiveUnionMember1Property.type(),
-        parameters?.recursiveUnionMember1Property,
-      ),
+      recursiveUnionMember1Property: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters?.recursiveUnionMember1Property),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -13857,11 +13718,9 @@ export namespace PropertyPaths {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       inversePathProperty: $convertToMaybe($convertToIri<string>)(
-        schema.properties.inversePathProperty.type(),
         parameters?.inversePathProperty,
       ),
-      predicatePathProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.predicatePathProperty.type(),
+      predicatePathProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.predicatePathProperty,
       ),
     }).map((properties) => {
@@ -14565,24 +14424,19 @@ export namespace PropertyNames {
   }): Either<Error, PropertyNames> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      actualPropertyName1: $convertToString<string>(
-        schema.properties.actualPropertyName1.type(),
+      actualPropertyName1: $identityConversionFunction(
         parameters.actualPropertyName1,
       ),
-      actualPropertyName2: $convertToString<string>(
-        schema.properties.actualPropertyName2.type(),
+      actualPropertyName2: $identityConversionFunction(
         parameters.actualPropertyName2,
       ),
-      actualPropertyName3: $convertToString<string>(
-        schema.properties.actualPropertyName3.type(),
+      actualPropertyName3: $identityConversionFunction(
         parameters.actualPropertyName3,
       ),
-      actualPropertyName4: $convertToString<string>(
-        schema.properties.actualPropertyName4.type(),
+      actualPropertyName4: $identityConversionFunction(
         parameters.actualPropertyName4,
       ),
-      actualPropertyName5: $convertToString<string>(
-        schema.properties.actualPropertyName5.type(),
+      actualPropertyName5: $identityConversionFunction(
         parameters.actualPropertyName5,
       ),
     }).map((properties) => {
@@ -15468,22 +15322,18 @@ export namespace PropertyCardinalities {
   }): Either<Error, PropertyCardinalities> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      emptyStringSetProperty: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.emptyStringSetProperty.type(),
-        parameters.emptyStringSetProperty,
-      ),
-      nonEmptyStringSetProperty: $convertToReadonlyArray(
-        $convertToString<string>,
-      )(
-        schema.properties.nonEmptyStringSetProperty.type(),
-        parameters.nonEmptyStringSetProperty,
-      ),
-      optionalStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.optionalStringProperty.type(),
+      emptyStringSetProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.emptyStringSetProperty),
+      nonEmptyStringSetProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.nonEmptyStringSetProperty),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
       ),
-      requiredStringProperty: $convertToString<string>(
-        schema.properties.requiredStringProperty.type(),
+      requiredStringProperty: $identityConversionFunction(
         parameters.requiredStringProperty,
       ),
     }).map((properties) => {
@@ -16279,8 +16129,7 @@ export namespace UnionMemberCommonParent {
   }): Either<Error, UnionMemberCommonParent> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      unionMemberCommonParentProperty: $convertToString<string>(
-        schema.properties.unionMemberCommonParentProperty.type(),
+      unionMemberCommonParentProperty: $identityConversionFunction(
         parameters.unionMemberCommonParentProperty,
       ),
     }).map((properties) => {
@@ -16884,8 +16733,7 @@ export namespace UnionMember2 {
     return UnionMemberCommonParent.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        unionMember2Property: $convertToString<string>(
-          schema.properties.unionMember2Property.type(),
+        unionMember2Property: $identityConversionFunction(
           parameters.unionMember2Property,
         ),
       }).map((properties) => {
@@ -17461,8 +17309,7 @@ export namespace PartialUnionMember2 {
   }): Either<Error, PartialUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -18021,8 +17868,7 @@ export namespace UnionMember1 {
     return UnionMemberCommonParent.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        unionMember1Property: $convertToString<string>(
-          schema.properties.unionMember1Property.type(),
+        unionMember1Property: $identityConversionFunction(
           parameters.unionMember1Property,
         ),
       }).map((properties) => {
@@ -18598,8 +18444,7 @@ export namespace PartialUnionMember1 {
   }): Either<Error, PartialUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -19612,16 +19457,13 @@ export namespace OrderedProperties {
   }): Either<Error, OrderedProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      orderedPropertyC: $convertToString<string>(
-        schema.properties.orderedPropertyC.type(),
+      orderedPropertyC: $identityConversionFunction(
         parameters.orderedPropertyC,
       ),
-      orderedPropertyB: $convertToString<string>(
-        schema.properties.orderedPropertyB.type(),
+      orderedPropertyB: $identityConversionFunction(
         parameters.orderedPropertyB,
       ),
-      orderedPropertyA: $convertToString<string>(
-        schema.properties.orderedPropertyA.type(),
+      orderedPropertyA: $identityConversionFunction(
         parameters.orderedPropertyA,
       ),
     }).map((properties) => {
@@ -20248,78 +20090,54 @@ export namespace NumericProperties {
   }): Either<Error, NumericProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      byteNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.byteNumericProperty.type(),
+      byteNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.byteNumericProperty,
       ),
-      decimalNumericProperty: $convertToMaybe($convertToBigDecimal)(
-        schema.properties.decimalNumericProperty.type(),
+      decimalNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.decimalNumericProperty,
       ),
-      doubleNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.doubleNumericProperty.type(),
+      doubleNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.doubleNumericProperty,
       ),
-      floatNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.floatNumericProperty.type(),
+      floatNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.floatNumericProperty,
       ),
-      integerNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.integerNumericProperty.type(),
+      integerNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.integerNumericProperty,
       ),
-      intNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.intNumericProperty.type(),
+      intNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.intNumericProperty,
       ),
-      longNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.longNumericProperty.type(),
+      longNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.longNumericProperty,
       ),
       negativeIntegerNumericProperty: $convertToMaybe(
-        $convertToNumeric<bigint>,
-      )(
-        schema.properties.negativeIntegerNumericProperty.type(),
-        parameters?.negativeIntegerNumericProperty,
-      ),
+        $identityConversionFunction,
+      )(parameters?.negativeIntegerNumericProperty),
       nonNegativeIntegerNumericProperty: $convertToMaybe(
-        $convertToNumeric<bigint>,
-      )(
-        schema.properties.nonNegativeIntegerNumericProperty.type(),
-        parameters?.nonNegativeIntegerNumericProperty,
-      ),
+        $identityConversionFunction,
+      )(parameters?.nonNegativeIntegerNumericProperty),
       nonPositiveIntegerNumericProperty: $convertToMaybe(
-        $convertToNumeric<bigint>,
-      )(
-        schema.properties.nonPositiveIntegerNumericProperty.type(),
-        parameters?.nonPositiveIntegerNumericProperty,
-      ),
+        $identityConversionFunction,
+      )(parameters?.nonPositiveIntegerNumericProperty),
       positiveIntegerNumericProperty: $convertToMaybe(
-        $convertToNumeric<bigint>,
-      )(
-        schema.properties.positiveIntegerNumericProperty.type(),
-        parameters?.positiveIntegerNumericProperty,
-      ),
-      shortNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.shortNumericProperty.type(),
+        $identityConversionFunction,
+      )(parameters?.positiveIntegerNumericProperty),
+      shortNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.shortNumericProperty,
       ),
-      unsignedByteNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.unsignedByteNumericProperty.type(),
+      unsignedByteNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedByteNumericProperty,
       ),
-      unsignedIntNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.unsignedIntNumericProperty.type(),
+      unsignedIntNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedIntNumericProperty,
       ),
-      unsignedLongNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.unsignedLongNumericProperty.type(),
+      unsignedLongNumericProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.unsignedLongNumericProperty,
       ),
-      unsignedShortNumericProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.unsignedShortNumericProperty.type(),
-        parameters?.unsignedShortNumericProperty,
-      ),
+      unsignedShortNumericProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters?.unsignedShortNumericProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -22505,27 +22323,21 @@ export namespace NodeKinds {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       blankNodeKindProperty: $convertToBlankNode(
-        schema.properties.blankNodeKindProperty.type(),
         parameters.blankNodeKindProperty,
       ),
       blankNodeOrIriNodeKindProperty: $convertToIdentifier(
-        schema.properties.blankNodeOrIriNodeKindProperty.type(),
         parameters.blankNodeOrIriNodeKindProperty,
       ),
-      blankNodeOrLiteralNodeKindProperty: $convertToTerm<BlankNode | Literal>(
-        schema.properties.blankNodeOrLiteralNodeKindProperty.type(),
+      blankNodeOrLiteralNodeKindProperty: $identityConversionFunction(
         parameters.blankNodeOrLiteralNodeKindProperty,
       ),
       iriNodeKindProperty: $convertToIri<string>(
-        schema.properties.iriNodeKindProperty.type(),
         parameters.iriNodeKindProperty,
       ),
-      iriOrLiteralNodeKindProperty: $convertToTerm<NamedNode | Literal>(
-        schema.properties.iriOrLiteralNodeKindProperty.type(),
+      iriOrLiteralNodeKindProperty: $identityConversionFunction(
         parameters.iriOrLiteralNodeKindProperty,
       ),
       literalNodeKindProperty: $convertToLiteral(
-        schema.properties.literalNodeKindProperty.type(),
         parameters.literalNodeKindProperty,
       ),
     }).map((properties) => {
@@ -23639,8 +23451,7 @@ export namespace NoRdfTypeUnionMember2 {
   }): Either<Error, NoRdfTypeUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      noRdfTypeUnionMember2Property: $convertToString<string>(
-        schema.properties.noRdfTypeUnionMember2Property.type(),
+      noRdfTypeUnionMember2Property: $identityConversionFunction(
         parameters.noRdfTypeUnionMember2Property,
       ),
     }).map((properties) => {
@@ -24100,8 +23911,7 @@ export namespace NoRdfTypeUnionMember1 {
   }): Either<Error, NoRdfTypeUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      noRdfTypeUnionMember1Property: $convertToString<string>(
-        schema.properties.noRdfTypeUnionMember1Property.type(),
+      noRdfTypeUnionMember1Property: $identityConversionFunction(
         parameters.noRdfTypeUnionMember1Property,
       ),
     }).map((properties) => {
@@ -24563,12 +24373,10 @@ export namespace NamedUnionProperties {
   }): Either<Error, NamedUnionProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      namedUnion1Property: $convertToUnion(
-        schema.properties.namedUnion1Property.type(),
+      namedUnion1Property: $identityConversionFunction(
         parameters.namedUnion1Property,
       ),
-      namedUnion2Property: $convertToUnion(
-        schema.properties.namedUnion2Property.type(),
+      namedUnion2Property: $identityConversionFunction(
         parameters.namedUnion2Property,
       ),
     }).map((properties) => {
@@ -25261,17 +25069,13 @@ export namespace MutableProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       mutableListProperty: $convertToMaybe(
-        $convertToMutableArray($convertToString<string>),
-      )(
-        schema.properties.mutableListProperty.type(),
-        parameters?.mutableListProperty,
-      ),
-      mutableSetProperty: $convertToMutableArray($convertToString<string>)(
-        schema.properties.mutableSetProperty.type(),
-        parameters?.mutableSetProperty,
-      ),
-      mutableStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.mutableStringProperty.type(),
+        $convertToArray($identityConversionFunction, false),
+      )(parameters?.mutableListProperty),
+      mutableSetProperty: $convertToArray(
+        $identityConversionFunction,
+        false,
+      )(parameters?.mutableSetProperty),
+      mutableStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.mutableStringProperty,
       ),
     }).map((properties) => {
@@ -26152,8 +25956,7 @@ export namespace ClassMultipleInheritanceParent2 {
   }): Either<Error, ClassMultipleInheritanceParent2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classMultipleInheritanceParent2Property: $convertToString<string>(
-        schema.properties.classMultipleInheritanceParent2Property.type(),
+      classMultipleInheritanceParent2Property: $identityConversionFunction(
         parameters.classMultipleInheritanceParent2Property,
       ),
     }).map((properties) => {
@@ -26762,8 +26565,7 @@ export namespace ClassMultipleInheritanceParent1 {
   }): Either<Error, ClassMultipleInheritanceParent1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classMultipleInheritanceParent1Property: $convertToString<string>(
-        schema.properties.classMultipleInheritanceParent1Property.type(),
+      classMultipleInheritanceParent1Property: $identityConversionFunction(
         parameters.classMultipleInheritanceParent1Property,
       ),
     }).map((properties) => {
@@ -27377,8 +27179,7 @@ export namespace ClassMultipleInheritanceChild {
       ClassMultipleInheritanceParent2.create(parameters).chain((super1) =>
         $sequenceRecord({
           $identifier: $convertToIdentifierProperty(parameters.$identifier),
-          classMultipleInheritanceChildProperty: $convertToString<string>(
-            schema.properties.classMultipleInheritanceChildProperty.type(),
+          classMultipleInheritanceChildProperty: $identityConversionFunction(
             parameters.classMultipleInheritanceChildProperty,
           ),
         }).map((properties) => {
@@ -28065,20 +27866,14 @@ export namespace ListProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriListProperty: $convertToMaybe(
-        $convertToReadonlyArray($convertToIri<string>),
-      )(schema.properties.iriListProperty.type(), parameters?.iriListProperty),
+        $convertToArray($convertToIri<string>, true),
+      )(parameters?.iriListProperty),
       objectListProperty: $convertToMaybe(
-        $convertToReadonlyArray($convertToObject),
-      )(
-        schema.properties.objectListProperty.type(),
-        parameters?.objectListProperty,
-      ),
+        $convertToArray($identityConversionFunction, true),
+      )(parameters?.objectListProperty),
       stringListProperty: $convertToMaybe(
-        $convertToReadonlyArray($convertToString<string>),
-      )(
-        schema.properties.stringListProperty.type(),
-        parameters?.stringListProperty,
-      ),
+        $convertToArray($identityConversionFunction, true),
+      )(parameters?.stringListProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "ListProperties" as const };
       if (
@@ -29269,7 +29064,6 @@ export namespace LazyProperties {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >($DefaultPartial.createUnsafe)(
-          schema.properties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
         ),
       optionalLazyToResolvedIriIdentifierProperty: $convertToLazyObjectOption<
@@ -29277,7 +29071,6 @@ export namespace LazyProperties {
         $NamedDefaultPartial,
         LazilyResolvedIriIdentifier
       >($NamedDefaultPartial.createUnsafe)(
-        schema.properties.optionalLazyToResolvedIriIdentifierProperty.type(),
         parameters.optionalLazyToResolvedIriIdentifierProperty,
       ),
       optionalLazyToResolvedUnionProperty: $convertToLazyObjectOption<
@@ -29285,7 +29078,6 @@ export namespace LazyProperties {
         $DefaultPartial,
         LazilyResolvedUnion
       >($DefaultPartial.createUnsafe)(
-        schema.properties.optionalLazyToResolvedUnionProperty.type(),
         parameters.optionalLazyToResolvedUnionProperty,
       ),
       optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
@@ -29294,7 +29086,6 @@ export namespace LazyProperties {
           Partial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >(Partial.createUnsafe)(
-          schema.properties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
         ),
       optionalPartialToResolvedUnionProperty: $convertToLazyObjectOption<
@@ -29302,7 +29093,6 @@ export namespace LazyProperties {
         Partial,
         LazilyResolvedUnion
       >(Partial.createUnsafe)(
-        schema.properties.optionalPartialToResolvedUnionProperty.type(),
         parameters.optionalPartialToResolvedUnionProperty,
       ),
       optionalPartialUnionToResolvedUnionProperty: $convertToLazyObjectOption<
@@ -29319,17 +29109,13 @@ export namespace LazyProperties {
             resolved satisfies never;
             throw new Error("unrecognized type");
         }
-      })(
-        schema.properties.optionalPartialUnionToResolvedUnionProperty.type(),
-        parameters.optionalPartialUnionToResolvedUnionProperty,
-      ),
+      })(parameters.optionalPartialUnionToResolvedUnionProperty),
       requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
         $convertToLazyObject<
           LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >($DefaultPartial.createUnsafe)(
-          schema.properties.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
         ),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
@@ -29338,7 +29124,6 @@ export namespace LazyProperties {
           Partial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >(Partial.createUnsafe)(
-          schema.properties.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
         ),
       setLazyToResolvedBlankNodeOrIriIdentifierProperty:
@@ -29347,7 +29132,6 @@ export namespace LazyProperties {
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >($DefaultPartial.createUnsafe)(
-          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
         ),
       setPartialToResolvedBlankNodeOrIriIdentifierProperty:
@@ -29356,7 +29140,6 @@ export namespace LazyProperties {
           Partial,
           LazilyResolvedBlankNodeOrIriIdentifier
         >(Partial.createUnsafe)(
-          schema.properties.setPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
           parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
         ),
     }).map((properties) => {
@@ -31616,8 +31399,7 @@ export namespace LazilyResolvedIriIdentifier {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -32084,8 +31866,7 @@ export namespace LazilyResolvedUnionMember2 {
   }): Either<Error, LazilyResolvedUnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -32656,8 +32437,7 @@ export namespace LazilyResolvedUnionMember1 {
   }): Either<Error, LazilyResolvedUnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -33231,8 +33011,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -33831,10 +33610,10 @@ export namespace LanguageInProperties {
   }): Either<Error, LanguageInProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      languageInLiteralProperty: $convertToReadonlyArray($convertToLiteral)(
-        schema.properties.languageInLiteralProperty.type(),
-        parameters.languageInLiteralProperty,
-      ),
+      languageInLiteralProperty: $convertToArray(
+        $convertToLiteral,
+        true,
+      )(parameters.languageInLiteralProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -34359,10 +34138,10 @@ export namespace JsPrimitiveUnionProperty {
   }): Either<Error, JsPrimitiveUnionProperty> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      jsPrimitiveUnionProperty: $convertToReadonlyArray($convertToUnion)(
-        schema.properties.jsPrimitiveUnionProperty.type(),
-        parameters?.jsPrimitiveUnionProperty,
-      ),
+      jsPrimitiveUnionProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters?.jsPrimitiveUnionProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -35776,8 +35555,7 @@ export namespace IndirectRecursiveHelper {
   }): Either<Error, IndirectRecursiveHelper> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      indirectRecursiveProperty: $convertToMaybe($convertToObject)(
-        schema.properties.indirectRecursiveProperty.type(),
+      indirectRecursiveProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.indirectRecursiveProperty,
       ),
     }).map((properties) => {
@@ -36355,10 +36133,9 @@ export namespace IndirectRecursive {
   }): Either<Error, IndirectRecursive> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      indirectRecursiveHelperProperty: $convertToMaybe($convertToObject)(
-        schema.properties.indirectRecursiveHelperProperty.type(),
-        parameters?.indirectRecursiveHelperProperty,
-      ),
+      indirectRecursiveHelperProperty: $convertToMaybe(
+        $identityConversionFunction,
+      )(parameters?.indirectRecursiveHelperProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -36959,20 +36736,16 @@ export namespace InProperties {
   }): Either<Error, InProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      inBooleansProperty: $convertToMaybe($convertToBoolean<true>)(
-        schema.properties.inBooleansProperty.type(),
+      inBooleansProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inBooleansProperty,
       ),
-      inDateTimesProperty: $convertToMaybe($convertToDateTime)(
-        schema.properties.inDateTimesProperty.type(),
+      inDateTimesProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inDateTimesProperty,
       ),
-      inDoublesProperty: $convertToMaybe($convertToNumeric<1 | 2>)(
-        schema.properties.inDoublesProperty.type(),
+      inDoublesProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inDoublesProperty,
       ),
-      inIntegersProperty: $convertToMaybe($convertToNumeric<1n | 2n>)(
-        schema.properties.inIntegersProperty.type(),
+      inIntegersProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inIntegersProperty,
       ),
       inIrisProperty: $convertToMaybe(
@@ -36980,9 +36753,8 @@ export namespace InProperties {
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >,
-      )(schema.properties.inIrisProperty.type(), parameters?.inIrisProperty),
-      inStringsProperty: $convertToMaybe($convertToString<"text" | "html">)(
-        schema.properties.inStringsProperty.type(),
+      )(parameters?.inIrisProperty),
+      inStringsProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.inStringsProperty,
       ),
     }).map((properties) => {
@@ -38125,8 +37897,7 @@ export namespace InIdentifier {
         | "http://example.com/InIdentifierInstance1"
         | "http://example.com/InIdentifierInstance2"
       >(parameters.$identifier),
-      inIdentifierProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.inIdentifierProperty.type(),
+      inIdentifierProperty: $convertToMaybe($identityConversionFunction)(
         parameters.inIdentifierProperty,
       ),
     }).map((properties) => {
@@ -38748,11 +38519,9 @@ export namespace HasValueProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       hasIriValueProperty: $convertToIri<string>(
-        schema.properties.hasIriValueProperty.type(),
         parameters.hasIriValueProperty,
       ),
-      hasLiteralValueProperty: $convertToString<string>(
-        schema.properties.hasLiteralValueProperty.type(),
+      hasLiteralValueProperty: $identityConversionFunction(
         parameters.hasLiteralValueProperty,
       ),
     }).map((properties) => {
@@ -39299,8 +39068,7 @@ export namespace FlattenUnionMember3 {
   }): Either<Error, FlattenUnionMember3> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      flattenUnionMember3Property: $convertToString<string>(
-        schema.properties.flattenUnionMember3Property.type(),
+      flattenUnionMember3Property: $identityConversionFunction(
         parameters.flattenUnionMember3Property,
       ),
     }).map((properties) => {
@@ -39859,8 +39627,7 @@ export namespace ExternProperty {
   }): Either<Error, ExternProperty> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      externProperty: $convertToMaybe($convertToObject)(
-        schema.properties.externProperty.type(),
+      externProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.externProperty,
       ),
     }).map((properties) => {
@@ -40435,8 +40202,7 @@ export namespace BaseForExtern {
   }): Either<Error, BaseForExtern> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      baseForExternProperty: $convertToString<string>(
-        schema.properties.baseForExternProperty.type(),
+      baseForExternProperty: $identityConversionFunction(
         parameters.baseForExternProperty,
       ),
     }).map((properties) => {
@@ -41001,8 +40767,7 @@ export namespace ExplicitRdfType {
   }): Either<Error, ExplicitRdfType> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitRdfTypeProperty: $convertToString<string>(
-        schema.properties.explicitRdfTypeProperty.type(),
+      explicitRdfTypeProperty: $identityConversionFunction(
         parameters.explicitRdfTypeProperty,
       ),
     }).map((properties) => {
@@ -41562,8 +41327,7 @@ export namespace ExplicitFromToRdfTypes {
   }): Either<Error, ExplicitFromToRdfTypes> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitFromToRdfTypesProperty: $convertToString<string>(
-        schema.properties.explicitFromToRdfTypesProperty.type(),
+      explicitFromToRdfTypesProperty: $identityConversionFunction(
         parameters.explicitFromToRdfTypesProperty,
       ),
     }).map((properties) => {
@@ -42155,16 +41919,13 @@ export namespace DisplayProperties {
   }): Either<Error, DisplayProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      explicitFalseDisplayProperty: $convertToString<string>(
-        schema.properties.explicitFalseDisplayProperty.type(),
+      explicitFalseDisplayProperty: $identityConversionFunction(
         parameters.explicitFalseDisplayProperty,
       ),
-      explicitTrueDisplayProperty: $convertToString<string>(
-        schema.properties.explicitTrueDisplayProperty.type(),
+      explicitTrueDisplayProperty: $identityConversionFunction(
         parameters.explicitTrueDisplayProperty,
       ),
-      implicitFalseDisplayProperty: $convertToString<string>(
-        schema.properties.implicitFalseDisplayProperty.type(),
+      implicitFalseDisplayProperty: $identityConversionFunction(
         parameters.implicitFalseDisplayProperty,
       ),
     }).map((properties) => {
@@ -42893,8 +42654,7 @@ export namespace DirectRecursive {
   }): Either<Error, DirectRecursive> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      directRecursiveProperty: $convertToMaybe($convertToObject)(
-        schema.properties.directRecursiveProperty.type(),
+      directRecursiveProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.directRecursiveProperty,
       ),
     }).map((properties) => {
@@ -43466,40 +43226,30 @@ export namespace DefaultValueProperties {
   }): Either<Error, DefaultValueProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      dateDefaultValueProperty: $convertWithDefaultValue($convertToDate)(
-        schema.properties.dateDefaultValueProperty.type(),
-        parameters?.dateDefaultValueProperty,
-      ),
+      dateDefaultValueProperty: $convertWithDefaultValue(
+        $identityConversionFunction,
+        new Date("2018-04-09T00:00:00.000Z"),
+      )(parameters?.dateDefaultValueProperty),
       dateTimeDefaultValueProperty: $convertWithDefaultValue(
-        $convertToDateTime,
-      )(
-        schema.properties.dateTimeDefaultValueProperty.type(),
-        parameters?.dateTimeDefaultValueProperty,
-      ),
+        $identityConversionFunction,
+        new Date("2018-04-09T10:00:00.000Z"),
+      )(parameters?.dateTimeDefaultValueProperty),
       falseBooleanDefaultValueProperty: $convertWithDefaultValue(
-        $convertToBoolean<boolean>,
-      )(
-        schema.properties.falseBooleanDefaultValueProperty.type(),
-        parameters?.falseBooleanDefaultValueProperty,
-      ),
+        $identityConversionFunction,
+        false,
+      )(parameters?.falseBooleanDefaultValueProperty),
       numberDefaultValueProperty: $convertWithDefaultValue(
-        $convertToNumeric<number>,
-      )(
-        schema.properties.numberDefaultValueProperty.type(),
-        parameters?.numberDefaultValueProperty,
-      ),
+        $identityConversionFunction,
+        0,
+      )(parameters?.numberDefaultValueProperty),
       stringDefaultValueProperty: $convertWithDefaultValue(
-        $convertToString<string>,
-      )(
-        schema.properties.stringDefaultValueProperty.type(),
-        parameters?.stringDefaultValueProperty,
-      ),
+        $identityConversionFunction,
+        "",
+      )(parameters?.stringDefaultValueProperty),
       trueBooleanDefaultValueProperty: $convertWithDefaultValue(
-        $convertToBoolean<boolean>,
-      )(
-        schema.properties.trueBooleanDefaultValueProperty.type(),
-        parameters?.trueBooleanDefaultValueProperty,
-      ),
+        $identityConversionFunction,
+        true,
+      )(parameters?.trueBooleanDefaultValueProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -44668,20 +44418,16 @@ export namespace DateUnionProperties {
   }): Either<Error, DateUnionProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      dateOrDateTimeProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.dateOrDateTimeProperty.type(),
+      dateOrDateTimeProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateOrDateTimeProperty,
       ),
-      dateOrStringProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.dateOrStringProperty.type(),
+      dateOrStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateOrStringProperty,
       ),
-      dateTimeOrDateProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.dateTimeOrDateProperty.type(),
+      dateTimeOrDateProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.dateTimeOrDateProperty,
       ),
-      stringOrDateProperty: $convertToMaybe($convertToUnion)(
-        schema.properties.stringOrDateProperty.type(),
+      stringOrDateProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.stringOrDateProperty,
       ),
     }).map((properties) => {
@@ -47113,64 +46859,48 @@ export namespace ConvertibleTypeProperties {
   }): Either<Error, ConvertibleTypeProperties> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      convertibleIriNonEmptySetProperty: $convertToReadonlyArray(
+      convertibleIriNonEmptySetProperty: $convertToArray(
         $convertToIri<string>,
-      )(
-        schema.properties.convertibleIriNonEmptySetProperty.type(),
-        parameters.convertibleIriNonEmptySetProperty,
-      ),
+        true,
+      )(parameters.convertibleIriNonEmptySetProperty),
       convertibleIriOptionProperty: $convertToMaybe($convertToIri<string>)(
-        schema.properties.convertibleIriOptionProperty.type(),
         parameters.convertibleIriOptionProperty,
       ),
       convertibleIriProperty: $convertToIri<string>(
-        schema.properties.convertibleIriProperty.type(),
         parameters.convertibleIriProperty,
       ),
-      convertibleIriSetProperty: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.convertibleIriSetProperty.type(),
-        parameters.convertibleIriSetProperty,
-      ),
-      convertibleLiteralNonEmptySetProperty: $convertToReadonlyArray(
+      convertibleIriSetProperty: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters.convertibleIriSetProperty),
+      convertibleLiteralNonEmptySetProperty: $convertToArray(
         $convertToLiteral,
-      )(
-        schema.properties.convertibleLiteralNonEmptySetProperty.type(),
-        parameters.convertibleLiteralNonEmptySetProperty,
-      ),
+        true,
+      )(parameters.convertibleLiteralNonEmptySetProperty),
       convertibleLiteralOptionProperty: $convertToMaybe($convertToLiteral)(
-        schema.properties.convertibleLiteralOptionProperty.type(),
         parameters.convertibleLiteralOptionProperty,
       ),
       convertibleLiteralProperty: $convertToLiteral(
-        schema.properties.convertibleLiteralProperty.type(),
         parameters.convertibleLiteralProperty,
       ),
-      convertibleLiteralSetProperty: $convertToReadonlyArray($convertToLiteral)(
-        schema.properties.convertibleLiteralSetProperty.type(),
-        parameters.convertibleLiteralSetProperty,
-      ),
-      convertibleTermNonEmptySetProperty: $convertToReadonlyArray(
-        $convertToTerm<BlankNode | NamedNode | Literal>,
-      )(
-        schema.properties.convertibleTermNonEmptySetProperty.type(),
-        parameters.convertibleTermNonEmptySetProperty,
-      ),
+      convertibleLiteralSetProperty: $convertToArray(
+        $convertToLiteral,
+        true,
+      )(parameters.convertibleLiteralSetProperty),
+      convertibleTermNonEmptySetProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.convertibleTermNonEmptySetProperty),
       convertibleTermOptionProperty: $convertToMaybe(
-        $convertToTerm<BlankNode | NamedNode | Literal>,
-      )(
-        schema.properties.convertibleTermOptionProperty.type(),
-        parameters.convertibleTermOptionProperty,
-      ),
-      convertibleTermProperty: $convertToTerm<BlankNode | NamedNode | Literal>(
-        schema.properties.convertibleTermProperty.type(),
+        $identityConversionFunction,
+      )(parameters.convertibleTermOptionProperty),
+      convertibleTermProperty: $identityConversionFunction(
         parameters.convertibleTermProperty,
       ),
-      convertibleTermSetProperty: $convertToReadonlyArray(
-        $convertToTerm<BlankNode | NamedNode | Literal>,
-      )(
-        schema.properties.convertibleTermSetProperty.type(),
-        parameters.convertibleTermSetProperty,
-      ),
+      convertibleTermSetProperty: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.convertibleTermSetProperty),
     }).map((properties) => {
       const finalObject = {
         ...properties,
@@ -49276,8 +49006,7 @@ export namespace Partial {
   }): Either<Error, Partial> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      lazilyResolvedStringProperty: $convertToString<string>(
-        schema.properties.lazilyResolvedStringProperty.type(),
+      lazilyResolvedStringProperty: $identityConversionFunction(
         parameters.lazilyResolvedStringProperty,
       ),
     }).map((properties) => {
@@ -49719,8 +49448,7 @@ export namespace NonClass {
   }): Either<Error, NonClass> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      nonClassProperty: $convertToString<string>(
-        schema.properties.nonClassProperty.type(),
+      nonClassProperty: $identityConversionFunction(
         parameters.nonClassProperty,
       ),
     }).map((properties) => {
@@ -50188,23 +49916,18 @@ export namespace ClassProperties {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       iriClassProperty: $convertToMaybe($convertToIri<string>)(
-        schema.properties.iriClassProperty.type(),
         parameters?.iriClassProperty,
       ),
       multiClassProperty: $convertToMaybe($convertToIdentifier)(
-        schema.properties.multiClassProperty.type(),
         parameters?.multiClassProperty,
       ),
-      nodeClassProperty1: $convertToMaybe($convertToObject)(
-        schema.properties.nodeClassProperty1.type(),
+      nodeClassProperty1: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClassProperty1,
       ),
-      nodeClassProperty2: $convertToMaybe($convertToObject)(
-        schema.properties.nodeClassProperty2.type(),
+      nodeClassProperty2: $convertToMaybe($identityConversionFunction)(
         parameters?.nodeClassProperty2,
       ),
       singleClassProperty: $convertToMaybe($convertToIdentifier)(
-        schema.properties.singleClassProperty.type(),
         parameters?.singleClassProperty,
       ),
     }).map((properties) => {
@@ -51229,8 +50952,7 @@ export namespace ClassHierarchy0 {
   }): Either<Error, ClassHierarchy0> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      classHierarchy0Property: $convertToString<string>(
-        schema.properties.classHierarchy0Property.type(),
+      classHierarchy0Property: $identityConversionFunction(
         parameters.classHierarchy0Property,
       ),
     }).map((properties) => {
@@ -52344,8 +52066,7 @@ export namespace ClassHierarchy2 {
     return ClassHierarchy1.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        classHierarchy2Property: $convertToString<string>(
-          schema.properties.classHierarchy2Property.type(),
+        classHierarchy2Property: $identityConversionFunction(
           parameters.classHierarchy2Property,
         ),
       }).map((properties) => {
@@ -52949,8 +52670,7 @@ export namespace ClassHierarchy3 {
     return ClassHierarchy2.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-        classHierarchy3Property: $convertToString<string>(
-          schema.properties.classHierarchy3Property.type(),
+        classHierarchy3Property: $identityConversionFunction(
           parameters.classHierarchy3Property,
         ),
       }).map((properties) => {
