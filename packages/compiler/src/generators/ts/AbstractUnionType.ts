@@ -360,7 +360,7 @@ ${joinCode(
             value: code`(${unwrap(code`value`)} as ${jsonType})`,
           },
         },
-      )}.map(value => ${wrap(code`value`)}); }`,
+      )}.map(value => (${wrap(code`value`)})); }`,
   ),
 )}
 
