@@ -15,7 +15,7 @@ export class Harness<
     readonly instance: T,
     readonly staticSide: Readonly<{
       equals: (left: T, right: T) => $EqualsResult;
-      fromJson: (json: any) => T;
+      fromJson: (json: any) => Either<Error, T>;
       fromRdfResource: (
         resource: Resource,
         parameters: {
