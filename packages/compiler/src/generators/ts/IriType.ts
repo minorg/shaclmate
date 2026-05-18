@@ -1,7 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
-
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import {
   arrayOf,
@@ -21,7 +20,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     code`${this.reusables.snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
-  override get conversionFunction() {
+  override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
     const IriT =
       this.in_.length > 0
         ? code`${joinCode(
@@ -30,7 +29,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
           )}`
         : code`string`;
 
-    return {
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToIri}<${IriT}>`,
       sourceTypes: [
         {
@@ -42,7 +41,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
           typeof: "object" as const,
         },
       ],
-    };
+    });
   }
 
   @Memoize()

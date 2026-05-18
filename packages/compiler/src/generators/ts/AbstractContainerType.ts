@@ -67,6 +67,24 @@ export abstract class AbstractContainerType<
     return this.itemType.toRdfResourceValueTypes;
   }
 
+  @Memoize()
+  protected get itemConversionFunctionDefault(): AbstractType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.identityConversionFunction}`,
+      sourceTypes: [
+        {
+          name: this.itemType.name,
+          typeof: this.itemType.typeofs[0],
+        },
+      ],
+    };
+  }
+
+  @Memoize()
+  protected get itemValidationFunctionDefault(): Code {
+    return code`${this.reusables.snippets.identityValidationFunction}`;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,

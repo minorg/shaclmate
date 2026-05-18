@@ -20,8 +20,8 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override readonly kind = "LazyObjectSetType";
 
   @Memoize()
-  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
-    return {
+  override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToLazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
@@ -37,7 +37,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
           typeof: "undefined",
         },
       ],
-    };
+    });
   }
 
   protected override get runtimeClass() {

@@ -1,15 +1,15 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { type IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  override readonly conversionFunction: AbstractIdentifierType.ConversionFunction =
-    {
+  override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
+    Maybe.of({
       code: code`${this.reusables.snippets.convertToIdentifier}`,
       sourceTypes: [
         {
@@ -29,7 +29,7 @@ export class IdentifierType extends AbstractIdentifierType<
           typeof: "undefined",
         },
       ],
-    };
+    });
   override readonly filterFunction =
     code`${this.reusables.snippets.filterIdentifier}`;
   override readonly filterType =

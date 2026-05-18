@@ -43,11 +43,6 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
-interface $BooleanSchema {
-  readonly kind: "Boolean";
-  readonly in?: readonly boolean[];
-}
-
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
@@ -76,15 +71,24 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
-function $convertToBoolean<ValueT extends boolean>(
-  _schema: $BooleanSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
+type $ConversionFunction<SourceT, TargetT> = (
+  source: SourceT,
+) => Either<Error, TargetT>;
+
+function $convertToArray<ItemSourceT, ItemTargetT, Readonly extends boolean>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  _readonly: Readonly,
+) {
+  type EitherR = Readonly extends true
+    ? ReadonlyArray<ItemTargetT>
+    : Array<ItemTargetT>;
+  return (value: readonly ItemSourceT[] | undefined): Either<Error, EitherR> =>
+    (typeof value === "undefined"
+      ? Either.of([])
+      : Either.sequence(value.map(convertToItem))) as Either<Error, EitherR>;
 }
 
 function $convertToIdentifier(
-  _schema: $IdentifierSchema,
   value: BlankNode | NamedNode | string | undefined,
 ): Either<Error, BlankNode | NamedNode> {
   switch (typeof value) {
@@ -124,7 +128,6 @@ function $convertToIdentifierProperty(
 }
 
 function $convertToIri<IriT extends string = string>(
-  _schema: $IriSchema,
   value: IriT | NamedNode<IriT>,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
@@ -136,7 +139,6 @@ function $convertToIri<IriT extends string = string>(
 }
 
 function $convertToLiteral(
-  _schema: $LiteralSchema,
   value: bigint | boolean | Date | number | string | Literal,
 ): Either<Error, Literal> {
   if (typeof value === "object") {
@@ -149,14 +151,10 @@ function $convertToLiteral(
   return Either.of($literalFactory.primitive(value));
 }
 
-function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
+function $convertToMaybe<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
 ) {
   return (
-    schema: $MaybeSchema<ItemSchemaT>,
     value: ItemSourceT | Maybe<ItemTargetT> | undefined,
   ): Either<Error, Maybe<ItemTargetT>> => {
     switch (typeof value) {
@@ -170,93 +168,20 @@ function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(schema.item(), value).map(Maybe.of);
+    return convertToItem(value).map(Maybe.of);
   };
 }
 
-function $convertToNumeric<ValueT extends bigint | number>(
-  _schema: $NumericSchema<ValueT>,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToObject<ValueT extends object>(
-  _schema: unknown,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
+function $convertWithDefaultValue<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
+  defaultValue: ItemSourceT,
 ) {
-  return (
-    schema: $CollectionSchema<ItemSchemaT>,
-    value: readonly ItemSourceT[] | undefined,
-  ): Either<Error, readonly ItemTargetT[]> => {
-    return (
-      typeof value === "undefined"
-        ? Either.of<Error, readonly ItemTargetT[]>([])
-        : Either.sequence(
-            value.map((item) => convertToItem(schema.item(), item)),
-          )
-    ).chain((array) => {
-      if (schema.minCount !== undefined && array.length < schema.minCount) {
-        return Left(
-          new Error(
-            `array has length (${array.length}) less than minCount (${schema.minCount})`,
-          ),
-        );
-      }
-      return Either.of(array);
-    });
-  };
-}
-
-function $convertToString<ValueT extends string>(
-  _schema: $StringSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToTerm<ValueT extends BlankNode | Literal | NamedNode>(
-  _schema: $TermSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertWithDefaultValue<
-  DefaultValueT extends ItemSourceT,
-  ItemSchemaT,
-  ItemSourceT,
-  ItemTargetT,
->(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
-) {
-  return (
-    schema: $DefaultValueSchema<DefaultValueT, ItemSchemaT>,
-    value: ItemSourceT | undefined,
-  ): Either<Error, ItemTargetT> => {
+  return (value: ItemSourceT | undefined): Either<Error, ItemTargetT> => {
     if (typeof value === "undefined") {
-      return convertToItem(schema.item(), schema.defaultValue);
+      return convertToItem(defaultValue);
     }
-    return convertToItem(schema.item(), value);
+    return convertToItem(value);
   };
-}
-
-interface $DefaultValueSchema<DefaultValueT, ItemSchemaT> {
-  readonly defaultValue: DefaultValueT;
-  readonly item: () => ItemSchemaT;
-  readonly kind: "DefaultValue";
 }
 
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
@@ -545,10 +470,6 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-interface $IdentifierSchema {
-  readonly kind: "Identifier";
-}
-
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -574,25 +495,25 @@ class $IdentifierSet {
   }
 }
 
-interface $IriFilter {
-  readonly in?: readonly NamedNode[];
+function $identityConversionFunction<T>(value: T): Either<Error, T> {
+  return Either.of(value);
 }
 
-interface $IriSchema {
+function $identityValidationFunction<T>(
+  _schema: unknown,
+  value: T,
+): Either<Error, T> {
+  return Either.of(value);
+}
+
+interface $IriFilter {
   readonly in?: readonly NamedNode[];
-  readonly kind: "Iri";
 }
 
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
   readonly in?: readonly Literal[];
-}
-
-interface $LiteralSchema {
-  readonly in?: readonly Literal[];
-  readonly kind: "Literal";
-  readonly languageIn?: readonly string[];
 }
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
@@ -608,11 +529,6 @@ interface $NumericFilter<T> {
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
-}
-
-interface $NumericSchema<T> {
-  readonly in?: readonly T[];
-  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -793,21 +709,11 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-interface $StringSchema {
-  readonly in?: readonly string[];
-  readonly kind: "String";
-}
-
 interface $TermFilter {
   readonly datatypeIn?: readonly NamedNode[];
   readonly in?: readonly (Literal | NamedNode)[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-}
-
-interface $TermSchema {
-  readonly in?: readonly (Literal | NamedNode)[];
-  readonly kind: "Term";
 }
 
 export type $ToRdfResourceFunction<
@@ -838,6 +744,48 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+  _readonly: Readonly,
+) {
+  type EitherR = Readonly extends true
+    ? ReadonlyArray<ItemValueT>
+    : Array<ItemValueT>;
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    valueArray: readonly ItemValueT[],
+  ): Either<Error, EitherR> => {
+    if (schema.minCount !== undefined && valueArray.length < schema.minCount) {
+      return Left(
+        new Error(
+          `value array has length (${valueArray.length}) less than minCount (${schema.minCount})`,
+        ),
+      ) as Either<Error, EitherR>;
+    }
+
+    return Either.sequence(
+      valueArray.map((value) => validateItem(schema.item(), value)),
+    ) as Either<Error, EitherR>;
+  };
+}
+
+function $validateMaybe<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    valueMaybe: Maybe<ItemValueT>,
+  ): Either<Error, Maybe<ItemValueT>> =>
+    valueMaybe
+      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .orDefault(Either.of(valueMaybe));
+}
+
+type $ValidationFunction<SchemaT, ValueT> = (
+  schema: SchemaT,
+  value: ValueT,
+) => Either<Error, ValueT>;
 
 function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
@@ -945,7 +893,8 @@ export namespace PropertyShape {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -1058,107 +1007,211 @@ export namespace PropertyShape {
   }): Either<Error, PropertyShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      and: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.and.type(),
+      and: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters.and,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.and.type(),
+          value,
+        ),
       ),
-      classes: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.classes.type(),
-        parameters.classes,
+      classes: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters.classes).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.classes.type(),
+          value,
+        ),
       ),
-      comment: $convertToMaybe($convertToString<string>)(
-        schema.properties.comment.type(),
+      comment: $convertToMaybe($identityConversionFunction)(
         parameters.comment,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.comment.type(),
+          value,
+        ),
       ),
       datatype: $convertToMaybe($convertToIri<string>)(
-        schema.properties.datatype.type(),
         parameters.datatype,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.datatype.type(),
+          value,
+        ),
       ),
-      deactivated: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.deactivated.type(),
+      deactivated: $convertToMaybe($identityConversionFunction)(
         parameters.deactivated,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.deactivated.type(),
+          value,
+        ),
       ),
-      defaultValue: $convertToMaybe($convertToTerm<NamedNode | Literal>)(
-        schema.properties.defaultValue.type(),
+      defaultValue: $convertToMaybe($identityConversionFunction)(
         parameters.defaultValue,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.defaultValue.type(),
+          value,
+        ),
       ),
-      description: $convertToMaybe($convertToString<string>)(
-        schema.properties.description.type(),
+      description: $convertToMaybe($identityConversionFunction)(
         parameters.description,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.description.type(),
+          value,
+        ),
       ),
-      display: $convertWithDefaultValue($convertToBoolean<boolean>)(
-        schema.properties.display.type(),
-        parameters.display,
+      display: $convertWithDefaultValue(
+        $identityConversionFunction,
+        false,
+      )(parameters.display),
+      flags: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.flags).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.flags.type(),
+          value,
+        ),
       ),
-      flags: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.flags.type(),
-        parameters.flags,
+      groups: $convertToArray(
+        $convertToIdentifier,
+        true,
+      )(parameters.groups).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.groups.type(),
+          value,
+        ),
       ),
-      groups: $convertToReadonlyArray($convertToIdentifier)(
-        schema.properties.groups.type(),
-        parameters.groups,
+      hasValues: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.hasValues).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.hasValues.type(),
+          value,
+        ),
       ),
-      hasValues: $convertToReadonlyArray($convertToTerm<NamedNode | Literal>)(
-        schema.properties.hasValues.type(),
-        parameters.hasValues,
+      in_: $convertToMaybe($convertToArray($identityConversionFunction, true))(
+        parameters.in_,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.in_.type(),
+          value,
+        ),
       ),
-      in_: $convertToMaybe(
-        $convertToReadonlyArray($convertToTerm<NamedNode | Literal>),
-      )(schema.properties.in_.type(), parameters.in_),
       isDefinedBy: $convertToMaybe($convertToIdentifier)(
-        schema.properties.isDefinedBy.type(),
         parameters.isDefinedBy,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.isDefinedBy.type(),
+          value,
+        ),
       ),
-      label: $convertToMaybe($convertToString<string>)(
-        schema.properties.label.type(),
+      label: $convertToMaybe($identityConversionFunction)(
         parameters.label,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.label.type(),
+          value,
+        ),
       ),
       languageIn: $convertToMaybe(
-        $convertToReadonlyArray($convertToString<string>),
-      )(schema.properties.languageIn.type(), parameters.languageIn),
-      maxCount: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.maxCount.type(),
+        $convertToArray($identityConversionFunction, true),
+      )(parameters.languageIn).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.languageIn.type(),
+          value,
+        ),
+      ),
+      maxCount: $convertToMaybe($identityConversionFunction)(
         parameters.maxCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxCount.type(),
+          value,
+        ),
       ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.maxExclusive.type(),
         parameters.maxExclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxExclusive.type(),
+          value,
+        ),
       ),
       maxInclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.maxInclusive.type(),
         parameters.maxInclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxInclusive.type(),
+          value,
+        ),
       ),
-      maxLength: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.maxLength.type(),
+      maxLength: $convertToMaybe($identityConversionFunction)(
         parameters.maxLength,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxLength.type(),
+          value,
+        ),
       ),
-      minCount: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.minCount.type(),
+      minCount: $convertToMaybe($identityConversionFunction)(
         parameters.minCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minCount.type(),
+          value,
+        ),
       ),
       minExclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.minExclusive.type(),
         parameters.minExclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minExclusive.type(),
+          value,
+        ),
       ),
       minInclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.minInclusive.type(),
         parameters.minInclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minInclusive.type(),
+          value,
+        ),
       ),
-      minLength: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.minLength.type(),
+      minLength: $convertToMaybe($identityConversionFunction)(
         parameters.minLength,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minLength.type(),
+          value,
+        ),
       ),
-      mutable: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.mutable.type(),
+      mutable: $convertToMaybe($identityConversionFunction)(
         parameters.mutable,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.mutable.type(),
+          value,
+        ),
       ),
-      name: $convertToMaybe($convertToString<string>)(
-        schema.properties.name.type(),
-        parameters.name,
+      name: $convertToMaybe($identityConversionFunction)(parameters.name).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            PropertyShape.schema.properties.name.type(),
+            value,
+          ),
       ),
-      node: $convertToMaybe($convertToIdentifier)(
-        schema.properties.node.type(),
-        parameters.node,
+      node: $convertToMaybe($convertToIdentifier)(parameters.node).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            PropertyShape.schema.properties.node.type(),
+            value,
+          ),
       ),
       nodeKind: $convertToMaybe(
         $convertToIri<
@@ -1169,39 +1222,77 @@ export namespace PropertyShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-      )(schema.properties.nodeKind.type(), parameters.nodeKind),
-      not: $convertToReadonlyArray($convertToIdentifier)(
-        schema.properties.not.type(),
-        parameters.not,
+      )(parameters.nodeKind).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.nodeKind.type(),
+          value,
+        ),
       ),
-      or: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.or.type(),
+      not: $convertToArray(
+        $convertToIdentifier,
+        true,
+      )(parameters.not).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.not.type(),
+          value,
+        ),
+      ),
+      or: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters.or,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.or.type(),
+          value,
+        ),
       ),
-      order: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.order.type(),
+      order: $convertToMaybe($identityConversionFunction)(
         parameters.order,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.order.type(),
+          value,
+        ),
       ),
-      path: $convertToObject(schema.properties.path.type(), parameters.path),
-      patterns: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.patterns.type(),
-        parameters.patterns,
+      path: Either.of(parameters.path),
+      patterns: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters.patterns).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.patterns.type(),
+          value,
+        ),
       ),
-      resolve: $convertToMaybe($convertToIdentifier)(
-        schema.properties.resolve.type(),
-        parameters.resolve,
+      resolve: $convertToMaybe($convertToIdentifier)(parameters.resolve).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            PropertyShape.schema.properties.resolve.type(),
+            value,
+          ),
       ),
-      shaclmateName: $convertToMaybe($convertToString<string>)(
-        schema.properties.shaclmateName.type(),
+      shaclmateName: $convertToMaybe($identityConversionFunction)(
         parameters.shaclmateName,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.shaclmateName.type(),
+          value,
+        ),
       ),
-      uniqueLang: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.uniqueLang.type(),
+      uniqueLang: $convertToMaybe($identityConversionFunction)(
         parameters.uniqueLang,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.uniqueLang.type(),
+          value,
+        ),
       ),
-      xone: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.xone.type(),
+      xone: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters.xone,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.xone.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "PropertyShape" as const };
@@ -1220,7 +1311,8 @@ export namespace PropertyShape {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => PropertyShape.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -3593,20 +3685,29 @@ export namespace PropertyGroup {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
   }): Either<Error, PropertyGroup> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      comment: $convertToMaybe($convertToString<string>)(
-        schema.properties.comment.type(),
+      comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.comment.type(),
+          value,
+        ),
       ),
-      label: $convertToMaybe($convertToString<string>)(
-        schema.properties.label.type(),
+      label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.label.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "PropertyGroup" as const };
@@ -3625,7 +3726,8 @@ export namespace PropertyGroup {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => PropertyGroup.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
@@ -3896,20 +3998,29 @@ export namespace Ontology {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => Ontology.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
   }): Either<Error, Ontology> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      comment: $convertToMaybe($convertToString<string>)(
-        schema.properties.comment.type(),
+      comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.comment.type(),
+          value,
+        ),
       ),
-      label: $convertToMaybe($convertToString<string>)(
-        schema.properties.label.type(),
+      label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.label.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "Ontology" as const };
@@ -3928,7 +4039,8 @@ export namespace Ontology {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => Ontology.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly comment?: string | Maybe<string>;
     readonly label?: string | Maybe<string>;
@@ -4239,7 +4351,8 @@ export namespace NodeShape {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => NodeShape.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]
@@ -4357,109 +4470,215 @@ export namespace NodeShape {
   }): Either<Error, NodeShape> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      and: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.and.type(),
+      and: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters?.and,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.and.type(),
+          value,
+        ),
       ),
-      classes: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.classes.type(),
-        parameters?.classes,
+      classes: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters?.classes).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.classes.type(),
+          value,
+        ),
       ),
-      closed: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.closed.type(),
+      closed: $convertToMaybe($identityConversionFunction)(
         parameters?.closed,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.closed.type(),
+          value,
+        ),
       ),
-      comment: $convertToMaybe($convertToString<string>)(
-        schema.properties.comment.type(),
+      comment: $convertToMaybe($identityConversionFunction)(
         parameters?.comment,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.comment.type(),
+          value,
+        ),
       ),
       datatype: $convertToMaybe($convertToIri<string>)(
-        schema.properties.datatype.type(),
         parameters?.datatype,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.datatype.type(),
+          value,
+        ),
       ),
-      deactivated: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.deactivated.type(),
+      deactivated: $convertToMaybe($identityConversionFunction)(
         parameters?.deactivated,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.deactivated.type(),
+          value,
+        ),
       ),
-      discriminantValue: $convertToMaybe($convertToString<string>)(
-        schema.properties.discriminantValue.type(),
+      discriminantValue: $convertToMaybe($identityConversionFunction)(
         parameters?.discriminantValue,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.discriminantValue.type(),
+          value,
+        ),
       ),
-      extern: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.extern.type(),
+      extern: $convertToMaybe($identityConversionFunction)(
         parameters?.extern,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.extern.type(),
+          value,
+        ),
       ),
-      flags: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.flags.type(),
-        parameters?.flags,
+      flags: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters?.flags).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.flags.type(),
+          value,
+        ),
       ),
       fromRdfType: $convertToMaybe($convertToIri<string>)(
-        schema.properties.fromRdfType.type(),
         parameters?.fromRdfType,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.fromRdfType.type(),
+          value,
+        ),
       ),
-      hasValues: $convertToReadonlyArray($convertToTerm<NamedNode | Literal>)(
-        schema.properties.hasValues.type(),
-        parameters?.hasValues,
+      hasValues: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters?.hasValues).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.hasValues.type(),
+          value,
+        ),
       ),
       ignoredProperties: $convertToMaybe(
-        $convertToReadonlyArray($convertToIri<string>),
-      )(
-        schema.properties.ignoredProperties.type(),
-        parameters?.ignoredProperties,
+        $convertToArray($convertToIri<string>, true),
+      )(parameters?.ignoredProperties).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          NodeShape.schema.properties.ignoredProperties.type(),
+          value,
+        ),
       ),
-      in_: $convertToMaybe(
-        $convertToReadonlyArray($convertToTerm<NamedNode | Literal>),
-      )(schema.properties.in_.type(), parameters?.in_),
+      in_: $convertToMaybe($convertToArray($identityConversionFunction, true))(
+        parameters?.in_,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.in_.type(),
+          value,
+        ),
+      ),
       isDefinedBy: $convertToMaybe($convertToIdentifier)(
-        schema.properties.isDefinedBy.type(),
         parameters?.isDefinedBy,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.isDefinedBy.type(),
+          value,
+        ),
       ),
-      label: $convertToMaybe($convertToString<string>)(
-        schema.properties.label.type(),
+      label: $convertToMaybe($identityConversionFunction)(
         parameters?.label,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.label.type(),
+          value,
+        ),
       ),
       languageIn: $convertToMaybe(
-        $convertToReadonlyArray($convertToString<string>),
-      )(schema.properties.languageIn.type(), parameters?.languageIn),
-      maxCount: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.maxCount.type(),
+        $convertToArray($identityConversionFunction, true),
+      )(parameters?.languageIn).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.languageIn.type(),
+          value,
+        ),
+      ),
+      maxCount: $convertToMaybe($identityConversionFunction)(
         parameters?.maxCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxCount.type(),
+          value,
+        ),
       ),
       maxExclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.maxExclusive.type(),
         parameters?.maxExclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxExclusive.type(),
+          value,
+        ),
       ),
       maxInclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.maxInclusive.type(),
         parameters?.maxInclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxInclusive.type(),
+          value,
+        ),
       ),
-      maxLength: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.maxLength.type(),
+      maxLength: $convertToMaybe($identityConversionFunction)(
         parameters?.maxLength,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.maxLength.type(),
+          value,
+        ),
       ),
-      minCount: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.minCount.type(),
+      minCount: $convertToMaybe($identityConversionFunction)(
         parameters?.minCount,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minCount.type(),
+          value,
+        ),
       ),
       minExclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.minExclusive.type(),
         parameters?.minExclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minExclusive.type(),
+          value,
+        ),
       ),
       minInclusive: $convertToMaybe($convertToLiteral)(
-        schema.properties.minInclusive.type(),
         parameters?.minInclusive,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minInclusive.type(),
+          value,
+        ),
       ),
-      minLength: $convertToMaybe($convertToNumeric<bigint>)(
-        schema.properties.minLength.type(),
+      minLength: $convertToMaybe($identityConversionFunction)(
         parameters?.minLength,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.minLength.type(),
+          value,
+        ),
       ),
-      mutable: $convertToMaybe($convertToBoolean<boolean>)(
-        schema.properties.mutable.type(),
+      mutable: $convertToMaybe($identityConversionFunction)(
         parameters?.mutable,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.mutable.type(),
+          value,
+        ),
       ),
-      node: $convertToMaybe($convertToIdentifier)(
-        schema.properties.node.type(),
-        parameters?.node,
+      node: $convertToMaybe($convertToIdentifier)(parameters?.node).chain(
+        (value) =>
+          $validateMaybe($identityValidationFunction)(
+            PropertyShape.schema.properties.node.type(),
+            value,
+          ),
       ),
       nodeKind: $convertToMaybe(
         $convertToIri<
@@ -4470,50 +4689,106 @@ export namespace NodeShape {
           | "http://www.w3.org/ns/shacl#IRIOrLiteral"
           | "http://www.w3.org/ns/shacl#Literal"
         >,
-      )(schema.properties.nodeKind.type(), parameters?.nodeKind),
-      not: $convertToReadonlyArray($convertToIdentifier)(
-        schema.properties.not.type(),
-        parameters?.not,
+      )(parameters?.nodeKind).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.nodeKind.type(),
+          value,
+        ),
       ),
-      or: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.or.type(),
+      not: $convertToArray(
+        $convertToIdentifier,
+        true,
+      )(parameters?.not).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.not.type(),
+          value,
+        ),
+      ),
+      or: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters?.or,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.or.type(),
+          value,
+        ),
       ),
-      patterns: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.patterns.type(),
-        parameters?.patterns,
+      patterns: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters?.patterns).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          PropertyShape.schema.properties.patterns.type(),
+          value,
+        ),
       ),
-      properties: $convertToReadonlyArray($convertToIdentifier)(
-        schema.properties.properties.type(),
-        parameters?.properties,
+      properties: $convertToArray(
+        $convertToIdentifier,
+        true,
+      )(parameters?.properties).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          NodeShape.schema.properties.properties.type(),
+          value,
+        ),
       ),
       rdfType: $convertToMaybe($convertToIri<string>)(
-        schema.properties.rdfType.type(),
         parameters?.rdfType,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          NodeShape.schema.properties.rdfType.type(),
+          value,
+        ),
       ),
-      shaclmateName: $convertToMaybe($convertToString<string>)(
-        schema.properties.shaclmateName.type(),
+      shaclmateName: $convertToMaybe($identityConversionFunction)(
         parameters?.shaclmateName,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          PropertyShape.schema.properties.shaclmateName.type(),
+          value,
+        ),
       ),
-      subClassOf: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.subClassOf.type(),
-        parameters?.subClassOf,
+      subClassOf: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters?.subClassOf).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          NodeShape.schema.properties.subClassOf.type(),
+          value,
+        ),
       ),
-      toRdfTypes: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.toRdfTypes.type(),
-        parameters?.toRdfTypes,
+      toRdfTypes: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters?.toRdfTypes).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          NodeShape.schema.properties.toRdfTypes.type(),
+          value,
+        ),
       ),
-      tsImports: $convertToReadonlyArray($convertToString<string>)(
-        schema.properties.tsImports.type(),
-        parameters?.tsImports,
+      tsImports: $convertToArray(
+        $identityConversionFunction,
+        true,
+      )(parameters?.tsImports).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          NodeShape.schema.properties.tsImports.type(),
+          value,
+        ),
       ),
-      types: $convertToReadonlyArray($convertToIri<string>)(
-        schema.properties.types.type(),
-        parameters?.types,
+      types: $convertToArray(
+        $convertToIri<string>,
+        true,
+      )(parameters?.types).chain((value) =>
+        $validateArray($identityValidationFunction, true)(
+          NodeShape.schema.properties.types.type(),
+          value,
+        ),
       ),
-      xone: $convertToMaybe($convertToReadonlyArray($convertToIdentifier))(
-        schema.properties.xone.type(),
+      xone: $convertToMaybe($convertToArray($convertToIdentifier, true))(
         parameters?.xone,
+      ).chain((value) =>
+        $validateMaybe($validateArray($identityValidationFunction, true))(
+          PropertyShape.schema.properties.xone.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "NodeShape" as const };
@@ -4532,7 +4807,8 @@ export namespace NodeShape {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => NodeShape.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly and?:
       | readonly (BlankNode | NamedNode | string | undefined)[]

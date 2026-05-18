@@ -22,19 +22,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
 
   @Memoize()
-  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToBoolean}<${this.name}>`,
-      sourceTypes: [
-        {
-          name: this.name,
-          typeof: "boolean",
-        },
-      ],
-    };
-  }
-
-  @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
       return `${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;

@@ -6,9 +6,7 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-
 import { removeUndefined } from "./removeUndefined.js";
-
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -22,6 +20,7 @@ export abstract class AbstractUnionType<
   >;
 
   override readonly recursive: boolean;
+  override readonly validationFunction: Maybe<Code> = Maybe.empty();
 
   constructor({
     identifierType,
@@ -185,9 +184,9 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
-  override get conversionFunction(): AbstractType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToUnion}`,
+  override get conversionFunction(): Maybe<AbstractType.ConversionFunction> {
+    return Maybe.of({
+      code: code`${this.reusables.snippets.identityConversionFunction}`,
       sourceTypes:
         this.discriminant.kind === "typeof"
           ? this.members.map(({ primaryDiscriminantValue, type }) => ({
@@ -200,7 +199,7 @@ export abstract class AbstractUnionType<
                 typeof: "object",
               },
             ],
-    };
+    });
   }
 
   @Memoize()
@@ -421,6 +420,19 @@ ${joinCode(
 ) satisfies ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}>)`;
   }
 
+  protected get inlineHashFunction(): Code {
+    return code`\
+(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.name}): HasherT => {
+${joinCode(
+  this.members.map(
+    ({ type, typeCheck, unwrap }) =>
+      code`if (${typeCheck(code`value`)}) { return ${type.hashFunction}(hasher, ${unwrap(code`value`)}); }`,
+  ),
+)}
+  return hasher;
+})`;
+  }
+
   protected get inlineJsonSchema(): Code {
     const discriminant = this.discriminant; // To get type narrowing to work
     switch (discriminant.kind) {
@@ -579,19 +591,6 @@ ${joinCode(
 )}
 
   throw new Error("unable to serialize to JSON");
-})`;
-  }
-
-  protected get inlineHashFunction(): Code {
-    return code`\
-(<HasherT extends ${this.reusables.snippets.Hasher}>(hasher: HasherT, value: ${this.name}): HasherT => {
-${joinCode(
-  this.members.map(
-    ({ type, typeCheck, unwrap }) =>
-      code`if (${typeCheck(code`value`)}) { return ${type.hashFunction}(hasher, ${unwrap(code`value`)}); }`,
-  ),
-)}
-  return hasher;
 })`;
   }
 

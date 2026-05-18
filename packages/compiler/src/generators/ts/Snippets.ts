@@ -16,13 +16,11 @@ import { snippets_booleanEquals } from "./_snippets/snippets_booleanEquals.js";
 import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_booleanSparqlWherePatterns.js";
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
+import { snippets_ConversionFunction } from "./_snippets/snippets_ConversionFunction.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
-import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
+import { snippets_convertToArray } from "./_snippets/snippets_convertToArray.js";
 import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
 import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
-import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
-import { snippets_convertToDate } from "./_snippets/snippets_convertToDate.js";
-import { snippets_convertToDateTime } from "./_snippets/snippets_convertToDateTime.js";
 import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
 import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
 import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
@@ -32,13 +30,6 @@ import { snippets_convertToLazyObjectOption } from "./_snippets/snippets_convert
 import { snippets_convertToLazyObjectSet } from "./_snippets/snippets_convertToLazyObjectSet.js";
 import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
 import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
-import { snippets_convertToMutableArray } from "./_snippets/snippets_convertToMutableArray.js";
-import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
-import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
-import { snippets_convertToReadonlyArray } from "./_snippets/snippets_convertToReadonlyArray.js";
-import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
-import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
-import { snippets_convertToUnion } from "./_snippets/snippets_convertToUnion.js";
 import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
@@ -84,6 +75,8 @@ import { snippets_IdentifierSet } from "./_snippets/snippets_IdentifierSet.js";
 import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
+import { snippets_identityConversionFunction } from "./_snippets/snippets_identityConversionFunction.js";
+import { snippets_identityValidationFunction } from "./_snippets/snippets_identityValidationFunction.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
 import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
 import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
@@ -137,8 +130,11 @@ import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSche
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
 import { snippets_toIsoDateString } from "./_snippets/snippets_toIsoDateString.js";
 import { snippets_UnwrapR } from "./_snippets/snippets_UnwrapR.js";
+import { snippets_ValidationFunction } from "./_snippets/snippets_ValidationFunction.js";
 import { snippets_ValueSparqlConstructTriplesFunction } from "./_snippets/snippets_ValueSparqlConstructTriplesFunction.js";
 import { snippets_ValueSparqlWherePatternsFunction } from "./_snippets/snippets_ValueSparqlWherePatternsFunction.js";
+import { snippets_validateArray } from "./_snippets/snippets_validateArray.js";
+import { snippets_validateMaybe } from "./_snippets/snippets_validateMaybe.js";
 import { snippets_wrap_FromRdfResourceFunction } from "./_snippets/snippets_wrap_FromRdfResourceFunction.js";
 import { snippets_wrap_ToRdfResourceFunction } from "./_snippets/snippets_wrap_ToRdfResourceFunction.js";
 import type { Imports } from "./Imports.js";
@@ -195,6 +191,11 @@ export class Snippets {
   @Memoize()
   get CollectionSchema(): Snippet {
     return this.snippet(snippets_CollectionSchema);
+  }
+
+  @Memoize()
+  get ConversionFunction(): Snippet {
+    return this.snippet(snippets_ConversionFunction);
   }
 
   @Memoize()
@@ -383,6 +384,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get ValidationFunction(): Snippet {
+    return this.snippet(snippets_ValidationFunction);
+  }
+
+  @Memoize()
   get ValueSparqlConstructTriplesFunction(): Snippet {
     return this.snippet(snippets_ValueSparqlConstructTriplesFunction);
   }
@@ -443,8 +449,8 @@ export class Snippets {
   }
 
   @Memoize()
-  get convertToBigDecimal(): Snippet {
-    return this.snippet(snippets_convertToBigDecimal);
+  get convertToArray(): Snippet {
+    return this.snippet(snippets_convertToArray);
   }
 
   @Memoize()
@@ -455,21 +461,6 @@ export class Snippets {
   @Memoize()
   get convertToBlankNodeIdentifierProperty(): Snippet {
     return this.snippet(snippets_convertToBlankNodeIdentifierProperty);
-  }
-
-  @Memoize()
-  get convertToBoolean(): Snippet {
-    return this.snippet(snippets_convertToBoolean);
-  }
-
-  @Memoize()
-  get convertToDate(): Snippet {
-    return this.snippet(snippets_convertToDate);
-  }
-
-  @Memoize()
-  get convertToDateTime(): Snippet {
-    return this.snippet(snippets_convertToDateTime);
   }
 
   @Memoize()
@@ -515,41 +506,6 @@ export class Snippets {
   @Memoize()
   get convertToMaybe(): Snippet {
     return this.snippet(snippets_convertToMaybe);
-  }
-
-  @Memoize()
-  get convertToMutableArray(): Snippet {
-    return this.snippet(snippets_convertToMutableArray);
-  }
-
-  @Memoize()
-  get convertToNumeric(): Snippet {
-    return this.snippet(snippets_convertToNumeric);
-  }
-
-  @Memoize()
-  get convertToObject(): Snippet {
-    return this.snippet(snippets_convertToObject);
-  }
-
-  @Memoize()
-  get convertToReadonlyArray(): Snippet {
-    return this.snippet(snippets_convertToReadonlyArray);
-  }
-
-  @Memoize()
-  get convertToString(): Snippet {
-    return this.snippet(snippets_convertToString);
-  }
-
-  @Memoize()
-  get convertToTerm(): Snippet {
-    return this.snippet(snippets_convertToTerm);
-  }
-
-  @Memoize()
-  get convertToUnion(): Snippet {
-    return this.snippet(snippets_convertToUnion);
   }
 
   @Memoize()
@@ -700,6 +656,16 @@ export class Snippets {
   @Memoize()
   get identifierSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_identifierSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get identityConversionFunction(): Snippet {
+    return this.snippet(snippets_identityConversionFunction);
+  }
+
+  @Memoize()
+  get identityValidationFunction(): Snippet {
+    return this.snippet(snippets_identityValidationFunction);
   }
 
   get ifUsed(): Code[] {
@@ -878,6 +844,16 @@ export class Snippets {
   @Memoize()
   get toIsoDateString(): Snippet {
     return this.snippet(snippets_toIsoDateString);
+  }
+
+  @Memoize()
+  get validateArray(): Snippet {
+    return this.snippet(snippets_validateArray);
+  }
+
+  @Memoize()
+  get validateMaybe(): Snippet {
+    return this.snippet(snippets_validateMaybe);
   }
 
   @Memoize()

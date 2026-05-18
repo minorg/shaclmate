@@ -1,5 +1,4 @@
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -11,19 +10,6 @@ export abstract class AbstractNumericType<
 > extends AbstractPrimitiveType<ValueT> {
   override readonly hashFunction = code`${this.reusables.snippets.hashNumeric}`;
   abstract override readonly kind: "BigIntType" | "FloatType" | "IntType";
-
-  @Memoize()
-  override get conversionFunction() {
-    return {
-      code: code`${this.reusables.snippets.convertToNumeric}<${this.name}>`,
-      sourceTypes: [
-        {
-          name: this.name,
-          typeof: this.typeofs[0],
-        },
-      ],
-    };
-  }
 
   @Memoize()
   override get filterFunction(): Code {

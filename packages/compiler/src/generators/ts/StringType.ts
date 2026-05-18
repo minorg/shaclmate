@@ -1,8 +1,6 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
@@ -20,19 +18,6 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly typeofs = ["string" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
-
-  @Memoize()
-  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
-    return {
-      code: code`${this.reusables.snippets.convertToString}<${this.name}>`,
-      sourceTypes: [
-        {
-          name: this.name,
-          typeof: "string",
-        },
-      ],
-    };
-  }
 
   @Memoize()
   override get name(): string {

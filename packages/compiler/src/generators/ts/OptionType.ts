@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
-
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class OptionType<
@@ -18,9 +17,11 @@ export class OptionType<
   override readonly typeofs = ["object" as const];
 
   @Memoize()
-  override get conversionFunction(): AbstractContainerType.ConversionFunction {
-    const itemConversionFunction = this.itemType.conversionFunction;
-    return {
+  override get conversionFunction(): Maybe<AbstractContainerType.ConversionFunction> {
+    const itemConversionFunction = this.itemType.conversionFunction.orDefault(
+      this.itemConversionFunctionDefault,
+    );
+    return Maybe.of({
       code: code`${this.reusables.snippets.convertToMaybe}(${itemConversionFunction.code})`,
       sourceTypes: (
         itemConversionFunction.sourceTypes as AbstractContainerType.ConversionFunction["sourceTypes"]
@@ -34,7 +35,7 @@ export class OptionType<
           typeof: "undefined",
         },
       ),
-    };
+    });
   }
 
   @Memoize()
@@ -45,11 +46,6 @@ export class OptionType<
   @Memoize()
   get filterFunction(): Code {
     return code`${this.reusables.snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
-  }
-
-  @Memoize()
-  get hashFunction(): Code {
-    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
   }
 
   @Memoize()
@@ -69,6 +65,11 @@ export class OptionType<
     );
   }
 
+  @Memoize()
+  get hashFunction(): Code {
+    return code`${this.reusables.snippets.hashMaybe}(${this.itemType.hashFunction})`;
+  }
+
   override get mutable(): boolean {
     return this.itemType.mutable;
   }
@@ -81,6 +82,15 @@ export class OptionType<
   @Memoize()
   override get schemaType(): Code {
     return code`${this.reusables.snippets.MaybeSchema}<${this.itemType.schemaType}>`;
+  }
+
+  @Memoize()
+  override get validationFunction(): Maybe<Code> {
+    return Maybe.of(
+      code`${this.reusables.snippets.validateMaybe}(${this.itemType.validationFunction.orDefault(
+        this.itemValidationFunctionDefault,
+      )})`,
+    );
   }
 
   @Memoize()
@@ -132,6 +142,12 @@ export class OptionType<
     return code`${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
 
+  override jsonSchema(
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
+  ): Code {
+    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
+  }
+
   @Memoize()
   override jsonType(
     parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
@@ -149,12 +165,6 @@ export class OptionType<
     >[0],
   ): Maybe<Code> {
     return this.itemType.jsonUiSchemaElement(parameters);
-  }
-
-  override jsonSchema(
-    parameters: Parameters<AbstractContainerType<ItemTypeT>["jsonSchema"]>[0],
-  ): Code {
-    return code`${this.itemType.jsonSchema(parameters)}.optional()`;
   }
 
   override toJsonExpression({

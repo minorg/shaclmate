@@ -48,10 +48,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get constructorParameter(): Maybe<Code> {
+    const conversionFunction = this.type.conversionFunction.extract();
+
+    if (!conversionFunction) {
+      return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);
+    }
+
     let hasQuestionToken = false;
 
     const typeNames: Code[] = [];
-    for (const type of this.type.conversionFunction.sourceTypes) {
+    for (const type of conversionFunction.sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {
@@ -153,9 +159,22 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }: Parameters<
     AbstractProperty<TypeT>["constructorInitializer"]
   >[0]): Maybe<Code> {
-    return Maybe.of(
-      code`${this.name}: ${this.type.conversionFunction.code}(schema.properties.${this.name}.type(), ${variables.parameters}.${this.name})`,
-    );
+    const parameterVariable = code`${variables.parameters}.${this.name}`;
+
+    const conversionFunction = this.type.conversionFunction.extract()?.code;
+    const validationFunction = this.type.validationFunction.extract();
+    let rhs: Code;
+    if (conversionFunction && validationFunction) {
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), value))`;
+    } else if (conversionFunction) {
+      rhs = code`${conversionFunction}(${parameterVariable})`;
+    } else if (validationFunction) {
+      rhs = code`${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), ${parameterVariable})`;
+    } else {
+      rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
+    }
+
+    return Maybe.of(code`${this.name}: ${rhs}`);
   }
 
   override fromJsonInitializer({

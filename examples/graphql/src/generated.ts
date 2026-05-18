@@ -72,6 +72,10 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
+type $ConversionFunction<SourceT, TargetT> = (
+  source: SourceT,
+) => Either<Error, TargetT>;
+
 function $convertToIdentifierProperty(
   identifier:
     | (() => BlankNode | NamedNode)
@@ -121,7 +125,6 @@ function $convertToLazyObjectOption<
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
   return (
-    _schema: unknown,
     value:
       | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | Maybe<ResolvedObjectT>
@@ -184,7 +187,6 @@ function $convertToLazyObjectSet<
   ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
 >(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
   return (
-    _schema: unknown,
     value:
       | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
       | readonly ResolvedObjectT[]
@@ -226,14 +228,10 @@ function $convertToLazyObjectSet<
   };
 }
 
-function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
-  convertToItem: (
-    schema: ItemSchemaT,
-    value: ItemSourceT,
-  ) => Either<Error, ItemTargetT>,
+function $convertToMaybe<ItemSourceT, ItemTargetT>(
+  convertToItem: $ConversionFunction<ItemSourceT, ItemTargetT>,
 ) {
   return (
-    schema: $MaybeSchema<ItemSchemaT>,
     value: ItemSourceT | Maybe<ItemTargetT> | undefined,
   ): Either<Error, Maybe<ItemTargetT>> => {
     switch (typeof value) {
@@ -247,29 +245,8 @@ function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
         return Either.of(Maybe.empty());
     }
 
-    return convertToItem(schema.item(), value).map(Maybe.of);
+    return convertToItem(value).map(Maybe.of);
   };
-}
-
-function $convertToNumeric<ValueT extends bigint | number>(
-  _schema: $NumericSchema<ValueT>,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToObject<ValueT extends object>(
-  _schema: unknown,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
-}
-
-function $convertToString<ValueT extends string>(
-  _schema: $StringSchema,
-  value: ValueT,
-): Either<Error, ValueT> {
-  return Either.of(value);
 }
 
 function $filterArray<ItemT, ItemFilterT>(
@@ -481,6 +458,17 @@ class $IdentifierSet {
   }
 }
 
+function $identityConversionFunction<T>(value: T): Either<Error, T> {
+  return Either.of(value);
+}
+
+function $identityValidationFunction<T>(
+  _schema: unknown,
+  value: T,
+): Either<Error, T> {
+  return Either.of(value);
+}
+
 interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
@@ -602,11 +590,6 @@ interface $NumericFilter<T> {
   readonly maxInclusive?: T;
   readonly minExclusive?: T;
   readonly minInclusive?: T;
-}
-
-interface $NumericSchema<T> {
-  readonly in?: readonly T[];
-  readonly kind: "BigDecimal" | "BigInt" | "Float" | "Int";
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -785,11 +768,6 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-interface $StringSchema {
-  readonly in?: readonly string[];
-  readonly kind: "String";
-}
-
 export type $ToRdfResourceFunction<
   ObjectT,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
@@ -818,6 +796,23 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+function $validateMaybe<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    valueMaybe: Maybe<ItemValueT>,
+  ): Either<Error, Maybe<ItemValueT>> =>
+    valueMaybe
+      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .orDefault(Either.of(valueMaybe));
+}
+
+type $ValidationFunction<SchemaT, ValueT> = (
+  schema: SchemaT,
+  value: ValueT,
+) => Either<Error, ValueT>;
 
 function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
@@ -877,7 +872,8 @@ export namespace $DefaultPartial {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): Either<Error, $DefaultPartial> {
     return $sequenceRecord({
@@ -899,7 +895,8 @@ export namespace $DefaultPartial {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
   }): $DefaultPartial {
     return create(parameters).unsafeCoerce();
@@ -1030,15 +1027,20 @@ export namespace UnionMember2 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => UnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalStringProperty?: string | Maybe<string>;
   }): Either<Error, UnionMember2> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.optionalStringProperty.type(),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember2.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "UnionMember2" as const };
@@ -1057,7 +1059,8 @@ export namespace UnionMember2 {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => UnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalStringProperty?: string | Maybe<string>;
   }): UnionMember2 {
@@ -1306,15 +1309,20 @@ export namespace UnionMember1 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => UnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
   }): Either<Error, UnionMember1> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-      optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.optionalNumberProperty.type(),
+      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "UnionMember1" as const };
@@ -1333,7 +1341,8 @@ export namespace UnionMember1 {
   export function createUnsafe(parameters?: {
     readonly $identifier?:
       | (() => UnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
   }): UnionMember1 {
@@ -1586,7 +1595,8 @@ export namespace Nested {
   export function create(parameters: {
     readonly $identifier?:
       | (() => Nested.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
@@ -1594,18 +1604,23 @@ export namespace Nested {
   }): Either<Error, Nested> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      optionalNumberProperty: $convertToMaybe($convertToNumeric<number>)(
-        schema.properties.optionalNumberProperty.type(),
+      optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          value,
+        ),
       ),
-      optionalStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.optionalStringProperty.type(),
+      optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember2.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
-      requiredStringProperty: $convertToString<string>(
-        schema.properties.requiredStringProperty.type(),
-        parameters.requiredStringProperty,
-      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "Nested" as const };
       if (
@@ -1623,7 +1638,8 @@ export namespace Nested {
   export function createUnsafe(parameters: {
     readonly $identifier?:
       | (() => Nested.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalNumberProperty?: number | Maybe<number>;
     readonly optionalStringProperty?: string | Maybe<string>;
@@ -1966,16 +1982,20 @@ export interface Parent {
 
 export namespace Parent {
   export function create(parameters: {
-    readonly $identifier: (() => Parent.Identifier) | NamedNode | string;
+    readonly $identifier: (() => Parent.Identifier) | string | NamedNode;
     readonly parentStringProperty?: string | Maybe<string>;
   }): Either<Error, Parent> {
     return $sequenceRecord({
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-      parentStringProperty: $convertToMaybe($convertToString<string>)(
-        schema.properties.parentStringProperty.type(),
+      parentStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.parentStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Parent.schema.properties.parentStringProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "Parent" as const };
@@ -1992,7 +2012,7 @@ export namespace Parent {
   }
 
   export function createUnsafe(parameters: {
-    readonly $identifier: (() => Parent.Identifier) | NamedNode | string;
+    readonly $identifier: (() => Parent.Identifier) | string | NamedNode;
     readonly parentStringProperty?: string | Maybe<string>;
   }): Parent {
     return create(parameters).unsafeCoerce();
@@ -2262,7 +2282,7 @@ export interface Child extends Parent {
 export namespace Child {
   export function create(
     parameters: {
-      readonly $identifier: (() => Child.Identifier) | NamedNode | string;
+      readonly $identifier: (() => Child.Identifier) | string | NamedNode;
       readonly childStringProperty?: string | Maybe<string>;
       readonly lazyObjectSetProperty?:
         | $LazyObjectSet<Nested.Identifier, $DefaultPartial, Nested>
@@ -2281,38 +2301,41 @@ export namespace Child {
         $identifier: $convertToIriIdentifierProperty<string>(
           parameters.$identifier,
         ),
-        childStringProperty: $convertToMaybe($convertToString<string>)(
-          schema.properties.childStringProperty.type(),
+        childStringProperty: $convertToMaybe($identityConversionFunction)(
           parameters.childStringProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            Child.schema.properties.childStringProperty.type(),
+            value,
+          ),
         ),
         lazyObjectSetProperty: $convertToLazyObjectSet<
           Nested.Identifier,
           $DefaultPartial,
           Nested
-        >($DefaultPartial.createUnsafe)(
-          schema.properties.lazyObjectSetProperty.type(),
-          parameters.lazyObjectSetProperty,
-        ),
+        >($DefaultPartial.createUnsafe)(parameters.lazyObjectSetProperty),
         optionalLazyObjectProperty: $convertToLazyObjectOption<
           Nested.Identifier,
           $DefaultPartial,
           Nested
-        >($DefaultPartial.createUnsafe)(
-          schema.properties.optionalLazyObjectProperty.type(),
-          parameters.optionalLazyObjectProperty,
-        ),
-        optionalObjectProperty: $convertToMaybe($convertToObject)(
-          schema.properties.optionalObjectProperty.type(),
+        >($DefaultPartial.createUnsafe)(parameters.optionalLazyObjectProperty),
+        optionalObjectProperty: $convertToMaybe($identityConversionFunction)(
           parameters.optionalObjectProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            Child.schema.properties.optionalObjectProperty.type(),
+            value,
+          ),
         ),
-        optionalStringProperty: $convertToMaybe($convertToString<string>)(
-          schema.properties.optionalStringProperty.type(),
+        optionalStringProperty: $convertToMaybe($identityConversionFunction)(
           parameters.optionalStringProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            UnionMember2.schema.properties.optionalStringProperty.type(),
+            value,
+          ),
         ),
-        requiredStringProperty: $convertToString<string>(
-          schema.properties.requiredStringProperty.type(),
-          parameters.requiredStringProperty,
-        ),
+        requiredStringProperty: Either.of(parameters.requiredStringProperty),
       }).map((properties) => {
         const finalObject = {
           ...super0,
@@ -2334,7 +2357,7 @@ export namespace Child {
 
   export function createUnsafe(
     parameters: {
-      readonly $identifier: (() => Child.Identifier) | NamedNode | string;
+      readonly $identifier: (() => Child.Identifier) | string | NamedNode;
       readonly childStringProperty?: string | Maybe<string>;
       readonly lazyObjectSetProperty?:
         | $LazyObjectSet<Nested.Identifier, $DefaultPartial, Nested>

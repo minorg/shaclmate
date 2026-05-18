@@ -41,7 +41,8 @@ export class IdentifierProperty extends AbstractProperty<
   override get constructorParameter(): Maybe<Code> {
     let hasQuestionToken: boolean = false;
     const typeNames: Code[] = [code`(() => ${this.typeAlias})`];
-    for (const type of this.type.conversionFunction.sourceTypes) {
+    for (const type of this.type.conversionFunction.unsafeCoerce()
+      .sourceTypes) {
       if (type.typeof === "undefined") {
         hasQuestionToken = true;
       } else {

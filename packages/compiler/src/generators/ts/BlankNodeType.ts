@@ -1,12 +1,12 @@
 import type { BlankNode } from "@rdfjs/types";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
-  override readonly conversionFunction: AbstractIdentifierType.ConversionFunction =
-    {
+  override readonly conversionFunction: Maybe<AbstractIdentifierType.ConversionFunction> =
+    Maybe.of({
       code: code`${this.reusables.snippets.convertToBlankNode}`,
       sourceTypes: [
         {
@@ -18,7 +18,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
           typeof: "undefined",
         },
       ],
-    };
+    });
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBlankNode}`;
   override readonly filterType =

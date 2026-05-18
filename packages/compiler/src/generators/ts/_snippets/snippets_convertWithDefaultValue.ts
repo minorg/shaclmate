@@ -9,12 +9,12 @@ export const snippets_convertWithDefaultValue: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}convertWithDefaultValue`,
     code`\
-function ${syntheticNamePrefix}convertWithDefaultValue<DefaultValueT extends ItemSourceT, ItemSchemaT, ItemSourceT, ItemTargetT>(convertToItem: (schema: ItemSchemaT, value: ItemSourceT) => ${imports.Either}<Error, ItemTargetT>) {
-  return (schema: ${snippets.DefaultValueSchema}<DefaultValueT, ItemSchemaT>, value: ItemSourceT | undefined): ${imports.Either}<Error, ItemTargetT> => {
+function ${syntheticNamePrefix}convertWithDefaultValue<ItemSourceT, ItemTargetT>(convertToItem: ${snippets.ConversionFunction}<ItemSourceT, ItemTargetT>, defaultValue: ItemSourceT) {
+  return (value: ItemSourceT | undefined): ${imports.Either}<Error, ItemTargetT> => {
     if (typeof value === "undefined") {
-      return convertToItem(schema.item(), schema.defaultValue);
+      return convertToItem(defaultValue);
     }
-    return convertToItem(schema.item(), value);
+    return convertToItem(value);
   }
 }`,
   );
