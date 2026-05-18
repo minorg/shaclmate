@@ -19,25 +19,6 @@ export abstract class AbstractIdentifierType<
     code`${this.reusables.imports.NTriplesTerm}.stringify`;
 
   @Memoize()
-  override get conversions(): readonly AbstractTermType.Conversion[] {
-    const conversions = super.conversions.concat();
-    if (this.nodeKinds.has("IRI")) {
-      conversions.push({
-        conversionExpression: (value) =>
-          code`${this.reusables.imports.dataFactory}.namedNode(${value})`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "string"`,
-        sourceTypeName:
-          this.in_.length > 0
-            ? code`${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}`
-            : code`string`,
-        sourceTypeof: "string",
-      });
-    }
-    return conversions;
-  }
-
-  @Memoize()
   override get graphqlType() {
     return new AbstractTermType.GraphqlType(
       code`${this.reusables.imports.GraphQLString}`,
@@ -50,4 +31,9 @@ export abstract class AbstractIdentifierType<
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
     return code`${this.reusables.imports.NTriplesTerm}.stringify(${value})`;
   }
+}
+
+export namespace AbstractIdentifierType {
+  export type ConversionFunction = AbstractTermType.ConversionFunction;
+  export type JsonType = AbstractTermType.JsonType;
 }

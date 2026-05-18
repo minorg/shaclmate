@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -26,7 +26,7 @@ export abstract class AbstractLazyObjectType<
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     partialType,
@@ -39,18 +39,6 @@ export abstract class AbstractLazyObjectType<
     super(superParameters);
     this.partialType = partialType;
     this.resolveType = resolveType;
-  }
-
-  override get conversions(): readonly AbstractType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      } satisfies AbstractType.Conversion,
-    ];
   }
 
   @Memoize()
@@ -194,6 +182,37 @@ export abstract class AbstractLazyObjectType<
     );
     return code`switch (${variables.resolvedObjectUnion}.${resolvedNamedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
+
+  protected resolveToPartialFunction<
+    ObjectTypeT extends AbstractLazyObjectType.ObjectTypeConstraint,
+  >({
+    partialType,
+    resolveType,
+  }: {
+    partialType: ObjectTypeT;
+    resolveType: ObjectTypeT;
+  }): Code {
+    if (partialType.kind === "NamedObjectType") {
+      return code`${partialType.name}.createUnsafe`;
+    }
+
+    invariant(partialType.kind === "NamedObjectUnionType");
+    invariant(resolveType.kind === "NamedObjectUnionType");
+
+    invariant(partialType.members.length === resolveType.members.length);
+
+    const caseBlocks = resolveType.members.map(
+      ({ discriminantValues }, memberI) => {
+        return code`${discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialType.members[memberI].type.name}.createUnsafe(resolved);`;
+      },
+    );
+
+    caseBlocks.push(
+      code`default: resolved satisfies never; throw new Error("unrecognized type");`,
+    );
+
+    return code`((resolved: ${resolveType.name}) => { switch (resolved.${resolveType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} } })`;
+  }
 }
 
 export namespace AbstractLazyObjectType {
@@ -204,7 +223,7 @@ export namespace AbstractLazyObjectType {
     | SetType<ObjectTypeConstraint>;
   export type ResolveTypeConstraint = PartialTypeConstraint;
 
-  export type Conversion = AbstractType.Conversion;
+  export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;

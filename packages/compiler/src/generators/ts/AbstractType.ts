@@ -1,4 +1,4 @@
-import type { Maybe, NonEmptyList } from "purify-ts";
+import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
@@ -23,9 +23,15 @@ export abstract class AbstractType {
   readonly comment: Maybe<string>;
 
   /**
-   * Expressions that convert a source type or types to this type. It should include the type itself.
+   * Function that converts one or more source types to this type and returns Either<Error, ThisType>.
+   *
+   * The function takes two parameters:
+   *  - an instance of this.schemaType
+   *  - a value with one of the source types
+   *
+   * The source types should include this type.
    */
-  abstract readonly conversions: readonly AbstractType.Conversion[];
+  abstract readonly conversionFunction: AbstractType.ConversionFunction;
 
   /**
    * The declaration of named types.
@@ -121,7 +127,7 @@ export abstract class AbstractType {
   /**
    * JavaScript typeof(s) the type.
    */
-  abstract readonly typeofs: NonEmptyList<Typeof>;
+  abstract readonly typeofs: readonly Typeof[];
 
   /**
    * A ValueSparqlConstructTriplesFunction (reference or declaration) that returns an array of sparqljs.Triple's for a property value of this type.
@@ -310,11 +316,12 @@ export abstract class AbstractType {
 }
 
 export namespace AbstractType {
-  export interface Conversion {
-    readonly conversionExpression: (value: Code) => Code;
-    readonly sourceTypeCheckExpression: (value: Code) => Code;
-    readonly sourceTypeName: Code | string;
-    readonly sourceTypeof: Typeof;
+  export interface ConversionFunction {
+    readonly code: Code;
+    readonly sourceTypes: {
+      readonly name: Code | string;
+      readonly typeof: Typeof;
+    }[];
   }
 
   export interface DiscriminantProperty {

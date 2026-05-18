@@ -17,14 +17,7 @@ import {
 } from "@rdfx/resource";
 import { NTriplesIdentifier, NTriplesTerm } from "@rdfx/string";
 import { Decimal as BigDecimal } from "decimal.js";
-import {
-  Either,
-  EitherAsync,
-  Left,
-  Maybe,
-  NonEmptyList,
-  Right,
-} from "purify-ts";
+import { Either, EitherAsync, Left, Maybe, Right } from "purify-ts";
 import * as sparqljs from "sparqljs";
 import { z } from "zod";
 
@@ -315,6 +308,424 @@ function $compactRecord<KeyT extends string, ValueT extends {}>(
   );
 }
 
+function $convertToBigDecimal(
+  _schema: $NumericSchema<BigDecimal>,
+  value: BigDecimal,
+): Either<Error, BigDecimal> {
+  return Either.of(value);
+}
+
+function $convertToBlankNode(
+  _schema: $BlankNodeSchema,
+  value: BlankNode | undefined,
+): Either<Error, BlankNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "undefined":
+      return Either.of(dataFactory.blankNode());
+  }
+}
+
+function $convertToBlankNodeIdentifierProperty(
+  identifier: (() => BlankNode) | BlankNode | undefined,
+): Either<Error, () => BlankNode> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "undefined": {
+      const captureIdentifier = dataFactory.blankNode();
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
+function $convertToBoolean<ValueT extends boolean>(
+  _schema: $BooleanSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToDate(
+  _schema: $DateSchema,
+  value: Date,
+): Either<Error, Date> {
+  return Either.of(value);
+}
+
+function $convertToDateTime(
+  _schema: $DateSchema,
+  value: Date,
+): Either<Error, Date> {
+  return Either.of(value);
+}
+
+function $convertToIdentifier(
+  _schema: $IdentifierSchema,
+  value: BlankNode | NamedNode | string | undefined,
+): Either<Error, BlankNode | NamedNode> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode(value));
+    case "undefined":
+      return Either.of(dataFactory.blankNode());
+  }
+}
+
+function $convertToIdentifierProperty(
+  identifier:
+    | (() => BlankNode | NamedNode)
+    | BlankNode
+    | NamedNode
+    | string
+    | undefined,
+): Either<Error, () => BlankNode | NamedNode> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode(identifier);
+      return Either.of(() => captureIdentifier);
+    }
+    case "undefined": {
+      const captureIdentifier = dataFactory.blankNode();
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
+function $convertToIri<IriT extends string = string>(
+  _schema: $IriSchema,
+  value: IriT | NamedNode<IriT>,
+): Either<Error, NamedNode<IriT>> {
+  switch (typeof value) {
+    case "object":
+      return Either.of(value);
+    case "string":
+      return Either.of(dataFactory.namedNode<IriT>(value));
+  }
+}
+
+function $convertToIriIdentifierProperty<IriT extends string = string>(
+  identifier: (() => NamedNode<IriT>) | NamedNode<IriT> | IriT,
+): Either<Error, () => NamedNode<IriT>> {
+  switch (typeof identifier) {
+    case "function":
+      return Either.of(identifier);
+    case "object": {
+      const captureIdentifier = identifier;
+      return Either.of(() => captureIdentifier);
+    }
+    case "string": {
+      const captureIdentifier = dataFactory.namedNode<IriT>(identifier);
+      return Either.of(() => captureIdentifier);
+    }
+  }
+}
+
+function $convertToLazyObject<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+  return (
+    _schema: unknown,
+    value:
+      | $LazyObject<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+      | ResolvedObjectT,
+  ): Either<
+    Error,
+    $LazyObject<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+  > => {
+    if (value instanceof $LazyObject) {
+      return Either.of(value);
+    }
+
+    return Either.of(
+      new $LazyObject({
+        partial: resolvedToPartial(value),
+        resolver: async () => Right(value),
+      }),
+    );
+  };
+}
+
+function $convertToLazyObjectOption<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+  return (
+    _schema: unknown,
+    value:
+      | $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+      | Maybe<ResolvedObjectT>
+      | ResolvedObjectT
+      | undefined,
+  ): Either<
+    Error,
+    $LazyObjectOption<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+  > => {
+    switch (typeof value) {
+      case "object": {
+        if (value instanceof $LazyObjectOption) {
+          return Either.of(value);
+        }
+
+        if (Maybe.isMaybe(value)) {
+          return Either.of(
+            new $LazyObjectOption<
+              ObjectIdentifierT,
+              PartialObjectT,
+              ResolvedObjectT
+            >({
+              partial: value.map(resolvedToPartial),
+              resolver: async () => Right(value.unsafeCoerce()),
+            }),
+          );
+        }
+
+        return Either.of(
+          new $LazyObjectOption<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partial: Maybe.of(resolvedToPartial(value)),
+            resolver: async () => Right(value),
+          }),
+        );
+      }
+      case "undefined":
+        return Either.of(
+          new $LazyObjectOption<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partial: Maybe.empty(),
+            resolver: async () => {
+              throw new Error("should never be called");
+            },
+          }),
+        );
+    }
+  };
+}
+
+function $convertToLazyObjectSet<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: () => ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: () => ObjectIdentifierT },
+>(resolvedToPartial: (resolved: ResolvedObjectT) => PartialObjectT) {
+  return (
+    _schema: unknown,
+    value:
+      | $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+      | readonly ResolvedObjectT[]
+      | undefined,
+  ): Either<
+    Error,
+    $LazyObjectSet<ObjectIdentifierT, PartialObjectT, ResolvedObjectT>
+  > => {
+    switch (typeof value) {
+      case "object": {
+        if (value instanceof $LazyObjectSet) {
+          return Either.of(value);
+        }
+
+        const captureValue = value;
+        return Either.of(
+          new $LazyObjectSet<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partials: value.map(resolvedToPartial),
+            resolver: async () => Right(captureValue),
+          }),
+        );
+      }
+      case "undefined":
+        return Either.of(
+          new $LazyObjectSet<
+            ObjectIdentifierT,
+            PartialObjectT,
+            ResolvedObjectT
+          >({
+            partials: [],
+            resolver: async () => Right([]),
+          }),
+        );
+    }
+  };
+}
+
+function $convertToLiteral(
+  _schema: $LiteralSchema,
+  value: bigint | boolean | Date | number | string | Literal,
+): Either<Error, Literal> {
+  if (typeof value === "object") {
+    if (value instanceof Date) {
+      return Either.of($literalFactory.date(value));
+    }
+    return Either.of(value);
+  }
+
+  return Either.of($literalFactory.primitive(value));
+}
+
+function $convertToMaybe<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    value: ItemSourceT | Maybe<ItemTargetT> | undefined,
+  ): Either<Error, Maybe<ItemTargetT>> => {
+    switch (typeof value) {
+      case "object": {
+        if (Maybe.isMaybe(value)) {
+          return Either.of(value as Maybe<ItemTargetT>);
+        }
+        break;
+      }
+      case "undefined":
+        return Either.of(Maybe.empty());
+    }
+
+    return convertToItem(schema.item(), value).map(Maybe.of);
+  };
+}
+
+function $convertToMutableArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    value: readonly ItemSourceT[] | undefined,
+  ): Either<Error, ItemTargetT[]> => {
+    return (
+      typeof value === "undefined"
+        ? Either.of<Error, ItemTargetT[]>([])
+        : Either.sequence(
+            value.map((item) => convertToItem(schema.item(), item)),
+          )
+    ).chain((array) => {
+      if (schema.minCount !== undefined && array.length < schema.minCount) {
+        return Left(
+          new Error(
+            `array has length (${array.length}) less than minCount (${schema.minCount})`,
+          ),
+        );
+      }
+      return Either.of(array);
+    });
+  };
+}
+
+function $convertToNumeric<ValueT extends bigint | number>(
+  _schema: $NumericSchema<ValueT>,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToObject<ValueT extends object>(
+  _schema: unknown,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToReadonlyArray<ItemSchemaT, ItemSourceT, ItemTargetT>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $CollectionSchema<ItemSchemaT>,
+    value: readonly ItemSourceT[] | undefined,
+  ): Either<Error, readonly ItemTargetT[]> => {
+    return (
+      typeof value === "undefined"
+        ? Either.of<Error, readonly ItemTargetT[]>([])
+        : Either.sequence(
+            value.map((item) => convertToItem(schema.item(), item)),
+          )
+    ).chain((array) => {
+      if (schema.minCount !== undefined && array.length < schema.minCount) {
+        return Left(
+          new Error(
+            `array has length (${array.length}) less than minCount (${schema.minCount})`,
+          ),
+        );
+      }
+      return Either.of(array);
+    });
+  };
+}
+
+function $convertToString<ValueT extends string>(
+  _schema: $StringSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToTerm<ValueT extends BlankNode | Literal | NamedNode>(
+  _schema: $TermSchema,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertToUnion<ValueT>(
+  _schema: unknown,
+  value: ValueT,
+): Either<Error, ValueT> {
+  return Either.of(value);
+}
+
+function $convertWithDefaultValue<
+  DefaultValueT extends ItemSourceT,
+  ItemSchemaT,
+  ItemSourceT,
+  ItemTargetT,
+>(
+  convertToItem: (
+    schema: ItemSchemaT,
+    value: ItemSourceT,
+  ) => Either<Error, ItemTargetT>,
+) {
+  return (
+    schema: $DefaultValueSchema<DefaultValueT, ItemSchemaT>,
+    value: ItemSourceT | undefined,
+  ): Either<Error, ItemTargetT> => {
+    if (typeof value === "undefined") {
+      return convertToItem(schema.item(), schema.defaultValue);
+    }
+    return convertToItem(schema.item(), value);
+  };
+}
+
 /**
  * Compare two Dates and return an $EqualsResult.
  */
@@ -483,8 +894,8 @@ function $deduplicateSparqlPatterns(
   return deduplicatedPatterns;
 }
 
-interface $DefaultValueSchema<ItemSchemaT> {
-  readonly defaultValue: Literal | NamedNode;
+interface $DefaultValueSchema<DefaultValueT, ItemSchemaT> {
+  readonly defaultValue: DefaultValueT;
   readonly item: () => ItemSchemaT;
   readonly kind: "DefaultValue";
 }
@@ -496,7 +907,7 @@ function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   >,
 ): $ValueSparqlWherePatternsFunction<
   ItemFilterT,
-  $DefaultValueSchema<ItemSchemaT>
+  $DefaultValueSchema<unknown, ItemSchemaT>
 > {
   return ({ schema, ...otherParameters }) => {
     const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
@@ -1100,26 +1511,6 @@ const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     valueVariable,
   });
 };
-
-function $isReadonlyBigIntArray(x: unknown): x is readonly bigint[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "bigint");
-}
-
-function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
-}
-
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
-}
-
-function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "object");
-}
-
-function $isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "string");
-}
 
 /**
  * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
@@ -3440,26 +3831,37 @@ export namespace $NamedDefaultPartial {
   export function create(parameters: {
     readonly $identifier:
       | (() => $NamedDefaultPartial.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
+  }): Either<Error, $NamedDefaultPartial> {
+    return $sequenceRecord({
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "$NamedDefaultPartial" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier:
+      | (() => $NamedDefaultPartial.Identifier)
+      | string
+      | NamedNode;
   }): $NamedDefaultPartial {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => $NamedDefaultPartial.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "$NamedDefaultPartial" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -3595,7 +3997,7 @@ export namespace $NamedDefaultPartial {
   export function fromJson(
     $json: $NamedDefaultPartial.Json,
   ): $NamedDefaultPartial {
-    return create({ $identifier: dataFactory.namedNode($json["@id"]) });
+    return createUnsafe({ $identifier: dataFactory.namedNode($json["@id"]) });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -3612,7 +4014,7 @@ export namespace $NamedDefaultPartial {
       )
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head()),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -3794,29 +4196,34 @@ export namespace $DefaultPartial {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => $DefaultPartial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+  }): Either<Error, $DefaultPartial> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "$DefaultPartial" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => $DefaultPartial.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
   }): $DefaultPartial {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => $DefaultPartial.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "$DefaultPartial" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -3950,7 +4357,7 @@ export namespace $DefaultPartial {
   };
 
   export function fromJson($json: $DefaultPartial.Json): $DefaultPartial {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -3972,7 +4379,7 @@ export namespace $DefaultPartial {
       )
         .chain((values) => values.chainMap((value) => value.toIdentifier()))
         .chain((values) => values.head()),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -4233,27 +4640,20 @@ export namespace UnionDiscriminants {
   export function create(parameters: {
     readonly $identifier?:
       | (() => UnionDiscriminants.Identifier)
-      | (BlankNode | NamedNode)
-      | string;
-    readonly optionalIriOrLiteralProperty?:
-      | Maybe<NamedNode | Literal>
-      | (NamedNode | Literal);
-    readonly optionalIriOrStringProperty?:
-      | Maybe<NamedNode | string>
+      | BlankNode
       | NamedNode
       | string;
+    readonly optionalIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | Maybe<NamedNode | Literal>;
+    readonly optionalIriOrStringProperty?:
+      | NamedNode
+      | string
+      | Maybe<NamedNode | string>;
     readonly optionalNodeOrLiteralProperty?:
-      | Maybe<{ termType: "UnionMember1"; value: UnionMember1 } | Literal>
-      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal);
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | Maybe<{ termType: "UnionMember1"; value: UnionMember1 } | Literal>;
     readonly optionalNodeOrNodeOrStringProperty?:
-      | Maybe<
-          | { type: "UnionMember1"; value: UnionMember1 }
-          | { type: "UnionMember2"; value: UnionMember2 }
-          | {
-              type: "string";
-              value: string;
-            }
-        >
       | (
           | { type: "UnionMember1"; value: UnionMember1 }
           | { type: "UnionMember2"; value: UnionMember2 }
@@ -4261,7 +4661,142 @@ export namespace UnionDiscriminants {
               type: "string";
               value: string;
             }
-        );
+        )
+      | Maybe<
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        >;
+    readonly requiredIriOrLiteralProperty: NamedNode | Literal;
+    readonly requiredIriOrStringProperty: NamedNode | string;
+    readonly requiredNodeOrLiteralProperty:
+      | { termType: "UnionMember1"; value: UnionMember1 }
+      | Literal;
+    readonly requiredNodeOrNodeOrStringProperty:
+      | { type: "UnionMember1"; value: UnionMember1 }
+      | {
+          type: "UnionMember2";
+          value: UnionMember2;
+        }
+      | { type: "string"; value: string };
+    readonly setIriOrLiteralProperty?: readonly (NamedNode | Literal)[];
+    readonly setIriOrStringProperty?: readonly (NamedNode | string)[];
+    readonly setNodeOrLiteralProperty?: readonly (
+      | { termType: "UnionMember1"; value: UnionMember1 }
+      | Literal
+    )[];
+    readonly setNodeOrNodeOrStringProperty?: readonly (
+      | { type: "UnionMember1"; value: UnionMember1 }
+      | { type: "UnionMember2"; value: UnionMember2 }
+      | {
+          type: "string";
+          value: string;
+        }
+    )[];
+  }): Either<Error, UnionDiscriminants> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      optionalIriOrLiteralProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.optionalIriOrLiteralProperty.type(),
+        parameters.optionalIriOrLiteralProperty,
+      ),
+      optionalIriOrStringProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.optionalIriOrStringProperty.type(),
+        parameters.optionalIriOrStringProperty,
+      ),
+      optionalNodeOrLiteralProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.optionalNodeOrLiteralProperty.type(),
+        parameters.optionalNodeOrLiteralProperty,
+      ),
+      optionalNodeOrNodeOrStringProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.optionalNodeOrNodeOrStringProperty.type(),
+        parameters.optionalNodeOrNodeOrStringProperty,
+      ),
+      requiredIriOrLiteralProperty: $convertToUnion(
+        schema.properties.requiredIriOrLiteralProperty.type(),
+        parameters.requiredIriOrLiteralProperty,
+      ),
+      requiredIriOrStringProperty: $convertToUnion(
+        schema.properties.requiredIriOrStringProperty.type(),
+        parameters.requiredIriOrStringProperty,
+      ),
+      requiredNodeOrLiteralProperty: $convertToUnion(
+        schema.properties.requiredNodeOrLiteralProperty.type(),
+        parameters.requiredNodeOrLiteralProperty,
+      ),
+      requiredNodeOrNodeOrStringProperty: $convertToUnion(
+        schema.properties.requiredNodeOrNodeOrStringProperty.type(),
+        parameters.requiredNodeOrNodeOrStringProperty,
+      ),
+      setIriOrLiteralProperty: $convertToReadonlyArray($convertToUnion)(
+        schema.properties.setIriOrLiteralProperty.type(),
+        parameters.setIriOrLiteralProperty,
+      ),
+      setIriOrStringProperty: $convertToReadonlyArray($convertToUnion)(
+        schema.properties.setIriOrStringProperty.type(),
+        parameters.setIriOrStringProperty,
+      ),
+      setNodeOrLiteralProperty: $convertToReadonlyArray($convertToUnion)(
+        schema.properties.setNodeOrLiteralProperty.type(),
+        parameters.setNodeOrLiteralProperty,
+      ),
+      setNodeOrNodeOrStringProperty: $convertToReadonlyArray($convertToUnion)(
+        schema.properties.setNodeOrNodeOrStringProperty.type(),
+        parameters.setNodeOrNodeOrStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "UnionDiscriminants" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => UnionDiscriminants.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalIriOrLiteralProperty?:
+      | (NamedNode | Literal)
+      | Maybe<NamedNode | Literal>;
+    readonly optionalIriOrStringProperty?:
+      | NamedNode
+      | string
+      | Maybe<NamedNode | string>;
+    readonly optionalNodeOrLiteralProperty?:
+      | ({ termType: "UnionMember1"; value: UnionMember1 } | Literal)
+      | Maybe<{ termType: "UnionMember1"; value: UnionMember1 } | Literal>;
+    readonly optionalNodeOrNodeOrStringProperty?:
+      | (
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        )
+      | Maybe<
+          | { type: "UnionMember1"; value: UnionMember1 }
+          | { type: "UnionMember2"; value: UnionMember2 }
+          | {
+              type: "string";
+              value: string;
+            }
+        >;
     readonly requiredIriOrLiteralProperty: NamedNode | Literal;
     readonly requiredIriOrStringProperty: NamedNode | string;
     readonly requiredNodeOrLiteralProperty:
@@ -4289,170 +4824,7 @@ export namespace UnionDiscriminants {
         }
     )[];
   }): UnionDiscriminants {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => UnionDiscriminants.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionDiscriminants" as const;
-    let optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
-    if (Maybe.isMaybe(parameters.optionalIriOrLiteralProperty)) {
-      optionalIriOrLiteralProperty = parameters.optionalIriOrLiteralProperty;
-    } else if (typeof parameters.optionalIriOrLiteralProperty === "object") {
-      optionalIriOrLiteralProperty = Maybe.of(
-        parameters.optionalIriOrLiteralProperty,
-      );
-    } else if (parameters.optionalIriOrLiteralProperty === undefined) {
-      optionalIriOrLiteralProperty = Maybe.empty();
-    } else {
-      optionalIriOrLiteralProperty =
-        parameters.optionalIriOrLiteralProperty satisfies never;
-    }
-    let optionalIriOrStringProperty: Maybe<NamedNode | string>;
-    if (Maybe.isMaybe(parameters.optionalIriOrStringProperty)) {
-      optionalIriOrStringProperty = parameters.optionalIriOrStringProperty;
-    } else if (typeof parameters.optionalIriOrStringProperty === "object") {
-      optionalIriOrStringProperty = Maybe.of(
-        parameters.optionalIriOrStringProperty,
-      );
-    } else if (typeof parameters.optionalIriOrStringProperty === "string") {
-      optionalIriOrStringProperty = Maybe.of(
-        parameters.optionalIriOrStringProperty,
-      );
-    } else if (parameters.optionalIriOrStringProperty === undefined) {
-      optionalIriOrStringProperty = Maybe.empty();
-    } else {
-      optionalIriOrStringProperty =
-        parameters.optionalIriOrStringProperty satisfies never;
-    }
-    let optionalNodeOrLiteralProperty: Maybe<
-      { termType: "UnionMember1"; value: UnionMember1 } | Literal
-    >;
-    if (Maybe.isMaybe(parameters.optionalNodeOrLiteralProperty)) {
-      optionalNodeOrLiteralProperty = parameters.optionalNodeOrLiteralProperty;
-    } else if (typeof parameters.optionalNodeOrLiteralProperty === "object") {
-      optionalNodeOrLiteralProperty = Maybe.of(
-        parameters.optionalNodeOrLiteralProperty,
-      );
-    } else if (parameters.optionalNodeOrLiteralProperty === undefined) {
-      optionalNodeOrLiteralProperty = Maybe.empty();
-    } else {
-      optionalNodeOrLiteralProperty =
-        parameters.optionalNodeOrLiteralProperty satisfies never;
-    }
-    let optionalNodeOrNodeOrStringProperty: Maybe<
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    >;
-    if (Maybe.isMaybe(parameters.optionalNodeOrNodeOrStringProperty)) {
-      optionalNodeOrNodeOrStringProperty =
-        parameters.optionalNodeOrNodeOrStringProperty;
-    } else if (
-      typeof parameters.optionalNodeOrNodeOrStringProperty === "object"
-    ) {
-      optionalNodeOrNodeOrStringProperty = Maybe.of(
-        parameters.optionalNodeOrNodeOrStringProperty,
-      );
-    } else if (parameters.optionalNodeOrNodeOrStringProperty === undefined) {
-      optionalNodeOrNodeOrStringProperty = Maybe.empty();
-    } else {
-      optionalNodeOrNodeOrStringProperty =
-        parameters.optionalNodeOrNodeOrStringProperty satisfies never;
-    }
-    const requiredIriOrLiteralProperty =
-      parameters.requiredIriOrLiteralProperty;
-    let requiredIriOrStringProperty: NamedNode | string;
-    if (typeof parameters.requiredIriOrStringProperty === "object") {
-      requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
-    } else if (typeof parameters.requiredIriOrStringProperty === "string") {
-      requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
-    } else {
-      requiredIriOrStringProperty =
-        parameters.requiredIriOrStringProperty satisfies never;
-    }
-    const requiredNodeOrLiteralProperty =
-      parameters.requiredNodeOrLiteralProperty;
-    const requiredNodeOrNodeOrStringProperty =
-      parameters.requiredNodeOrNodeOrStringProperty;
-    let setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
-    if (parameters.setIriOrLiteralProperty === undefined) {
-      setIriOrLiteralProperty = [];
-    } else if (typeof parameters.setIriOrLiteralProperty === "object") {
-      setIriOrLiteralProperty = parameters.setIriOrLiteralProperty;
-    } else {
-      setIriOrLiteralProperty =
-        parameters.setIriOrLiteralProperty satisfies never;
-    }
-    let setIriOrStringProperty: readonly (NamedNode | string)[];
-    if (parameters.setIriOrStringProperty === undefined) {
-      setIriOrStringProperty = [];
-    } else if (typeof parameters.setIriOrStringProperty === "object") {
-      setIriOrStringProperty = parameters.setIriOrStringProperty;
-    } else {
-      setIriOrStringProperty =
-        parameters.setIriOrStringProperty satisfies never;
-    }
-    let setNodeOrLiteralProperty: readonly (
-      | { termType: "UnionMember1"; value: UnionMember1 }
-      | Literal
-    )[];
-    if (parameters.setNodeOrLiteralProperty === undefined) {
-      setNodeOrLiteralProperty = [];
-    } else if (typeof parameters.setNodeOrLiteralProperty === "object") {
-      setNodeOrLiteralProperty = parameters.setNodeOrLiteralProperty;
-    } else {
-      setNodeOrLiteralProperty =
-        parameters.setNodeOrLiteralProperty satisfies never;
-    }
-    let setNodeOrNodeOrStringProperty: readonly (
-      | { type: "UnionMember1"; value: UnionMember1 }
-      | { type: "UnionMember2"; value: UnionMember2 }
-      | {
-          type: "string";
-          value: string;
-        }
-    )[];
-    if (parameters.setNodeOrNodeOrStringProperty === undefined) {
-      setNodeOrNodeOrStringProperty = [];
-    } else if (typeof parameters.setNodeOrNodeOrStringProperty === "object") {
-      setNodeOrNodeOrStringProperty = parameters.setNodeOrNodeOrStringProperty;
-    } else {
-      setNodeOrNodeOrStringProperty =
-        parameters.setNodeOrNodeOrStringProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      optionalIriOrLiteralProperty,
-      optionalIriOrStringProperty,
-      optionalNodeOrLiteralProperty,
-      optionalNodeOrNodeOrStringProperty,
-      requiredIriOrLiteralProperty,
-      requiredIriOrStringProperty,
-      requiredNodeOrLiteralProperty,
-      requiredNodeOrNodeOrStringProperty,
-      setIriOrLiteralProperty,
-      setIriOrStringProperty,
-      setNodeOrLiteralProperty,
-      setNodeOrNodeOrStringProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -8001,7 +8373,7 @@ export namespace UnionDiscriminants {
   };
 
   export function fromJson($json: UnionDiscriminants.Json): UnionDiscriminants {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -9605,7 +9977,7 @@ export namespace UnionDiscriminants {
               }),
             ),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -10799,202 +11171,105 @@ export namespace TermProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => TermProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly blankNodeTermProperty?: Maybe<BlankNode> | BlankNode;
-    readonly booleanTermProperty?: Maybe<boolean> | boolean;
-    readonly dateTermProperty?: Maybe<Date> | Date;
-    readonly dateTimeTermProperty?: Maybe<Date> | Date;
-    readonly iriTermProperty?: Maybe<NamedNode> | NamedNode | string;
+    readonly blankNodeTermProperty?: BlankNode | Maybe<BlankNode>;
+    readonly booleanTermProperty?: boolean | Maybe<boolean>;
+    readonly dateTermProperty?: Date | Maybe<Date>;
+    readonly dateTimeTermProperty?: Date | Maybe<Date>;
+    readonly iriTermProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly literalTermProperty?:
-      | Maybe<Literal>
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
-    readonly numberTermProperty?: Maybe<number> | number;
-    readonly stringTermProperty?: Maybe<string> | string;
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly numberTermProperty?: number | Maybe<number>;
+    readonly stringTermProperty?: string | Maybe<string>;
     readonly termProperty?:
-      | Maybe<BlankNode | NamedNode | Literal>
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+  }): Either<Error, TermProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      blankNodeTermProperty: $convertToMaybe($convertToBlankNode)(
+        schema.properties.blankNodeTermProperty.type(),
+        parameters?.blankNodeTermProperty,
+      ),
+      booleanTermProperty: $convertToMaybe($convertToBoolean<boolean>)(
+        schema.properties.booleanTermProperty.type(),
+        parameters?.booleanTermProperty,
+      ),
+      dateTermProperty: $convertToMaybe($convertToDate)(
+        schema.properties.dateTermProperty.type(),
+        parameters?.dateTermProperty,
+      ),
+      dateTimeTermProperty: $convertToMaybe($convertToDateTime)(
+        schema.properties.dateTimeTermProperty.type(),
+        parameters?.dateTimeTermProperty,
+      ),
+      iriTermProperty: $convertToMaybe($convertToIri<string>)(
+        schema.properties.iriTermProperty.type(),
+        parameters?.iriTermProperty,
+      ),
+      literalTermProperty: $convertToMaybe($convertToLiteral)(
+        schema.properties.literalTermProperty.type(),
+        parameters?.literalTermProperty,
+      ),
+      numberTermProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.numberTermProperty.type(),
+        parameters?.numberTermProperty,
+      ),
+      stringTermProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.stringTermProperty.type(),
+        parameters?.stringTermProperty,
+      ),
+      termProperty: $convertToMaybe(
+        $convertToTerm<BlankNode | NamedNode | Literal>,
+      )(schema.properties.termProperty.type(), parameters?.termProperty),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "TermProperties" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => TermProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly blankNodeTermProperty?: BlankNode | Maybe<BlankNode>;
+    readonly booleanTermProperty?: boolean | Maybe<boolean>;
+    readonly dateTermProperty?: Date | Maybe<Date>;
+    readonly dateTimeTermProperty?: Date | Maybe<Date>;
+    readonly iriTermProperty?: string | NamedNode | Maybe<NamedNode>;
+    readonly literalTermProperty?:
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | (BlankNode | NamedNode | Literal);
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly numberTermProperty?: number | Maybe<number>;
+    readonly stringTermProperty?: string | Maybe<string>;
+    readonly termProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
   }): TermProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => TermProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "TermProperties" as const;
-    let blankNodeTermProperty: Maybe<BlankNode>;
-    if (Maybe.isMaybe(parameters?.blankNodeTermProperty)) {
-      blankNodeTermProperty = parameters?.blankNodeTermProperty;
-    } else if (typeof parameters?.blankNodeTermProperty === "object") {
-      blankNodeTermProperty = Maybe.of(parameters?.blankNodeTermProperty);
-    } else if (parameters?.blankNodeTermProperty === undefined) {
-      blankNodeTermProperty = Maybe.empty();
-    } else {
-      blankNodeTermProperty = parameters?.blankNodeTermProperty satisfies never;
-    }
-    let booleanTermProperty: Maybe<boolean>;
-    if (Maybe.isMaybe(parameters?.booleanTermProperty)) {
-      booleanTermProperty = parameters?.booleanTermProperty;
-    } else if (typeof parameters?.booleanTermProperty === "boolean") {
-      booleanTermProperty = Maybe.of(parameters?.booleanTermProperty);
-    } else if (parameters?.booleanTermProperty === undefined) {
-      booleanTermProperty = Maybe.empty();
-    } else {
-      booleanTermProperty = parameters?.booleanTermProperty satisfies never;
-    }
-    let dateTermProperty: Maybe<Date>;
-    if (Maybe.isMaybe(parameters?.dateTermProperty)) {
-      dateTermProperty = parameters?.dateTermProperty;
-    } else if (
-      typeof parameters?.dateTermProperty === "object" &&
-      parameters?.dateTermProperty instanceof Date
-    ) {
-      dateTermProperty = Maybe.of(parameters?.dateTermProperty);
-    } else if (parameters?.dateTermProperty === undefined) {
-      dateTermProperty = Maybe.empty();
-    } else {
-      dateTermProperty = parameters?.dateTermProperty satisfies never;
-    }
-    let dateTimeTermProperty: Maybe<Date>;
-    if (Maybe.isMaybe(parameters?.dateTimeTermProperty)) {
-      dateTimeTermProperty = parameters?.dateTimeTermProperty;
-    } else if (
-      typeof parameters?.dateTimeTermProperty === "object" &&
-      parameters?.dateTimeTermProperty instanceof Date
-    ) {
-      dateTimeTermProperty = Maybe.of(parameters?.dateTimeTermProperty);
-    } else if (parameters?.dateTimeTermProperty === undefined) {
-      dateTimeTermProperty = Maybe.empty();
-    } else {
-      dateTimeTermProperty = parameters?.dateTimeTermProperty satisfies never;
-    }
-    let iriTermProperty: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.iriTermProperty)) {
-      iriTermProperty = parameters?.iriTermProperty;
-    } else if (typeof parameters?.iriTermProperty === "object") {
-      iriTermProperty = Maybe.of(parameters?.iriTermProperty);
-    } else if (typeof parameters?.iriTermProperty === "string") {
-      iriTermProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.iriTermProperty),
-      );
-    } else if (parameters?.iriTermProperty === undefined) {
-      iriTermProperty = Maybe.empty();
-    } else {
-      iriTermProperty = parameters?.iriTermProperty satisfies never;
-    }
-    let literalTermProperty: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters?.literalTermProperty)) {
-      literalTermProperty = parameters?.literalTermProperty;
-    } else if (typeof parameters?.literalTermProperty === "bigint") {
-      literalTermProperty = Maybe.of(
-        $literalFactory.bigint(parameters?.literalTermProperty),
-      );
-    } else if (typeof parameters?.literalTermProperty === "boolean") {
-      literalTermProperty = Maybe.of(
-        $literalFactory.boolean(parameters?.literalTermProperty),
-      );
-    } else if (
-      typeof parameters?.literalTermProperty === "object" &&
-      parameters?.literalTermProperty instanceof Date
-    ) {
-      literalTermProperty = Maybe.of(
-        $literalFactory.date(parameters?.literalTermProperty),
-      );
-    } else if (typeof parameters?.literalTermProperty === "number") {
-      literalTermProperty = Maybe.of(
-        $literalFactory.number(parameters?.literalTermProperty),
-      );
-    } else if (typeof parameters?.literalTermProperty === "string") {
-      literalTermProperty = Maybe.of(
-        $literalFactory.string(parameters?.literalTermProperty),
-      );
-    } else if (typeof parameters?.literalTermProperty === "object") {
-      literalTermProperty = Maybe.of(parameters?.literalTermProperty);
-    } else if (parameters?.literalTermProperty === undefined) {
-      literalTermProperty = Maybe.empty();
-    } else {
-      literalTermProperty = parameters?.literalTermProperty satisfies never;
-    }
-    let numberTermProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.numberTermProperty)) {
-      numberTermProperty = parameters?.numberTermProperty;
-    } else if (typeof parameters?.numberTermProperty === "number") {
-      numberTermProperty = Maybe.of(parameters?.numberTermProperty);
-    } else if (parameters?.numberTermProperty === undefined) {
-      numberTermProperty = Maybe.empty();
-    } else {
-      numberTermProperty = parameters?.numberTermProperty satisfies never;
-    }
-    let stringTermProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.stringTermProperty)) {
-      stringTermProperty = parameters?.stringTermProperty;
-    } else if (typeof parameters?.stringTermProperty === "string") {
-      stringTermProperty = Maybe.of(parameters?.stringTermProperty);
-    } else if (parameters?.stringTermProperty === undefined) {
-      stringTermProperty = Maybe.empty();
-    } else {
-      stringTermProperty = parameters?.stringTermProperty satisfies never;
-    }
-    let termProperty: Maybe<BlankNode | NamedNode | Literal>;
-    if (Maybe.isMaybe(parameters?.termProperty)) {
-      termProperty = parameters?.termProperty;
-    } else if (typeof parameters?.termProperty === "bigint") {
-      termProperty = Maybe.of($literalFactory.bigint(parameters?.termProperty));
-    } else if (typeof parameters?.termProperty === "boolean") {
-      termProperty = Maybe.of(
-        $literalFactory.boolean(parameters?.termProperty),
-      );
-    } else if (
-      typeof parameters?.termProperty === "object" &&
-      parameters?.termProperty instanceof Date
-    ) {
-      termProperty = Maybe.of($literalFactory.date(parameters?.termProperty));
-    } else if (typeof parameters?.termProperty === "number") {
-      termProperty = Maybe.of($literalFactory.number(parameters?.termProperty));
-    } else if (typeof parameters?.termProperty === "string") {
-      termProperty = Maybe.of($literalFactory.string(parameters?.termProperty));
-    } else if (typeof parameters?.termProperty === "object") {
-      termProperty = Maybe.of(parameters?.termProperty);
-    } else if (parameters?.termProperty === undefined) {
-      termProperty = Maybe.empty();
-    } else {
-      termProperty = parameters?.termProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      blankNodeTermProperty,
-      booleanTermProperty,
-      dateTermProperty,
-      dateTimeTermProperty,
-      iriTermProperty,
-      literalTermProperty,
-      numberTermProperty,
-      stringTermProperty,
-      termProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -11749,7 +12024,7 @@ export namespace TermProperties {
   };
 
   export function fromJson($json: TermProperties.Json): TermProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -12024,7 +12299,7 @@ export namespace TermProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -12401,45 +12676,47 @@ export namespace RecursiveUnionMember2 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember2Property?:
-      | Maybe<RecursiveUnion>
-      | RecursiveUnion;
-  }): RecursiveUnionMember2 {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => RecursiveUnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "RecursiveUnionMember2" as const;
-    let recursiveUnionMember2Property: Maybe<RecursiveUnion>;
-    if (Maybe.isMaybe(parameters?.recursiveUnionMember2Property)) {
-      recursiveUnionMember2Property = parameters?.recursiveUnionMember2Property;
-    } else if (typeof parameters?.recursiveUnionMember2Property === "object") {
-      recursiveUnionMember2Property = Maybe.of(
+      | RecursiveUnion
+      | Maybe<RecursiveUnion>;
+  }): Either<Error, RecursiveUnionMember2> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      recursiveUnionMember2Property: $convertToMaybe($convertToUnion)(
+        schema.properties.recursiveUnionMember2Property.type(),
         parameters?.recursiveUnionMember2Property,
-      );
-    } else if (parameters?.recursiveUnionMember2Property === undefined) {
-      recursiveUnionMember2Property = Maybe.empty();
-    } else {
-      recursiveUnionMember2Property =
-        parameters?.recursiveUnionMember2Property satisfies never;
-    }
-    const $object = { $identifier, $type, recursiveUnionMember2Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "RecursiveUnionMember2" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => RecursiveUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly recursiveUnionMember2Property?:
+      | RecursiveUnion
+      | Maybe<RecursiveUnion>;
+  }): RecursiveUnionMember2 {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -12673,7 +12950,7 @@ export namespace RecursiveUnionMember2 {
   export function fromJson(
     $json: RecursiveUnionMember2.Json,
   ): RecursiveUnionMember2 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -12753,7 +13030,7 @@ export namespace RecursiveUnionMember2 {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -12983,45 +13260,47 @@ export namespace RecursiveUnionMember1 {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => RecursiveUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly recursiveUnionMember1Property?:
-      | Maybe<RecursiveUnion>
-      | RecursiveUnion;
-  }): RecursiveUnionMember1 {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => RecursiveUnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "RecursiveUnionMember1" as const;
-    let recursiveUnionMember1Property: Maybe<RecursiveUnion>;
-    if (Maybe.isMaybe(parameters?.recursiveUnionMember1Property)) {
-      recursiveUnionMember1Property = parameters?.recursiveUnionMember1Property;
-    } else if (typeof parameters?.recursiveUnionMember1Property === "object") {
-      recursiveUnionMember1Property = Maybe.of(
+      | RecursiveUnion
+      | Maybe<RecursiveUnion>;
+  }): Either<Error, RecursiveUnionMember1> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      recursiveUnionMember1Property: $convertToMaybe($convertToUnion)(
+        schema.properties.recursiveUnionMember1Property.type(),
         parameters?.recursiveUnionMember1Property,
-      );
-    } else if (parameters?.recursiveUnionMember1Property === undefined) {
-      recursiveUnionMember1Property = Maybe.empty();
-    } else {
-      recursiveUnionMember1Property =
-        parameters?.recursiveUnionMember1Property satisfies never;
-    }
-    const $object = { $identifier, $type, recursiveUnionMember1Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "RecursiveUnionMember1" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => RecursiveUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly recursiveUnionMember1Property?:
+      | RecursiveUnion
+      | Maybe<RecursiveUnion>;
+  }): RecursiveUnionMember1 {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -13255,7 +13534,7 @@ export namespace RecursiveUnionMember1 {
   export function fromJson(
     $json: RecursiveUnionMember1.Json,
   ): RecursiveUnionMember1 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -13335,7 +13614,7 @@ export namespace RecursiveUnionMember1 {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -13569,60 +13848,46 @@ export namespace PropertyPaths {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => PropertyPaths.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly inversePathProperty?: Maybe<NamedNode> | NamedNode | string;
-    readonly predicatePathProperty?: Maybe<string> | string;
+    readonly inversePathProperty?: string | NamedNode | Maybe<NamedNode>;
+    readonly predicatePathProperty?: string | Maybe<string>;
+  }): Either<Error, PropertyPaths> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      inversePathProperty: $convertToMaybe($convertToIri<string>)(
+        schema.properties.inversePathProperty.type(),
+        parameters?.inversePathProperty,
+      ),
+      predicatePathProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.predicatePathProperty.type(),
+        parameters?.predicatePathProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "PropertyPaths" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => PropertyPaths.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly inversePathProperty?: string | NamedNode | Maybe<NamedNode>;
+    readonly predicatePathProperty?: string | Maybe<string>;
   }): PropertyPaths {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => PropertyPaths.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyPaths" as const;
-    let inversePathProperty: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.inversePathProperty)) {
-      inversePathProperty = parameters?.inversePathProperty;
-    } else if (typeof parameters?.inversePathProperty === "object") {
-      inversePathProperty = Maybe.of(parameters?.inversePathProperty);
-    } else if (typeof parameters?.inversePathProperty === "string") {
-      inversePathProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.inversePathProperty),
-      );
-    } else if (parameters?.inversePathProperty === undefined) {
-      inversePathProperty = Maybe.empty();
-    } else {
-      inversePathProperty = parameters?.inversePathProperty satisfies never;
-    }
-    let predicatePathProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.predicatePathProperty)) {
-      predicatePathProperty = parameters?.predicatePathProperty;
-    } else if (typeof parameters?.predicatePathProperty === "string") {
-      predicatePathProperty = Maybe.of(parameters?.predicatePathProperty);
-    } else if (parameters?.predicatePathProperty === undefined) {
-      predicatePathProperty = Maybe.empty();
-    } else {
-      predicatePathProperty = parameters?.predicatePathProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      inversePathProperty,
-      predicatePathProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -13936,7 +14201,7 @@ export namespace PropertyPaths {
   };
 
   export function fromJson($json: PropertyPaths.Json): PropertyPaths {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -14035,7 +14300,7 @@ export namespace PropertyPaths {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -14289,7 +14554,56 @@ export namespace PropertyNames {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PropertyNames.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly actualPropertyName1: string;
+    readonly actualPropertyName2: string;
+    readonly actualPropertyName3: string;
+    readonly actualPropertyName4: string;
+    readonly actualPropertyName5: string;
+  }): Either<Error, PropertyNames> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      actualPropertyName1: $convertToString<string>(
+        schema.properties.actualPropertyName1.type(),
+        parameters.actualPropertyName1,
+      ),
+      actualPropertyName2: $convertToString<string>(
+        schema.properties.actualPropertyName2.type(),
+        parameters.actualPropertyName2,
+      ),
+      actualPropertyName3: $convertToString<string>(
+        schema.properties.actualPropertyName3.type(),
+        parameters.actualPropertyName3,
+      ),
+      actualPropertyName4: $convertToString<string>(
+        schema.properties.actualPropertyName4.type(),
+        parameters.actualPropertyName4,
+      ),
+      actualPropertyName5: $convertToString<string>(
+        schema.properties.actualPropertyName5.type(),
+        parameters.actualPropertyName5,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "PropertyNames" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => PropertyNames.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly actualPropertyName1: string;
     readonly actualPropertyName2: string;
@@ -14297,39 +14611,7 @@ export namespace PropertyNames {
     readonly actualPropertyName4: string;
     readonly actualPropertyName5: string;
   }): PropertyNames {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PropertyNames.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyNames" as const;
-    const actualPropertyName1 = parameters.actualPropertyName1;
-    const actualPropertyName2 = parameters.actualPropertyName2;
-    const actualPropertyName3 = parameters.actualPropertyName3;
-    const actualPropertyName4 = parameters.actualPropertyName4;
-    const actualPropertyName5 = parameters.actualPropertyName5;
-    const $object = {
-      $identifier,
-      $type,
-      actualPropertyName1,
-      actualPropertyName2,
-      actualPropertyName3,
-      actualPropertyName4,
-      actualPropertyName5,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -14785,7 +15067,7 @@ export namespace PropertyNames {
   };
 
   export function fromJson($json: PropertyNames.Json): PropertyNames {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -14911,7 +15193,7 @@ export namespace PropertyNames {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -15161,7 +15443,7 @@ export interface PropertyCardinalities {
    * Set: minCount=1, no maxCount
    */;
 
-  readonly nonEmptyStringSetProperty: NonEmptyList<string> /**
+  readonly nonEmptyStringSetProperty: readonly string[] /**
    * Option: maxCount=1, minCount=0
    */;
 
@@ -15176,62 +15458,63 @@ export namespace PropertyCardinalities {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PropertyCardinalities.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly emptyStringSetProperty?: readonly string[];
-    readonly nonEmptyStringSetProperty: NonEmptyList<string>;
-    readonly optionalStringProperty?: Maybe<string> | string;
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string | Maybe<string>;
+    readonly requiredStringProperty: string;
+  }): Either<Error, PropertyCardinalities> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      emptyStringSetProperty: $convertToReadonlyArray($convertToString<string>)(
+        schema.properties.emptyStringSetProperty.type(),
+        parameters.emptyStringSetProperty,
+      ),
+      nonEmptyStringSetProperty: $convertToReadonlyArray(
+        $convertToString<string>,
+      )(
+        schema.properties.nonEmptyStringSetProperty.type(),
+        parameters.nonEmptyStringSetProperty,
+      ),
+      optionalStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.optionalStringProperty.type(),
+        parameters.optionalStringProperty,
+      ),
+      requiredStringProperty: $convertToString<string>(
+        schema.properties.requiredStringProperty.type(),
+        parameters.requiredStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "PropertyCardinalities" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => PropertyCardinalities.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly emptyStringSetProperty?: readonly string[];
+    readonly nonEmptyStringSetProperty: readonly string[];
+    readonly optionalStringProperty?: string | Maybe<string>;
     readonly requiredStringProperty: string;
   }): PropertyCardinalities {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PropertyCardinalities.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PropertyCardinalities" as const;
-    let emptyStringSetProperty: readonly string[];
-    if (parameters.emptyStringSetProperty === undefined) {
-      emptyStringSetProperty = [];
-    } else if (typeof parameters.emptyStringSetProperty === "object") {
-      emptyStringSetProperty = parameters.emptyStringSetProperty;
-    } else {
-      emptyStringSetProperty =
-        parameters.emptyStringSetProperty satisfies never;
-    }
-    const nonEmptyStringSetProperty = parameters.nonEmptyStringSetProperty;
-    let optionalStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.optionalStringProperty)) {
-      optionalStringProperty = parameters.optionalStringProperty;
-    } else if (typeof parameters.optionalStringProperty === "string") {
-      optionalStringProperty = Maybe.of(parameters.optionalStringProperty);
-    } else if (parameters.optionalStringProperty === undefined) {
-      optionalStringProperty = Maybe.empty();
-    } else {
-      optionalStringProperty =
-        parameters.optionalStringProperty satisfies never;
-    }
-    const requiredStringProperty = parameters.requiredStringProperty;
-    const $object = {
-      $identifier,
-      $type,
-      emptyStringSetProperty,
-      nonEmptyStringSetProperty,
-      optionalStringProperty,
-      requiredStringProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -15627,14 +15910,12 @@ export namespace PropertyCardinalities {
   export function fromJson(
     $json: PropertyCardinalities.Json,
   ): PropertyCardinalities {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
       emptyStringSetProperty: $json["emptyStringSetProperty"] ?? [],
-      nonEmptyStringSetProperty: NonEmptyList.fromArray(
-        $json["nonEmptyStringSetProperty"],
-      ).unsafeCoerce(),
+      nonEmptyStringSetProperty: $json["nonEmptyStringSetProperty"],
       optionalStringProperty: Maybe.fromNullable(
         $json["optionalStringProperty"],
       ),
@@ -15687,11 +15968,7 @@ export namespace PropertyCardinalities {
               $fromRdfPreferredLanguages(values, _$options.preferredLanguages),
             )
             .chain((values) => values.chainMap((value) => value.toString()))
-            .chain((values) =>
-              NonEmptyList.fromArray(values.toArray()).toEither(
-                new Error(`${$resource.identifier} is an empty set`),
-              ),
-            )
+            .map((values) => values.toArray())
             .map((valuesArray) =>
               Resource.Values.fromValue({
                 focusResource: $resource,
@@ -15735,7 +16012,7 @@ export namespace PropertyCardinalities {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -15995,32 +16272,43 @@ export namespace UnionMemberCommonParent {
   export function create(parameters: {
     readonly $identifier?:
       | (() => UnionMemberCommonParent.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly unionMemberCommonParentProperty: string;
+  }): Either<Error, UnionMemberCommonParent> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      unionMemberCommonParentProperty: $convertToString<string>(
+        schema.properties.unionMemberCommonParentProperty.type(),
+        parameters.unionMemberCommonParentProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "UnionMemberCommonParent" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => UnionMemberCommonParent.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly unionMemberCommonParentProperty: string;
   }): UnionMemberCommonParent {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => UnionMemberCommonParent.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionMemberCommonParent" as const;
-    const unionMemberCommonParentProperty =
-      parameters.unionMemberCommonParentProperty;
-    const $object = { $identifier, $type, unionMemberCommonParentProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -16294,7 +16582,7 @@ export namespace UnionMemberCommonParent {
   export function fromJson(
     $json: UnionMemberCommonParent.Json,
   ): UnionMemberCommonParent {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -16361,7 +16649,7 @@ export namespace UnionMemberCommonParent {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -16587,37 +16875,49 @@ export namespace UnionMember2 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+      readonly unionMember2Property: string;
+    } & Parameters<typeof UnionMemberCommonParent.create>[0],
+  ): Either<Error, UnionMember2> {
+    return UnionMemberCommonParent.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIdentifierProperty(parameters.$identifier),
+        unionMember2Property: $convertToString<string>(
+          schema.properties.unionMember2Property.type(),
+          parameters.unionMember2Property,
+        ),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "UnionMember2" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => UnionMember2.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember2Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
   ): UnionMember2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => UnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionMember2" as const;
-    const unionMember2Property = parameters.unionMember2Property;
-    const $object = {
-      ...UnionMemberCommonParent.create(parameters),
-      $identifier,
-      $type,
-      unionMember2Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -16873,7 +17173,7 @@ export namespace UnionMember2 {
   };
 
   export function fromJson($json: UnionMember2.Json): UnionMember2 {
-    return create({
+    return createUnsafe({
       ...UnionMemberCommonParent.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
@@ -16945,7 +17245,7 @@ export namespace UnionMember2 {
                   values.chainMap((value) => value.toString()),
                 ),
           }),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };
@@ -17154,32 +17454,43 @@ export namespace PartialUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, PartialUnionMember2> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "PartialUnionMember2" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => PartialUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialUnionMember2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PartialUnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PartialUnionMember2" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -17425,7 +17736,7 @@ export namespace PartialUnionMember2 {
   export function fromJson(
     $json: PartialUnionMember2.Json,
   ): PartialUnionMember2 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -17490,7 +17801,7 @@ export namespace PartialUnionMember2 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -17701,37 +18012,49 @@ export namespace UnionMember1 {
     parameters: {
       readonly $identifier?:
         | (() => UnionMember1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+      readonly unionMember1Property: string;
+    } & Parameters<typeof UnionMemberCommonParent.create>[0],
+  ): Either<Error, UnionMember1> {
+    return UnionMemberCommonParent.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIdentifierProperty(parameters.$identifier),
+        unionMember1Property: $convertToString<string>(
+          schema.properties.unionMember1Property.type(),
+          parameters.unionMember1Property,
+        ),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "UnionMember1" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => UnionMember1.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
       readonly unionMember1Property: string;
     } & Parameters<typeof UnionMemberCommonParent.create>[0],
   ): UnionMember1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => UnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "UnionMember1" as const;
-    const unionMember1Property = parameters.unionMember1Property;
-    const $object = {
-      ...UnionMemberCommonParent.create(parameters),
-      $identifier,
-      $type,
-      unionMember1Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -17987,7 +18310,7 @@ export namespace UnionMember1 {
   };
 
   export function fromJson($json: UnionMember1.Json): UnionMember1 {
-    return create({
+    return createUnsafe({
       ...UnionMemberCommonParent.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
@@ -18059,7 +18382,7 @@ export namespace UnionMember1 {
                   values.chainMap((value) => value.toString()),
                 ),
           }),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };
@@ -18268,32 +18591,43 @@ export namespace PartialUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => PartialUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, PartialUnionMember1> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "PartialUnionMember1" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => PartialUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): PartialUnionMember1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => PartialUnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "PartialUnionMember1" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -18539,7 +18873,7 @@ export namespace PartialUnionMember1 {
   export function fromJson(
     $json: PartialUnionMember1.Json,
   ): PartialUnionMember1 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -18604,7 +18938,7 @@ export namespace PartialUnionMember1 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -18816,29 +19150,34 @@ export namespace NewName {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => NewName.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+  }): Either<Error, NewName> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "NewName" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => NewName.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
   }): NewName {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => NewName.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NewName" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(left: NewName, right: NewName): $EqualsResult {
@@ -19020,7 +19359,7 @@ export namespace NewName {
   };
 
   export function fromJson($json: NewName.Json): NewName {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -19071,7 +19410,7 @@ export namespace NewName {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -19264,41 +19603,55 @@ export namespace OrderedProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => OrderedProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly orderedPropertyC: string;
+    readonly orderedPropertyB: string;
+    readonly orderedPropertyA: string;
+  }): Either<Error, OrderedProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      orderedPropertyC: $convertToString<string>(
+        schema.properties.orderedPropertyC.type(),
+        parameters.orderedPropertyC,
+      ),
+      orderedPropertyB: $convertToString<string>(
+        schema.properties.orderedPropertyB.type(),
+        parameters.orderedPropertyB,
+      ),
+      orderedPropertyA: $convertToString<string>(
+        schema.properties.orderedPropertyA.type(),
+        parameters.orderedPropertyA,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "OrderedProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => OrderedProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly orderedPropertyC: string;
     readonly orderedPropertyB: string;
     readonly orderedPropertyA: string;
   }): OrderedProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => OrderedProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "OrderedProperties" as const;
-    const orderedPropertyC = parameters.orderedPropertyC;
-    const orderedPropertyB = parameters.orderedPropertyB;
-    const orderedPropertyA = parameters.orderedPropertyA;
-    const $object = {
-      $identifier,
-      $type,
-      orderedPropertyC,
-      orderedPropertyB,
-      orderedPropertyA,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -19581,7 +19934,7 @@ export namespace OrderedProperties {
   };
 
   export function fromJson($json: OrderedProperties.Json): OrderedProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -19638,7 +19991,7 @@ export namespace OrderedProperties {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -19873,294 +20226,141 @@ export namespace NumericProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => NumericProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly byteNumericProperty?: Maybe<number> | number;
-    readonly decimalNumericProperty?: Maybe<BigDecimal> | BigDecimal;
-    readonly doubleNumericProperty?: Maybe<number> | number;
-    readonly floatNumericProperty?: Maybe<number> | number;
-    readonly integerNumericProperty?: Maybe<bigint> | bigint | number;
-    readonly intNumericProperty?: Maybe<number> | number;
-    readonly longNumericProperty?: Maybe<bigint> | bigint | number;
-    readonly negativeIntegerNumericProperty?: Maybe<bigint> | bigint | number;
-    readonly nonNegativeIntegerNumericProperty?:
-      | Maybe<bigint>
-      | bigint
-      | number;
-    readonly nonPositiveIntegerNumericProperty?:
-      | Maybe<bigint>
-      | bigint
-      | number;
-    readonly positiveIntegerNumericProperty?: Maybe<bigint> | bigint | number;
-    readonly shortNumericProperty?: Maybe<number> | number;
-    readonly unsignedByteNumericProperty?: Maybe<number> | number;
-    readonly unsignedIntNumericProperty?: Maybe<number> | number;
-    readonly unsignedLongNumericProperty?: Maybe<bigint> | bigint | number;
-    readonly unsignedShortNumericProperty?: Maybe<number> | number;
-  }): NumericProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => NumericProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NumericProperties" as const;
-    let byteNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.byteNumericProperty)) {
-      byteNumericProperty = parameters?.byteNumericProperty;
-    } else if (typeof parameters?.byteNumericProperty === "number") {
-      byteNumericProperty = Maybe.of(parameters?.byteNumericProperty);
-    } else if (parameters?.byteNumericProperty === undefined) {
-      byteNumericProperty = Maybe.empty();
-    } else {
-      byteNumericProperty = parameters?.byteNumericProperty satisfies never;
-    }
-    let decimalNumericProperty: Maybe<BigDecimal>;
-    if (Maybe.isMaybe(parameters?.decimalNumericProperty)) {
-      decimalNumericProperty = parameters?.decimalNumericProperty;
-    } else if (typeof parameters?.decimalNumericProperty === "object") {
-      decimalNumericProperty = Maybe.of(parameters?.decimalNumericProperty);
-    } else if (parameters?.decimalNumericProperty === undefined) {
-      decimalNumericProperty = Maybe.empty();
-    } else {
-      decimalNumericProperty =
-        parameters?.decimalNumericProperty satisfies never;
-    }
-    let doubleNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.doubleNumericProperty)) {
-      doubleNumericProperty = parameters?.doubleNumericProperty;
-    } else if (typeof parameters?.doubleNumericProperty === "number") {
-      doubleNumericProperty = Maybe.of(parameters?.doubleNumericProperty);
-    } else if (parameters?.doubleNumericProperty === undefined) {
-      doubleNumericProperty = Maybe.empty();
-    } else {
-      doubleNumericProperty = parameters?.doubleNumericProperty satisfies never;
-    }
-    let floatNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.floatNumericProperty)) {
-      floatNumericProperty = parameters?.floatNumericProperty;
-    } else if (typeof parameters?.floatNumericProperty === "number") {
-      floatNumericProperty = Maybe.of(parameters?.floatNumericProperty);
-    } else if (parameters?.floatNumericProperty === undefined) {
-      floatNumericProperty = Maybe.empty();
-    } else {
-      floatNumericProperty = parameters?.floatNumericProperty satisfies never;
-    }
-    let integerNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.integerNumericProperty)) {
-      integerNumericProperty = parameters?.integerNumericProperty;
-    } else if (typeof parameters?.integerNumericProperty === "bigint") {
-      integerNumericProperty = Maybe.of(parameters?.integerNumericProperty);
-    } else if (typeof parameters?.integerNumericProperty === "number") {
-      integerNumericProperty = Maybe.of(
-        BigInt(parameters?.integerNumericProperty),
-      );
-    } else if (parameters?.integerNumericProperty === undefined) {
-      integerNumericProperty = Maybe.empty();
-    } else {
-      integerNumericProperty =
-        parameters?.integerNumericProperty satisfies never;
-    }
-    let intNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.intNumericProperty)) {
-      intNumericProperty = parameters?.intNumericProperty;
-    } else if (typeof parameters?.intNumericProperty === "number") {
-      intNumericProperty = Maybe.of(parameters?.intNumericProperty);
-    } else if (parameters?.intNumericProperty === undefined) {
-      intNumericProperty = Maybe.empty();
-    } else {
-      intNumericProperty = parameters?.intNumericProperty satisfies never;
-    }
-    let longNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.longNumericProperty)) {
-      longNumericProperty = parameters?.longNumericProperty;
-    } else if (typeof parameters?.longNumericProperty === "bigint") {
-      longNumericProperty = Maybe.of(parameters?.longNumericProperty);
-    } else if (typeof parameters?.longNumericProperty === "number") {
-      longNumericProperty = Maybe.of(BigInt(parameters?.longNumericProperty));
-    } else if (parameters?.longNumericProperty === undefined) {
-      longNumericProperty = Maybe.empty();
-    } else {
-      longNumericProperty = parameters?.longNumericProperty satisfies never;
-    }
-    let negativeIntegerNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.negativeIntegerNumericProperty)) {
-      negativeIntegerNumericProperty =
-        parameters?.negativeIntegerNumericProperty;
-    } else if (typeof parameters?.negativeIntegerNumericProperty === "bigint") {
-      negativeIntegerNumericProperty = Maybe.of(
+    readonly byteNumericProperty?: number | Maybe<number>;
+    readonly decimalNumericProperty?: BigDecimal | Maybe<BigDecimal>;
+    readonly doubleNumericProperty?: number | Maybe<number>;
+    readonly floatNumericProperty?: number | Maybe<number>;
+    readonly integerNumericProperty?: bigint | Maybe<bigint>;
+    readonly intNumericProperty?: number | Maybe<number>;
+    readonly longNumericProperty?: bigint | Maybe<bigint>;
+    readonly negativeIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly nonNegativeIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly nonPositiveIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly positiveIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly shortNumericProperty?: number | Maybe<number>;
+    readonly unsignedByteNumericProperty?: number | Maybe<number>;
+    readonly unsignedIntNumericProperty?: number | Maybe<number>;
+    readonly unsignedLongNumericProperty?: bigint | Maybe<bigint>;
+    readonly unsignedShortNumericProperty?: number | Maybe<number>;
+  }): Either<Error, NumericProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      byteNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.byteNumericProperty.type(),
+        parameters?.byteNumericProperty,
+      ),
+      decimalNumericProperty: $convertToMaybe($convertToBigDecimal)(
+        schema.properties.decimalNumericProperty.type(),
+        parameters?.decimalNumericProperty,
+      ),
+      doubleNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.doubleNumericProperty.type(),
+        parameters?.doubleNumericProperty,
+      ),
+      floatNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.floatNumericProperty.type(),
+        parameters?.floatNumericProperty,
+      ),
+      integerNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.integerNumericProperty.type(),
+        parameters?.integerNumericProperty,
+      ),
+      intNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.intNumericProperty.type(),
+        parameters?.intNumericProperty,
+      ),
+      longNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.longNumericProperty.type(),
+        parameters?.longNumericProperty,
+      ),
+      negativeIntegerNumericProperty: $convertToMaybe(
+        $convertToNumeric<bigint>,
+      )(
+        schema.properties.negativeIntegerNumericProperty.type(),
         parameters?.negativeIntegerNumericProperty,
-      );
-    } else if (typeof parameters?.negativeIntegerNumericProperty === "number") {
-      negativeIntegerNumericProperty = Maybe.of(
-        BigInt(parameters?.negativeIntegerNumericProperty),
-      );
-    } else if (parameters?.negativeIntegerNumericProperty === undefined) {
-      negativeIntegerNumericProperty = Maybe.empty();
-    } else {
-      negativeIntegerNumericProperty =
-        parameters?.negativeIntegerNumericProperty satisfies never;
-    }
-    let nonNegativeIntegerNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.nonNegativeIntegerNumericProperty)) {
-      nonNegativeIntegerNumericProperty =
-        parameters?.nonNegativeIntegerNumericProperty;
-    } else if (
-      typeof parameters?.nonNegativeIntegerNumericProperty === "bigint"
-    ) {
-      nonNegativeIntegerNumericProperty = Maybe.of(
+      ),
+      nonNegativeIntegerNumericProperty: $convertToMaybe(
+        $convertToNumeric<bigint>,
+      )(
+        schema.properties.nonNegativeIntegerNumericProperty.type(),
         parameters?.nonNegativeIntegerNumericProperty,
-      );
-    } else if (
-      typeof parameters?.nonNegativeIntegerNumericProperty === "number"
-    ) {
-      nonNegativeIntegerNumericProperty = Maybe.of(
-        BigInt(parameters?.nonNegativeIntegerNumericProperty),
-      );
-    } else if (parameters?.nonNegativeIntegerNumericProperty === undefined) {
-      nonNegativeIntegerNumericProperty = Maybe.empty();
-    } else {
-      nonNegativeIntegerNumericProperty =
-        parameters?.nonNegativeIntegerNumericProperty satisfies never;
-    }
-    let nonPositiveIntegerNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.nonPositiveIntegerNumericProperty)) {
-      nonPositiveIntegerNumericProperty =
-        parameters?.nonPositiveIntegerNumericProperty;
-    } else if (
-      typeof parameters?.nonPositiveIntegerNumericProperty === "bigint"
-    ) {
-      nonPositiveIntegerNumericProperty = Maybe.of(
+      ),
+      nonPositiveIntegerNumericProperty: $convertToMaybe(
+        $convertToNumeric<bigint>,
+      )(
+        schema.properties.nonPositiveIntegerNumericProperty.type(),
         parameters?.nonPositiveIntegerNumericProperty,
-      );
-    } else if (
-      typeof parameters?.nonPositiveIntegerNumericProperty === "number"
-    ) {
-      nonPositiveIntegerNumericProperty = Maybe.of(
-        BigInt(parameters?.nonPositiveIntegerNumericProperty),
-      );
-    } else if (parameters?.nonPositiveIntegerNumericProperty === undefined) {
-      nonPositiveIntegerNumericProperty = Maybe.empty();
-    } else {
-      nonPositiveIntegerNumericProperty =
-        parameters?.nonPositiveIntegerNumericProperty satisfies never;
-    }
-    let positiveIntegerNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.positiveIntegerNumericProperty)) {
-      positiveIntegerNumericProperty =
-        parameters?.positiveIntegerNumericProperty;
-    } else if (typeof parameters?.positiveIntegerNumericProperty === "bigint") {
-      positiveIntegerNumericProperty = Maybe.of(
+      ),
+      positiveIntegerNumericProperty: $convertToMaybe(
+        $convertToNumeric<bigint>,
+      )(
+        schema.properties.positiveIntegerNumericProperty.type(),
         parameters?.positiveIntegerNumericProperty,
-      );
-    } else if (typeof parameters?.positiveIntegerNumericProperty === "number") {
-      positiveIntegerNumericProperty = Maybe.of(
-        BigInt(parameters?.positiveIntegerNumericProperty),
-      );
-    } else if (parameters?.positiveIntegerNumericProperty === undefined) {
-      positiveIntegerNumericProperty = Maybe.empty();
-    } else {
-      positiveIntegerNumericProperty =
-        parameters?.positiveIntegerNumericProperty satisfies never;
-    }
-    let shortNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.shortNumericProperty)) {
-      shortNumericProperty = parameters?.shortNumericProperty;
-    } else if (typeof parameters?.shortNumericProperty === "number") {
-      shortNumericProperty = Maybe.of(parameters?.shortNumericProperty);
-    } else if (parameters?.shortNumericProperty === undefined) {
-      shortNumericProperty = Maybe.empty();
-    } else {
-      shortNumericProperty = parameters?.shortNumericProperty satisfies never;
-    }
-    let unsignedByteNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.unsignedByteNumericProperty)) {
-      unsignedByteNumericProperty = parameters?.unsignedByteNumericProperty;
-    } else if (typeof parameters?.unsignedByteNumericProperty === "number") {
-      unsignedByteNumericProperty = Maybe.of(
+      ),
+      shortNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.shortNumericProperty.type(),
+        parameters?.shortNumericProperty,
+      ),
+      unsignedByteNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.unsignedByteNumericProperty.type(),
         parameters?.unsignedByteNumericProperty,
-      );
-    } else if (parameters?.unsignedByteNumericProperty === undefined) {
-      unsignedByteNumericProperty = Maybe.empty();
-    } else {
-      unsignedByteNumericProperty =
-        parameters?.unsignedByteNumericProperty satisfies never;
-    }
-    let unsignedIntNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.unsignedIntNumericProperty)) {
-      unsignedIntNumericProperty = parameters?.unsignedIntNumericProperty;
-    } else if (typeof parameters?.unsignedIntNumericProperty === "number") {
-      unsignedIntNumericProperty = Maybe.of(
+      ),
+      unsignedIntNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.unsignedIntNumericProperty.type(),
         parameters?.unsignedIntNumericProperty,
-      );
-    } else if (parameters?.unsignedIntNumericProperty === undefined) {
-      unsignedIntNumericProperty = Maybe.empty();
-    } else {
-      unsignedIntNumericProperty =
-        parameters?.unsignedIntNumericProperty satisfies never;
-    }
-    let unsignedLongNumericProperty: Maybe<bigint>;
-    if (Maybe.isMaybe(parameters?.unsignedLongNumericProperty)) {
-      unsignedLongNumericProperty = parameters?.unsignedLongNumericProperty;
-    } else if (typeof parameters?.unsignedLongNumericProperty === "bigint") {
-      unsignedLongNumericProperty = Maybe.of(
+      ),
+      unsignedLongNumericProperty: $convertToMaybe($convertToNumeric<bigint>)(
+        schema.properties.unsignedLongNumericProperty.type(),
         parameters?.unsignedLongNumericProperty,
-      );
-    } else if (typeof parameters?.unsignedLongNumericProperty === "number") {
-      unsignedLongNumericProperty = Maybe.of(
-        BigInt(parameters?.unsignedLongNumericProperty),
-      );
-    } else if (parameters?.unsignedLongNumericProperty === undefined) {
-      unsignedLongNumericProperty = Maybe.empty();
-    } else {
-      unsignedLongNumericProperty =
-        parameters?.unsignedLongNumericProperty satisfies never;
-    }
-    let unsignedShortNumericProperty: Maybe<number>;
-    if (Maybe.isMaybe(parameters?.unsignedShortNumericProperty)) {
-      unsignedShortNumericProperty = parameters?.unsignedShortNumericProperty;
-    } else if (typeof parameters?.unsignedShortNumericProperty === "number") {
-      unsignedShortNumericProperty = Maybe.of(
+      ),
+      unsignedShortNumericProperty: $convertToMaybe($convertToNumeric<number>)(
+        schema.properties.unsignedShortNumericProperty.type(),
         parameters?.unsignedShortNumericProperty,
-      );
-    } else if (parameters?.unsignedShortNumericProperty === undefined) {
-      unsignedShortNumericProperty = Maybe.empty();
-    } else {
-      unsignedShortNumericProperty =
-        parameters?.unsignedShortNumericProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      byteNumericProperty,
-      decimalNumericProperty,
-      doubleNumericProperty,
-      floatNumericProperty,
-      integerNumericProperty,
-      intNumericProperty,
-      longNumericProperty,
-      negativeIntegerNumericProperty,
-      nonNegativeIntegerNumericProperty,
-      nonPositiveIntegerNumericProperty,
-      positiveIntegerNumericProperty,
-      shortNumericProperty,
-      unsignedByteNumericProperty,
-      unsignedIntNumericProperty,
-      unsignedLongNumericProperty,
-      unsignedShortNumericProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "NumericProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => NumericProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly byteNumericProperty?: number | Maybe<number>;
+    readonly decimalNumericProperty?: BigDecimal | Maybe<BigDecimal>;
+    readonly doubleNumericProperty?: number | Maybe<number>;
+    readonly floatNumericProperty?: number | Maybe<number>;
+    readonly integerNumericProperty?: bigint | Maybe<bigint>;
+    readonly intNumericProperty?: number | Maybe<number>;
+    readonly longNumericProperty?: bigint | Maybe<bigint>;
+    readonly negativeIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly nonNegativeIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly nonPositiveIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly positiveIntegerNumericProperty?: bigint | Maybe<bigint>;
+    readonly shortNumericProperty?: number | Maybe<number>;
+    readonly unsignedByteNumericProperty?: number | Maybe<number>;
+    readonly unsignedIntNumericProperty?: number | Maybe<number>;
+    readonly unsignedLongNumericProperty?: bigint | Maybe<bigint>;
+    readonly unsignedShortNumericProperty?: number | Maybe<number>;
+  }): NumericProperties {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -21320,7 +21520,7 @@ export namespace NumericProperties {
   };
 
   export function fromJson($json: NumericProperties.Json): NumericProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -21722,7 +21922,7 @@ export namespace NumericProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -22286,184 +22486,82 @@ export namespace NodeKinds {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NodeKinds.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly blankNodeKindProperty: BlankNode;
-    readonly blankNodeOrIriNodeKindProperty: (BlankNode | NamedNode) | string;
-    readonly blankNodeOrLiteralNodeKindProperty:
-      | bigint
-      | boolean
-      | Date
-      | number
-      | string
-      | (BlankNode | Literal);
-    readonly iriNodeKindProperty: NamedNode | string;
-    readonly iriOrLiteralNodeKindProperty:
-      | bigint
-      | boolean
-      | Date
-      | number
-      | string
-      | (NamedNode | Literal);
+    readonly blankNodeKindProperty?: BlankNode;
+    readonly blankNodeOrIriNodeKindProperty?: BlankNode | NamedNode | string;
+    readonly blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+    readonly iriNodeKindProperty: string | NamedNode;
+    readonly iriOrLiteralNodeKindProperty: NamedNode | Literal;
     readonly literalNodeKindProperty:
       | bigint
       | boolean
-      | Date
       | number
       | string
+      | Date
+      | Literal;
+  }): Either<Error, NodeKinds> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      blankNodeKindProperty: $convertToBlankNode(
+        schema.properties.blankNodeKindProperty.type(),
+        parameters.blankNodeKindProperty,
+      ),
+      blankNodeOrIriNodeKindProperty: $convertToIdentifier(
+        schema.properties.blankNodeOrIriNodeKindProperty.type(),
+        parameters.blankNodeOrIriNodeKindProperty,
+      ),
+      blankNodeOrLiteralNodeKindProperty: $convertToTerm<BlankNode | Literal>(
+        schema.properties.blankNodeOrLiteralNodeKindProperty.type(),
+        parameters.blankNodeOrLiteralNodeKindProperty,
+      ),
+      iriNodeKindProperty: $convertToIri<string>(
+        schema.properties.iriNodeKindProperty.type(),
+        parameters.iriNodeKindProperty,
+      ),
+      iriOrLiteralNodeKindProperty: $convertToTerm<NamedNode | Literal>(
+        schema.properties.iriOrLiteralNodeKindProperty.type(),
+        parameters.iriOrLiteralNodeKindProperty,
+      ),
+      literalNodeKindProperty: $convertToLiteral(
+        schema.properties.literalNodeKindProperty.type(),
+        parameters.literalNodeKindProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "NodeKinds" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NodeKinds.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly blankNodeKindProperty?: BlankNode;
+    readonly blankNodeOrIriNodeKindProperty?: BlankNode | NamedNode | string;
+    readonly blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
+    readonly iriNodeKindProperty: string | NamedNode;
+    readonly iriOrLiteralNodeKindProperty: NamedNode | Literal;
+    readonly literalNodeKindProperty:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
       | Literal;
   }): NodeKinds {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NodeKinds.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NodeKinds" as const;
-    const blankNodeKindProperty = parameters.blankNodeKindProperty;
-    let blankNodeOrIriNodeKindProperty: BlankNode | NamedNode;
-    if (typeof parameters.blankNodeOrIriNodeKindProperty === "object") {
-      blankNodeOrIriNodeKindProperty =
-        parameters.blankNodeOrIriNodeKindProperty;
-    } else if (typeof parameters.blankNodeOrIriNodeKindProperty === "string") {
-      blankNodeOrIriNodeKindProperty = dataFactory.namedNode(
-        parameters.blankNodeOrIriNodeKindProperty,
-      );
-    } else {
-      blankNodeOrIriNodeKindProperty =
-        parameters.blankNodeOrIriNodeKindProperty satisfies never;
-    }
-    let blankNodeOrLiteralNodeKindProperty: BlankNode | Literal;
-    if (typeof parameters.blankNodeOrLiteralNodeKindProperty === "bigint") {
-      blankNodeOrLiteralNodeKindProperty = $literalFactory.bigint(
-        parameters.blankNodeOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.blankNodeOrLiteralNodeKindProperty === "boolean"
-    ) {
-      blankNodeOrLiteralNodeKindProperty = $literalFactory.boolean(
-        parameters.blankNodeOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.blankNodeOrLiteralNodeKindProperty === "object" &&
-      parameters.blankNodeOrLiteralNodeKindProperty instanceof Date
-    ) {
-      blankNodeOrLiteralNodeKindProperty = $literalFactory.date(
-        parameters.blankNodeOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.blankNodeOrLiteralNodeKindProperty === "number"
-    ) {
-      blankNodeOrLiteralNodeKindProperty = $literalFactory.number(
-        parameters.blankNodeOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.blankNodeOrLiteralNodeKindProperty === "string"
-    ) {
-      blankNodeOrLiteralNodeKindProperty = $literalFactory.string(
-        parameters.blankNodeOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.blankNodeOrLiteralNodeKindProperty === "object"
-    ) {
-      blankNodeOrLiteralNodeKindProperty =
-        parameters.blankNodeOrLiteralNodeKindProperty;
-    } else {
-      blankNodeOrLiteralNodeKindProperty =
-        parameters.blankNodeOrLiteralNodeKindProperty satisfies never;
-    }
-    let iriNodeKindProperty: NamedNode;
-    if (typeof parameters.iriNodeKindProperty === "object") {
-      iriNodeKindProperty = parameters.iriNodeKindProperty;
-    } else if (typeof parameters.iriNodeKindProperty === "string") {
-      iriNodeKindProperty = dataFactory.namedNode(
-        parameters.iriNodeKindProperty,
-      );
-    } else {
-      iriNodeKindProperty = parameters.iriNodeKindProperty satisfies never;
-    }
-    let iriOrLiteralNodeKindProperty: NamedNode | Literal;
-    if (typeof parameters.iriOrLiteralNodeKindProperty === "bigint") {
-      iriOrLiteralNodeKindProperty = $literalFactory.bigint(
-        parameters.iriOrLiteralNodeKindProperty,
-      );
-    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "boolean") {
-      iriOrLiteralNodeKindProperty = $literalFactory.boolean(
-        parameters.iriOrLiteralNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.iriOrLiteralNodeKindProperty === "object" &&
-      parameters.iriOrLiteralNodeKindProperty instanceof Date
-    ) {
-      iriOrLiteralNodeKindProperty = $literalFactory.date(
-        parameters.iriOrLiteralNodeKindProperty,
-      );
-    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "number") {
-      iriOrLiteralNodeKindProperty = $literalFactory.number(
-        parameters.iriOrLiteralNodeKindProperty,
-      );
-    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "string") {
-      iriOrLiteralNodeKindProperty = $literalFactory.string(
-        parameters.iriOrLiteralNodeKindProperty,
-      );
-    } else if (typeof parameters.iriOrLiteralNodeKindProperty === "object") {
-      iriOrLiteralNodeKindProperty = parameters.iriOrLiteralNodeKindProperty;
-    } else {
-      iriOrLiteralNodeKindProperty =
-        parameters.iriOrLiteralNodeKindProperty satisfies never;
-    }
-    let literalNodeKindProperty: Literal;
-    if (typeof parameters.literalNodeKindProperty === "bigint") {
-      literalNodeKindProperty = $literalFactory.bigint(
-        parameters.literalNodeKindProperty,
-      );
-    } else if (typeof parameters.literalNodeKindProperty === "boolean") {
-      literalNodeKindProperty = $literalFactory.boolean(
-        parameters.literalNodeKindProperty,
-      );
-    } else if (
-      typeof parameters.literalNodeKindProperty === "object" &&
-      parameters.literalNodeKindProperty instanceof Date
-    ) {
-      literalNodeKindProperty = $literalFactory.date(
-        parameters.literalNodeKindProperty,
-      );
-    } else if (typeof parameters.literalNodeKindProperty === "number") {
-      literalNodeKindProperty = $literalFactory.number(
-        parameters.literalNodeKindProperty,
-      );
-    } else if (typeof parameters.literalNodeKindProperty === "string") {
-      literalNodeKindProperty = $literalFactory.string(
-        parameters.literalNodeKindProperty,
-      );
-    } else if (typeof parameters.literalNodeKindProperty === "object") {
-      literalNodeKindProperty = parameters.literalNodeKindProperty;
-    } else {
-      literalNodeKindProperty =
-        parameters.literalNodeKindProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      blankNodeKindProperty,
-      blankNodeOrIriNodeKindProperty,
-      blankNodeOrLiteralNodeKindProperty,
-      iriNodeKindProperty,
-      iriOrLiteralNodeKindProperty,
-      literalNodeKindProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(left: NodeKinds, right: NodeKinds): $EqualsResult {
@@ -23015,7 +23113,7 @@ export namespace NodeKinds {
   };
 
   export function fromJson($json: NodeKinds.Json): NodeKinds {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -23214,7 +23312,7 @@ export namespace NodeKinds {
               )
               .chain((values) => values.chainMap((value) => value.toLiteral())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -23534,32 +23632,43 @@ export namespace NoRdfTypeUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly noRdfTypeUnionMember2Property: string;
+  }): Either<Error, NoRdfTypeUnionMember2> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      noRdfTypeUnionMember2Property: $convertToString<string>(
+        schema.properties.noRdfTypeUnionMember2Property.type(),
+        parameters.noRdfTypeUnionMember2Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "NoRdfTypeUnionMember2" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NoRdfTypeUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember2Property: string;
   }): NoRdfTypeUnionMember2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NoRdfTypeUnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NoRdfTypeUnionMember2" as const;
-    const noRdfTypeUnionMember2Property =
-      parameters.noRdfTypeUnionMember2Property;
-    const $object = { $identifier, $type, noRdfTypeUnionMember2Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -23749,7 +23858,7 @@ export namespace NoRdfTypeUnionMember2 {
   export function fromJson(
     $json: NoRdfTypeUnionMember2.Json,
   ): NoRdfTypeUnionMember2 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -23782,7 +23891,7 @@ export namespace NoRdfTypeUnionMember2 {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -23984,32 +24093,43 @@ export namespace NoRdfTypeUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NoRdfTypeUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly noRdfTypeUnionMember1Property: string;
+  }): Either<Error, NoRdfTypeUnionMember1> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      noRdfTypeUnionMember1Property: $convertToString<string>(
+        schema.properties.noRdfTypeUnionMember1Property.type(),
+        parameters.noRdfTypeUnionMember1Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "NoRdfTypeUnionMember1" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NoRdfTypeUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly noRdfTypeUnionMember1Property: string;
   }): NoRdfTypeUnionMember1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NoRdfTypeUnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NoRdfTypeUnionMember1" as const;
-    const noRdfTypeUnionMember1Property =
-      parameters.noRdfTypeUnionMember1Property;
-    const $object = { $identifier, $type, noRdfTypeUnionMember1Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -24199,7 +24319,7 @@ export namespace NoRdfTypeUnionMember1 {
   export function fromJson(
     $json: NoRdfTypeUnionMember1.Json,
   ): NoRdfTypeUnionMember1 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -24232,7 +24352,7 @@ export namespace NoRdfTypeUnionMember1 {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -24435,45 +24555,49 @@ export namespace NamedUnionProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NamedUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly namedUnion1Property: NamedNode | string;
+    readonly namedUnion2Property: NamedUnion2;
+  }): Either<Error, NamedUnionProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      namedUnion1Property: $convertToUnion(
+        schema.properties.namedUnion1Property.type(),
+        parameters.namedUnion1Property,
+      ),
+      namedUnion2Property: $convertToUnion(
+        schema.properties.namedUnion2Property.type(),
+        parameters.namedUnion2Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "NamedUnionProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NamedUnionProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly namedUnion1Property: NamedNode | string;
     readonly namedUnion2Property: NamedUnion2;
   }): NamedUnionProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NamedUnionProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NamedUnionProperties" as const;
-    let namedUnion1Property: NamedUnion1;
-    if (typeof parameters.namedUnion1Property === "object") {
-      namedUnion1Property = parameters.namedUnion1Property;
-    } else if (typeof parameters.namedUnion1Property === "string") {
-      namedUnion1Property = parameters.namedUnion1Property;
-    } else {
-      namedUnion1Property = parameters.namedUnion1Property satisfies never;
-    }
-    const namedUnion2Property = parameters.namedUnion2Property;
-    const $object = {
-      $identifier,
-      $type,
-      namedUnion1Property,
-      namedUnion2Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -24765,7 +24889,7 @@ export namespace NamedUnionProperties {
   export function fromJson(
     $json: NamedUnionProperties.Json,
   ): NamedUnionProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -24849,7 +24973,7 @@ export namespace NamedUnionProperties {
                 NamedUnionProperties.schema.properties.namedUnion2Property.path,
             }),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -25127,66 +25251,57 @@ export namespace MutableProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => MutableProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly mutableListProperty?: Maybe<string[]> | readonly string[];
+    readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
     readonly mutableSetProperty?: readonly string[];
-    readonly mutableStringProperty?: Maybe<string> | string;
+    readonly mutableStringProperty?: string | Maybe<string>;
+  }): Either<Error, MutableProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      mutableListProperty: $convertToMaybe(
+        $convertToMutableArray($convertToString<string>),
+      )(
+        schema.properties.mutableListProperty.type(),
+        parameters?.mutableListProperty,
+      ),
+      mutableSetProperty: $convertToMutableArray($convertToString<string>)(
+        schema.properties.mutableSetProperty.type(),
+        parameters?.mutableSetProperty,
+      ),
+      mutableStringProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.mutableStringProperty.type(),
+        parameters?.mutableStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "MutableProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => MutableProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly mutableListProperty?: readonly string[] | Maybe<string[]>;
+    readonly mutableSetProperty?: readonly string[];
+    readonly mutableStringProperty?: string | Maybe<string>;
   }): MutableProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => MutableProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "MutableProperties" as const;
-    let mutableListProperty: Maybe<string[]>;
-    if (Maybe.isMaybe(parameters?.mutableListProperty)) {
-      mutableListProperty = parameters?.mutableListProperty;
-    } else if (typeof parameters?.mutableListProperty === "object") {
-      mutableListProperty = Maybe.of(parameters?.mutableListProperty.concat());
-    } else if (parameters?.mutableListProperty === undefined) {
-      mutableListProperty = Maybe.empty();
-    } else {
-      mutableListProperty = parameters?.mutableListProperty satisfies never;
-    }
-    let mutableSetProperty: string[];
-    if (parameters?.mutableSetProperty === undefined) {
-      mutableSetProperty = [];
-    } else if (typeof parameters?.mutableSetProperty === "object") {
-      mutableSetProperty = parameters?.mutableSetProperty.concat();
-    } else {
-      mutableSetProperty = parameters?.mutableSetProperty satisfies never;
-    }
-    let mutableStringProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters?.mutableStringProperty)) {
-      mutableStringProperty = parameters?.mutableStringProperty;
-    } else if (typeof parameters?.mutableStringProperty === "string") {
-      mutableStringProperty = Maybe.of(parameters?.mutableStringProperty);
-    } else if (parameters?.mutableStringProperty === undefined) {
-      mutableStringProperty = Maybe.empty();
-    } else {
-      mutableStringProperty = parameters?.mutableStringProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      mutableListProperty,
-      mutableSetProperty,
-      mutableStringProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -25576,7 +25691,7 @@ export namespace MutableProperties {
   };
 
   export function fromJson($json: MutableProperties.Json): MutableProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -25727,7 +25842,7 @@ export namespace MutableProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -26030,36 +26145,43 @@ export namespace ClassMultipleInheritanceParent2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly classMultipleInheritanceParent2Property: string;
+  }): Either<Error, ClassMultipleInheritanceParent2> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      classMultipleInheritanceParent2Property: $convertToString<string>(
+        schema.properties.classMultipleInheritanceParent2Property.type(),
+        parameters.classMultipleInheritanceParent2Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "ClassMultipleInheritanceParent2" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ClassMultipleInheritanceParent2.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent2Property: string;
   }): ClassMultipleInheritanceParent2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassMultipleInheritanceParent2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassMultipleInheritanceParent2" as const;
-    const classMultipleInheritanceParent2Property =
-      parameters.classMultipleInheritanceParent2Property;
-    const $object = {
-      $identifier,
-      $type,
-      classMultipleInheritanceParent2Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -26333,7 +26455,7 @@ export namespace ClassMultipleInheritanceParent2 {
   export function fromJson(
     $json: ClassMultipleInheritanceParent2.Json,
   ): ClassMultipleInheritanceParent2 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -26402,7 +26524,7 @@ export namespace ClassMultipleInheritanceParent2 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -26633,36 +26755,43 @@ export namespace ClassMultipleInheritanceParent1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassMultipleInheritanceParent1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly classMultipleInheritanceParent1Property: string;
+  }): Either<Error, ClassMultipleInheritanceParent1> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      classMultipleInheritanceParent1Property: $convertToString<string>(
+        schema.properties.classMultipleInheritanceParent1Property.type(),
+        parameters.classMultipleInheritanceParent1Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "ClassMultipleInheritanceParent1" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ClassMultipleInheritanceParent1.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classMultipleInheritanceParent1Property: string;
   }): ClassMultipleInheritanceParent1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassMultipleInheritanceParent1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassMultipleInheritanceParent1" as const;
-    const classMultipleInheritanceParent1Property =
-      parameters.classMultipleInheritanceParent1Property;
-    const $object = {
-      $identifier,
-      $type,
-      classMultipleInheritanceParent1Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -26936,7 +27065,7 @@ export namespace ClassMultipleInheritanceParent1 {
   export function fromJson(
     $json: ClassMultipleInheritanceParent1.Json,
   ): ClassMultipleInheritanceParent1 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -27005,7 +27134,7 @@ export namespace ClassMultipleInheritanceParent1 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -27237,40 +27366,54 @@ export namespace ClassMultipleInheritanceChild {
     parameters: {
       readonly $identifier?:
         | (() => ClassMultipleInheritanceChild.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+      readonly classMultipleInheritanceChildProperty: string;
+    } & Parameters<typeof ClassMultipleInheritanceParent1.create>[0] &
+      Parameters<typeof ClassMultipleInheritanceParent2.create>[0],
+  ): Either<Error, ClassMultipleInheritanceChild> {
+    return ClassMultipleInheritanceParent1.create(parameters).chain((super0) =>
+      ClassMultipleInheritanceParent2.create(parameters).chain((super1) =>
+        $sequenceRecord({
+          $identifier: $convertToIdentifierProperty(parameters.$identifier),
+          classMultipleInheritanceChildProperty: $convertToString<string>(
+            schema.properties.classMultipleInheritanceChildProperty.type(),
+            parameters.classMultipleInheritanceChildProperty,
+          ),
+        }).map((properties) => {
+          const finalObject = {
+            ...super0,
+            ...super1,
+            ...properties,
+            $type: "ClassMultipleInheritanceChild" as const,
+          };
+          if (
+            !globalThis.Object.prototype.hasOwnProperty.call(
+              finalObject,
+              "toString",
+            )
+          ) {
+            (finalObject as any).toString = $toString;
+          }
+          return finalObject;
+        }),
+      ),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassMultipleInheritanceChild.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classMultipleInheritanceChildProperty: string;
     } & Parameters<typeof ClassMultipleInheritanceParent1.create>[0] &
       Parameters<typeof ClassMultipleInheritanceParent2.create>[0],
   ): ClassMultipleInheritanceChild {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassMultipleInheritanceChild.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassMultipleInheritanceChild" as const;
-    const classMultipleInheritanceChildProperty =
-      parameters.classMultipleInheritanceChildProperty;
-    const $object = {
-      ...ClassMultipleInheritanceParent1.create(parameters),
-      ...ClassMultipleInheritanceParent2.create(parameters),
-      $identifier,
-      $type,
-      classMultipleInheritanceChildProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -27570,7 +27713,7 @@ export namespace ClassMultipleInheritanceChild {
   export function fromJson(
     $json: ClassMultipleInheritanceChild.Json,
   ): ClassMultipleInheritanceChild {
-    return create({
+    return createUnsafe({
       ...ClassMultipleInheritanceParent1.fromJson($json),
       ...ClassMultipleInheritanceParent2.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
@@ -27651,7 +27794,7 @@ export namespace ClassMultipleInheritanceChild {
                     values.chainMap((value) => value.toString()),
                   ),
             }),
-          }).map((properties) =>
+          }).chain((properties) =>
             create({ ...super0, ...super1, ...properties }),
           ),
         ),
@@ -27908,77 +28051,63 @@ export namespace ListProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ListProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly iriListProperty?:
-      | Maybe<readonly NamedNode[]>
-      | readonly NamedNode[]
-      | readonly string[];
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
     readonly objectListProperty?:
-      | Maybe<readonly NonClass[]>
-      | readonly NonClass[];
-    readonly stringListProperty?: Maybe<readonly string[]> | readonly string[];
+      | readonly NonClass[]
+      | Maybe<readonly NonClass[]>;
+    readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
+  }): Either<Error, ListProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      iriListProperty: $convertToMaybe(
+        $convertToReadonlyArray($convertToIri<string>),
+      )(schema.properties.iriListProperty.type(), parameters?.iriListProperty),
+      objectListProperty: $convertToMaybe(
+        $convertToReadonlyArray($convertToObject),
+      )(
+        schema.properties.objectListProperty.type(),
+        parameters?.objectListProperty,
+      ),
+      stringListProperty: $convertToMaybe(
+        $convertToReadonlyArray($convertToString<string>),
+      )(
+        schema.properties.stringListProperty.type(),
+        parameters?.stringListProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "ListProperties" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => ListProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly iriListProperty?:
+      | readonly (string | NamedNode)[]
+      | Maybe<readonly NamedNode[]>;
+    readonly objectListProperty?:
+      | readonly NonClass[]
+      | Maybe<readonly NonClass[]>;
+    readonly stringListProperty?: readonly string[] | Maybe<readonly string[]>;
   }): ListProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => ListProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ListProperties" as const;
-    let iriListProperty: Maybe<readonly NamedNode[]>;
-    if (Maybe.isMaybe(parameters?.iriListProperty)) {
-      iriListProperty = parameters?.iriListProperty;
-    } else if ($isReadonlyObjectArray(parameters?.iriListProperty)) {
-      iriListProperty = Maybe.of(parameters?.iriListProperty);
-    } else if ($isReadonlyStringArray(parameters?.iriListProperty)) {
-      iriListProperty = Maybe.of(
-        parameters?.iriListProperty.map((item) => dataFactory.namedNode(item)),
-      );
-    } else if (parameters?.iriListProperty === undefined) {
-      iriListProperty = Maybe.empty();
-    } else {
-      iriListProperty = parameters?.iriListProperty satisfies never;
-    }
-    let objectListProperty: Maybe<readonly NonClass[]>;
-    if (Maybe.isMaybe(parameters?.objectListProperty)) {
-      objectListProperty = parameters?.objectListProperty;
-    } else if (typeof parameters?.objectListProperty === "object") {
-      objectListProperty = Maybe.of(parameters?.objectListProperty);
-    } else if (parameters?.objectListProperty === undefined) {
-      objectListProperty = Maybe.empty();
-    } else {
-      objectListProperty = parameters?.objectListProperty satisfies never;
-    }
-    let stringListProperty: Maybe<readonly string[]>;
-    if (Maybe.isMaybe(parameters?.stringListProperty)) {
-      stringListProperty = parameters?.stringListProperty;
-    } else if (typeof parameters?.stringListProperty === "object") {
-      stringListProperty = Maybe.of(parameters?.stringListProperty);
-    } else if (parameters?.stringListProperty === undefined) {
-      stringListProperty = Maybe.empty();
-    } else {
-      stringListProperty = parameters?.stringListProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      iriListProperty,
-      objectListProperty,
-      stringListProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -28399,7 +28528,7 @@ export namespace ListProperties {
   };
 
   export function fromJson($json: ListProperties.Json): ListProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -28599,7 +28728,7 @@ export namespace ListProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -29052,7 +29181,203 @@ export namespace LazyProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazyProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
+      | LazilyResolvedBlankNodeOrIriIdentifier;
+    readonly optionalLazyToResolvedIriIdentifierProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedIriIdentifier.Identifier,
+          $NamedDefaultPartial,
+          LazilyResolvedIriIdentifier
+        >
+      | Maybe<LazilyResolvedIriIdentifier>
+      | LazilyResolvedIriIdentifier;
+    readonly optionalLazyToResolvedUnionProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedUnion.Identifier,
+          $DefaultPartial,
+          LazilyResolvedUnion
+        >
+      | Maybe<LazilyResolvedUnion>
+      | LazilyResolvedUnion;
+    readonly optionalPartialToResolvedBlankNodeOrIriIdentifierProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
+      | LazilyResolvedBlankNodeOrIriIdentifier;
+    readonly optionalPartialToResolvedUnionProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedUnion.Identifier,
+          Partial,
+          LazilyResolvedUnion
+        >
+      | Maybe<LazilyResolvedUnion>
+      | LazilyResolvedUnion;
+    readonly optionalPartialUnionToResolvedUnionProperty?:
+      | $LazyObjectOption<
+          LazilyResolvedUnion.Identifier,
+          PartialUnion,
+          LazilyResolvedUnion
+        >
+      | Maybe<LazilyResolvedUnion>
+      | LazilyResolvedUnion;
+    readonly requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+      | $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | LazilyResolvedBlankNodeOrIriIdentifier;
+    readonly requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+      | $LazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | LazilyResolvedBlankNodeOrIriIdentifier;
+    readonly setLazyToResolvedBlankNodeOrIriIdentifierProperty?:
+      | $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | readonly LazilyResolvedBlankNodeOrIriIdentifier[];
+    readonly setPartialToResolvedBlankNodeOrIriIdentifierProperty?:
+      | $LazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >
+      | readonly LazilyResolvedBlankNodeOrIriIdentifier[];
+  }): Either<Error, LazyProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >($DefaultPartial.createUnsafe)(
+          schema.properties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+      optionalLazyToResolvedIriIdentifierProperty: $convertToLazyObjectOption<
+        LazilyResolvedIriIdentifier.Identifier,
+        $NamedDefaultPartial,
+        LazilyResolvedIriIdentifier
+      >($NamedDefaultPartial.createUnsafe)(
+        schema.properties.optionalLazyToResolvedIriIdentifierProperty.type(),
+        parameters.optionalLazyToResolvedIriIdentifierProperty,
+      ),
+      optionalLazyToResolvedUnionProperty: $convertToLazyObjectOption<
+        LazilyResolvedUnion.Identifier,
+        $DefaultPartial,
+        LazilyResolvedUnion
+      >($DefaultPartial.createUnsafe)(
+        schema.properties.optionalLazyToResolvedUnionProperty.type(),
+        parameters.optionalLazyToResolvedUnionProperty,
+      ),
+      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObjectOption<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >(Partial.createUnsafe)(
+          schema.properties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+      optionalPartialToResolvedUnionProperty: $convertToLazyObjectOption<
+        LazilyResolvedUnion.Identifier,
+        Partial,
+        LazilyResolvedUnion
+      >(Partial.createUnsafe)(
+        schema.properties.optionalPartialToResolvedUnionProperty.type(),
+        parameters.optionalPartialToResolvedUnionProperty,
+      ),
+      optionalPartialUnionToResolvedUnionProperty: $convertToLazyObjectOption<
+        LazilyResolvedUnion.Identifier,
+        PartialUnion,
+        LazilyResolvedUnion
+      >((resolved: LazilyResolvedUnion) => {
+        switch (resolved.$type) {
+          case "LazilyResolvedUnionMember1":
+            return PartialUnionMember1.createUnsafe(resolved);
+          case "LazilyResolvedUnionMember2":
+            return PartialUnionMember2.createUnsafe(resolved);
+          default:
+            resolved satisfies never;
+            throw new Error("unrecognized type");
+        }
+      })(
+        schema.properties.optionalPartialUnionToResolvedUnionProperty.type(),
+        parameters.optionalPartialUnionToResolvedUnionProperty,
+      ),
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >($DefaultPartial.createUnsafe)(
+          schema.properties.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObject<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >(Partial.createUnsafe)(
+          schema.properties.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+      setLazyToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          $DefaultPartial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >($DefaultPartial.createUnsafe)(
+          schema.properties.setLazyToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+      setPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        $convertToLazyObjectSet<
+          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+          Partial,
+          LazilyResolvedBlankNodeOrIriIdentifier
+        >(Partial.createUnsafe)(
+          schema.properties.setPartialToResolvedBlankNodeOrIriIdentifierProperty.type(),
+          parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
+        ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "LazyProperties" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LazyProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly optionalLazyToResolvedBlankNodeOrIriIdentifierProperty?:
       | $LazyObjectOption<
@@ -29131,627 +29456,7 @@ export namespace LazyProperties {
         >
       | readonly LazilyResolvedBlankNodeOrIriIdentifier[];
   }): LazyProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LazyProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LazyProperties" as const;
-    let optionalLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      Maybe.isMaybe(
-        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      )
-    ) {
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial:
-            parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.map(
-              $DefaultPartial.create,
-            ),
-          resolver: async () =>
-            Right(
-              (
-                parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
-              ).unsafeCoerce(),
-            ),
-        });
-    } else if (
-      typeof parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.of(
-            $DefaultPartial.create(
-              parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
-            ),
-          ),
-          resolver: async () =>
-            Right(
-              parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty as LazilyResolvedBlankNodeOrIriIdentifier,
-            ),
-        });
-    } else if (
-      parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-      undefined
-    ) {
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.empty(),
-          resolver: async () => {
-            throw new Error("should never be called");
-          },
-        });
-    } else {
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    let optionalLazyToResolvedIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedIriIdentifier.Identifier,
-      $NamedDefaultPartial,
-      LazilyResolvedIriIdentifier
-    >;
-    if (
-      typeof parameters.optionalLazyToResolvedIriIdentifierProperty ===
-        "object" &&
-      parameters.optionalLazyToResolvedIriIdentifierProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalLazyToResolvedIriIdentifierProperty =
-        parameters.optionalLazyToResolvedIriIdentifierProperty;
-    } else if (
-      Maybe.isMaybe(parameters.optionalLazyToResolvedIriIdentifierProperty)
-    ) {
-      optionalLazyToResolvedIriIdentifierProperty = new $LazyObjectOption<
-        LazilyResolvedIriIdentifier.Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifier
-      >({
-        partial: parameters.optionalLazyToResolvedIriIdentifierProperty.map(
-          $NamedDefaultPartial.create,
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalLazyToResolvedIriIdentifierProperty as Maybe<LazilyResolvedIriIdentifier>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (
-      typeof parameters.optionalLazyToResolvedIriIdentifierProperty === "object"
-    ) {
-      optionalLazyToResolvedIriIdentifierProperty = new $LazyObjectOption<
-        LazilyResolvedIriIdentifier.Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifier
-      >({
-        partial: Maybe.of(
-          $NamedDefaultPartial.create(
-            parameters.optionalLazyToResolvedIriIdentifierProperty,
-          ),
-        ),
-        resolver: async () =>
-          Right(
-            parameters.optionalLazyToResolvedIriIdentifierProperty as LazilyResolvedIriIdentifier,
-          ),
-      });
-    } else if (
-      parameters.optionalLazyToResolvedIriIdentifierProperty === undefined
-    ) {
-      optionalLazyToResolvedIriIdentifierProperty = new $LazyObjectOption<
-        LazilyResolvedIriIdentifier.Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifier
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      optionalLazyToResolvedIriIdentifierProperty =
-        parameters.optionalLazyToResolvedIriIdentifierProperty satisfies never;
-    }
-    let optionalLazyToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      $DefaultPartial,
-      LazilyResolvedUnion
-    >;
-    if (
-      typeof parameters.optionalLazyToResolvedUnionProperty === "object" &&
-      parameters.optionalLazyToResolvedUnionProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalLazyToResolvedUnionProperty =
-        parameters.optionalLazyToResolvedUnionProperty;
-    } else if (Maybe.isMaybe(parameters.optionalLazyToResolvedUnionProperty)) {
-      optionalLazyToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        $DefaultPartial,
-        LazilyResolvedUnion
-      >({
-        partial: parameters.optionalLazyToResolvedUnionProperty.map(
-          $DefaultPartial.create,
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalLazyToResolvedUnionProperty as Maybe<LazilyResolvedUnion>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (
-      typeof parameters.optionalLazyToResolvedUnionProperty === "object"
-    ) {
-      optionalLazyToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        $DefaultPartial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.of(
-          $DefaultPartial.create(
-            parameters.optionalLazyToResolvedUnionProperty,
-          ),
-        ),
-        resolver: async () =>
-          Right(
-            parameters.optionalLazyToResolvedUnionProperty as LazilyResolvedUnion,
-          ),
-      });
-    } else if (parameters.optionalLazyToResolvedUnionProperty === undefined) {
-      optionalLazyToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        $DefaultPartial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      optionalLazyToResolvedUnionProperty =
-        parameters.optionalLazyToResolvedUnionProperty satisfies never;
-    }
-    let optionalPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectOption<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      Maybe.isMaybe(
-        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
-      )
-    ) {
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial:
-            parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.map(
-              Partial.create,
-            ),
-          resolver: async () =>
-            Right(
-              (
-                parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty as Maybe<LazilyResolvedBlankNodeOrIriIdentifier>
-              ).unsafeCoerce(),
-            ),
-        });
-    } else if (
-      typeof parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.of(
-            Partial.create(
-              parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
-            ),
-          ),
-          resolver: async () =>
-            Right(
-              parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty as LazilyResolvedBlankNodeOrIriIdentifier,
-            ),
-        });
-    } else if (
-      parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-      undefined
-    ) {
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.empty(),
-          resolver: async () => {
-            throw new Error("should never be called");
-          },
-        });
-    } else {
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    let optionalPartialToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      Partial,
-      LazilyResolvedUnion
-    >;
-    if (
-      typeof parameters.optionalPartialToResolvedUnionProperty === "object" &&
-      parameters.optionalPartialToResolvedUnionProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalPartialToResolvedUnionProperty =
-        parameters.optionalPartialToResolvedUnionProperty;
-    } else if (
-      Maybe.isMaybe(parameters.optionalPartialToResolvedUnionProperty)
-    ) {
-      optionalPartialToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        Partial,
-        LazilyResolvedUnion
-      >({
-        partial: parameters.optionalPartialToResolvedUnionProperty.map(
-          Partial.create,
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalPartialToResolvedUnionProperty as Maybe<LazilyResolvedUnion>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (
-      typeof parameters.optionalPartialToResolvedUnionProperty === "object"
-    ) {
-      optionalPartialToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        Partial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.of(
-          Partial.create(parameters.optionalPartialToResolvedUnionProperty),
-        ),
-        resolver: async () =>
-          Right(
-            parameters.optionalPartialToResolvedUnionProperty as LazilyResolvedUnion,
-          ),
-      });
-    } else if (
-      parameters.optionalPartialToResolvedUnionProperty === undefined
-    ) {
-      optionalPartialToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        Partial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      optionalPartialToResolvedUnionProperty =
-        parameters.optionalPartialToResolvedUnionProperty satisfies never;
-    }
-    let optionalPartialUnionToResolvedUnionProperty: $LazyObjectOption<
-      LazilyResolvedUnion.Identifier,
-      PartialUnion,
-      LazilyResolvedUnion
-    >;
-    if (
-      typeof parameters.optionalPartialUnionToResolvedUnionProperty ===
-        "object" &&
-      parameters.optionalPartialUnionToResolvedUnionProperty instanceof
-        $LazyObjectOption
-    ) {
-      optionalPartialUnionToResolvedUnionProperty =
-        parameters.optionalPartialUnionToResolvedUnionProperty;
-    } else if (
-      Maybe.isMaybe(parameters.optionalPartialUnionToResolvedUnionProperty)
-    ) {
-      optionalPartialUnionToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        PartialUnion,
-        LazilyResolvedUnion
-      >({
-        partial: parameters.optionalPartialUnionToResolvedUnionProperty.map(
-          (object) => {
-            switch (object.$type) {
-              case "LazilyResolvedUnionMember1":
-                return PartialUnionMember1.create(object);
-              case "LazilyResolvedUnionMember2":
-                return PartialUnionMember2.create(object);
-              default:
-                object satisfies never;
-                throw new Error("unrecognized type");
-            }
-          },
-        ),
-        resolver: async () =>
-          Right(
-            (
-              parameters.optionalPartialUnionToResolvedUnionProperty as Maybe<LazilyResolvedUnion>
-            ).unsafeCoerce(),
-          ),
-      });
-    } else if (
-      typeof parameters.optionalPartialUnionToResolvedUnionProperty === "object"
-    ) {
-      optionalPartialUnionToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        PartialUnion,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.of(
-          parameters.optionalPartialUnionToResolvedUnionProperty,
-        ).map((object) => {
-          switch (object.$type) {
-            case "LazilyResolvedUnionMember1":
-              return PartialUnionMember1.create(object);
-            case "LazilyResolvedUnionMember2":
-              return PartialUnionMember2.create(object);
-            default:
-              object satisfies never;
-              throw new Error("unrecognized type");
-          }
-        }),
-        resolver: async () =>
-          Right(
-            parameters.optionalPartialUnionToResolvedUnionProperty as LazilyResolvedUnion,
-          ),
-      });
-    } else if (
-      parameters.optionalPartialUnionToResolvedUnionProperty === undefined
-    ) {
-      optionalPartialUnionToResolvedUnionProperty = new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        PartialUnion,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.empty(),
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      optionalPartialUnionToResolvedUnionProperty =
-        parameters.optionalPartialUnionToResolvedUnionProperty satisfies never;
-    }
-    let requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObject
-    ) {
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      typeof parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty = new $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partial: $DefaultPartial.create(
-          parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
-        ),
-        resolver: async () =>
-          Right(
-            parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty as LazilyResolvedBlankNodeOrIriIdentifier,
-          ),
-      });
-    } else {
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    let requiredPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObject<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObject
-    ) {
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      typeof parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        new $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Partial.create(
-            parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
-          ),
-          resolver: async () =>
-            Right(
-              parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty as LazilyResolvedBlankNodeOrIriIdentifier,
-            ),
-        });
-    } else {
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    let setLazyToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      $DefaultPartial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObjectSet
-    ) {
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      typeof parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials:
-          parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty.map(
-            $DefaultPartial.create,
-          ),
-        resolver: async () =>
-          Right(
-            parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty as readonly LazilyResolvedBlankNodeOrIriIdentifier[],
-          ),
-      });
-    } else if (
-      parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty === undefined
-    ) {
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials: [],
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.setLazyToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    let setPartialToResolvedBlankNodeOrIriIdentifierProperty: $LazyObjectSet<
-      LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-      Partial,
-      LazilyResolvedBlankNodeOrIriIdentifier
-    >;
-    if (
-      typeof parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-        "object" &&
-      parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty instanceof
-        $LazyObjectSet
-    ) {
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty;
-    } else if (
-      typeof parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-      "object"
-    ) {
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        Partial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials:
-          parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty.map(
-            Partial.create,
-          ),
-        resolver: async () =>
-          Right(
-            parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty as readonly LazilyResolvedBlankNodeOrIriIdentifier[],
-          ),
-      });
-    } else if (
-      parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty ===
-      undefined
-    ) {
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty = new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        Partial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials: [],
-        resolver: async () => {
-          throw new Error("should never be called");
-        },
-      });
-    } else {
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty =
-        parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      optionalLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      optionalLazyToResolvedIriIdentifierProperty,
-      optionalLazyToResolvedUnionProperty,
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty,
-      optionalPartialToResolvedUnionProperty,
-      optionalPartialUnionToResolvedUnionProperty,
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      requiredPartialToResolvedBlankNodeOrIriIdentifierProperty,
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty,
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -30766,7 +30471,7 @@ export namespace LazyProperties {
   };
 
   export function fromJson($json: LazyProperties.Json): LazyProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -31411,7 +31116,7 @@ export namespace LazyProperties {
                 ),
               ),
         }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -31903,29 +31608,43 @@ export namespace LazilyResolvedIriIdentifier {
   export function create(parameters: {
     readonly $identifier:
       | (() => LazilyResolvedIriIdentifier.Identifier)
-      | NamedNode
-      | string;
+      | string
+      | NamedNode;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, LazilyResolvedIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "LazilyResolvedIriIdentifier" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier:
+      | (() => LazilyResolvedIriIdentifier.Identifier)
+      | string
+      | NamedNode;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedIriIdentifier {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LazilyResolvedIriIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LazilyResolvedIriIdentifier" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -32124,7 +31843,7 @@ export namespace LazilyResolvedIriIdentifier {
   export function fromJson(
     $json: LazilyResolvedIriIdentifier.Json,
   ): LazilyResolvedIriIdentifier {
-    return create({
+    return createUnsafe({
       $identifier: dataFactory.namedNode($json["@id"]),
       lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
     });
@@ -32155,7 +31874,7 @@ export namespace LazilyResolvedIriIdentifier {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -32358,32 +32077,43 @@ export namespace LazilyResolvedUnionMember2 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember2.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, LazilyResolvedUnionMember2> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "LazilyResolvedUnionMember2" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LazilyResolvedUnionMember2.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedUnionMember2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LazilyResolvedUnionMember2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LazilyResolvedUnionMember2" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -32636,7 +32366,7 @@ export namespace LazilyResolvedUnionMember2 {
   export function fromJson(
     $json: LazilyResolvedUnionMember2.Json,
   ): LazilyResolvedUnionMember2 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -32701,7 +32431,7 @@ export namespace LazilyResolvedUnionMember2 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -32919,32 +32649,43 @@ export namespace LazilyResolvedUnionMember1 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedUnionMember1.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, LazilyResolvedUnionMember1> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "LazilyResolvedUnionMember1" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LazilyResolvedUnionMember1.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedUnionMember1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LazilyResolvedUnionMember1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LazilyResolvedUnionMember1" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -33197,7 +32938,7 @@ export namespace LazilyResolvedUnionMember1 {
   export function fromJson(
     $json: LazilyResolvedUnionMember1.Json,
   ): LazilyResolvedUnionMember1 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -33262,7 +33003,7 @@ export namespace LazilyResolvedUnionMember1 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -33483,32 +33224,43 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LazilyResolvedBlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "LazilyResolvedBlankNodeOrIriIdentifier" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LazilyResolvedBlankNodeOrIriIdentifier.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): LazilyResolvedBlankNodeOrIriIdentifier {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LazilyResolvedBlankNodeOrIriIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LazilyResolvedBlankNodeOrIriIdentifier" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -33765,7 +33517,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   export function fromJson(
     $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
   ): LazilyResolvedBlankNodeOrIriIdentifier {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -33831,7 +33583,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -34058,38 +33810,64 @@ export interface LanguageInProperties {
    * literal property for testing languageIn
    */;
 
-  readonly languageInLiteralProperty: NonEmptyList<Literal>;
+  readonly languageInLiteralProperty: readonly Literal[];
 }
 
 export namespace LanguageInProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => LanguageInProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly languageInLiteralProperty: NonEmptyList<Literal>;
+    readonly languageInLiteralProperty: readonly (
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+    )[];
+  }): Either<Error, LanguageInProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      languageInLiteralProperty: $convertToReadonlyArray($convertToLiteral)(
+        schema.properties.languageInLiteralProperty.type(),
+        parameters.languageInLiteralProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "LanguageInProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => LanguageInProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly languageInLiteralProperty: readonly (
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+    )[];
   }): LanguageInProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => LanguageInProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "LanguageInProperties" as const;
-    const languageInLiteralProperty = parameters.languageInLiteralProperty;
-    const $object = { $identifier, $type, languageInLiteralProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -34304,15 +34082,12 @@ export namespace LanguageInProperties {
   export function fromJson(
     $json: LanguageInProperties.Json,
   ): LanguageInProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
-      languageInLiteralProperty: NonEmptyList.fromArray(
-        $json["languageInLiteralProperty"],
-      )
-        .unsafeCoerce()
-        .map((item) =>
+      languageInLiteralProperty: $json["languageInLiteralProperty"].map(
+        (item) =>
           dataFactory.literal(
             item["@value"],
             item["@language"] !== undefined
@@ -34321,7 +34096,7 @@ export namespace LanguageInProperties {
                 ? dataFactory.namedNode(item["@type"]!)
                 : undefined,
           ),
-        ),
+      ),
     });
   }
 
@@ -34350,11 +34125,7 @@ export namespace LanguageInProperties {
               $fromRdfPreferredLanguages(values, _$options.preferredLanguages),
             )
             .chain((values) => values.chainMap((value) => value.toLiteral()))
-            .chain((values) =>
-              NonEmptyList.fromArray(values.toArray()).toEither(
-                new Error(`${$resource.identifier} is an empty set`),
-              ),
-            )
+            .map((values) => values.toArray())
             .map((valuesArray) =>
               Resource.Values.fromValue({
                 focusResource: $resource,
@@ -34365,7 +34136,7 @@ export namespace LanguageInProperties {
               }),
             ),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -34581,39 +34352,43 @@ export namespace JsPrimitiveUnionProperty {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => JsPrimitiveUnionProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+  }): Either<Error, JsPrimitiveUnionProperty> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      jsPrimitiveUnionProperty: $convertToReadonlyArray($convertToUnion)(
+        schema.properties.jsPrimitiveUnionProperty.type(),
+        parameters?.jsPrimitiveUnionProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "JsPrimitiveUnionProperty" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => JsPrimitiveUnionProperty.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }): JsPrimitiveUnionProperty {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => JsPrimitiveUnionProperty.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "JsPrimitiveUnionProperty" as const;
-    let jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
-    if (parameters?.jsPrimitiveUnionProperty === undefined) {
-      jsPrimitiveUnionProperty = [];
-    } else if (typeof parameters?.jsPrimitiveUnionProperty === "object") {
-      jsPrimitiveUnionProperty = parameters?.jsPrimitiveUnionProperty;
-    } else {
-      jsPrimitiveUnionProperty =
-        parameters?.jsPrimitiveUnionProperty satisfies never;
-    }
-    const $object = { $identifier, $type, jsPrimitiveUnionProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -35128,7 +34903,7 @@ export namespace JsPrimitiveUnionProperty {
   export function fromJson(
     $json: JsPrimitiveUnionProperty.Json,
   ): JsPrimitiveUnionProperty {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -35264,7 +35039,7 @@ export namespace JsPrimitiveUnionProperty {
                 }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -35540,25 +35315,30 @@ export interface IriIdentifier {
 
 export namespace IriIdentifier {
   export function create(parameters: {
-    readonly $identifier: (() => IriIdentifier.Identifier) | NamedNode | string;
+    readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
+  }): Either<Error, IriIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToIriIdentifierProperty<string>(
+        parameters.$identifier,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "IriIdentifier" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier: (() => IriIdentifier.Identifier) | string | NamedNode;
   }): IriIdentifier {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => IriIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "IriIdentifier" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -35751,7 +35531,7 @@ export namespace IriIdentifier {
   };
 
   export function fromJson($json: IriIdentifier.Json): IriIdentifier {
-    return create({ $identifier: dataFactory.namedNode($json["@id"]) });
+    return createUnsafe({ $identifier: dataFactory.namedNode($json["@id"]) });
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<IriIdentifier> = (
@@ -35798,7 +35578,7 @@ export namespace IriIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toIri()))
           .chain((values) => values.head()),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -35987,45 +35767,47 @@ export namespace IndirectRecursiveHelper {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursiveHelper.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveProperty?:
-      | Maybe<IndirectRecursive>
-      | IndirectRecursive;
-  }): IndirectRecursiveHelper {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => IndirectRecursiveHelper.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "IndirectRecursiveHelper" as const;
-    let indirectRecursiveProperty: Maybe<IndirectRecursive>;
-    if (Maybe.isMaybe(parameters?.indirectRecursiveProperty)) {
-      indirectRecursiveProperty = parameters?.indirectRecursiveProperty;
-    } else if (typeof parameters?.indirectRecursiveProperty === "object") {
-      indirectRecursiveProperty = Maybe.of(
+      | IndirectRecursive
+      | Maybe<IndirectRecursive>;
+  }): Either<Error, IndirectRecursiveHelper> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      indirectRecursiveProperty: $convertToMaybe($convertToObject)(
+        schema.properties.indirectRecursiveProperty.type(),
         parameters?.indirectRecursiveProperty,
-      );
-    } else if (parameters?.indirectRecursiveProperty === undefined) {
-      indirectRecursiveProperty = Maybe.empty();
-    } else {
-      indirectRecursiveProperty =
-        parameters?.indirectRecursiveProperty satisfies never;
-    }
-    const $object = { $identifier, $type, indirectRecursiveProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "IndirectRecursiveHelper" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => IndirectRecursiveHelper.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly indirectRecursiveProperty?:
+      | IndirectRecursive
+      | Maybe<IndirectRecursive>;
+  }): IndirectRecursiveHelper {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -36258,7 +36040,7 @@ export namespace IndirectRecursiveHelper {
   export function fromJson(
     $json: IndirectRecursiveHelper.Json,
   ): IndirectRecursiveHelper {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -36338,7 +36120,7 @@ export namespace IndirectRecursiveHelper {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -36564,48 +36346,47 @@ export namespace IndirectRecursive {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => IndirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly indirectRecursiveHelperProperty?:
-      | Maybe<IndirectRecursiveHelper>
-      | IndirectRecursiveHelper;
-  }): IndirectRecursive {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => IndirectRecursive.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "IndirectRecursive" as const;
-    let indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelper>;
-    if (Maybe.isMaybe(parameters?.indirectRecursiveHelperProperty)) {
-      indirectRecursiveHelperProperty =
-        parameters?.indirectRecursiveHelperProperty;
-    } else if (
-      typeof parameters?.indirectRecursiveHelperProperty === "object"
-    ) {
-      indirectRecursiveHelperProperty = Maybe.of(
+      | IndirectRecursiveHelper
+      | Maybe<IndirectRecursiveHelper>;
+  }): Either<Error, IndirectRecursive> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      indirectRecursiveHelperProperty: $convertToMaybe($convertToObject)(
+        schema.properties.indirectRecursiveHelperProperty.type(),
         parameters?.indirectRecursiveHelperProperty,
-      );
-    } else if (parameters?.indirectRecursiveHelperProperty === undefined) {
-      indirectRecursiveHelperProperty = Maybe.empty();
-    } else {
-      indirectRecursiveHelperProperty =
-        parameters?.indirectRecursiveHelperProperty satisfies never;
-    }
-    const $object = { $identifier, $type, indirectRecursiveHelperProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "IndirectRecursive" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => IndirectRecursive.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly indirectRecursiveHelperProperty?:
+      | IndirectRecursiveHelper
+      | Maybe<IndirectRecursiveHelper>;
+  }): IndirectRecursive {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -36837,7 +36618,7 @@ export namespace IndirectRecursive {
   };
 
   export function fromJson($json: IndirectRecursive.Json): IndirectRecursive {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -36917,7 +36698,7 @@ export namespace IndirectRecursive {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -37154,128 +36935,96 @@ export namespace InProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => InProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly inBooleansProperty?: Maybe<true> | true;
-    readonly inDateTimesProperty?: Maybe<Date> | Date;
-    readonly inDoublesProperty?: Maybe<1 | 2> | 1 | 2;
-    readonly inIntegersProperty?: Maybe<1n | 2n> | 1n | 2n;
+    readonly inBooleansProperty?: true | Maybe<true>;
+    readonly inDateTimesProperty?: Date | Maybe<Date>;
+    readonly inDoublesProperty?: 1 | 2 | Maybe<1 | 2>;
+    readonly inIntegersProperty?: 1n | 2n | Maybe<1n | 2n>;
     readonly inIrisProperty?:
+      | "http://example.com/InPropertiesIri1"
+      | "http://example.com/InPropertiesIri2"
+      | NamedNode<
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        >
       | Maybe<
           NamedNode<
             | "http://example.com/InPropertiesIri1"
             | "http://example.com/InPropertiesIri2"
           >
-        >
+        >;
+    readonly inStringsProperty?: "text" | "html" | Maybe<"text" | "html">;
+  }): Either<Error, InProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      inBooleansProperty: $convertToMaybe($convertToBoolean<true>)(
+        schema.properties.inBooleansProperty.type(),
+        parameters?.inBooleansProperty,
+      ),
+      inDateTimesProperty: $convertToMaybe($convertToDateTime)(
+        schema.properties.inDateTimesProperty.type(),
+        parameters?.inDateTimesProperty,
+      ),
+      inDoublesProperty: $convertToMaybe($convertToNumeric<1 | 2>)(
+        schema.properties.inDoublesProperty.type(),
+        parameters?.inDoublesProperty,
+      ),
+      inIntegersProperty: $convertToMaybe($convertToNumeric<1n | 2n>)(
+        schema.properties.inIntegersProperty.type(),
+        parameters?.inIntegersProperty,
+      ),
+      inIrisProperty: $convertToMaybe(
+        $convertToIri<
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        >,
+      )(schema.properties.inIrisProperty.type(), parameters?.inIrisProperty),
+      inStringsProperty: $convertToMaybe($convertToString<"text" | "html">)(
+        schema.properties.inStringsProperty.type(),
+        parameters?.inStringsProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "InProperties" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => InProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly inBooleansProperty?: true | Maybe<true>;
+    readonly inDateTimesProperty?: Date | Maybe<Date>;
+    readonly inDoublesProperty?: 1 | 2 | Maybe<1 | 2>;
+    readonly inIntegersProperty?: 1n | 2n | Maybe<1n | 2n>;
+    readonly inIrisProperty?:
+      | "http://example.com/InPropertiesIri1"
+      | "http://example.com/InPropertiesIri2"
       | NamedNode<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
         >
-      | "http://example.com/InPropertiesIri1"
-      | "http://example.com/InPropertiesIri2";
-    readonly inStringsProperty?: Maybe<"text" | "html"> | "text" | "html";
+      | Maybe<
+          NamedNode<
+            | "http://example.com/InPropertiesIri1"
+            | "http://example.com/InPropertiesIri2"
+          >
+        >;
+    readonly inStringsProperty?: "text" | "html" | Maybe<"text" | "html">;
   }): InProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => InProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "InProperties" as const;
-    let inBooleansProperty: Maybe<true>;
-    if (Maybe.isMaybe(parameters?.inBooleansProperty)) {
-      inBooleansProperty = parameters?.inBooleansProperty;
-    } else if (typeof parameters?.inBooleansProperty === "boolean") {
-      inBooleansProperty = Maybe.of(parameters?.inBooleansProperty);
-    } else if (parameters?.inBooleansProperty === undefined) {
-      inBooleansProperty = Maybe.empty();
-    } else {
-      inBooleansProperty = parameters?.inBooleansProperty satisfies never;
-    }
-    let inDateTimesProperty: Maybe<Date>;
-    if (Maybe.isMaybe(parameters?.inDateTimesProperty)) {
-      inDateTimesProperty = parameters?.inDateTimesProperty;
-    } else if (
-      typeof parameters?.inDateTimesProperty === "object" &&
-      parameters?.inDateTimesProperty instanceof Date
-    ) {
-      inDateTimesProperty = Maybe.of(parameters?.inDateTimesProperty);
-    } else if (parameters?.inDateTimesProperty === undefined) {
-      inDateTimesProperty = Maybe.empty();
-    } else {
-      inDateTimesProperty = parameters?.inDateTimesProperty satisfies never;
-    }
-    let inDoublesProperty: Maybe<1 | 2>;
-    if (Maybe.isMaybe(parameters?.inDoublesProperty)) {
-      inDoublesProperty = parameters?.inDoublesProperty;
-    } else if (typeof parameters?.inDoublesProperty === "number") {
-      inDoublesProperty = Maybe.of(parameters?.inDoublesProperty);
-    } else if (parameters?.inDoublesProperty === undefined) {
-      inDoublesProperty = Maybe.empty();
-    } else {
-      inDoublesProperty = parameters?.inDoublesProperty satisfies never;
-    }
-    let inIntegersProperty: Maybe<1n | 2n>;
-    if (Maybe.isMaybe(parameters?.inIntegersProperty)) {
-      inIntegersProperty = parameters?.inIntegersProperty;
-    } else if (typeof parameters?.inIntegersProperty === "bigint") {
-      inIntegersProperty = Maybe.of(parameters?.inIntegersProperty);
-    } else if (parameters?.inIntegersProperty === undefined) {
-      inIntegersProperty = Maybe.empty();
-    } else {
-      inIntegersProperty = parameters?.inIntegersProperty satisfies never;
-    }
-    let inIrisProperty: Maybe<
-      NamedNode<
-        | "http://example.com/InPropertiesIri1"
-        | "http://example.com/InPropertiesIri2"
-      >
-    >;
-    if (Maybe.isMaybe(parameters?.inIrisProperty)) {
-      inIrisProperty = parameters?.inIrisProperty;
-    } else if (typeof parameters?.inIrisProperty === "object") {
-      inIrisProperty = Maybe.of(parameters?.inIrisProperty);
-    } else if (typeof parameters?.inIrisProperty === "string") {
-      inIrisProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.inIrisProperty),
-      );
-    } else if (parameters?.inIrisProperty === undefined) {
-      inIrisProperty = Maybe.empty();
-    } else {
-      inIrisProperty = parameters?.inIrisProperty satisfies never;
-    }
-    let inStringsProperty: Maybe<"text" | "html">;
-    if (Maybe.isMaybe(parameters?.inStringsProperty)) {
-      inStringsProperty = parameters?.inStringsProperty;
-    } else if (typeof parameters?.inStringsProperty === "string") {
-      inStringsProperty = Maybe.of(parameters?.inStringsProperty);
-    } else if (parameters?.inStringsProperty === undefined) {
-      inStringsProperty = Maybe.empty();
-    } else {
-      inStringsProperty = parameters?.inStringsProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      inBooleansProperty,
-      inDateTimesProperty,
-      inDoublesProperty,
-      inIntegersProperty,
-      inIrisProperty,
-      inStringsProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -37835,7 +37584,7 @@ export namespace InProperties {
   };
 
   export function fromJson($json: InProperties.Json): InProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -38044,7 +37793,7 @@ export namespace InProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -38092,7 +37841,7 @@ export namespace InProperties {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Boolean" as const, in: [true] }),
+          item: () => ({ kind: "Boolean" as const, in: [true] as const }),
         }),
         path: dataFactory.namedNode("http://example.com/inBooleansProperty"),
       },
@@ -38102,7 +37851,7 @@ export namespace InProperties {
           kind: "Maybe" as const,
           item: () => ({
             kind: "DateTime" as const,
-            in: [new Date("2018-04-09T10:00:00.000Z")],
+            in: [new Date("2018-04-09T10:00:00.000Z")] as const,
           }),
         }),
         path: dataFactory.namedNode("http://example.com/inDateTimesProperty"),
@@ -38111,7 +37860,7 @@ export namespace InProperties {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "Float" as const, in: [1, 2] }),
+          item: () => ({ kind: "Float" as const, in: [1, 2] as const }),
         }),
         path: dataFactory.namedNode("http://example.com/inDoublesProperty"),
       },
@@ -38119,7 +37868,7 @@ export namespace InProperties {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] }),
+          item: () => ({ kind: "BigInt" as const, in: [1n, 2n] as const }),
         }),
         path: dataFactory.namedNode("http://example.com/inIntegersProperty"),
       },
@@ -38132,7 +37881,7 @@ export namespace InProperties {
             in: [
               dataFactory.namedNode("http://example.com/InPropertiesIri1"),
               dataFactory.namedNode("http://example.com/InPropertiesIri2"),
-            ],
+            ] as const,
           }),
         }),
         path: dataFactory.namedNode("http://example.com/inIrisProperty"),
@@ -38141,7 +37890,10 @@ export namespace InProperties {
         kind: "Shacl" as const,
         type: () => ({
           kind: "Maybe" as const,
-          item: () => ({ kind: "String" as const, in: ["text", "html"] }),
+          item: () => ({
+            kind: "String" as const,
+            in: ["text", "html"] as const,
+          }),
         }),
         path: dataFactory.namedNode("http://example.com/inStringsProperty"),
       },
@@ -38360,41 +38112,49 @@ export namespace InIdentifier {
   export function create(parameters: {
     readonly $identifier:
       | (() => InIdentifier.Identifier)
+      | "http://example.com/InIdentifierInstance1"
+      | "http://example.com/InIdentifierInstance2"
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
-        >
+        >;
+    readonly inIdentifierProperty?: string | Maybe<string>;
+  }): Either<Error, InIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToIriIdentifierProperty<
+        | "http://example.com/InIdentifierInstance1"
+        | "http://example.com/InIdentifierInstance2"
+      >(parameters.$identifier),
+      inIdentifierProperty: $convertToMaybe($convertToString<string>)(
+        schema.properties.inIdentifierProperty.type(),
+        parameters.inIdentifierProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "InIdentifier" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier:
+      | (() => InIdentifier.Identifier)
       | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2";
-    readonly inIdentifierProperty?: Maybe<string> | string;
+      | "http://example.com/InIdentifierInstance2"
+      | NamedNode<
+          | "http://example.com/InIdentifierInstance1"
+          | "http://example.com/InIdentifierInstance2"
+        >;
+    readonly inIdentifierProperty?: string | Maybe<string>;
   }): InIdentifier {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => InIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "InIdentifier" as const;
-    let inIdentifierProperty: Maybe<string>;
-    if (Maybe.isMaybe(parameters.inIdentifierProperty)) {
-      inIdentifierProperty = parameters.inIdentifierProperty;
-    } else if (typeof parameters.inIdentifierProperty === "string") {
-      inIdentifierProperty = Maybe.of(parameters.inIdentifierProperty);
-    } else if (parameters.inIdentifierProperty === undefined) {
-      inIdentifierProperty = Maybe.empty();
-    } else {
-      inIdentifierProperty = parameters.inIdentifierProperty satisfies never;
-    }
-    const $object = { $identifier, $type, inIdentifierProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -38678,7 +38438,7 @@ export namespace InIdentifier {
   };
 
   export function fromJson($json: InIdentifier.Json): InIdentifier {
-    return create({
+    return createUnsafe({
       $identifier: dataFactory.namedNode($json["@id"]),
       inIdentifierProperty: Maybe.fromNullable($json["inIdentifierProperty"]),
     });
@@ -38764,7 +38524,7 @@ export namespace InIdentifier {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -38804,7 +38564,7 @@ export namespace InIdentifier {
           in: [
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
             dataFactory.namedNode("http://example.com/InIdentifierInstance2"),
-          ],
+          ] as const,
         }),
       },
       $type: {
@@ -38979,47 +38739,49 @@ export namespace HasValueProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => HasValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly hasIriValueProperty: NamedNode | string;
+    readonly hasIriValueProperty: string | NamedNode;
+    readonly hasLiteralValueProperty: string;
+  }): Either<Error, HasValueProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      hasIriValueProperty: $convertToIri<string>(
+        schema.properties.hasIriValueProperty.type(),
+        parameters.hasIriValueProperty,
+      ),
+      hasLiteralValueProperty: $convertToString<string>(
+        schema.properties.hasLiteralValueProperty.type(),
+        parameters.hasLiteralValueProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "HasValueProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => HasValueProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly hasIriValueProperty: string | NamedNode;
     readonly hasLiteralValueProperty: string;
   }): HasValueProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => HasValueProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "HasValueProperties" as const;
-    let hasIriValueProperty: NamedNode;
-    if (typeof parameters.hasIriValueProperty === "object") {
-      hasIriValueProperty = parameters.hasIriValueProperty;
-    } else if (typeof parameters.hasIriValueProperty === "string") {
-      hasIriValueProperty = dataFactory.namedNode(
-        parameters.hasIriValueProperty,
-      );
-    } else {
-      hasIriValueProperty = parameters.hasIriValueProperty satisfies never;
-    }
-    const hasLiteralValueProperty = parameters.hasLiteralValueProperty;
-    const $object = {
-      $identifier,
-      $type,
-      hasIriValueProperty,
-      hasLiteralValueProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -39258,7 +39020,7 @@ export namespace HasValueProperties {
   };
 
   export function fromJson($json: HasValueProperties.Json): HasValueProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -39320,7 +39082,7 @@ export namespace HasValueProperties {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -39530,31 +39292,43 @@ export namespace FlattenUnionMember3 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => FlattenUnionMember3.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly flattenUnionMember3Property: string;
+  }): Either<Error, FlattenUnionMember3> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      flattenUnionMember3Property: $convertToString<string>(
+        schema.properties.flattenUnionMember3Property.type(),
+        parameters.flattenUnionMember3Property,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "FlattenUnionMember3" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => FlattenUnionMember3.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly flattenUnionMember3Property: string;
   }): FlattenUnionMember3 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => FlattenUnionMember3.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "FlattenUnionMember3" as const;
-    const flattenUnionMember3Property = parameters.flattenUnionMember3Property;
-    const $object = { $identifier, $type, flattenUnionMember3Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -39800,7 +39574,7 @@ export namespace FlattenUnionMember3 {
   export function fromJson(
     $json: FlattenUnionMember3.Json,
   ): FlattenUnionMember3 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -39865,7 +39639,7 @@ export namespace FlattenUnionMember3 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -40078,40 +39852,40 @@ export namespace ExternProperty {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ExternProperty.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly externProperty?: Maybe<Extern> | Extern;
+    readonly externProperty?: Extern | Maybe<Extern>;
+  }): Either<Error, ExternProperty> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      externProperty: $convertToMaybe($convertToObject)(
+        schema.properties.externProperty.type(),
+        parameters?.externProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "ExternProperty" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => ExternProperty.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly externProperty?: Extern | Maybe<Extern>;
   }): ExternProperty {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => ExternProperty.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ExternProperty" as const;
-    let externProperty: Maybe<Extern>;
-    if (Maybe.isMaybe(parameters?.externProperty)) {
-      externProperty = parameters?.externProperty;
-    } else if (typeof parameters?.externProperty === "object") {
-      externProperty = Maybe.of(parameters?.externProperty);
-    } else if (parameters?.externProperty === undefined) {
-      externProperty = Maybe.empty();
-    } else {
-      externProperty = parameters?.externProperty satisfies never;
-    }
-    const $object = { $identifier, $type, externProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -40362,7 +40136,7 @@ export namespace ExternProperty {
   };
 
   export function fromJson($json: ExternProperty.Json): ExternProperty {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -40441,7 +40215,7 @@ export namespace ExternProperty {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -40654,31 +40428,40 @@ export namespace BaseForExtern {
   export function create(parameters: {
     readonly $identifier?:
       | (() => BaseForExtern.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly baseForExternProperty: string;
+  }): Either<Error, BaseForExtern> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      baseForExternProperty: $convertToString<string>(
+        schema.properties.baseForExternProperty.type(),
+        parameters.baseForExternProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "BaseForExtern" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => BaseForExtern.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly baseForExternProperty: string;
   }): BaseForExtern {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => BaseForExtern.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "BaseForExtern" as const;
-    const baseForExternProperty = parameters.baseForExternProperty;
-    const $object = { $identifier, $type, baseForExternProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -40934,7 +40717,7 @@ export namespace BaseForExtern {
   };
 
   export function fromJson($json: BaseForExtern.Json): BaseForExtern {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -41001,7 +40784,7 @@ export namespace BaseForExtern {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -41211,31 +40994,40 @@ export namespace ExplicitRdfType {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ExplicitRdfType.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly explicitRdfTypeProperty: string;
+  }): Either<Error, ExplicitRdfType> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      explicitRdfTypeProperty: $convertToString<string>(
+        schema.properties.explicitRdfTypeProperty.type(),
+        parameters.explicitRdfTypeProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "ExplicitRdfType" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ExplicitRdfType.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitRdfTypeProperty: string;
   }): ExplicitRdfType {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ExplicitRdfType.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ExplicitRdfType" as const;
-    const explicitRdfTypeProperty = parameters.explicitRdfTypeProperty;
-    const $object = { $identifier, $type, explicitRdfTypeProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -41482,7 +41274,7 @@ export namespace ExplicitRdfType {
   };
 
   export function fromJson($json: ExplicitRdfType.Json): ExplicitRdfType {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -41548,7 +41340,7 @@ export namespace ExplicitRdfType {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -41763,32 +41555,43 @@ export namespace ExplicitFromToRdfTypes {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ExplicitFromToRdfTypes.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly explicitFromToRdfTypesProperty: string;
+  }): Either<Error, ExplicitFromToRdfTypes> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      explicitFromToRdfTypesProperty: $convertToString<string>(
+        schema.properties.explicitFromToRdfTypesProperty.type(),
+        parameters.explicitFromToRdfTypesProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "ExplicitFromToRdfTypes" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ExplicitFromToRdfTypes.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFromToRdfTypesProperty: string;
   }): ExplicitFromToRdfTypes {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ExplicitFromToRdfTypes.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ExplicitFromToRdfTypes" as const;
-    const explicitFromToRdfTypesProperty =
-      parameters.explicitFromToRdfTypesProperty;
-    const $object = { $identifier, $type, explicitFromToRdfTypesProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -42037,7 +41840,7 @@ export namespace ExplicitFromToRdfTypes {
   export function fromJson(
     $json: ExplicitFromToRdfTypes.Json,
   ): ExplicitFromToRdfTypes {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -42102,7 +41905,7 @@ export namespace ExplicitFromToRdfTypes {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -42343,43 +42146,55 @@ export namespace DisplayProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => DisplayProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly explicitFalseDisplayProperty: string;
+    readonly explicitTrueDisplayProperty: string;
+    readonly implicitFalseDisplayProperty: string;
+  }): Either<Error, DisplayProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      explicitFalseDisplayProperty: $convertToString<string>(
+        schema.properties.explicitFalseDisplayProperty.type(),
+        parameters.explicitFalseDisplayProperty,
+      ),
+      explicitTrueDisplayProperty: $convertToString<string>(
+        schema.properties.explicitTrueDisplayProperty.type(),
+        parameters.explicitTrueDisplayProperty,
+      ),
+      implicitFalseDisplayProperty: $convertToString<string>(
+        schema.properties.implicitFalseDisplayProperty.type(),
+        parameters.implicitFalseDisplayProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "DisplayProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => DisplayProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly explicitFalseDisplayProperty: string;
     readonly explicitTrueDisplayProperty: string;
     readonly implicitFalseDisplayProperty: string;
   }): DisplayProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => DisplayProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "DisplayProperties" as const;
-    const explicitFalseDisplayProperty =
-      parameters.explicitFalseDisplayProperty;
-    const explicitTrueDisplayProperty = parameters.explicitTrueDisplayProperty;
-    const implicitFalseDisplayProperty =
-      parameters.implicitFalseDisplayProperty;
-    const $object = {
-      $identifier,
-      $type,
-      explicitFalseDisplayProperty,
-      explicitTrueDisplayProperty,
-      implicitFalseDisplayProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -42736,7 +42551,7 @@ export namespace DisplayProperties {
   };
 
   export function fromJson($json: DisplayProperties.Json): DisplayProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -42831,7 +42646,7 @@ export namespace DisplayProperties {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -43071,41 +42886,40 @@ export namespace DirectRecursive {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DirectRecursive.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly directRecursiveProperty?: Maybe<DirectRecursive> | DirectRecursive;
+    readonly directRecursiveProperty?: DirectRecursive | Maybe<DirectRecursive>;
+  }): Either<Error, DirectRecursive> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      directRecursiveProperty: $convertToMaybe($convertToObject)(
+        schema.properties.directRecursiveProperty.type(),
+        parameters?.directRecursiveProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "DirectRecursive" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DirectRecursive.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly directRecursiveProperty?: DirectRecursive | Maybe<DirectRecursive>;
   }): DirectRecursive {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => DirectRecursive.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "DirectRecursive" as const;
-    let directRecursiveProperty: Maybe<DirectRecursive>;
-    if (Maybe.isMaybe(parameters?.directRecursiveProperty)) {
-      directRecursiveProperty = parameters?.directRecursiveProperty;
-    } else if (typeof parameters?.directRecursiveProperty === "object") {
-      directRecursiveProperty = Maybe.of(parameters?.directRecursiveProperty);
-    } else if (parameters?.directRecursiveProperty === undefined) {
-      directRecursiveProperty = Maybe.empty();
-    } else {
-      directRecursiveProperty =
-        parameters?.directRecursiveProperty satisfies never;
-    }
-    const $object = { $identifier, $type, directRecursiveProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -43333,7 +43147,7 @@ export namespace DirectRecursive {
   };
 
   export function fromJson($json: DirectRecursive.Json): DirectRecursive {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -43413,7 +43227,7 @@ export namespace DirectRecursive {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -43640,7 +43454,74 @@ export namespace DefaultValueProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DefaultValueProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly dateDefaultValueProperty?: Date;
+    readonly dateTimeDefaultValueProperty?: Date;
+    readonly falseBooleanDefaultValueProperty?: boolean;
+    readonly numberDefaultValueProperty?: number;
+    readonly stringDefaultValueProperty?: string;
+    readonly trueBooleanDefaultValueProperty?: boolean;
+  }): Either<Error, DefaultValueProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      dateDefaultValueProperty: $convertWithDefaultValue($convertToDate)(
+        schema.properties.dateDefaultValueProperty.type(),
+        parameters?.dateDefaultValueProperty,
+      ),
+      dateTimeDefaultValueProperty: $convertWithDefaultValue(
+        $convertToDateTime,
+      )(
+        schema.properties.dateTimeDefaultValueProperty.type(),
+        parameters?.dateTimeDefaultValueProperty,
+      ),
+      falseBooleanDefaultValueProperty: $convertWithDefaultValue(
+        $convertToBoolean<boolean>,
+      )(
+        schema.properties.falseBooleanDefaultValueProperty.type(),
+        parameters?.falseBooleanDefaultValueProperty,
+      ),
+      numberDefaultValueProperty: $convertWithDefaultValue(
+        $convertToNumeric<number>,
+      )(
+        schema.properties.numberDefaultValueProperty.type(),
+        parameters?.numberDefaultValueProperty,
+      ),
+      stringDefaultValueProperty: $convertWithDefaultValue(
+        $convertToString<string>,
+      )(
+        schema.properties.stringDefaultValueProperty.type(),
+        parameters?.stringDefaultValueProperty,
+      ),
+      trueBooleanDefaultValueProperty: $convertWithDefaultValue(
+        $convertToBoolean<boolean>,
+      )(
+        schema.properties.trueBooleanDefaultValueProperty.type(),
+        parameters?.trueBooleanDefaultValueProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "DefaultValueProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DefaultValueProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateDefaultValueProperty?: Date;
     readonly dateTimeDefaultValueProperty?: Date;
@@ -43649,97 +43530,7 @@ export namespace DefaultValueProperties {
     readonly stringDefaultValueProperty?: string;
     readonly trueBooleanDefaultValueProperty?: boolean;
   }): DefaultValueProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => DefaultValueProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "DefaultValueProperties" as const;
-    let dateDefaultValueProperty: Date;
-    if (
-      typeof parameters?.dateDefaultValueProperty === "object" &&
-      parameters?.dateDefaultValueProperty instanceof Date
-    ) {
-      dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
-    } else if (parameters?.dateDefaultValueProperty === undefined) {
-      dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z");
-    } else {
-      dateDefaultValueProperty =
-        parameters?.dateDefaultValueProperty satisfies never;
-    }
-    let dateTimeDefaultValueProperty: Date;
-    if (
-      typeof parameters?.dateTimeDefaultValueProperty === "object" &&
-      parameters?.dateTimeDefaultValueProperty instanceof Date
-    ) {
-      dateTimeDefaultValueProperty = parameters?.dateTimeDefaultValueProperty;
-    } else if (parameters?.dateTimeDefaultValueProperty === undefined) {
-      dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z");
-    } else {
-      dateTimeDefaultValueProperty =
-        parameters?.dateTimeDefaultValueProperty satisfies never;
-    }
-    let falseBooleanDefaultValueProperty: boolean;
-    if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") {
-      falseBooleanDefaultValueProperty =
-        parameters?.falseBooleanDefaultValueProperty;
-    } else if (parameters?.falseBooleanDefaultValueProperty === undefined) {
-      falseBooleanDefaultValueProperty = false;
-    } else {
-      falseBooleanDefaultValueProperty =
-        parameters?.falseBooleanDefaultValueProperty satisfies never;
-    }
-    let numberDefaultValueProperty: number;
-    if (typeof parameters?.numberDefaultValueProperty === "number") {
-      numberDefaultValueProperty = parameters?.numberDefaultValueProperty;
-    } else if (parameters?.numberDefaultValueProperty === undefined) {
-      numberDefaultValueProperty = 0;
-    } else {
-      numberDefaultValueProperty =
-        parameters?.numberDefaultValueProperty satisfies never;
-    }
-    let stringDefaultValueProperty: string;
-    if (typeof parameters?.stringDefaultValueProperty === "string") {
-      stringDefaultValueProperty = parameters?.stringDefaultValueProperty;
-    } else if (parameters?.stringDefaultValueProperty === undefined) {
-      stringDefaultValueProperty = "";
-    } else {
-      stringDefaultValueProperty =
-        parameters?.stringDefaultValueProperty satisfies never;
-    }
-    let trueBooleanDefaultValueProperty: boolean;
-    if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") {
-      trueBooleanDefaultValueProperty =
-        parameters?.trueBooleanDefaultValueProperty;
-    } else if (parameters?.trueBooleanDefaultValueProperty === undefined) {
-      trueBooleanDefaultValueProperty = true;
-    } else {
-      trueBooleanDefaultValueProperty =
-        parameters?.trueBooleanDefaultValueProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      dateDefaultValueProperty,
-      dateTimeDefaultValueProperty,
-      falseBooleanDefaultValueProperty,
-      numberDefaultValueProperty,
-      stringDefaultValueProperty,
-      trueBooleanDefaultValueProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -44271,7 +44062,7 @@ export namespace DefaultValueProperties {
   export function fromJson(
     $json: DefaultValueProperties.Json,
   ): DefaultValueProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -44473,7 +44264,7 @@ export namespace DefaultValueProperties {
               )
               .chain((values) => values.chainMap((value) => value.toBoolean())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -44526,10 +44317,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "Date" as const }),
-          defaultValue: dataFactory.literal(
-            "2018-04-09",
-            $RdfVocabularies.xsd.date,
-          ),
+          defaultValue: new Date("2018-04-09T00:00:00.000Z"),
         }),
         path: dataFactory.namedNode(
           "http://example.com/dateDefaultValueProperty",
@@ -44540,10 +44328,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "DateTime" as const }),
-          defaultValue: dataFactory.literal(
-            "2018-04-09T10:00:00Z",
-            $RdfVocabularies.xsd.dateTime,
-          ),
+          defaultValue: new Date("2018-04-09T10:00:00.000Z"),
         }),
         path: dataFactory.namedNode(
           "http://example.com/dateTimeDefaultValueProperty",
@@ -44554,10 +44339,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "Boolean" as const }),
-          defaultValue: dataFactory.literal(
-            "false",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: false,
         }),
         path: dataFactory.namedNode(
           "http://example.com/falseBooleanDefaultValueProperty",
@@ -44568,10 +44350,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "Float" as const }),
-          defaultValue: dataFactory.literal(
-            "0.0e0",
-            $RdfVocabularies.xsd.double,
-          ),
+          defaultValue: 0,
         }),
         path: dataFactory.namedNode(
           "http://example.com/numberDefaultValueProperty",
@@ -44582,7 +44361,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "String" as const }),
-          defaultValue: dataFactory.literal(""),
+          defaultValue: "",
         }),
         path: dataFactory.namedNode(
           "http://example.com/stringDefaultValueProperty",
@@ -44593,10 +44372,7 @@ export namespace DefaultValueProperties {
         type: () => ({
           kind: "DefaultValue" as const,
           item: () => ({ kind: "Boolean" as const }),
-          defaultValue: dataFactory.literal(
-            "true",
-            $RdfVocabularies.xsd.boolean,
-          ),
+          defaultValue: true,
         }),
         path: dataFactory.namedNode(
           "http://example.com/trueBooleanDefaultValueProperty",
@@ -44866,98 +44642,93 @@ export namespace DateUnionProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => DateUnionProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
     readonly dateOrDateTimeProperty?:
-      | Maybe<{ type: "date"; value: Date } | { type: "dateTime"; value: Date }>
-      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date });
+      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
+      | Maybe<
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+        >;
     readonly dateOrStringProperty?:
-      | Maybe<{ type: "date"; value: Date } | { type: "string"; value: string }>
-      | ({ type: "date"; value: Date } | { type: "string"; value: string });
+      | ({ type: "date"; value: Date } | { type: "string"; value: string })
+      | Maybe<
+          { type: "date"; value: Date } | { type: "string"; value: string }
+        >;
     readonly dateTimeOrDateProperty?:
-      | Maybe<{ type: "dateTime"; value: Date } | { type: "date"; value: Date }>
-      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date });
+      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
+      | Maybe<
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+        >;
     readonly stringOrDateProperty?:
-      | Maybe<{ type: "string"; value: string } | { type: "date"; value: Date }>
-      | ({ type: "string"; value: string } | { type: "date"; value: Date });
+      | ({ type: "string"; value: string } | { type: "date"; value: Date })
+      | Maybe<
+          { type: "string"; value: string } | { type: "date"; value: Date }
+        >;
+  }): Either<Error, DateUnionProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      dateOrDateTimeProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.dateOrDateTimeProperty.type(),
+        parameters?.dateOrDateTimeProperty,
+      ),
+      dateOrStringProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.dateOrStringProperty.type(),
+        parameters?.dateOrStringProperty,
+      ),
+      dateTimeOrDateProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.dateTimeOrDateProperty.type(),
+        parameters?.dateTimeOrDateProperty,
+      ),
+      stringOrDateProperty: $convertToMaybe($convertToUnion)(
+        schema.properties.stringOrDateProperty.type(),
+        parameters?.stringOrDateProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "DateUnionProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => DateUnionProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly dateOrDateTimeProperty?:
+      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
+      | Maybe<
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+        >;
+    readonly dateOrStringProperty?:
+      | ({ type: "date"; value: Date } | { type: "string"; value: string })
+      | Maybe<
+          { type: "date"; value: Date } | { type: "string"; value: string }
+        >;
+    readonly dateTimeOrDateProperty?:
+      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
+      | Maybe<
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+        >;
+    readonly stringOrDateProperty?:
+      | ({ type: "string"; value: string } | { type: "date"; value: Date })
+      | Maybe<
+          { type: "string"; value: string } | { type: "date"; value: Date }
+        >;
   }): DateUnionProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => DateUnionProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "DateUnionProperties" as const;
-    let dateOrDateTimeProperty: Maybe<
-      { type: "date"; value: Date } | { type: "dateTime"; value: Date }
-    >;
-    if (Maybe.isMaybe(parameters?.dateOrDateTimeProperty)) {
-      dateOrDateTimeProperty = parameters?.dateOrDateTimeProperty;
-    } else if (typeof parameters?.dateOrDateTimeProperty === "object") {
-      dateOrDateTimeProperty = Maybe.of(parameters?.dateOrDateTimeProperty);
-    } else if (parameters?.dateOrDateTimeProperty === undefined) {
-      dateOrDateTimeProperty = Maybe.empty();
-    } else {
-      dateOrDateTimeProperty =
-        parameters?.dateOrDateTimeProperty satisfies never;
-    }
-    let dateOrStringProperty: Maybe<
-      { type: "date"; value: Date } | { type: "string"; value: string }
-    >;
-    if (Maybe.isMaybe(parameters?.dateOrStringProperty)) {
-      dateOrStringProperty = parameters?.dateOrStringProperty;
-    } else if (typeof parameters?.dateOrStringProperty === "object") {
-      dateOrStringProperty = Maybe.of(parameters?.dateOrStringProperty);
-    } else if (parameters?.dateOrStringProperty === undefined) {
-      dateOrStringProperty = Maybe.empty();
-    } else {
-      dateOrStringProperty = parameters?.dateOrStringProperty satisfies never;
-    }
-    let dateTimeOrDateProperty: Maybe<
-      { type: "dateTime"; value: Date } | { type: "date"; value: Date }
-    >;
-    if (Maybe.isMaybe(parameters?.dateTimeOrDateProperty)) {
-      dateTimeOrDateProperty = parameters?.dateTimeOrDateProperty;
-    } else if (typeof parameters?.dateTimeOrDateProperty === "object") {
-      dateTimeOrDateProperty = Maybe.of(parameters?.dateTimeOrDateProperty);
-    } else if (parameters?.dateTimeOrDateProperty === undefined) {
-      dateTimeOrDateProperty = Maybe.empty();
-    } else {
-      dateTimeOrDateProperty =
-        parameters?.dateTimeOrDateProperty satisfies never;
-    }
-    let stringOrDateProperty: Maybe<
-      { type: "string"; value: string } | { type: "date"; value: Date }
-    >;
-    if (Maybe.isMaybe(parameters?.stringOrDateProperty)) {
-      stringOrDateProperty = parameters?.stringOrDateProperty;
-    } else if (typeof parameters?.stringOrDateProperty === "object") {
-      stringOrDateProperty = Maybe.of(parameters?.stringOrDateProperty);
-    } else if (parameters?.stringOrDateProperty === undefined) {
-      stringOrDateProperty = Maybe.empty();
-    } else {
-      stringOrDateProperty = parameters?.stringOrDateProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      dateOrDateTimeProperty,
-      dateOrStringProperty,
-      dateTimeOrDateProperty,
-      stringOrDateProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -46238,7 +46009,7 @@ export namespace DateUnionProperties {
   export function fromJson(
     $json: DateUnionProperties.Json,
   ): DateUnionProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -46756,7 +46527,7 @@ export namespace DateUnionProperties {
                   }),
             ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -47256,17 +47027,19 @@ export namespace DateUnionProperties {
 export interface ConvertibleTypeProperties {
   readonly $identifier: () => ConvertibleTypeProperties.Identifier;
   readonly $type: "ConvertibleTypeProperties";
-  readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
+  readonly convertibleIriNonEmptySetProperty: readonly NamedNode[];
   readonly convertibleIriOptionProperty: Maybe<NamedNode>;
   readonly convertibleIriProperty: NamedNode;
   readonly convertibleIriSetProperty: readonly NamedNode[];
-  readonly convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
+  readonly convertibleLiteralNonEmptySetProperty: readonly Literal[];
   readonly convertibleLiteralOptionProperty: Maybe<Literal>;
   readonly convertibleLiteralProperty: Literal;
   readonly convertibleLiteralSetProperty: readonly Literal[];
-  readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-    BlankNode | NamedNode | Literal
-  >;
+  readonly convertibleTermNonEmptySetProperty: readonly (
+    | BlankNode
+    | NamedNode
+    | Literal
+  )[];
   readonly convertibleTermOptionProperty: Maybe<
     BlankNode | NamedNode | Literal
   >;
@@ -47282,357 +47055,199 @@ export namespace ConvertibleTypeProperties {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ConvertibleTypeProperties.Identifier)
-      | (BlankNode | NamedNode)
-      | string;
-    readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
-    readonly convertibleIriOptionProperty?:
-      | Maybe<NamedNode>
+      | BlankNode
       | NamedNode
       | string;
-    readonly convertibleIriProperty: NamedNode | string;
-    readonly convertibleIriSetProperty?:
-      | readonly NamedNode[]
-      | readonly string[];
-    readonly convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
-    readonly convertibleLiteralOptionProperty?:
-      | Maybe<Literal>
+    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriOptionProperty?:
+      | string
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly convertibleIriProperty: string | NamedNode;
+    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty: readonly (
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | Literal;
+      | Date
+      | Literal
+    )[];
+    readonly convertibleLiteralOptionProperty?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
     readonly convertibleLiteralProperty:
       | bigint
       | boolean
-      | Date
       | number
       | string
+      | Date
       | Literal;
-    readonly convertibleLiteralSetProperty?:
-      | readonly Literal[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
-    readonly convertibleTermNonEmptySetProperty: NonEmptyList<
-      BlankNode | NamedNode | Literal
-    >;
-    readonly convertibleTermOptionProperty?:
-      | Maybe<BlankNode | NamedNode | Literal>
+    readonly convertibleLiteralSetProperty?: readonly (
       | bigint
       | boolean
-      | Date
       | number
       | string
-      | (BlankNode | NamedNode | Literal);
-    readonly convertibleTermProperty:
-      | bigint
-      | boolean
       | Date
-      | number
-      | string
-      | (BlankNode | NamedNode | Literal);
-    readonly convertibleTermSetProperty?:
-      | readonly (BlankNode | NamedNode | Literal)[]
-      | readonly bigint[]
-      | readonly boolean[]
-      | readonly number[]
-      | readonly string[];
-  }): ConvertibleTypeProperties {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ConvertibleTypeProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ConvertibleTypeProperties" as const;
-    const convertibleIriNonEmptySetProperty =
-      parameters.convertibleIriNonEmptySetProperty;
-    let convertibleIriOptionProperty: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters.convertibleIriOptionProperty)) {
-      convertibleIriOptionProperty = parameters.convertibleIriOptionProperty;
-    } else if (typeof parameters.convertibleIriOptionProperty === "object") {
-      convertibleIriOptionProperty = Maybe.of(
-        parameters.convertibleIriOptionProperty,
-      );
-    } else if (typeof parameters.convertibleIriOptionProperty === "string") {
-      convertibleIriOptionProperty = Maybe.of(
-        dataFactory.namedNode(parameters.convertibleIriOptionProperty),
-      );
-    } else if (parameters.convertibleIriOptionProperty === undefined) {
-      convertibleIriOptionProperty = Maybe.empty();
-    } else {
-      convertibleIriOptionProperty =
-        parameters.convertibleIriOptionProperty satisfies never;
-    }
-    let convertibleIriProperty: NamedNode;
-    if (typeof parameters.convertibleIriProperty === "object") {
-      convertibleIriProperty = parameters.convertibleIriProperty;
-    } else if (typeof parameters.convertibleIriProperty === "string") {
-      convertibleIriProperty = dataFactory.namedNode(
-        parameters.convertibleIriProperty,
-      );
-    } else {
-      convertibleIriProperty =
-        parameters.convertibleIriProperty satisfies never;
-    }
-    let convertibleIriSetProperty: readonly NamedNode[];
-    if (parameters.convertibleIriSetProperty === undefined) {
-      convertibleIriSetProperty = [];
-    } else if ($isReadonlyObjectArray(parameters.convertibleIriSetProperty)) {
-      convertibleIriSetProperty = parameters.convertibleIriSetProperty;
-    } else if ($isReadonlyStringArray(parameters.convertibleIriSetProperty)) {
-      convertibleIriSetProperty = parameters.convertibleIriSetProperty.map(
-        (item) => dataFactory.namedNode(item),
-      );
-    } else {
-      convertibleIriSetProperty =
-        parameters.convertibleIriSetProperty satisfies never;
-    }
-    const convertibleLiteralNonEmptySetProperty =
-      parameters.convertibleLiteralNonEmptySetProperty;
-    let convertibleLiteralOptionProperty: Maybe<Literal>;
-    if (Maybe.isMaybe(parameters.convertibleLiteralOptionProperty)) {
-      convertibleLiteralOptionProperty =
-        parameters.convertibleLiteralOptionProperty;
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "bigint"
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.bigint(parameters.convertibleLiteralOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "boolean"
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.boolean(parameters.convertibleLiteralOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "object" &&
-      parameters.convertibleLiteralOptionProperty instanceof Date
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.date(parameters.convertibleLiteralOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "number"
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.number(parameters.convertibleLiteralOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "string"
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        $literalFactory.string(parameters.convertibleLiteralOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleLiteralOptionProperty === "object"
-    ) {
-      convertibleLiteralOptionProperty = Maybe.of(
-        parameters.convertibleLiteralOptionProperty,
-      );
-    } else if (parameters.convertibleLiteralOptionProperty === undefined) {
-      convertibleLiteralOptionProperty = Maybe.empty();
-    } else {
-      convertibleLiteralOptionProperty =
-        parameters.convertibleLiteralOptionProperty satisfies never;
-    }
-    let convertibleLiteralProperty: Literal;
-    if (typeof parameters.convertibleLiteralProperty === "bigint") {
-      convertibleLiteralProperty = $literalFactory.bigint(
-        parameters.convertibleLiteralProperty,
-      );
-    } else if (typeof parameters.convertibleLiteralProperty === "boolean") {
-      convertibleLiteralProperty = $literalFactory.boolean(
-        parameters.convertibleLiteralProperty,
-      );
-    } else if (
-      typeof parameters.convertibleLiteralProperty === "object" &&
-      parameters.convertibleLiteralProperty instanceof Date
-    ) {
-      convertibleLiteralProperty = $literalFactory.date(
-        parameters.convertibleLiteralProperty,
-      );
-    } else if (typeof parameters.convertibleLiteralProperty === "number") {
-      convertibleLiteralProperty = $literalFactory.number(
-        parameters.convertibleLiteralProperty,
-      );
-    } else if (typeof parameters.convertibleLiteralProperty === "string") {
-      convertibleLiteralProperty = $literalFactory.string(
-        parameters.convertibleLiteralProperty,
-      );
-    } else if (typeof parameters.convertibleLiteralProperty === "object") {
-      convertibleLiteralProperty = parameters.convertibleLiteralProperty;
-    } else {
-      convertibleLiteralProperty =
-        parameters.convertibleLiteralProperty satisfies never;
-    }
-    let convertibleLiteralSetProperty: readonly Literal[];
-    if (parameters.convertibleLiteralSetProperty === undefined) {
-      convertibleLiteralSetProperty = [];
-    } else if (
-      $isReadonlyObjectArray(parameters.convertibleLiteralSetProperty)
-    ) {
-      convertibleLiteralSetProperty = parameters.convertibleLiteralSetProperty;
-    } else if (
-      $isReadonlyBigIntArray(parameters.convertibleLiteralSetProperty)
-    ) {
-      convertibleLiteralSetProperty =
-        parameters.convertibleLiteralSetProperty.map((item) =>
-          $literalFactory.bigint(item),
-        );
-    } else if (
-      $isReadonlyBooleanArray(parameters.convertibleLiteralSetProperty)
-    ) {
-      convertibleLiteralSetProperty =
-        parameters.convertibleLiteralSetProperty.map((item) =>
-          $literalFactory.boolean(item),
-        );
-    } else if (
-      $isReadonlyNumberArray(parameters.convertibleLiteralSetProperty)
-    ) {
-      convertibleLiteralSetProperty =
-        parameters.convertibleLiteralSetProperty.map((item) =>
-          $literalFactory.number(item),
-        );
-    } else if (
-      $isReadonlyStringArray(parameters.convertibleLiteralSetProperty)
-    ) {
-      convertibleLiteralSetProperty =
-        parameters.convertibleLiteralSetProperty.map((item) =>
-          $literalFactory.string(item),
-        );
-    } else {
-      convertibleLiteralSetProperty =
-        parameters.convertibleLiteralSetProperty satisfies never;
-    }
-    const convertibleTermNonEmptySetProperty =
-      parameters.convertibleTermNonEmptySetProperty;
-    let convertibleTermOptionProperty: Maybe<BlankNode | NamedNode | Literal>;
-    if (Maybe.isMaybe(parameters.convertibleTermOptionProperty)) {
-      convertibleTermOptionProperty = parameters.convertibleTermOptionProperty;
-    } else if (typeof parameters.convertibleTermOptionProperty === "bigint") {
-      convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.bigint(parameters.convertibleTermOptionProperty),
-      );
-    } else if (typeof parameters.convertibleTermOptionProperty === "boolean") {
-      convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.boolean(parameters.convertibleTermOptionProperty),
-      );
-    } else if (
-      typeof parameters.convertibleTermOptionProperty === "object" &&
-      parameters.convertibleTermOptionProperty instanceof Date
-    ) {
-      convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.date(parameters.convertibleTermOptionProperty),
-      );
-    } else if (typeof parameters.convertibleTermOptionProperty === "number") {
-      convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.number(parameters.convertibleTermOptionProperty),
-      );
-    } else if (typeof parameters.convertibleTermOptionProperty === "string") {
-      convertibleTermOptionProperty = Maybe.of(
-        $literalFactory.string(parameters.convertibleTermOptionProperty),
-      );
-    } else if (typeof parameters.convertibleTermOptionProperty === "object") {
-      convertibleTermOptionProperty = Maybe.of(
-        parameters.convertibleTermOptionProperty,
-      );
-    } else if (parameters.convertibleTermOptionProperty === undefined) {
-      convertibleTermOptionProperty = Maybe.empty();
-    } else {
-      convertibleTermOptionProperty =
-        parameters.convertibleTermOptionProperty satisfies never;
-    }
-    let convertibleTermProperty: BlankNode | NamedNode | Literal;
-    if (typeof parameters.convertibleTermProperty === "bigint") {
-      convertibleTermProperty = $literalFactory.bigint(
-        parameters.convertibleTermProperty,
-      );
-    } else if (typeof parameters.convertibleTermProperty === "boolean") {
-      convertibleTermProperty = $literalFactory.boolean(
-        parameters.convertibleTermProperty,
-      );
-    } else if (
-      typeof parameters.convertibleTermProperty === "object" &&
-      parameters.convertibleTermProperty instanceof Date
-    ) {
-      convertibleTermProperty = $literalFactory.date(
-        parameters.convertibleTermProperty,
-      );
-    } else if (typeof parameters.convertibleTermProperty === "number") {
-      convertibleTermProperty = $literalFactory.number(
-        parameters.convertibleTermProperty,
-      );
-    } else if (typeof parameters.convertibleTermProperty === "string") {
-      convertibleTermProperty = $literalFactory.string(
-        parameters.convertibleTermProperty,
-      );
-    } else if (typeof parameters.convertibleTermProperty === "object") {
-      convertibleTermProperty = parameters.convertibleTermProperty;
-    } else {
-      convertibleTermProperty =
-        parameters.convertibleTermProperty satisfies never;
-    }
-    let convertibleTermSetProperty: readonly (
+      | Literal
+    )[];
+    readonly convertibleTermNonEmptySetProperty: readonly (
       | BlankNode
       | NamedNode
       | Literal
     )[];
-    if (parameters.convertibleTermSetProperty === undefined) {
-      convertibleTermSetProperty = [];
-    } else if ($isReadonlyObjectArray(parameters.convertibleTermSetProperty)) {
-      convertibleTermSetProperty = parameters.convertibleTermSetProperty;
-    } else if ($isReadonlyBigIntArray(parameters.convertibleTermSetProperty)) {
-      convertibleTermSetProperty = parameters.convertibleTermSetProperty.map(
-        (item) => $literalFactory.bigint(item),
-      );
-    } else if ($isReadonlyBooleanArray(parameters.convertibleTermSetProperty)) {
-      convertibleTermSetProperty = parameters.convertibleTermSetProperty.map(
-        (item) => $literalFactory.boolean(item),
-      );
-    } else if ($isReadonlyNumberArray(parameters.convertibleTermSetProperty)) {
-      convertibleTermSetProperty = parameters.convertibleTermSetProperty.map(
-        (item) => $literalFactory.number(item),
-      );
-    } else if ($isReadonlyStringArray(parameters.convertibleTermSetProperty)) {
-      convertibleTermSetProperty = parameters.convertibleTermSetProperty.map(
-        (item) => $literalFactory.string(item),
-      );
-    } else {
-      convertibleTermSetProperty =
-        parameters.convertibleTermSetProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      convertibleIriNonEmptySetProperty,
-      convertibleIriOptionProperty,
-      convertibleIriProperty,
-      convertibleIriSetProperty,
-      convertibleLiteralNonEmptySetProperty,
-      convertibleLiteralOptionProperty,
-      convertibleLiteralProperty,
-      convertibleLiteralSetProperty,
-      convertibleTermNonEmptySetProperty,
-      convertibleTermOptionProperty,
-      convertibleTermProperty,
-      convertibleTermSetProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    readonly convertibleTermOptionProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+    readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
+    readonly convertibleTermSetProperty?: readonly (
+      | BlankNode
+      | NamedNode
+      | Literal
+    )[];
+  }): Either<Error, ConvertibleTypeProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      convertibleIriNonEmptySetProperty: $convertToReadonlyArray(
+        $convertToIri<string>,
+      )(
+        schema.properties.convertibleIriNonEmptySetProperty.type(),
+        parameters.convertibleIriNonEmptySetProperty,
+      ),
+      convertibleIriOptionProperty: $convertToMaybe($convertToIri<string>)(
+        schema.properties.convertibleIriOptionProperty.type(),
+        parameters.convertibleIriOptionProperty,
+      ),
+      convertibleIriProperty: $convertToIri<string>(
+        schema.properties.convertibleIriProperty.type(),
+        parameters.convertibleIriProperty,
+      ),
+      convertibleIriSetProperty: $convertToReadonlyArray($convertToIri<string>)(
+        schema.properties.convertibleIriSetProperty.type(),
+        parameters.convertibleIriSetProperty,
+      ),
+      convertibleLiteralNonEmptySetProperty: $convertToReadonlyArray(
+        $convertToLiteral,
+      )(
+        schema.properties.convertibleLiteralNonEmptySetProperty.type(),
+        parameters.convertibleLiteralNonEmptySetProperty,
+      ),
+      convertibleLiteralOptionProperty: $convertToMaybe($convertToLiteral)(
+        schema.properties.convertibleLiteralOptionProperty.type(),
+        parameters.convertibleLiteralOptionProperty,
+      ),
+      convertibleLiteralProperty: $convertToLiteral(
+        schema.properties.convertibleLiteralProperty.type(),
+        parameters.convertibleLiteralProperty,
+      ),
+      convertibleLiteralSetProperty: $convertToReadonlyArray($convertToLiteral)(
+        schema.properties.convertibleLiteralSetProperty.type(),
+        parameters.convertibleLiteralSetProperty,
+      ),
+      convertibleTermNonEmptySetProperty: $convertToReadonlyArray(
+        $convertToTerm<BlankNode | NamedNode | Literal>,
+      )(
+        schema.properties.convertibleTermNonEmptySetProperty.type(),
+        parameters.convertibleTermNonEmptySetProperty,
+      ),
+      convertibleTermOptionProperty: $convertToMaybe(
+        $convertToTerm<BlankNode | NamedNode | Literal>,
+      )(
+        schema.properties.convertibleTermOptionProperty.type(),
+        parameters.convertibleTermOptionProperty,
+      ),
+      convertibleTermProperty: $convertToTerm<BlankNode | NamedNode | Literal>(
+        schema.properties.convertibleTermProperty.type(),
+        parameters.convertibleTermProperty,
+      ),
+      convertibleTermSetProperty: $convertToReadonlyArray(
+        $convertToTerm<BlankNode | NamedNode | Literal>,
+      )(
+        schema.properties.convertibleTermSetProperty.type(),
+        parameters.convertibleTermSetProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "ConvertibleTypeProperties" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ConvertibleTypeProperties.Identifier)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly convertibleIriNonEmptySetProperty: readonly (string | NamedNode)[];
+    readonly convertibleIriOptionProperty?:
+      | string
+      | NamedNode
+      | Maybe<NamedNode>;
+    readonly convertibleIriProperty: string | NamedNode;
+    readonly convertibleIriSetProperty?: readonly (string | NamedNode)[];
+    readonly convertibleLiteralNonEmptySetProperty: readonly (
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+    )[];
+    readonly convertibleLiteralOptionProperty?:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+      | Maybe<Literal>;
+    readonly convertibleLiteralProperty:
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal;
+    readonly convertibleLiteralSetProperty?: readonly (
+      | bigint
+      | boolean
+      | number
+      | string
+      | Date
+      | Literal
+    )[];
+    readonly convertibleTermNonEmptySetProperty: readonly (
+      | BlankNode
+      | NamedNode
+      | Literal
+    )[];
+    readonly convertibleTermOptionProperty?:
+      | (BlankNode | NamedNode | Literal)
+      | Maybe<BlankNode | NamedNode | Literal>;
+    readonly convertibleTermProperty: BlankNode | NamedNode | Literal;
+    readonly convertibleTermSetProperty?: readonly (
+      | BlankNode
+      | NamedNode
+      | Literal
+    )[];
+  }): ConvertibleTypeProperties {
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -48707,15 +48322,13 @@ export namespace ConvertibleTypeProperties {
   export function fromJson(
     $json: ConvertibleTypeProperties.Json,
   ): ConvertibleTypeProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
-      convertibleIriNonEmptySetProperty: NonEmptyList.fromArray(
-        $json["convertibleIriNonEmptySetProperty"],
-      )
-        .unsafeCoerce()
-        .map((item) => dataFactory.namedNode(item["@id"])),
+      convertibleIriNonEmptySetProperty: $json[
+        "convertibleIriNonEmptySetProperty"
+      ].map((item) => dataFactory.namedNode(item["@id"])),
       convertibleIriOptionProperty: Maybe.fromNullable(
         $json["convertibleIriOptionProperty"],
       ).map((item) => dataFactory.namedNode(item["@id"])),
@@ -48725,20 +48338,18 @@ export namespace ConvertibleTypeProperties {
       convertibleIriSetProperty: ($json["convertibleIriSetProperty"] ?? []).map(
         (item) => dataFactory.namedNode(item["@id"]),
       ),
-      convertibleLiteralNonEmptySetProperty: NonEmptyList.fromArray(
-        $json["convertibleLiteralNonEmptySetProperty"],
-      )
-        .unsafeCoerce()
-        .map((item) =>
-          dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"]!)
-                : undefined,
-          ),
+      convertibleLiteralNonEmptySetProperty: $json[
+        "convertibleLiteralNonEmptySetProperty"
+      ].map((item) =>
+        dataFactory.literal(
+          item["@value"],
+          item["@language"] !== undefined
+            ? item["@language"]
+            : item["@type"] !== undefined
+              ? dataFactory.namedNode(item["@type"]!)
+              : undefined,
         ),
+      ),
       convertibleLiteralOptionProperty: Maybe.fromNullable(
         $json["convertibleLiteralOptionProperty"],
       ).map((item) =>
@@ -48773,24 +48384,22 @@ export namespace ConvertibleTypeProperties {
               : undefined,
         ),
       ),
-      convertibleTermNonEmptySetProperty: NonEmptyList.fromArray(
-        $json["convertibleTermNonEmptySetProperty"],
-      )
-        .unsafeCoerce()
-        .map((item) =>
-          item.termType === "Literal"
-            ? dataFactory.literal(
-                item["@value"],
-                item["@language"] !== undefined
-                  ? item["@language"]
-                  : item["@type"] !== undefined
-                    ? dataFactory.namedNode(item["@type"]!)
-                    : undefined,
-              )
-            : item.termType === "NamedNode"
-              ? dataFactory.namedNode(item["@id"])
-              : dataFactory.blankNode(item["@id"].substring(2)),
-        ),
+      convertibleTermNonEmptySetProperty: $json[
+        "convertibleTermNonEmptySetProperty"
+      ].map((item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            )
+          : item.termType === "NamedNode"
+            ? dataFactory.namedNode(item["@id"])
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      ),
       convertibleTermOptionProperty: Maybe.fromNullable(
         $json["convertibleTermOptionProperty"],
       ).map((item) =>
@@ -48893,11 +48502,7 @@ export namespace ConvertibleTypeProperties {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) => values.chainMap((value) => value.toIri()))
-              .chain((values) =>
-                NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(`${$resource.identifier} is an empty set`),
-                ),
-              )
+              .map((values) => values.toArray())
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $resource,
@@ -48968,11 +48573,7 @@ export namespace ConvertibleTypeProperties {
                 ),
               )
               .chain((values) => values.chainMap((value) => value.toLiteral()))
-              .chain((values) =>
-                NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(`${$resource.identifier} is an empty set`),
-                ),
-              )
+              .map((values) => values.toArray())
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $resource,
@@ -49053,11 +48654,7 @@ export namespace ConvertibleTypeProperties {
           typeFromRdf: (resourceValues) =>
             resourceValues
               .chain((values) => values.chainMap((value) => value.toTerm()))
-              .chain((values) =>
-                NonEmptyList.fromArray(values.toArray()).toEither(
-                  new Error(`${$resource.identifier} is an empty set`),
-                ),
-              )
+              .map((values) => values.toArray())
               .map((valuesArray) =>
                 Resource.Values.fromValue({
                   focusResource: $resource,
@@ -49116,7 +48713,7 @@ export namespace ConvertibleTypeProperties {
                 }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -49672,32 +49269,40 @@ export namespace Partial {
   export function create(parameters: {
     readonly $identifier?:
       | (() => Partial.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly lazilyResolvedStringProperty: string;
+  }): Either<Error, Partial> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      lazilyResolvedStringProperty: $convertToString<string>(
+        schema.properties.lazilyResolvedStringProperty.type(),
+        parameters.lazilyResolvedStringProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "Partial" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => Partial.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly lazilyResolvedStringProperty: string;
   }): Partial {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => Partial.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "Partial" as const;
-    const lazilyResolvedStringProperty =
-      parameters.lazilyResolvedStringProperty;
-    const $object = { $identifier, $type, lazilyResolvedStringProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(left: Partial, right: Partial): $EqualsResult {
@@ -49881,7 +49486,7 @@ export namespace Partial {
   };
 
   export function fromJson($json: Partial.Json): Partial {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -49915,7 +49520,7 @@ export namespace Partial {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -50107,31 +49712,40 @@ export namespace NonClass {
   export function create(parameters: {
     readonly $identifier?:
       | (() => NonClass.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly nonClassProperty: string;
+  }): Either<Error, NonClass> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      nonClassProperty: $convertToString<string>(
+        schema.properties.nonClassProperty.type(),
+        parameters.nonClassProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "NonClass" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => NonClass.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly nonClassProperty: string;
   }): NonClass {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => NonClass.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "NonClass" as const;
-    const nonClassProperty = parameters.nonClassProperty;
-    const $object = { $identifier, $type, nonClassProperty };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(left: NonClass, right: NonClass): $EqualsResult {
@@ -50311,7 +49925,7 @@ export namespace NonClass {
   };
 
   export function fromJson($json: NonClass.Json): NonClass {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -50345,7 +49959,7 @@ export namespace NonClass {
             )
             .chain((values) => values.chainMap((value) => value.toString())),
       }),
-    }).map((properties) => create(properties));
+    }).chain((properties) => create(properties));
   };
 
   export const fromRdfResource =
@@ -50554,110 +50168,80 @@ export namespace ClassProperties {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => ClassProperties.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
       | string;
-    readonly iriClassProperty?: Maybe<NamedNode> | NamedNode | string;
+    readonly iriClassProperty?: string | NamedNode | Maybe<NamedNode>;
     readonly multiClassProperty?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
-      | string;
-    readonly nodeClassProperty1?: Maybe<NonClass> | NonClass;
-    readonly nodeClassProperty2?: Maybe<Partial> | Partial;
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly nodeClassProperty1?: NonClass | Maybe<NonClass>;
+    readonly nodeClassProperty2?: Partial | Maybe<Partial>;
     readonly singleClassProperty?:
-      | Maybe<BlankNode | NamedNode>
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+  }): Either<Error, ClassProperties> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+      iriClassProperty: $convertToMaybe($convertToIri<string>)(
+        schema.properties.iriClassProperty.type(),
+        parameters?.iriClassProperty,
+      ),
+      multiClassProperty: $convertToMaybe($convertToIdentifier)(
+        schema.properties.multiClassProperty.type(),
+        parameters?.multiClassProperty,
+      ),
+      nodeClassProperty1: $convertToMaybe($convertToObject)(
+        schema.properties.nodeClassProperty1.type(),
+        parameters?.nodeClassProperty1,
+      ),
+      nodeClassProperty2: $convertToMaybe($convertToObject)(
+        schema.properties.nodeClassProperty2.type(),
+        parameters?.nodeClassProperty2,
+      ),
+      singleClassProperty: $convertToMaybe($convertToIdentifier)(
+        schema.properties.singleClassProperty.type(),
+        parameters?.singleClassProperty,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "ClassProperties" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => ClassProperties.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
+    readonly iriClassProperty?: string | NamedNode | Maybe<NamedNode>;
+    readonly multiClassProperty?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
+    readonly nodeClassProperty1?: NonClass | Maybe<NonClass>;
+    readonly nodeClassProperty2?: Partial | Maybe<Partial>;
+    readonly singleClassProperty?:
+      | BlankNode
+      | NamedNode
+      | string
+      | Maybe<BlankNode | NamedNode>;
   }): ClassProperties {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => ClassProperties.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassProperties" as const;
-    let iriClassProperty: Maybe<NamedNode>;
-    if (Maybe.isMaybe(parameters?.iriClassProperty)) {
-      iriClassProperty = parameters?.iriClassProperty;
-    } else if (typeof parameters?.iriClassProperty === "object") {
-      iriClassProperty = Maybe.of(parameters?.iriClassProperty);
-    } else if (typeof parameters?.iriClassProperty === "string") {
-      iriClassProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.iriClassProperty),
-      );
-    } else if (parameters?.iriClassProperty === undefined) {
-      iriClassProperty = Maybe.empty();
-    } else {
-      iriClassProperty = parameters?.iriClassProperty satisfies never;
-    }
-    let multiClassProperty: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters?.multiClassProperty)) {
-      multiClassProperty = parameters?.multiClassProperty;
-    } else if (typeof parameters?.multiClassProperty === "object") {
-      multiClassProperty = Maybe.of(parameters?.multiClassProperty);
-    } else if (typeof parameters?.multiClassProperty === "string") {
-      multiClassProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.multiClassProperty),
-      );
-    } else if (parameters?.multiClassProperty === undefined) {
-      multiClassProperty = Maybe.empty();
-    } else {
-      multiClassProperty = parameters?.multiClassProperty satisfies never;
-    }
-    let nodeClassProperty1: Maybe<NonClass>;
-    if (Maybe.isMaybe(parameters?.nodeClassProperty1)) {
-      nodeClassProperty1 = parameters?.nodeClassProperty1;
-    } else if (typeof parameters?.nodeClassProperty1 === "object") {
-      nodeClassProperty1 = Maybe.of(parameters?.nodeClassProperty1);
-    } else if (parameters?.nodeClassProperty1 === undefined) {
-      nodeClassProperty1 = Maybe.empty();
-    } else {
-      nodeClassProperty1 = parameters?.nodeClassProperty1 satisfies never;
-    }
-    let nodeClassProperty2: Maybe<Partial>;
-    if (Maybe.isMaybe(parameters?.nodeClassProperty2)) {
-      nodeClassProperty2 = parameters?.nodeClassProperty2;
-    } else if (typeof parameters?.nodeClassProperty2 === "object") {
-      nodeClassProperty2 = Maybe.of(parameters?.nodeClassProperty2);
-    } else if (parameters?.nodeClassProperty2 === undefined) {
-      nodeClassProperty2 = Maybe.empty();
-    } else {
-      nodeClassProperty2 = parameters?.nodeClassProperty2 satisfies never;
-    }
-    let singleClassProperty: Maybe<BlankNode | NamedNode>;
-    if (Maybe.isMaybe(parameters?.singleClassProperty)) {
-      singleClassProperty = parameters?.singleClassProperty;
-    } else if (typeof parameters?.singleClassProperty === "object") {
-      singleClassProperty = Maybe.of(parameters?.singleClassProperty);
-    } else if (typeof parameters?.singleClassProperty === "string") {
-      singleClassProperty = Maybe.of(
-        dataFactory.namedNode(parameters?.singleClassProperty),
-      );
-    } else if (parameters?.singleClassProperty === undefined) {
-      singleClassProperty = Maybe.empty();
-    } else {
-      singleClassProperty = parameters?.singleClassProperty satisfies never;
-    }
-    const $object = {
-      $identifier,
-      $type,
-      iriClassProperty,
-      multiClassProperty,
-      nodeClassProperty1,
-      nodeClassProperty2,
-      singleClassProperty,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -51161,7 +50745,7 @@ export namespace ClassProperties {
   };
 
   export function fromJson($json: ClassProperties.Json): ClassProperties {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -51343,7 +50927,7 @@ export namespace ClassProperties {
                     }),
               ),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -51638,31 +51222,40 @@ export namespace ClassHierarchy0 {
   export function create(parameters: {
     readonly $identifier?:
       | (() => ClassHierarchy0.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+    readonly classHierarchy0Property: string;
+  }): Either<Error, ClassHierarchy0> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      classHierarchy0Property: $convertToString<string>(
+        schema.properties.classHierarchy0Property.type(),
+        parameters.classHierarchy0Property,
+      ),
+    }).map((properties) => {
+      const finalObject = { ...properties, $type: "ClassHierarchy0" as const };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters: {
+    readonly $identifier?:
+      | (() => ClassHierarchy0.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
     readonly classHierarchy0Property: string;
   }): ClassHierarchy0 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassHierarchy0.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassHierarchy0" as const;
-    const classHierarchy0Property = parameters.classHierarchy0Property;
-    const $object = { $identifier, $type, classHierarchy0Property };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -51933,7 +51526,7 @@ export namespace ClassHierarchy0 {
   };
 
   export function fromJson($json: ClassHierarchy0.Json): ClassHierarchy0 {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -52002,7 +51595,7 @@ export namespace ClassHierarchy0 {
               )
               .chain((values) => values.chainMap((value) => value.toString())),
         }),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -52219,34 +51812,43 @@ export namespace ClassHierarchy1 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy1.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+    } & Parameters<typeof ClassHierarchy0.create>[0],
+  ): Either<Error, ClassHierarchy1> {
+    return ClassHierarchy0.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIdentifierProperty(parameters.$identifier),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "ClassHierarchy1" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy1.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
     } & Parameters<typeof ClassHierarchy0.create>[0],
   ): ClassHierarchy1 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassHierarchy1.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassHierarchy1" as const;
-    const $object = {
-      ...ClassHierarchy0.create(parameters),
-      $identifier,
-      $type,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -52471,7 +52073,7 @@ export namespace ClassHierarchy1 {
   };
 
   export function fromJson($json: ClassHierarchy1.Json): ClassHierarchy1 {
-    return create({
+    return createUnsafe({
       ...ClassHierarchy0.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
@@ -52528,7 +52130,7 @@ export namespace ClassHierarchy1 {
           )
             .chain((values) => values.chainMap((value) => value.toIdentifier()))
             .chain((values) => values.head()),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };
@@ -52733,37 +52335,49 @@ export namespace ClassHierarchy2 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy2.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+      readonly classHierarchy2Property: string;
+    } & Parameters<typeof ClassHierarchy1.create>[0],
+  ): Either<Error, ClassHierarchy2> {
+    return ClassHierarchy1.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIdentifierProperty(parameters.$identifier),
+        classHierarchy2Property: $convertToString<string>(
+          schema.properties.classHierarchy2Property.type(),
+          parameters.classHierarchy2Property,
+        ),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "ClassHierarchy2" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy2.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy2Property: string;
     } & Parameters<typeof ClassHierarchy1.create>[0],
   ): ClassHierarchy2 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassHierarchy2.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassHierarchy2" as const;
-    const classHierarchy2Property = parameters.classHierarchy2Property;
-    const $object = {
-      ...ClassHierarchy1.create(parameters),
-      $identifier,
-      $type,
-      classHierarchy2Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -53036,7 +52650,7 @@ export namespace ClassHierarchy2 {
   };
 
   export function fromJson($json: ClassHierarchy2.Json): ClassHierarchy2 {
-    return create({
+    return createUnsafe({
       ...ClassHierarchy1.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
@@ -53109,7 +52723,7 @@ export namespace ClassHierarchy2 {
                   values.chainMap((value) => value.toString()),
                 ),
           }),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };
@@ -53326,37 +52940,49 @@ export namespace ClassHierarchy3 {
     parameters: {
       readonly $identifier?:
         | (() => ClassHierarchy3.Identifier)
-        | (BlankNode | NamedNode)
+        | BlankNode
+        | NamedNode
+        | string;
+      readonly classHierarchy3Property: string;
+    } & Parameters<typeof ClassHierarchy2.create>[0],
+  ): Either<Error, ClassHierarchy3> {
+    return ClassHierarchy2.create(parameters).chain((super0) =>
+      $sequenceRecord({
+        $identifier: $convertToIdentifierProperty(parameters.$identifier),
+        classHierarchy3Property: $convertToString<string>(
+          schema.properties.classHierarchy3Property.type(),
+          parameters.classHierarchy3Property,
+        ),
+      }).map((properties) => {
+        const finalObject = {
+          ...super0,
+          ...properties,
+          $type: "ClassHierarchy3" as const,
+        };
+        if (
+          !globalThis.Object.prototype.hasOwnProperty.call(
+            finalObject,
+            "toString",
+          )
+        ) {
+          (finalObject as any).toString = $toString;
+        }
+        return finalObject;
+      }),
+    );
+  }
+
+  export function createUnsafe(
+    parameters: {
+      readonly $identifier?:
+        | (() => ClassHierarchy3.Identifier)
+        | BlankNode
+        | NamedNode
         | string;
       readonly classHierarchy3Property: string;
     } & Parameters<typeof ClassHierarchy2.create>[0],
   ): ClassHierarchy3 {
-    const $identifierParameter = parameters.$identifier;
-    let $identifier: () => ClassHierarchy3.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "ClassHierarchy3" as const;
-    const classHierarchy3Property = parameters.classHierarchy3Property;
-    const $object = {
-      ...ClassHierarchy2.create(parameters),
-      $identifier,
-      $type,
-      classHierarchy3Property,
-    };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -53615,7 +53241,7 @@ export namespace ClassHierarchy3 {
   };
 
   export function fromJson($json: ClassHierarchy3.Json): ClassHierarchy3 {
-    return create({
+    return createUnsafe({
       ...ClassHierarchy2.fromJson($json),
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
@@ -53687,7 +53313,7 @@ export namespace ClassHierarchy3 {
                   values.chainMap((value) => value.toString()),
                 ),
           }),
-        }).map((properties) => create({ ...super0, ...properties })),
+        }).chain((properties) => create({ ...super0, ...properties })),
       ),
     );
   };
@@ -53903,29 +53529,37 @@ export namespace BlankNodeOrIriIdentifier {
   export function create(parameters?: {
     readonly $identifier?:
       | (() => BlankNodeOrIriIdentifier.Identifier)
-      | (BlankNode | NamedNode)
+      | BlankNode
+      | NamedNode
+      | string;
+  }): Either<Error, BlankNodeOrIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToIdentifierProperty(parameters?.$identifier),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "BlankNodeOrIriIdentifier" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?:
+      | (() => BlankNodeOrIriIdentifier.Identifier)
+      | BlankNode
+      | NamedNode
       | string;
   }): BlankNodeOrIriIdentifier {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => BlankNodeOrIriIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if (typeof $identifierParameter === "string") {
-      $identifier = () => dataFactory.namedNode($identifierParameter);
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "BlankNodeOrIriIdentifier" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -54124,7 +53758,7 @@ export namespace BlankNodeOrIriIdentifier {
   export function fromJson(
     $json: BlankNodeOrIriIdentifier.Json,
   ): BlankNodeOrIriIdentifier {
-    return create({
+    return createUnsafe({
       $identifier: $json["@id"].startsWith("_:")
         ? dataFactory.blankNode($json["@id"].substring(2))
         : dataFactory.namedNode($json["@id"]),
@@ -54174,7 +53808,7 @@ export namespace BlankNodeOrIriIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toIdentifier()))
           .chain((values) => values.head()),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 
@@ -54377,25 +54011,32 @@ export interface BlankNodeIdentifier {
 export namespace BlankNodeIdentifier {
   export function create(parameters?: {
     readonly $identifier?: (() => BlankNodeIdentifier.Identifier) | BlankNode;
+  }): Either<Error, BlankNodeIdentifier> {
+    return $sequenceRecord({
+      $identifier: $convertToBlankNodeIdentifierProperty(
+        parameters?.$identifier,
+      ),
+    }).map((properties) => {
+      const finalObject = {
+        ...properties,
+        $type: "BlankNodeIdentifier" as const,
+      };
+      if (
+        !globalThis.Object.prototype.hasOwnProperty.call(
+          finalObject,
+          "toString",
+        )
+      ) {
+        (finalObject as any).toString = $toString;
+      }
+      return finalObject;
+    });
+  }
+
+  export function createUnsafe(parameters?: {
+    readonly $identifier?: (() => BlankNodeIdentifier.Identifier) | BlankNode;
   }): BlankNodeIdentifier {
-    const $identifierParameter = parameters?.$identifier;
-    let $identifier: () => BlankNodeIdentifier.Identifier;
-    if (typeof $identifierParameter === "function") {
-      $identifier = $identifierParameter;
-    } else if (typeof $identifierParameter === "object") {
-      $identifier = () => $identifierParameter;
-    } else if ($identifierParameter === undefined) {
-      const $eagerIdentifier = dataFactory.blankNode();
-      $identifier = () => $eagerIdentifier;
-    } else {
-      $identifier = $identifierParameter satisfies never;
-    }
-    const $type = "BlankNodeIdentifier" as const;
-    const $object = { $identifier, $type };
-    if (!globalThis.Object.prototype.hasOwnProperty.call($object, "toString")) {
-      ($object as any).toString = $toString;
-    }
-    return $object;
+    return create(parameters).unsafeCoerce();
   }
 
   export function equals(
@@ -54591,7 +54232,7 @@ export namespace BlankNodeIdentifier {
   export function fromJson(
     $json: BlankNodeIdentifier.Json,
   ): BlankNodeIdentifier {
-    return create({
+    return createUnsafe({
       $identifier: dataFactory.blankNode($json["@id"].substring(2)),
     });
   }
@@ -54639,7 +54280,7 @@ export namespace BlankNodeIdentifier {
         )
           .chain((values) => values.chainMap((value) => value.toBlankNode()))
           .chain((values) => values.head()),
-      }).map((properties) => create(properties)),
+      }).chain((properties) => create(properties)),
     );
   };
 

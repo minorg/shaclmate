@@ -66,33 +66,33 @@ export namespace ShapesGraph {
     }
 
     nodeShape(
-      parameters?: Parameters<typeof generated.NodeShape.create>[0],
+      parameters?: Parameters<typeof generated.NodeShape.createUnsafe>[0],
     ): generated.NodeShape {
-      const nodeShape = generated.NodeShape.create(parameters);
+      const nodeShape = generated.NodeShape.createUnsafe(parameters);
       this.add(nodeShape);
       return nodeShape;
     }
 
     ontology(
-      parameters?: Parameters<typeof generated.Ontology.create>[0],
+      parameters?: Parameters<typeof generated.Ontology.createUnsafe>[0],
     ): generated.Ontology {
-      const ontology = generated.Ontology.create(parameters);
+      const ontology = generated.Ontology.createUnsafe(parameters);
       this.add(ontology);
       return ontology;
     }
 
     propertyGroup(
-      parameters?: Parameters<typeof generated.PropertyGroup.create>[0],
+      parameters?: Parameters<typeof generated.PropertyGroup.createUnsafe>[0],
     ): generated.PropertyGroup {
-      const propertyGroup = generated.PropertyGroup.create(parameters);
+      const propertyGroup = generated.PropertyGroup.createUnsafe(parameters);
       this.add(propertyGroup);
       return propertyGroup;
     }
 
     propertyShape(
-      parameters: Parameters<typeof generated.PropertyShape.create>[0],
+      parameters: Parameters<typeof generated.PropertyShape.createUnsafe>[0],
     ): generated.PropertyShape {
-      const propertyShape = generated.PropertyShape.create(parameters);
+      const propertyShape = generated.PropertyShape.createUnsafe(parameters);
       this.add(propertyShape);
       return propertyShape;
     }

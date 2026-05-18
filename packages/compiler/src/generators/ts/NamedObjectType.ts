@@ -2,7 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 
 import { camelCase } from "change-case";
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { DiscriminantProperty as _DiscriminantProperty } from "./_NamedObjectType/DiscriminantProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_NamedObjectType/IdentifierProperty.js";
@@ -54,7 +54,7 @@ export class NamedObjectType extends AbstractType {
   override readonly name: string;
   override readonly recursive: boolean;
   readonly synthetic: boolean;
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     extern,
@@ -125,16 +125,16 @@ export class NamedObjectType extends AbstractType {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      },
-    ];
+  override get conversionFunction(): AbstractType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToObject}`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+      ],
+    };
   }
 
   override get declaration(): Maybe<Code> {

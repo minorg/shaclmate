@@ -1,8 +1,7 @@
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly equalsFunction =
@@ -16,32 +15,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
-  override readonly typeofs = NonEmptyList(["object" as const]);
-
-  @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object" && ${value} instanceof Date`,
-        sourceTypeName: this.name,
-        sourceTypeof: "object",
-      },
-    ];
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map(
-              (inValue) => code`new Date(${literalOf(inValue.toISOString())})`,
-            )
-          : undefined,
-    };
-  }
+  override readonly typeofs = ["object" as const];
 
   override fromJsonExpression({
     variables,
@@ -84,4 +58,8 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       value: Code;
     };
   }): Code;
+}
+
+export namespace AbstractDateType {
+  export type ConversionFunction = AbstractPrimitiveType.ConversionFunction;
 }

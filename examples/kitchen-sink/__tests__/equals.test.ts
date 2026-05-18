@@ -22,11 +22,11 @@ describe("equals", () => {
   }) => {
     expect(
       kitchenSink.NonClass.equals(
-        kitchenSink.NonClass.create({
+        kitchenSink.NonClass.createUnsafe({
           $identifier: dataFactory.blankNode(),
           nonClassProperty: "Test",
         }),
-        kitchenSink.NonClass.create({
+        kitchenSink.NonClass.createUnsafe({
           $identifier: dataFactory.blankNode(),
           nonClassProperty: "Test2",
         }),
@@ -38,7 +38,7 @@ describe("equals", () => {
     const $identifier = dataFactory.blankNode();
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -50,7 +50,7 @@ describe("equals", () => {
           ),
           requiredIriOrStringProperty: "test",
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -67,7 +67,7 @@ describe("equals", () => {
 
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -79,7 +79,7 @@ describe("equals", () => {
           ),
           requiredIriOrStringProperty: "test",
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -97,7 +97,7 @@ describe("equals", () => {
     const $identifier = dataFactory.blankNode();
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -109,7 +109,7 @@ describe("equals", () => {
           ),
           requiredIriOrStringProperty: "test",
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -126,7 +126,7 @@ describe("equals", () => {
 
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -138,11 +138,11 @@ describe("equals", () => {
           ),
           requiredIriOrStringProperty: "test",
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "UnionMember1",
-            value: kitchenSink.UnionMember1.create({
+            value: kitchenSink.UnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),
@@ -164,7 +164,7 @@ describe("equals", () => {
     const $identifier = dataFactory.blankNode();
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -176,7 +176,7 @@ describe("equals", () => {
           ),
           requiredIriOrStringProperty: "test",
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -193,7 +193,7 @@ describe("equals", () => {
 
     expect(
       kitchenSink.UnionDiscriminants.equals(
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "string",
@@ -206,11 +206,11 @@ describe("equals", () => {
           requiredIriOrStringProperty:
             dataFactory.namedNode("http://example.com"),
         }),
-        kitchenSink.UnionDiscriminants.create({
+        kitchenSink.UnionDiscriminants.createUnsafe({
           $identifier,
           requiredNodeOrNodeOrStringProperty: {
             type: "UnionMember1",
-            value: kitchenSink.UnionMember1.create({
+            value: kitchenSink.UnionMember1.createUnsafe({
               $identifier: dataFactory.namedNode(
                 "http://example.com/unionMember1",
               ),

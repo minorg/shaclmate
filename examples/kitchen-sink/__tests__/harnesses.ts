@@ -1,11 +1,12 @@
 import dataFactory from "@rdfx/data-factory";
+import { LiteralFactory } from "@rdfx/literal";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
-import { NonEmptyList } from "purify-ts";
 import { Harness } from "./Harness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
+const literalFactory = new LiteralFactory({ dataFactory });
 
 const jsPrimitiveValues = [true, 1, "test"];
 
@@ -21,27 +22,27 @@ const permute = <T>(arr: T[]): T[][] =>
 
 export const harnesses = {
   blankNodeOrIriIdentifierWithExplicitBlankNodeIdentifier: new Harness(
-    kitchenSink.BlankNodeOrIriIdentifier.create({
+    kitchenSink.BlankNodeOrIriIdentifier.createUnsafe({
       $identifier: dataFactory.blankNode(),
     }),
     kitchenSink.BlankNodeOrIriIdentifier,
   ),
   blankNodeOrIriIdentifierWithExplicitIriIdentifier: new Harness(
-    kitchenSink.BlankNodeOrIriIdentifier.create({
+    kitchenSink.BlankNodeOrIriIdentifier.createUnsafe({
       $identifier,
     }),
     kitchenSink.BlankNodeOrIriIdentifier,
   ),
   blankNodeIdentifierWithoutExplicitIdentifier: new Harness(
-    kitchenSink.BlankNodeIdentifier.create({}),
+    kitchenSink.BlankNodeIdentifier.createUnsafe({}),
     kitchenSink.BlankNodeIdentifier,
   ),
   blankNodeOrIriIdentifierWithoutExplicitIdentifier: new Harness(
-    kitchenSink.BlankNodeOrIriIdentifier.create(),
+    kitchenSink.BlankNodeOrIriIdentifier.createUnsafe(),
     kitchenSink.BlankNodeOrIriIdentifier,
   ),
   // classProperties: new Harness(
-  //   kitchenSink.ClassPropertiesClass.create({
+  //   kitchenSink.ClassPropertiesClass.createUnsafe({
   //     $identifier,
   //     iriClassProperty: dataFactory.namedNode(
   //       "http://example.com/iriClassPropertyInstance",
@@ -49,13 +50,13 @@ export const harnesses = {
   //     multiClassProperty: dataFactory.namedNode(
   //       "http://example.com/multiClassPropertyInstance",
   //     ),
-  //     nodeClassProperty1: kitchenSink.Non.create({
+  //     nodeClassProperty1: kitchenSink.Non.createUnsafe({
   //       $identifier: dataFactory.namedNode(
   //         "http://example.com/nodeClassProperty1Instance",
   //       ),
   //       nonClassProperty: "test",
   //     }),
-  //     nodeClassProperty2: kitchenSink.Partial.create({
+  //     nodeClassProperty2: kitchenSink.Partial.createUnsafe({
   //       $identifier: dataFactory.namedNode(
   //         "http://example.com/nodeClassProperty1Instance",
   //       ),
@@ -68,14 +69,14 @@ export const harnesses = {
   //   kitchenSink.ClassProperties,
   // ),
   classHierarchy0: new Harness(
-    kitchenSink.ClassHierarchy0.create({
+    kitchenSink.ClassHierarchy0.createUnsafe({
       classHierarchy0Property: "0",
       $identifier,
     }),
     kitchenSink.ClassHierarchy0,
   ),
   classHierarchy1: new Harness(
-    kitchenSink.ClassHierarchy1.create({
+    kitchenSink.ClassHierarchy1.createUnsafe({
       classHierarchy0Property: "0",
       // Doesn't have any own properties
       $identifier,
@@ -83,7 +84,7 @@ export const harnesses = {
     kitchenSink.ClassHierarchy1,
   ),
   classHierarchy2: new Harness(
-    kitchenSink.ClassHierarchy2.create({
+    kitchenSink.ClassHierarchy2.createUnsafe({
       classHierarchy0Property: "0",
       classHierarchy2Property: "2",
       $identifier,
@@ -91,7 +92,7 @@ export const harnesses = {
     kitchenSink.ClassHierarchy2,
   ),
   classHierarchy3: new Harness(
-    kitchenSink.ClassHierarchy3.create({
+    kitchenSink.ClassHierarchy3.createUnsafe({
       classHierarchy0Property: "0",
       classHierarchy2Property: "2",
       classHierarchy3Property: "3",
@@ -100,7 +101,7 @@ export const harnesses = {
     kitchenSink.ClassHierarchy3,
   ),
   classMultipleInheritanceChild: new Harness(
-    kitchenSink.ClassMultipleInheritanceChild.create({
+    kitchenSink.ClassMultipleInheritanceChild.createUnsafe({
       classMultipleInheritanceChildProperty: "child",
       classMultipleInheritanceParent1Property: "parent1",
       classMultipleInheritanceParent2Property: "parent2",
@@ -108,30 +109,26 @@ export const harnesses = {
     kitchenSink.ClassMultipleInheritanceChild,
   ),
   convertibleTypeProperties: new Harness(
-    kitchenSink.ConvertibleTypeProperties.create({
-      convertibleIriNonEmptySetProperty: NonEmptyList([
+    kitchenSink.ConvertibleTypeProperties.createUnsafe({
+      convertibleIriNonEmptySetProperty: [
         dataFactory.namedNode("http://example.com"),
-      ]),
+      ],
       convertibleIriOptionProperty: "http://example.com",
       convertibleIriProperty: "http://example.com",
       convertibleIriSetProperty: ["http://example.com"],
-      convertibleLiteralNonEmptySetProperty: NonEmptyList([
-        dataFactory.literal("test"),
-      ]),
+      convertibleLiteralNonEmptySetProperty: [dataFactory.literal("test")],
       convertibleLiteralProperty: 1,
       convertibleLiteralOptionProperty: true,
       convertibleLiteralSetProperty: ["test"],
-      convertibleTermOptionProperty: 1,
-      convertibleTermProperty: new Date(1523268000000),
-      convertibleTermNonEmptySetProperty: NonEmptyList([
-        dataFactory.blankNode(),
-      ]),
-      convertibleTermSetProperty: [true],
+      convertibleTermOptionProperty: literalFactory.number(1),
+      convertibleTermProperty: literalFactory.date(new Date(1523268000000)),
+      convertibleTermNonEmptySetProperty: [dataFactory.blankNode()],
+      convertibleTermSetProperty: [literalFactory.boolean(true)],
     }),
     kitchenSink.ConvertibleTypeProperties,
   ),
   dateUnionProperties1: new Harness(
-    kitchenSink.DateUnionProperties.create({
+    kitchenSink.DateUnionProperties.createUnsafe({
       $identifier,
       dateOrDateTimeProperty: { type: "date", value: new Date("2025-12-08") },
       dateTimeOrDateProperty: {
@@ -144,7 +141,7 @@ export const harnesses = {
     kitchenSink.DateUnionProperties,
   ),
   dateUnionProperties2: new Harness(
-    kitchenSink.DateUnionProperties.create({
+    kitchenSink.DateUnionProperties.createUnsafe({
       $identifier,
       dateOrDateTimeProperty: {
         type: "dateTime",
@@ -157,13 +154,13 @@ export const harnesses = {
     kitchenSink.DateUnionProperties,
   ),
   defaultValueProperties: new Harness(
-    kitchenSink.DefaultValueProperties.create({
+    kitchenSink.DefaultValueProperties.createUnsafe({
       $identifier,
     }),
     kitchenSink.DefaultValueProperties,
   ),
   defaultValuePropertiesOverriddenDifferent: new Harness(
-    kitchenSink.DefaultValueProperties.create({
+    kitchenSink.DefaultValueProperties.createUnsafe({
       falseBooleanDefaultValueProperty: true,
       $identifier,
       numberDefaultValueProperty: 1,
@@ -173,7 +170,7 @@ export const harnesses = {
     kitchenSink.DefaultValueProperties,
   ),
   defaultValuePropertiesOverriddenSame: new Harness(
-    kitchenSink.DefaultValueProperties.create({
+    kitchenSink.DefaultValueProperties.createUnsafe({
       falseBooleanDefaultValueProperty: false,
       dateDefaultValueProperty: new Date("2025-03-06"),
       dateTimeDefaultValueProperty: new Date(1523268000000),
@@ -185,13 +182,13 @@ export const harnesses = {
     kitchenSink.DefaultValueProperties,
   ),
   directRecursive: new Harness(
-    kitchenSink.DirectRecursive.create({
-      directRecursiveProperty: kitchenSink.DirectRecursive.create({}),
+    kitchenSink.DirectRecursive.createUnsafe({
+      directRecursiveProperty: kitchenSink.DirectRecursive.createUnsafe({}),
     }),
     kitchenSink.DirectRecursive,
   ),
   displayProperties: new Harness(
-    kitchenSink.DisplayProperties.create({
+    kitchenSink.DisplayProperties.createUnsafe({
       $identifier,
       explicitFalseDisplayProperty: "explicitFalseDisplayValue",
       explicitTrueDisplayProperty: "explicitTrueDisplayValue",
@@ -200,38 +197,38 @@ export const harnesses = {
     kitchenSink.DisplayProperties,
   ),
   emptyListProperties: new Harness(
-    kitchenSink.ListProperties.create({
+    kitchenSink.ListProperties.createUnsafe({
       $identifier,
       stringListProperty: [],
     }),
     kitchenSink.ListProperties,
   ),
   explicitFromToRdfTypes: new Harness(
-    kitchenSink.ExplicitFromToRdfTypes.create({
+    kitchenSink.ExplicitFromToRdfTypes.createUnsafe({
       explicitFromToRdfTypesProperty: "test",
       $identifier,
     }),
     kitchenSink.ExplicitFromToRdfTypes,
   ),
   explicitRdfType: new Harness(
-    kitchenSink.ExplicitRdfType.create({
+    kitchenSink.ExplicitRdfType.createUnsafe({
       explicitRdfTypeProperty: "test",
       $identifier,
     }),
     kitchenSink.ExplicitRdfType,
   ),
   externProperty: new Harness(
-    kitchenSink.ExternProperty.create({
+    kitchenSink.ExternProperty.createUnsafe({
       externProperty: kitchenSink.Extern.create({
         $identifier: dataFactory.blankNode(),
         baseForExternProperty: "baseForExternPropertyValue",
-      }),
+      }).unsafeCoerce(),
       $identifier,
     }),
     kitchenSink.ExternProperty,
   ),
   flattenUnionMember1: new Harness(
-    kitchenSink.UnionMember1.create({
+    kitchenSink.UnionMember1.createUnsafe({
       $identifier,
       unionMemberCommonParentProperty: "test common parent",
       unionMember1Property: "test member 1",
@@ -240,7 +237,7 @@ export const harnesses = {
     "FlattenUnion",
   ),
   flattenUnionMember2: new Harness(
-    kitchenSink.UnionMember2.create({
+    kitchenSink.UnionMember2.createUnsafe({
       $identifier,
       unionMemberCommonParentProperty: "test common parent",
       unionMember2Property: "test member 2",
@@ -249,7 +246,7 @@ export const harnesses = {
     "FlattenUnion",
   ),
   flattenUnionMember3: new Harness(
-    kitchenSink.FlattenUnionMember3.create({
+    kitchenSink.FlattenUnionMember3.createUnsafe({
       $identifier,
       flattenUnionMember3Property: "test",
     }),
@@ -257,16 +254,18 @@ export const harnesses = {
     "FlattenUnion",
   ),
   indirectRecursive: new Harness(
-    kitchenSink.IndirectRecursive.create({
+    kitchenSink.IndirectRecursive.createUnsafe({
       indirectRecursiveHelperProperty:
-        kitchenSink.IndirectRecursiveHelper.create({
-          indirectRecursiveProperty: kitchenSink.IndirectRecursive.create({}),
+        kitchenSink.IndirectRecursiveHelper.createUnsafe({
+          indirectRecursiveProperty: kitchenSink.IndirectRecursive.createUnsafe(
+            {},
+          ),
         }),
     }),
     kitchenSink.IndirectRecursive,
   ),
   hasValueProperties: new Harness(
-    kitchenSink.HasValueProperties.create({
+    kitchenSink.HasValueProperties.createUnsafe({
       hasIriValueProperty: dataFactory.namedNode(
         "http://example.com/HasValuePropertiesIri1",
       ),
@@ -276,7 +275,7 @@ export const harnesses = {
     kitchenSink.HasValueProperties,
   ),
   inIdentifier: new Harness(
-    kitchenSink.InIdentifier.create({
+    kitchenSink.InIdentifier.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/InIdentifierInstance1",
       ),
@@ -285,7 +284,7 @@ export const harnesses = {
     kitchenSink.InIdentifier,
   ),
   inProperties: new Harness(
-    kitchenSink.InProperties.create({
+    kitchenSink.InProperties.createUnsafe({
       $identifier,
       inBooleansProperty: true,
       inDateTimesProperty: new Date("2018-04-09T10:00:00.000Z"),
@@ -298,13 +297,13 @@ export const harnesses = {
     kitchenSink.InProperties,
   ),
   iriIdentifier: new Harness(
-    kitchenSink.IriIdentifier.create({
+    kitchenSink.IriIdentifier.createUnsafe({
       $identifier,
     }),
     kitchenSink.IriIdentifier,
   ),
   iriListProperty: new Harness(
-    kitchenSink.ListProperties.create({
+    kitchenSink.ListProperties.createUnsafe({
       $identifier,
       iriListProperty: [
         // The constructor will convert these to NamedNode's
@@ -317,7 +316,7 @@ export const harnesses = {
   // ...permute(jsPrimitiveValues).reduce(
   //   (harnesses, jsPrimitiveValues, i) => {
   //     harnesses[`jsPrimitiveUnionProperty${i}`] = new Harness(
-  //       kitchenSink.JsPrimitiveUnionProperty.create({
+  //       kitchenSink.JsPrimitiveUnionProperty.createUnsafe({
   //         $identifier,
   //         jsPrimitiveUnionProperty: jsPrimitiveValues,
   //       }),
@@ -331,36 +330,36 @@ export const harnesses = {
   //   >,
   // ),
   jsPrimitiveUnionProperty: new Harness(
-    kitchenSink.JsPrimitiveUnionProperty.create({
+    kitchenSink.JsPrimitiveUnionProperty.createUnsafe({
       $identifier,
       jsPrimitiveUnionProperty: jsPrimitiveValues,
     }),
     kitchenSink.JsPrimitiveUnionProperty,
   ),
   languageInProperties: new Harness(
-    kitchenSink.LanguageInProperties.create({
+    kitchenSink.LanguageInProperties.createUnsafe({
       $identifier,
-      languageInLiteralProperty: NonEmptyList([
+      languageInLiteralProperty: [
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
-      ]),
+      ],
     }),
     kitchenSink.LanguageInProperties,
   ),
   lazyPropertiesEmpty: new Harness(
-    kitchenSink.LazyProperties.create({
+    kitchenSink.LazyProperties.createUnsafe({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance1",
           ),
           lazilyResolvedStringProperty: "test required empty",
         }),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance2",
           ),
@@ -370,66 +369,66 @@ export const harnesses = {
     kitchenSink.LazyProperties,
   ),
   lazyPropertiesNonEmpty: new Harness(
-    kitchenSink.LazyProperties.create({
+    kitchenSink.LazyProperties.createUnsafe({
       $identifier,
       // These nested objects won't be resolvable since they're not serialized with $toRdf.
       // This harness is just intended to test the deserialization/deserialization of the identifiers.
       optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance1"),
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       optionalLazyToResolvedUnionProperty:
-        kitchenSink.LazilyResolvedUnionMember1.create({
+        kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance2"),
           lazilyResolvedStringProperty: "optionalLazyToResolvedUnionProperty",
         }),
       optionalLazyToResolvedIriIdentifierProperty:
-        kitchenSink.LazilyResolvedIriIdentifier.create({
+        kitchenSink.LazilyResolvedIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance3"),
           lazilyResolvedStringProperty:
             "optionalLazyToResolvedIriIdentifierProperty",
         }),
       optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance4"),
           lazilyResolvedStringProperty:
             "optionalPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       optionalPartialToResolvedUnionProperty:
-        kitchenSink.LazilyResolvedUnionMember1.create({
+        kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance5"),
           lazilyResolvedStringProperty:
             "optionalPartialToResolvedUnionProperty",
         }),
       optionalPartialUnionToResolvedUnionProperty:
-        kitchenSink.LazilyResolvedUnionMember1.create({
+        kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance6"),
           lazilyResolvedStringProperty:
             "optionalPartialUnionToResolvedUnionProperty",
         }),
       requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance7"),
           lazilyResolvedStringProperty:
             "requiredLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance8"),
           lazilyResolvedStringProperty:
             "requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       setLazyToResolvedBlankNodeOrIriIdentifierProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance9"),
           lazilyResolvedStringProperty:
             "setLazyToResolvedBlankNodeOrIriIdentifierProperty",
         }),
       ],
       setPartialToResolvedBlankNodeOrIriIdentifierProperty: [
-        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+        kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
           $identifier: dataFactory.namedNode("http://example.com/instance10"),
           lazilyResolvedStringProperty:
             "setPartialToResolvedBlankNodeOrIriIdentifierProperty",
@@ -439,7 +438,7 @@ export const harnesses = {
     kitchenSink.LazyProperties,
   ),
   mutableProperties: new Harness(
-    kitchenSink.MutableProperties.create({
+    kitchenSink.MutableProperties.createUnsafe({
       $identifier,
       mutableListProperty: ["test1", "test2"],
       mutableStringProperty: "test",
@@ -448,7 +447,7 @@ export const harnesses = {
     kitchenSink.MutableProperties,
   ),
   namedUnionProperties1: new Harness(
-    kitchenSink.NamedUnionProperties.create({
+    kitchenSink.NamedUnionProperties.createUnsafe({
       $identifier,
       namedUnion1Property: "test",
       namedUnion2Property: { type: "date", value: new Date("2025-12-08") },
@@ -456,7 +455,7 @@ export const harnesses = {
     kitchenSink.NamedUnionProperties,
   ),
   namedUnionProperties2: new Harness(
-    kitchenSink.NamedUnionProperties.create({
+    kitchenSink.NamedUnionProperties.createUnsafe({
       $identifier,
       namedUnion1Property: dataFactory.namedNode("http://example.com"),
       namedUnion2Property: {
@@ -468,7 +467,7 @@ export const harnesses = {
   ),
   // nodeKinds1 = use the first of the node kinds when there are two (e.g., sh:nodeKind sh:BlankNodeOrIRI)
   nodeKinds1: new Harness(
-    kitchenSink.NodeKinds.create({
+    kitchenSink.NodeKinds.createUnsafe({
       $identifier,
       blankNodeKindProperty: dataFactory.blankNode(),
       blankNodeOrIriNodeKindProperty: dataFactory.blankNode(),
@@ -484,7 +483,7 @@ export const harnesses = {
     kitchenSink.NodeKinds,
   ),
   nodeKinds2: new Harness(
-    kitchenSink.NodeKinds.create({
+    kitchenSink.NodeKinds.createUnsafe({
       $identifier,
       blankNodeKindProperty: dataFactory.blankNode(),
       blankNodeOrIriNodeKindProperty: dataFactory.namedNode(
@@ -506,7 +505,7 @@ export const harnesses = {
     kitchenSink.NodeKinds,
   ),
   noRdfTypeUnionMember1: new Harness(
-    kitchenSink.NoRdfTypeUnionMember1.create({
+    kitchenSink.NoRdfTypeUnionMember1.createUnsafe({
       $identifier,
       noRdfTypeUnionMember1Property: "test",
     }),
@@ -514,7 +513,7 @@ export const harnesses = {
     "NoRdfTypeUnion",
   ),
   noRdfTypeUnionMember2: new Harness(
-    kitchenSink.NoRdfTypeUnionMember2.create({
+    kitchenSink.NoRdfTypeUnionMember2.createUnsafe({
       $identifier,
       noRdfTypeUnionMember2Property: "test",
     }),
@@ -522,7 +521,7 @@ export const harnesses = {
     "NoRdfTypeUnion",
   ),
   numericProperties: new Harness(
-    kitchenSink.NumericProperties.create({
+    kitchenSink.NumericProperties.createUnsafe({
       $identifier,
       byteNumericProperty: -1,
       decimalNumericProperty: new Decimal(1.0),
@@ -544,17 +543,17 @@ export const harnesses = {
     kitchenSink.NumericProperties,
   ),
   objectListProperty: new Harness(
-    kitchenSink.ListProperties.create({
+    kitchenSink.ListProperties.createUnsafe({
       $identifier,
       objectListProperty: [
-        kitchenSink.NonClass.create({ nonClassProperty: "Test1" }),
-        kitchenSink.NonClass.create({ nonClassProperty: "Test2" }),
+        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test1" }),
+        kitchenSink.NonClass.createUnsafe({ nonClassProperty: "Test2" }),
       ],
     }),
     kitchenSink.ListProperties,
   ),
   orderedProperties: new Harness(
-    kitchenSink.OrderedProperties.create({
+    kitchenSink.OrderedProperties.createUnsafe({
       $identifier,
       orderedPropertyA: "testA",
       orderedPropertyB: "testB",
@@ -563,24 +562,24 @@ export const harnesses = {
     kitchenSink.OrderedProperties,
   ),
   overrideName: new Harness(
-    kitchenSink.NewName.create({
+    kitchenSink.NewName.createUnsafe({
       $identifier,
     }),
     kitchenSink.NewName,
     "OverrideName",
   ),
   propertyCardinalities: new Harness(
-    kitchenSink.PropertyCardinalities.create({
+    kitchenSink.PropertyCardinalities.createUnsafe({
       $identifier,
       emptyStringSetProperty: undefined,
-      nonEmptyStringSetProperty: NonEmptyList(["test1"]),
+      nonEmptyStringSetProperty: ["test1"],
       optionalStringProperty: undefined,
       requiredStringProperty: "test",
     }),
     kitchenSink.PropertyCardinalities,
   ),
   propertyNames: new Harness(
-    kitchenSink.PropertyNames.create({
+    kitchenSink.PropertyNames.createUnsafe({
       $identifier,
       // Should all be actualProperty*
       actualPropertyName1: "actualPropertyValue1",
@@ -592,7 +591,7 @@ export const harnesses = {
     kitchenSink.PropertyNames,
   ),
   propertyPaths: new Harness(
-    kitchenSink.PropertyPaths.create({
+    kitchenSink.PropertyPaths.createUnsafe({
       $identifier,
       inversePathProperty: "http://example.com/inversePathPropertyValue",
       predicatePathProperty: "predicatePathPropertyValue",
@@ -600,21 +599,21 @@ export const harnesses = {
     kitchenSink.PropertyPaths,
   ),
   nonClass: new Harness(
-    kitchenSink.NonClass.create({
+    kitchenSink.NonClass.createUnsafe({
       $identifier,
       nonClassProperty: "Test",
     }),
     kitchenSink.NonClass,
   ),
   stringListProperty: new Harness(
-    kitchenSink.ListProperties.create({
+    kitchenSink.ListProperties.createUnsafe({
       $identifier,
       stringListProperty: ["Test1", "Test2"],
     }),
     kitchenSink.ListProperties,
   ),
   termProperties: new Harness(
-    kitchenSink.TermProperties.create({
+    kitchenSink.TermProperties.createUnsafe({
       blankNodeTermProperty: dataFactory.blankNode(),
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
@@ -629,11 +628,11 @@ export const harnesses = {
     kitchenSink.TermProperties,
   ),
   unionDiscriminants1: new Harness(
-    kitchenSink.UnionDiscriminants.create({
+    kitchenSink.UnionDiscriminants.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrStringProperty: {
         type: "UnionMember1",
-        value: kitchenSink.UnionMember1.create({
+        value: kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1a",
           ),
@@ -645,7 +644,7 @@ export const harnesses = {
       optionalIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       requiredNodeOrNodeOrStringProperty: {
         type: "UnionMember1",
-        value: kitchenSink.UnionMember1.create({
+        value: kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1b",
           ),
@@ -655,7 +654,7 @@ export const harnesses = {
       },
       requiredNodeOrLiteralProperty: {
         termType: "UnionMember1",
-        value: kitchenSink.UnionMember1.create({
+        value: kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember1c",
           ),
@@ -670,11 +669,11 @@ export const harnesses = {
     kitchenSink.UnionDiscriminants,
   ),
   unionDiscriminants2: new Harness(
-    kitchenSink.UnionDiscriminants.create({
+    kitchenSink.UnionDiscriminants.createUnsafe({
       $identifier,
       optionalNodeOrNodeOrStringProperty: {
         type: "UnionMember2",
-        value: kitchenSink.UnionMember2.create({
+        value: kitchenSink.UnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             "http://example.com/unionMember2a",
           ),
@@ -700,7 +699,7 @@ export const harnesses = {
         },
         {
           type: "UnionMember2",
-          value: kitchenSink.UnionMember2.create({
+          value: kitchenSink.UnionMember2.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember2b",
             ),
@@ -710,7 +709,7 @@ export const harnesses = {
         },
         {
           type: "UnionMember1",
-          value: kitchenSink.UnionMember1.create({
+          value: kitchenSink.UnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember1b",
             ),
@@ -724,7 +723,7 @@ export const harnesses = {
         dataFactory.literal("test"),
         {
           termType: "UnionMember1",
-          value: kitchenSink.UnionMember1.create({
+          value: kitchenSink.UnionMember1.createUnsafe({
             $identifier: dataFactory.namedNode(
               "http://example.com/unionMember1c",
             ),
@@ -745,7 +744,7 @@ export const harnesses = {
     kitchenSink.UnionDiscriminants,
   ),
   unionMember1: new Harness(
-    kitchenSink.UnionMember1.create({
+    kitchenSink.UnionMember1.createUnsafe({
       $identifier,
       unionMemberCommonParentProperty: "test common parent",
       unionMember1Property: "test",
@@ -754,7 +753,7 @@ export const harnesses = {
     "Union",
   ),
   unionMember2: new Harness(
-    kitchenSink.UnionMember2.create({
+    kitchenSink.UnionMember2.createUnsafe({
       $identifier,
       unionMemberCommonParentProperty: "test common parent",
       unionMember2Property: "test",

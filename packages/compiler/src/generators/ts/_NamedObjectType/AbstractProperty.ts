@@ -2,6 +2,7 @@ import type { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
+
 import type { NamedObjectType } from "../NamedObjectType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -17,14 +18,11 @@ export abstract class AbstractProperty<
   protected readonly logger: Logger;
   protected readonly namedObjectType: NamedObjectType;
   protected readonly reusables: Reusables;
-  protected readonly rdfjsTermExpression: (
-    parameters: Parameters<typeof rdfjsTermExpression>[0],
-  ) => Code;
 
   /**
-   * Optional property to include in the parameters object of a class constructor.
+   * Optional parameter to include in the parameters object of constructor function.
    */
-  abstract readonly constructorParametersSignature: Maybe<Code>;
+  abstract readonly constructorParameter: Maybe<Code>;
 
   /**
    * Property declaration to include in a class or interface declaration of the object type.
@@ -58,7 +56,7 @@ export abstract class AbstractProperty<
   }>;
 
   /**
-   * zod Object key: schema pair on the property serialized by toJsonObjectMember.
+   * zod object key: schema.
    */
   abstract readonly jsonSchema: Maybe<{
     readonly key: string;
@@ -66,7 +64,7 @@ export abstract class AbstractProperty<
   }>;
 
   /**
-   * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
+   * Signature of the property when serialized to JSON.
    */
   abstract readonly jsonSignature: Maybe<Code>;
 
@@ -148,28 +146,25 @@ export abstract class AbstractProperty<
   }
 
   /**
-   * Statements to assign the parameter of described by constructorParametersSignature to a class or interface member.
+   * Initializer (name: value) from a constructor parameter.
    */
-  abstract constructorStatements(parameters: {
-    variables: {
-      parameter: Code;
-      parameters: Code;
-    };
-  }): readonly Code[];
+  abstract constructorInitializer(parameters: {
+    variables: { parameters: Code };
+  }): Maybe<Code>;
 
   /**
-   * Expression to deserialize JSON for this property (as described by toJsonObjectMember) to a typed value of the property.
+   * Initializer (name: value) from a JSON object.
    */
-  abstract fromJsonExpression(parameters: {
+  abstract fromJsonInitializer(parameters: {
     variables: {
       jsonObject: Code;
     };
   }): Maybe<Code>;
 
   /**
-   * Expression to deserialize this property on the given rdfjsResource.Resource to a Either<Error, this property type>.
+   * Initializer (name: value) from a rdfjsResource.Resource to a Either<Error, this property type>.
    */
-  abstract fromRdfResourceValuesExpression(parameters: {
+  abstract fromRdfResourceValuesInitializer(parameters: {
     variables: {
       context: Code;
       graph: Code;
@@ -232,9 +227,9 @@ export abstract class AbstractProperty<
   }): Maybe<{ condition?: Code; patterns: Code }>;
 
   /**
-   * Expression to serialize a property to a JSON object member.
+   * Initializer (name: value) to JSON.
    */
-  abstract toJsonObjectMemberExpression(parameters: {
+  abstract toJsonInitializer(parameters: {
     variables: { value: Code };
   }): Maybe<Code>;
 
@@ -249,9 +244,13 @@ export abstract class AbstractProperty<
   }): readonly Code[];
 
   /**
-   * Expression to serialize this property to a human-readable string (toString).
+   * Initializer (name: value) to serialize this property to a human-readable string (toString).
    */
-  abstract toStringExpression(parameters: {
+  abstract toStringInitializer(parameters: {
     variables: { value: Code };
   }): Maybe<Code>;
+
+  protected readonly rdfjsTermExpression: (
+    parameters: Parameters<typeof rdfjsTermExpression>[0],
+  ) => Code;
 }

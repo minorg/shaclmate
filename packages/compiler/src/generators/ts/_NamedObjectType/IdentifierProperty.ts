@@ -6,10 +6,15 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import type { BlankNodeType } from "../BlankNodeType.js";
-import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { IriType } from "../IriType.js";
-import { arrayOf, type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
@@ -33,20 +38,14 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get constructorParametersSignature(): Maybe<Code> {
-    const hasQuestionToken = (
-      this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>
-    ).has("BlankNode");
-
+  override get constructorParameter(): Maybe<Code> {
+    let hasQuestionToken: boolean = false;
     const typeNames: Code[] = [code`(() => ${this.typeAlias})`];
-    for (const conversion of this.type.conversions) {
-      if (
-        conversion.sourceTypeof !== "undefined" &&
-        !typeNames.some((typeName) =>
-          codeEquals(typeName, conversion.sourceTypeName),
-        )
-      ) {
-        typeNames.push(code`${conversion.sourceTypeName}`);
+    for (const type of this.type.conversionFunction.sourceTypes) {
+      if (type.typeof === "undefined") {
+        hasQuestionToken = true;
+      } else {
+        typeNames.push(code`${type.name}`);
       }
     }
 
@@ -119,65 +118,56 @@ export class IdentifierProperty extends AbstractProperty<
     return code`${variables.object}.${this.name}()`;
   }
 
-  override constructorStatements({
+  override constructorInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["constructorStatements"]
-  >[0]): readonly Code[] {
-    const parameterVariable = code`${this.name}Parameter`;
-    const statements: Code[] = [
-      // Pull out the parameter so the function can capture it if necessary.
-      code`const ${parameterVariable} = ${variables.parameter};`,
-      code`let ${this.name}: () => ${this.typeAlias};`,
-    ];
-    const typeConversions = this.type.conversions;
-    const conversionBranches: Code[] = [
-      code`if (typeof ${parameterVariable} === "function") { ${this.name} = ${parameterVariable}; }`,
-    ];
-    for (const conversion of typeConversions) {
-      invariant(conversion.sourceTypeof !== "function");
-      invariant(conversion.sourceTypeof !== "undefined");
-      conversionBranches.push(
-        code`if (${conversion.sourceTypeCheckExpression(parameterVariable)}) { ${this.name} = () => ${conversion.conversionExpression(parameterVariable)}; }`,
-      );
-    }
-    if (
-      (this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>).has("BlankNode")
-    ) {
-      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-      conversionBranches.push(
-        code`if (${parameterVariable} === undefined) { const ${syntheticNamePrefix}eagerIdentifier = ${this.reusables.imports.dataFactory}.blankNode(); ${this.name} = () => ${syntheticNamePrefix}eagerIdentifier; }`,
-      );
+    AbstractProperty<IdentifierType>["constructorInitializer"]
+  >[0]): Maybe<Code> {
+    const nodeKinds = this.type.nodeKinds as ReadonlySet<IdentifierNodeKind>;
+
+    let conversionFunction: Code;
+    if (nodeKinds.size === 2) {
+      conversionFunction = code`${this.reusables.snippets.convertToIdentifierProperty}`;
+    } else {
+      invariant(nodeKinds.size === 1);
+      if (nodeKinds.has("BlankNode")) {
+        conversionFunction = code`${this.reusables.snippets.convertToBlankNodeIdentifierProperty}`;
+      } else {
+        conversionFunction = code`${this.reusables.snippets.convertToIriIdentifierProperty}<${
+          this.type.in_.length > 0
+            ? joinCode(
+                this.type.in_.map((in_) => code`${literalOf(in_.value)}`),
+                { on: " | " },
+              )
+            : "string"
+        }>`;
+      }
     }
 
-    // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-    conversionBranches.push(
-      code`{ ${this.name} = (${parameterVariable}) satisfies never;\n }`,
+    return Maybe.of(
+      code`${this.name}: ${conversionFunction}(${variables.parameters}.${this.name})`,
     );
-    statements.push(joinCode(conversionBranches, { on: " else " }));
-
-    return statements;
   }
 
-  override fromJsonExpression({
+  override fromJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromJsonExpression"]
+    AbstractProperty<IdentifierType>["fromJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      this.type.fromJsonExpression({
+      code`${this.name}: ${this.type.fromJsonExpression({
         variables: { value: variables.jsonObject },
-      }),
+      })}`,
     );
   }
 
-  override fromRdfResourceValuesExpression({
+  override fromRdfResourceValuesInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromRdfResourceValuesExpression"]
+    AbstractProperty<IdentifierType>["fromRdfResourceValuesInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`${this.type.fromRdfResourceValuesExpression({
+      code`${this.name}: ${this.type.fromRdfResourceValuesExpression({
         variables: {
           ...variables,
           propertyPath: this.rdfjsTermExpression(rdf.subject),
@@ -228,10 +218,10 @@ export class IdentifierProperty extends AbstractProperty<
     });
   }
 
-  override toJsonObjectMemberExpression({
+  override toJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["toJsonObjectMemberExpression"]
+    AbstractProperty<IdentifierType>["toJsonInitializer"]
   >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
@@ -257,11 +247,13 @@ export class IdentifierProperty extends AbstractProperty<
     return [];
   }
 
-  override toStringExpression(
+  override toStringInitializer(
     parameters: Parameters<
-      AbstractProperty<IdentifierType>["toStringExpression"]
+      AbstractProperty<IdentifierType>["toStringInitializer"]
     >[0],
   ): Maybe<Code> {
-    return Maybe.of(this.type.toStringExpression(parameters));
+    return Maybe.of(
+      code`${literalOf(this.name)}: ${this.type.toStringExpression(parameters)}`,
+    );
   }
 }

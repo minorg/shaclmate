@@ -1,12 +1,13 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import { removeUndefined } from "./removeUndefined.js";
 import type { Type } from "./Type.js";
+import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
@@ -33,9 +34,7 @@ export abstract class AbstractTermType<
   override readonly mutable: boolean = false;
   abstract readonly nodeKinds: ReadonlySet<NodeKind>;
   override readonly recursive = false;
-  override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
-    "object" as const,
-  ]);
+  override readonly typeofs: readonly Typeof[] = ["object" as const];
 
   constructor({
     hasValues,
@@ -55,65 +54,6 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
-
-    if (this.nodeKinds.has("Literal")) {
-      conversions.push(
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.bigint(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "bigint"`,
-          sourceTypeName: code`bigint`,
-          sourceTypeof: "bigint",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.boolean(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "boolean"`,
-          sourceTypeName: code`boolean`,
-          sourceTypeof: "boolean",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.date(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "object" && ${value} instanceof Date`,
-          sourceTypeName: code`Date`,
-          sourceTypeof: "object",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.number(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "number"`,
-          sourceTypeName: code`number`,
-          sourceTypeof: "number",
-        },
-        {
-          conversionExpression: (value) =>
-            code`${this.reusables.snippets.literalFactory}.string(${value})`,
-          sourceTypeCheckExpression: (value) =>
-            code`typeof ${value} === "string"`,
-          sourceTypeName: code`string`,
-          sourceTypeof: "string",
-        },
-      );
-    }
-
-    conversions.push({
-      conversionExpression: (value) => value,
-      sourceTypeCheckExpression: (value) => code`typeof ${value} === "object"`,
-      sourceTypeName: this.name,
-      sourceTypeof: "object",
-    });
-
-    return conversions;
-  }
-
-  @Memoize()
   override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       descendantValues: [],
@@ -127,6 +67,19 @@ export abstract class AbstractTermType<
   @Memoize()
   override get schema(): Code {
     return code`${removeUndefined(this.schemaObject)}`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in:
+        this.in_.length > 0
+          ? code`[${joinCode(
+              this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+              { on: ", " },
+            )}] as const`
+          : undefined,
+    };
   }
 
   @Memoize()
@@ -234,7 +187,7 @@ chain(values => ${this.reusables.imports.Either}.sequence([${joinCode(
 }
 
 export namespace AbstractTermType {
-  export type Conversion = AbstractType.Conversion;
+  export type ConversionFunction = AbstractType.ConversionFunction;
   export type DiscriminantProperty = AbstractType.DiscriminantProperty;
   export const GraphqlType = AbstractType.GraphqlType;
   export type GraphqlType = AbstractType.GraphqlType;

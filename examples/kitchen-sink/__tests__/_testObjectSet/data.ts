@@ -3,7 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 
 export const data = {
   blankNodeOrIriIdentifieres: [...new Array(4)].map((_, i) =>
-    kitchenSink.BlankNodeOrIriIdentifier.create({
+    kitchenSink.BlankNodeOrIriIdentifier.createUnsafe({
       $identifier:
         i % 2 === 0
           ? dataFactory.blankNode()
@@ -14,7 +14,7 @@ export const data = {
   ) satisfies readonly kitchenSink.BlankNodeOrIriIdentifier[],
 
   classHierarchy3s: [...new Array(4)].map((_, i) =>
-    kitchenSink.ClassHierarchy3.create({
+    kitchenSink.ClassHierarchy3.createUnsafe({
       classHierarchy0Property: `ABC string ${i}`,
       classHierarchy3Property: `child string ${i}`,
       classHierarchy2Property: `parent string ${i}`,
@@ -26,8 +26,8 @@ export const data = {
 
   // directRecursivees: [...new Array(4)].map(
   //   (_, i) =>
-  //     kitchenSink.DirectRecursive.create({
-  //       directRecursiveProperty: kitchenSink.DirectRecursive.create({
+  //     kitchenSink.DirectRecursive.createUnsafe({
+  //       directRecursiveProperty: kitchenSink.DirectRecursive.createUnsafe({
   //         $identifier: dataFactory.namedNode(
   //           `http://example.com/directRecursive${i}/directRecursiveProperty/value`,
   //         ),
@@ -41,14 +41,14 @@ export const data = {
   noRdfTypeUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
-        return kitchenSink.NoRdfTypeUnionMember1.create({
+        return kitchenSink.NoRdfTypeUnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeUnion${i}`,
           ),
           noRdfTypeUnionMember1Property: `member ${i}`,
         });
       case 1:
-        return kitchenSink.NoRdfTypeUnionMember2.create({
+        return kitchenSink.NoRdfTypeUnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(
             `http://example.com/noRdfTypeUnion${i}`,
           ),
@@ -62,13 +62,13 @@ export const data = {
   unions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
-        return kitchenSink.UnionMember1.create({
+        return kitchenSink.UnionMember1.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
           unionMemberCommonParentProperty: `common parent ${i}`,
           unionMember1Property: `member ${i}`,
         });
       case 1:
-        return kitchenSink.UnionMember2.create({
+        return kitchenSink.UnionMember2.createUnsafe({
           $identifier: dataFactory.namedNode(`http://example.com/union${i}`),
           unionMemberCommonParentProperty: `common parent ${i}`,
           unionMember2Property: `member ${i}`,

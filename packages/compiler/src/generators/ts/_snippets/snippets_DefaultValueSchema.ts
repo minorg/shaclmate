@@ -2,14 +2,13 @@ import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_DefaultValueSchema: SnippetFactory = ({
-  imports,
   syntheticNamePrefix,
 }) =>
   conditionalOutput(
     `${syntheticNamePrefix}DefaultValueSchema`,
     code`\
-interface ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> {
-  readonly defaultValue: ${imports.Literal} | ${imports.NamedNode};
+interface ${syntheticNamePrefix}DefaultValueSchema<DefaultValueT, ItemSchemaT> {
+  readonly defaultValue: DefaultValueT;
   readonly item: () => ItemSchemaT;
   readonly kind: "DefaultValue";
 }`,

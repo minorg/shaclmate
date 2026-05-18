@@ -36,12 +36,12 @@
         sh:name "nonEmptyStringSetProperty" ;
         sh:path :nonEmptyStringSetProperty
     ], [
-        rdfs:label "Required integer" ;
+        rdfs:label "Required int" ;
         sh:datatype xsd:int ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:name "requiredIntegerProperty" ;
-        sh:path :requiredIntegerProperty
+        sh:name "requiredIntProperty" ;
+        sh:path :requiredIntProperty
     ], [
         rdfs:label "Nested object" ;
         sh:maxCount 1 ;

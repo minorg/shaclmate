@@ -20,7 +20,7 @@ export function NamedObjectType_toJsonFunctionDeclaration(
     jsonObjectMembers.push(
       ...this.properties.flatMap((property) =>
         property
-          .toJsonObjectMemberExpression({
+          .toJsonInitializer({
             variables: {
               value: property.accessExpression({
                 variables: { object: this.thisVariable },

@@ -1,7 +1,6 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-import { LiteralDecoder } from "@rdfx/literal";
 
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -9,7 +8,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Type } from "./Type.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
@@ -19,7 +18,7 @@ export class DefaultValueType<
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   override readonly kind = "DefaultValueType";
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   constructor({
     defaultValue,
@@ -31,17 +30,18 @@ export class DefaultValueType<
     this.defaultValue = defaultValue;
   }
 
-  get conversions(): readonly AbstractContainerType.Conversion[] {
-    let conversions = this.itemType.conversions;
-    this.defaultValuePrimitiveExpression.ifJust((defaultValue) => {
-      conversions = conversions.concat({
-        conversionExpression: () => code`${defaultValue}`,
-        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-        sourceTypeName: code`undefined`,
-        sourceTypeof: "undefined",
-      });
-    });
-    return conversions;
+  @Memoize()
+  get conversionFunction(): AbstractContainerType.ConversionFunction {
+    const itemConversionFunction = this.itemType.conversionFunction;
+    return {
+      code: code`${this.reusables.snippets.convertWithDefaultValue}(${itemConversionFunction.code})`,
+      sourceTypes: itemConversionFunction.sourceTypes
+        .filter((sourceType) => sourceType.typeof !== "undefined")
+        .concat({
+          name: "undefined",
+          typeof: "undefined",
+        }),
+    };
   }
 
   override get equalsFunction(): Code {
@@ -74,7 +74,7 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.DefaultValueSchema}`;
+    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.name}, ${this.itemType.schemaType}>`;
   }
 
   @Memoize()
@@ -90,74 +90,28 @@ export class DefaultValueType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.defaultValueTermExpression,
+      defaultValue: this.defaultValueExpression,
     };
   }
 
   @Memoize()
-  private get defaultValuePrimitiveExpression(): Maybe<Code> {
+  private get defaultValueExpression() {
     switch (this.itemType.kind) {
-      case "BigDecimalType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`new ${this.reusables.imports.BigDecimal}(${literalOf(this.defaultValue.value)})`,
-        );
-      case "BigIntType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`${LiteralDecoder.decodeBigIntLiteral(this.defaultValue).unsafeCoerce()}n`,
-        );
-      case "BooleanType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`${LiteralDecoder.decodeBooleanLiteral(this.defaultValue).unsafeCoerce()}`,
-        );
-      case "DateType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`new Date("${LiteralDecoder.decodeDateLiteral(this.defaultValue).unsafeCoerce().toISOString()}")`,
-        );
-      case "DateTimeType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`new Date("${LiteralDecoder.decodeDateTimeLiteral(this.defaultValue).unsafeCoerce().toISOString()}")`,
-        );
-      case "FloatType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`${LiteralDecoder.decodeFloatLiteral(this.defaultValue).unsafeCoerce()}`,
-        );
-      case "IntType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(
-          code`${LiteralDecoder.decodeIntLiteral(this.defaultValue).unsafeCoerce()}`,
-        );
-      case "StringType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(code`${literalOf(this.defaultValue.value)}`);
       case "IdentifierType":
       case "IriType":
-        invariant(this.defaultValue.termType === "NamedNode");
-        return Maybe.of(this.defaultValueTermExpression);
       case "LiteralType":
       case "TermType":
-        invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(this.defaultValueTermExpression);
+        return this.rdfjsTermExpression(this.defaultValue);
       case "AnonymousUnionType":
       case "ListType":
       case "NamedObjectType":
       case "NamedObjectUnionType":
       case "NamedUnionType":
-        return Maybe.empty();
-      default:
-        this.itemType satisfies never;
-        throw new Error("should never reach this point");
+        throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
-  }
 
-  @Memoize()
-  private get defaultValueTermExpression(): Code {
-    return this.rdfjsTermExpression(this.defaultValue);
+    invariant(this.defaultValue.termType === "Literal");
+    return this.itemType.literalExpression(this.defaultValue);
   }
 
   override fromJsonExpression(
@@ -174,7 +128,7 @@ export class DefaultValueType<
     return this.itemType.fromRdfResourceValuesExpression({
       variables: {
         ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.defaultValueTermExpression }}).toValues())`,
+        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${this.reusables.imports.Resource}.Value(${{ dataFactory: this.reusables.imports.dataFactory, focusResource: variables.resource, propertyPath: variables.propertyPath, term: this.rdfjsTermExpression(this.defaultValue) }}).toValues())`,
       },
     });
   }
@@ -217,14 +171,7 @@ export class DefaultValueType<
     parameters: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0],
   ): Code {
     const { variables } = parameters;
-    return this.defaultValuePrimitiveExpression
-      .map(
-        (defaultValuePrimitiveExpression) =>
-          code`${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`,
-      )
-      .orDefault(
-        code`${this.itemType.toRdfResourceValuesExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
-      );
+    return code`${this.itemType.equalsFunction}(${variables.value}, ${this.defaultValueExpression}).isLeft() ? ${this.itemType.toRdfResourceValuesExpression(parameters)} : []`;
   }
 
   override toStringExpression(

@@ -40,6 +40,19 @@ export class TermType<
     );
   }
 
+  @Memoize()
+  override get conversionFunction(): AbstractTermType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToTerm}<${this.name}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+      ],
+    };
+  }
+
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
   }
@@ -64,16 +77,6 @@ export class TermType<
         .map((import_) => code`${import_}`),
       { on: " | " },
     )})`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? this.in_.map((in_) => this.rdfjsTermExpression(in_))
-          : undefined,
-    };
   }
 
   override fromJsonExpression({

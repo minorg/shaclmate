@@ -2,8 +2,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
@@ -13,38 +11,21 @@ export class LazyObjectType extends AbstractLazyObjectType<
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
   override readonly kind = "LazyObjectType";
 
-  override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
-    const conversions = super.conversions.concat();
-
-    if (this.partialType.kind === "NamedObjectType") {
-      conversions.push({
-        conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as NamedObjectType).name}.create(${value}), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.name}) })`,
-        // Don't check instanceof value since the NamedObjectType may be an interface
-        // Rely on the fact that this will be the last type check on an object
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: this.resolveType.name,
-        sourceTypeof: "object",
-      });
-    } else if (
-      this.resolveType.kind === "NamedObjectUnionType" &&
-      this.partialType.kind === "NamedObjectUnionType" &&
-      this.resolveType.members.length === this.partialType.members.length
-    ) {
-      conversions.push({
-        conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolveType.name}) => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${this.reusables.imports.Right}(${value} as ${this.resolveType.name}) })`,
-        // Don't check instanceof value since the NamedObjectUnionType may be an interface
-        // Rely on the fact that this will be the last type check on an object
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: this.resolveType.name,
-        sourceTypeof: "object",
-      });
-    }
-
-    return conversions;
+  @Memoize()
+  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.name,
+          typeof: "object",
+        },
+      ],
+    };
   }
 
   @Memoize()

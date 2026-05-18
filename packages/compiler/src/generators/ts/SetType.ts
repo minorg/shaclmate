@@ -12,20 +12,6 @@ export class SetType<
     Maybe.empty();
   override readonly kind = "SetType";
 
-  override get conversions(): readonly AbstractCollectionType.Conversion[] {
-    const conversions: AbstractCollectionType.Conversion[] = [];
-    if (this.minCount === 0n) {
-      conversions.push({
-        conversionExpression: () => code`[]`,
-        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-        sourceTypeName: code`undefined`,
-        sourceTypeof: "undefined",
-      });
-    }
-
-    return conversions.concat(super.conversions);
-  }
-
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {
     return code`${this.reusables.snippets.setSparqlConstructTriples}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlConstructTriplesFunction})`;
@@ -42,22 +28,14 @@ export class SetType<
     >[0],
   ): Code {
     const { variables } = parameters;
-    const chain: Code[] = [
-      this.itemType.fromRdfResourceValuesExpression(parameters),
-    ];
-    if (this.minCount === 0n || this._mutable) {
-      chain.push(
+    return joinCode(
+      [
+        this.itemType.fromRdfResourceValuesExpression(parameters),
         code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
-      );
-    } else {
-      chain.push(
-        code`chain(values => ${this.reusables.imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${variables.resource}.identifier} is an empty set\`)))`,
-      );
-    }
-    chain.push(
-      code`map(valuesArray => ${this.reusables.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
+        code`map(valuesArray => ${this.reusables.imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: valuesArray }))`,
+      ],
+      { on: "." },
     );
-    return joinCode(chain, { on: "." });
   }
 
   @Memoize()

@@ -1,8 +1,7 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
-import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 
@@ -16,47 +15,26 @@ export class OptionType<
   override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
   override readonly kind = "OptionType";
-  override readonly typeofs = NonEmptyList(["object" as const]);
+  override readonly typeofs = ["object" as const];
 
   @Memoize()
-  override get conversions(): readonly AbstractContainerType.Conversion[] {
-    const conversions: AbstractContainerType.Conversion[] = [];
-    conversions.push({
-      conversionExpression: (value) => value,
-      sourceTypeCheckExpression: (value) =>
-        code`${this.reusables.imports.Maybe}.isMaybe(${value})`,
-      sourceTypeName: this.name,
-      sourceTypeof: "object",
-    });
-    for (const itemTypeConversion of this.itemType.conversions) {
-      conversions.push({
-        ...itemTypeConversion,
-        conversionExpression: (value) =>
-          code`${this.reusables.imports.Maybe}.of(${itemTypeConversion.conversionExpression(value)})`,
-      });
-    }
-
-    // Unless itemType is a list, it should only have a conversion from undefined if it has a
-    // defaultValue. Per the CST->AST transformation logic, a type with a defaultValue
-    // should never be wrapped in an OptionType.
-    invariant(
-      !conversions.some(
-        (conversion) => conversion.sourceTypeof === "undefined",
-      ) || this.itemType instanceof AbstractCollectionType,
-    );
-    if (
-      !conversions.some((conversion) => conversion.sourceTypeof === "undefined")
-    ) {
-      conversions.push({
-        conversionExpression: () =>
-          code`${this.reusables.imports.Maybe}.empty()`,
-        sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-        sourceTypeName: code`undefined`,
-        sourceTypeof: "undefined",
-      });
-    }
-
-    return conversions;
+  override get conversionFunction(): AbstractContainerType.ConversionFunction {
+    const itemConversionFunction = this.itemType.conversionFunction;
+    return {
+      code: code`${this.reusables.snippets.convertToMaybe}(${itemConversionFunction.code})`,
+      sourceTypes: (
+        itemConversionFunction.sourceTypes as AbstractContainerType.ConversionFunction["sourceTypes"]
+      ).concat(
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: code`undefined`,
+          typeof: "undefined",
+        },
+      ),
+    };
   }
 
   @Memoize()

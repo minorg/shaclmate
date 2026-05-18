@@ -6,7 +6,7 @@ import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
-  override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
+  override readonly constructorParameter: Maybe<Code> = Maybe.empty();
   override readonly filterProperty: AbstractProperty<DiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<DiscriminantProperty.Type>["graphqlField"] =
@@ -49,19 +49,19 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
   }
 
-  private get initializer(): Code {
+  private get constValue(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
   }
 
-  override constructorStatements(): readonly Code[] {
-    return [code`const ${this.name} = ${this.initializer};`];
-  }
-
-  override fromJsonExpression(): Maybe<Code> {
+  override constructorInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 
-  override fromRdfResourceValuesExpression(): Maybe<Code> {
+  override fromJsonInitializer(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  override fromRdfResourceValuesInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 
@@ -88,7 +88,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
     const scope = code`\`\${${variables.scopePrefix}}/properties/${this.jsonName}\``;
     return Maybe.of(
-      code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
+      code`{ rule: { condition: { schema: { const: ${this.constValue} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
     );
   }
 
@@ -102,10 +102,10 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.empty();
   }
 
-  override toJsonObjectMemberExpression({
+  override toJsonInitializer({
     variables,
   }: Parameters<
-    AbstractProperty<DiscriminantProperty.Type>["toJsonObjectMemberExpression"]
+    AbstractProperty<DiscriminantProperty.Type>["toJsonInitializer"]
   >[0]): Maybe<Code> {
     return Maybe.of(code`"${this.jsonName}": ${variables.value}`);
   }
@@ -114,7 +114,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return [];
   }
 
-  override toStringExpression(): Maybe<Code> {
+  override toStringInitializer(): Maybe<Code> {
     return Maybe.empty();
   }
 }

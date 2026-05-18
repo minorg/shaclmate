@@ -2,8 +2,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
@@ -22,43 +20,24 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override readonly kind = "LazyObjectSetType";
 
   @Memoize()
-  override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
-    const conversions = super.conversions.concat();
-
-    if (this.partialType.itemType.kind === "NamedObjectType") {
-      conversions.push({
-        conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(${(this.partialType.itemType as NamedObjectType).name}.create), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
-        sourceTypeof: "object",
-      });
-    } else if (
-      this.resolveType.itemType.kind === "NamedObjectUnionType" &&
-      this.partialType.itemType.kind === "NamedObjectUnionType" &&
-      this.resolveType.itemType.members.length ===
-        this.partialType.itemType.members.length
-    ) {
-      conversions.push({
-        conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedNamedObjectUnionTypeToPartialNamedObjectUnionTypeConversion({ resolvedNamedObjectUnionType: this.resolveType.itemType as NamedObjectUnionType, partialNamedObjectUnionType: this.partialType.itemType as NamedObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${this.reusables.imports.Right}(${value} as readonly ${this.resolveType.itemType.name}[]) })`,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "object"`,
-        sourceTypeName: code`readonly ${this.resolveType.itemType.name}[]`,
-        sourceTypeof: "object",
-      });
-    }
-
-    conversions.push({
-      conversionExpression: () =>
-        code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
-      sourceTypeCheckExpression: (value) => code`${value} === undefined`,
-      sourceTypeName: code`undefined`,
-      sourceTypeof: "undefined",
-    });
-
-    return conversions;
+  override get conversionFunction(): AbstractLazyObjectType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToLazyObjectSet}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "object",
+        },
+        {
+          name: this.resolveType.name,
+          typeof: "object",
+        },
+        {
+          name: "undefined",
+          typeof: "undefined",
+        },
+      ],
+    };
   }
 
   protected override get runtimeClass() {

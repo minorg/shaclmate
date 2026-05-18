@@ -1,5 +1,5 @@
 import dataFactory from "@rdfx/data-factory";
-
+import type { Either } from "purify-ts";
 import {
   type $FromRdfResourceFunction,
   type $FromRdfResourceValuesFunction,
@@ -23,11 +23,11 @@ export namespace Extern {
 
   export function create(
     parameters: Parameters<typeof BaseForExtern.create>[0],
-  ): Extern {
-    return {
-      ...BaseForExtern.create(parameters),
+  ): Either<Error, Extern> {
+    return BaseForExtern.create(parameters).map((base) => ({
+      ...base,
       $type: "Extern",
-    };
+    }));
   }
 
   export function equals(left: Extern, right: Extern) {
@@ -35,7 +35,7 @@ export namespace Extern {
   }
 
   export function fromJson(json: Json): Extern {
-    return create(BaseForExtern.fromJson(json));
+    return create(BaseForExtern.fromJson(json)).unsafeCoerce();
   }
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Extern> = (
@@ -82,7 +82,7 @@ export namespace Extern {
       ignoreRdfType,
       objectSet,
       preferredLanguages,
-    }).map(create);
+    }).chain(create);
   };
 
   // Called by interface functions

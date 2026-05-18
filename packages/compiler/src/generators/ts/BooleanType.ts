@@ -1,4 +1,6 @@
-import { NonEmptyList } from "purify-ts";
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -8,16 +10,29 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBoolean}`;
   override readonly filterType = code`${this.reusables.snippets.BooleanFilter}`;
-  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${this.reusables.imports.GraphQLBoolean}`,
     this.reusables,
   );
+  override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly kind = "BooleanType";
   override readonly schemaType = code`${this.reusables.snippets.BooleanSchema}`;
-  override readonly typeofs = NonEmptyList(["boolean" as const]);
+  override readonly typeofs = ["boolean" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
+
+  @Memoize()
+  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToBoolean}<${this.name}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "boolean",
+        },
+      ],
+    };
+  }
 
   @Memoize()
   override get name(): string {
@@ -27,13 +42,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return `boolean`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
-    };
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractPrimitiveType<number>["jsonSchema"]>[0],
   ): Code {
@@ -41,6 +49,10 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       return code`${this.reusables.imports.z}.literal(${this.primitiveIn[0]})`;
     }
     return code`${this.reusables.imports.z}.boolean()`;
+  }
+
+  override literalExpression(literal: boolean | Literal): Code {
+    return code`${typeof literal === "boolean" ? literal : LiteralDecoder.decodeBooleanLiteral(literal).unsafeCoerce()}`;
   }
 
   override toRdfResourceValuesExpression({

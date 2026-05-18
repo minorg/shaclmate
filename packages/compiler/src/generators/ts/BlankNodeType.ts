@@ -1,19 +1,36 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { BlankNode } from "@rdfjs/types";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { AbstractTermType } from "./AbstractTermType.js";
 
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
-  readonly filterFunction = code`${this.reusables.snippets.filterBlankNode}`;
-  readonly filterType = code`${this.reusables.snippets.BlankNodeFilter}`;
-  readonly parseFunction = code`${this.reusables.snippets.parseBlankNode};`;
+  override readonly conversionFunction: AbstractIdentifierType.ConversionFunction =
+    {
+      code: code`${this.reusables.snippets.convertToBlankNode}`,
+      sourceTypes: [
+        {
+          name: code`${this.reusables.imports.BlankNode}`,
+          typeof: "object",
+        },
+        {
+          name: "undefined",
+          typeof: "undefined",
+        },
+      ],
+    };
+  override readonly filterFunction =
+    code`${this.reusables.snippets.filterBlankNode}`;
+  override readonly filterType =
+    code`${this.reusables.snippets.BlankNodeFilter}`;
+  override readonly parseFunction =
+    code`${this.reusables.snippets.parseBlankNode};`;
   override readonly kind = "BlankNodeType";
-  readonly name = code`${this.reusables.imports.BlankNode}`;
+  override readonly name = code`${this.reusables.imports.BlankNode}`;
   override readonly nodeKinds = nodeKinds;
-  readonly schemaType = code`${this.reusables.snippets.BlankNodeSchema}`;
-  readonly valueSparqlWherePatternsFunction =
+  override readonly schemaType =
+    code`${this.reusables.snippets.BlankNodeSchema}`;
+  override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
@@ -32,29 +49,27 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   override fromJsonExpression({
     variables,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
+    AbstractIdentifierType<BlankNode>["fromJsonExpression"]
   >[0]): Code {
     return code`${this.reusables.imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
   }
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
-  ): AbstractTermType.JsonType {
+    parameters?: Parameters<AbstractIdentifierType<BlankNode>["jsonType"]>[0],
+  ): AbstractIdentifierType.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "BlankNode"`
       : "";
 
-    return new AbstractTermType.JsonType(
+    return new AbstractIdentifierType.JsonType(
       code`{ readonly "@id": string${discriminantProperty} }`,
     );
   }
 
   override jsonSchema({
     includeDiscriminantProperty,
-  }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
-  >[0]): Code {
+  }: Parameters<AbstractIdentifierType<BlankNode>["jsonSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? code`, termType: ${this.reusables.imports.z}.literal("BlankNode")`
       : "";
@@ -66,7 +81,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     includeDiscriminantProperty,
     variables,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
+    AbstractIdentifierType<BlankNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? code`, termType: ${variables.value}.termType`
@@ -76,7 +91,9 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]) {
+  }: Parameters<
+    AbstractIdentifierType<BlankNode>["fromRdfExpressionChain"]
+  >[0]) {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,

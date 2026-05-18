@@ -1,4 +1,4 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -185,32 +185,22 @@ export abstract class AbstractUnionType<
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    switch (this.discriminant.kind) {
-      case "extrinsic":
-      case "hybrid":
-      case "intrinsic":
-        return [
-          {
-            conversionExpression: (value) => value,
-            sourceTypeCheckExpression: (value) =>
-              code`typeof ${value} === "object"`,
-            sourceTypeName: this.name,
-            sourceTypeof: "object",
-          },
-        ];
-      case "typeof":
-        return this.members.map(
-          ({ primaryDiscriminantValue, type, typeCheck }) => ({
-            conversionExpression: (value) => value,
-            sourceTypeCheckExpression: (value) => typeCheck(value),
-            sourceTypeName: type.name,
-            sourceTypeof: primaryDiscriminantValue as Typeof,
-          }),
-        );
-      default:
-        throw this.discriminant satisfies never;
-    }
+  override get conversionFunction(): AbstractType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToUnion}`,
+      sourceTypes:
+        this.discriminant.kind === "typeof"
+          ? this.members.map(({ primaryDiscriminantValue, type }) => ({
+              name: type.name,
+              typeof: primaryDiscriminantValue as Typeof,
+            }))
+          : [
+              {
+                name: this.name,
+                typeof: "object",
+              },
+            ],
+    };
   }
 
   @Memoize()
@@ -295,9 +285,7 @@ export abstract class AbstractUnionType<
 
   @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
-    return NonEmptyList.fromArray(
-      this.members.flatMap((member) => member.type.typeofs),
-    ).unsafeCoerce();
+    return [...new Set(this.members.flatMap((member) => member.type.typeofs))];
   }
 
   @Memoize()

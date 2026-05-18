@@ -3,7 +3,6 @@ import dataFactory from "@rdfx/data-factory";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Decimal } from "decimal.js";
-import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
 import type { ObjectSetFactory } from "./ObjectSetFactory.js";
 import { objectDataset } from "./objectDataset.js";
@@ -17,10 +16,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("blank node", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             blankNodeTermProperty: dataFactory.blankNode(),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[1],
             stringTermProperty: "test",
           }),
@@ -55,12 +54,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.create({
+            kitchenSink.NumericProperties.createUnsafe({
               $identifier: identifiers[i],
               decimalNumericProperty: new Decimal(i),
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -110,12 +109,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.NumericProperties.create({
+            kitchenSink.NumericProperties.createUnsafe({
               $identifier: identifiers[i],
               integerNumericProperty: BigInt(i),
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -162,12 +161,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.create({
+            kitchenSink.TermProperties.createUnsafe({
               $identifier: identifiers[i],
               booleanTermProperty: i === 0,
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -204,12 +203,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.create({
+            kitchenSink.TermProperties.createUnsafe({
               $identifier: identifiers[i],
               dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -262,11 +261,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
 
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: blankNodeIdentifier,
             stringTermProperty: "ignored",
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: namedNodeIdentifier,
             stringTermProperty: "ignored",
           }),
@@ -315,15 +314,15 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("literal", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[0],
             literalTermProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[1],
             literalTermProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             literalTermProperty: dataFactory.literal("1", xsd.integer),
           }),
@@ -365,14 +364,14 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.create({
+            kitchenSink.TermProperties.createUnsafe({
               $identifier: identifiers[i],
               iriTermProperty: dataFactory.namedNode(
                 `http://example.com/prop${i}`,
               ),
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -410,12 +409,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.create({
+            kitchenSink.TermProperties.createUnsafe({
               $identifier: identifiers[i],
               numberTermProperty: i,
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             stringTermProperty: "test",
           }),
@@ -462,14 +461,14 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.ClassHierarchy3.create({
+            kitchenSink.ClassHierarchy3.createUnsafe({
               classHierarchy0Property: `test${i}`,
               $identifier: identifiers[i],
               classHierarchy3Property: `test${i}`,
               classHierarchy2Property: `test${i}`,
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -512,18 +511,18 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
             i === 0
-              ? kitchenSink.UnionMember1.create({
+              ? kitchenSink.UnionMember1.createUnsafe({
                   $identifier: identifiers[i],
                   unionMember1Property: `test${i}`,
                   unionMemberCommonParentProperty: `test${i}`,
                 })
-              : kitchenSink.UnionMember2.create({
+              : kitchenSink.UnionMember2.createUnsafe({
                   $identifier: identifiers[i],
                   unionMember2Property: `test${i}`,
                   unionMemberCommonParentProperty: `test${i}`,
                 }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -608,7 +607,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     });
 
     describe("option", () => {
-      const instance = kitchenSink.TermProperties.create({
+      const instance = kitchenSink.TermProperties.createUnsafe({
         booleanTermProperty: true,
         $identifier: identifiers[0],
       });
@@ -641,10 +640,10 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const value = "test";
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.PropertyCardinalities.create({
+          kitchenSink.PropertyCardinalities.createUnsafe({
             $identifier: identifiers[0],
             emptyStringSetProperty: [value],
-            nonEmptyStringSetProperty: NonEmptyList([value]),
+            nonEmptyStringSetProperty: [value],
             requiredStringProperty: value,
           }),
         ]),
@@ -687,12 +686,12 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
       const objectSet = createObjectSet(
         objectDataset([
           ...[...new Array(2)].map((_, i) =>
-            kitchenSink.TermProperties.create({
+            kitchenSink.TermProperties.createUnsafe({
               $identifier: identifiers[i],
               stringTermProperty: "x".repeat(i + 1),
             }),
           ),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             numberTermProperty: 0,
           }),
@@ -724,23 +723,23 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("term", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[0],
             termProperty: dataFactory.literal("test"),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[1],
             termProperty: dataFactory.literal("test", "en"),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[2],
             termProperty: dataFactory.literal("1", xsd.integer),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[3],
             termProperty: dataFactory.namedNode("http://example.com"),
           }),
-          kitchenSink.TermProperties.create({
+          kitchenSink.TermProperties.createUnsafe({
             $identifier: identifiers[4],
             stringTermProperty: "test",
           }),
@@ -782,11 +781,11 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
     describe("union", () => {
       const objectSet = createObjectSet(
         objectDataset([
-          kitchenSink.UnionDiscriminants.create({
+          kitchenSink.UnionDiscriminants.createUnsafe({
             $identifier: identifiers[0],
             requiredNodeOrNodeOrStringProperty: {
               type: "UnionMember1",
-              value: kitchenSink.UnionMember1.create({
+              value: kitchenSink.UnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/unionMember1",
                 ),
@@ -796,7 +795,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
             },
             requiredNodeOrLiteralProperty: {
               termType: "UnionMember1",
-              value: kitchenSink.UnionMember1.create({
+              value: kitchenSink.UnionMember1.createUnsafe({
                 $identifier: dataFactory.namedNode(
                   "http://example.com/unionMember1",
                 ),
@@ -811,7 +810,7 @@ export function testObjectFilters(createObjectSet: ObjectSetFactory) {
               "http://example.com/test0",
             ),
           }),
-          kitchenSink.UnionDiscriminants.create({
+          kitchenSink.UnionDiscriminants.createUnsafe({
             $identifier: identifiers[1],
             requiredNodeOrNodeOrStringProperty: {
               type: "string",

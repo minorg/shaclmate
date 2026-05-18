@@ -1,13 +1,14 @@
-import { NonEmptyList } from "purify-ts";
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { Memoize } from "typescript-memoize";
 
 import { AbstractNumericType } from "./AbstractNumericType.js";
-
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigIntType extends AbstractNumericType<bigint> {
   override readonly kind = "BigIntType";
-  override readonly typeofs = NonEmptyList(["bigint" as const]);
+  override readonly typeofs = ["bigint" as const];
 
   @Memoize()
   override get graphqlType() {
@@ -15,19 +16,6 @@ export class BigIntType extends AbstractNumericType<bigint> {
       code`${this.reusables.imports.GraphQLBigInt}`,
       this.reusables,
     );
-  }
-
-  override get conversions(): readonly AbstractNumericType.Conversion[] {
-    if (this.in_.length > 0) {
-      return super.conversions;
-    }
-
-    return super.conversions.concat({
-      conversionExpression: (value) => code`BigInt(${value})`,
-      sourceTypeCheckExpression: (value) => code`typeof ${value} === "number"`,
-      sourceTypeName: "number",
-      sourceTypeof: "number",
-    });
   }
 
   override fromJsonExpression({
@@ -61,6 +49,10 @@ export class BigIntType extends AbstractNumericType<bigint> {
     return new AbstractNumericType.JsonType(code`string`);
   }
 
+  override literalExpression(literal: bigint | Literal): Code {
+    return code`${typeof literal === "bigint" ? literal : LiteralDecoder.decodeBigIntLiteral(literal).unsafeCoerce()}n`;
+  }
+
   override toJsonExpression({
     variables,
   }: Parameters<AbstractNumericType<bigint>["toJsonExpression"]>[0]): Code {
@@ -73,9 +65,5 @@ export class BigIntType extends AbstractNumericType<bigint> {
     AbstractNumericType<bigint>["fromRdfResourceValueExpression"]
   >[0]): Code {
     return code`${variables.value}.toBigInt(${this.primitiveIn.length > 0 ? `[${this.primitiveIn.map((_) => `${_}n`).join(", ")}] as const` : ""})`;
-  }
-
-  protected override literalOf(value: bigint): string {
-    return `${value.toString()}n`;
   }
 }

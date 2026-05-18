@@ -17,6 +17,29 @@ import { snippets_booleanSparqlWherePatterns } from "./_snippets/snippets_boolea
 import { snippets_CollectionFilter } from "./_snippets/snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./_snippets/snippets_CollectionSchema.js";
 import { snippets_compactRecord } from "./_snippets/snippets_compactRecord.js";
+import { snippets_convertToBigDecimal } from "./_snippets/snippets_convertToBigDecimal.js";
+import { snippets_convertToBlankNode } from "./_snippets/snippets_convertToBlankNode.js";
+import { snippets_convertToBlankNodeIdentifierProperty } from "./_snippets/snippets_convertToBlankNodeIdentifierProperty.js";
+import { snippets_convertToBoolean } from "./_snippets/snippets_convertToBoolean.js";
+import { snippets_convertToDate } from "./_snippets/snippets_convertToDate.js";
+import { snippets_convertToDateTime } from "./_snippets/snippets_convertToDateTime.js";
+import { snippets_convertToIdentifier } from "./_snippets/snippets_convertToIdentifier.js";
+import { snippets_convertToIdentifierProperty } from "./_snippets/snippets_convertToIdentifierProperty.js";
+import { snippets_convertToIri } from "./_snippets/snippets_convertToIri.js";
+import { snippets_convertToIriIdentifierProperty } from "./_snippets/snippets_convertToIriIdentifierProperty.js";
+import { snippets_convertToLazyObject } from "./_snippets/snippets_convertToLazyObject.js";
+import { snippets_convertToLazyObjectOption } from "./_snippets/snippets_convertToLazyObjectOption.js";
+import { snippets_convertToLazyObjectSet } from "./_snippets/snippets_convertToLazyObjectSet.js";
+import { snippets_convertToLiteral } from "./_snippets/snippets_convertToLiteral.js";
+import { snippets_convertToMaybe } from "./_snippets/snippets_convertToMaybe.js";
+import { snippets_convertToMutableArray } from "./_snippets/snippets_convertToMutableArray.js";
+import { snippets_convertToNumeric } from "./_snippets/snippets_convertToNumeric.js";
+import { snippets_convertToObject } from "./_snippets/snippets_convertToObject.js";
+import { snippets_convertToReadonlyArray } from "./_snippets/snippets_convertToReadonlyArray.js";
+import { snippets_convertToString } from "./_snippets/snippets_convertToString.js";
+import { snippets_convertToTerm } from "./_snippets/snippets_convertToTerm.js";
+import { snippets_convertToUnion } from "./_snippets/snippets_convertToUnion.js";
+import { snippets_convertWithDefaultValue } from "./_snippets/snippets_convertWithDefaultValue.js";
 import { snippets_DateFilter } from "./_snippets/snippets_DateFilter.js";
 import { snippets_DateSchema } from "./_snippets/snippets_DateSchema.js";
 import { snippets_DefaultValueSchema } from "./_snippets/snippets_DefaultValueSchema.js";
@@ -62,11 +85,6 @@ import { snippets_IriFilter } from "./_snippets/snippets_IriFilter.js";
 import { snippets_IriSchema } from "./_snippets/snippets_IriSchema.js";
 import { snippets_identifierSparqlWherePatterns } from "./_snippets/snippets_identifierSparqlWherePatterns.js";
 import { snippets_iriSparqlWherePatterns } from "./_snippets/snippets_iriSparqlWherePatterns.js";
-import { snippets_isReadonlyBigIntArray } from "./_snippets/snippets_isReadonlyBigIntArray.js";
-import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonlyBooleanArray.js";
-import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
-import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
-import { snippets_isReadonlyStringArray } from "./_snippets/snippets_isReadonlyStringArray.js";
 import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
 import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
 import { snippets_LazyObjectSet } from "./_snippets/snippets_LazyObjectSet.js";
@@ -425,6 +443,121 @@ export class Snippets {
   }
 
   @Memoize()
+  get convertToBigDecimal(): Snippet {
+    return this.snippet(snippets_convertToBigDecimal);
+  }
+
+  @Memoize()
+  get convertToBlankNode(): Snippet {
+    return this.snippet(snippets_convertToBlankNode);
+  }
+
+  @Memoize()
+  get convertToBlankNodeIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToBlankNodeIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToBoolean(): Snippet {
+    return this.snippet(snippets_convertToBoolean);
+  }
+
+  @Memoize()
+  get convertToDate(): Snippet {
+    return this.snippet(snippets_convertToDate);
+  }
+
+  @Memoize()
+  get convertToDateTime(): Snippet {
+    return this.snippet(snippets_convertToDateTime);
+  }
+
+  @Memoize()
+  get convertToIdentifier(): Snippet {
+    return this.snippet(snippets_convertToIdentifier);
+  }
+
+  @Memoize()
+  get convertToIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToIri(): Snippet {
+    return this.snippet(snippets_convertToIri);
+  }
+
+  @Memoize()
+  get convertToIriIdentifierProperty(): Snippet {
+    return this.snippet(snippets_convertToIriIdentifierProperty);
+  }
+
+  @Memoize()
+  get convertToLazyObject(): Snippet {
+    return this.snippet(snippets_convertToLazyObject);
+  }
+
+  @Memoize()
+  get convertToLazyObjectOption(): Snippet {
+    return this.snippet(snippets_convertToLazyObjectOption);
+  }
+
+  @Memoize()
+  get convertToLazyObjectSet(): Snippet {
+    return this.snippet(snippets_convertToLazyObjectSet);
+  }
+
+  @Memoize()
+  get convertToLiteral(): Snippet {
+    return this.snippet(snippets_convertToLiteral);
+  }
+
+  @Memoize()
+  get convertToMaybe(): Snippet {
+    return this.snippet(snippets_convertToMaybe);
+  }
+
+  @Memoize()
+  get convertToMutableArray(): Snippet {
+    return this.snippet(snippets_convertToMutableArray);
+  }
+
+  @Memoize()
+  get convertToNumeric(): Snippet {
+    return this.snippet(snippets_convertToNumeric);
+  }
+
+  @Memoize()
+  get convertToObject(): Snippet {
+    return this.snippet(snippets_convertToObject);
+  }
+
+  @Memoize()
+  get convertToReadonlyArray(): Snippet {
+    return this.snippet(snippets_convertToReadonlyArray);
+  }
+
+  @Memoize()
+  get convertToString(): Snippet {
+    return this.snippet(snippets_convertToString);
+  }
+
+  @Memoize()
+  get convertToTerm(): Snippet {
+    return this.snippet(snippets_convertToTerm);
+  }
+
+  @Memoize()
+  get convertToUnion(): Snippet {
+    return this.snippet(snippets_convertToUnion);
+  }
+
+  @Memoize()
+  get convertWithDefaultValue(): Snippet {
+    return this.snippet(snippets_convertWithDefaultValue);
+  }
+
+  @Memoize()
   get dateEquals(): Snippet {
     return this.snippet(snippets_dateEquals);
   }
@@ -596,31 +729,6 @@ export class Snippets {
   @Memoize()
   get iriSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_iriSparqlWherePatterns);
-  }
-
-  @Memoize()
-  get isReadonlyBigIntArray(): Snippet {
-    return this.snippet(snippets_isReadonlyBigIntArray);
-  }
-
-  @Memoize()
-  get isReadonlyBooleanArray(): Snippet {
-    return this.snippet(snippets_isReadonlyBooleanArray);
-  }
-
-  @Memoize()
-  get isReadonlyNumberArray(): Snippet {
-    return this.snippet(snippets_isReadonlyNumberArray);
-  }
-
-  @Memoize()
-  get isReadonlyObjectArray(): Snippet {
-    return this.snippet(snippets_isReadonlyObjectArray);
-  }
-
-  @Memoize()
-  get isReadonlyStringArray(): Snippet {
-    return this.snippet(snippets_isReadonlyStringArray);
   }
 
   @Memoize()

@@ -1,7 +1,19 @@
+import type { Literal } from "@rdfjs/types";
+import { LiteralDecoder } from "@rdfx/literal";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class DateTimeType extends AbstractDateType {
+  override readonly conversionFunction: AbstractDateType.ConversionFunction = {
+    code: code`${this.reusables.snippets.convertToDateTime}`,
+    sourceTypes: [
+      {
+        name: "Date",
+        typeof: "object",
+      },
+    ],
+  };
   override readonly graphqlType = new DateTimeType.GraphqlType(
     code`${this.reusables.imports.GraphQLDateTime}`,
     this.reusables,
@@ -14,6 +26,10 @@ export class DateTimeType extends AbstractDateType {
     _parameters: Parameters<AbstractDateType["jsonSchema"]>[0],
   ): Code {
     return code`${this.reusables.imports.z}.iso.datetime()`;
+  }
+
+  override literalExpression(literal: Date | Literal): Code {
+    return code`new Date("${(literal instanceof Date ? literal : LiteralDecoder.decodeDateTimeLiteral(literal).unsafeCoerce()).toISOString()}")`;
   }
 
   override toJsonExpression({

@@ -1,6 +1,6 @@
+import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
-import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -17,9 +17,22 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly hashFunction = code`${this.reusables.snippets.hashString}`;
   override readonly kind = "StringType";
   override readonly schemaType = code`${this.reusables.snippets.StringSchema}`;
-  override readonly typeofs = NonEmptyList(["string" as const]);
+  override readonly typeofs = ["string" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.stringSparqlWherePatterns}`;
+
+  @Memoize()
+  override get conversionFunction(): AbstractPrimitiveType.ConversionFunction {
+    return {
+      code: code`${this.reusables.snippets.convertToString}<${this.name}>`,
+      sourceTypes: [
+        {
+          name: this.name,
+          typeof: "string",
+        },
+      ],
+    };
+  }
 
   @Memoize()
   override get name(): string {
@@ -27,16 +40,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       return `${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
     }
     return `string`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map(literalOf).concat()
-          : undefined,
-    };
   }
 
   override jsonSchema(
@@ -50,6 +53,10 @@ export class StringType extends AbstractPrimitiveType<string> {
       default:
         return code`${this.reusables.imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
     }
+  }
+
+  override literalExpression(literal: Literal | string): Code {
+    return code`${literalOf(typeof literal === "string" ? literal : literal.value)}`;
   }
 
   override toRdfResourceValuesExpression({

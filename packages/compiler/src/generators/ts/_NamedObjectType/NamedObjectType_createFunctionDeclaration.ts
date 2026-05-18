@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { NamedObjectType } from "../NamedObjectType.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_createFunctionDeclaration(
   this: NamedObjectType,
@@ -11,7 +11,7 @@ export function NamedObjectType_createFunctionDeclaration(
   }
 
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersSignature.toList(),
+    property.constructorParameter.toList(),
   );
 
   const parametersType: Code[] = [];
@@ -27,12 +27,6 @@ export function NamedObjectType_createFunctionDeclaration(
     parametersType.push(code`object`);
   }
 
-  const propertyInitializers: string[] = [];
-  const omitPropertyNames: string[] = [];
-  const propertyStatements: Code[] = [];
-  for (const parentObjectType of this.parentObjectTypes) {
-    propertyInitializers.push(`...${parentObjectType.name}.create(parameters)`);
-  }
   const parametersHasQuestionToken =
     this.parentObjectTypes.length === 0 &&
     parametersPropertySignatures.every(
@@ -40,31 +34,53 @@ export function NamedObjectType_createFunctionDeclaration(
         propertySignature.toCodeString([]).indexOf("?:") !== -1,
     );
   const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
-  for (const property of this.properties) {
-    const thisPropertyStatements = property.constructorStatements({
-      variables: {
-        parameter: code`${parametersVariable}.${property.name}`,
-        parameters: parametersVariable,
-      },
+
+  const parametersSignature = code`parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}`;
+
+  const chains: { expression: Code; variable: string }[] = [];
+
+  this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
+    chains.push({
+      expression: code`${parentObjectType.name}.create(parameters)`,
+      variable: `super${parentObjectTypeI}`,
     });
-    if (thisPropertyStatements.length > 0) {
-      propertyInitializers.push(property.name);
-      propertyStatements.push(...thisPropertyStatements);
-    } else {
-      omitPropertyNames.push(property.name);
-    }
-  }
+  });
+
+  const propertyInitializers = this.properties.flatMap((property) =>
+    property
+      .constructorInitializer({
+        variables: { parameters: parametersVariable },
+      })
+      .toList(),
+  );
   invariant(propertyInitializers.length > 0);
-  invariant(propertyStatements.length > 0);
+  chains.push({
+    expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} })`,
+    variable: "properties",
+  });
 
   const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
   return Maybe.of(code`\
-export function create(parameters${parametersHasQuestionToken ? "?" : ""}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
-  ${joinCode(propertyStatements)}
-  const ${syntheticNamePrefix}object = { ${propertyInitializers.join(", ")} };
-  if (!globalThis.Object.prototype.hasOwnProperty.call(${syntheticNamePrefix}object, "toString")) {
-    (${syntheticNamePrefix}object as any).toString = ${syntheticNamePrefix}toString;
+export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${chains.toReversed().reduce(
+    (acc, { expression, variable }, chainI) =>
+      code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+    code`\
+{
+  const finalObject = { ${chains
+    .map((chain) => `...${chain.variable}`)
+    .join(
+      ", ",
+    )}, ${this._discriminantProperty.name}: ${literalOf(this.discriminantValue)} as const };
+  if (!globalThis.Object.prototype.hasOwnProperty.call(finalObject, "toString")) {
+    (finalObject as any).toString = ${syntheticNamePrefix}toString;
   }
-  return ${syntheticNamePrefix}object;
+  return finalObject;
+}`,
+  )};
+}
+  
+export function createUnsafe(${parametersSignature}): ${this.name} {
+  return create(parameters).unsafeCoerce();
 }`);
 }

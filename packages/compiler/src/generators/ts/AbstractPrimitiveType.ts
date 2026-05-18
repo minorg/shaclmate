@@ -1,14 +1,16 @@
-import type { NamedNode } from "@rdfjs/types";
+import type { Literal, NamedNode } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractLiteralType } from "./AbstractLiteralType.js";
 
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
 > extends AbstractLiteralType {
   protected readonly datatype: NamedNode;
+
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:
@@ -35,21 +37,21 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    return [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) =>
-          code`typeof ${value} === "${this.typeofs[0]}"`,
-        sourceTypeName: this.name,
-        sourceTypeof: this.typeofs[0],
-      },
-    ];
-  }
-
   override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
     return Maybe.empty();
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in:
+        this.primitiveIn.length > 0
+          ? code`[${joinCode(
+              this.primitiveIn.map((in_) => this.literalExpression(in_)),
+              { on: ", " },
+            )}] as const`
+          : undefined,
+    };
   }
 
   override fromJsonExpression({
@@ -69,6 +71,8 @@ export abstract class AbstractPrimitiveType<
     return new AbstractLiteralType.JsonType(this.name);
   }
 
+  abstract override literalExpression(literal: Literal | ValueT): Code;
+
   override toJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
@@ -77,7 +81,7 @@ export abstract class AbstractPrimitiveType<
 }
 
 export namespace AbstractPrimitiveType {
-  export type Conversion = AbstractLiteralType.Conversion;
+  export type ConversionFunction = AbstractLiteralType.ConversionFunction;
   export type DiscriminantProperty = AbstractLiteralType.DiscriminantProperty;
   export const GraphqlType = AbstractLiteralType.GraphqlType;
   export type GraphqlType = AbstractLiteralType.GraphqlType;

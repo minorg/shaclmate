@@ -143,21 +143,21 @@ describe("lazyProperties", () => {
   let nonEmptyLazyPropertiesInstance: kitchenSink.LazyProperties;
 
   const expectedLazilyResolvedBlankNodeOrIriIdentifierInstance =
-    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.create({
+    kitchenSink.LazilyResolvedBlankNodeOrIriIdentifier.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedBlankNodeOrIriIdentifierInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedIriIdentifierInstance =
-    kitchenSink.LazilyResolvedIriIdentifier.create({
+    kitchenSink.LazilyResolvedIriIdentifier.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedIriIdentifierInstance",
       ),
       lazilyResolvedStringProperty: "test",
     });
   const expectedLazilyResolvedUnionInstance =
-    kitchenSink.LazilyResolvedUnionMember1.create({
+    kitchenSink.LazilyResolvedUnionMember1.createUnsafe({
       $identifier: dataFactory.namedNode(
         "http://example.com/lazilyResolvedUnionInstance",
       ),
@@ -188,7 +188,7 @@ describe("lazyProperties", () => {
 
     emptyLazyPropertiesInstance = kitchenSink.LazyProperties.fromRdfResource(
       kitchenSink.LazyProperties.toRdfResource(
-        kitchenSink.LazyProperties.create({
+        kitchenSink.LazyProperties.createUnsafe({
           requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
             expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
           requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
@@ -200,7 +200,7 @@ describe("lazyProperties", () => {
 
     nonEmptyLazyPropertiesInstance = kitchenSink.LazyProperties.fromRdfResource(
       kitchenSink.LazyProperties.toRdfResource(
-        kitchenSink.LazyProperties.create({
+        kitchenSink.LazyProperties.createUnsafe({
           optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
             expectedLazilyResolvedBlankNodeOrIriIdentifierInstance,
           optionalLazyToResolvedUnionProperty:

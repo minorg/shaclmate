@@ -1,10 +1,15 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { NamedNode } from "@rdfjs/types";
 
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import { AbstractTermType } from "./AbstractTermType.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
@@ -16,13 +21,39 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     code`${this.reusables.snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
+  override get conversionFunction() {
+    const IriT =
+      this.in_.length > 0
+        ? code`${joinCode(
+            this.in_.map((iri) => code`${literalOf(iri.value)}`),
+            { on: "| " },
+          )}`
+        : code`string`;
+
+    return {
+      code: code`${this.reusables.snippets.convertToIri}<${IriT}>`,
+      sourceTypes: [
+        {
+          name: IriT,
+          typeof: "string" as const,
+        },
+        {
+          name: this.name,
+          typeof: "object" as const,
+        },
+      ],
+    };
+  }
+
+  @Memoize()
   override get name(): Code {
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return code`${this.reusables.imports.NamedNode}<${this.in_
-        .map((iri) => `"${iri.value}"`)
-        .join(" | ")}>`;
+      return code`${this.reusables.imports.NamedNode}<${joinCode(
+        this.in_.map((iri) => code`${literalOf(iri.value)}`),
+        { on: "| " },
+      )}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
@@ -36,29 +67,17 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     return code`${this.reusables.snippets.parseIri}`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? this.in_.map((in_) => this.rdfjsTermExpression(in_)).concat()
-          : undefined,
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
+    AbstractIdentifierType<NamedNode>["fromJsonExpression"]
   >[0]): Code {
     return code`${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@id"])`;
   }
 
   override jsonSchema({
     includeDiscriminantProperty,
-  }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonSchema"]
-  >[0]): Code {
+  }: Parameters<AbstractIdentifierType<NamedNode>["jsonSchema"]>[0]): Code {
     let idSchema: Code;
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
@@ -77,8 +96,8 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
-  ): AbstractTermType.JsonType {
+    parameters?: Parameters<AbstractIdentifierType<NamedNode>["jsonType"]>[0],
+  ): AbstractIdentifierType.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "NamedNode"`
       : "";
@@ -86,12 +105,12 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new AbstractTermType.JsonType(
+      return new AbstractIdentifierType.JsonType(
         code`{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
       );
     }
 
-    return new AbstractTermType.JsonType(
+    return new AbstractIdentifierType.JsonType(
       code`{ readonly "@id": string${discriminantProperty} }`,
     );
   }
@@ -100,7 +119,7 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
     includeDiscriminantProperty,
     variables,
   }: Parameters<
-    AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
+    AbstractIdentifierType<NamedNode>["toJsonExpression"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? code`, termType: ${variables.value}.termType`
@@ -110,8 +129,10 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    AbstractTermType["fromRdfExpressionChain"]
+  }: Parameters<
+    AbstractIdentifierType<NamedNode>["fromRdfExpressionChain"]
+  >[0]): ReturnType<
+    AbstractIdentifierType<NamedNode>["fromRdfExpressionChain"]
   > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
