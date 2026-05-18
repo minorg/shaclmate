@@ -462,6 +462,13 @@ function $identityConversionFunction<T>(value: T): Either<Error, T> {
   return Either.of(value);
 }
 
+function $identityValidationFunction<T>(
+  _schema: unknown,
+  value: T,
+): Either<Error, T> {
+  return Either.of(value);
+}
+
 interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
@@ -571,6 +578,11 @@ export class $LazyObjectSet<
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
+
+interface $MaybeSchema<ItemSchemaT> {
+  readonly item: () => ItemSchemaT;
+  readonly kind: "Maybe";
+}
 
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
@@ -784,6 +796,23 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+function $validateMaybe<ItemSchemaT, ItemValueT>(
+  validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
+) {
+  return (
+    schema: $MaybeSchema<ItemSchemaT>,
+    valueMaybe: Maybe<ItemValueT>,
+  ): Either<Error, Maybe<ItemValueT>> =>
+    valueMaybe
+      .map((value) => validateItem(schema.item(), value).map(() => valueMaybe))
+      .orDefault(Either.of(valueMaybe));
+}
+
+type $ValidationFunction<SchemaT, ValueT> = (
+  schema: SchemaT,
+  value: ValueT,
+) => Either<Error, ValueT>;
 
 function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
@@ -1007,6 +1036,11 @@ export namespace UnionMember2 {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember2.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "UnionMember2" as const };
@@ -1284,6 +1318,11 @@ export namespace UnionMember1 {
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters?.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "UnionMember1" as const };
@@ -1567,13 +1606,21 @@ export namespace Nested {
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       optionalNumberProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalNumberProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember1.schema.properties.optionalNumberProperty.type(),
+          value,
+        ),
       ),
       optionalStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.optionalStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          UnionMember2.schema.properties.optionalStringProperty.type(),
+          value,
+        ),
       ),
-      requiredStringProperty: $identityConversionFunction(
-        parameters.requiredStringProperty,
-      ),
+      requiredStringProperty: Either.of(parameters.requiredStringProperty),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "Nested" as const };
       if (
@@ -1944,6 +1991,11 @@ export namespace Parent {
       ),
       parentStringProperty: $convertToMaybe($identityConversionFunction)(
         parameters.parentStringProperty,
+      ).chain((value) =>
+        $validateMaybe($identityValidationFunction)(
+          Parent.schema.properties.parentStringProperty.type(),
+          value,
+        ),
       ),
     }).map((properties) => {
       const finalObject = { ...properties, $type: "Parent" as const };
@@ -2251,6 +2303,11 @@ export namespace Child {
         ),
         childStringProperty: $convertToMaybe($identityConversionFunction)(
           parameters.childStringProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            Child.schema.properties.childStringProperty.type(),
+            value,
+          ),
         ),
         lazyObjectSetProperty: $convertToLazyObjectSet<
           Nested.Identifier,
@@ -2264,13 +2321,21 @@ export namespace Child {
         >($DefaultPartial.createUnsafe)(parameters.optionalLazyObjectProperty),
         optionalObjectProperty: $convertToMaybe($identityConversionFunction)(
           parameters.optionalObjectProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            Child.schema.properties.optionalObjectProperty.type(),
+            value,
+          ),
         ),
         optionalStringProperty: $convertToMaybe($identityConversionFunction)(
           parameters.optionalStringProperty,
+        ).chain((value) =>
+          $validateMaybe($identityValidationFunction)(
+            UnionMember2.schema.properties.optionalStringProperty.type(),
+            value,
+          ),
         ),
-        requiredStringProperty: $identityConversionFunction(
-          parameters.requiredStringProperty,
-        ),
+        requiredStringProperty: Either.of(parameters.requiredStringProperty),
       }).map((properties) => {
         const finalObject = {
           ...super0,
