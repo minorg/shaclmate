@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { codeEquals } from "./codeEquals.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
@@ -136,13 +135,11 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0n) {
       expression = code`(${expression} ?? [])`;
     }
-    const valueVariable = code`item`;
-    const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: valueVariable },
-    });
-    return codeEquals(itemFromJsonExpression, valueVariable)
-      ? expression
-      : code`${expression}.map(item => (${itemFromJsonExpression}))`;
+    return code`${this.reusables.imports.Either}.sequence<Error, ${this.itemType.name}>(${expression}.map(item => (${this.itemType.fromJsonExpression(
+      {
+        variables: { value: code`item` },
+      },
+    )})))`;
   }
 
   override graphqlResolveExpression({

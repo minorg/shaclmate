@@ -203,8 +203,7 @@ export abstract class AbstractType {
   }
 
   /**
-   * An expression that converts this type's JSON type to a value of this type. It doesn't return a Either because the JSON has
-   * already been validated and converted to the expected JSON type with Zod.
+   * An expression that converts this type's JSON type to an Either<Error, ThisType>.
    */
   abstract fromJsonExpression(parameters: {
     variables: {

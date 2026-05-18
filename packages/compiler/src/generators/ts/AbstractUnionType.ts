@@ -350,17 +350,17 @@ if (filter.on?.[${literalOf(primaryDiscriminantValue)}] !== undefined && ${typeC
 
   protected get inlineFromJsonFunction(): Code {
     return code`\
-((value: ${this.jsonType().name}): ${this.name} => {
+((value: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.name}> => {
 ${joinCode(
   this.members.map(
     ({ jsonType, jsonTypeCheck, type, unwrap, wrap }) =>
-      code`if (${jsonTypeCheck(code`value`)}) { return ${wrap(
-        type.fromJsonExpression({
+      code`if (${jsonTypeCheck(code`value`)}) { return ${type.fromJsonExpression(
+        {
           variables: {
             value: code`(${unwrap(code`value`)} as ${jsonType})`,
           },
-        }),
-      )}; }`,
+        },
+      )}.map(value => (${wrap(code`value`)})); }`,
   ),
 )}
 

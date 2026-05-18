@@ -51,7 +51,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+    return code`${this.partialType.fromJsonExpression(parameters)}.map(partial => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: partial, resolver: () => Promise.resolve(${this.reusables.imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) }))`;
   }
 
   override fromRdfResourceValuesExpression(

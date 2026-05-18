@@ -3274,14 +3274,16 @@ export namespace NamedUnion1 {
     };
   };
 
-  export const fromJson = (value: NamedUnion1.Json): NamedUnion1 => {
+  export const fromJson = (
+    value: NamedUnion1.Json,
+  ): Either<Error, NamedUnion1> => {
     if (typeof value === "object") {
-      return dataFactory.namedNode(
-        (value as { readonly "@id": string })["@id"],
-      );
+      return Either.of<Error, NamedNode>(
+        dataFactory.namedNode((value as { readonly "@id": string })["@id"]),
+      ).map((value) => value);
     }
     if (typeof value === "string") {
-      return value as string;
+      return Either.of<Error, string>(value as string).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -3539,15 +3541,24 @@ export namespace NamedUnion2 {
     };
   };
 
-  export const fromJson = (value: NamedUnion2.Json): NamedUnion2 => {
+  export const fromJson = (
+    value: NamedUnion2.Json,
+  ): Either<Error, NamedUnion2> => {
     if (value["type"] === "date") {
-      return { type: "date" as const, value: new Date(value.value as string) };
+      return Either.of<Error, Date>(new Date(value.value as string)).map(
+        (value) => ({
+          type: "date" as const,
+          value: value,
+        }),
+      );
     }
     if (value["type"] === "dateTime") {
-      return {
-        type: "dateTime" as const,
-        value: new Date(value.value as string),
-      };
+      return Either.of<Error, Date>(new Date(value.value as string)).map(
+        (value) => ({
+          type: "dateTime" as const,
+          value: value,
+        }),
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -3924,8 +3935,12 @@ export namespace $NamedDefaultPartial {
 
   export function fromJson(
     $json: $NamedDefaultPartial.Json,
-  ): $NamedDefaultPartial {
-    return createUnsafe({ $identifier: dataFactory.namedNode($json["@id"]) });
+  ): Either<Error, $NamedDefaultPartial> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["@id"]),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -4284,12 +4299,16 @@ export namespace $DefaultPartial {
     return patterns;
   };
 
-  export function fromJson($json: $DefaultPartial.Json): $DefaultPartial {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-    });
+  export function fromJson(
+    $json: $DefaultPartial.Json,
+  ): Either<Error, $DefaultPartial> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<$DefaultPartial> = (
@@ -8332,205 +8351,245 @@ export namespace UnionDiscriminants {
     return patterns;
   };
 
-  export function fromJson($json: UnionDiscriminants.Json): UnionDiscriminants {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  export function fromJson(
+    $json: UnionDiscriminants.Json,
+  ): Either<Error, UnionDiscriminants> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       optionalIriOrLiteralProperty: Maybe.fromNullable(
         $json["optionalIriOrLiteralProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { readonly "@id": string; readonly termType: "NamedNode" }
-            | {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              },
-        ): NamedNode | Literal => {
-          if (value["termType"] === "NamedNode") {
-            return dataFactory.namedNode(
-              (
-                value as {
-                  readonly "@id": string;
-                  readonly termType: "NamedNode";
-                }
-              )["@id"],
-            );
-          }
-          if (value["termType"] === "Literal") {
-            return dataFactory.literal(
-              (
-                value as {
+      )
+        .map((item) =>
+          ((
+            value:
+              | { readonly "@id": string; readonly termType: "NamedNode" }
+              | {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@language"] !== undefined
-                ? (
+                },
+          ): Either<Error, NamedNode | Literal> => {
+            if (value["termType"] === "NamedNode") {
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(
+                  (
+                    value as {
+                      readonly "@id": string;
+                      readonly termType: "NamedNode";
+                    }
+                  )["@id"],
+                ),
+              ).map((value) => value);
+            }
+            if (value["termType"] === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@language"]
-                : (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"] !== undefined
-                  ? dataFactory.namedNode(
-                      (
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@type"]!,
-                    )
-                  : undefined,
-            );
-          }
+                      )["@language"]
+                    : (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       optionalIriOrStringProperty: Maybe.fromNullable(
         $json["optionalIriOrStringProperty"],
-      ).map((item) =>
-        ((value: { readonly "@id": string } | string): NamedNode | string => {
-          if (typeof value === "object") {
-            return dataFactory.namedNode(
-              (value as { readonly "@id": string })["@id"],
-            );
-          }
-          if (typeof value === "string") {
-            return value as string;
-          }
+      )
+        .map((item) =>
+          ((
+            value: { readonly "@id": string } | string,
+          ): Either<Error, NamedNode | string> => {
+            if (typeof value === "object") {
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(
+                  (value as { readonly "@id": string })["@id"],
+                ),
+              ).map((value) => value);
+            }
+            if (typeof value === "string") {
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       optionalNodeOrLiteralProperty: Maybe.fromNullable(
         $json["optionalNodeOrLiteralProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { termType: "UnionMember1"; value: UnionMember1.Json }
-            | {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              },
-        ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
-          if (value["termType"] === "UnionMember1") {
-            return {
-              termType: "UnionMember1" as const,
-              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-            };
-          }
-          if (value["termType"] === "Literal") {
-            return dataFactory.literal(
-              (
-                value as {
+      )
+        .map((item) =>
+          ((
+            value:
+              | { termType: "UnionMember1"; value: UnionMember1.Json }
+              | {
                   readonly "@language"?: string;
                   readonly termType: "Literal";
                   readonly "@type"?: string;
                   readonly "@value": string;
-                }
-              )["@value"],
-              (
-                value as {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                }
-              )["@language"] !== undefined
-                ? (
+                },
+          ): Either<
+            Error,
+            { termType: "UnionMember1"; value: UnionMember1 } | Literal
+          > => {
+            if (value["termType"] === "UnionMember1") {
+              return UnionMember1.fromJson(
+                value.value as UnionMember1.Json,
+              ).map((value) => ({
+                termType: "UnionMember1" as const,
+                value: value,
+              }));
+            }
+            if (value["termType"] === "Literal") {
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@language"]
-                : (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@type"] !== undefined
-                  ? dataFactory.namedNode(
-                      (
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@type"]!,
-                    )
-                  : undefined,
-            );
-          }
+                      )["@language"]
+                    : (
+                          value as {
+                            readonly "@language"?: string;
+                            readonly termType: "Literal";
+                            readonly "@type"?: string;
+                            readonly "@value": string;
+                          }
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       optionalNodeOrNodeOrStringProperty: Maybe.fromNullable(
         $json["optionalNodeOrNodeOrStringProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { type: "UnionMember1"; value: UnionMember1.Json }
-            | { type: "UnionMember2"; value: UnionMember2.Json }
-            | { type: "string"; value: string },
-        ):
-          | { type: "UnionMember1"; value: UnionMember1 }
-          | { type: "UnionMember2"; value: UnionMember2 }
-          | {
-              type: "string";
-              value: string;
-            } => {
-          if (value["type"] === "UnionMember1") {
-            return {
-              type: "UnionMember1" as const,
-              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-            };
-          }
-          if (value["type"] === "UnionMember2") {
-            return {
-              type: "UnionMember2" as const,
-              value: UnionMember2.fromJson(value.value as UnionMember2.Json),
-            };
-          }
-          if (value["type"] === "string") {
-            return { type: "string" as const, value: value.value as string };
-          }
+      )
+        .map((item) =>
+          ((
+            value:
+              | { type: "UnionMember1"; value: UnionMember1.Json }
+              | { type: "UnionMember2"; value: UnionMember2.Json }
+              | { type: "string"; value: string },
+          ): Either<
+            Error,
+            | { type: "UnionMember1"; value: UnionMember1 }
+            | { type: "UnionMember2"; value: UnionMember2 }
+            | {
+                type: "string";
+                value: string;
+              }
+          > => {
+            if (value["type"] === "UnionMember1") {
+              return UnionMember1.fromJson(
+                value.value as UnionMember1.Json,
+              ).map((value) => ({
+                type: "UnionMember1" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "UnionMember2") {
+              return UnionMember2.fromJson(
+                value.value as UnionMember2.Json,
+              ).map((value) => ({
+                type: "UnionMember2" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "string") {
+              return Either.of<Error, string>(value.value as string).map(
+                (value) => ({
+                  type: "string" as const,
+                  value: value,
+                }),
+              );
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       requiredIriOrLiteralProperty: ((
         value:
           | { readonly "@id": string; readonly termType: "NamedNode" }
@@ -8540,77 +8599,83 @@ export namespace UnionDiscriminants {
               readonly "@type"?: string;
               readonly "@value": string;
             },
-      ): NamedNode | Literal => {
+      ): Either<Error, NamedNode | Literal> => {
         if (value["termType"] === "NamedNode") {
-          return dataFactory.namedNode(
-            (
-              value as {
-                readonly "@id": string;
-                readonly termType: "NamedNode";
-              }
-            )["@id"],
-          );
+          return Either.of<Error, NamedNode>(
+            dataFactory.namedNode(
+              (
+                value as {
+                  readonly "@id": string;
+                  readonly termType: "NamedNode";
+                }
+              )["@id"],
+            ),
+          ).map((value) => value);
         }
         if (value["termType"] === "Literal") {
-          return dataFactory.literal(
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@value"],
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@language"] !== undefined
-              ? (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"]
-              : (
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"] !== undefined
+                ? (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    (
+                  )["@language"]
+                : (
                       value as {
                         readonly "@language"?: string;
                         readonly termType: "Literal";
                         readonly "@type"?: string;
                         readonly "@value": string;
                       }
-                    )["@type"]!,
-                  )
-                : undefined,
-          );
+                    )["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"]!,
+                    )
+                  : undefined,
+            ),
+          ).map((value) => value);
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["requiredIriOrLiteralProperty"]),
       requiredIriOrStringProperty: ((
         value: { readonly "@id": string } | string,
-      ): NamedNode | string => {
+      ): Either<Error, NamedNode | string> => {
         if (typeof value === "object") {
-          return dataFactory.namedNode(
-            (value as { readonly "@id": string })["@id"],
-          );
+          return Either.of<Error, NamedNode>(
+            dataFactory.namedNode((value as { readonly "@id": string })["@id"]),
+          ).map((value) => value);
         }
         if (typeof value === "string") {
-          return value as string;
+          return Either.of<Error, string>(value as string).map(
+            (value) => value,
+          );
         }
 
         throw new Error("unable to deserialize JSON");
@@ -8624,59 +8689,66 @@ export namespace UnionDiscriminants {
               readonly "@type"?: string;
               readonly "@value": string;
             },
-      ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
+      ): Either<
+        Error,
+        { termType: "UnionMember1"; value: UnionMember1 } | Literal
+      > => {
         if (value["termType"] === "UnionMember1") {
-          return {
-            termType: "UnionMember1" as const,
-            value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-          };
+          return UnionMember1.fromJson(value.value as UnionMember1.Json).map(
+            (value) => ({
+              termType: "UnionMember1" as const,
+              value: value,
+            }),
+          );
         }
         if (value["termType"] === "Literal") {
-          return dataFactory.literal(
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@value"],
-            (
-              value as {
-                readonly "@language"?: string;
-                readonly termType: "Literal";
-                readonly "@type"?: string;
-                readonly "@value": string;
-              }
-            )["@language"] !== undefined
-              ? (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"]
-              : (
+          return Either.of<Error, Literal>(
+            dataFactory.literal(
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@value"],
+              (
+                value as {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                }
+              )["@language"] !== undefined
+                ? (
                     value as {
                       readonly "@language"?: string;
                       readonly termType: "Literal";
                       readonly "@type"?: string;
                       readonly "@value": string;
                     }
-                  )["@type"] !== undefined
-                ? dataFactory.namedNode(
-                    (
+                  )["@language"]
+                : (
                       value as {
                         readonly "@language"?: string;
                         readonly termType: "Literal";
                         readonly "@type"?: string;
                         readonly "@value": string;
                       }
-                    )["@type"]!,
-                  )
-                : undefined,
-          );
+                    )["@type"] !== undefined
+                  ? dataFactory.namedNode(
+                      (
+                        value as {
+                          readonly "@language"?: string;
+                          readonly termType: "Literal";
+                          readonly "@type"?: string;
+                          readonly "@value": string;
+                        }
+                      )["@type"]!,
+                    )
+                  : undefined,
+            ),
+          ).map((value) => value);
         }
 
         throw new Error("unable to deserialize JSON");
@@ -8686,33 +8758,44 @@ export namespace UnionDiscriminants {
           | { type: "UnionMember1"; value: UnionMember1.Json }
           | { type: "UnionMember2"; value: UnionMember2.Json }
           | { type: "string"; value: string },
-      ):
+      ): Either<
+        Error,
         | { type: "UnionMember1"; value: UnionMember1 }
         | { type: "UnionMember2"; value: UnionMember2 }
         | {
             type: "string";
             value: string;
-          } => {
+          }
+      > => {
         if (value["type"] === "UnionMember1") {
-          return {
-            type: "UnionMember1" as const,
-            value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-          };
+          return UnionMember1.fromJson(value.value as UnionMember1.Json).map(
+            (value) => ({
+              type: "UnionMember1" as const,
+              value: value,
+            }),
+          );
         }
         if (value["type"] === "UnionMember2") {
-          return {
-            type: "UnionMember2" as const,
-            value: UnionMember2.fromJson(value.value as UnionMember2.Json),
-          };
+          return UnionMember2.fromJson(value.value as UnionMember2.Json).map(
+            (value) => ({
+              type: "UnionMember2" as const,
+              value: value,
+            }),
+          );
         }
         if (value["type"] === "string") {
-          return { type: "string" as const, value: value.value as string };
+          return Either.of<Error, string>(value.value as string).map(
+            (value) => ({
+              type: "string" as const,
+              value: value,
+            }),
+          );
         }
 
         throw new Error("unable to deserialize JSON");
       })($json["requiredNodeOrNodeOrStringProperty"]),
-      setIriOrLiteralProperty: ($json["setIriOrLiteralProperty"] ?? []).map(
-        (item) =>
+      setIriOrLiteralProperty: Either.sequence<Error, NamedNode | Literal>(
+        ($json["setIriOrLiteralProperty"] ?? []).map((item) =>
           ((
             value:
               | { readonly "@id": string; readonly termType: "NamedNode" }
@@ -8722,85 +8805,100 @@ export namespace UnionDiscriminants {
                   readonly "@type"?: string;
                   readonly "@value": string;
                 },
-          ): NamedNode | Literal => {
+          ): Either<Error, NamedNode | Literal> => {
             if (value["termType"] === "NamedNode") {
-              return dataFactory.namedNode(
-                (
-                  value as {
-                    readonly "@id": string;
-                    readonly termType: "NamedNode";
-                  }
-                )["@id"],
-              );
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(
+                  (
+                    value as {
+                      readonly "@id": string;
+                      readonly termType: "NamedNode";
+                    }
+                  )["@id"],
+                ),
+              ).map((value) => value);
             }
             if (value["termType"] === "Literal") {
-              return dataFactory.literal(
-                (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@value"],
-                (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"] !== undefined
-                  ? (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@language"]
-                  : (
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@type"] !== undefined
-                    ? dataFactory.namedNode(
-                        (
+                      )["@language"]
+                    : (
                           value as {
                             readonly "@language"?: string;
                             readonly termType: "Literal";
                             readonly "@type"?: string;
                             readonly "@value": string;
                           }
-                        )["@type"]!,
-                      )
-                    : undefined,
-              );
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
             }
 
             throw new Error("unable to deserialize JSON");
           })(item),
+        ),
       ),
-      setIriOrStringProperty: ($json["setIriOrStringProperty"] ?? []).map(
-        (item) =>
-          ((value: { readonly "@id": string } | string): NamedNode | string => {
+      setIriOrStringProperty: Either.sequence<Error, NamedNode | string>(
+        ($json["setIriOrStringProperty"] ?? []).map((item) =>
+          ((
+            value: { readonly "@id": string } | string,
+          ): Either<Error, NamedNode | string> => {
             if (typeof value === "object") {
-              return dataFactory.namedNode(
-                (value as { readonly "@id": string })["@id"],
-              );
+              return Either.of<Error, NamedNode>(
+                dataFactory.namedNode(
+                  (value as { readonly "@id": string })["@id"],
+                ),
+              ).map((value) => value);
             }
             if (typeof value === "string") {
-              return value as string;
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
             }
 
             throw new Error("unable to deserialize JSON");
           })(item),
+        ),
       ),
-      setNodeOrLiteralProperty: ($json["setNodeOrLiteralProperty"] ?? []).map(
-        (item) =>
+      setNodeOrLiteralProperty: Either.sequence<
+        Error,
+        { termType: "UnionMember1"; value: UnionMember1 } | Literal
+      >(
+        ($json["setNodeOrLiteralProperty"] ?? []).map((item) =>
           ((
             value:
               | { termType: "UnionMember1"; value: UnionMember1.Json }
@@ -8810,99 +8908,126 @@ export namespace UnionDiscriminants {
                   readonly "@type"?: string;
                   readonly "@value": string;
                 },
-          ): { termType: "UnionMember1"; value: UnionMember1 } | Literal => {
+          ): Either<
+            Error,
+            { termType: "UnionMember1"; value: UnionMember1 } | Literal
+          > => {
             if (value["termType"] === "UnionMember1") {
-              return {
+              return UnionMember1.fromJson(
+                value.value as UnionMember1.Json,
+              ).map((value) => ({
                 termType: "UnionMember1" as const,
-                value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-              };
+                value: value,
+              }));
             }
             if (value["termType"] === "Literal") {
-              return dataFactory.literal(
-                (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@value"],
-                (
-                  value as {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  }
-                )["@language"] !== undefined
-                  ? (
-                      value as {
-                        readonly "@language"?: string;
-                        readonly termType: "Literal";
-                        readonly "@type"?: string;
-                        readonly "@value": string;
-                      }
-                    )["@language"]
-                  : (
+              return Either.of<Error, Literal>(
+                dataFactory.literal(
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@value"],
+                  (
+                    value as {
+                      readonly "@language"?: string;
+                      readonly termType: "Literal";
+                      readonly "@type"?: string;
+                      readonly "@value": string;
+                    }
+                  )["@language"] !== undefined
+                    ? (
                         value as {
                           readonly "@language"?: string;
                           readonly termType: "Literal";
                           readonly "@type"?: string;
                           readonly "@value": string;
                         }
-                      )["@type"] !== undefined
-                    ? dataFactory.namedNode(
-                        (
+                      )["@language"]
+                    : (
                           value as {
                             readonly "@language"?: string;
                             readonly termType: "Literal";
                             readonly "@type"?: string;
                             readonly "@value": string;
                           }
-                        )["@type"]!,
-                      )
-                    : undefined,
+                        )["@type"] !== undefined
+                      ? dataFactory.namedNode(
+                          (
+                            value as {
+                              readonly "@language"?: string;
+                              readonly termType: "Literal";
+                              readonly "@type"?: string;
+                              readonly "@value": string;
+                            }
+                          )["@type"]!,
+                        )
+                      : undefined,
+                ),
+              ).map((value) => value);
+            }
+
+            throw new Error("unable to deserialize JSON");
+          })(item),
+        ),
+      ),
+      setNodeOrNodeOrStringProperty: Either.sequence<
+        Error,
+        | { type: "UnionMember1"; value: UnionMember1 }
+        | { type: "UnionMember2"; value: UnionMember2 }
+        | {
+            type: "string";
+            value: string;
+          }
+      >(
+        ($json["setNodeOrNodeOrStringProperty"] ?? []).map((item) =>
+          ((
+            value:
+              | { type: "UnionMember1"; value: UnionMember1.Json }
+              | { type: "UnionMember2"; value: UnionMember2.Json }
+              | { type: "string"; value: string },
+          ): Either<
+            Error,
+            | { type: "UnionMember1"; value: UnionMember1 }
+            | { type: "UnionMember2"; value: UnionMember2 }
+            | {
+                type: "string";
+                value: string;
+              }
+          > => {
+            if (value["type"] === "UnionMember1") {
+              return UnionMember1.fromJson(
+                value.value as UnionMember1.Json,
+              ).map((value) => ({
+                type: "UnionMember1" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "UnionMember2") {
+              return UnionMember2.fromJson(
+                value.value as UnionMember2.Json,
+              ).map((value) => ({
+                type: "UnionMember2" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "string") {
+              return Either.of<Error, string>(value.value as string).map(
+                (value) => ({
+                  type: "string" as const,
+                  value: value,
+                }),
               );
             }
 
             throw new Error("unable to deserialize JSON");
           })(item),
+        ),
       ),
-      setNodeOrNodeOrStringProperty: (
-        $json["setNodeOrNodeOrStringProperty"] ?? []
-      ).map((item) =>
-        ((
-          value:
-            | { type: "UnionMember1"; value: UnionMember1.Json }
-            | { type: "UnionMember2"; value: UnionMember2.Json }
-            | { type: "string"; value: string },
-        ):
-          | { type: "UnionMember1"; value: UnionMember1 }
-          | { type: "UnionMember2"; value: UnionMember2 }
-          | {
-              type: "string";
-              value: string;
-            } => {
-          if (value["type"] === "UnionMember1") {
-            return {
-              type: "UnionMember1" as const,
-              value: UnionMember1.fromJson(value.value as UnionMember1.Json),
-            };
-          }
-          if (value["type"] === "UnionMember2") {
-            return {
-              type: "UnionMember2" as const,
-              value: UnionMember2.fromJson(value.value as UnionMember2.Json),
-            };
-          }
-          if (value["type"] === "string") {
-            return { type: "string" as const, value: value.value as string };
-          }
-
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -12020,52 +12145,77 @@ export namespace TermProperties {
     return patterns;
   };
 
-  export function fromJson($json: TermProperties.Json): TermProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      blankNodeTermProperty: Maybe.fromNullable(
-        $json["blankNodeTermProperty"],
-      ).map((item) => dataFactory.blankNode(item["@id"].substring(2))),
-      booleanTermProperty: Maybe.fromNullable($json["booleanTermProperty"]),
-      dateTermProperty: Maybe.fromNullable($json["dateTermProperty"]).map(
-        (item) => new Date(item),
+  export function fromJson(
+    $json: TermProperties.Json,
+  ): Either<Error, TermProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      dateTimeTermProperty: Maybe.fromNullable(
-        $json["dateTimeTermProperty"],
-      ).map((item) => new Date(item)),
-      iriTermProperty: Maybe.fromNullable($json["iriTermProperty"]).map(
-        (item) => dataFactory.namedNode(item["@id"]),
-      ),
-      literalTermProperty: Maybe.fromNullable($json["literalTermProperty"]).map(
-        (item) =>
-          dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"]!)
-                : undefined,
+      blankNodeTermProperty: Maybe.fromNullable($json["blankNodeTermProperty"])
+        .map((item) =>
+          Either.of<Error, BlankNode>(
+            dataFactory.blankNode(item["@id"].substring(2)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      booleanTermProperty: Maybe.fromNullable($json["booleanTermProperty"])
+        .map((item) => Either.of<Error, boolean>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      dateTermProperty: Maybe.fromNullable($json["dateTermProperty"])
+        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      dateTimeTermProperty: Maybe.fromNullable($json["dateTimeTermProperty"])
+        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      iriTermProperty: Maybe.fromNullable($json["iriTermProperty"])
+        .map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+            Maybe.of,
           ),
-      ),
-      numberTermProperty: Maybe.fromNullable($json["numberTermProperty"]),
-      stringTermProperty: Maybe.fromNullable($json["stringTermProperty"]),
-      termProperty: Maybe.fromNullable($json["termProperty"]).map((item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      literalTermProperty: Maybe.fromNullable($json["literalTermProperty"])
+        .map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
               item["@value"],
               item["@language"] !== undefined
                 ? item["@language"]
                 : item["@type"] !== undefined
                   ? dataFactory.namedNode(item["@type"]!)
                   : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
-      ),
-    });
+            ),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      numberTermProperty: Maybe.fromNullable($json["numberTermProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      stringTermProperty: Maybe.fromNullable($json["stringTermProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      termProperty: Maybe.fromNullable($json["termProperty"])
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode | Literal>(
+            item.termType === "Literal"
+              ? dataFactory.literal(
+                  item["@value"],
+                  item["@language"] !== undefined
+                    ? item["@language"]
+                    : item["@type"] !== undefined
+                      ? dataFactory.namedNode(item["@type"]!)
+                      : undefined,
+                )
+              : item.termType === "NamedNode"
+                ? dataFactory.namedNode(item["@id"])
+                : dataFactory.blankNode(item["@id"].substring(2)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<TermProperties> = (
@@ -12950,15 +13100,19 @@ export namespace RecursiveUnionMember2 {
 
   export function fromJson(
     $json: RecursiveUnionMember2.Json,
-  ): RecursiveUnionMember2 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  ): Either<Error, RecursiveUnionMember2> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       recursiveUnionMember2Property: Maybe.fromNullable(
         $json["recursiveUnionMember2Property"],
-      ).map((item) => RecursiveUnion.fromJson(item)),
-    });
+      )
+        .map((item) => RecursiveUnion.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -13538,15 +13692,19 @@ export namespace RecursiveUnionMember1 {
 
   export function fromJson(
     $json: RecursiveUnionMember1.Json,
-  ): RecursiveUnionMember1 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  ): Either<Error, RecursiveUnionMember1> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       recursiveUnionMember1Property: Maybe.fromNullable(
         $json["recursiveUnionMember1Property"],
-      ).map((item) => RecursiveUnion.fromJson(item)),
-    });
+      )
+        .map((item) => RecursiveUnion.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -14213,16 +14371,26 @@ export namespace PropertyPaths {
     return patterns;
   };
 
-  export function fromJson($json: PropertyPaths.Json): PropertyPaths {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      inversePathProperty: Maybe.fromNullable($json["inversePathProperty"]).map(
-        (item) => dataFactory.namedNode(item["@id"]),
+  export function fromJson(
+    $json: PropertyPaths.Json,
+  ): Either<Error, PropertyPaths> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      predicatePathProperty: Maybe.fromNullable($json["predicatePathProperty"]),
-    });
+      inversePathProperty: Maybe.fromNullable($json["inversePathProperty"])
+        .map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+            Maybe.of,
+          ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      predicatePathProperty: Maybe.fromNullable($json["predicatePathProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyPaths> = (
@@ -15064,17 +15232,31 @@ export namespace PropertyNames {
     return patterns;
   };
 
-  export function fromJson($json: PropertyNames.Json): PropertyNames {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      actualPropertyName1: $json["actualPropertyName1"],
-      actualPropertyName2: $json["actualPropertyName2"],
-      actualPropertyName3: $json["actualPropertyName3"],
-      actualPropertyName4: $json["actualPropertyName4"],
-      actualPropertyName5: $json["actualPropertyName5"],
-    });
+  export function fromJson(
+    $json: PropertyNames.Json,
+  ): Either<Error, PropertyNames> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      actualPropertyName1: Either.of<Error, string>(
+        $json["actualPropertyName1"],
+      ),
+      actualPropertyName2: Either.of<Error, string>(
+        $json["actualPropertyName2"],
+      ),
+      actualPropertyName3: Either.of<Error, string>(
+        $json["actualPropertyName3"],
+      ),
+      actualPropertyName4: Either.of<Error, string>(
+        $json["actualPropertyName4"],
+      ),
+      actualPropertyName5: Either.of<Error, string>(
+        $json["actualPropertyName5"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<PropertyNames> = (
@@ -15916,18 +16098,32 @@ export namespace PropertyCardinalities {
 
   export function fromJson(
     $json: PropertyCardinalities.Json,
-  ): PropertyCardinalities {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      emptyStringSetProperty: $json["emptyStringSetProperty"] ?? [],
-      nonEmptyStringSetProperty: $json["nonEmptyStringSetProperty"],
+  ): Either<Error, PropertyCardinalities> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      emptyStringSetProperty: Either.sequence<Error, string>(
+        ($json["emptyStringSetProperty"] ?? []).map((item) =>
+          Either.of<Error, string>(item),
+        ),
+      ),
+      nonEmptyStringSetProperty: Either.sequence<Error, string>(
+        $json["nonEmptyStringSetProperty"].map((item) =>
+          Either.of<Error, string>(item),
+        ),
+      ),
       optionalStringProperty: Maybe.fromNullable(
         $json["optionalStringProperty"],
+      )
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      requiredStringProperty: Either.of<Error, string>(
+        $json["requiredStringProperty"],
       ),
-      requiredStringProperty: $json["requiredStringProperty"],
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -16587,13 +16783,17 @@ export namespace UnionMemberCommonParent {
 
   export function fromJson(
     $json: UnionMemberCommonParent.Json,
-  ): UnionMemberCommonParent {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      unionMemberCommonParentProperty: $json["unionMemberCommonParentProperty"],
-    });
+  ): Either<Error, UnionMemberCommonParent> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      unionMemberCommonParentProperty: Either.of<Error, string>(
+        $json["unionMemberCommonParentProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -17175,14 +17375,21 @@ export namespace UnionMember2 {
     return patterns;
   };
 
-  export function fromJson($json: UnionMember2.Json): UnionMember2 {
-    return createUnsafe({
-      ...UnionMemberCommonParent.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      unionMember2Property: $json["unionMember2Property"],
-    });
+  export function fromJson(
+    $json: UnionMember2.Json,
+  ): Either<Error, UnionMember2> {
+    return UnionMemberCommonParent.fromJson($json).chain((super0) =>
+      $sequenceRecord({
+        $identifier: Either.of<Error, BlankNode | NamedNode>(
+          $json["@id"].startsWith("_:")
+            ? dataFactory.blankNode($json["@id"].substring(2))
+            : dataFactory.namedNode($json["@id"]),
+        ),
+        unionMember2Property: Either.of<Error, string>(
+          $json["unionMember2Property"],
+        ),
+      }).chain((properties) => create({ ...properties, ...super0 })),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember2> = (
@@ -17737,13 +17944,17 @@ export namespace PartialUnionMember2 {
 
   export function fromJson(
     $json: PartialUnionMember2.Json,
-  ): PartialUnionMember2 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, PartialUnionMember2> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -18308,14 +18519,21 @@ export namespace UnionMember1 {
     return patterns;
   };
 
-  export function fromJson($json: UnionMember1.Json): UnionMember1 {
-    return createUnsafe({
-      ...UnionMemberCommonParent.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      unionMember1Property: $json["unionMember1Property"],
-    });
+  export function fromJson(
+    $json: UnionMember1.Json,
+  ): Either<Error, UnionMember1> {
+    return UnionMemberCommonParent.fromJson($json).chain((super0) =>
+      $sequenceRecord({
+        $identifier: Either.of<Error, BlankNode | NamedNode>(
+          $json["@id"].startsWith("_:")
+            ? dataFactory.blankNode($json["@id"].substring(2))
+            : dataFactory.namedNode($json["@id"]),
+        ),
+        unionMember1Property: Either.of<Error, string>(
+          $json["unionMember1Property"],
+        ),
+      }).chain((properties) => create({ ...properties, ...super0 })),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<UnionMember1> = (
@@ -18870,13 +19088,17 @@ export namespace PartialUnionMember1 {
 
   export function fromJson(
     $json: PartialUnionMember1.Json,
-  ): PartialUnionMember1 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, PartialUnionMember1> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -19356,12 +19578,14 @@ export namespace NewName {
     return patterns;
   };
 
-  export function fromJson($json: NewName.Json): NewName {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-    });
+  export function fromJson($json: NewName.Json): Either<Error, NewName> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NewName> = (
@@ -19922,15 +20146,19 @@ export namespace OrderedProperties {
     return patterns;
   };
 
-  export function fromJson($json: OrderedProperties.Json): OrderedProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      orderedPropertyC: $json["orderedPropertyC"],
-      orderedPropertyB: $json["orderedPropertyB"],
-      orderedPropertyA: $json["orderedPropertyA"],
-    });
+  export function fromJson(
+    $json: OrderedProperties.Json,
+  ): Either<Error, OrderedProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      orderedPropertyC: Either.of<Error, string>($json["orderedPropertyC"]),
+      orderedPropertyB: Either.of<Error, string>($json["orderedPropertyB"]),
+      orderedPropertyA: Either.of<Error, string>($json["orderedPropertyA"]),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -21564,50 +21792,102 @@ export namespace NumericProperties {
     return patterns;
   };
 
-  export function fromJson($json: NumericProperties.Json): NumericProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      byteNumericProperty: Maybe.fromNullable($json["byteNumericProperty"]),
+  export function fromJson(
+    $json: NumericProperties.Json,
+  ): Either<Error, NumericProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      byteNumericProperty: Maybe.fromNullable($json["byteNumericProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
       decimalNumericProperty: Maybe.fromNullable(
         $json["decimalNumericProperty"],
-      ).map((item) => new BigDecimal(item)),
-      doubleNumericProperty: Maybe.fromNullable($json["doubleNumericProperty"]),
-      floatNumericProperty: Maybe.fromNullable($json["floatNumericProperty"]),
+      )
+        .map((item) =>
+          Either.encase<Error, BigDecimal>(() => new BigDecimal(item)).map(
+            Maybe.of,
+          ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      doubleNumericProperty: Maybe.fromNullable($json["doubleNumericProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      floatNumericProperty: Maybe.fromNullable($json["floatNumericProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
       integerNumericProperty: Maybe.fromNullable(
         $json["integerNumericProperty"],
-      ).map((item) => BigInt(item)),
-      intNumericProperty: Maybe.fromNullable($json["intNumericProperty"]),
-      longNumericProperty: Maybe.fromNullable($json["longNumericProperty"]).map(
-        (item) => BigInt(item),
-      ),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      intNumericProperty: Maybe.fromNullable($json["intNumericProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      longNumericProperty: Maybe.fromNullable($json["longNumericProperty"])
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       negativeIntegerNumericProperty: Maybe.fromNullable(
         $json["negativeIntegerNumericProperty"],
-      ).map((item) => BigInt(item)),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       nonNegativeIntegerNumericProperty: Maybe.fromNullable(
         $json["nonNegativeIntegerNumericProperty"],
-      ).map((item) => BigInt(item)),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       nonPositiveIntegerNumericProperty: Maybe.fromNullable(
         $json["nonPositiveIntegerNumericProperty"],
-      ).map((item) => BigInt(item)),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       positiveIntegerNumericProperty: Maybe.fromNullable(
         $json["positiveIntegerNumericProperty"],
-      ).map((item) => BigInt(item)),
-      shortNumericProperty: Maybe.fromNullable($json["shortNumericProperty"]),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      shortNumericProperty: Maybe.fromNullable($json["shortNumericProperty"])
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
       unsignedByteNumericProperty: Maybe.fromNullable(
         $json["unsignedByteNumericProperty"],
-      ),
+      )
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
       unsignedIntNumericProperty: Maybe.fromNullable(
         $json["unsignedIntNumericProperty"],
-      ),
+      )
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
       unsignedLongNumericProperty: Maybe.fromNullable(
         $json["unsignedLongNumericProperty"],
-      ).map((item) => BigInt(item)),
+      )
+        .map((item) =>
+          Either.encase<Error, bigint>(() => BigInt(item)).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       unsignedShortNumericProperty: Maybe.fromNullable(
         $json["unsignedShortNumericProperty"],
-      ),
-    });
+      )
+        .map((item) => Either.of<Error, number>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -23151,22 +23431,28 @@ export namespace NodeKinds {
     return patterns;
   };
 
-  export function fromJson($json: NodeKinds.Json): NodeKinds {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      blankNodeKindProperty: dataFactory.blankNode(
-        $json["blankNodeKindProperty"]["@id"].substring(2),
+  export function fromJson($json: NodeKinds.Json): Either<Error, NodeKinds> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      blankNodeOrIriNodeKindProperty: $json["blankNodeOrIriNodeKindProperty"][
-        "@id"
-      ].startsWith("_:")
-        ? dataFactory.blankNode(
-            $json["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
-          )
-        : dataFactory.namedNode($json["blankNodeOrIriNodeKindProperty"]["@id"]),
-      blankNodeOrLiteralNodeKindProperty:
+      blankNodeKindProperty: Either.of<Error, BlankNode>(
+        dataFactory.blankNode(
+          $json["blankNodeKindProperty"]["@id"].substring(2),
+        ),
+      ),
+      blankNodeOrIriNodeKindProperty: Either.of<Error, BlankNode | NamedNode>(
+        $json["blankNodeOrIriNodeKindProperty"]["@id"].startsWith("_:")
+          ? dataFactory.blankNode(
+              $json["blankNodeOrIriNodeKindProperty"]["@id"].substring(2),
+            )
+          : dataFactory.namedNode(
+              $json["blankNodeOrIriNodeKindProperty"]["@id"],
+            ),
+      ),
+      blankNodeOrLiteralNodeKindProperty: Either.of<Error, BlankNode | Literal>(
         $json["blankNodeOrLiteralNodeKindProperty"].termType === "Literal"
           ? dataFactory.literal(
               $json["blankNodeOrLiteralNodeKindProperty"]["@value"],
@@ -23183,10 +23469,11 @@ export namespace NodeKinds {
           : dataFactory.blankNode(
               $json["blankNodeOrLiteralNodeKindProperty"]["@id"].substring(2),
             ),
-      iriNodeKindProperty: dataFactory.namedNode(
-        $json["iriNodeKindProperty"]["@id"],
       ),
-      iriOrLiteralNodeKindProperty:
+      iriNodeKindProperty: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["iriNodeKindProperty"]["@id"]),
+      ),
+      iriOrLiteralNodeKindProperty: Either.of<Error, NamedNode | Literal>(
         $json["iriOrLiteralNodeKindProperty"].termType === "Literal"
           ? dataFactory.literal(
               $json["iriOrLiteralNodeKindProperty"]["@value"],
@@ -23199,15 +23486,20 @@ export namespace NodeKinds {
                   : undefined,
             )
           : dataFactory.namedNode($json["iriOrLiteralNodeKindProperty"]["@id"]),
-      literalNodeKindProperty: dataFactory.literal(
-        $json["literalNodeKindProperty"]["@value"],
-        $json["literalNodeKindProperty"]["@language"] !== undefined
-          ? $json["literalNodeKindProperty"]["@language"]
-          : $json["literalNodeKindProperty"]["@type"] !== undefined
-            ? dataFactory.namedNode($json["literalNodeKindProperty"]["@type"]!)
-            : undefined,
       ),
-    });
+      literalNodeKindProperty: Either.of<Error, Literal>(
+        dataFactory.literal(
+          $json["literalNodeKindProperty"]["@value"],
+          $json["literalNodeKindProperty"]["@language"] !== undefined
+            ? $json["literalNodeKindProperty"]["@language"]
+            : $json["literalNodeKindProperty"]["@type"] !== undefined
+              ? dataFactory.namedNode(
+                  $json["literalNodeKindProperty"]["@type"]!,
+                )
+              : undefined,
+        ),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NodeKinds> = (
@@ -23895,13 +24187,17 @@ export namespace NoRdfTypeUnionMember2 {
 
   export function fromJson(
     $json: NoRdfTypeUnionMember2.Json,
-  ): NoRdfTypeUnionMember2 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      noRdfTypeUnionMember2Property: $json["noRdfTypeUnionMember2Property"],
-    });
+  ): Either<Error, NoRdfTypeUnionMember2> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      noRdfTypeUnionMember2Property: Either.of<Error, string>(
+        $json["noRdfTypeUnionMember2Property"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -24355,13 +24651,17 @@ export namespace NoRdfTypeUnionMember1 {
 
   export function fromJson(
     $json: NoRdfTypeUnionMember1.Json,
-  ): NoRdfTypeUnionMember1 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      noRdfTypeUnionMember1Property: $json["noRdfTypeUnionMember1Property"],
-    });
+  ): Either<Error, NoRdfTypeUnionMember1> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      noRdfTypeUnionMember1Property: Either.of<Error, string>(
+        $json["noRdfTypeUnionMember1Property"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -24923,14 +25223,16 @@ export namespace NamedUnionProperties {
 
   export function fromJson(
     $json: NamedUnionProperties.Json,
-  ): NamedUnionProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  ): Either<Error, NamedUnionProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       namedUnion1Property: NamedUnion1.fromJson($json["namedUnion1Property"]),
       namedUnion2Property: NamedUnion2.fromJson($json["namedUnion2Property"]),
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -25736,17 +26038,31 @@ export namespace MutableProperties {
     return patterns;
   };
 
-  export function fromJson($json: MutableProperties.Json): MutableProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      mutableListProperty: Maybe.fromNullable($json["mutableListProperty"]).map(
-        (item) => item ?? [],
+  export function fromJson(
+    $json: MutableProperties.Json,
+  ): Either<Error, MutableProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      mutableSetProperty: $json["mutableSetProperty"] ?? [],
-      mutableStringProperty: Maybe.fromNullable($json["mutableStringProperty"]),
-    });
+      mutableListProperty: Maybe.fromNullable($json["mutableListProperty"])
+        .map((item) =>
+          Either.sequence<Error, string>(
+            (item ?? []).map((item) => Either.of<Error, string>(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      mutableSetProperty: Either.sequence<Error, string>(
+        ($json["mutableSetProperty"] ?? []).map((item) =>
+          Either.of<Error, string>(item),
+        ),
+      ),
+      mutableStringProperty: Maybe.fromNullable($json["mutableStringProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -26499,14 +26815,17 @@ export namespace ClassMultipleInheritanceParent2 {
 
   export function fromJson(
     $json: ClassMultipleInheritanceParent2.Json,
-  ): ClassMultipleInheritanceParent2 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classMultipleInheritanceParent2Property:
+  ): Either<Error, ClassMultipleInheritanceParent2> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      classMultipleInheritanceParent2Property: Either.of<Error, string>(
         $json["classMultipleInheritanceParent2Property"],
-    });
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -27108,14 +27427,17 @@ export namespace ClassMultipleInheritanceParent1 {
 
   export function fromJson(
     $json: ClassMultipleInheritanceParent1.Json,
-  ): ClassMultipleInheritanceParent1 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classMultipleInheritanceParent1Property:
+  ): Either<Error, ClassMultipleInheritanceParent1> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      classMultipleInheritanceParent1Property: Either.of<Error, string>(
         $json["classMultipleInheritanceParent1Property"],
-    });
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -27755,16 +28077,23 @@ export namespace ClassMultipleInheritanceChild {
 
   export function fromJson(
     $json: ClassMultipleInheritanceChild.Json,
-  ): ClassMultipleInheritanceChild {
-    return createUnsafe({
-      ...ClassMultipleInheritanceParent1.fromJson($json),
-      ...ClassMultipleInheritanceParent2.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classMultipleInheritanceChildProperty:
-        $json["classMultipleInheritanceChildProperty"],
-    });
+  ): Either<Error, ClassMultipleInheritanceChild> {
+    return ClassMultipleInheritanceParent1.fromJson($json).chain((super0) =>
+      ClassMultipleInheritanceParent2.fromJson($json).chain((super1) =>
+        $sequenceRecord({
+          $identifier: Either.of<Error, BlankNode | NamedNode>(
+            $json["@id"].startsWith("_:")
+              ? dataFactory.blankNode($json["@id"].substring(2))
+              : dataFactory.namedNode($json["@id"]),
+          ),
+          classMultipleInheritanceChildProperty: Either.of<Error, string>(
+            $json["classMultipleInheritanceChildProperty"],
+          ),
+        }).chain((properties) =>
+          create({ ...properties, ...super1, ...super0 }),
+        ),
+      ),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -28579,22 +28908,39 @@ export namespace ListProperties {
     return patterns;
   };
 
-  export function fromJson($json: ListProperties.Json): ListProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      iriListProperty: Maybe.fromNullable($json["iriListProperty"]).map(
-        (item) =>
-          (item ?? []).map((item) => dataFactory.namedNode(item["@id"])),
+  export function fromJson(
+    $json: ListProperties.Json,
+  ): Either<Error, ListProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      objectListProperty: Maybe.fromNullable($json["objectListProperty"]).map(
-        (item) => (item ?? []).map((item) => NonClass.fromJson(item)),
-      ),
-      stringListProperty: Maybe.fromNullable($json["stringListProperty"]).map(
-        (item) => item ?? [],
-      ),
-    });
+      iriListProperty: Maybe.fromNullable($json["iriListProperty"])
+        .map((item) =>
+          Either.sequence<Error, NamedNode>(
+            (item ?? []).map((item) =>
+              Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+            ),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      objectListProperty: Maybe.fromNullable($json["objectListProperty"])
+        .map((item) =>
+          Either.sequence<Error, NonClass>(
+            (item ?? []).map((item) => NonClass.fromJson(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringListProperty: Maybe.fromNullable($json["stringListProperty"])
+        .map((item) =>
+          Either.sequence<Error, string>(
+            (item ?? []).map((item) => Either.of<Error, string>(item)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ListProperties> = (
@@ -30510,181 +30856,249 @@ export namespace LazyProperties {
     return patterns;
   };
 
-  export function fromJson($json: LazyProperties.Json): LazyProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  export function fromJson(
+    $json: LazyProperties.Json,
+  ): Either<Error, LazyProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          $DefaultPartial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.fromNullable(
-            $json["optionalLazyToResolvedBlankNodeOrIriIdentifierProperty"],
-          ).map((item) => $DefaultPartial.fromJson(item)),
-          resolver: (identifier) =>
-            Promise.resolve(
-              Left(
-                new Error(
-                  `unable to resolve identifier ${identifier} deserialized from JSON`,
+        Maybe.fromNullable(
+          $json["optionalLazyToResolvedBlankNodeOrIriIdentifierProperty"],
+        )
+          .map((item) => $DefaultPartial.fromJson(item).map(Maybe.of))
+          .orDefault(Either.of(Maybe.empty()))
+          .map(
+            (partial) =>
+              new $LazyObjectOption<
+                LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+                $DefaultPartial,
+                LazilyResolvedBlankNodeOrIriIdentifier
+              >({
+                partial: partial,
+                resolver: (identifier) =>
+                  Promise.resolve(
+                    Left(
+                      new Error(
+                        `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      ),
+                    ),
+                  ),
+              }),
+          ),
+      optionalLazyToResolvedIriIdentifierProperty: Maybe.fromNullable(
+        $json["optionalLazyToResolvedIriIdentifierProperty"],
+      )
+        .map((item) => $NamedDefaultPartial.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty()))
+        .map(
+          (partial) =>
+            new $LazyObjectOption<
+              LazilyResolvedIriIdentifier.Identifier,
+              $NamedDefaultPartial,
+              LazilyResolvedIriIdentifier
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-        }),
-      optionalLazyToResolvedIriIdentifierProperty: new $LazyObjectOption<
-        LazilyResolvedIriIdentifier.Identifier,
-        $NamedDefaultPartial,
-        LazilyResolvedIriIdentifier
-      >({
-        partial: Maybe.fromNullable(
-          $json["optionalLazyToResolvedIriIdentifierProperty"],
-        ).map((item) => $NamedDefaultPartial.fromJson(item)),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
-              ),
-            ),
-          ),
-      }),
-      optionalLazyToResolvedUnionProperty: new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        $DefaultPartial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.fromNullable(
-          $json["optionalLazyToResolvedUnionProperty"],
-        ).map((item) => $DefaultPartial.fromJson(item)),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
-              ),
-            ),
-          ),
-      }),
-      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        new $LazyObjectOption<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Maybe.fromNullable(
-            $json["optionalPartialToResolvedBlankNodeOrIriIdentifierProperty"],
-          ).map((item) => Partial.fromJson(item)),
-          resolver: (identifier) =>
-            Promise.resolve(
-              Left(
-                new Error(
-                  `unable to resolve identifier ${identifier} deserialized from JSON`,
-                ),
-              ),
-            ),
-        }),
-      optionalPartialToResolvedUnionProperty: new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        Partial,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.fromNullable(
-          $json["optionalPartialToResolvedUnionProperty"],
-        ).map((item) => Partial.fromJson(item)),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
-              ),
-            ),
-          ),
-      }),
-      optionalPartialUnionToResolvedUnionProperty: new $LazyObjectOption<
-        LazilyResolvedUnion.Identifier,
-        PartialUnion,
-        LazilyResolvedUnion
-      >({
-        partial: Maybe.fromNullable(
-          $json["optionalPartialUnionToResolvedUnionProperty"],
-        ).map((item) => PartialUnion.fromJson(item)),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
-              ),
-            ),
-          ),
-      }),
-      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObject<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partial: $DefaultPartial.fromJson(
-          $json["requiredLazyToResolvedBlankNodeOrIriIdentifierProperty"],
+            }),
         ),
-        resolver: (identifier) =>
-          Promise.resolve(
-            Left(
-              new Error(
-                `unable to resolve identifier ${identifier} deserialized from JSON`,
-              ),
-            ),
+      optionalLazyToResolvedUnionProperty: Maybe.fromNullable(
+        $json["optionalLazyToResolvedUnionProperty"],
+      )
+        .map((item) => $DefaultPartial.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty()))
+        .map(
+          (partial) =>
+            new $LazyObjectOption<
+              LazilyResolvedUnion.Identifier,
+              $DefaultPartial,
+              LazilyResolvedUnion
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
+                ),
+            }),
+        ),
+      optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
+        Maybe.fromNullable(
+          $json["optionalPartialToResolvedBlankNodeOrIriIdentifierProperty"],
+        )
+          .map((item) => Partial.fromJson(item).map(Maybe.of))
+          .orDefault(Either.of(Maybe.empty()))
+          .map(
+            (partial) =>
+              new $LazyObjectOption<
+                LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+                Partial,
+                LazilyResolvedBlankNodeOrIriIdentifier
+              >({
+                partial: partial,
+                resolver: (identifier) =>
+                  Promise.resolve(
+                    Left(
+                      new Error(
+                        `unable to resolve identifier ${identifier} deserialized from JSON`,
+                      ),
+                    ),
+                  ),
+              }),
           ),
-      }),
+      optionalPartialToResolvedUnionProperty: Maybe.fromNullable(
+        $json["optionalPartialToResolvedUnionProperty"],
+      )
+        .map((item) => Partial.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty()))
+        .map(
+          (partial) =>
+            new $LazyObjectOption<
+              LazilyResolvedUnion.Identifier,
+              Partial,
+              LazilyResolvedUnion
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
+                ),
+            }),
+        ),
+      optionalPartialUnionToResolvedUnionProperty: Maybe.fromNullable(
+        $json["optionalPartialUnionToResolvedUnionProperty"],
+      )
+        .map((item) => PartialUnion.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty()))
+        .map(
+          (partial) =>
+            new $LazyObjectOption<
+              LazilyResolvedUnion.Identifier,
+              PartialUnion,
+              LazilyResolvedUnion
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
+                ),
+            }),
+        ),
+      requiredLazyToResolvedBlankNodeOrIriIdentifierProperty: $DefaultPartial
+        .fromJson(
+          $json["requiredLazyToResolvedBlankNodeOrIriIdentifierProperty"],
+        )
+        .map(
+          (partial) =>
+            new $LazyObject<
+              LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+              $DefaultPartial,
+              LazilyResolvedBlankNodeOrIriIdentifier
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
+                ),
+            }),
+        ),
       requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
-        new $LazyObject<
-          LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-          Partial,
-          LazilyResolvedBlankNodeOrIriIdentifier
-        >({
-          partial: Partial.fromJson(
-            $json["requiredPartialToResolvedBlankNodeOrIriIdentifierProperty"],
-          ),
-          resolver: (identifier) =>
-            Promise.resolve(
-              Left(
-                new Error(
-                  `unable to resolve identifier ${identifier} deserialized from JSON`,
+        Partial.fromJson(
+          $json["requiredPartialToResolvedBlankNodeOrIriIdentifierProperty"],
+        ).map(
+          (partial) =>
+            new $LazyObject<
+              LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+              Partial,
+              LazilyResolvedBlankNodeOrIriIdentifier
+            >({
+              partial: partial,
+              resolver: (identifier) =>
+                Promise.resolve(
+                  Left(
+                    new Error(
+                      `unable to resolve identifier ${identifier} deserialized from JSON`,
+                    ),
+                  ),
+                ),
+            }),
+        ),
+      setLazyToResolvedBlankNodeOrIriIdentifierProperty: Either.sequence<
+        Error,
+        $DefaultPartial
+      >(
+        ($json["setLazyToResolvedBlankNodeOrIriIdentifierProperty"] ?? []).map(
+          (item) => $DefaultPartial.fromJson(item),
+        ),
+      ).map(
+        (partial) =>
+          new $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifier
+          >({
+            partials: partial,
+            resolver: () =>
+              Promise.resolve(
+                Left(
+                  new Error(
+                    "unable to resolve identifiers deserialized from JSON",
+                  ),
                 ),
               ),
-            ),
-        }),
-      setLazyToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        $DefaultPartial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials: (
-          $json["setLazyToResolvedBlankNodeOrIriIdentifierProperty"] ?? []
-        ).map((item) => $DefaultPartial.fromJson(item)),
-        resolver: () =>
-          Promise.resolve(
-            Left(
-              new Error("unable to resolve identifiers deserialized from JSON"),
-            ),
-          ),
-      }),
-      setPartialToResolvedBlankNodeOrIriIdentifierProperty: new $LazyObjectSet<
-        LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
-        Partial,
-        LazilyResolvedBlankNodeOrIriIdentifier
-      >({
-        partials: (
+          }),
+      ),
+      setPartialToResolvedBlankNodeOrIriIdentifierProperty: Either.sequence<
+        Error,
+        Partial
+      >(
+        (
           $json["setPartialToResolvedBlankNodeOrIriIdentifierProperty"] ?? []
         ).map((item) => Partial.fromJson(item)),
-        resolver: () =>
-          Promise.resolve(
-            Left(
-              new Error("unable to resolve identifiers deserialized from JSON"),
-            ),
-          ),
-      }),
-    });
+      ).map(
+        (partial) =>
+          new $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifier.Identifier,
+            Partial,
+            LazilyResolvedBlankNodeOrIriIdentifier
+          >({
+            partials: partial,
+            resolver: () =>
+              Promise.resolve(
+                Left(
+                  new Error(
+                    "unable to resolve identifiers deserialized from JSON",
+                  ),
+                ),
+              ),
+          }),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<LazyProperties> = (
@@ -31881,11 +32295,15 @@ export namespace LazilyResolvedIriIdentifier {
 
   export function fromJson(
     $json: LazilyResolvedIriIdentifier.Json,
-  ): LazilyResolvedIriIdentifier {
-    return createUnsafe({
-      $identifier: dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, LazilyResolvedIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -32403,13 +32821,17 @@ export namespace LazilyResolvedUnionMember2 {
 
   export function fromJson(
     $json: LazilyResolvedUnionMember2.Json,
-  ): LazilyResolvedUnionMember2 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, LazilyResolvedUnionMember2> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -32974,13 +33396,17 @@ export namespace LazilyResolvedUnionMember1 {
 
   export function fromJson(
     $json: LazilyResolvedUnionMember1.Json,
-  ): LazilyResolvedUnionMember1 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, LazilyResolvedUnionMember1> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -33552,13 +33978,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
 
   export function fromJson(
     $json: LazilyResolvedBlankNodeOrIriIdentifier.Json,
-  ): LazilyResolvedBlankNodeOrIriIdentifier {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -34122,23 +34552,28 @@ export namespace LanguageInProperties {
 
   export function fromJson(
     $json: LanguageInProperties.Json,
-  ): LanguageInProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      languageInLiteralProperty: $json["languageInLiteralProperty"].map(
-        (item) =>
-          dataFactory.literal(
-            item["@value"],
-            item["@language"] !== undefined
-              ? item["@language"]
-              : item["@type"] !== undefined
-                ? dataFactory.namedNode(item["@type"]!)
-                : undefined,
-          ),
+  ): Either<Error, LanguageInProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-    });
+      languageInLiteralProperty: Either.sequence<Error, Literal>(
+        $json["languageInLiteralProperty"].map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            ),
+          ),
+        ),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -34948,28 +35383,42 @@ export namespace JsPrimitiveUnionProperty {
 
   export function fromJson(
     $json: JsPrimitiveUnionProperty.Json,
-  ): JsPrimitiveUnionProperty {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      jsPrimitiveUnionProperty: ($json["jsPrimitiveUnionProperty"] ?? []).map(
-        (item) =>
-          ((value: boolean | number | string): boolean | number | string => {
+  ): Either<Error, JsPrimitiveUnionProperty> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      jsPrimitiveUnionProperty: Either.sequence<
+        Error,
+        boolean | number | string
+      >(
+        ($json["jsPrimitiveUnionProperty"] ?? []).map((item) =>
+          ((
+            value: boolean | number | string,
+          ): Either<Error, boolean | number | string> => {
             if (typeof value === "boolean") {
-              return value as boolean;
+              return Either.of<Error, boolean>(value as boolean).map(
+                (value) => value,
+              );
             }
             if (typeof value === "number") {
-              return value as number;
+              return Either.of<Error, number>(value as number).map(
+                (value) => value,
+              );
             }
             if (typeof value === "string") {
-              return value as string;
+              return Either.of<Error, string>(value as string).map(
+                (value) => value,
+              );
             }
 
             throw new Error("unable to deserialize JSON");
           })(item),
+        ),
       ),
-    });
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -35576,8 +36025,14 @@ export namespace IriIdentifier {
     return patterns;
   };
 
-  export function fromJson($json: IriIdentifier.Json): IriIdentifier {
-    return createUnsafe({ $identifier: dataFactory.namedNode($json["@id"]) });
+  export function fromJson(
+    $json: IriIdentifier.Json,
+  ): Either<Error, IriIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["@id"]),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<IriIdentifier> = (
@@ -36089,15 +36544,19 @@ export namespace IndirectRecursiveHelper {
 
   export function fromJson(
     $json: IndirectRecursiveHelper.Json,
-  ): IndirectRecursiveHelper {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  ): Either<Error, IndirectRecursiveHelper> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       indirectRecursiveProperty: Maybe.fromNullable(
         $json["indirectRecursiveProperty"],
-      ).map((item) => IndirectRecursive.fromJson(item)),
-    });
+      )
+        .map((item) => IndirectRecursive.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -36671,15 +37130,21 @@ export namespace IndirectRecursive {
     return patterns;
   };
 
-  export function fromJson($json: IndirectRecursive.Json): IndirectRecursive {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  export function fromJson(
+    $json: IndirectRecursive.Json,
+  ): Either<Error, IndirectRecursive> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       indirectRecursiveHelperProperty: Maybe.fromNullable(
         $json["indirectRecursiveHelperProperty"],
-      ).map((item) => IndirectRecursiveHelper.fromJson(item)),
-    });
+      )
+        .map((item) => IndirectRecursiveHelper.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -37662,24 +38127,46 @@ export namespace InProperties {
     return patterns;
   };
 
-  export function fromJson($json: InProperties.Json): InProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      inBooleansProperty: Maybe.fromNullable($json["inBooleansProperty"]),
-      inDateTimesProperty: Maybe.fromNullable($json["inDateTimesProperty"]).map(
-        (item) => new Date(item),
+  export function fromJson(
+    $json: InProperties.Json,
+  ): Either<Error, InProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      inDoublesProperty: Maybe.fromNullable($json["inDoublesProperty"]),
-      inIntegersProperty: Maybe.fromNullable($json["inIntegersProperty"]).map(
-        (item) => BigInt(item) as 1n | 2n,
-      ),
-      inIrisProperty: Maybe.fromNullable($json["inIrisProperty"]).map((item) =>
-        dataFactory.namedNode(item["@id"]),
-      ),
-      inStringsProperty: Maybe.fromNullable($json["inStringsProperty"]),
-    });
+      inBooleansProperty: Maybe.fromNullable($json["inBooleansProperty"])
+        .map((item) => Either.of<Error, true>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      inDateTimesProperty: Maybe.fromNullable($json["inDateTimesProperty"])
+        .map((item) => Either.of<Error, Date>(new Date(item)).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      inDoublesProperty: Maybe.fromNullable($json["inDoublesProperty"])
+        .map((item) => Either.of<Error, 1 | 2>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      inIntegersProperty: Maybe.fromNullable($json["inIntegersProperty"])
+        .map((item) =>
+          Either.encase<Error, 1n | 2n>(() => BigInt(item) as 1n | 2n).map(
+            Maybe.of,
+          ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      inIrisProperty: Maybe.fromNullable($json["inIrisProperty"])
+        .map((item) =>
+          Either.of<
+            Error,
+            NamedNode<
+              | "http://example.com/InPropertiesIri1"
+              | "http://example.com/InPropertiesIri2"
+            >
+          >(dataFactory.namedNode(item["@id"])).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      inStringsProperty: Maybe.fromNullable($json["inStringsProperty"])
+        .map((item) => Either.of<Error, "text" | "html">(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<InProperties> = (
@@ -38520,11 +39007,21 @@ export namespace InIdentifier {
     return patterns;
   };
 
-  export function fromJson($json: InIdentifier.Json): InIdentifier {
-    return createUnsafe({
-      $identifier: dataFactory.namedNode($json["@id"]),
-      inIdentifierProperty: Maybe.fromNullable($json["inIdentifierProperty"]),
-    });
+  export function fromJson(
+    $json: InIdentifier.Json,
+  ): Either<Error, InIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<
+        Error,
+        NamedNode<
+          | "http://example.com/InIdentifierInstance1"
+          | "http://example.com/InIdentifierInstance2"
+        >
+      >(dataFactory.namedNode($json["@id"])),
+      inIdentifierProperty: Maybe.fromNullable($json["inIdentifierProperty"])
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<InIdentifier> = (
@@ -39098,16 +39595,22 @@ export namespace HasValueProperties {
     return patterns;
   };
 
-  export function fromJson($json: HasValueProperties.Json): HasValueProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      hasIriValueProperty: dataFactory.namedNode(
-        $json["hasIriValueProperty"]["@id"],
+  export function fromJson(
+    $json: HasValueProperties.Json,
+  ): Either<Error, HasValueProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      hasLiteralValueProperty: $json["hasLiteralValueProperty"],
-    });
+      hasIriValueProperty: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["hasIriValueProperty"]["@id"]),
+      ),
+      hasLiteralValueProperty: Either.of<Error, string>(
+        $json["hasLiteralValueProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -39651,13 +40154,17 @@ export namespace FlattenUnionMember3 {
 
   export function fromJson(
     $json: FlattenUnionMember3.Json,
-  ): FlattenUnionMember3 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      flattenUnionMember3Property: $json["flattenUnionMember3Property"],
-    });
+  ): Either<Error, FlattenUnionMember3> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      flattenUnionMember3Property: Either.of<Error, string>(
+        $json["flattenUnionMember3Property"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -40217,15 +40724,19 @@ export namespace ExternProperty {
     return patterns;
   };
 
-  export function fromJson($json: ExternProperty.Json): ExternProperty {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      externProperty: Maybe.fromNullable($json["externProperty"]).map((item) =>
-        Extern.fromJson(item),
+  export function fromJson(
+    $json: ExternProperty.Json,
+  ): Either<Error, ExternProperty> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-    });
+      externProperty: Maybe.fromNullable($json["externProperty"])
+        .map((item) => Extern.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ExternProperty> = (
@@ -40795,13 +41306,19 @@ export namespace BaseForExtern {
     return patterns;
   };
 
-  export function fromJson($json: BaseForExtern.Json): BaseForExtern {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      baseForExternProperty: $json["baseForExternProperty"],
-    });
+  export function fromJson(
+    $json: BaseForExtern.Json,
+  ): Either<Error, BaseForExtern> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      baseForExternProperty: Either.of<Error, string>(
+        $json["baseForExternProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<BaseForExtern> = (
@@ -41349,13 +41866,19 @@ export namespace ExplicitRdfType {
     return patterns;
   };
 
-  export function fromJson($json: ExplicitRdfType.Json): ExplicitRdfType {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      explicitRdfTypeProperty: $json["explicitRdfTypeProperty"],
-    });
+  export function fromJson(
+    $json: ExplicitRdfType.Json,
+  ): Either<Error, ExplicitRdfType> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      explicitRdfTypeProperty: Either.of<Error, string>(
+        $json["explicitRdfTypeProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ExplicitRdfType> = (
@@ -41914,13 +42437,17 @@ export namespace ExplicitFromToRdfTypes {
 
   export function fromJson(
     $json: ExplicitFromToRdfTypes.Json,
-  ): ExplicitFromToRdfTypes {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      explicitFromToRdfTypesProperty: $json["explicitFromToRdfTypesProperty"],
-    });
+  ): Either<Error, ExplicitFromToRdfTypes> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      explicitFromToRdfTypesProperty: Either.of<Error, string>(
+        $json["explicitFromToRdfTypesProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -42622,15 +43149,25 @@ export namespace DisplayProperties {
     return patterns;
   };
 
-  export function fromJson($json: DisplayProperties.Json): DisplayProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      explicitFalseDisplayProperty: $json["explicitFalseDisplayProperty"],
-      explicitTrueDisplayProperty: $json["explicitTrueDisplayProperty"],
-      implicitFalseDisplayProperty: $json["implicitFalseDisplayProperty"],
-    });
+  export function fromJson(
+    $json: DisplayProperties.Json,
+  ): Either<Error, DisplayProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      explicitFalseDisplayProperty: Either.of<Error, string>(
+        $json["explicitFalseDisplayProperty"],
+      ),
+      explicitTrueDisplayProperty: Either.of<Error, string>(
+        $json["explicitTrueDisplayProperty"],
+      ),
+      implicitFalseDisplayProperty: Either.of<Error, string>(
+        $json["implicitFalseDisplayProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -43222,15 +43759,21 @@ export namespace DirectRecursive {
     return patterns;
   };
 
-  export function fromJson($json: DirectRecursive.Json): DirectRecursive {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  export function fromJson(
+    $json: DirectRecursive.Json,
+  ): Either<Error, DirectRecursive> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       directRecursiveProperty: Maybe.fromNullable(
         $json["directRecursiveProperty"],
-      ).map((item) => DirectRecursive.fromJson(item)),
-    });
+      )
+        .map((item) => DirectRecursive.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<DirectRecursive> = (
@@ -44127,21 +44670,32 @@ export namespace DefaultValueProperties {
 
   export function fromJson(
     $json: DefaultValueProperties.Json,
-  ): DefaultValueProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      dateDefaultValueProperty: new Date($json["dateDefaultValueProperty"]),
-      dateTimeDefaultValueProperty: new Date(
-        $json["dateTimeDefaultValueProperty"],
+  ): Either<Error, DefaultValueProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      falseBooleanDefaultValueProperty:
+      dateDefaultValueProperty: Either.of<Error, Date>(
+        new Date($json["dateDefaultValueProperty"]),
+      ),
+      dateTimeDefaultValueProperty: Either.of<Error, Date>(
+        new Date($json["dateTimeDefaultValueProperty"]),
+      ),
+      falseBooleanDefaultValueProperty: Either.of<Error, boolean>(
         $json["falseBooleanDefaultValueProperty"],
-      numberDefaultValueProperty: $json["numberDefaultValueProperty"],
-      stringDefaultValueProperty: $json["stringDefaultValueProperty"],
-      trueBooleanDefaultValueProperty: $json["trueBooleanDefaultValueProperty"],
-    });
+      ),
+      numberDefaultValueProperty: Either.of<Error, number>(
+        $json["numberDefaultValueProperty"],
+      ),
+      stringDefaultValueProperty: Either.of<Error, string>(
+        $json["stringDefaultValueProperty"],
+      ),
+      trueBooleanDefaultValueProperty: Either.of<Error, boolean>(
+        $json["trueBooleanDefaultValueProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -46090,110 +46644,142 @@ export namespace DateUnionProperties {
 
   export function fromJson(
     $json: DateUnionProperties.Json,
-  ): DateUnionProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
+  ): Either<Error, DateUnionProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
       dateOrDateTimeProperty: Maybe.fromNullable(
         $json["dateOrDateTimeProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { type: "date"; value: string }
-            | { type: "dateTime"; value: string },
-        ):
-          | { type: "date"; value: Date }
-          | { type: "dateTime"; value: Date } => {
-          if (value["type"] === "date") {
-            return {
-              type: "date" as const,
-              value: new Date(value.value as string),
-            };
-          }
-          if (value["type"] === "dateTime") {
-            return {
-              type: "dateTime" as const,
-              value: new Date(value.value as string),
-            };
-          }
+      )
+        .map((item) =>
+          ((
+            value:
+              | { type: "date"; value: string }
+              | { type: "dateTime"; value: string },
+          ): Either<
+            Error,
+            { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+          > => {
+            if (value["type"] === "date") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "date" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "dateTime") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "dateTime" as const,
+                value: value,
+              }));
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
-      dateOrStringProperty: Maybe.fromNullable(
-        $json["dateOrStringProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { type: "date"; value: string }
-            | { type: "string"; value: string },
-        ):
-          | { type: "date"; value: Date }
-          | { type: "string"; value: string } => {
-          if (value["type"] === "date") {
-            return {
-              type: "date" as const,
-              value: new Date(value.value as string),
-            };
-          }
-          if (value["type"] === "string") {
-            return { type: "string" as const, value: value.value as string };
-          }
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      dateOrStringProperty: Maybe.fromNullable($json["dateOrStringProperty"])
+        .map((item) =>
+          ((
+            value:
+              | { type: "date"; value: string }
+              | { type: "string"; value: string },
+          ): Either<
+            Error,
+            { type: "date"; value: Date } | { type: "string"; value: string }
+          > => {
+            if (value["type"] === "date") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "date" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "string") {
+              return Either.of<Error, string>(value.value as string).map(
+                (value) => ({
+                  type: "string" as const,
+                  value: value,
+                }),
+              );
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
       dateTimeOrDateProperty: Maybe.fromNullable(
         $json["dateTimeOrDateProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { type: "dateTime"; value: string }
-            | { type: "date"; value: string },
-        ):
-          | { type: "dateTime"; value: Date }
-          | { type: "date"; value: Date } => {
-          if (value["type"] === "dateTime") {
-            return {
-              type: "dateTime" as const,
-              value: new Date(value.value as string),
-            };
-          }
-          if (value["type"] === "date") {
-            return {
-              type: "date" as const,
-              value: new Date(value.value as string),
-            };
-          }
+      )
+        .map((item) =>
+          ((
+            value:
+              | { type: "dateTime"; value: string }
+              | { type: "date"; value: string },
+          ): Either<
+            Error,
+            { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+          > => {
+            if (value["type"] === "dateTime") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "dateTime" as const,
+                value: value,
+              }));
+            }
+            if (value["type"] === "date") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "date" as const,
+                value: value,
+              }));
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
-      stringOrDateProperty: Maybe.fromNullable(
-        $json["stringOrDateProperty"],
-      ).map((item) =>
-        ((
-          value:
-            | { type: "string"; value: string }
-            | { type: "date"; value: string },
-        ):
-          | { type: "string"; value: string }
-          | { type: "date"; value: Date } => {
-          if (value["type"] === "string") {
-            return { type: "string" as const, value: value.value as string };
-          }
-          if (value["type"] === "date") {
-            return {
-              type: "date" as const,
-              value: new Date(value.value as string),
-            };
-          }
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      stringOrDateProperty: Maybe.fromNullable($json["stringOrDateProperty"])
+        .map((item) =>
+          ((
+            value:
+              | { type: "string"; value: string }
+              | { type: "date"; value: string },
+          ): Either<
+            Error,
+            { type: "string"; value: string } | { type: "date"; value: Date }
+          > => {
+            if (value["type"] === "string") {
+              return Either.of<Error, string>(value.value as string).map(
+                (value) => ({
+                  type: "string" as const,
+                  value: value,
+                }),
+              );
+            }
+            if (value["type"] === "date") {
+              return Either.of<Error, Date>(
+                new Date(value.value as string),
+              ).map((value) => ({
+                type: "date" as const,
+                value: value,
+              }));
+            }
 
-          throw new Error("unable to deserialize JSON");
-        })(item),
-      ),
-    });
+            throw new Error("unable to deserialize JSON");
+          })(item).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -48430,102 +49016,136 @@ export namespace ConvertibleTypeProperties {
 
   export function fromJson(
     $json: ConvertibleTypeProperties.Json,
-  ): ConvertibleTypeProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      convertibleIriNonEmptySetProperty: $json[
-        "convertibleIriNonEmptySetProperty"
-      ].map((item) => dataFactory.namedNode(item["@id"])),
+  ): Either<Error, ConvertibleTypeProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      convertibleIriNonEmptySetProperty: Either.sequence<Error, NamedNode>(
+        $json["convertibleIriNonEmptySetProperty"].map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+        ),
+      ),
       convertibleIriOptionProperty: Maybe.fromNullable(
         $json["convertibleIriOptionProperty"],
-      ).map((item) => dataFactory.namedNode(item["@id"])),
-      convertibleIriProperty: dataFactory.namedNode(
-        $json["convertibleIriProperty"]["@id"],
+      )
+        .map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+            Maybe.of,
+          ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      convertibleIriProperty: Either.of<Error, NamedNode>(
+        dataFactory.namedNode($json["convertibleIriProperty"]["@id"]),
       ),
-      convertibleIriSetProperty: ($json["convertibleIriSetProperty"] ?? []).map(
-        (item) => dataFactory.namedNode(item["@id"]),
+      convertibleIriSetProperty: Either.sequence<Error, NamedNode>(
+        ($json["convertibleIriSetProperty"] ?? []).map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])),
+        ),
       ),
-      convertibleLiteralNonEmptySetProperty: $json[
-        "convertibleLiteralNonEmptySetProperty"
-      ].map((item) =>
-        dataFactory.literal(
-          item["@value"],
-          item["@language"] !== undefined
-            ? item["@language"]
-            : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"]!)
-              : undefined,
+      convertibleLiteralNonEmptySetProperty: Either.sequence<Error, Literal>(
+        $json["convertibleLiteralNonEmptySetProperty"].map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            ),
+          ),
         ),
       ),
       convertibleLiteralOptionProperty: Maybe.fromNullable(
         $json["convertibleLiteralOptionProperty"],
-      ).map((item) =>
-        dataFactory.literal(
-          item["@value"],
-          item["@language"] !== undefined
-            ? item["@language"]
-            : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"]!)
-              : undefined,
-        ),
-      ),
-      convertibleLiteralProperty: dataFactory.literal(
-        $json["convertibleLiteralProperty"]["@value"],
-        $json["convertibleLiteralProperty"]["@language"] !== undefined
-          ? $json["convertibleLiteralProperty"]["@language"]
-          : $json["convertibleLiteralProperty"]["@type"] !== undefined
-            ? dataFactory.namedNode(
-                $json["convertibleLiteralProperty"]["@type"]!,
-              )
-            : undefined,
-      ),
-      convertibleLiteralSetProperty: (
-        $json["convertibleLiteralSetProperty"] ?? []
-      ).map((item) =>
-        dataFactory.literal(
-          item["@value"],
-          item["@language"] !== undefined
-            ? item["@language"]
-            : item["@type"] !== undefined
-              ? dataFactory.namedNode(item["@type"]!)
-              : undefined,
-        ),
-      ),
-      convertibleTermNonEmptySetProperty: $json[
-        "convertibleTermNonEmptySetProperty"
-      ].map((item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
+      )
+        .map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
               item["@value"],
               item["@language"] !== undefined
                 ? item["@language"]
                 : item["@type"] !== undefined
                   ? dataFactory.namedNode(item["@type"]!)
                   : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
+            ),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      convertibleLiteralProperty: Either.of<Error, Literal>(
+        dataFactory.literal(
+          $json["convertibleLiteralProperty"]["@value"],
+          $json["convertibleLiteralProperty"]["@language"] !== undefined
+            ? $json["convertibleLiteralProperty"]["@language"]
+            : $json["convertibleLiteralProperty"]["@type"] !== undefined
+              ? dataFactory.namedNode(
+                  $json["convertibleLiteralProperty"]["@type"]!,
+                )
+              : undefined,
+        ),
+      ),
+      convertibleLiteralSetProperty: Either.sequence<Error, Literal>(
+        ($json["convertibleLiteralSetProperty"] ?? []).map((item) =>
+          Either.of<Error, Literal>(
+            dataFactory.literal(
+              item["@value"],
+              item["@language"] !== undefined
+                ? item["@language"]
+                : item["@type"] !== undefined
+                  ? dataFactory.namedNode(item["@type"]!)
+                  : undefined,
+            ),
+          ),
+        ),
+      ),
+      convertibleTermNonEmptySetProperty: Either.sequence<
+        Error,
+        BlankNode | NamedNode | Literal
+      >(
+        $json["convertibleTermNonEmptySetProperty"].map((item) =>
+          Either.of<Error, BlankNode | NamedNode | Literal>(
+            item.termType === "Literal"
+              ? dataFactory.literal(
+                  item["@value"],
+                  item["@language"] !== undefined
+                    ? item["@language"]
+                    : item["@type"] !== undefined
+                      ? dataFactory.namedNode(item["@type"]!)
+                      : undefined,
+                )
+              : item.termType === "NamedNode"
+                ? dataFactory.namedNode(item["@id"])
+                : dataFactory.blankNode(item["@id"].substring(2)),
+          ),
+        ),
       ),
       convertibleTermOptionProperty: Maybe.fromNullable(
         $json["convertibleTermOptionProperty"],
-      ).map((item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"]!)
-                  : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
-      ),
-      convertibleTermProperty:
+      )
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode | Literal>(
+            item.termType === "Literal"
+              ? dataFactory.literal(
+                  item["@value"],
+                  item["@language"] !== undefined
+                    ? item["@language"]
+                    : item["@type"] !== undefined
+                      ? dataFactory.namedNode(item["@type"]!)
+                      : undefined,
+                )
+              : item.termType === "NamedNode"
+                ? dataFactory.namedNode(item["@id"])
+                : dataFactory.blankNode(item["@id"].substring(2)),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      convertibleTermProperty: Either.of<
+        Error,
+        BlankNode | NamedNode | Literal
+      >(
         $json["convertibleTermProperty"].termType === "Literal"
           ? dataFactory.literal(
               $json["convertibleTermProperty"]["@value"],
@@ -48542,23 +49162,29 @@ export namespace ConvertibleTypeProperties {
             : dataFactory.blankNode(
                 $json["convertibleTermProperty"]["@id"].substring(2),
               ),
-      convertibleTermSetProperty: (
-        $json["convertibleTermSetProperty"] ?? []
-      ).map((item) =>
-        item.termType === "Literal"
-          ? dataFactory.literal(
-              item["@value"],
-              item["@language"] !== undefined
-                ? item["@language"]
-                : item["@type"] !== undefined
-                  ? dataFactory.namedNode(item["@type"]!)
-                  : undefined,
-            )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
       ),
-    });
+      convertibleTermSetProperty: Either.sequence<
+        Error,
+        BlankNode | NamedNode | Literal
+      >(
+        ($json["convertibleTermSetProperty"] ?? []).map((item) =>
+          Either.of<Error, BlankNode | NamedNode | Literal>(
+            item.termType === "Literal"
+              ? dataFactory.literal(
+                  item["@value"],
+                  item["@language"] !== undefined
+                    ? item["@language"]
+                    : item["@type"] !== undefined
+                      ? dataFactory.namedNode(item["@type"]!)
+                      : undefined,
+                )
+              : item.termType === "NamedNode"
+                ? dataFactory.namedNode(item["@id"])
+                : dataFactory.blankNode(item["@id"].substring(2)),
+          ),
+        ),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -49593,13 +50219,17 @@ export namespace Partial {
     return patterns;
   };
 
-  export function fromJson($json: Partial.Json): Partial {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      lazilyResolvedStringProperty: $json["lazilyResolvedStringProperty"],
-    });
+  export function fromJson($json: Partial.Json): Either<Error, Partial> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      lazilyResolvedStringProperty: Either.of<Error, string>(
+        $json["lazilyResolvedStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<Partial> = (
@@ -50029,13 +50659,15 @@ export namespace NonClass {
     return patterns;
   };
 
-  export function fromJson($json: NonClass.Json): NonClass {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      nonClassProperty: $json["nonClassProperty"],
-    });
+  export function fromJson($json: NonClass.Json): Either<Error, NonClass> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      nonClassProperty: Either.of<Error, string>($json["nonClassProperty"]),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NonClass> = (
@@ -50869,33 +51501,47 @@ export namespace ClassProperties {
     return patterns;
   };
 
-  export function fromJson($json: ClassProperties.Json): ClassProperties {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      iriClassProperty: Maybe.fromNullable($json["iriClassProperty"]).map(
-        (item) => dataFactory.namedNode(item["@id"]),
+  export function fromJson(
+    $json: ClassProperties.Json,
+  ): Either<Error, ClassProperties> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
       ),
-      multiClassProperty: Maybe.fromNullable($json["multiClassProperty"]).map(
-        (item) =>
-          item["@id"].startsWith("_:")
-            ? dataFactory.blankNode(item["@id"].substring(2))
-            : dataFactory.namedNode(item["@id"]),
-      ),
-      nodeClassProperty1: Maybe.fromNullable($json["nodeClassProperty1"]).map(
-        (item) => NonClass.fromJson(item),
-      ),
-      nodeClassProperty2: Maybe.fromNullable($json["nodeClassProperty2"]).map(
-        (item) => Partial.fromJson(item),
-      ),
-      singleClassProperty: Maybe.fromNullable($json["singleClassProperty"]).map(
-        (item) =>
-          item["@id"].startsWith("_:")
-            ? dataFactory.blankNode(item["@id"].substring(2))
-            : dataFactory.namedNode(item["@id"]),
-      ),
-    });
+      iriClassProperty: Maybe.fromNullable($json["iriClassProperty"])
+        .map((item) =>
+          Either.of<Error, NamedNode>(dataFactory.namedNode(item["@id"])).map(
+            Maybe.of,
+          ),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      multiClassProperty: Maybe.fromNullable($json["multiClassProperty"])
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode>(
+            item["@id"].startsWith("_:")
+              ? dataFactory.blankNode(item["@id"].substring(2))
+              : dataFactory.namedNode(item["@id"]),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+      nodeClassProperty1: Maybe.fromNullable($json["nodeClassProperty1"])
+        .map((item) => NonClass.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      nodeClassProperty2: Maybe.fromNullable($json["nodeClassProperty2"])
+        .map((item) => Partial.fromJson(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      singleClassProperty: Maybe.fromNullable($json["singleClassProperty"])
+        .map((item) =>
+          Either.of<Error, BlankNode | NamedNode>(
+            item["@id"].startsWith("_:")
+              ? dataFactory.blankNode(item["@id"].substring(2))
+              : dataFactory.namedNode(item["@id"]),
+          ).map(Maybe.of),
+        )
+        .orDefault(Either.of(Maybe.empty())),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassProperties> = (
@@ -51647,13 +52293,19 @@ export namespace ClassHierarchy0 {
     return patterns;
   };
 
-  export function fromJson($json: ClassHierarchy0.Json): ClassHierarchy0 {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classHierarchy0Property: $json["classHierarchy0Property"],
-    });
+  export function fromJson(
+    $json: ClassHierarchy0.Json,
+  ): Either<Error, ClassHierarchy0> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      classHierarchy0Property: Either.of<Error, string>(
+        $json["classHierarchy0Property"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy0> = (
@@ -52194,13 +52846,18 @@ export namespace ClassHierarchy1 {
     return patterns;
   };
 
-  export function fromJson($json: ClassHierarchy1.Json): ClassHierarchy1 {
-    return createUnsafe({
-      ...ClassHierarchy0.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-    });
+  export function fromJson(
+    $json: ClassHierarchy1.Json,
+  ): Either<Error, ClassHierarchy1> {
+    return ClassHierarchy0.fromJson($json).chain((super0) =>
+      $sequenceRecord({
+        $identifier: Either.of<Error, BlankNode | NamedNode>(
+          $json["@id"].startsWith("_:")
+            ? dataFactory.blankNode($json["@id"].substring(2))
+            : dataFactory.namedNode($json["@id"]),
+        ),
+      }).chain((properties) => create({ ...properties, ...super0 })),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy1> = (
@@ -52768,14 +53425,21 @@ export namespace ClassHierarchy2 {
     return patterns;
   };
 
-  export function fromJson($json: ClassHierarchy2.Json): ClassHierarchy2 {
-    return createUnsafe({
-      ...ClassHierarchy1.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classHierarchy2Property: $json["classHierarchy2Property"],
-    });
+  export function fromJson(
+    $json: ClassHierarchy2.Json,
+  ): Either<Error, ClassHierarchy2> {
+    return ClassHierarchy1.fromJson($json).chain((super0) =>
+      $sequenceRecord({
+        $identifier: Either.of<Error, BlankNode | NamedNode>(
+          $json["@id"].startsWith("_:")
+            ? dataFactory.blankNode($json["@id"].substring(2))
+            : dataFactory.namedNode($json["@id"]),
+        ),
+        classHierarchy2Property: Either.of<Error, string>(
+          $json["classHierarchy2Property"],
+        ),
+      }).chain((properties) => create({ ...properties, ...super0 })),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy2> = (
@@ -53356,14 +54020,21 @@ export namespace ClassHierarchy3 {
     return patterns;
   };
 
-  export function fromJson($json: ClassHierarchy3.Json): ClassHierarchy3 {
-    return createUnsafe({
-      ...ClassHierarchy2.fromJson($json),
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      classHierarchy3Property: $json["classHierarchy3Property"],
-    });
+  export function fromJson(
+    $json: ClassHierarchy3.Json,
+  ): Either<Error, ClassHierarchy3> {
+    return ClassHierarchy2.fromJson($json).chain((super0) =>
+      $sequenceRecord({
+        $identifier: Either.of<Error, BlankNode | NamedNode>(
+          $json["@id"].startsWith("_:")
+            ? dataFactory.blankNode($json["@id"].substring(2))
+            : dataFactory.namedNode($json["@id"]),
+        ),
+        classHierarchy3Property: Either.of<Error, string>(
+          $json["classHierarchy3Property"],
+        ),
+      }).chain((properties) => create({ ...properties, ...super0 })),
+    );
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<ClassHierarchy3> = (
@@ -53873,12 +54544,14 @@ export namespace BlankNodeOrIriIdentifier {
 
   export function fromJson(
     $json: BlankNodeOrIriIdentifier.Json,
-  ): BlankNodeOrIriIdentifier {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-    });
+  ): Either<Error, BlankNodeOrIriIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -54347,10 +55020,12 @@ export namespace BlankNodeIdentifier {
 
   export function fromJson(
     $json: BlankNodeIdentifier.Json,
-  ): BlankNodeIdentifier {
-    return createUnsafe({
-      $identifier: dataFactory.blankNode($json["@id"].substring(2)),
-    });
+  ): Either<Error, BlankNodeIdentifier> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode>(
+        dataFactory.blankNode($json["@id"].substring(2)),
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<
@@ -54774,15 +55449,23 @@ export namespace FlattenUnion {
     return patterns;
   }
 
-  export const fromJson = (value: FlattenUnion.Json): FlattenUnion => {
+  export const fromJson = (
+    value: FlattenUnion.Json,
+  ): Either<Error, FlattenUnion> => {
     if (value["@type"] === "UnionMember1") {
-      return UnionMember1.fromJson(value as UnionMember1.Json);
+      return UnionMember1.fromJson(value as UnionMember1.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "UnionMember2") {
-      return UnionMember2.fromJson(value as UnionMember2.Json);
+      return UnionMember2.fromJson(value as UnionMember2.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "FlattenUnionMember3") {
-      return FlattenUnionMember3.fromJson(value as FlattenUnionMember3.Json);
+      return FlattenUnionMember3.fromJson(
+        value as FlattenUnionMember3.Json,
+      ).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -55285,12 +55968,16 @@ export namespace Union {
     return patterns;
   }
 
-  export const fromJson = (value: Union.Json): Union => {
+  export const fromJson = (value: Union.Json): Either<Error, Union> => {
     if (value["@type"] === "UnionMember1") {
-      return UnionMember1.fromJson(value as UnionMember1.Json);
+      return UnionMember1.fromJson(value as UnionMember1.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "UnionMember2") {
-      return UnionMember2.fromJson(value as UnionMember2.Json);
+      return UnionMember2.fromJson(value as UnionMember2.Json).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");
@@ -55765,16 +56452,16 @@ export namespace LazilyResolvedUnion {
 
   export const fromJson = (
     value: LazilyResolvedUnion.Json,
-  ): LazilyResolvedUnion => {
+  ): Either<Error, LazilyResolvedUnion> => {
     if (value["@type"] === "LazilyResolvedUnionMember1") {
       return LazilyResolvedUnionMember1.fromJson(
         value as LazilyResolvedUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LazilyResolvedUnionMember2") {
       return LazilyResolvedUnionMember2.fromJson(
         value as LazilyResolvedUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -56240,12 +56927,18 @@ export namespace PartialUnion {
     return patterns;
   }
 
-  export const fromJson = (value: PartialUnion.Json): PartialUnion => {
+  export const fromJson = (
+    value: PartialUnion.Json,
+  ): Either<Error, PartialUnion> => {
     if (value["@type"] === "PartialUnionMember1") {
-      return PartialUnionMember1.fromJson(value as PartialUnionMember1.Json);
+      return PartialUnionMember1.fromJson(
+        value as PartialUnionMember1.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "PartialUnionMember2") {
-      return PartialUnionMember2.fromJson(value as PartialUnionMember2.Json);
+      return PartialUnionMember2.fromJson(
+        value as PartialUnionMember2.Json,
+      ).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -56706,16 +57399,18 @@ export namespace NoRdfTypeUnion {
     return patterns;
   }
 
-  export const fromJson = (value: NoRdfTypeUnion.Json): NoRdfTypeUnion => {
+  export const fromJson = (
+    value: NoRdfTypeUnion.Json,
+  ): Either<Error, NoRdfTypeUnion> => {
     if (value["@type"] === "NoRdfTypeUnionMember1") {
       return NoRdfTypeUnionMember1.fromJson(
         value as NoRdfTypeUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "NoRdfTypeUnionMember2") {
       return NoRdfTypeUnionMember2.fromJson(
         value as NoRdfTypeUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -57168,16 +57863,18 @@ export namespace RecursiveUnion {
     return patterns;
   }
 
-  export const fromJson = (value: RecursiveUnion.Json): RecursiveUnion => {
+  export const fromJson = (
+    value: RecursiveUnion.Json,
+  ): Either<Error, RecursiveUnion> => {
     if (value["@type"] === "RecursiveUnionMember1") {
       return RecursiveUnionMember1.fromJson(
         value as RecursiveUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "RecursiveUnionMember2") {
       return RecursiveUnionMember2.fromJson(
         value as RecursiveUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");
@@ -59827,218 +60524,288 @@ export namespace $Object {
     return patterns;
   }
 
-  export const fromJson = (value: $Object.Json): $Object => {
+  export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
     if (value["@type"] === "BlankNodeIdentifier") {
-      return BlankNodeIdentifier.fromJson(value as BlankNodeIdentifier.Json);
+      return BlankNodeIdentifier.fromJson(
+        value as BlankNodeIdentifier.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "BlankNodeOrIriIdentifier") {
       return BlankNodeOrIriIdentifier.fromJson(
         value as BlankNodeOrIriIdentifier.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "ClassHierarchy3") {
-      return ClassHierarchy3.fromJson(value as ClassHierarchy3.Json);
+      return ClassHierarchy3.fromJson(value as ClassHierarchy3.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ClassHierarchy2") {
-      return ClassHierarchy2.fromJson(value as ClassHierarchy2.Json);
+      return ClassHierarchy2.fromJson(value as ClassHierarchy2.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ClassHierarchy1") {
-      return ClassHierarchy1.fromJson(value as ClassHierarchy1.Json);
+      return ClassHierarchy1.fromJson(value as ClassHierarchy1.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ClassHierarchy0") {
-      return ClassHierarchy0.fromJson(value as ClassHierarchy0.Json);
+      return ClassHierarchy0.fromJson(value as ClassHierarchy0.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ClassProperties") {
-      return ClassProperties.fromJson(value as ClassProperties.Json);
+      return ClassProperties.fromJson(value as ClassProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "NonClass") {
-      return NonClass.fromJson(value as NonClass.Json);
+      return NonClass.fromJson(value as NonClass.Json).map((value) => value);
     }
     if (value["@type"] === "Partial") {
-      return Partial.fromJson(value as Partial.Json);
+      return Partial.fromJson(value as Partial.Json).map((value) => value);
     }
     if (value["@type"] === "ConvertibleTypeProperties") {
       return ConvertibleTypeProperties.fromJson(
         value as ConvertibleTypeProperties.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "DateUnionProperties") {
-      return DateUnionProperties.fromJson(value as DateUnionProperties.Json);
+      return DateUnionProperties.fromJson(
+        value as DateUnionProperties.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "DefaultValueProperties") {
       return DefaultValueProperties.fromJson(
         value as DefaultValueProperties.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "DirectRecursive") {
-      return DirectRecursive.fromJson(value as DirectRecursive.Json);
+      return DirectRecursive.fromJson(value as DirectRecursive.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "DisplayProperties") {
-      return DisplayProperties.fromJson(value as DisplayProperties.Json);
+      return DisplayProperties.fromJson(value as DisplayProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ExplicitFromToRdfTypes") {
       return ExplicitFromToRdfTypes.fromJson(
         value as ExplicitFromToRdfTypes.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "ExplicitRdfType") {
-      return ExplicitRdfType.fromJson(value as ExplicitRdfType.Json);
+      return ExplicitRdfType.fromJson(value as ExplicitRdfType.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "BaseForExtern" || value["@type"] === "Extern") {
-      return BaseForExtern.fromJson(value as BaseForExtern.Json);
+      return BaseForExtern.fromJson(value as BaseForExtern.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ExternProperty") {
-      return ExternProperty.fromJson(value as ExternProperty.Json);
+      return ExternProperty.fromJson(value as ExternProperty.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "FlattenUnionMember3") {
-      return FlattenUnionMember3.fromJson(value as FlattenUnionMember3.Json);
+      return FlattenUnionMember3.fromJson(
+        value as FlattenUnionMember3.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "HasValueProperties") {
-      return HasValueProperties.fromJson(value as HasValueProperties.Json);
+      return HasValueProperties.fromJson(value as HasValueProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "InIdentifier") {
-      return InIdentifier.fromJson(value as InIdentifier.Json);
+      return InIdentifier.fromJson(value as InIdentifier.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "InProperties") {
-      return InProperties.fromJson(value as InProperties.Json);
+      return InProperties.fromJson(value as InProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "IndirectRecursive") {
-      return IndirectRecursive.fromJson(value as IndirectRecursive.Json);
+      return IndirectRecursive.fromJson(value as IndirectRecursive.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "IndirectRecursiveHelper") {
       return IndirectRecursiveHelper.fromJson(
         value as IndirectRecursiveHelper.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "IriIdentifier") {
-      return IriIdentifier.fromJson(value as IriIdentifier.Json);
+      return IriIdentifier.fromJson(value as IriIdentifier.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "JsPrimitiveUnionProperty") {
       return JsPrimitiveUnionProperty.fromJson(
         value as JsPrimitiveUnionProperty.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LanguageInProperties") {
-      return LanguageInProperties.fromJson(value as LanguageInProperties.Json);
+      return LanguageInProperties.fromJson(
+        value as LanguageInProperties.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "LazilyResolvedBlankNodeOrIriIdentifier") {
       return LazilyResolvedBlankNodeOrIriIdentifier.fromJson(
         value as LazilyResolvedBlankNodeOrIriIdentifier.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LazilyResolvedUnionMember1") {
       return LazilyResolvedUnionMember1.fromJson(
         value as LazilyResolvedUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LazilyResolvedUnionMember2") {
       return LazilyResolvedUnionMember2.fromJson(
         value as LazilyResolvedUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LazilyResolvedIriIdentifier") {
       return LazilyResolvedIriIdentifier.fromJson(
         value as LazilyResolvedIriIdentifier.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "LazyProperties") {
-      return LazyProperties.fromJson(value as LazyProperties.Json);
+      return LazyProperties.fromJson(value as LazyProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ListProperties") {
-      return ListProperties.fromJson(value as ListProperties.Json);
+      return ListProperties.fromJson(value as ListProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "ClassMultipleInheritanceChild") {
       return ClassMultipleInheritanceChild.fromJson(
         value as ClassMultipleInheritanceChild.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "ClassMultipleInheritanceParent1") {
       return ClassMultipleInheritanceParent1.fromJson(
         value as ClassMultipleInheritanceParent1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "ClassMultipleInheritanceParent2") {
       return ClassMultipleInheritanceParent2.fromJson(
         value as ClassMultipleInheritanceParent2.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "MutableProperties") {
-      return MutableProperties.fromJson(value as MutableProperties.Json);
+      return MutableProperties.fromJson(value as MutableProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "NamedUnionProperties") {
-      return NamedUnionProperties.fromJson(value as NamedUnionProperties.Json);
+      return NamedUnionProperties.fromJson(
+        value as NamedUnionProperties.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "NoRdfTypeUnionMember1") {
       return NoRdfTypeUnionMember1.fromJson(
         value as NoRdfTypeUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "NoRdfTypeUnionMember2") {
       return NoRdfTypeUnionMember2.fromJson(
         value as NoRdfTypeUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "NodeKinds") {
-      return NodeKinds.fromJson(value as NodeKinds.Json);
+      return NodeKinds.fromJson(value as NodeKinds.Json).map((value) => value);
     }
     if (value["@type"] === "NumericProperties") {
-      return NumericProperties.fromJson(value as NumericProperties.Json);
+      return NumericProperties.fromJson(value as NumericProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "OrderedProperties") {
-      return OrderedProperties.fromJson(value as OrderedProperties.Json);
+      return OrderedProperties.fromJson(value as OrderedProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "NewName") {
-      return NewName.fromJson(value as NewName.Json);
+      return NewName.fromJson(value as NewName.Json).map((value) => value);
     }
     if (value["@type"] === "PartialUnionMember1") {
-      return PartialUnionMember1.fromJson(value as PartialUnionMember1.Json);
+      return PartialUnionMember1.fromJson(
+        value as PartialUnionMember1.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "UnionMember1") {
-      return UnionMember1.fromJson(value as UnionMember1.Json);
+      return UnionMember1.fromJson(value as UnionMember1.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "PartialUnionMember2") {
-      return PartialUnionMember2.fromJson(value as PartialUnionMember2.Json);
+      return PartialUnionMember2.fromJson(
+        value as PartialUnionMember2.Json,
+      ).map((value) => value);
     }
     if (value["@type"] === "UnionMember2") {
-      return UnionMember2.fromJson(value as UnionMember2.Json);
+      return UnionMember2.fromJson(value as UnionMember2.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "UnionMemberCommonParent") {
       return UnionMemberCommonParent.fromJson(
         value as UnionMemberCommonParent.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "PropertyCardinalities") {
       return PropertyCardinalities.fromJson(
         value as PropertyCardinalities.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "PropertyNames") {
-      return PropertyNames.fromJson(value as PropertyNames.Json);
+      return PropertyNames.fromJson(value as PropertyNames.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "PropertyPaths") {
-      return PropertyPaths.fromJson(value as PropertyPaths.Json);
+      return PropertyPaths.fromJson(value as PropertyPaths.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "RecursiveUnionMember1") {
       return RecursiveUnionMember1.fromJson(
         value as RecursiveUnionMember1.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "RecursiveUnionMember2") {
       return RecursiveUnionMember2.fromJson(
         value as RecursiveUnionMember2.Json,
-      );
+      ).map((value) => value);
     }
     if (value["@type"] === "TermProperties") {
-      return TermProperties.fromJson(value as TermProperties.Json);
+      return TermProperties.fromJson(value as TermProperties.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "UnionDiscriminants") {
-      return UnionDiscriminants.fromJson(value as UnionDiscriminants.Json);
+      return UnionDiscriminants.fromJson(value as UnionDiscriminants.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "$DefaultPartial") {
-      return $DefaultPartial.fromJson(value as $DefaultPartial.Json);
+      return $DefaultPartial
+        .fromJson(value as $DefaultPartial.Json)
+        .map((value) => value);
     }
     if (value["@type"] === "$NamedDefaultPartial") {
-      return $NamedDefaultPartial.fromJson(value as $NamedDefaultPartial.Json);
+      return $NamedDefaultPartial
+        .fromJson(value as $NamedDefaultPartial.Json)
+        .map((value) => value);
     }
 
     throw new Error("unable to deserialize JSON");

@@ -62,12 +62,13 @@ const App: FC = () => {
   const dataRdfString = useMemo(
     () =>
       generated.FormNodeShape.Json.parse(data)
-        .mapLeft((error) => error.toString())
-        .map((json) => {
+        .chain(generated.FormNodeShape.fromJson)
+        .map((instance) => {
           return new Writer({ format: "N-Triples" }).quadsToString([
-            ...generated.FormNodeShape.toRdfResource(generated.FormNodeShape.fromJson(json)).dataset,
+            ...generated.FormNodeShape.toRdfResource(instance).dataset,
           ]);
         })
+        .mapLeft((error) => error.toString())
         .extract(),
     [data],
   );

@@ -9,30 +9,50 @@ export function NamedObjectType_fromJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  let initializers: Code[] = [];
-  const statements: Code[] = [];
   const variables = {
     jsonObject: code`${this.configuration.syntheticNamePrefix}json`,
   };
 
-  this.parentObjectTypes.forEach((parentObjectType) => {
-    initializers.push(
-      code`...${parentObjectType.name}.fromJson(${variables.jsonObject})`,
-    );
+  const chains: { expression: Code; variable: string }[] = [];
+
+  this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
+    chains.push({
+      expression: code`${parentObjectType.name}.fromJson(${variables.jsonObject})`,
+      variable: `super${parentObjectTypeI}`,
+    });
   });
 
-  initializers = initializers.concat(
-    this.properties.flatMap((property) =>
-      property.fromJsonInitializer({ variables }).toList(),
-    ),
+  const propertyInitializers = this.properties.flatMap((property) =>
+    property.fromJsonInitializer({ variables }).toList(),
   );
+  if (propertyInitializers.length > 0) {
+    chains.push({
+      expression: code`${this.reusables.snippets.sequenceRecord}({ ${joinCode(propertyInitializers, { on: "," })} })`,
+      variable: "properties",
+    });
+  }
 
-  statements.push(
-    code`return createUnsafe({ ${joinCode(initializers, { on: ", " })} });`,
-  );
+  let returnExpression: Code;
+  switch (chains.length) {
+    case 0:
+      returnExpression = code`create({})`;
+      break;
+    case 1:
+      returnExpression = code`(${chains[0].expression}).chain(create)`;
+      break;
+    default:
+      returnExpression = code`${chains
+        .reverse()
+        .reduce(
+          (acc, { expression, variable }) =>
+            code`(${expression}).chain(${variable} => ${acc})`,
+          code`(create({ ${chains.map((chain) => `...${chain.variable}`).join(", ")} }))`,
+        )}`;
+      break;
+  }
 
   return Maybe.of(code`\
-export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.name} {
-${joinCode(statements, { on: "\n" })}
+export function fromJson(${variables.jsonObject}: ${this.jsonType().name}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${returnExpression};
 }`);
 }

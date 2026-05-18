@@ -1038,13 +1038,19 @@ export namespace NestedNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson($json: NestedNodeShape.Json): NestedNodeShape {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      requiredStringProperty: $json["requiredStringProperty"],
-    });
+  export function fromJson(
+    $json: NestedNodeShape.Json,
+  ): Either<Error, NestedNodeShape> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      requiredStringProperty: Either.of<Error, string>(
+        $json["requiredStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<NestedNodeShape> = (
@@ -1580,22 +1586,40 @@ export namespace FormNodeShape {
     readonly requiredStringProperty?: $StringFilter;
   };
 
-  export function fromJson($json: FormNodeShape.Json): FormNodeShape {
-    return createUnsafe({
-      $identifier: $json["@id"].startsWith("_:")
-        ? dataFactory.blankNode($json["@id"].substring(2))
-        : dataFactory.namedNode($json["@id"]),
-      emptyStringSetProperty: $json["emptyStringSetProperty"] ?? [],
+  export function fromJson(
+    $json: FormNodeShape.Json,
+  ): Either<Error, FormNodeShape> {
+    return $sequenceRecord({
+      $identifier: Either.of<Error, BlankNode | NamedNode>(
+        $json["@id"].startsWith("_:")
+          ? dataFactory.blankNode($json["@id"].substring(2))
+          : dataFactory.namedNode($json["@id"]),
+      ),
+      emptyStringSetProperty: Either.sequence<Error, string>(
+        ($json["emptyStringSetProperty"] ?? []).map((item) =>
+          Either.of<Error, string>(item),
+        ),
+      ),
       nestedObjectProperty: NestedNodeShape.fromJson(
         $json["nestedObjectProperty"],
       ),
-      nonEmptyStringSetProperty: $json["nonEmptyStringSetProperty"],
+      nonEmptyStringSetProperty: Either.sequence<Error, string>(
+        $json["nonEmptyStringSetProperty"].map((item) =>
+          Either.of<Error, string>(item),
+        ),
+      ),
       optionalStringProperty: Maybe.fromNullable(
         $json["optionalStringProperty"],
+      )
+        .map((item) => Either.of<Error, string>(item).map(Maybe.of))
+        .orDefault(Either.of(Maybe.empty())),
+      requiredIntProperty: Either.of<Error, number>(
+        $json["requiredIntProperty"],
       ),
-      requiredIntProperty: $json["requiredIntProperty"],
-      requiredStringProperty: $json["requiredStringProperty"],
-    });
+      requiredStringProperty: Either.of<Error, string>(
+        $json["requiredStringProperty"],
+      ),
+    }).chain(create);
   }
 
   export const _fromRdfResource: $_FromRdfResourceFunction<FormNodeShape> = (
@@ -1984,12 +2008,16 @@ export namespace $Object {
     };
   };
 
-  export const fromJson = (value: $Object.Json): $Object => {
+  export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
     if (value["@type"] === "FormNodeShape") {
-      return FormNodeShape.fromJson(value as FormNodeShape.Json);
+      return FormNodeShape.fromJson(value as FormNodeShape.Json).map(
+        (value) => value,
+      );
     }
     if (value["@type"] === "NestedNodeShape") {
-      return NestedNodeShape.fromJson(value as NestedNodeShape.Json);
+      return NestedNodeShape.fromJson(value as NestedNodeShape.Json).map(
+        (value) => value,
+      );
     }
 
     throw new Error("unable to deserialize JSON");

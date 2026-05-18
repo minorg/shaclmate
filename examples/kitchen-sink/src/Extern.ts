@@ -34,8 +34,8 @@ export namespace Extern {
     return BaseForExtern.equals(left, right);
   }
 
-  export function fromJson(json: Json): Extern {
-    return create(BaseForExtern.fromJson(json)).unsafeCoerce();
+  export function fromJson(json: Json): Either<Error, Extern> {
+    return BaseForExtern.fromJson(json).chain(create);
   }
 
   export const fromRdfResourceValues: $FromRdfResourceValuesFunction<Extern> = (

@@ -101,27 +101,23 @@ export function NamedObjectType_fromRdfResourceFunctionDeclaration(
       break;
   }
 
-  const statements: Code[] = [];
+  let returnExpression: Code;
   const resultExpression = code`create(${partialsJoined})`;
   if (chains.length === 0) {
-    statements.push(
-      code`return ${this.reusables.imports.Right}(${resultExpression});`,
-    );
+    returnExpression = code`${this.reusables.imports.Right}(${resultExpression})`;
   } else {
-    statements.push(
-      code`return ${chains
-        .reverse()
-        .reduce(
-          (acc, { expression, variable }) =>
-            code`(${expression}).chain(${variable} => ${acc})`,
-          code`(${resultExpression})`,
-        )}`,
-    );
+    returnExpression = code`${chains
+      .reverse()
+      .reduce(
+        (acc, { expression, variable }) =>
+          code`(${expression}).chain(${variable} => ${acc})`,
+        code`(${resultExpression})`,
+      )}`;
   }
 
   return Maybe.of(code`\
 export const _fromRdfResource: ${this.reusables.snippets._FromRdfResourceFunction}<${this.name}> = (${variables.resource}, ${optionsVariable}) => {
-${joinCode(statements)}
+  return ${returnExpression};
 }
 
 export const fromRdfResource = ${this.reusables.snippets.wrap_FromRdfResourceFunction}(_fromRdfResource);`);
