@@ -1,40 +1,30 @@
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-
-import type { TsGenerator } from "./TsGenerator.js";
+import { Memoize } from "typescript-memoize";
+import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export function sparqlObjectSetClassDeclaration(
-  this: TsGenerator,
-  {
-    namedObjectTypes,
-    namedObjectUnionTypes,
-  }: {
-    namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
-  },
-): Code {
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+export class SparqlObjectSetType extends AbstractObjectSetType {
+  @Memoize()
+  get declaration(): Code {
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
 
-  const parameters = {
-    constructObjectType: code`namedObjectType: {\
+    const parameters = {
+      constructObjectType: code`namedObjectType: {\
   focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT>;
   fromRdfResource:  ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
   sparqlConstructQueryString: (parameters: { filter?: ObjectFilterT; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable}; } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${this.reusables.imports.sparqljs}.GeneratorOptions) => string;
 }`,
-    query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
-    selectObjectTypeType: code`namedObjectType: { focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
-  };
-  const sparqlClientType = code`{ queryBindings: (query: string) => Promise<readonly Record<string, ${this.reusables.imports.BlankNode} | ${this.reusables.imports.Literal} | ${this.reusables.imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${this.reusables.imports.Quad}[]>; }`;
+      query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
+      selectObjectTypeType: code`namedObjectType: { focusSparqlWherePatterns: ${this.reusables.snippets.FocusSparqlWherePatternsFunction}<ObjectFilterT> }`,
+    };
+    const sparqlClientType = code`{ queryBindings: (query: string) => Promise<readonly Record<string, ${this.reusables.imports.BlankNode} | ${this.reusables.imports.Literal} | ${this.reusables.imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${this.reusables.imports.Quad}[]>; }`;
 
-  const typeParameters = {
-    ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT`,
-    ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
-  };
+    const typeParameters = {
+      ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
+      ObjectFilterT: code`ObjectFilterT`,
+      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
+    };
 
-  return code`\
+    return code`\
 export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePrefix}ObjectSet {
   readonly #countVariable = ${this.reusables.imports.dataFactory}.variable!("count");;
   readonly #graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
@@ -48,10 +38,9 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   }
 
 ${joinCode(
-  [...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
+  [...this.namedObjectTypes, ...this.namedObjectUnionTypes].flatMap(
     (namedObjectType): readonly Code[] => {
-      const methodSignatures = objectSetMethodSignatures.call(this, {
-        namedObjectType,
+      const methodSignatures = this.methodSignatures(namedObjectType, {
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
       });
 
@@ -250,4 +239,5 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
 export namespace ${syntheticNamePrefix}SparqlObjectSet {
   export type Query<${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}> = ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT> & { readonly order?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Ordering[]; readonly where?: (objectVariable: ${this.reusables.imports.Variable}) => readonly ${this.reusables.imports.sparqljs}.Pattern[] };
 }`;
+  }
 }

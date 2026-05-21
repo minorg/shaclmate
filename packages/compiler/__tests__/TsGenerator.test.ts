@@ -83,16 +83,15 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "kitchenSink") {
-      //   return;
-      // }
+      if (id !== "kitchenSink") {
+        return;
+      }
 
-      const diagnostics = compileTs(
-        generate(shapesGraphEither.unsafeCoerce(), configuration),
-        sourceDirectoryPath,
-      );
+      const source = generate(shapesGraphEither.unsafeCoerce(), configuration);
+      const diagnostics = compileTs(source, sourceDirectoryPath);
       if (diagnostics.length > 0) {
-        console.log("b");
+        // biome-ignore lint/suspicious/noDebugger: allow in a test
+        debugger;
       }
       expect(diagnostics).toHaveLength(0);
     }, 60000);

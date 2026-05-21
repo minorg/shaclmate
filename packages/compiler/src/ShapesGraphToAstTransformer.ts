@@ -245,6 +245,19 @@ export class ShapesGraphToAstTransformer {
     }
 
     return Either.of({
+      lazyTypesCount: [...this.cachedAstTypesByShapeIdentifier.values()].reduce(
+        (acc, astType) => {
+          switch (astType.kind) {
+            case "LazyObjectType":
+            case "LazyObjectOptionType":
+            case "LazyObjectSetType":
+              return acc + 1;
+            default:
+              return acc;
+          }
+        },
+        0,
+      ),
       namedIntersectionTypes: astNamedIntersectionTypes,
       namedObjectTypes: astObjectTypes.concat(
         Object.values(syntheticAstObjectTypesByName),
