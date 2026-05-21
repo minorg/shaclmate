@@ -233,6 +233,9 @@ export namespace TsGenerator {
     const featureDependencies: Record<TsFeature, readonly TsFeature[]> = {
       GraphQL: ["ObjectSet"],
 
+      // Alias for other features, not dependencies per se
+      JSON: ["Object.JSON"],
+
       "Object.create": ["Object.schema", "Object.toString", "Object.type"],
 
       "Object.equals": ["Object.type"],
