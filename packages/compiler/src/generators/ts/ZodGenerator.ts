@@ -10,26 +10,30 @@ import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ZodGenerator implements Generator {
-  private readonly reusables: Reusables;
-  private readonly typeFactory: TypeFactory;
+  private readonly logger: Logger;
 
   constructor({ logger }: { logger: Logger }) {
-    const configuration = TsGenerator.Configuration.default_;
-    this.reusables = new Reusables({ configuration, logger });
-    this.typeFactory = new TypeFactory({
-      configuration,
-      logger,
-      reusables: this.reusables,
-    });
+    this.logger = logger;
   }
 
   generate(ast_: ast.Ast): string {
+    const configuration = TsGenerator.Configuration.finalize(
+      ast_,
+      TsGenerator.Configuration.default_,
+    );
+    const reusables = new Reusables({ configuration, logger: this.logger });
+    const typeFactory = new TypeFactory({
+      configuration,
+      logger: this.logger,
+      reusables,
+    });
+
     const declarations: Code[] = [];
 
     for (const namedObjectType of ast.ObjectType.toposort(
       ast_.namedObjectTypes,
     ).map((astObjectType) =>
-      this.typeFactory.createNamedObjectType(astObjectType),
+      typeFactory.createNamedObjectType(astObjectType),
     )) {
       declarations.push(code`\
 export namespace ${namedObjectType.name} {
@@ -42,8 +46,7 @@ export namespace ${namedObjectType.name} {
     }
 
     for (const astNamedUnionType of ast_.namedUnionTypes.map(
-      (astNamedUnionType) =>
-        this.typeFactory.createUnionType(astNamedUnionType),
+      (astNamedUnionType) => typeFactory.createUnionType(astNamedUnionType),
     )) {
       invariant(astNamedUnionType.kind !== "AnonymousUnionType");
       declarations.push(code`\
@@ -58,7 +61,7 @@ export namespace ${astNamedUnionType.name} {
     declarations.splice(
       0,
       0,
-      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
+      joinCode(reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations, { on: "\n\n" }).toString({});

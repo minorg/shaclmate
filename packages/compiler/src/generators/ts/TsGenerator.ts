@@ -283,7 +283,7 @@ export namespace TsGenerator {
   }
 
   export namespace Configuration {
-    export const default_: Configuration = {
+    export const default_: Partial<Configuration> = {
       features: new Set([
         "Object.create",
         "Object.equals",
@@ -363,7 +363,7 @@ export namespace TsGenerator {
       partialConfiguration?: Partial<Configuration>,
     ): Configuration {
       const requestedFeatures =
-        partialConfiguration?.features ?? default_.features;
+        partialConfiguration?.features ?? default_.features!;
 
       const featureDependencies = Object.fromEntries(
         Object.entries(featureDependenciesStatic).map(([k, v]) => [k, [...v]]),
@@ -371,7 +371,10 @@ export namespace TsGenerator {
 
       if (ast.lazyTypesCount > 0) {
         featureDependencies["Object.fromJson"].push("ObjectSet");
-        featureDependencies["Object.fromRdf"].push("RdfjsDatasetObjectSet");
+        featureDependencies["Object.fromRdf"].push(
+          "ObjectSet",
+          "RdfjsDatasetObjectSet",
+        );
       }
 
       const inferredFeatures = new Set(requestedFeatures);
@@ -393,7 +396,7 @@ export namespace TsGenerator {
         features: inferredFeatures,
         syntheticNamePrefix:
           partialConfiguration?.syntheticNamePrefix ??
-          default_.syntheticNamePrefix,
+          default_.syntheticNamePrefix!,
       };
     }
   }
