@@ -5,7 +5,7 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function NamedObjectType_fromRdfTypeVariableStatement(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.configuration.features.has("rdf")) {
+  if (!this.configuration.features.has("Object.fromRdf")) {
     return Maybe.empty();
   }
 

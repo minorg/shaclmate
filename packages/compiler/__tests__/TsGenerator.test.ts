@@ -6,6 +6,7 @@ import {
   TsGenerator,
 } from "@shaclmate/compiler";
 import { describe, expect, it } from "vitest";
+import { TS_FEATURES } from "../src/generators/ts/TsFeature.js";
 import { compileTs } from "./compileTs.js";
 import { logger } from "./logger.js";
 import { testData } from "./testData.js";
@@ -40,7 +41,7 @@ describe("TsGenerator", () => {
         case "compilerInput":
           configuration = {
             ...TsGenerator.Configuration.default_,
-            features: new Set(["rdf"]),
+            features: new Set(["RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -54,7 +55,7 @@ describe("TsGenerator", () => {
             ...TsGenerator.Configuration.default_,
             features: new Set([
               ...TsGenerator.Configuration.default_.features,
-              "sparql",
+              "SPARQL",
             ]),
           };
           sourceDirectoryPath = path.join(
@@ -70,7 +71,7 @@ describe("TsGenerator", () => {
         case "shaclAst":
           configuration = {
             ...TsGenerator.Configuration.default_,
-            features: new Set(["rdf"]),
+            features: new Set(["RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -102,22 +103,12 @@ describe("TsGenerator", () => {
       testData.shapesGraphs.wellFormed.tsFeatureCombinations.unsafeCoerce();
     const sourceDirectoryPath = undefined; //path.join(thisDirectoryPath);
 
-    const tsFeaturesAll = [
-      "create",
-      "equals",
-      "graphql",
-      "hash",
-      "json",
-      "rdf",
-      "sparql",
-    ] as const;
-
     for (const tsFeatureCombination of [
-      ["json"],
-      ["rdf", "sparql"],
-      tsFeaturesAll,
+      ["Object.JSON"],
+      ["RDF", "SPARQL"],
+      TS_FEATURES,
       // Ablation
-      ...tsFeaturesAll.map((_, i) => tsFeaturesAll.filter((_, j) => i !== j)),
+      ...TS_FEATURES.map((_, i) => TS_FEATURES.filter((_, j) => i !== j)),
     ] as const) {
       it(tsFeatureCombination.join("+"), () => {
         const source = new TsGenerator({

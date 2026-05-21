@@ -4,6 +4,10 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function identifierTypeDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
+  if (!this.configuration.features.has("Object.type")) {
+    return [];
+  }
+
   const ancestorObjectTypeWithSameIdentifierType =
     this.ancestorObjectTypes.find(
       (ancestorObjectType) =>

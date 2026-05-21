@@ -101,7 +101,7 @@ export function graphqlSchemaVariableStatement(
     namedObjectUnionTypes: NamedObjectUnionType[];
   },
 ): Maybe<Code> {
-  if (!this.configuration.features.has("graphql")) {
+  if (!this.configuration.features.has("GraphQL")) {
     return Maybe.empty();
   }
 

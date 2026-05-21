@@ -1,10 +1,15 @@
+import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_schemaVariableStatement(
   this: NamedObjectType,
-): Code {
-  return code`\
+): Maybe<Code> {
+  if (!this.configuration.features.has("Object.schema")) {
+    return Maybe.empty();
+  }
+
+  return Maybe.of(code`\
 export const schema = { properties: { ${joinCode(
     this.parentObjectTypes
       .map(
@@ -17,5 +22,5 @@ export const schema = { properties: { ${joinCode(
         ),
       ),
     { on: ", " },
-  )} } } as const;`;
+  )} } } as const;`);
 }

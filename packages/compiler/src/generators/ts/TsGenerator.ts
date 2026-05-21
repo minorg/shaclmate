@@ -219,19 +219,96 @@ export namespace TsGenerator {
 
   export namespace Configuration {
     export const default_: Configuration = {
-      features: new Set(["create", "equals", "hash", "json", "rdf"]),
+      features: new Set([
+        "Object.create",
+        "Object.equals",
+        "Object.hash",
+        "Object.JSON",
+        "RDF",
+        "RdfjsDatasetObjectSet",
+      ]),
       syntheticNamePrefix: "$",
+    };
+
+    const featureDependencies: Record<TsFeature, readonly TsFeature[]> = {
+      GraphQL: ["ObjectSet"],
+
+      "Object.create": ["Object.schema", "Object.toString", "Object.type"],
+
+      "Object.equals": ["Object.type"],
+
+      "Object.filter": ["Object.type"],
+
+      "Object.fromJson": [
+        "Object.create",
+        "Object.JSON.type",
+        "Object.type",
+        "ObjectSet",
+      ],
+
+      "Object.fromRdf": ["Object.create", "Object.schema", "ObjectSet"],
+
+      "Object.hash": [],
+
+      // Alias for other features, not dependencies per se
+      "Object.JSON": [
+        "Object.fromJson",
+        "Object.JSON.parse",
+        "Object.JSON.schema",
+        "Object.JSON.type",
+        "Object.JSON.uiSchema",
+        "Object.toJson",
+      ],
+
+      "Object.JSON.parse": ["Object.JSON.schema", "Object.JSON.type"],
+
+      "Object.JSON.type": [],
+
+      "Object.JSON.schema": ["Object.JSON.type"],
+
+      "Object.JSON.uiSchema": [],
+
+      // Alias for other features, not dependencies per se
+      "Object.RDF": ["Object.fromRdf", "Object.toRdf"],
+
+      "Object.schema": [],
+
+      "Object.toJson": ["Object.JSON.type", "Object.type"],
+
+      "Object.toRdf": ["Object.schema", "Object.type"],
+
+      "Object.toString": ["Object.type"],
+
+      "Object.SPARQL": ["Object.schema"],
+
+      "Object.type": [], // Implies Object.Identifier
+
+      ObjectSet: ["Object.filter"],
+
+      // Alias for other features, not dependencies per se
+      RDF: ["Object.RDF", "RdfjsDatasetObjectSet"],
+
+      RdfjsDatasetObjectSet: ["Object.fromRdf", "ObjectSet"],
+
+      SPARQL: ["Object.SPARQL", "SparqlObjectSet"],
+
+      SparqlObjectSet: ["Object.SPARQL", "ObjectSet"],
     };
 
     export function inferFeatures(features: ReadonlySet<TsFeature>) {
       const inferredFeatures = new Set(features);
 
-      if (inferredFeatures.has("graphql") || inferredFeatures.has("sparql")) {
-        inferredFeatures.add("rdf");
-      }
+      const queue = [...features];
 
-      if (inferredFeatures.has("json") || inferredFeatures.has("rdf")) {
-        inferredFeatures.add("create");
+      while (queue.length > 0) {
+        const feature = queue.shift()!;
+
+        for (const featureDependency of featureDependencies[feature]) {
+          if (!inferredFeatures.has(featureDependency)) {
+            inferredFeatures.add(featureDependency);
+            queue.push(featureDependency);
+          }
+        }
       }
 
       return inferredFeatures;

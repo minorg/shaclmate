@@ -4,6 +4,10 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 export function NamedObjectType_toStringFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
+  if (!this.configuration.features.has("Object.toString")) {
+    return [];
+  }
+
   let propertiesToStringInitializers: Code[] = [];
   if (this.parentObjectTypes.length > 0) {
     for (const parentObjectType of this.parentObjectTypes) {

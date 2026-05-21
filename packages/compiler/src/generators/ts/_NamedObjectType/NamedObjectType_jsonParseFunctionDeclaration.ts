@@ -5,7 +5,7 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function NamedObjectType_jsonParseFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.configuration.features.has("json")) {
+  if (!this.configuration.features.has("Object.JSON.parse")) {
     return Maybe.empty();
   }
 

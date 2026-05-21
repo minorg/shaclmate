@@ -141,9 +141,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       ...super.schemaObject,
       // comment: this.comment.map(JSON.stringify).extract(),
       // description: this.description.map(JSON.stringify).extract(),
-      path: this.configuration.features.has("rdf")
-        ? this.propertyPathToCode(this.path)
-        : undefined,
+      path:
+        this.configuration.features.has("Object.fromRdf") ||
+        this.configuration.features.has("Object.toRdf") ||
+        this.configuration.features.has("Object.SPARQL")
+          ? this.propertyPathToCode(this.path)
+          : undefined,
       // label: this.label.map(JSON.stringify).extract(),
       // mutable: this.mutable ? true : undefined,
       // recursive: this.recursive ? true : undefined,
@@ -309,7 +312,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return [];
     }
 
-    const propertyPath = this.propertyPathToCode(this.path);
+    const propertyPath = code`${this.namedObjectType.name}.schema.properties.${this.name}.path`;
     return [
       code`${variables.resource}.add(${propertyPath}, ${this.type.toRdfResourceValuesExpression(
         {

@@ -17,22 +17,24 @@ export const snippets_PropertyPath: SnippetFactory = ({
 }) => {
   const companionDeclarations: Code[] = [];
 
-  if (configuration.features.has("equals")) {
+  if (configuration.features.has("Object.equals")) {
     companionDeclarations.push(code`\
 export function equals(left: ${syntheticNamePrefix}PropertyPath, right: ${syntheticNamePrefix}PropertyPath): ${snippets.EqualsResult} {
   return ${snippets.EqualsResult}.fromBooleanEqualsResult(left, right, ${imports.RdfxResourcePropertyPath}.equals(left, right));
 }`);
   }
 
-  companionDeclarations.push(
-    code`export type Filter = object`,
-    code`\
+  if (configuration.features.has("Object.filter")) {
+    companionDeclarations.push(
+      code`export type Filter = object`,
+      code`\
 export function filter(_filter: Filter, _value: ${syntheticNamePrefix}PropertyPath): boolean {
   return true;
 }`,
-  );
+    );
+  }
 
-  if (configuration.features.has("rdf")) {
+  if (configuration.features.has("Object.fromRdf")) {
     companionDeclarations.push(
       code`\
 export const fromRdfResource: ${snippets.FromRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.fromResource;`,
@@ -48,16 +50,22 @@ export const fromRdfResourceValues: ${snippets.FromRdfResourceValuesFunction}<${
     );
   }
 
-  companionDeclarations.push(code`export const schema: Readonly<object> = {}`);
+  if (configuration.features.has("Object.schema")) {
+    companionDeclarations.push(
+      code`export const schema: Readonly<object> = {}`,
+    );
+  }
 
-  if (configuration.features.has("rdf")) {
+  if (configuration.features.has("Object.toRdf")) {
     companionDeclarations.push(code`\
 export const toRdfResource: ${snippets.ToRdfResourceFunction}<${syntheticNamePrefix}PropertyPath> = ${imports.RdfxResourcePropertyPath}.toResource;`);
   }
 
-  companionDeclarations.push(
-    code`export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;`,
-  );
+  if (configuration.features.has("Object.toString")) {
+    companionDeclarations.push(
+      code`export const ${syntheticNamePrefix}toString = ${imports.RdfxResourcePropertyPath}.toString;`,
+    );
+  }
 
   return conditionalOutput(
     `${syntheticNamePrefix}PropertyPath`,

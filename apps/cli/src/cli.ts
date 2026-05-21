@@ -114,10 +114,11 @@ run(
                 type: {
                   async from(strings: readonly string[]) {
                     return strings.map((string) => {
-                      if (
-                        TS_FEATURES.some((tsFeature) => string === tsFeature)
-                      ) {
-                        return string as TsFeature;
+                      const stringLowerCase = string.toLowerCase();
+                      for (const tsFeature of TS_FEATURES) {
+                        if (tsFeature.toLowerCase() === stringLowerCase) {
+                          return tsFeature;
+                        }
                       }
                       throw new RangeError(`invalid feature: ${string}`);
                     });

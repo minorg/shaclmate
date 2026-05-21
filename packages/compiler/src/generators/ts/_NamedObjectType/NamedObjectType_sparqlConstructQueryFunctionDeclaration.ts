@@ -10,7 +10,7 @@ export function NamedObjectType_sparqlConstructQueryFunctionDeclaration(this: {
   readonly name: string;
   readonly reusables: Reusables;
 }): Maybe<Code> {
-  if (!this.configuration.features.has("sparql")) {
+  if (!this.configuration.features.has("Object.SPARQL")) {
     return Maybe.empty();
   }
 

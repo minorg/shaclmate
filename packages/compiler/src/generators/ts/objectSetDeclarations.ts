@@ -20,21 +20,18 @@ export function objectSetDeclarations(
     (namedObjectType) => !namedObjectType.extern && !namedObjectType.synthetic,
   );
 
-  if (
-    !this.configuration.features.has("rdf") &&
-    !this.configuration.features.has("sparql")
-  ) {
-    return [];
+  const declarations: Code[] = [];
+
+  if (this.configuration.features.has("ObjectSet")) {
+    declarations.push(
+      objectSetInterfaceDeclaration.call(this, {
+        namedObjectTypes: namedObjectTypes,
+        namedObjectUnionTypes,
+      }),
+    );
   }
 
-  const declarations: Code[] = [
-    objectSetInterfaceDeclaration.call(this, {
-      namedObjectTypes: namedObjectTypes,
-      namedObjectUnionTypes,
-    }),
-  ];
-
-  if (this.configuration.features.has("rdf")) {
+  if (this.configuration.features.has("RdfjsDatasetObjectSet")) {
     declarations.push(
       rdfjsDatasetObjectSetClassDeclaration.call(this, {
         namedObjectTypes: namedObjectTypes,
@@ -43,7 +40,7 @@ export function objectSetDeclarations(
     );
   }
 
-  if (this.configuration.features.has("sparql")) {
+  if (this.configuration.features.has("SparqlObjectSet")) {
     declarations.push(
       sparqlObjectSetClassDeclaration.call(this, {
         namedObjectTypes: namedObjectTypes,

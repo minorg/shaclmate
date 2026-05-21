@@ -6,7 +6,6 @@ import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
-import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration(
   this: TsGenerator,
@@ -62,14 +61,6 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
     [
       ...[...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
         (namedObjectType): readonly Code[] => {
-          if (!this.configuration.features.has("rdf")) {
-            return Object.values(
-              unsupportedObjectSetMethodDeclarations.call(this, {
-                namedObjectType,
-              }),
-            );
-          }
-
           const methodSignatures = objectSetMethodSignatures.call(this, {
             namedObjectType,
           });
