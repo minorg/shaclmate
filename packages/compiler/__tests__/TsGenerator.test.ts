@@ -83,7 +83,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "compilerInput") {
+      // if (id !== "kitchenSink") {
       //   return;
       // }
 

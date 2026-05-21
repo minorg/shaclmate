@@ -218,18 +218,6 @@ export namespace TsGenerator {
   }
 
   export namespace Configuration {
-    export const default_: Configuration = {
-      features: new Set([
-        "Object.create",
-        "Object.equals",
-        "Object.hash",
-        "Object.JSON",
-        "RDF",
-        "RdfjsDatasetObjectSet",
-      ]),
-      syntheticNamePrefix: "$",
-    };
-
     const featureDependencies: Record<TsFeature, readonly TsFeature[]> = {
       GraphQL: ["ObjectSet"],
 
@@ -321,5 +309,18 @@ export namespace TsGenerator {
 
       return inferredFeatures;
     }
+
+    export const default_: Configuration = {
+      features: inferFeatures(
+        new Set([
+          "Object.create",
+          "Object.equals",
+          "Object.hash",
+          "JSON",
+          "RDF",
+        ]),
+      ),
+      syntheticNamePrefix: "$",
+    };
   }
 }
