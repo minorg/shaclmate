@@ -6,10 +6,7 @@ import {
   TsGenerator,
   ZodGenerator,
 } from "@shaclmate/compiler";
-import {
-  TS_FEATURES,
-  type TsFeature,
-} from "@shaclmate/compiler/dist/generators/ts/TsFeature.js";
+import { TS_FEATURES } from "@shaclmate/compiler/dist/generators/ts/TsFeature.js";
 import {
   command,
   multioption,

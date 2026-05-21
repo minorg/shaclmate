@@ -249,7 +249,12 @@ export namespace TsGenerator {
         "ObjectSet",
       ],
 
-      "Object.fromRdf": ["Object.create", "Object.schema", "ObjectSet"],
+      "Object.fromRdf": [
+        "Object.create",
+        "Object.schema",
+        "ObjectSet",
+        "RdfjsDatasetObjectSet",
+      ],
 
       "Object.hash": [],
 
