@@ -1,42 +1,31 @@
 import type { Maybe } from "purify-ts";
-
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-
-import type { TsGenerator } from "./TsGenerator.js";
+import { Memoize } from "typescript-memoize";
+import { AbstractObjectSetType } from "./AbstractObjectSetType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
-export function rdfjsDatasetObjectSetClassDeclaration(
-  this: TsGenerator,
-  {
-    namedObjectTypes,
-    namedObjectUnionTypes,
-  }: {
-    namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
-  },
-): Code {
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+export class RdfjsDatasetObjectSetType extends AbstractObjectSetType {
+  @Memoize()
+  get declaration(): Code {
+    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
 
-  const namedObjectTypeType = code`\
+    const namedObjectTypeType = code`\
 {
   filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
   fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<ObjectT>;
   fromRdfTypes: readonly ${this.reusables.imports.NamedNode}[]
 }`;
 
-  const parameters = {
-    query: `query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
-  };
+    const parameters = {
+      query: `query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT, ObjectIdentifierT>`,
+    };
 
-  const typeParameters = {
-    ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT`,
-    ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
-  };
+    const typeParameters = {
+      ObjectT: code`ObjectT extends { readonly $identifier: () => ObjectIdentifierT }`,
+      ObjectFilterT: code`ObjectFilterT`,
+      ObjectIdentifierT: code`ObjectIdentifierT extends ${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode}`,
+    };
 
-  return code`\
+    return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
   readonly #dataset: ${this.reusables.imports.DatasetCore} | (() => ${this.reusables.imports.DatasetCore});
   readonly #graph?: Exclude<${this.reusables.imports.Quad_Graph}, ${this.reusables.imports.Variable}>;
@@ -59,11 +48,9 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
 
   ${joinCode(
     [
-      ...[...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
+      ...[...this.namedObjectTypes, ...this.namedObjectUnionTypes].flatMap(
         (namedObjectType): readonly Code[] => {
-          const methodSignatures = objectSetMethodSignatures.call(this, {
-            namedObjectType,
-          });
+          const methodSignatures = this.methodSignatures(namedObjectType);
 
           const delegatingMethods: Code[] = [
             // object
@@ -147,7 +134,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
         },
       ),
 
-      ...(namedObjectTypes.length > 0
+      ...(this.namedObjectTypes.length > 0
         ? [
             code`\
 #objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectType: ${namedObjectTypeType}, ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
@@ -240,7 +227,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
           ]
         : []),
 
-      ...(namedObjectUnionTypes.length > 0
+      ...(this.namedObjectUnionTypes.length > 0
         ? [
             code`\
 #objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(namedObjectTypes: readonly ${namedObjectTypeType}[], ${parameters.query}): ${this.reusables.imports.Either}<Error, readonly ObjectT[]> {
@@ -357,4 +344,5 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     { on: "\n\n" },
   )}
 }`;
+  }
 }

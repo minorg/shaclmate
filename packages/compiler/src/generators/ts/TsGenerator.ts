@@ -6,48 +6,47 @@ import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { BlankNodeType } from "./BlankNodeType.js";
-import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+import { GraphqlSchema } from "./GraphqlSchema.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { ObjectSetType } from "./ObjectSetType.js";
+import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
+import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
 import type { TsFeature } from "./TsFeature.js";
 import { TypeFactory } from "./TypeFactory.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
-  private readonly typeFactory: TypeFactory;
-
-  protected readonly configuration: TsGenerator.Configuration;
-  protected readonly logger: Logger;
-  protected readonly reusables: Reusables;
+  private readonly configuration?: Partial<TsGenerator.Configuration>;
+  private readonly logger: Logger;
 
   constructor({
     configuration,
     logger,
-  }: { configuration?: TsGenerator.Configuration; logger: Logger }) {
-    if (!configuration) {
-      configuration = TsGenerator.Configuration.default_;
-    }
-    this.configuration = {
-      ...configuration,
-      features: TsGenerator.Configuration.inferFeatures(configuration.features),
-    };
+  }: { configuration?: Partial<TsGenerator.Configuration>; logger: Logger }) {
+    this.configuration = configuration;
     this.logger = logger;
-    this.reusables = new Reusables({
-      configuration: this.configuration,
-      logger,
-    });
-    this.typeFactory = new TypeFactory({
-      configuration: this.configuration,
-      logger,
-      reusables: this.reusables,
-    });
   }
 
   generate(ast_: ast.Ast): string {
+    const configuration = TsGenerator.Configuration.finalize(
+      ast_,
+      this.configuration,
+    );
+
+    const reusables = new Reusables({
+      configuration,
+      logger: this.logger,
+    });
+    const typeFactory = new TypeFactory({
+      configuration,
+      logger: this.logger,
+      reusables,
+    });
+
     let declarations: Code[] = [];
 
     for (const namedObjectType of ast_.namedObjectTypes) {
@@ -61,20 +60,18 @@ export class TsGenerator implements Generator {
         continue;
       }
       declarations = declarations.concat(
-        this.typeFactory.createType(astNamedUnionType).declaration.toList(),
+        typeFactory.createType(astNamedUnionType).declaration.toList(),
       );
     }
 
     const namedObjectTypesToposorted = ast.ObjectType.toposort(
       ast_.namedObjectTypes,
-    ).map((astObjectType) =>
-      this.typeFactory.createNamedObjectType(astObjectType),
-    );
+    ).map((astObjectType) => typeFactory.createNamedObjectType(astObjectType));
 
     const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())
       .map((astObjectUnionType) =>
-        this.typeFactory.createNamedObjectUnionType(astObjectUnionType),
+        typeFactory.createNamedObjectUnionType(astObjectUnionType),
       );
     for (const namedObjectType of namedObjectTypesToposorted) {
       declarations = declarations.concat(namedObjectType.declaration.toList());
@@ -99,13 +96,15 @@ export class TsGenerator implements Generator {
         break;
       case 1:
         declarations.push(
-          code`type ${this.configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
+          code`type ${configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
         );
         break;
       default: {
-        const uberObjectUnionType = this.synthesizeUberObjectUnionType(
-          namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-        );
+        const uberObjectUnionType = this.synthesizeUberObjectUnionType({
+          configuration,
+          namedObjectTypes: namedObjectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+          reusables,
+        });
         declarations = declarations.concat(
           uberObjectUnionType.declaration.toList(),
         );
@@ -114,36 +113,102 @@ export class TsGenerator implements Generator {
     }
 
     declarations.push(
-      ...objectSetDeclarations.call(this, {
+      ...this.objectSetTypeDeclarations({
+        configuration,
         namedObjectTypes: namedObjectTypesNameSorted,
         namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
+        reusables,
       }),
     );
 
-    declarations.push(
-      ...graphqlSchemaVariableStatement
-        .call(this, {
-          namedObjectTypes: namedObjectTypesNameSorted,
-          namedObjectUnionTypes: namedObjectUnionTypesNameSorted,
-        })
-        .toList(),
-    );
+    if (configuration.features.has("GraphQL")) {
+      const graphqlNamedObjectTypes = namedObjectTypesNameSorted.filter(
+        (namedObjectType) => !namedObjectType.synthetic,
+      );
+      const graphqlNamedObjectUnionTypes =
+        namedObjectUnionTypesNameSorted.filter(
+          (namedObjectUnionType) => !namedObjectUnionType.synthetic,
+        );
+
+      if (graphqlNamedObjectTypes.length > 0) {
+        declarations.push(
+          new GraphqlSchema({
+            configuration,
+            logger: this.logger,
+            namedObjectTypes: graphqlNamedObjectTypes,
+            namedObjectUnionTypes: graphqlNamedObjectUnionTypes,
+            reusables,
+          }).declaration,
+        );
+      }
+    }
 
     declarations.splice(
       0,
       0,
-      joinCode(this.reusables.snippets.ifUsed, { on: "\n\n" }),
+      joinCode(reusables.snippets.ifUsed, { on: "\n\n" }),
     );
 
     return joinCode(declarations).toString({});
   }
 
+  private objectSetTypeDeclarations({
+    configuration,
+    namedObjectTypes,
+    namedObjectUnionTypes,
+    reusables,
+  }: {
+    configuration: TsGenerator.Configuration;
+    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+    reusables: Reusables;
+  }): readonly Code[] {
+    const constructorParameters: ConstructorParameters<
+      typeof ObjectSetType
+    >[0] = {
+      configuration,
+      logger: this.logger,
+      namedObjectTypes: namedObjectTypes.filter(
+        (namedObjectType) =>
+          !namedObjectType.extern && !namedObjectType.synthetic,
+      ),
+      namedObjectUnionTypes,
+      reusables,
+    };
+
+    const declarations: Code[] = [];
+
+    if (configuration.features.has("ObjectSet")) {
+      declarations.push(new ObjectSetType(constructorParameters).declaration);
+    }
+
+    if (configuration.features.has("RdfjsDatasetObjectSet")) {
+      declarations.push(
+        new RdfjsDatasetObjectSetType(constructorParameters).declaration,
+      );
+    }
+
+    if (configuration.features.has("SparqlObjectSet")) {
+      declarations.push(
+        new SparqlObjectSetType(constructorParameters).declaration,
+      );
+    }
+
+    return declarations;
+  }
+
   /**
    * Synthesize the $Object union.
    */
-  private synthesizeUberObjectUnionType(
-    namedObjectTypes: readonly NamedObjectType[],
-  ): NamedObjectUnionType {
+  private synthesizeUberObjectUnionType({
+    configuration,
+    namedObjectTypes,
+    reusables,
+  }: {
+    configuration: TsGenerator.Configuration;
+    namedObjectTypes: readonly NamedObjectType[];
+    reusables: Reusables;
+  }): NamedObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
       (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
     );
@@ -163,31 +228,31 @@ export class TsGenerator implements Generator {
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
         comment: Maybe.empty(),
-        configuration: this.configuration,
+        configuration,
         label: Maybe.empty(),
         logger: this.logger,
-        reusables: this.reusables,
+        reusables,
       });
     } else {
       switch ([...nodeKinds][0]) {
         case "BlankNode":
           identifierType = new BlankNodeType({
             comment: Maybe.empty(),
-            configuration: this.configuration,
+            configuration,
             label: Maybe.empty(),
             logger: this.logger,
-            reusables: this.reusables,
+            reusables,
           });
           break;
         case "IRI":
           identifierType = new IriType({
             comment: Maybe.empty(),
-            configuration: this.configuration,
+            configuration,
             hasValues: [],
             in_: [],
             label: Maybe.empty(),
             logger: this.logger,
-            reusables: this.reusables,
+            reusables,
           });
           break;
       }
@@ -195,7 +260,7 @@ export class TsGenerator implements Generator {
 
     return new NamedObjectUnionType({
       comment: Maybe.empty(),
-      configuration: this.configuration,
+      configuration,
       identifierType,
       label: Maybe.empty(),
       logger: this.logger,
@@ -203,9 +268,9 @@ export class TsGenerator implements Generator {
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
-      name: `${this.configuration.syntheticNamePrefix}Object`,
+      name: `${configuration.syntheticNamePrefix}Object`,
       recursive: false,
-      reusables: this.reusables,
+      reusables,
       synthetic: true,
     });
   }
@@ -214,11 +279,24 @@ export class TsGenerator implements Generator {
 export namespace TsGenerator {
   export interface Configuration {
     readonly features: ReadonlySet<TsFeature>;
+    readonly finalized: true;
     readonly syntheticNamePrefix: string;
   }
 
   export namespace Configuration {
-    const featureDependencies: Record<TsFeature, readonly TsFeature[]> = {
+    export const default_: Omit<Configuration, "finalized"> = {
+      features: new Set([
+        "Object.create",
+        "Object.equals",
+        "Object.hash",
+        "JSON",
+        "RDF",
+      ]),
+
+      syntheticNamePrefix: "$",
+    };
+
+    const featureDependenciesStatic: Record<TsFeature, TsFeature[]> = {
       GraphQL: ["ObjectSet"],
 
       // Alias for other features, not dependencies per se
@@ -230,19 +308,9 @@ export namespace TsGenerator {
 
       "Object.filter": ["Object.type"],
 
-      "Object.fromJson": [
-        "Object.create",
-        "Object.JSON.type",
-        "Object.type",
-        "ObjectSet",
-      ],
+      "Object.fromJson": ["Object.create", "Object.JSON.type", "Object.type"],
 
-      "Object.fromRdf": [
-        "Object.create",
-        "Object.schema",
-        "ObjectSet",
-        "RdfjsDatasetObjectSet",
-      ],
+      "Object.fromRdf": ["Object.create", "Object.schema"],
 
       "Object.hash": [],
 
@@ -291,36 +359,47 @@ export namespace TsGenerator {
       SparqlObjectSet: ["Object.SPARQL", "ObjectSet"],
     };
 
-    export function inferFeatures(features: ReadonlySet<TsFeature>) {
-      const inferredFeatures = new Set(features);
+    export function finalize(
+      ast: ast.Ast,
+      partialConfiguration?: Partial<Configuration>,
+    ): Configuration {
+      const requestedFeatures =
+        partialConfiguration?.features ?? default_.features!;
 
-      const queue = [...features];
+      const featureDependencies = Object.fromEntries(
+        Object.entries(featureDependenciesStatic).map(([k, v]) => [k, [...v]]),
+      ) as Record<TsFeature, TsFeature[]>;
 
-      while (queue.length > 0) {
-        const feature = queue.shift()!;
+      if (ast.lazyTypesCount > 0) {
+        featureDependencies["Object.fromJson"].push("ObjectSet");
+        featureDependencies["Object.fromRdf"].push(
+          "ObjectSet",
+          "RdfjsDatasetObjectSet",
+        );
+      }
 
-        for (const featureDependency of featureDependencies[feature]) {
-          if (!inferredFeatures.has(featureDependency)) {
-            inferredFeatures.add(featureDependency);
-            queue.push(featureDependency);
+      const inferredFeatures = new Set(requestedFeatures);
+      {
+        const inferredFeaturesQueue = [...requestedFeatures];
+        while (inferredFeaturesQueue.length > 0) {
+          const feature = inferredFeaturesQueue.shift()!;
+
+          for (const featureDependency of featureDependencies[feature]) {
+            if (!inferredFeatures.has(featureDependency)) {
+              inferredFeatures.add(featureDependency);
+              inferredFeaturesQueue.push(featureDependency);
+            }
           }
         }
       }
 
-      return inferredFeatures;
+      return {
+        features: inferredFeatures,
+        finalized: true,
+        syntheticNamePrefix:
+          partialConfiguration?.syntheticNamePrefix ??
+          default_.syntheticNamePrefix!,
+      };
     }
-
-    export const default_: Configuration = {
-      features: inferFeatures(
-        new Set([
-          "Object.create",
-          "Object.equals",
-          "Object.hash",
-          "JSON",
-          "RDF",
-        ]),
-      ),
-      syntheticNamePrefix: "$",
-    };
   }
 }

@@ -15,7 +15,7 @@ const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function generate(
   shapesGraph: ShapesGraph,
-  configuration?: TsGenerator.Configuration,
+  configuration?: Partial<TsGenerator.Configuration>,
 ): string {
   const source = new TsGenerator({ configuration, logger }).generate(
     new ShapesGraphToAstTransformer({ logger, shapesGraph })
@@ -35,13 +35,12 @@ describe("TsGenerator", () => {
     }
 
     it(id, () => {
-      let configuration: TsGenerator.Configuration | undefined;
+      let configuration: Partial<TsGenerator.Configuration> | undefined;
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "compilerInput":
           configuration = {
-            ...TsGenerator.Configuration.default_,
-            features: new Set(["RDF"]),
+            features: new Set(["Object.RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -71,7 +70,7 @@ describe("TsGenerator", () => {
         case "shaclAst":
           configuration = {
             ...TsGenerator.Configuration.default_,
-            features: new Set(["RDF"]),
+            features: new Set(["Object.RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -83,16 +82,15 @@ describe("TsGenerator", () => {
           break;
       }
 
-      // if (id !== "kitchenSink") {
+      // if (id !== "compilerInput") {
       //   return;
       // }
 
-      const diagnostics = compileTs(
-        generate(shapesGraphEither.unsafeCoerce(), configuration),
-        sourceDirectoryPath,
-      );
+      const source = generate(shapesGraphEither.unsafeCoerce(), configuration);
+      const diagnostics = compileTs(source, sourceDirectoryPath);
       if (diagnostics.length > 0) {
-        console.log("b");
+        // biome-ignore lint/suspicious/noDebugger: allow in a test
+        debugger;
       }
       expect(diagnostics).toHaveLength(0);
     }, 60000);
@@ -113,7 +111,6 @@ describe("TsGenerator", () => {
       it(tsFeatureCombination.join("+"), () => {
         const source = new TsGenerator({
           configuration: {
-            ...TsGenerator.Configuration.default_,
             features: new Set(tsFeatureCombination),
           },
           logger,
@@ -125,7 +122,12 @@ describe("TsGenerator", () => {
             .transform()
             .unsafeCoerce(),
         );
-        compileTs(source, sourceDirectoryPath);
+        const diagnostics = compileTs(source, sourceDirectoryPath);
+        if (diagnostics.length > 0) {
+          // biome-ignore lint/suspicious/noDebugger: allow in a test
+          debugger;
+        }
+        expect(diagnostics).toHaveLength(0);
       });
     }
   }, 60000);

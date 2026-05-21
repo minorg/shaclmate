@@ -818,21 +818,18 @@ function $wrap_FromRdfResourceFunction<T>(
   _fromRdfResourceFunction: $_FromRdfResourceFunction<T>,
 ): $FromRdfResourceFunction<T> {
   return (resource, options) => {
-    let {
+    const {
       context,
       graph,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
     } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet(resource.dataset);
-    }
     return _fromRdfResourceFunction(resource, {
       context,
       graph,
       ignoreRdfType,
-      objectSet,
+      objectSet: objectSet ?? new $RdfjsDatasetObjectSet(resource.dataset),
       preferredLanguages,
     });
   };

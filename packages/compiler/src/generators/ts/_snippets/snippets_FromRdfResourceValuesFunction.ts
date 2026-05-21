@@ -2,6 +2,7 @@ import type { SnippetFactory } from "../SnippetFactory.js";
 import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_FromRdfResourceValuesFunction: SnippetFactory = ({
+  configuration,
   imports,
   syntheticNamePrefix,
 }) =>
@@ -14,7 +15,7 @@ export type ${syntheticNamePrefix}FromRdfResourceValuesFunction<T> = (
     context?: unknown;
     graph?: Exclude<${imports.Quad_Graph}, ${imports.Variable}>;
     ignoreRdfType?: boolean;
-    objectSet?: ${syntheticNamePrefix}ObjectSet;
+    ${configuration.features.has("ObjectSet") ? code`objectSet?: ${syntheticNamePrefix}ObjectSet;` : ""}
     preferredLanguages?: readonly string[];
     propertyPath: ${syntheticNamePrefix}PropertyPath;
     resource: ${imports.Resource};

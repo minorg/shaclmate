@@ -365,8 +365,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override fromRdfResourceValuesExpression({
     variables,
   }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
-    const { resourceValues, ...options } = variables;
-    return code`${this.name}.fromRdfResourceValues(${resourceValues}, ${options})`;
+    const {
+      resourceValues: resourceValuesVariable,
+      ...fromRdfResourceValuesOptionsTemp
+    } = variables;
+    const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
+      fromRdfResourceValuesOptionsTemp;
+    if (!this.configuration.features.has("ObjectSet")) {
+      delete fromRdfResourceValuesOptions["objectSet"];
+    }
+    return code`${this.name}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({
