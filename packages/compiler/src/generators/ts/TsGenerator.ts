@@ -279,11 +279,12 @@ export class TsGenerator implements Generator {
 export namespace TsGenerator {
   export interface Configuration {
     readonly features: ReadonlySet<TsFeature>;
+    readonly finalized: true;
     readonly syntheticNamePrefix: string;
   }
 
   export namespace Configuration {
-    export const default_: Partial<Configuration> = {
+    export const default_: Omit<Configuration, "finalized"> = {
       features: new Set([
         "Object.create",
         "Object.equals",
@@ -394,6 +395,7 @@ export namespace TsGenerator {
 
       return {
         features: inferredFeatures,
+        finalized: true,
         syntheticNamePrefix:
           partialConfiguration?.syntheticNamePrefix ??
           default_.syntheticNamePrefix!,

@@ -15,7 +15,7 @@ const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
 function generate(
   shapesGraph: ShapesGraph,
-  configuration?: TsGenerator.Configuration,
+  configuration?: Partial<TsGenerator.Configuration>,
 ): string {
   const source = new TsGenerator({ configuration, logger }).generate(
     new ShapesGraphToAstTransformer({ logger, shapesGraph })
@@ -35,12 +35,11 @@ describe("TsGenerator", () => {
     }
 
     it(id, () => {
-      let configuration: TsGenerator.Configuration | undefined;
+      let configuration: Partial<TsGenerator.Configuration> | undefined;
       let sourceDirectoryPath: string | undefined;
       switch (id) {
         case "compilerInput":
           configuration = {
-            ...TsGenerator.Configuration.default_,
             features: new Set(["RDF"]),
           };
           sourceDirectoryPath = path.join(
