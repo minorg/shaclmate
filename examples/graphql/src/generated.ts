@@ -1265,7 +1265,7 @@ export namespace UnionMember2 {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -1541,7 +1541,7 @@ export namespace UnionMember1 {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
+      UnionMember1.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1928,7 +1928,7 @@ export namespace Nested {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalNumberProperty"),
+      UnionMember1.schema.properties.optionalNumberProperty.path,
       parameters.object.optionalNumberProperty
         .toList()
         .flatMap((value) => [
@@ -1937,14 +1937,14 @@ export namespace Nested {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      Nested.schema.properties.requiredStringProperty.path,
       [$literalFactory.string(parameters.object.requiredStringProperty)],
       parameters.graph,
     );
@@ -2213,7 +2213,7 @@ export namespace Parent {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/parentStringProperty"),
+      Parent.schema.properties.parentStringProperty.path,
       parameters.object.parentStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -2881,14 +2881,14 @@ export namespace Child {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/childStringProperty"),
+      Child.schema.properties.childStringProperty.path,
       parameters.object.childStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/lazyObjectSetProperty"),
+      Child.schema.properties.lazyObjectSetProperty.path,
       parameters.object.lazyObjectSetProperty.partials.flatMap((item) => [
         $DefaultPartial.toRdfResource(item, {
           graph: parameters.graph,
@@ -2898,7 +2898,7 @@ export namespace Child {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalLazyObjectProperty"),
+      Child.schema.properties.optionalLazyObjectProperty.path,
       parameters.object.optionalLazyObjectProperty.partial
         .toList()
         .flatMap((value) => [
@@ -2910,7 +2910,7 @@ export namespace Child {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalObjectProperty"),
+      Child.schema.properties.optionalObjectProperty.path,
       parameters.object.optionalObjectProperty.toList().flatMap((value) => [
         Nested.toRdfResource(value, {
           graph: parameters.graph,
@@ -2920,14 +2920,14 @@ export namespace Child {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/optionalStringProperty"),
+      UnionMember2.schema.properties.optionalStringProperty.path,
       parameters.object.optionalStringProperty
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://example.com/requiredStringProperty"),
+      Nested.schema.properties.requiredStringProperty.path,
       [$literalFactory.string(parameters.object.requiredStringProperty)],
       parameters.graph,
     );

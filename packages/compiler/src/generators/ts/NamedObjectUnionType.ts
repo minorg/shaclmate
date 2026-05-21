@@ -104,7 +104,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
     string,
     Code
   > {
-    if (!this.configuration.features.has("sparql")) {
+    if (!this.configuration.features.has("Object.SPARQL")) {
       return {};
     }
 
@@ -127,7 +127,7 @@ export function focusSparqlConstructTriples({ filter, focusIdentifier, variableP
     string,
     Code
   > {
-    if (!this.configuration.features.has("sparql")) {
+    if (!this.configuration.features.has("Object.SPARQL")) {
       return {};
     }
 
@@ -166,7 +166,7 @@ if (focusIdentifier.termType === "Variable") {
   }
 
   private get fromRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.configuration.features.has("rdf")) {
+    if (!this.configuration.features.has("Object.fromRdf")) {
       return {};
     }
 
@@ -187,7 +187,7 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
   }
 
   private get graphqlTypeVariableStatement(): Record<string, Code> {
-    if (!this.configuration.features.has("graphql")) {
+    if (!this.configuration.features.has("GraphQL")) {
       return {};
     }
 
@@ -211,6 +211,10 @@ export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
   }
 
   private get identifierTypeDeclarations(): Record<string, Code> {
+    if (!this.configuration.features.has("Object.type")) {
+      return {};
+    }
+
     return singleEntryRecord(
       `Identifier`,
       code`\
@@ -223,6 +227,10 @@ export namespace Identifier {
   }
 
   private get isTypeFunctionDeclaration(): Record<string, Code> {
+    if (!this.configuration.features.has("Object.type")) {
+      return {};
+    }
+
     if (this._name === `${this.configuration.syntheticNamePrefix}Object`) {
       return {};
     }
@@ -242,6 +250,10 @@ export namespace Identifier {
   }
 
   private get schemaVariableStatement(): Record<string, Code> {
+    if (!this.configuration.features.has("Object.schema")) {
+      return {};
+    }
+
     const commonPropertiesByName: Record<
       string,
       {
@@ -303,7 +315,7 @@ ${{
   }
 
   private get toRdfResourceFunctionDeclaration(): Record<string, Code> {
-    if (!this.configuration.features.has("rdf")) {
+    if (!this.configuration.features.has("Object.toRdf")) {
       return {};
     }
 

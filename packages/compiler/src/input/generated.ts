@@ -3161,7 +3161,7 @@ export namespace PropertyShape {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+      PropertyShape.schema.properties.and.path,
       parameters.object.and.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -3216,24 +3216,24 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+      PropertyShape.schema.properties.classes.path,
       parameters.object.classes.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      PropertyShape.schema.properties.comment.path,
       parameters.object.comment
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
+      PropertyShape.schema.properties.datatype.path,
       parameters.object.datatype.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
+      PropertyShape.schema.properties.deactivated.path,
       parameters.object.deactivated
         .toList()
         .flatMap((value) => [
@@ -3242,19 +3242,19 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
+      PropertyShape.schema.properties.defaultValue.path,
       parameters.object.defaultValue.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
+      PropertyShape.schema.properties.description.path,
       parameters.object.description
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#display"),
+      PropertyShape.schema.properties.display.path,
       $strictEquals(parameters.object.display, false).isLeft()
         ? [
             $literalFactory.boolean(
@@ -3266,22 +3266,22 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+      PropertyShape.schema.properties.flags.path,
       parameters.object.flags.flatMap((item) => [$literalFactory.string(item)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
+      PropertyShape.schema.properties.groups.path,
       parameters.object.groups.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
+      PropertyShape.schema.properties.hasValues.path,
       parameters.object.hasValues.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+      PropertyShape.schema.properties.in_.path,
       parameters.object.in_.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -3336,19 +3336,19 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#isDefinedBy"),
+      PropertyShape.schema.properties.isDefinedBy.path,
       parameters.object.isDefinedBy.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      PropertyShape.schema.properties.label.path,
       parameters.object.label
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
+      PropertyShape.schema.properties.languageIn.path,
       parameters.object.languageIn.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -3403,7 +3403,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
+      PropertyShape.schema.properties.maxCount.path,
       parameters.object.maxCount
         .toList()
         .flatMap((value) => [
@@ -3412,17 +3412,17 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
+      PropertyShape.schema.properties.maxExclusive.path,
       parameters.object.maxExclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
+      PropertyShape.schema.properties.maxInclusive.path,
       parameters.object.maxInclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
+      PropertyShape.schema.properties.maxLength.path,
       parameters.object.maxLength
         .toList()
         .flatMap((value) => [
@@ -3431,7 +3431,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
+      PropertyShape.schema.properties.minCount.path,
       parameters.object.minCount
         .toList()
         .flatMap((value) => [
@@ -3440,17 +3440,17 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
+      PropertyShape.schema.properties.minExclusive.path,
       parameters.object.minExclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
+      PropertyShape.schema.properties.minInclusive.path,
       parameters.object.minInclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
+      PropertyShape.schema.properties.minLength.path,
       parameters.object.minLength
         .toList()
         .flatMap((value) => [
@@ -3459,7 +3459,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+      PropertyShape.schema.properties.mutable.path,
       parameters.object.mutable
         .toList()
         .flatMap((value) => [
@@ -3468,29 +3468,29 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
+      PropertyShape.schema.properties.name.path,
       parameters.object.name
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+      PropertyShape.schema.properties.node.path,
       parameters.object.node.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+      PropertyShape.schema.properties.nodeKind.path,
       parameters.object.nodeKind.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+      PropertyShape.schema.properties.not.path,
       parameters.object.not.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+      PropertyShape.schema.properties.or.path,
       parameters.object.or.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -3545,7 +3545,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+      PropertyShape.schema.properties.order.path,
       parameters.object.order
         .toList()
         .flatMap((value) => [
@@ -3554,7 +3554,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
+      PropertyShape.schema.properties.path.path,
       [
         $PropertyPath.toRdfResource(parameters.object.path, {
           graph: parameters.graph,
@@ -3564,26 +3564,26 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+      PropertyShape.schema.properties.patterns.path,
       parameters.object.patterns.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#resolve"),
+      PropertyShape.schema.properties.resolve.path,
       parameters.object.resolve.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      PropertyShape.schema.properties.shaclmateName.path,
       parameters.object.shaclmateName
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
+      PropertyShape.schema.properties.uniqueLang.path,
       parameters.object.uniqueLang
         .toList()
         .flatMap((value) => [
@@ -3592,7 +3592,7 @@ export namespace PropertyShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+      PropertyShape.schema.properties.xone.path,
       parameters.object.xone.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -3951,14 +3951,14 @@ export namespace PropertyGroup {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      PropertyShape.schema.properties.comment.path,
       parameters.object.comment
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      PropertyShape.schema.properties.label.path,
       parameters.object.label
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -4259,14 +4259,14 @@ export namespace Ontology {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      PropertyShape.schema.properties.comment.path,
       parameters.object.comment
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      PropertyShape.schema.properties.label.path,
       parameters.object.label
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
@@ -6739,7 +6739,7 @@ export namespace NodeShape {
       );
     }
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+      PropertyShape.schema.properties.and.path,
       parameters.object.and.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -6794,12 +6794,12 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+      PropertyShape.schema.properties.classes.path,
       parameters.object.classes.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
+      NodeShape.schema.properties.closed.path,
       parameters.object.closed
         .toList()
         .flatMap((value) => [
@@ -6808,19 +6808,19 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#comment"),
+      PropertyShape.schema.properties.comment.path,
       parameters.object.comment
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
+      PropertyShape.schema.properties.datatype.path,
       parameters.object.datatype.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
+      PropertyShape.schema.properties.deactivated.path,
       parameters.object.deactivated
         .toList()
         .flatMap((value) => [
@@ -6829,16 +6829,14 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#discriminantValue",
-      ),
+      NodeShape.schema.properties.discriminantValue.path,
       parameters.object.discriminantValue
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#extern"),
+      NodeShape.schema.properties.extern.path,
       parameters.object.extern
         .toList()
         .flatMap((value) => [
@@ -6847,22 +6845,22 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+      PropertyShape.schema.properties.flags.path,
       parameters.object.flags.flatMap((item) => [$literalFactory.string(item)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#fromRdfType"),
+      NodeShape.schema.properties.fromRdfType.path,
       parameters.object.fromRdfType.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
+      PropertyShape.schema.properties.hasValues.path,
       parameters.object.hasValues.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#ignoredProperties"),
+      NodeShape.schema.properties.ignoredProperties.path,
       parameters.object.ignoredProperties.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -6917,7 +6915,7 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
+      PropertyShape.schema.properties.in_.path,
       parameters.object.in_.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -6972,19 +6970,19 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#isDefinedBy"),
+      PropertyShape.schema.properties.isDefinedBy.path,
       parameters.object.isDefinedBy.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#label"),
+      PropertyShape.schema.properties.label.path,
       parameters.object.label
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
+      PropertyShape.schema.properties.languageIn.path,
       parameters.object.languageIn.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -7039,7 +7037,7 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
+      PropertyShape.schema.properties.maxCount.path,
       parameters.object.maxCount
         .toList()
         .flatMap((value) => [
@@ -7048,17 +7046,17 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
+      PropertyShape.schema.properties.maxExclusive.path,
       parameters.object.maxExclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
+      PropertyShape.schema.properties.maxInclusive.path,
       parameters.object.maxInclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
+      PropertyShape.schema.properties.maxLength.path,
       parameters.object.maxLength
         .toList()
         .flatMap((value) => [
@@ -7067,7 +7065,7 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
+      PropertyShape.schema.properties.minCount.path,
       parameters.object.minCount
         .toList()
         .flatMap((value) => [
@@ -7076,17 +7074,17 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
+      PropertyShape.schema.properties.minExclusive.path,
       parameters.object.minExclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
+      PropertyShape.schema.properties.minInclusive.path,
       parameters.object.minInclusive.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
+      PropertyShape.schema.properties.minLength.path,
       parameters.object.minLength
         .toList()
         .flatMap((value) => [
@@ -7095,7 +7093,7 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#mutable"),
+      PropertyShape.schema.properties.mutable.path,
       parameters.object.mutable
         .toList()
         .flatMap((value) => [
@@ -7104,22 +7102,22 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+      PropertyShape.schema.properties.node.path,
       parameters.object.node.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+      PropertyShape.schema.properties.nodeKind.path,
       parameters.object.nodeKind.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+      PropertyShape.schema.properties.not.path,
       parameters.object.not.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
+      PropertyShape.schema.properties.or.path,
       parameters.object.or.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -7174,53 +7172,53 @@ export namespace NodeShape {
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+      PropertyShape.schema.properties.patterns.path,
       parameters.object.patterns.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
+      NodeShape.schema.properties.properties.path,
       parameters.object.properties.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#rdfType"),
+      NodeShape.schema.properties.rdfType.path,
       parameters.object.rdfType.toList(),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
+      PropertyShape.schema.properties.shaclmateName.path,
       parameters.object.shaclmateName
         .toList()
         .flatMap((value) => [$literalFactory.string(value)]),
       parameters.graph,
     );
     parameters.resource.add(
-      $RdfVocabularies.rdfs.subClassOf,
+      NodeShape.schema.properties.subClassOf.path,
       parameters.object.subClassOf.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#toRdfType"),
+      NodeShape.schema.properties.toRdfTypes.path,
       parameters.object.toRdfTypes.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://purl.org/shaclmate/ontology#tsImport"),
+      NodeShape.schema.properties.tsImports.path,
       parameters.object.tsImports.flatMap((item) => [
         $literalFactory.string(item),
       ]),
       parameters.graph,
     );
     parameters.resource.add(
-      $RdfVocabularies.rdf.type,
+      NodeShape.schema.properties.types.path,
       parameters.object.types.flatMap((item) => [item]),
       parameters.graph,
     );
     parameters.resource.add(
-      dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+      PropertyShape.schema.properties.xone.path,
       parameters.object.xone.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(

@@ -4,7 +4,6 @@ import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
-import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function sparqlObjectSetClassDeclaration(
   this: TsGenerator,
@@ -51,14 +50,6 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
 ${joinCode(
   [...namedObjectTypes, ...namedObjectUnionTypes].flatMap(
     (namedObjectType): readonly Code[] => {
-      if (!this.configuration.features.has("sparql")) {
-        return Object.values(
-          unsupportedObjectSetMethodDeclarations.call(this, {
-            namedObjectType,
-          }),
-        );
-      }
-
       const methodSignatures = objectSetMethodSignatures.call(this, {
         namedObjectType,
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,

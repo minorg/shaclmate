@@ -5,7 +5,7 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 export function NamedObjectType_toJsonFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.configuration.features.has("json")) {
+  if (!this.configuration.features.has("Object.toJson")) {
     return Maybe.empty();
   }
 

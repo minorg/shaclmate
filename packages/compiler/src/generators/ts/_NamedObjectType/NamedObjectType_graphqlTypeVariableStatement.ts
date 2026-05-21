@@ -5,7 +5,7 @@ import { type Code, code } from "../ts-poet-wrapper.js";
 export function NamedObjectType_graphqlTypeVariableStatement(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.configuration.features.has("graphql")) {
+  if (!this.configuration.features.has("GraphQL")) {
     return Maybe.empty();
   }
 

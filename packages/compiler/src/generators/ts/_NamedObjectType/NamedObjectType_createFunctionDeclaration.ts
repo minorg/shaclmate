@@ -6,7 +6,7 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 export function NamedObjectType_createFunctionDeclaration(
   this: NamedObjectType,
 ): Maybe<Code> {
-  if (!this.configuration.features.has("create")) {
+  if (!this.configuration.features.has("Object.create")) {
     return Maybe.empty();
   }
 

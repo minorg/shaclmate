@@ -6,7 +6,7 @@ const hasherVariable = code`hasher`;
 export function NamedObjectType_hashFunctionDeclarations(
   this: NamedObjectType,
 ): readonly Code[] {
-  if (!this.configuration.features.has("hash")) {
+  if (!this.configuration.features.has("Object.hash")) {
     return [];
   }
 

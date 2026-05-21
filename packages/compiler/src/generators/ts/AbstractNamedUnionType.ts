@@ -23,9 +23,13 @@ export abstract class AbstractNamedUnionType<
 
   @Memoize()
   get declaration(): Maybe<Code> {
-    const declarations: Code[] = [
-      code`export type ${def(this._name)} = ${this.inlineName};`,
-    ];
+    const declarations: Code[] = [];
+
+    if (this.configuration.features.has("Object.type")) {
+      declarations.push(
+        code`export type ${def(this._name)} = ${this.inlineName};`,
+      );
+    }
 
     const staticModuleDeclarations = Object.entries(
       this.staticModuleDeclarations,
@@ -101,25 +105,30 @@ ${joinCode(
   protected get staticModuleDeclarations(): Record<string, Code> {
     const staticModuleDeclarations: Record<string, Code> = {};
 
-    if (this.configuration.features.has("equals")) {
+    if (this.configuration.features.has("Object.equals")) {
       staticModuleDeclarations[`equals`] =
         code`export const equals = ${this.inlineEqualsFunction};`;
     }
 
-    staticModuleDeclarations[`Filter`] =
-      code`export type Filter = ${this.inlineFilterType};`;
-    staticModuleDeclarations[`filter`] =
-      code`export const filter = ${this.inlineFilterFunction};`;
+    if (this.configuration.features.has("Object.filter")) {
+      staticModuleDeclarations[`Filter`] =
+        code`export type Filter = ${this.inlineFilterType};`;
+      staticModuleDeclarations[`filter`] =
+        code`export const filter = ${this.inlineFilterFunction};`;
+    }
 
-    if (this.configuration.features.has("hash")) {
+    if (this.configuration.features.has("Object.hash")) {
       staticModuleDeclarations[`hash`] =
         code`export const hash = ${this.inlineHashFunction};`;
     }
 
-    if (this.configuration.features.has("json")) {
-      staticModuleDeclarations[`Json`] = code`\
-${this.jsonTypeAliasDeclaration}
+    if (this.configuration.features.has("Object.JSON.type")) {
+      staticModuleDeclarations[`Json.type`] =
+        code`${this.jsonTypeAliasDeclaration}`;
+    }
 
+    if (this.configuration.features.has("Object.JSON.schema")) {
+      staticModuleDeclarations[`Json.namespace`] = code`\
 export namespace Json {
   ${this.jsonSchemaFunctionDeclaration}
 
@@ -129,23 +138,29 @@ export namespace Json {
     return ${this.reusables.imports.Right}(jsonSafeParseResult.data);
   }
 }`;
+    }
 
+    if (this.configuration.features.has("Object.fromJson")) {
       staticModuleDeclarations[`fromJson`] =
         code`export const fromJson = ${this.inlineFromJsonFunction};`;
+    }
 
+    if (this.configuration.features.has("Object.fromRdf")) {
+      staticModuleDeclarations[`fromRdfResourceValues`] =
+        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
+    }
+
+    if (this.configuration.features.has("Object.toJson")) {
       staticModuleDeclarations[`toJson`] =
         code`export const toJson = ${this.inlineToJsonFunction};`;
     }
 
-    if (this.configuration.features.has("rdf")) {
-      staticModuleDeclarations[`fromRdfResourceValues`] =
-        code`export const fromRdfResourceValues: ${this.reusables.snippets.FromRdfResourceValuesFunction}<${this.name}> = ${this.inlineFromRdfResourceValuesFunction};`;
-
+    if (this.configuration.features.has("Object.toRdf")) {
       staticModuleDeclarations[`toRdfResourceValues`] =
         code`export const toRdfResourceValues = ${this.inlineToRdfResourceValuesFunction};`;
     }
 
-    if (this.configuration.features.has("sparql")) {
+    if (this.configuration.features.has("Object.SPARQL")) {
       staticModuleDeclarations[`valueSparqlConstructTriples`] =
         code`export const valueSparqlConstructTriples: ${this.reusables.snippets.ValueSparqlConstructTriplesFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlConstructTriplesFunction};`;
 
@@ -153,9 +168,11 @@ export namespace Json {
         code`export const valueSparqlWherePatterns: ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> = ${this.inlineValueSparqlWherePatternsFunction};`;
     }
 
-    const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-    staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
-      code`export const ${syntheticNamePrefix}toString = ${this.inlineToStringFunction};`;
+    if (this.configuration.features.has("Object.toString")) {
+      const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
+      staticModuleDeclarations[`${syntheticNamePrefix}toString`] =
+        code`export const ${syntheticNamePrefix}toString = ${this.inlineToStringFunction};`;
+    }
 
     return staticModuleDeclarations;
   }

@@ -133,7 +133,10 @@ export class NamedObjectType extends AbstractType {
     if (!this.extern) {
       const staticModuleDeclarations: Code[] = [];
 
-      declarations.push(NamedObjectType_interfaceDeclaration.call(this));
+      if (this.configuration.features.has("Object.type")) {
+        declarations.push(NamedObjectType_interfaceDeclaration.call(this));
+      }
+
       staticModuleDeclarations.push(
         ...NamedObjectType_createFunctionDeclaration.call(this).toList(),
         ...NamedObjectType_equalsFunctionDeclaration.call(this).toList(),
@@ -155,8 +158,8 @@ export class NamedObjectType extends AbstractType {
               code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
             ]
           : []),
-        NamedObjectType_filterFunctionDeclaration.call(this),
-        NamedObjectType_filterTypeDeclaration.call(this),
+        ...NamedObjectType_filterFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_filterTypeDeclaration.call(this).toList(),
         ...NamedObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
           this,
         ).toList(),
@@ -171,8 +174,8 @@ export class NamedObjectType extends AbstractType {
           this,
         ).toList(),
         ...NamedObjectType_fromRdfTypeVariableStatement.call(this).toList(),
-        NamedObjectType_isTypeFunctionDeclaration.call(this),
-        NamedObjectType_schemaVariableStatement.call(this),
+        ...NamedObjectType_isTypeFunctionDeclaration.call(this).toList(),
+        ...NamedObjectType_schemaVariableStatement.call(this).toList(),
         ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
           configuration: this.configuration,
           filterType: this.filterType,
@@ -202,6 +205,10 @@ export namespace ${def(this.name)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
       }
+    }
+
+    if (declarations.length === 0) {
+      return Maybe.empty();
     }
 
     return Maybe.of(joinCode(declarations, { on: "\n\n" }));

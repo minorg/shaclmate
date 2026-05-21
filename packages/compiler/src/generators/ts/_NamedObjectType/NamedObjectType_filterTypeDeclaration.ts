@@ -1,9 +1,14 @@
+import { Maybe } from "purify-ts";
 import type { NamedObjectType } from "../NamedObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function NamedObjectType_filterTypeDeclaration(
   this: NamedObjectType,
-): Code {
+): Maybe<Code> {
+  if (!this.configuration.features.has("Object.filter")) {
+    return Maybe.empty();
+  }
+
   const members: Code[] = [];
   if (this.properties.length > 0) {
     const filterProperties: Record<string, Code> = {};
@@ -27,6 +32,6 @@ export function NamedObjectType_filterTypeDeclaration(
     members.push(code`${parentObjectType.name}.Filter`);
   }
 
-  return code`\
-export type Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`;
+  return Maybe.of(code`\
+export type Filter = ${members.length > 0 ? joinCode(members, { on: " & " }) : "object"};`);
 }
