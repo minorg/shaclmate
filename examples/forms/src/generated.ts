@@ -28,11 +28,6 @@ export type $_ToRdfResourceFunction<
   resourceSet: ResourceSet;
 }) => void;
 
-type $CollectionFilter<ItemFilterT> = ItemFilterT & {
-  readonly $maxCount?: number;
-  readonly $minCount?: number;
-};
-
 interface $CollectionSchema<ItemSchemaT> {
   readonly item: () => ItemSchemaT;
   readonly kind: "List" | "Set";
@@ -120,125 +115,6 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
   };
 }
 
-function $filterArray<ItemT, ItemFilterT>(
-  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
-) {
-  return (
-    filter: $CollectionFilter<ItemFilterT>,
-    values: readonly ItemT[],
-  ): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (filter.$maxCount !== undefined && values.length > filter.$maxCount) {
-      return false;
-    }
-
-    if (filter.$minCount !== undefined && values.length < filter.$minCount) {
-      return false;
-    }
-
-    return true;
-  };
-}
-
-function $filterIdentifier(
-  filter: $IdentifierFilter,
-  value: BlankNode | NamedNode,
-) {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue.equals(value))
-  ) {
-    return false;
-  }
-
-  if (filter.type !== undefined && value.termType !== filter.type) {
-    return false;
-  }
-
-  return true;
-}
-
-function $filterMaybe<ItemT, ItemFilterT>(
-  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
-) {
-  return (filter: $MaybeFilter<ItemFilterT>, value: Maybe<ItemT>): boolean => {
-    if (filter !== null) {
-      if (value.isNothing()) {
-        return false;
-      }
-
-      if (!filterItem(filter, value.extract()!)) {
-        return false;
-      }
-    } else {
-      if (value.isJust()) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-}
-
-function $filterNumeric<T extends bigint | number>(
-  filter: $NumericFilter<T>,
-  value: T,
-) {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue === value)
-  ) {
-    return false;
-  }
-
-  if (filter.maxExclusive !== undefined && value >= filter.maxExclusive) {
-    return false;
-  }
-
-  if (filter.maxInclusive !== undefined && value > filter.maxInclusive) {
-    return false;
-  }
-
-  if (filter.minExclusive !== undefined && value <= filter.minExclusive) {
-    return false;
-  }
-
-  if (filter.minInclusive !== undefined && value < filter.minInclusive) {
-    return false;
-  }
-
-  return true;
-}
-
-function $filterString(filter: $StringFilter, value: string) {
-  if (
-    filter.in !== undefined &&
-    !filter.in.some((inValue) => inValue === value)
-  ) {
-    return false;
-  }
-
-  if (filter.maxLength !== undefined && value.length > filter.maxLength) {
-    return false;
-  }
-
-  if (filter.minLength !== undefined && value.length < filter.minLength) {
-    return false;
-  }
-
-  return true;
-}
-
-interface $IdentifierFilter {
-  readonly in?: readonly (BlankNode | NamedNode)[];
-  readonly type?: "BlankNode" | "NamedNode";
-}
-
 function $identityConversionFunction<T>(value: T): Either<Error, T> {
   return Either.of(value);
 }
@@ -252,19 +128,9 @@ function $identityValidationFunction<T>(
 
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
-type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
-
 interface $MaybeSchema<ItemSchemaT> {
   readonly item: () => ItemSchemaT;
   readonly kind: "Maybe";
-}
-
-interface $NumericFilter<T> {
-  readonly in?: readonly T[];
-  readonly maxExclusive?: T;
-  readonly maxInclusive?: T;
-  readonly minExclusive?: T;
-  readonly minInclusive?: T;
 }
 
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
@@ -272,12 +138,6 @@ const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 export type $PropertyPath = RdfxResourcePropertyPath;
 
 export namespace $PropertyPath {
-  export type Filter = object;
-
-  export function filter(_filter: Filter, _value: $PropertyPath): boolean {
-    return true;
-  }
-
   export const schema: Readonly<object> = {};
 
   export const toRdfResource: $ToRdfResourceFunction<$PropertyPath> =
@@ -389,12 +249,6 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   }
 
   return Right(result as T);
-}
-
-interface $StringFilter {
-  readonly in?: readonly string[];
-  readonly maxLength?: number;
-  readonly minLength?: number;
 }
 
 export type $ToRdfResourceFunction<
@@ -602,33 +456,6 @@ export namespace NestedNodeShape {
       };
     }
   }
-
-  export function filter(
-    filter: NestedNodeShape.Filter,
-    value: NestedNodeShape,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly requiredStringProperty?: $StringFilter;
-  };
 
   export function fromJson(
     $json: NestedNodeShape.Json,
@@ -947,83 +774,6 @@ export namespace FormNodeShape {
     }
   }
 
-  export function filter(
-    filter: FormNodeShape.Filter,
-    value: FormNodeShape,
-  ): boolean {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.emptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.emptyStringSetProperty,
-        value.emptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nestedObjectProperty !== undefined &&
-      !NestedNodeShape.filter(
-        filter.nestedObjectProperty,
-        value.nestedObjectProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.nonEmptyStringSetProperty !== undefined &&
-      !$filterArray<string, $StringFilter>($filterString)(
-        filter.nonEmptyStringSetProperty,
-        value.nonEmptyStringSetProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.optionalStringProperty !== undefined &&
-      !$filterMaybe<string, $StringFilter>($filterString)(
-        filter.optionalStringProperty,
-        value.optionalStringProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredIntProperty !== undefined &&
-      !$filterNumeric<number>(
-        filter.requiredIntProperty,
-        value.requiredIntProperty,
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter.requiredStringProperty !== undefined &&
-      !$filterString(
-        filter.requiredStringProperty,
-        value.requiredStringProperty,
-      )
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly nestedObjectProperty?: NestedNodeShape.Filter;
-    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
-    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
-    readonly requiredIntProperty?: $NumericFilter<number>;
-    readonly requiredStringProperty?: $StringFilter;
-  };
-
   export function fromJson(
     $json: FormNodeShape.Json,
   ): Either<Error, FormNodeShape> {
@@ -1245,41 +995,6 @@ export namespace $Object {
     throw new Error("unable to serialize to string");
   };
 
-  export const filter = (filter: $Object.Filter, value: $Object) => {
-    if (
-      filter.$identifier !== undefined &&
-      !$filterIdentifier(filter.$identifier, value.$identifier())
-    ) {
-      return false;
-    }
-    if (
-      filter.on?.["FormNodeShape"] !== undefined &&
-      FormNodeShape.isFormNodeShape(value)
-    ) {
-      if (!FormNodeShape.filter(filter.on["FormNodeShape"], value)) {
-        return false;
-      }
-    }
-    if (
-      filter.on?.["NestedNodeShape"] !== undefined &&
-      NestedNodeShape.isNestedNodeShape(value)
-    ) {
-      if (!NestedNodeShape.filter(filter.on["NestedNodeShape"], value)) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  export type Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly on?: {
-      readonly FormNodeShape?: FormNodeShape.Filter;
-      readonly NestedNodeShape?: NestedNodeShape.Filter;
-    };
-  };
-
   export const fromJson = (value: $Object.Json): Either<Error, $Object> => {
     if (value["@type"] === "FormNodeShape") {
       return FormNodeShape.fromJson(value as FormNodeShape.Json).map(
@@ -1392,85 +1107,4 @@ export namespace $Object {
 
     throw new Error("unable to serialize to RDF");
   }) satisfies $ToRdfResourceValuesFunction<$Object>;
-}
-export interface $ObjectSet {
-  formNodeShape(
-    identifier: FormNodeShape.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, FormNodeShape>>;
-
-  formNodeShapeCount(
-    query?: Pick<
-      $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  formNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
-  ): Promise<Either<Error, readonly FormNodeShape.Identifier[]>>;
-
-  formNodeShapes(
-    query?: $ObjectSet.Query<FormNodeShape.Filter, FormNodeShape.Identifier>,
-  ): Promise<Either<Error, readonly FormNodeShape[]>>;
-
-  nestedNodeShape(
-    identifier: NestedNodeShape.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, NestedNodeShape>>;
-
-  nestedNodeShapeCount(
-    query?: Pick<
-      $ObjectSet.Query<NestedNodeShape.Filter, NestedNodeShape.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  nestedNodeShapeIdentifiers(
-    query?: $ObjectSet.Query<
-      NestedNodeShape.Filter,
-      NestedNodeShape.Identifier
-    >,
-  ): Promise<Either<Error, readonly NestedNodeShape.Identifier[]>>;
-
-  nestedNodeShapes(
-    query?: $ObjectSet.Query<
-      NestedNodeShape.Filter,
-      NestedNodeShape.Identifier
-    >,
-  ): Promise<Either<Error, readonly NestedNodeShape[]>>;
-
-  $object(
-    identifier: $Object.Identifier,
-    options?: { preferredLanguages?: readonly string[] },
-  ): Promise<Either<Error, $Object>>;
-
-  $objectCount(
-    query?: Pick<
-      $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-      "filter"
-    >,
-  ): Promise<Either<Error, number>>;
-
-  $objectIdentifiers(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object.Identifier[]>>;
-
-  $objects(
-    query?: $ObjectSet.Query<$Object.Filter, $Object.Identifier>,
-  ): Promise<Either<Error, readonly $Object[]>>;
-}
-
-export namespace $ObjectSet {
-  export interface Query<
-    ObjectFilterT,
-    ObjectIdentifierT extends BlankNode | NamedNode,
-  > {
-    readonly filter?: ObjectFilterT;
-    readonly graph?: Exclude<Quad_Graph, Variable>;
-    readonly identifiers?: readonly ObjectIdentifierT[];
-    readonly limit?: number;
-    readonly offset?: number;
-    readonly preferredLanguages?: readonly string[];
-  }
 }
