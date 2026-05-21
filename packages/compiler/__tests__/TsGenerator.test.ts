@@ -40,7 +40,7 @@ describe("TsGenerator", () => {
       switch (id) {
         case "compilerInput":
           configuration = {
-            features: new Set(["RDF"]),
+            features: new Set(["Object.RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -70,7 +70,7 @@ describe("TsGenerator", () => {
         case "shaclAst":
           configuration = {
             ...TsGenerator.Configuration.default_,
-            features: new Set(["RDF"]),
+            features: new Set(["Object.RDF"]),
           };
           sourceDirectoryPath = path.join(
             thisDirectoryPath,
@@ -82,7 +82,7 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "kitchenSink") {
+      if (id !== "shaclAst") {
         return;
       }
 
@@ -111,7 +111,6 @@ describe("TsGenerator", () => {
       it(tsFeatureCombination.join("+"), () => {
         const source = new TsGenerator({
           configuration: {
-            ...TsGenerator.Configuration.default_,
             features: new Set(tsFeatureCombination),
           },
           logger,
@@ -123,7 +122,12 @@ describe("TsGenerator", () => {
             .transform()
             .unsafeCoerce(),
         );
-        compileTs(source, sourceDirectoryPath);
+        const diagnostics = compileTs(source, sourceDirectoryPath);
+        if (diagnostics.length > 0) {
+          // biome-ignore lint/suspicious/noDebugger: allow in a test
+          debugger;
+        }
+        expect(diagnostics).toHaveLength(0);
       });
     }
   }, 60000);

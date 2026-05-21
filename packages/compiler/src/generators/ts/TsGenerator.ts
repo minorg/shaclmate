@@ -121,7 +121,7 @@ export class TsGenerator implements Generator {
       }),
     );
 
-    if (!configuration.features.has("GraphQL")) {
+    if (configuration.features.has("GraphQL")) {
       const graphqlNamedObjectTypes = namedObjectTypesNameSorted.filter(
         (namedObjectType) => !namedObjectType.synthetic,
       );
