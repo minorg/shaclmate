@@ -82,9 +82,9 @@ describe("TsGenerator", () => {
           break;
       }
 
-      if (id !== "shaclAst") {
-        return;
-      }
+      // if (id !== "compilerInput") {
+      //   return;
+      // }
 
       const source = generate(shapesGraphEither.unsafeCoerce(), configuration);
       const diagnostics = compileTs(source, sourceDirectoryPath);
