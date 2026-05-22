@@ -129,8 +129,8 @@ describe("toJson", () => {
   });
 
   it("toJSON", ({ expect }) => {
-    expect(JSON.stringify(harnesses.classHierarchy0.instance)).toStrictEqual(
-      `{"@id":"http://example.com/instance","@type":"ClassHierarchy0","classHierarchy0Property":"0"}`,
+    expect(JSON.stringify(harnesses.classHierarchy3.instance)).toStrictEqual(
+      `{"@id":"http://example.com/instance","@type":"ClassHierarchy3","classHierarchy0Property":"0","classHierarchy2Property":"2","classHierarchy3Property":"3"}`,
     );
   });
 

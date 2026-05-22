@@ -590,7 +590,8 @@ function $monkeyPatchObject<T extends object>(
 ): T {
   if (
     methods.toJson &&
-    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+    (!globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON") ||
+      typeof (obj as any).toJSON === "function")
   ) {
     const toJsonMethod = methods.toJson;
     (obj as any).toJSON = function (this: T, _key: string) {
@@ -600,7 +601,8 @@ function $monkeyPatchObject<T extends object>(
 
   if (
     methods.$toString &&
-    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+    (!globalThis.Object.prototype.hasOwnProperty.call(obj, "toString") ||
+      typeof (obj as any).toJSON === "function")
   ) {
     const toStringMethod = methods.$toString;
     (obj as any).toString = function (this: T) {
