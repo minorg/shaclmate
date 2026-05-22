@@ -133,6 +133,27 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Maybe";
 }
 
+function $monkeyPatchObject<T extends object>(
+  obj: T,
+  methods: { toJson?: $ToJsonFunction<T>; $toString?: $ToStringFunction<T> },
+): T {
+  if (
+    methods.toJson &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+  ) {
+    (obj as any).toJSON = methods.toJson;
+  }
+
+  if (
+    methods.$toString &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+  ) {
+    (obj as any).toString = methods.$toString;
+  }
+
+  return obj;
+}
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type $PropertyPath = RdfxResourcePropertyPath;
@@ -251,6 +272,11 @@ function $sequenceRecord<T extends Record<string, unknown>>(
   return Right(result as T);
 }
 
+type $ToJsonFunction<T extends object> = {
+  (this: T): object;
+  (this_: T): object;
+};
+
 export type $ToRdfResourceFunction<
   ObjectT,
   IdentifierT extends Resource.Identifier = Resource.Identifier,
@@ -279,6 +305,11 @@ export type $ToRdfResourceValuesFunction<
     resourceSet: ResourceSet;
   },
 ) => ReturnT[];
+
+type $ToStringFunction<T extends object> = {
+  (this: T): string;
+  (this_: T): string;
+};
 
 function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
   validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>,
@@ -368,18 +399,12 @@ export namespace NestedNodeShape {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NestedNodeShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NestedNodeShape" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -506,17 +531,23 @@ export namespace NestedNodeShape {
     },
   } as const;
 
+  export function toJson(this: NestedNodeShape): NestedNodeShape.Json;
   export function toJson(
     _nestedNodeShape: NestedNodeShape,
+  ): NestedNodeShape.Json;
+  export function toJson(
+    this: NestedNodeShape | undefined,
+    _nestedNodeShape?: NestedNodeShape,
   ): NestedNodeShape.Json {
+    const this_ = (_nestedNodeShape ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _nestedNodeShape.$identifier().termType === "BlankNode"
-            ? `_:${_nestedNodeShape.$identifier().value}`
-            : _nestedNodeShape.$identifier().value,
-        "@type": _nestedNodeShape.$type,
-        requiredStringProperty: _nestedNodeShape.requiredStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        requiredStringProperty: this_.requiredStringProperty,
       } satisfies NestedNodeShape.Json),
     );
   }
@@ -629,18 +660,12 @@ export namespace FormNodeShape {
       ),
       requiredIntProperty: Either.of(parameters.requiredIntProperty),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "FormNodeShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "FormNodeShape" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -883,28 +908,34 @@ export namespace FormNodeShape {
     },
   } as const;
 
-  export function toJson(_formNodeShape: FormNodeShape): FormNodeShape.Json {
+  export function toJson(this: FormNodeShape): FormNodeShape.Json;
+  export function toJson(_formNodeShape: FormNodeShape): FormNodeShape.Json;
+  export function toJson(
+    this: FormNodeShape | undefined,
+    _formNodeShape?: FormNodeShape,
+  ): FormNodeShape.Json {
+    const this_ = (_formNodeShape ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _formNodeShape.$identifier().termType === "BlankNode"
-            ? `_:${_formNodeShape.$identifier().value}`
-            : _formNodeShape.$identifier().value,
-        "@type": _formNodeShape.$type,
-        emptyStringSetProperty: _formNodeShape.emptyStringSetProperty.map(
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        emptyStringSetProperty: this_.emptyStringSetProperty.map(
           (item) => item,
         ),
         nestedObjectProperty: NestedNodeShape.toJson(
-          _formNodeShape.nestedObjectProperty,
+          this_.nestedObjectProperty,
         ),
-        nonEmptyStringSetProperty: _formNodeShape.nonEmptyStringSetProperty.map(
+        nonEmptyStringSetProperty: this_.nonEmptyStringSetProperty.map(
           (item) => item,
         ),
-        optionalStringProperty: _formNodeShape.optionalStringProperty
+        optionalStringProperty: this_.optionalStringProperty
           .map((item) => item)
           .extract(),
-        requiredIntProperty: _formNodeShape.requiredIntProperty,
-        requiredStringProperty: _formNodeShape.requiredStringProperty,
+        requiredIntProperty: this_.requiredIntProperty,
+        requiredStringProperty: this_.requiredStringProperty,
       } satisfies FormNodeShape.Json),
     );
   }

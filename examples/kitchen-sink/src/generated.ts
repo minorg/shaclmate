@@ -4058,13 +4058,19 @@ export namespace $NamedDefaultPartial {
     );
   }
 
+  export function toJson(this: $NamedDefaultPartial): $NamedDefaultPartial.Json;
   export function toJson(
     _namedDefaultPartial: $NamedDefaultPartial,
+  ): $NamedDefaultPartial.Json;
+  export function toJson(
+    this: $NamedDefaultPartial | undefined,
+    _namedDefaultPartial?: $NamedDefaultPartial,
   ): $NamedDefaultPartial.Json {
+    const this_ = (_namedDefaultPartial ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        "@id": _namedDefaultPartial.$identifier().value,
-        "@type": _namedDefaultPartial.$type,
+        "@id": this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies $NamedDefaultPartial.Json),
     );
   }
@@ -4425,16 +4431,22 @@ export namespace $DefaultPartial {
     );
   }
 
+  export function toJson(this: $DefaultPartial): $DefaultPartial.Json;
   export function toJson(
     _defaultPartial: $DefaultPartial,
+  ): $DefaultPartial.Json;
+  export function toJson(
+    this: $DefaultPartial | undefined,
+    _defaultPartial?: $DefaultPartial,
   ): $DefaultPartial.Json {
+    const this_ = (_defaultPartial ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _defaultPartial.$identifier().termType === "BlankNode"
-            ? `_:${_defaultPartial.$identifier().value}`
-            : _defaultPartial.$identifier().value,
-        "@type": _defaultPartial.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies $DefaultPartial.Json),
     );
   }
@@ -10425,108 +10437,111 @@ export namespace UnionDiscriminants {
     );
   }
 
+  export function toJson(this: UnionDiscriminants): UnionDiscriminants.Json;
   export function toJson(
     _unionDiscriminants: UnionDiscriminants,
+  ): UnionDiscriminants.Json;
+  export function toJson(
+    this: UnionDiscriminants | undefined,
+    _unionDiscriminants?: UnionDiscriminants,
   ): UnionDiscriminants.Json {
+    const this_ = (_unionDiscriminants ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _unionDiscriminants.$identifier().termType === "BlankNode"
-            ? `_:${_unionDiscriminants.$identifier().value}`
-            : _unionDiscriminants.$identifier().value,
-        "@type": _unionDiscriminants.$type,
-        optionalIriOrLiteralProperty:
-          _unionDiscriminants.optionalIriOrLiteralProperty
-            .map((item) =>
-              ((
-                value: NamedNode | Literal,
-              ):
-                | { readonly "@id": string; readonly termType: "NamedNode" }
-                | {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  } => {
-                if (value["termType"] === "NamedNode") {
-                  return { "@id": value.value, termType: value.termType };
-                }
-                if (value["termType"] === "Literal") {
-                  return {
-                    "@language":
-                      value.language.length > 0 ? value.language : undefined,
-                    termType: "Literal" as const,
-                    "@type":
-                      value.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? value.datatype.value
-                        : undefined,
-                    "@value": value.value,
-                  };
-                }
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        optionalIriOrLiteralProperty: this_.optionalIriOrLiteralProperty
+          .map((item) =>
+            ((
+              value: NamedNode | Literal,
+            ):
+              | { readonly "@id": string; readonly termType: "NamedNode" }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                } => {
+              if (value["termType"] === "NamedNode") {
+                return { "@id": value.value, termType: value.termType };
+              }
+              if (value["termType"] === "Literal") {
+                return {
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  termType: "Literal" as const,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              })(item),
-            )
-            .extract(),
-        optionalIriOrStringProperty:
-          _unionDiscriminants.optionalIriOrStringProperty
-            .map((item) =>
-              ((
-                value: NamedNode | string,
-              ): { readonly "@id": string } | string => {
-                if (typeof value === "object") {
-                  return { "@id": value.value };
-                }
-                if (typeof value === "string") {
-                  return value;
-                }
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
+        optionalIriOrStringProperty: this_.optionalIriOrStringProperty
+          .map((item) =>
+            ((
+              value: NamedNode | string,
+            ): { readonly "@id": string } | string => {
+              if (typeof value === "object") {
+                return { "@id": value.value };
+              }
+              if (typeof value === "string") {
+                return value;
+              }
 
-                throw new Error("unable to serialize to JSON");
-              })(item),
-            )
-            .extract(),
-        optionalNodeOrLiteralProperty:
-          _unionDiscriminants.optionalNodeOrLiteralProperty
-            .map((item) =>
-              ((
-                value:
-                  | { termType: "UnionMember1"; value: UnionMember1 }
-                  | Literal,
-              ):
-                | { termType: "UnionMember1"; value: UnionMember1.Json }
-                | {
-                    readonly "@language"?: string;
-                    readonly termType: "Literal";
-                    readonly "@type"?: string;
-                    readonly "@value": string;
-                  } => {
-                if (value["termType"] === "UnionMember1") {
-                  return {
-                    termType: "UnionMember1" as const,
-                    value: UnionMember1.toJson(value.value),
-                  };
-                }
-                if (value["termType"] === "Literal") {
-                  return {
-                    "@language":
-                      value.language.length > 0 ? value.language : undefined,
-                    termType: "Literal" as const,
-                    "@type":
-                      value.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? value.datatype.value
-                        : undefined,
-                    "@value": value.value,
-                  };
-                }
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
+        optionalNodeOrLiteralProperty: this_.optionalNodeOrLiteralProperty
+          .map((item) =>
+            ((
+              value:
+                | { termType: "UnionMember1"; value: UnionMember1 }
+                | Literal,
+            ):
+              | { termType: "UnionMember1"; value: UnionMember1.Json }
+              | {
+                  readonly "@language"?: string;
+                  readonly termType: "Literal";
+                  readonly "@type"?: string;
+                  readonly "@value": string;
+                } => {
+              if (value["termType"] === "UnionMember1") {
+                return {
+                  termType: "UnionMember1" as const,
+                  value: UnionMember1.toJson(value.value),
+                };
+              }
+              if (value["termType"] === "Literal") {
+                return {
+                  "@language":
+                    value.language.length > 0 ? value.language : undefined,
+                  termType: "Literal" as const,
+                  "@type":
+                    value.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? value.datatype.value
+                      : undefined,
+                  "@value": value.value,
+                };
+              }
 
-                throw new Error("unable to serialize to JSON");
-              })(item),
-            )
-            .extract(),
+              throw new Error("unable to serialize to JSON");
+            })(item),
+          )
+          .extract(),
         optionalNodeOrNodeOrStringProperty:
-          _unionDiscriminants.optionalNodeOrNodeOrStringProperty
+          this_.optionalNodeOrNodeOrStringProperty
             .map((item) =>
               ((
                 value:
@@ -10591,7 +10606,7 @@ export namespace UnionDiscriminants {
           }
 
           throw new Error("unable to serialize to JSON");
-        })(_unionDiscriminants.requiredIriOrLiteralProperty),
+        })(this_.requiredIriOrLiteralProperty),
         requiredIriOrStringProperty: ((
           value: NamedNode | string,
         ): { readonly "@id": string } | string => {
@@ -10603,7 +10618,7 @@ export namespace UnionDiscriminants {
           }
 
           throw new Error("unable to serialize to JSON");
-        })(_unionDiscriminants.requiredIriOrStringProperty),
+        })(this_.requiredIriOrStringProperty),
         requiredNodeOrLiteralProperty: ((
           value: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
         ):
@@ -10635,7 +10650,7 @@ export namespace UnionDiscriminants {
           }
 
           throw new Error("unable to serialize to JSON");
-        })(_unionDiscriminants.requiredNodeOrLiteralProperty),
+        })(this_.requiredNodeOrLiteralProperty),
         requiredNodeOrNodeOrStringProperty: ((
           value:
             | { type: "UnionMember1"; value: UnionMember1 }
@@ -10668,93 +10683,86 @@ export namespace UnionDiscriminants {
           }
 
           throw new Error("unable to serialize to JSON");
-        })(_unionDiscriminants.requiredNodeOrNodeOrStringProperty),
-        setIriOrLiteralProperty:
-          _unionDiscriminants.setIriOrLiteralProperty.map((item) =>
-            ((
-              value: NamedNode | Literal,
-            ):
-              | { readonly "@id": string; readonly termType: "NamedNode" }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                } => {
-              if (value["termType"] === "NamedNode") {
-                return { "@id": value.value, termType: value.termType };
-              }
-              if (value["termType"] === "Literal") {
-                return {
-                  "@language":
-                    value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
-                  "@type":
-                    value.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? value.datatype.value
-                      : undefined,
-                  "@value": value.value,
-                };
-              }
+        })(this_.requiredNodeOrNodeOrStringProperty),
+        setIriOrLiteralProperty: this_.setIriOrLiteralProperty.map((item) =>
+          ((
+            value: NamedNode | Literal,
+          ):
+            | { readonly "@id": string; readonly termType: "NamedNode" }
+            | {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              } => {
+            if (value["termType"] === "NamedNode") {
+              return { "@id": value.value, termType: value.termType };
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          ),
-        setIriOrStringProperty: _unionDiscriminants.setIriOrStringProperty.map(
-          (item) =>
-            ((
-              value: NamedNode | string,
-            ): { readonly "@id": string } | string => {
-              if (typeof value === "object") {
-                return { "@id": value.value };
-              }
-              if (typeof value === "string") {
-                return value;
-              }
-
-              throw new Error("unable to serialize to JSON");
-            })(item),
+            throw new Error("unable to serialize to JSON");
+          })(item),
         ),
-        setNodeOrLiteralProperty:
-          _unionDiscriminants.setNodeOrLiteralProperty.map((item) =>
-            ((
-              value:
-                | { termType: "UnionMember1"; value: UnionMember1 }
-                | Literal,
-            ):
-              | { termType: "UnionMember1"; value: UnionMember1.Json }
-              | {
-                  readonly "@language"?: string;
-                  readonly termType: "Literal";
-                  readonly "@type"?: string;
-                  readonly "@value": string;
-                } => {
-              if (value["termType"] === "UnionMember1") {
-                return {
-                  termType: "UnionMember1" as const,
-                  value: UnionMember1.toJson(value.value),
-                };
-              }
-              if (value["termType"] === "Literal") {
-                return {
-                  "@language":
-                    value.language.length > 0 ? value.language : undefined,
-                  termType: "Literal" as const,
-                  "@type":
-                    value.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? value.datatype.value
-                      : undefined,
-                  "@value": value.value,
-                };
-              }
+        setIriOrStringProperty: this_.setIriOrStringProperty.map((item) =>
+          ((value: NamedNode | string): { readonly "@id": string } | string => {
+            if (typeof value === "object") {
+              return { "@id": value.value };
+            }
+            if (typeof value === "string") {
+              return value;
+            }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          ),
-        setNodeOrNodeOrStringProperty:
-          _unionDiscriminants.setNodeOrNodeOrStringProperty.map((item) =>
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
+        setNodeOrLiteralProperty: this_.setNodeOrLiteralProperty.map((item) =>
+          ((
+            value: { termType: "UnionMember1"; value: UnionMember1 } | Literal,
+          ):
+            | { termType: "UnionMember1"; value: UnionMember1.Json }
+            | {
+                readonly "@language"?: string;
+                readonly termType: "Literal";
+                readonly "@type"?: string;
+                readonly "@value": string;
+              } => {
+            if (value["termType"] === "UnionMember1") {
+              return {
+                termType: "UnionMember1" as const,
+                value: UnionMember1.toJson(value.value),
+              };
+            }
+            if (value["termType"] === "Literal") {
+              return {
+                "@language":
+                  value.language.length > 0 ? value.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  value.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? value.datatype.value
+                    : undefined,
+                "@value": value.value,
+              };
+            }
+
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
+        setNodeOrNodeOrStringProperty: this_.setNodeOrNodeOrStringProperty.map(
+          (item) =>
             ((
               value:
                 | { type: "UnionMember1"; value: UnionMember1 }
@@ -10788,7 +10796,7 @@ export namespace UnionDiscriminants {
 
               throw new Error("unable to serialize to JSON");
             })(item),
-          ),
+        ),
       } satisfies UnionDiscriminants.Json),
     );
   }
@@ -12614,30 +12622,36 @@ export namespace TermProperties {
     );
   }
 
-  export function toJson(_termProperties: TermProperties): TermProperties.Json {
+  export function toJson(this: TermProperties): TermProperties.Json;
+  export function toJson(_termProperties: TermProperties): TermProperties.Json;
+  export function toJson(
+    this: TermProperties | undefined,
+    _termProperties?: TermProperties,
+  ): TermProperties.Json {
+    const this_ = (_termProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _termProperties.$identifier().termType === "BlankNode"
-            ? `_:${_termProperties.$identifier().value}`
-            : _termProperties.$identifier().value,
-        "@type": _termProperties.$type,
-        blankNodeTermProperty: _termProperties.blankNodeTermProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        blankNodeTermProperty: this_.blankNodeTermProperty
           .map((item) => ({ "@id": `_:${item.value}` }))
           .extract(),
-        booleanTermProperty: _termProperties.booleanTermProperty
+        booleanTermProperty: this_.booleanTermProperty
           .map((item) => item)
           .extract(),
-        dateTermProperty: _termProperties.dateTermProperty
+        dateTermProperty: this_.dateTermProperty
           .map((item) => $toIsoDateString(item))
           .extract(),
-        dateTimeTermProperty: _termProperties.dateTimeTermProperty
+        dateTimeTermProperty: this_.dateTimeTermProperty
           .map((item) => item.toISOString())
           .extract(),
-        iriTermProperty: _termProperties.iriTermProperty
+        iriTermProperty: this_.iriTermProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        literalTermProperty: _termProperties.literalTermProperty
+        literalTermProperty: this_.literalTermProperty
           .map((item) => ({
             "@language": item.language.length > 0 ? item.language : undefined,
             "@type":
@@ -12647,13 +12661,13 @@ export namespace TermProperties {
             "@value": item.value,
           }))
           .extract(),
-        numberTermProperty: _termProperties.numberTermProperty
+        numberTermProperty: this_.numberTermProperty
           .map((item) => item)
           .extract(),
-        stringTermProperty: _termProperties.stringTermProperty
+        stringTermProperty: this_.stringTermProperty
           .map((item) => item)
           .extract(),
-        termProperty: _termProperties.termProperty
+        termProperty: this_.termProperty
           .map((item) =>
             item.termType === "Literal"
               ? {
@@ -13296,19 +13310,26 @@ export namespace RecursiveUnionMember2 {
   }
 
   export function toJson(
+    this: RecursiveUnionMember2,
+  ): RecursiveUnionMember2.Json;
+  export function toJson(
     _recursiveUnionMember2: RecursiveUnionMember2,
+  ): RecursiveUnionMember2.Json;
+  export function toJson(
+    this: RecursiveUnionMember2 | undefined,
+    _recursiveUnionMember2?: RecursiveUnionMember2,
   ): RecursiveUnionMember2.Json {
+    const this_ = (_recursiveUnionMember2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _recursiveUnionMember2.$identifier().termType === "BlankNode"
-            ? `_:${_recursiveUnionMember2.$identifier().value}`
-            : _recursiveUnionMember2.$identifier().value,
-        "@type": _recursiveUnionMember2.$type,
-        recursiveUnionMember2Property:
-          _recursiveUnionMember2.recursiveUnionMember2Property
-            .map((item) => RecursiveUnion.toJson(item))
-            .extract(),
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        recursiveUnionMember2Property: this_.recursiveUnionMember2Property
+          .map((item) => RecursiveUnion.toJson(item))
+          .extract(),
       } satisfies RecursiveUnionMember2.Json),
     );
   }
@@ -13889,19 +13910,26 @@ export namespace RecursiveUnionMember1 {
   }
 
   export function toJson(
+    this: RecursiveUnionMember1,
+  ): RecursiveUnionMember1.Json;
+  export function toJson(
     _recursiveUnionMember1: RecursiveUnionMember1,
+  ): RecursiveUnionMember1.Json;
+  export function toJson(
+    this: RecursiveUnionMember1 | undefined,
+    _recursiveUnionMember1?: RecursiveUnionMember1,
   ): RecursiveUnionMember1.Json {
+    const this_ = (_recursiveUnionMember1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _recursiveUnionMember1.$identifier().termType === "BlankNode"
-            ? `_:${_recursiveUnionMember1.$identifier().value}`
-            : _recursiveUnionMember1.$identifier().value,
-        "@type": _recursiveUnionMember1.$type,
-        recursiveUnionMember1Property:
-          _recursiveUnionMember1.recursiveUnionMember1Property
-            .map((item) => RecursiveUnion.toJson(item))
-            .extract(),
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        recursiveUnionMember1Property: this_.recursiveUnionMember1Property
+          .map((item) => RecursiveUnion.toJson(item))
+          .extract(),
       } satisfies RecursiveUnionMember1.Json),
     );
   }
@@ -14598,18 +14626,24 @@ export namespace PropertyPaths {
     );
   }
 
-  export function toJson(_propertyPaths: PropertyPaths): PropertyPaths.Json {
+  export function toJson(this: PropertyPaths): PropertyPaths.Json;
+  export function toJson(_propertyPaths: PropertyPaths): PropertyPaths.Json;
+  export function toJson(
+    this: PropertyPaths | undefined,
+    _propertyPaths?: PropertyPaths,
+  ): PropertyPaths.Json {
+    const this_ = (_propertyPaths ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _propertyPaths.$identifier().termType === "BlankNode"
-            ? `_:${_propertyPaths.$identifier().value}`
-            : _propertyPaths.$identifier().value,
-        "@type": _propertyPaths.$type,
-        inversePathProperty: _propertyPaths.inversePathProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        inversePathProperty: this_.inversePathProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        predicatePathProperty: _propertyPaths.predicatePathProperty
+        predicatePathProperty: this_.predicatePathProperty
           .map((item) => item)
           .extract(),
       } satisfies PropertyPaths.Json),
@@ -15493,19 +15527,25 @@ export namespace PropertyNames {
     );
   }
 
-  export function toJson(_propertyNames: PropertyNames): PropertyNames.Json {
+  export function toJson(this: PropertyNames): PropertyNames.Json;
+  export function toJson(_propertyNames: PropertyNames): PropertyNames.Json;
+  export function toJson(
+    this: PropertyNames | undefined,
+    _propertyNames?: PropertyNames,
+  ): PropertyNames.Json {
+    const this_ = (_propertyNames ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _propertyNames.$identifier().termType === "BlankNode"
-            ? `_:${_propertyNames.$identifier().value}`
-            : _propertyNames.$identifier().value,
-        "@type": _propertyNames.$type,
-        actualPropertyName1: _propertyNames.actualPropertyName1,
-        actualPropertyName2: _propertyNames.actualPropertyName2,
-        actualPropertyName3: _propertyNames.actualPropertyName3,
-        actualPropertyName4: _propertyNames.actualPropertyName4,
-        actualPropertyName5: _propertyNames.actualPropertyName5,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        actualPropertyName1: this_.actualPropertyName1,
+        actualPropertyName2: this_.actualPropertyName2,
+        actualPropertyName3: this_.actualPropertyName3,
+        actualPropertyName4: this_.actualPropertyName4,
+        actualPropertyName5: this_.actualPropertyName5,
       } satisfies PropertyNames.Json),
     );
   }
@@ -16348,23 +16388,33 @@ export namespace PropertyCardinalities {
   }
 
   export function toJson(
+    this: PropertyCardinalities,
+  ): PropertyCardinalities.Json;
+  export function toJson(
     _propertyCardinalities: PropertyCardinalities,
+  ): PropertyCardinalities.Json;
+  export function toJson(
+    this: PropertyCardinalities | undefined,
+    _propertyCardinalities?: PropertyCardinalities,
   ): PropertyCardinalities.Json {
+    const this_ = (_propertyCardinalities ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _propertyCardinalities.$identifier().termType === "BlankNode"
-            ? `_:${_propertyCardinalities.$identifier().value}`
-            : _propertyCardinalities.$identifier().value,
-        "@type": _propertyCardinalities.$type,
-        emptyStringSetProperty:
-          _propertyCardinalities.emptyStringSetProperty.map((item) => item),
-        nonEmptyStringSetProperty:
-          _propertyCardinalities.nonEmptyStringSetProperty.map((item) => item),
-        optionalStringProperty: _propertyCardinalities.optionalStringProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        emptyStringSetProperty: this_.emptyStringSetProperty.map(
+          (item) => item,
+        ),
+        nonEmptyStringSetProperty: this_.nonEmptyStringSetProperty.map(
+          (item) => item,
+        ),
+        optionalStringProperty: this_.optionalStringProperty
           .map((item) => item)
           .extract(),
-        requiredStringProperty: _propertyCardinalities.requiredStringProperty,
+        requiredStringProperty: this_.requiredStringProperty,
       } satisfies PropertyCardinalities.Json),
     );
   }
@@ -16967,17 +17017,24 @@ export namespace UnionMemberCommonParent {
   }
 
   export function toJson(
+    this: UnionMemberCommonParent,
+  ): UnionMemberCommonParent.Json;
+  export function toJson(
     _unionMemberCommonParent: UnionMemberCommonParent,
+  ): UnionMemberCommonParent.Json;
+  export function toJson(
+    this: UnionMemberCommonParent | undefined,
+    _unionMemberCommonParent?: UnionMemberCommonParent,
   ): UnionMemberCommonParent.Json {
+    const this_ = (_unionMemberCommonParent ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _unionMemberCommonParent.$identifier().termType === "BlankNode"
-            ? `_:${_unionMemberCommonParent.$identifier().value}`
-            : _unionMemberCommonParent.$identifier().value,
-        "@type": _unionMemberCommonParent.$type,
-        unionMemberCommonParentProperty:
-          _unionMemberCommonParent.unionMemberCommonParentProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        unionMemberCommonParentProperty: this_.unionMemberCommonParentProperty,
       } satisfies UnionMemberCommonParent.Json),
     );
   }
@@ -17554,16 +17611,22 @@ export namespace UnionMember2 {
     );
   }
 
-  export function toJson(_unionMember2: UnionMember2): UnionMember2.Json {
+  export function toJson(this: UnionMember2): UnionMember2.Json;
+  export function toJson(_unionMember2: UnionMember2): UnionMember2.Json;
+  export function toJson(
+    this: UnionMember2 | undefined,
+    _unionMember2?: UnionMember2,
+  ): UnionMember2.Json {
+    const this_ = (_unionMember2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...UnionMemberCommonParent.toJson(_unionMember2),
+        ...UnionMemberCommonParent.toJson(this_),
         "@id":
-          _unionMember2.$identifier().termType === "BlankNode"
-            ? `_:${_unionMember2.$identifier().value}`
-            : _unionMember2.$identifier().value,
-        "@type": _unionMember2.$type,
-        unionMember2Property: _unionMember2.unionMember2Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        unionMember2Property: this_.unionMember2Property,
       } satisfies UnionMember2.Json),
     );
   }
@@ -18117,18 +18180,23 @@ export namespace PartialUnionMember2 {
     );
   }
 
+  export function toJson(this: PartialUnionMember2): PartialUnionMember2.Json;
   export function toJson(
     _partialUnionMember2: PartialUnionMember2,
+  ): PartialUnionMember2.Json;
+  export function toJson(
+    this: PartialUnionMember2 | undefined,
+    _partialUnionMember2?: PartialUnionMember2,
   ): PartialUnionMember2.Json {
+    const this_ = (_partialUnionMember2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partialUnionMember2.$identifier().termType === "BlankNode"
-            ? `_:${_partialUnionMember2.$identifier().value}`
-            : _partialUnionMember2.$identifier().value,
-        "@type": _partialUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _partialUnionMember2.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies PartialUnionMember2.Json),
     );
   }
@@ -18698,16 +18766,22 @@ export namespace UnionMember1 {
     );
   }
 
-  export function toJson(_unionMember1: UnionMember1): UnionMember1.Json {
+  export function toJson(this: UnionMember1): UnionMember1.Json;
+  export function toJson(_unionMember1: UnionMember1): UnionMember1.Json;
+  export function toJson(
+    this: UnionMember1 | undefined,
+    _unionMember1?: UnionMember1,
+  ): UnionMember1.Json {
+    const this_ = (_unionMember1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...UnionMemberCommonParent.toJson(_unionMember1),
+        ...UnionMemberCommonParent.toJson(this_),
         "@id":
-          _unionMember1.$identifier().termType === "BlankNode"
-            ? `_:${_unionMember1.$identifier().value}`
-            : _unionMember1.$identifier().value,
-        "@type": _unionMember1.$type,
-        unionMember1Property: _unionMember1.unionMember1Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        unionMember1Property: this_.unionMember1Property,
       } satisfies UnionMember1.Json),
     );
   }
@@ -19261,18 +19335,23 @@ export namespace PartialUnionMember1 {
     );
   }
 
+  export function toJson(this: PartialUnionMember1): PartialUnionMember1.Json;
   export function toJson(
     _partialUnionMember1: PartialUnionMember1,
+  ): PartialUnionMember1.Json;
+  export function toJson(
+    this: PartialUnionMember1 | undefined,
+    _partialUnionMember1?: PartialUnionMember1,
   ): PartialUnionMember1.Json {
+    const this_ = (_partialUnionMember1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partialUnionMember1.$identifier().termType === "BlankNode"
-            ? `_:${_partialUnionMember1.$identifier().value}`
-            : _partialUnionMember1.$identifier().value,
-        "@type": _partialUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _partialUnionMember1.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies PartialUnionMember1.Json),
     );
   }
@@ -19724,14 +19803,20 @@ export namespace NewName {
     );
   }
 
-  export function toJson(_newName: NewName): NewName.Json {
+  export function toJson(this: NewName): NewName.Json;
+  export function toJson(_newName: NewName): NewName.Json;
+  export function toJson(
+    this: NewName | undefined,
+    _newName?: NewName,
+  ): NewName.Json {
+    const this_ = (_newName ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _newName.$identifier().termType === "BlankNode"
-            ? `_:${_newName.$identifier().value}`
-            : _newName.$identifier().value,
-        "@type": _newName.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies NewName.Json),
     );
   }
@@ -20314,19 +20399,25 @@ export namespace OrderedProperties {
     );
   }
 
+  export function toJson(this: OrderedProperties): OrderedProperties.Json;
   export function toJson(
     _orderedProperties: OrderedProperties,
+  ): OrderedProperties.Json;
+  export function toJson(
+    this: OrderedProperties | undefined,
+    _orderedProperties?: OrderedProperties,
   ): OrderedProperties.Json {
+    const this_ = (_orderedProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _orderedProperties.$identifier().termType === "BlankNode"
-            ? `_:${_orderedProperties.$identifier().value}`
-            : _orderedProperties.$identifier().value,
-        "@type": _orderedProperties.$type,
-        orderedPropertyC: _orderedProperties.orderedPropertyC,
-        orderedPropertyB: _orderedProperties.orderedPropertyB,
-        orderedPropertyA: _orderedProperties.orderedPropertyA,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        orderedPropertyC: this_.orderedPropertyC,
+        orderedPropertyB: this_.orderedPropertyB,
+        orderedPropertyA: this_.orderedPropertyA,
       } satisfies OrderedProperties.Json),
     );
   }
@@ -22491,72 +22582,72 @@ export namespace NumericProperties {
     );
   }
 
+  export function toJson(this: NumericProperties): NumericProperties.Json;
   export function toJson(
     _numericProperties: NumericProperties,
+  ): NumericProperties.Json;
+  export function toJson(
+    this: NumericProperties | undefined,
+    _numericProperties?: NumericProperties,
   ): NumericProperties.Json {
+    const this_ = (_numericProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _numericProperties.$identifier().termType === "BlankNode"
-            ? `_:${_numericProperties.$identifier().value}`
-            : _numericProperties.$identifier().value,
-        "@type": _numericProperties.$type,
-        byteNumericProperty: _numericProperties.byteNumericProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        byteNumericProperty: this_.byteNumericProperty
           .map((item) => item)
           .extract(),
-        decimalNumericProperty: _numericProperties.decimalNumericProperty
+        decimalNumericProperty: this_.decimalNumericProperty
           .map((item) => item.toFixed())
           .extract(),
-        doubleNumericProperty: _numericProperties.doubleNumericProperty
+        doubleNumericProperty: this_.doubleNumericProperty
           .map((item) => item)
           .extract(),
-        floatNumericProperty: _numericProperties.floatNumericProperty
+        floatNumericProperty: this_.floatNumericProperty
           .map((item) => item)
           .extract(),
-        integerNumericProperty: _numericProperties.integerNumericProperty
+        integerNumericProperty: this_.integerNumericProperty
           .map((item) => item.toString())
           .extract(),
-        intNumericProperty: _numericProperties.intNumericProperty
+        intNumericProperty: this_.intNumericProperty
           .map((item) => item)
           .extract(),
-        longNumericProperty: _numericProperties.longNumericProperty
+        longNumericProperty: this_.longNumericProperty
           .map((item) => item.toString())
           .extract(),
-        negativeIntegerNumericProperty:
-          _numericProperties.negativeIntegerNumericProperty
-            .map((item) => item.toString())
-            .extract(),
+        negativeIntegerNumericProperty: this_.negativeIntegerNumericProperty
+          .map((item) => item.toString())
+          .extract(),
         nonNegativeIntegerNumericProperty:
-          _numericProperties.nonNegativeIntegerNumericProperty
+          this_.nonNegativeIntegerNumericProperty
             .map((item) => item.toString())
             .extract(),
         nonPositiveIntegerNumericProperty:
-          _numericProperties.nonPositiveIntegerNumericProperty
+          this_.nonPositiveIntegerNumericProperty
             .map((item) => item.toString())
             .extract(),
-        positiveIntegerNumericProperty:
-          _numericProperties.positiveIntegerNumericProperty
-            .map((item) => item.toString())
-            .extract(),
-        shortNumericProperty: _numericProperties.shortNumericProperty
+        positiveIntegerNumericProperty: this_.positiveIntegerNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        shortNumericProperty: this_.shortNumericProperty
           .map((item) => item)
           .extract(),
-        unsignedByteNumericProperty:
-          _numericProperties.unsignedByteNumericProperty
-            .map((item) => item)
-            .extract(),
-        unsignedIntNumericProperty:
-          _numericProperties.unsignedIntNumericProperty
-            .map((item) => item)
-            .extract(),
-        unsignedLongNumericProperty:
-          _numericProperties.unsignedLongNumericProperty
-            .map((item) => item.toString())
-            .extract(),
-        unsignedShortNumericProperty:
-          _numericProperties.unsignedShortNumericProperty
-            .map((item) => item)
-            .extract(),
+        unsignedByteNumericProperty: this_.unsignedByteNumericProperty
+          .map((item) => item)
+          .extract(),
+        unsignedIntNumericProperty: this_.unsignedIntNumericProperty
+          .map((item) => item)
+          .extract(),
+        unsignedLongNumericProperty: this_.unsignedLongNumericProperty
+          .map((item) => item.toString())
+          .extract(),
+        unsignedShortNumericProperty: this_.unsignedShortNumericProperty
+          .map((item) => item)
+          .extract(),
       } satisfies NumericProperties.Json),
     );
   }
@@ -23767,73 +23858,77 @@ export namespace NodeKinds {
     );
   }
 
-  export function toJson(_nodeKinds: NodeKinds): NodeKinds.Json {
+  export function toJson(this: NodeKinds): NodeKinds.Json;
+  export function toJson(_nodeKinds: NodeKinds): NodeKinds.Json;
+  export function toJson(
+    this: NodeKinds | undefined,
+    _nodeKinds?: NodeKinds,
+  ): NodeKinds.Json {
+    const this_ = (_nodeKinds ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _nodeKinds.$identifier().termType === "BlankNode"
-            ? `_:${_nodeKinds.$identifier().value}`
-            : _nodeKinds.$identifier().value,
-        "@type": _nodeKinds.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         blankNodeKindProperty: {
-          "@id": `_:${_nodeKinds.blankNodeKindProperty.value}`,
+          "@id": `_:${this_.blankNodeKindProperty.value}`,
         },
         blankNodeOrIriNodeKindProperty:
-          _nodeKinds.blankNodeOrIriNodeKindProperty.termType === "BlankNode"
-            ? { "@id": `_:${_nodeKinds.blankNodeOrIriNodeKindProperty.value}` }
-            : { "@id": _nodeKinds.blankNodeOrIriNodeKindProperty.value },
+          this_.blankNodeOrIriNodeKindProperty.termType === "BlankNode"
+            ? { "@id": `_:${this_.blankNodeOrIriNodeKindProperty.value}` }
+            : { "@id": this_.blankNodeOrIriNodeKindProperty.value },
         blankNodeOrLiteralNodeKindProperty:
-          _nodeKinds.blankNodeOrLiteralNodeKindProperty.termType === "Literal"
+          this_.blankNodeOrLiteralNodeKindProperty.termType === "Literal"
             ? {
                 "@language":
-                  _nodeKinds.blankNodeOrLiteralNodeKindProperty.language
-                    .length > 0
-                    ? _nodeKinds.blankNodeOrLiteralNodeKindProperty.language
+                  this_.blankNodeOrLiteralNodeKindProperty.language.length > 0
+                    ? this_.blankNodeOrLiteralNodeKindProperty.language
                     : undefined,
                 "@type":
-                  _nodeKinds.blankNodeOrLiteralNodeKindProperty.datatype
-                    .value !== "http://www.w3.org/2001/XMLSchema#string"
-                    ? _nodeKinds.blankNodeOrLiteralNodeKindProperty.datatype
-                        .value
+                  this_.blankNodeOrLiteralNodeKindProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this_.blankNodeOrLiteralNodeKindProperty.datatype.value
                     : undefined,
-                "@value": _nodeKinds.blankNodeOrLiteralNodeKindProperty.value,
+                "@value": this_.blankNodeOrLiteralNodeKindProperty.value,
                 termType: "Literal" as const,
               }
             : {
-                "@id": `_:${_nodeKinds.blankNodeOrLiteralNodeKindProperty.value}`,
+                "@id": `_:${this_.blankNodeOrLiteralNodeKindProperty.value}`,
                 termType: "BlankNode" as const,
               },
-        iriNodeKindProperty: { "@id": _nodeKinds.iriNodeKindProperty.value },
+        iriNodeKindProperty: { "@id": this_.iriNodeKindProperty.value },
         iriOrLiteralNodeKindProperty:
-          _nodeKinds.iriOrLiteralNodeKindProperty.termType === "Literal"
+          this_.iriOrLiteralNodeKindProperty.termType === "Literal"
             ? {
                 "@language":
-                  _nodeKinds.iriOrLiteralNodeKindProperty.language.length > 0
-                    ? _nodeKinds.iriOrLiteralNodeKindProperty.language
+                  this_.iriOrLiteralNodeKindProperty.language.length > 0
+                    ? this_.iriOrLiteralNodeKindProperty.language
                     : undefined,
                 "@type":
-                  _nodeKinds.iriOrLiteralNodeKindProperty.datatype.value !==
+                  this_.iriOrLiteralNodeKindProperty.datatype.value !==
                   "http://www.w3.org/2001/XMLSchema#string"
-                    ? _nodeKinds.iriOrLiteralNodeKindProperty.datatype.value
+                    ? this_.iriOrLiteralNodeKindProperty.datatype.value
                     : undefined,
-                "@value": _nodeKinds.iriOrLiteralNodeKindProperty.value,
+                "@value": this_.iriOrLiteralNodeKindProperty.value,
                 termType: "Literal" as const,
               }
             : {
-                "@id": _nodeKinds.iriOrLiteralNodeKindProperty.value,
+                "@id": this_.iriOrLiteralNodeKindProperty.value,
                 termType: "NamedNode" as const,
               },
         literalNodeKindProperty: {
           "@language":
-            _nodeKinds.literalNodeKindProperty.language.length > 0
-              ? _nodeKinds.literalNodeKindProperty.language
+            this_.literalNodeKindProperty.language.length > 0
+              ? this_.literalNodeKindProperty.language
               : undefined,
           "@type":
-            _nodeKinds.literalNodeKindProperty.datatype.value !==
+            this_.literalNodeKindProperty.datatype.value !==
             "http://www.w3.org/2001/XMLSchema#string"
-              ? _nodeKinds.literalNodeKindProperty.datatype.value
+              ? this_.literalNodeKindProperty.datatype.value
               : undefined,
-          "@value": _nodeKinds.literalNodeKindProperty.value,
+          "@value": this_.literalNodeKindProperty.value,
         },
       } satisfies NodeKinds.Json),
     );
@@ -24316,17 +24411,24 @@ export namespace NoRdfTypeUnionMember2 {
   }
 
   export function toJson(
+    this: NoRdfTypeUnionMember2,
+  ): NoRdfTypeUnionMember2.Json;
+  export function toJson(
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
+  ): NoRdfTypeUnionMember2.Json;
+  export function toJson(
+    this: NoRdfTypeUnionMember2 | undefined,
+    _noRdfTypeUnionMember2?: NoRdfTypeUnionMember2,
   ): NoRdfTypeUnionMember2.Json {
+    const this_ = (_noRdfTypeUnionMember2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _noRdfTypeUnionMember2.$identifier().termType === "BlankNode"
-            ? `_:${_noRdfTypeUnionMember2.$identifier().value}`
-            : _noRdfTypeUnionMember2.$identifier().value,
-        "@type": _noRdfTypeUnionMember2.$type,
-        noRdfTypeUnionMember2Property:
-          _noRdfTypeUnionMember2.noRdfTypeUnionMember2Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        noRdfTypeUnionMember2Property: this_.noRdfTypeUnionMember2Property,
       } satisfies NoRdfTypeUnionMember2.Json),
     );
   }
@@ -24781,17 +24883,24 @@ export namespace NoRdfTypeUnionMember1 {
   }
 
   export function toJson(
+    this: NoRdfTypeUnionMember1,
+  ): NoRdfTypeUnionMember1.Json;
+  export function toJson(
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
+  ): NoRdfTypeUnionMember1.Json;
+  export function toJson(
+    this: NoRdfTypeUnionMember1 | undefined,
+    _noRdfTypeUnionMember1?: NoRdfTypeUnionMember1,
   ): NoRdfTypeUnionMember1.Json {
+    const this_ = (_noRdfTypeUnionMember1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _noRdfTypeUnionMember1.$identifier().termType === "BlankNode"
-            ? `_:${_noRdfTypeUnionMember1.$identifier().value}`
-            : _noRdfTypeUnionMember1.$identifier().value,
-        "@type": _noRdfTypeUnionMember1.$type,
-        noRdfTypeUnionMember1Property:
-          _noRdfTypeUnionMember1.noRdfTypeUnionMember1Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        noRdfTypeUnionMember1Property: this_.noRdfTypeUnionMember1Property,
       } satisfies NoRdfTypeUnionMember1.Json),
     );
   }
@@ -25434,22 +25543,24 @@ export namespace NamedUnionProperties {
     );
   }
 
+  export function toJson(this: NamedUnionProperties): NamedUnionProperties.Json;
   export function toJson(
     _namedUnionProperties: NamedUnionProperties,
+  ): NamedUnionProperties.Json;
+  export function toJson(
+    this: NamedUnionProperties | undefined,
+    _namedUnionProperties?: NamedUnionProperties,
   ): NamedUnionProperties.Json {
+    const this_ = (_namedUnionProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _namedUnionProperties.$identifier().termType === "BlankNode"
-            ? `_:${_namedUnionProperties.$identifier().value}`
-            : _namedUnionProperties.$identifier().value,
-        "@type": _namedUnionProperties.$type,
-        namedUnion1Property: NamedUnion1.toJson(
-          _namedUnionProperties.namedUnion1Property,
-        ),
-        namedUnion2Property: NamedUnion2.toJson(
-          _namedUnionProperties.namedUnion2Property,
-        ),
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        namedUnion1Property: NamedUnion1.toJson(this_.namedUnion1Property),
+        namedUnion2Property: NamedUnion2.toJson(this_.namedUnion2Property),
       } satisfies NamedUnionProperties.Json),
     );
   }
@@ -26317,23 +26428,27 @@ export namespace MutableProperties {
     );
   }
 
+  export function toJson(this: MutableProperties): MutableProperties.Json;
   export function toJson(
     _mutableProperties: MutableProperties,
+  ): MutableProperties.Json;
+  export function toJson(
+    this: MutableProperties | undefined,
+    _mutableProperties?: MutableProperties,
   ): MutableProperties.Json {
+    const this_ = (_mutableProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _mutableProperties.$identifier().termType === "BlankNode"
-            ? `_:${_mutableProperties.$identifier().value}`
-            : _mutableProperties.$identifier().value,
-        "@type": _mutableProperties.$type,
-        mutableListProperty: _mutableProperties.mutableListProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        mutableListProperty: this_.mutableListProperty
           .map((item) => item.map((item) => item))
           .extract(),
-        mutableSetProperty: _mutableProperties.mutableSetProperty.map(
-          (item) => item,
-        ),
-        mutableStringProperty: _mutableProperties.mutableStringProperty
+        mutableSetProperty: this_.mutableSetProperty.map((item) => item),
+        mutableStringProperty: this_.mutableStringProperty
           .map((item) => item)
           .extract(),
       } satisfies MutableProperties.Json),
@@ -26988,18 +27103,25 @@ export namespace ClassMultipleInheritanceParent2 {
   }
 
   export function toJson(
+    this: ClassMultipleInheritanceParent2,
+  ): ClassMultipleInheritanceParent2.Json;
+  export function toJson(
     _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
+  ): ClassMultipleInheritanceParent2.Json;
+  export function toJson(
+    this: ClassMultipleInheritanceParent2 | undefined,
+    _classMultipleInheritanceParent2?: ClassMultipleInheritanceParent2,
   ): ClassMultipleInheritanceParent2.Json {
+    const this_ = (_classMultipleInheritanceParent2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _classMultipleInheritanceParent2.$identifier().termType ===
-          "BlankNode"
-            ? `_:${_classMultipleInheritanceParent2.$identifier().value}`
-            : _classMultipleInheritanceParent2.$identifier().value,
-        "@type": _classMultipleInheritanceParent2.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         classMultipleInheritanceParent2Property:
-          _classMultipleInheritanceParent2.classMultipleInheritanceParent2Property,
+          this_.classMultipleInheritanceParent2Property,
       } satisfies ClassMultipleInheritanceParent2.Json),
     );
   }
@@ -27599,18 +27721,25 @@ export namespace ClassMultipleInheritanceParent1 {
   }
 
   export function toJson(
+    this: ClassMultipleInheritanceParent1,
+  ): ClassMultipleInheritanceParent1.Json;
+  export function toJson(
     _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
+  ): ClassMultipleInheritanceParent1.Json;
+  export function toJson(
+    this: ClassMultipleInheritanceParent1 | undefined,
+    _classMultipleInheritanceParent1?: ClassMultipleInheritanceParent1,
   ): ClassMultipleInheritanceParent1.Json {
+    const this_ = (_classMultipleInheritanceParent1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _classMultipleInheritanceParent1.$identifier().termType ===
-          "BlankNode"
-            ? `_:${_classMultipleInheritanceParent1.$identifier().value}`
-            : _classMultipleInheritanceParent1.$identifier().value,
-        "@type": _classMultipleInheritanceParent1.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         classMultipleInheritanceParent1Property:
-          _classMultipleInheritanceParent1.classMultipleInheritanceParent1Property,
+          this_.classMultipleInheritanceParent1Property,
       } satisfies ClassMultipleInheritanceParent1.Json),
     );
   }
@@ -28268,23 +28397,27 @@ export namespace ClassMultipleInheritanceChild {
   }
 
   export function toJson(
+    this: ClassMultipleInheritanceChild,
+  ): ClassMultipleInheritanceChild.Json;
+  export function toJson(
     _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
+  ): ClassMultipleInheritanceChild.Json;
+  export function toJson(
+    this: ClassMultipleInheritanceChild | undefined,
+    _classMultipleInheritanceChild?: ClassMultipleInheritanceChild,
   ): ClassMultipleInheritanceChild.Json {
+    const this_ = (_classMultipleInheritanceChild ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...ClassMultipleInheritanceParent1.toJson(
-          _classMultipleInheritanceChild,
-        ),
-        ...ClassMultipleInheritanceParent2.toJson(
-          _classMultipleInheritanceChild,
-        ),
+        ...ClassMultipleInheritanceParent1.toJson(this_),
+        ...ClassMultipleInheritanceParent2.toJson(this_),
         "@id":
-          _classMultipleInheritanceChild.$identifier().termType === "BlankNode"
-            ? `_:${_classMultipleInheritanceChild.$identifier().value}`
-            : _classMultipleInheritanceChild.$identifier().value,
-        "@type": _classMultipleInheritanceChild.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         classMultipleInheritanceChildProperty:
-          _classMultipleInheritanceChild.classMultipleInheritanceChildProperty,
+          this_.classMultipleInheritanceChildProperty,
       } satisfies ClassMultipleInheritanceChild.Json),
     );
   }
@@ -29237,21 +29370,27 @@ export namespace ListProperties {
     );
   }
 
-  export function toJson(_listProperties: ListProperties): ListProperties.Json {
+  export function toJson(this: ListProperties): ListProperties.Json;
+  export function toJson(_listProperties: ListProperties): ListProperties.Json;
+  export function toJson(
+    this: ListProperties | undefined,
+    _listProperties?: ListProperties,
+  ): ListProperties.Json {
+    const this_ = (_listProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _listProperties.$identifier().termType === "BlankNode"
-            ? `_:${_listProperties.$identifier().value}`
-            : _listProperties.$identifier().value,
-        "@type": _listProperties.$type,
-        iriListProperty: _listProperties.iriListProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        iriListProperty: this_.iriListProperty
           .map((item) => item.map((item) => ({ "@id": item.value })))
           .extract(),
-        objectListProperty: _listProperties.objectListProperty
+        objectListProperty: this_.objectListProperty
           .map((item) => item.map((item) => NonClass.toJson(item)))
           .extract(),
-        stringListProperty: _listProperties.stringListProperty
+        stringListProperty: this_.stringListProperty
           .map((item) => item.map((item) => item))
           .extract(),
       } satisfies ListProperties.Json),
@@ -31767,55 +31906,60 @@ export namespace LazyProperties {
     );
   }
 
-  export function toJson(_lazyProperties: LazyProperties): LazyProperties.Json {
+  export function toJson(this: LazyProperties): LazyProperties.Json;
+  export function toJson(_lazyProperties: LazyProperties): LazyProperties.Json;
+  export function toJson(
+    this: LazyProperties | undefined,
+    _lazyProperties?: LazyProperties,
+  ): LazyProperties.Json {
+    const this_ = (_lazyProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazyProperties.$identifier().termType === "BlankNode"
-            ? `_:${_lazyProperties.$identifier().value}`
-            : _lazyProperties.$identifier().value,
-        "@type": _lazyProperties.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         optionalLazyToResolvedBlankNodeOrIriIdentifierProperty:
-          _lazyProperties.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.partial
+          this_.optionalLazyToResolvedBlankNodeOrIriIdentifierProperty.partial
             .map((item) => $DefaultPartial.toJson(item))
             .extract(),
         optionalLazyToResolvedIriIdentifierProperty:
-          _lazyProperties.optionalLazyToResolvedIriIdentifierProperty.partial
+          this_.optionalLazyToResolvedIriIdentifierProperty.partial
             .map((item) => $NamedDefaultPartial.toJson(item))
             .extract(),
         optionalLazyToResolvedUnionProperty:
-          _lazyProperties.optionalLazyToResolvedUnionProperty.partial
+          this_.optionalLazyToResolvedUnionProperty.partial
             .map((item) => $DefaultPartial.toJson(item))
             .extract(),
         optionalPartialToResolvedBlankNodeOrIriIdentifierProperty:
-          _lazyProperties.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.partial
+          this_.optionalPartialToResolvedBlankNodeOrIriIdentifierProperty.partial
             .map((item) => Partial.toJson(item))
             .extract(),
         optionalPartialToResolvedUnionProperty:
-          _lazyProperties.optionalPartialToResolvedUnionProperty.partial
+          this_.optionalPartialToResolvedUnionProperty.partial
             .map((item) => Partial.toJson(item))
             .extract(),
         optionalPartialUnionToResolvedUnionProperty:
-          _lazyProperties.optionalPartialUnionToResolvedUnionProperty.partial
+          this_.optionalPartialUnionToResolvedUnionProperty.partial
             .map((item) => PartialUnion.toJson(item))
             .extract(),
         requiredLazyToResolvedBlankNodeOrIriIdentifierProperty:
           $DefaultPartial.toJson(
-            _lazyProperties
-              .requiredLazyToResolvedBlankNodeOrIriIdentifierProperty.partial,
+            this_.requiredLazyToResolvedBlankNodeOrIriIdentifierProperty
+              .partial,
           ),
         requiredPartialToResolvedBlankNodeOrIriIdentifierProperty:
           Partial.toJson(
-            _lazyProperties
-              .requiredPartialToResolvedBlankNodeOrIriIdentifierProperty
+            this_.requiredPartialToResolvedBlankNodeOrIriIdentifierProperty
               .partial,
           ),
         setLazyToResolvedBlankNodeOrIriIdentifierProperty:
-          _lazyProperties.setLazyToResolvedBlankNodeOrIriIdentifierProperty.partials.map(
+          this_.setLazyToResolvedBlankNodeOrIriIdentifierProperty.partials.map(
             (item) => $DefaultPartial.toJson(item),
           ),
         setPartialToResolvedBlankNodeOrIriIdentifierProperty:
-          _lazyProperties.setPartialToResolvedBlankNodeOrIriIdentifierProperty.partials.map(
+          this_.setPartialToResolvedBlankNodeOrIriIdentifierProperty.partials.map(
             (item) => Partial.toJson(item),
           ),
       } satisfies LazyProperties.Json),
@@ -32410,14 +32554,21 @@ export namespace LazilyResolvedIriIdentifier {
   }
 
   export function toJson(
+    this: LazilyResolvedIriIdentifier,
+  ): LazilyResolvedIriIdentifier.Json;
+  export function toJson(
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
+  ): LazilyResolvedIriIdentifier.Json;
+  export function toJson(
+    this: LazilyResolvedIriIdentifier | undefined,
+    _lazilyResolvedIriIdentifier?: LazilyResolvedIriIdentifier,
   ): LazilyResolvedIriIdentifier.Json {
+    const this_ = (_lazilyResolvedIriIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        "@id": _lazilyResolvedIriIdentifier.$identifier().value,
-        "@type": _lazilyResolvedIriIdentifier.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedIriIdentifier.lazilyResolvedStringProperty,
+        "@id": this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedIriIdentifier.Json),
     );
   }
@@ -32976,17 +33127,24 @@ export namespace LazilyResolvedUnionMember2 {
   }
 
   export function toJson(
+    this: LazilyResolvedUnionMember2,
+  ): LazilyResolvedUnionMember2.Json;
+  export function toJson(
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
+  ): LazilyResolvedUnionMember2.Json;
+  export function toJson(
+    this: LazilyResolvedUnionMember2 | undefined,
+    _lazilyResolvedUnionMember2?: LazilyResolvedUnionMember2,
   ): LazilyResolvedUnionMember2.Json {
+    const this_ = (_lazilyResolvedUnionMember2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedUnionMember2.$identifier().termType === "BlankNode"
-            ? `_:${_lazilyResolvedUnionMember2.$identifier().value}`
-            : _lazilyResolvedUnionMember2.$identifier().value,
-        "@type": _lazilyResolvedUnionMember2.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedUnionMember2.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedUnionMember2.Json),
     );
   }
@@ -33552,17 +33710,24 @@ export namespace LazilyResolvedUnionMember1 {
   }
 
   export function toJson(
+    this: LazilyResolvedUnionMember1,
+  ): LazilyResolvedUnionMember1.Json;
+  export function toJson(
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
+  ): LazilyResolvedUnionMember1.Json;
+  export function toJson(
+    this: LazilyResolvedUnionMember1 | undefined,
+    _lazilyResolvedUnionMember1?: LazilyResolvedUnionMember1,
   ): LazilyResolvedUnionMember1.Json {
+    const this_ = (_lazilyResolvedUnionMember1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedUnionMember1.$identifier().termType === "BlankNode"
-            ? `_:${_lazilyResolvedUnionMember1.$identifier().value}`
-            : _lazilyResolvedUnionMember1.$identifier().value,
-        "@type": _lazilyResolvedUnionMember1.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedUnionMember1.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedUnionMember1.Json),
     );
   }
@@ -34139,18 +34304,24 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   }
 
   export function toJson(
+    this: LazilyResolvedBlankNodeOrIriIdentifier,
+  ): LazilyResolvedBlankNodeOrIriIdentifier.Json;
+  export function toJson(
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
+  ): LazilyResolvedBlankNodeOrIriIdentifier.Json;
+  export function toJson(
+    this: LazilyResolvedBlankNodeOrIriIdentifier | undefined,
+    _lazilyResolvedBlankNodeOrIriIdentifier?: LazilyResolvedBlankNodeOrIriIdentifier,
   ): LazilyResolvedBlankNodeOrIriIdentifier.Json {
+    const this_ = (_lazilyResolvedBlankNodeOrIriIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _lazilyResolvedBlankNodeOrIriIdentifier.$identifier().termType ===
-          "BlankNode"
-            ? `_:${_lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value}`
-            : _lazilyResolvedBlankNodeOrIriIdentifier.$identifier().value,
-        "@type": _lazilyResolvedBlankNodeOrIriIdentifier.$type,
-        lazilyResolvedStringProperty:
-          _lazilyResolvedBlankNodeOrIriIdentifier.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies LazilyResolvedBlankNodeOrIriIdentifier.Json),
     );
   }
@@ -34696,25 +34867,32 @@ export namespace LanguageInProperties {
     );
   }
 
+  export function toJson(this: LanguageInProperties): LanguageInProperties.Json;
   export function toJson(
     _languageInProperties: LanguageInProperties,
+  ): LanguageInProperties.Json;
+  export function toJson(
+    this: LanguageInProperties | undefined,
+    _languageInProperties?: LanguageInProperties,
   ): LanguageInProperties.Json {
+    const this_ = (_languageInProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _languageInProperties.$identifier().termType === "BlankNode"
-            ? `_:${_languageInProperties.$identifier().value}`
-            : _languageInProperties.$identifier().value,
-        "@type": _languageInProperties.$type,
-        languageInLiteralProperty:
-          _languageInProperties.languageInLiteralProperty.map((item) => ({
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        languageInLiteralProperty: this_.languageInLiteralProperty.map(
+          (item) => ({
             "@language": item.language.length > 0 ? item.language : undefined,
             "@type":
               item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
                 ? item.datatype.value
                 : undefined,
             "@value": item.value,
-          })),
+          }),
+        ),
       } satisfies LanguageInProperties.Json),
     );
   }
@@ -35641,31 +35819,38 @@ export namespace JsPrimitiveUnionProperty {
   }
 
   export function toJson(
+    this: JsPrimitiveUnionProperty,
+  ): JsPrimitiveUnionProperty.Json;
+  export function toJson(
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
+  ): JsPrimitiveUnionProperty.Json;
+  export function toJson(
+    this: JsPrimitiveUnionProperty | undefined,
+    _jsPrimitiveUnionProperty?: JsPrimitiveUnionProperty,
   ): JsPrimitiveUnionProperty.Json {
+    const this_ = (_jsPrimitiveUnionProperty ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _jsPrimitiveUnionProperty.$identifier().termType === "BlankNode"
-            ? `_:${_jsPrimitiveUnionProperty.$identifier().value}`
-            : _jsPrimitiveUnionProperty.$identifier().value,
-        "@type": _jsPrimitiveUnionProperty.$type,
-        jsPrimitiveUnionProperty:
-          _jsPrimitiveUnionProperty.jsPrimitiveUnionProperty.map((item) =>
-            ((value: boolean | number | string): boolean | number | string => {
-              if (typeof value === "boolean") {
-                return value;
-              }
-              if (typeof value === "number") {
-                return value;
-              }
-              if (typeof value === "string") {
-                return value;
-              }
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        jsPrimitiveUnionProperty: this_.jsPrimitiveUnionProperty.map((item) =>
+          ((value: boolean | number | string): boolean | number | string => {
+            if (typeof value === "boolean") {
+              return value;
+            }
+            if (typeof value === "number") {
+              return value;
+            }
+            if (typeof value === "string") {
+              return value;
+            }
 
-              throw new Error("unable to serialize to JSON");
-            })(item),
-          ),
+            throw new Error("unable to serialize to JSON");
+          })(item),
+        ),
       } satisfies JsPrimitiveUnionProperty.Json),
     );
   }
@@ -36153,11 +36338,17 @@ export namespace IriIdentifier {
     );
   }
 
-  export function toJson(_iriIdentifier: IriIdentifier): IriIdentifier.Json {
+  export function toJson(this: IriIdentifier): IriIdentifier.Json;
+  export function toJson(_iriIdentifier: IriIdentifier): IriIdentifier.Json;
+  export function toJson(
+    this: IriIdentifier | undefined,
+    _iriIdentifier?: IriIdentifier,
+  ): IriIdentifier.Json {
+    const this_ = (_iriIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        "@id": _iriIdentifier.$identifier().value,
-        "@type": _iriIdentifier.$type,
+        "@id": this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies IriIdentifier.Json),
     );
   }
@@ -36720,19 +36911,26 @@ export namespace IndirectRecursiveHelper {
   }
 
   export function toJson(
+    this: IndirectRecursiveHelper,
+  ): IndirectRecursiveHelper.Json;
+  export function toJson(
     _indirectRecursiveHelper: IndirectRecursiveHelper,
+  ): IndirectRecursiveHelper.Json;
+  export function toJson(
+    this: IndirectRecursiveHelper | undefined,
+    _indirectRecursiveHelper?: IndirectRecursiveHelper,
   ): IndirectRecursiveHelper.Json {
+    const this_ = (_indirectRecursiveHelper ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _indirectRecursiveHelper.$identifier().termType === "BlankNode"
-            ? `_:${_indirectRecursiveHelper.$identifier().value}`
-            : _indirectRecursiveHelper.$identifier().value,
-        "@type": _indirectRecursiveHelper.$type,
-        indirectRecursiveProperty:
-          _indirectRecursiveHelper.indirectRecursiveProperty
-            .map((item) => IndirectRecursive.toJson(item))
-            .extract(),
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        indirectRecursiveProperty: this_.indirectRecursiveProperty
+          .map((item) => IndirectRecursive.toJson(item))
+          .extract(),
       } satisfies IndirectRecursiveHelper.Json),
     );
   }
@@ -37303,20 +37501,25 @@ export namespace IndirectRecursive {
     );
   }
 
+  export function toJson(this: IndirectRecursive): IndirectRecursive.Json;
   export function toJson(
     _indirectRecursive: IndirectRecursive,
+  ): IndirectRecursive.Json;
+  export function toJson(
+    this: IndirectRecursive | undefined,
+    _indirectRecursive?: IndirectRecursive,
   ): IndirectRecursive.Json {
+    const this_ = (_indirectRecursive ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _indirectRecursive.$identifier().termType === "BlankNode"
-            ? `_:${_indirectRecursive.$identifier().value}`
-            : _indirectRecursive.$identifier().value,
-        "@type": _indirectRecursive.$type,
-        indirectRecursiveHelperProperty:
-          _indirectRecursive.indirectRecursiveHelperProperty
-            .map((item) => IndirectRecursiveHelper.toJson(item))
-            .extract(),
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        indirectRecursiveHelperProperty: this_.indirectRecursiveHelperProperty
+          .map((item) => IndirectRecursiveHelper.toJson(item))
+          .extract(),
       } satisfies IndirectRecursive.Json),
     );
   }
@@ -38489,30 +38692,36 @@ export namespace InProperties {
     );
   }
 
-  export function toJson(_inProperties: InProperties): InProperties.Json {
+  export function toJson(this: InProperties): InProperties.Json;
+  export function toJson(_inProperties: InProperties): InProperties.Json;
+  export function toJson(
+    this: InProperties | undefined,
+    _inProperties?: InProperties,
+  ): InProperties.Json {
+    const this_ = (_inProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _inProperties.$identifier().termType === "BlankNode"
-            ? `_:${_inProperties.$identifier().value}`
-            : _inProperties.$identifier().value,
-        "@type": _inProperties.$type,
-        inBooleansProperty: _inProperties.inBooleansProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        inBooleansProperty: this_.inBooleansProperty
           .map((item) => item)
           .extract(),
-        inDateTimesProperty: _inProperties.inDateTimesProperty
+        inDateTimesProperty: this_.inDateTimesProperty
           .map((item) => item.toISOString())
           .extract(),
-        inDoublesProperty: _inProperties.inDoublesProperty
+        inDoublesProperty: this_.inDoublesProperty
           .map((item) => item)
           .extract(),
-        inIntegersProperty: _inProperties.inIntegersProperty
+        inIntegersProperty: this_.inIntegersProperty
           .map((item) => item.toString())
           .extract(),
-        inIrisProperty: _inProperties.inIrisProperty
+        inIrisProperty: this_.inIrisProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        inStringsProperty: _inProperties.inStringsProperty
+        inStringsProperty: this_.inStringsProperty
           .map((item) => item)
           .extract(),
       } satisfies InProperties.Json),
@@ -39188,12 +39397,18 @@ export namespace InIdentifier {
     );
   }
 
-  export function toJson(_inIdentifier: InIdentifier): InIdentifier.Json {
+  export function toJson(this: InIdentifier): InIdentifier.Json;
+  export function toJson(_inIdentifier: InIdentifier): InIdentifier.Json;
+  export function toJson(
+    this: InIdentifier | undefined,
+    _inIdentifier?: InIdentifier,
+  ): InIdentifier.Json {
+    const this_ = (_inIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        "@id": _inIdentifier.$identifier().value,
-        "@type": _inIdentifier.$type,
-        inIdentifierProperty: _inIdentifier.inIdentifierProperty
+        "@id": this_.$identifier().value,
+        "@type": this_.$type,
+        inIdentifierProperty: this_.inIdentifierProperty
           .map((item) => item)
           .extract(),
       } satisfies InIdentifier.Json),
@@ -39745,20 +39960,24 @@ export namespace HasValueProperties {
     );
   }
 
+  export function toJson(this: HasValueProperties): HasValueProperties.Json;
   export function toJson(
     _hasValueProperties: HasValueProperties,
+  ): HasValueProperties.Json;
+  export function toJson(
+    this: HasValueProperties | undefined,
+    _hasValueProperties?: HasValueProperties,
   ): HasValueProperties.Json {
+    const this_ = (_hasValueProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _hasValueProperties.$identifier().termType === "BlankNode"
-            ? `_:${_hasValueProperties.$identifier().value}`
-            : _hasValueProperties.$identifier().value,
-        "@type": _hasValueProperties.$type,
-        hasIriValueProperty: {
-          "@id": _hasValueProperties.hasIriValueProperty.value,
-        },
-        hasLiteralValueProperty: _hasValueProperties.hasLiteralValueProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        hasIriValueProperty: { "@id": this_.hasIriValueProperty.value },
+        hasLiteralValueProperty: this_.hasLiteralValueProperty,
       } satisfies HasValueProperties.Json),
     );
   }
@@ -40305,18 +40524,23 @@ export namespace FlattenUnionMember3 {
     );
   }
 
+  export function toJson(this: FlattenUnionMember3): FlattenUnionMember3.Json;
   export function toJson(
     _flattenUnionMember3: FlattenUnionMember3,
+  ): FlattenUnionMember3.Json;
+  export function toJson(
+    this: FlattenUnionMember3 | undefined,
+    _flattenUnionMember3?: FlattenUnionMember3,
   ): FlattenUnionMember3.Json {
+    const this_ = (_flattenUnionMember3 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _flattenUnionMember3.$identifier().termType === "BlankNode"
-            ? `_:${_flattenUnionMember3.$identifier().value}`
-            : _flattenUnionMember3.$identifier().value,
-        "@type": _flattenUnionMember3.$type,
-        flattenUnionMember3Property:
-          _flattenUnionMember3.flattenUnionMember3Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        flattenUnionMember3Property: this_.flattenUnionMember3Property,
       } satisfies FlattenUnionMember3.Json),
     );
   }
@@ -40885,15 +41109,21 @@ export namespace ExternProperty {
     );
   }
 
-  export function toJson(_externProperty: ExternProperty): ExternProperty.Json {
+  export function toJson(this: ExternProperty): ExternProperty.Json;
+  export function toJson(_externProperty: ExternProperty): ExternProperty.Json;
+  export function toJson(
+    this: ExternProperty | undefined,
+    _externProperty?: ExternProperty,
+  ): ExternProperty.Json {
+    const this_ = (_externProperty ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _externProperty.$identifier().termType === "BlankNode"
-            ? `_:${_externProperty.$identifier().value}`
-            : _externProperty.$identifier().value,
-        "@type": _externProperty.$type,
-        externProperty: _externProperty.externProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        externProperty: this_.externProperty
           .map((item) => Extern.toJson(item))
           .extract(),
       } satisfies ExternProperty.Json),
@@ -41459,15 +41689,21 @@ export namespace BaseForExtern {
     );
   }
 
-  export function toJson(_baseForExtern: BaseForExtern): BaseForExtern.Json {
+  export function toJson(this: BaseForExtern): BaseForExtern.Json;
+  export function toJson(_baseForExtern: BaseForExtern): BaseForExtern.Json;
+  export function toJson(
+    this: BaseForExtern | undefined,
+    _baseForExtern?: BaseForExtern,
+  ): BaseForExtern.Json {
+    const this_ = (_baseForExtern ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _baseForExtern.$identifier().termType === "BlankNode"
-            ? `_:${_baseForExtern.$identifier().value}`
-            : _baseForExtern.$identifier().value,
-        "@type": _baseForExtern.$type,
-        baseForExternProperty: _baseForExtern.baseForExternProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        baseForExternProperty: this_.baseForExternProperty,
       } satisfies BaseForExtern.Json),
     );
   }
@@ -42020,17 +42256,23 @@ export namespace ExplicitRdfType {
     );
   }
 
+  export function toJson(this: ExplicitRdfType): ExplicitRdfType.Json;
   export function toJson(
     _explicitRdfType: ExplicitRdfType,
+  ): ExplicitRdfType.Json;
+  export function toJson(
+    this: ExplicitRdfType | undefined,
+    _explicitRdfType?: ExplicitRdfType,
   ): ExplicitRdfType.Json {
+    const this_ = (_explicitRdfType ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _explicitRdfType.$identifier().termType === "BlankNode"
-            ? `_:${_explicitRdfType.$identifier().value}`
-            : _explicitRdfType.$identifier().value,
-        "@type": _explicitRdfType.$type,
-        explicitRdfTypeProperty: _explicitRdfType.explicitRdfTypeProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        explicitRdfTypeProperty: this_.explicitRdfTypeProperty,
       } satisfies ExplicitRdfType.Json),
     );
   }
@@ -42593,17 +42835,24 @@ export namespace ExplicitFromToRdfTypes {
   }
 
   export function toJson(
+    this: ExplicitFromToRdfTypes,
+  ): ExplicitFromToRdfTypes.Json;
+  export function toJson(
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
+  ): ExplicitFromToRdfTypes.Json;
+  export function toJson(
+    this: ExplicitFromToRdfTypes | undefined,
+    _explicitFromToRdfTypes?: ExplicitFromToRdfTypes,
   ): ExplicitFromToRdfTypes.Json {
+    const this_ = (_explicitFromToRdfTypes ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _explicitFromToRdfTypes.$identifier().termType === "BlankNode"
-            ? `_:${_explicitFromToRdfTypes.$identifier().value}`
-            : _explicitFromToRdfTypes.$identifier().value,
-        "@type": _explicitFromToRdfTypes.$type,
-        explicitFromToRdfTypesProperty:
-          _explicitFromToRdfTypes.explicitFromToRdfTypesProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        explicitFromToRdfTypesProperty: this_.explicitFromToRdfTypesProperty,
       } satisfies ExplicitFromToRdfTypes.Json),
     );
   }
@@ -43349,22 +43598,25 @@ export namespace DisplayProperties {
     );
   }
 
+  export function toJson(this: DisplayProperties): DisplayProperties.Json;
   export function toJson(
     _displayProperties: DisplayProperties,
+  ): DisplayProperties.Json;
+  export function toJson(
+    this: DisplayProperties | undefined,
+    _displayProperties?: DisplayProperties,
   ): DisplayProperties.Json {
+    const this_ = (_displayProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _displayProperties.$identifier().termType === "BlankNode"
-            ? `_:${_displayProperties.$identifier().value}`
-            : _displayProperties.$identifier().value,
-        "@type": _displayProperties.$type,
-        explicitFalseDisplayProperty:
-          _displayProperties.explicitFalseDisplayProperty,
-        explicitTrueDisplayProperty:
-          _displayProperties.explicitTrueDisplayProperty,
-        implicitFalseDisplayProperty:
-          _displayProperties.implicitFalseDisplayProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        explicitFalseDisplayProperty: this_.explicitFalseDisplayProperty,
+        explicitTrueDisplayProperty: this_.explicitTrueDisplayProperty,
+        implicitFalseDisplayProperty: this_.implicitFalseDisplayProperty,
       } satisfies DisplayProperties.Json),
     );
   }
@@ -43929,17 +44181,23 @@ export namespace DirectRecursive {
     );
   }
 
+  export function toJson(this: DirectRecursive): DirectRecursive.Json;
   export function toJson(
     _directRecursive: DirectRecursive,
+  ): DirectRecursive.Json;
+  export function toJson(
+    this: DirectRecursive | undefined,
+    _directRecursive?: DirectRecursive,
   ): DirectRecursive.Json {
+    const this_ = (_directRecursive ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _directRecursive.$identifier().termType === "BlankNode"
-            ? `_:${_directRecursive.$identifier().value}`
-            : _directRecursive.$identifier().value,
-        "@type": _directRecursive.$type,
-        directRecursiveProperty: _directRecursive.directRecursiveProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        directRecursiveProperty: this_.directRecursiveProperty
           .map((item) => DirectRecursive.toJson(item))
           .extract(),
       } satisfies DirectRecursive.Json),
@@ -45028,28 +45286,33 @@ export namespace DefaultValueProperties {
   }
 
   export function toJson(
+    this: DefaultValueProperties,
+  ): DefaultValueProperties.Json;
+  export function toJson(
     _defaultValueProperties: DefaultValueProperties,
+  ): DefaultValueProperties.Json;
+  export function toJson(
+    this: DefaultValueProperties | undefined,
+    _defaultValueProperties?: DefaultValueProperties,
   ): DefaultValueProperties.Json {
+    const this_ = (_defaultValueProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _defaultValueProperties.$identifier().termType === "BlankNode"
-            ? `_:${_defaultValueProperties.$identifier().value}`
-            : _defaultValueProperties.$identifier().value,
-        "@type": _defaultValueProperties.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         dateDefaultValueProperty: $toIsoDateString(
-          _defaultValueProperties.dateDefaultValueProperty,
+          this_.dateDefaultValueProperty,
         ),
         dateTimeDefaultValueProperty:
-          _defaultValueProperties.dateTimeDefaultValueProperty.toISOString(),
+          this_.dateTimeDefaultValueProperty.toISOString(),
         falseBooleanDefaultValueProperty:
-          _defaultValueProperties.falseBooleanDefaultValueProperty,
-        numberDefaultValueProperty:
-          _defaultValueProperties.numberDefaultValueProperty,
-        stringDefaultValueProperty:
-          _defaultValueProperties.stringDefaultValueProperty,
-        trueBooleanDefaultValueProperty:
-          _defaultValueProperties.trueBooleanDefaultValueProperty,
+          this_.falseBooleanDefaultValueProperty,
+        numberDefaultValueProperty: this_.numberDefaultValueProperty,
+        stringDefaultValueProperty: this_.stringDefaultValueProperty,
+        trueBooleanDefaultValueProperty: this_.trueBooleanDefaultValueProperty,
       } satisfies DefaultValueProperties.Json),
     );
   }
@@ -47351,17 +47614,23 @@ export namespace DateUnionProperties {
     );
   }
 
+  export function toJson(this: DateUnionProperties): DateUnionProperties.Json;
   export function toJson(
     _dateUnionProperties: DateUnionProperties,
+  ): DateUnionProperties.Json;
+  export function toJson(
+    this: DateUnionProperties | undefined,
+    _dateUnionProperties?: DateUnionProperties,
   ): DateUnionProperties.Json {
+    const this_ = (_dateUnionProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _dateUnionProperties.$identifier().termType === "BlankNode"
-            ? `_:${_dateUnionProperties.$identifier().value}`
-            : _dateUnionProperties.$identifier().value,
-        "@type": _dateUnionProperties.$type,
-        dateOrDateTimeProperty: _dateUnionProperties.dateOrDateTimeProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        dateOrDateTimeProperty: this_.dateOrDateTimeProperty
           .map((item) =>
             ((
               value:
@@ -47387,7 +47656,7 @@ export namespace DateUnionProperties {
             })(item),
           )
           .extract(),
-        dateOrStringProperty: _dateUnionProperties.dateOrStringProperty
+        dateOrStringProperty: this_.dateOrStringProperty
           .map((item) =>
             ((
               value:
@@ -47410,7 +47679,7 @@ export namespace DateUnionProperties {
             })(item),
           )
           .extract(),
-        dateTimeOrDateProperty: _dateUnionProperties.dateTimeOrDateProperty
+        dateTimeOrDateProperty: this_.dateTimeOrDateProperty
           .map((item) =>
             ((
               value:
@@ -47436,7 +47705,7 @@ export namespace DateUnionProperties {
             })(item),
           )
           .extract(),
-        stringOrDateProperty: _dateUnionProperties.stringOrDateProperty
+        stringOrDateProperty: this_.stringOrDateProperty
           .map((item) =>
             ((
               value:
@@ -49635,162 +49904,77 @@ export namespace ConvertibleTypeProperties {
   }
 
   export function toJson(
+    this: ConvertibleTypeProperties,
+  ): ConvertibleTypeProperties.Json;
+  export function toJson(
     _convertibleTypeProperties: ConvertibleTypeProperties,
+  ): ConvertibleTypeProperties.Json;
+  export function toJson(
+    this: ConvertibleTypeProperties | undefined,
+    _convertibleTypeProperties?: ConvertibleTypeProperties,
   ): ConvertibleTypeProperties.Json {
+    const this_ = (_convertibleTypeProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _convertibleTypeProperties.$identifier().termType === "BlankNode"
-            ? `_:${_convertibleTypeProperties.$identifier().value}`
-            : _convertibleTypeProperties.$identifier().value,
-        "@type": _convertibleTypeProperties.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
         convertibleIriNonEmptySetProperty:
-          _convertibleTypeProperties.convertibleIriNonEmptySetProperty.map(
-            (item) => ({
-              "@id": item.value,
-            }),
-          ),
-        convertibleIriOptionProperty:
-          _convertibleTypeProperties.convertibleIriOptionProperty
-            .map((item) => ({
-              "@id": item.value,
-            }))
-            .extract(),
-        convertibleIriProperty: {
-          "@id": _convertibleTypeProperties.convertibleIriProperty.value,
-        },
-        convertibleIriSetProperty:
-          _convertibleTypeProperties.convertibleIriSetProperty.map((item) => ({
+          this_.convertibleIriNonEmptySetProperty.map((item) => ({
             "@id": item.value,
           })),
+        convertibleIriOptionProperty: this_.convertibleIriOptionProperty
+          .map((item) => ({ "@id": item.value }))
+          .extract(),
+        convertibleIriProperty: { "@id": this_.convertibleIriProperty.value },
+        convertibleIriSetProperty: this_.convertibleIriSetProperty.map(
+          (item) => ({ "@id": item.value }),
+        ),
         convertibleLiteralNonEmptySetProperty:
-          _convertibleTypeProperties.convertibleLiteralNonEmptySetProperty.map(
-            (item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }),
-          ),
-        convertibleLiteralOptionProperty:
-          _convertibleTypeProperties.convertibleLiteralOptionProperty
-            .map((item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }))
-            .extract(),
+          this_.convertibleLiteralNonEmptySetProperty.map((item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          })),
+        convertibleLiteralOptionProperty: this_.convertibleLiteralOptionProperty
+          .map((item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }))
+          .extract(),
         convertibleLiteralProperty: {
           "@language":
-            _convertibleTypeProperties.convertibleLiteralProperty.language
-              .length > 0
-              ? _convertibleTypeProperties.convertibleLiteralProperty.language
+            this_.convertibleLiteralProperty.language.length > 0
+              ? this_.convertibleLiteralProperty.language
               : undefined,
           "@type":
-            _convertibleTypeProperties.convertibleLiteralProperty.datatype
-              .value !== "http://www.w3.org/2001/XMLSchema#string"
-              ? _convertibleTypeProperties.convertibleLiteralProperty.datatype
-                  .value
+            this_.convertibleLiteralProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this_.convertibleLiteralProperty.datatype.value
               : undefined,
-          "@value": _convertibleTypeProperties.convertibleLiteralProperty.value,
+          "@value": this_.convertibleLiteralProperty.value,
         },
-        convertibleLiteralSetProperty:
-          _convertibleTypeProperties.convertibleLiteralSetProperty.map(
-            (item) => ({
-              "@language": item.language.length > 0 ? item.language : undefined,
-              "@type":
-                item.datatype.value !==
-                "http://www.w3.org/2001/XMLSchema#string"
-                  ? item.datatype.value
-                  : undefined,
-              "@value": item.value,
-            }),
-          ),
+        convertibleLiteralSetProperty: this_.convertibleLiteralSetProperty.map(
+          (item) => ({
+            "@language": item.language.length > 0 ? item.language : undefined,
+            "@type":
+              item.datatype.value !== "http://www.w3.org/2001/XMLSchema#string"
+                ? item.datatype.value
+                : undefined,
+            "@value": item.value,
+          }),
+        ),
         convertibleTermNonEmptySetProperty:
-          _convertibleTypeProperties.convertibleTermNonEmptySetProperty.map(
-            (item) =>
-              item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
-                : item.termType === "NamedNode"
-                  ? { "@id": item.value, termType: "NamedNode" as const }
-                  : {
-                      "@id": `_:${item.value}`,
-                      termType: "BlankNode" as const,
-                    },
-          ),
-        convertibleTermOptionProperty:
-          _convertibleTypeProperties.convertibleTermOptionProperty
-            .map((item) =>
-              item.termType === "Literal"
-                ? {
-                    "@language":
-                      item.language.length > 0 ? item.language : undefined,
-                    "@type":
-                      item.datatype.value !==
-                      "http://www.w3.org/2001/XMLSchema#string"
-                        ? item.datatype.value
-                        : undefined,
-                    "@value": item.value,
-                    termType: "Literal" as const,
-                  }
-                : item.termType === "NamedNode"
-                  ? { "@id": item.value, termType: "NamedNode" as const }
-                  : {
-                      "@id": `_:${item.value}`,
-                      termType: "BlankNode" as const,
-                    },
-            )
-            .extract(),
-        convertibleTermProperty:
-          _convertibleTypeProperties.convertibleTermProperty.termType ===
-          "Literal"
-            ? {
-                "@language":
-                  _convertibleTypeProperties.convertibleTermProperty.language
-                    .length > 0
-                    ? _convertibleTypeProperties.convertibleTermProperty
-                        .language
-                    : undefined,
-                "@type":
-                  _convertibleTypeProperties.convertibleTermProperty.datatype
-                    .value !== "http://www.w3.org/2001/XMLSchema#string"
-                    ? _convertibleTypeProperties.convertibleTermProperty
-                        .datatype.value
-                    : undefined,
-                "@value":
-                  _convertibleTypeProperties.convertibleTermProperty.value,
-                termType: "Literal" as const,
-              }
-            : _convertibleTypeProperties.convertibleTermProperty.termType ===
-                "NamedNode"
-              ? {
-                  "@id":
-                    _convertibleTypeProperties.convertibleTermProperty.value,
-                  termType: "NamedNode" as const,
-                }
-              : {
-                  "@id": `_:${_convertibleTypeProperties.convertibleTermProperty.value}`,
-                  termType: "BlankNode" as const,
-                },
-        convertibleTermSetProperty:
-          _convertibleTypeProperties.convertibleTermSetProperty.map((item) =>
+          this_.convertibleTermNonEmptySetProperty.map((item) =>
             item.termType === "Literal"
               ? {
                   "@language":
@@ -49807,6 +49991,67 @@ export namespace ConvertibleTypeProperties {
                 ? { "@id": item.value, termType: "NamedNode" as const }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           ),
+        convertibleTermOptionProperty: this_.convertibleTermOptionProperty
+          .map((item) =>
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+          )
+          .extract(),
+        convertibleTermProperty:
+          this_.convertibleTermProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this_.convertibleTermProperty.language.length > 0
+                    ? this_.convertibleTermProperty.language
+                    : undefined,
+                "@type":
+                  this_.convertibleTermProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this_.convertibleTermProperty.datatype.value
+                    : undefined,
+                "@value": this_.convertibleTermProperty.value,
+                termType: "Literal" as const,
+              }
+            : this_.convertibleTermProperty.termType === "NamedNode"
+              ? {
+                  "@id": this_.convertibleTermProperty.value,
+                  termType: "NamedNode" as const,
+                }
+              : {
+                  "@id": `_:${this_.convertibleTermProperty.value}`,
+                  termType: "BlankNode" as const,
+                },
+        convertibleTermSetProperty: this_.convertibleTermSetProperty.map(
+          (item) =>
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                  termType: "Literal" as const,
+                }
+              : item.termType === "NamedNode"
+                ? { "@id": item.value, termType: "NamedNode" as const }
+                : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
+        ),
       } satisfies ConvertibleTypeProperties.Json),
     );
   }
@@ -50326,15 +50571,21 @@ export namespace Partial {
     );
   }
 
-  export function toJson(_partial: Partial): Partial.Json {
+  export function toJson(this: Partial): Partial.Json;
+  export function toJson(_partial: Partial): Partial.Json;
+  export function toJson(
+    this: Partial | undefined,
+    _partial?: Partial,
+  ): Partial.Json {
+    const this_ = (_partial ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _partial.$identifier().termType === "BlankNode"
-            ? `_:${_partial.$identifier().value}`
-            : _partial.$identifier().value,
-        "@type": _partial.$type,
-        lazilyResolvedStringProperty: _partial.lazilyResolvedStringProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        lazilyResolvedStringProperty: this_.lazilyResolvedStringProperty,
       } satisfies Partial.Json),
     );
   }
@@ -50762,15 +51013,21 @@ export namespace NonClass {
     );
   }
 
-  export function toJson(_nonClass: NonClass): NonClass.Json {
+  export function toJson(this: NonClass): NonClass.Json;
+  export function toJson(_nonClass: NonClass): NonClass.Json;
+  export function toJson(
+    this: NonClass | undefined,
+    _nonClass?: NonClass,
+  ): NonClass.Json {
+    const this_ = (_nonClass ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _nonClass.$identifier().termType === "BlankNode"
-            ? `_:${_nonClass.$identifier().value}`
-            : _nonClass.$identifier().value,
-        "@type": _nonClass.$type,
-        nonClassProperty: _nonClass.nonClassProperty,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        nonClassProperty: this_.nonClassProperty,
       } satisfies NonClass.Json),
     );
   }
@@ -51802,33 +52059,39 @@ export namespace ClassProperties {
     );
   }
 
+  export function toJson(this: ClassProperties): ClassProperties.Json;
   export function toJson(
     _classProperties: ClassProperties,
+  ): ClassProperties.Json;
+  export function toJson(
+    this: ClassProperties | undefined,
+    _classProperties?: ClassProperties,
   ): ClassProperties.Json {
+    const this_ = (_classProperties ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _classProperties.$identifier().termType === "BlankNode"
-            ? `_:${_classProperties.$identifier().value}`
-            : _classProperties.$identifier().value,
-        "@type": _classProperties.$type,
-        iriClassProperty: _classProperties.iriClassProperty
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        iriClassProperty: this_.iriClassProperty
           .map((item) => ({ "@id": item.value }))
           .extract(),
-        multiClassProperty: _classProperties.multiClassProperty
+        multiClassProperty: this_.multiClassProperty
           .map((item) =>
             item.termType === "BlankNode"
               ? { "@id": `_:${item.value}` }
               : { "@id": item.value },
           )
           .extract(),
-        nodeClassProperty1: _classProperties.nodeClassProperty1
+        nodeClassProperty1: this_.nodeClassProperty1
           .map((item) => NonClass.toJson(item))
           .extract(),
-        nodeClassProperty2: _classProperties.nodeClassProperty2
+        nodeClassProperty2: this_.nodeClassProperty2
           .map((item) => Partial.toJson(item))
           .extract(),
-        singleClassProperty: _classProperties.singleClassProperty
+        singleClassProperty: this_.singleClassProperty
           .map((item) =>
             item.termType === "BlankNode"
               ? { "@id": `_:${item.value}` }
@@ -52454,17 +52717,23 @@ export namespace ClassHierarchy0 {
     );
   }
 
+  export function toJson(this: ClassHierarchy0): ClassHierarchy0.Json;
   export function toJson(
     _classHierarchy0: ClassHierarchy0,
+  ): ClassHierarchy0.Json;
+  export function toJson(
+    this: ClassHierarchy0 | undefined,
+    _classHierarchy0?: ClassHierarchy0,
   ): ClassHierarchy0.Json {
+    const this_ = (_classHierarchy0 ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _classHierarchy0.$identifier().termType === "BlankNode"
-            ? `_:${_classHierarchy0.$identifier().value}`
-            : _classHierarchy0.$identifier().value,
-        "@type": _classHierarchy0.$type,
-        classHierarchy0Property: _classHierarchy0.classHierarchy0Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        classHierarchy0Property: this_.classHierarchy0Property,
       } satisfies ClassHierarchy0.Json),
     );
   }
@@ -52984,17 +53253,23 @@ export namespace ClassHierarchy1 {
     );
   }
 
+  export function toJson(this: ClassHierarchy1): ClassHierarchy1.Json;
   export function toJson(
     _classHierarchy1: ClassHierarchy1,
+  ): ClassHierarchy1.Json;
+  export function toJson(
+    this: ClassHierarchy1 | undefined,
+    _classHierarchy1?: ClassHierarchy1,
   ): ClassHierarchy1.Json {
+    const this_ = (_classHierarchy1 ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...ClassHierarchy0.toJson(_classHierarchy1),
+        ...ClassHierarchy0.toJson(this_),
         "@id":
-          _classHierarchy1.$identifier().termType === "BlankNode"
-            ? `_:${_classHierarchy1.$identifier().value}`
-            : _classHierarchy1.$identifier().value,
-        "@type": _classHierarchy1.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies ClassHierarchy1.Json),
     );
   }
@@ -53587,18 +53862,24 @@ export namespace ClassHierarchy2 {
     );
   }
 
+  export function toJson(this: ClassHierarchy2): ClassHierarchy2.Json;
   export function toJson(
     _classHierarchy2: ClassHierarchy2,
+  ): ClassHierarchy2.Json;
+  export function toJson(
+    this: ClassHierarchy2 | undefined,
+    _classHierarchy2?: ClassHierarchy2,
   ): ClassHierarchy2.Json {
+    const this_ = (_classHierarchy2 ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...ClassHierarchy1.toJson(_classHierarchy2),
+        ...ClassHierarchy1.toJson(this_),
         "@id":
-          _classHierarchy2.$identifier().termType === "BlankNode"
-            ? `_:${_classHierarchy2.$identifier().value}`
-            : _classHierarchy2.$identifier().value,
-        "@type": _classHierarchy2.$type,
-        classHierarchy2Property: _classHierarchy2.classHierarchy2Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        classHierarchy2Property: this_.classHierarchy2Property,
       } satisfies ClassHierarchy2.Json),
     );
   }
@@ -54179,18 +54460,24 @@ export namespace ClassHierarchy3 {
     );
   }
 
+  export function toJson(this: ClassHierarchy3): ClassHierarchy3.Json;
   export function toJson(
     _classHierarchy3: ClassHierarchy3,
+  ): ClassHierarchy3.Json;
+  export function toJson(
+    this: ClassHierarchy3 | undefined,
+    _classHierarchy3?: ClassHierarchy3,
   ): ClassHierarchy3.Json {
+    const this_ = (_classHierarchy3 ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        ...ClassHierarchy2.toJson(_classHierarchy3),
+        ...ClassHierarchy2.toJson(this_),
         "@id":
-          _classHierarchy3.$identifier().termType === "BlankNode"
-            ? `_:${_classHierarchy3.$identifier().value}`
-            : _classHierarchy3.$identifier().value,
-        "@type": _classHierarchy3.$type,
-        classHierarchy3Property: _classHierarchy3.classHierarchy3Property,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
+        classHierarchy3Property: this_.classHierarchy3Property,
       } satisfies ClassHierarchy3.Json),
     );
   }
@@ -54672,15 +54959,23 @@ export namespace BlankNodeOrIriIdentifier {
   }
 
   export function toJson(
+    this: BlankNodeOrIriIdentifier,
+  ): BlankNodeOrIriIdentifier.Json;
+  export function toJson(
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
+  ): BlankNodeOrIriIdentifier.Json;
+  export function toJson(
+    this: BlankNodeOrIriIdentifier | undefined,
+    _blankNodeOrIriIdentifier?: BlankNodeOrIriIdentifier,
   ): BlankNodeOrIriIdentifier.Json {
+    const this_ = (_blankNodeOrIriIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
         "@id":
-          _blankNodeOrIriIdentifier.$identifier().termType === "BlankNode"
-            ? `_:${_blankNodeOrIriIdentifier.$identifier().value}`
-            : _blankNodeOrIriIdentifier.$identifier().value,
-        "@type": _blankNodeOrIriIdentifier.$type,
+          this_.$identifier().termType === "BlankNode"
+            ? `_:${this_.$identifier().value}`
+            : this_.$identifier().value,
+        "@type": this_.$type,
       } satisfies BlankNodeOrIriIdentifier.Json),
     );
   }
@@ -55141,13 +55436,19 @@ export namespace BlankNodeIdentifier {
     );
   }
 
+  export function toJson(this: BlankNodeIdentifier): BlankNodeIdentifier.Json;
   export function toJson(
     _blankNodeIdentifier: BlankNodeIdentifier,
+  ): BlankNodeIdentifier.Json;
+  export function toJson(
+    this: BlankNodeIdentifier | undefined,
+    _blankNodeIdentifier?: BlankNodeIdentifier,
   ): BlankNodeIdentifier.Json {
+    const this_ = (_blankNodeIdentifier ?? this)!;
     return JSON.parse(
       JSON.stringify({
-        "@id": `_:${_blankNodeIdentifier.$identifier().value}`,
-        "@type": _blankNodeIdentifier.$type,
+        "@id": `_:${this_.$identifier().value}`,
+        "@type": this_.$type,
       } satisfies BlankNodeIdentifier.Json),
     );
   }

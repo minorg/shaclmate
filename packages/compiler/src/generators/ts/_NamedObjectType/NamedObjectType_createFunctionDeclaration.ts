@@ -59,25 +59,36 @@ export function NamedObjectType_createFunctionDeclaration(
     variable: "properties",
   });
 
-  const syntheticNamePrefix = this.configuration.syntheticNamePrefix;
-  return Maybe.of(code`\
-export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.name}> {
-  return ${chains.toReversed().reduce(
-    (acc, { expression, variable }, chainI) =>
-      code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
-    code`\
-{
-  const finalObject = { ${chains
+  let returnExpression = code`{ ${chains
     .map((chain) => `...${chain.variable}`)
     .join(
       ", ",
-    )}, ${this._discriminantProperty.name}: ${literalOf(this.discriminantValue)} as const };
-  if (!globalThis.Object.prototype.hasOwnProperty.call(finalObject, "toString")) {
-    (finalObject as any).toString = ${syntheticNamePrefix}toString;
+    )}, ${this._discriminantProperty.name}: ${literalOf(this.discriminantValue)} as const }`;
+
+  const monkeyPatchMethods: string[] = [];
+  if (this.configuration.features.has("Object.toJson")) {
+    monkeyPatchMethods.push("toJson");
   }
-  return finalObject;
-}`,
-  )};
+  if (this.configuration.features.has("Object.toString")) {
+    monkeyPatchMethods.push(
+      `${this.configuration.syntheticNamePrefix}toString`,
+    );
+  }
+  if (monkeyPatchMethods.length > 0) {
+    returnExpression = code`${this.reusables.snippets.monkeyPatchObject}(${returnExpression}, { ${monkeyPatchMethods.join(", ")} })`;
+  }
+
+  returnExpression = chains
+    .toReversed()
+    .reduce(
+      (acc, { expression, variable }, chainI) =>
+        code`(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+      returnExpression,
+    );
+
+  return Maybe.of(code`\
+export function create(${parametersSignature}): ${this.reusables.imports.Either}<Error, ${this.name}> {
+  return ${returnExpression};
 }
   
 export function createUnsafe(${parametersSignature}): ${this.name} {

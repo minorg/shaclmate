@@ -94,6 +94,7 @@ import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
 import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
 import { snippets_maybeSparqlConstructTriples } from "./_snippets/snippets_maybeSparqlConstructTriples.js";
 import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
+import { snippets_monkeyPatchObject } from "./_snippets/snippets_monkeyPatchObject.js";
 import { snippets_NumericFilter } from "./_snippets/snippets_NumericFilter.js";
 import { snippets_NumericSchema } from "./_snippets/snippets_NumericSchema.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
@@ -123,8 +124,10 @@ import { snippets_strictEquals } from "./_snippets/snippets_strictEquals.js";
 import { snippets_stringSparqlWherePatterns } from "./_snippets/snippets_stringSparqlWherePatterns.js";
 import { snippets_TermFilter } from "./_snippets/snippets_TermFilter.js";
 import { snippets_TermSchema } from "./_snippets/snippets_TermSchema.js";
+import { snippets_ToJsonFunction } from "./_snippets/snippets_ToJsonFunction.js";
 import { snippets_ToRdfResourceFunction } from "./_snippets/snippets_ToRdfResourceFunction.js";
 import { snippets_ToRdfResourceValuesFunction } from "./_snippets/snippets_ToRdfResourceValuesFunction.js";
+import { snippets_ToStringFunction } from "./_snippets/snippets_ToStringFunction.js";
 import { snippets_termFilterSparqlPatterns } from "./_snippets/snippets_termFilterSparqlPatterns.js";
 import { snippets_termSchemaSparqlPatterns } from "./_snippets/snippets_termSchemaSparqlPatterns.js";
 import { snippets_termSparqlWherePatterns } from "./_snippets/snippets_termSparqlWherePatterns.js";
@@ -369,6 +372,11 @@ export class Snippets {
   }
 
   @Memoize()
+  get ToJsonFunction(): Snippet {
+    return this.snippet(snippets_ToJsonFunction);
+  }
+
+  @Memoize()
   get ToRdfResourceFunction(): Snippet {
     return this.snippet(snippets_ToRdfResourceFunction);
   }
@@ -376,6 +384,11 @@ export class Snippets {
   @Memoize()
   get ToRdfResourceValuesFunction(): Snippet {
     return this.snippet(snippets_ToRdfResourceValuesFunction);
+  }
+
+  @Memoize()
+  get ToStringFunction(): Snippet {
+    return this.snippet(snippets_ToStringFunction);
   }
 
   @Memoize()
@@ -740,6 +753,11 @@ export class Snippets {
   @Memoize()
   get maybeSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_maybeSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get monkeyPatchObject(): Snippet {
+    return this.snippet(snippets_monkeyPatchObject);
   }
 
   @Memoize()
