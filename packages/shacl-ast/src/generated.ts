@@ -234,6 +234,33 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Maybe";
 }
 
+function $monkeyPatchObject<T extends object>(
+  obj: T,
+  methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
+): T {
+  if (
+    methods.toJson &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+  ) {
+    const toJsonMethod = methods.toJson;
+    (obj as any).toJSON = function (this: T, _key: string) {
+      return toJsonMethod(this);
+    };
+  }
+
+  if (
+    methods.$toString &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+  ) {
+    const toStringMethod = methods.$toString;
+    (obj as any).toString = function (this: T) {
+      return toStringMethod(this);
+    };
+  }
+
+  return obj;
+}
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type $PropertyPath = RdfxResourcePropertyPath;
@@ -921,18 +948,12 @@ export namespace PropertyShape {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "PropertyShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PropertyShape" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -2737,13 +2758,8 @@ export namespace PropertyShape {
     });
   }
 
-  export function $toString(this: PropertyShape): string;
-  export function $toString(_propertyShape: PropertyShape): string;
-  export function $toString(
-    this: PropertyShape | undefined,
-    _propertyShape?: PropertyShape,
-  ): string {
-    return `PropertyShape(${JSON.stringify(_propertiesToStrings((_propertyShape ?? this)!))})`;
+  export function $toString(_propertyShape: PropertyShape): string {
+    return `PropertyShape(${JSON.stringify(_propertiesToStrings(_propertyShape))})`;
   }
 }
 export interface PropertyGroup {
@@ -2781,18 +2797,12 @@ export namespace PropertyGroup {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "PropertyGroup" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PropertyGroup" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -3013,13 +3023,8 @@ export namespace PropertyGroup {
     });
   }
 
-  export function $toString(this: PropertyGroup): string;
-  export function $toString(_propertyGroup: PropertyGroup): string;
-  export function $toString(
-    this: PropertyGroup | undefined,
-    _propertyGroup?: PropertyGroup,
-  ): string {
-    return `PropertyGroup(${JSON.stringify(_propertiesToStrings((_propertyGroup ?? this)!))})`;
+  export function $toString(_propertyGroup: PropertyGroup): string {
+    return `PropertyGroup(${JSON.stringify(_propertiesToStrings(_propertyGroup))})`;
   }
 }
 export interface Ontology {
@@ -3057,18 +3062,12 @@ export namespace Ontology {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "Ontology" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "Ontology" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -3287,13 +3286,8 @@ export namespace Ontology {
     });
   }
 
-  export function $toString(this: Ontology): string;
-  export function $toString(_ontology: Ontology): string;
-  export function $toString(
-    this: Ontology | undefined,
-    _ontology?: Ontology,
-  ): string {
-    return `Ontology(${JSON.stringify(_propertiesToStrings((_ontology ?? this)!))})`;
+  export function $toString(_ontology: Ontology): string {
+    return `Ontology(${JSON.stringify(_propertiesToStrings(_ontology))})`;
   }
 }
 export interface NodeShape {
@@ -3709,18 +3703,12 @@ export namespace NodeShape {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NodeShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NodeShape" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -5499,13 +5487,8 @@ export namespace NodeShape {
     });
   }
 
-  export function $toString(this: NodeShape): string;
-  export function $toString(_nodeShape: NodeShape): string;
-  export function $toString(
-    this: NodeShape | undefined,
-    _nodeShape?: NodeShape,
-  ): string {
-    return `NodeShape(${JSON.stringify(_propertiesToStrings((_nodeShape ?? this)!))})`;
+  export function $toString(_nodeShape: NodeShape): string {
+    return `NodeShape(${JSON.stringify(_propertiesToStrings(_nodeShape))})`;
   }
 }
 export type Shape = NodeShape | PropertyShape;
