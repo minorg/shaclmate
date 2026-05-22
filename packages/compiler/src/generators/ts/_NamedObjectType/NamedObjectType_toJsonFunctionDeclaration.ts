@@ -9,12 +9,10 @@ export function NamedObjectType_toJsonFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const thisVariable = code`this_`;
-
   const jsonObjectMembers: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     jsonObjectMembers.push(
-      code`...${parentObjectType.name}.toJson(${thisVariable})`,
+      code`...${parentObjectType.name}.toJson(${this.thisVariable})`,
     );
   }
 
@@ -25,7 +23,7 @@ export function NamedObjectType_toJsonFunctionDeclaration(
           .toJsonInitializer({
             variables: {
               value: property.accessExpression({
-                variables: { object: thisVariable },
+                variables: { object: this.thisVariable },
               }),
             },
           })
@@ -51,10 +49,7 @@ export function NamedObjectType_toJsonFunctionDeclaration(
   // }
 
   return Maybe.of(code`\
-export function toJson(this: ${this.name}): ${returnType};
-export function toJson(${this.thisVariable}: ${this.name}): ${returnType};
-export function toJson(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): ${returnType} {
-  const this_ = (${this.thisVariable} ?? this)!;
+export function toJson(${this.thisVariable}: ${this.name}): ${returnType} {
   return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
 }`);
 }
