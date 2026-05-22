@@ -1932,6 +1932,33 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   };
 }
 
+function $monkeyPatchObject<T extends object>(
+  obj: T,
+  methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
+): T {
+  if (
+    methods.toJson &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+  ) {
+    const toJsonMethod = methods.toJson;
+    (obj as any).toJSON = function (this: T, _key: string) {
+      return toJsonMethod(this);
+    };
+  }
+
+  if (
+    methods.$toString &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+  ) {
+    const toStringMethod = methods.$toString;
+    (obj as any).toString = function (this: T) {
+      return toStringMethod(this);
+    };
+  }
+
+  return obj;
+}
+
 function $normalizeSparqlWherePatterns(
   patterns: readonly $SparqlPattern[],
 ): readonly $SparqlPattern[] {
@@ -3774,21 +3801,12 @@ export namespace $NamedDefaultPartial {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "$NamedDefaultPartial" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "$NamedDefaultPartial" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -4086,13 +4104,10 @@ export namespace $NamedDefaultPartial {
     });
   }
 
-  export function $toString(this: $NamedDefaultPartial): string;
-  export function $toString(_namedDefaultPartial: $NamedDefaultPartial): string;
   export function $toString(
-    this: $NamedDefaultPartial | undefined,
-    _namedDefaultPartial?: $NamedDefaultPartial,
+    _namedDefaultPartial: $NamedDefaultPartial,
   ): string {
-    return `$NamedDefaultPartial(${JSON.stringify(_propertiesToStrings((_namedDefaultPartial ?? this)!))})`;
+    return `$NamedDefaultPartial(${JSON.stringify(_propertiesToStrings(_namedDefaultPartial))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -4142,18 +4157,12 @@ export namespace $DefaultPartial {
   }): Either<Error, $DefaultPartial> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "$DefaultPartial" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "$DefaultPartial" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -4456,13 +4465,8 @@ export namespace $DefaultPartial {
     });
   }
 
-  export function $toString(this: $DefaultPartial): string;
-  export function $toString(_defaultPartial: $DefaultPartial): string;
-  export function $toString(
-    this: $DefaultPartial | undefined,
-    _defaultPartial?: $DefaultPartial,
-  ): string {
-    return `$DefaultPartial(${JSON.stringify(_propertiesToStrings((_defaultPartial ?? this)!))})`;
+  export function $toString(_defaultPartial: $DefaultPartial): string {
+    return `$DefaultPartial(${JSON.stringify(_propertiesToStrings(_defaultPartial))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -4723,21 +4727,12 @@ export namespace UnionDiscriminants {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "UnionDiscriminants" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "UnionDiscriminants" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -11185,13 +11180,8 @@ export namespace UnionDiscriminants {
     });
   }
 
-  export function $toString(this: UnionDiscriminants): string;
-  export function $toString(_unionDiscriminants: UnionDiscriminants): string;
-  export function $toString(
-    this: UnionDiscriminants | undefined,
-    _unionDiscriminants?: UnionDiscriminants,
-  ): string {
-    return `UnionDiscriminants(${JSON.stringify(_propertiesToStrings((_unionDiscriminants ?? this)!))})`;
+  export function $toString(_unionDiscriminants: UnionDiscriminants): string {
+    return `UnionDiscriminants(${JSON.stringify(_propertiesToStrings(_unionDiscriminants))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -11343,18 +11333,12 @@ export namespace TermProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "TermProperties" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "TermProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -12763,13 +12747,8 @@ export namespace TermProperties {
     });
   }
 
-  export function $toString(this: TermProperties): string;
-  export function $toString(_termProperties: TermProperties): string;
-  export function $toString(
-    this: TermProperties | undefined,
-    _termProperties?: TermProperties,
-  ): string {
-    return `TermProperties(${JSON.stringify(_propertiesToStrings((_termProperties ?? this)!))})`;
+  export function $toString(_termProperties: TermProperties): string {
+    return `TermProperties(${JSON.stringify(_propertiesToStrings(_termProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -12831,21 +12810,12 @@ export namespace RecursiveUnionMember2 {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "RecursiveUnionMember2" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "RecursiveUnionMember2" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -13354,15 +13324,10 @@ export namespace RecursiveUnionMember2 {
     });
   }
 
-  export function $toString(this: RecursiveUnionMember2): string;
   export function $toString(
     _recursiveUnionMember2: RecursiveUnionMember2,
-  ): string;
-  export function $toString(
-    this: RecursiveUnionMember2 | undefined,
-    _recursiveUnionMember2?: RecursiveUnionMember2,
   ): string {
-    return `RecursiveUnionMember2(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember2 ?? this)!))})`;
+    return `RecursiveUnionMember2(${JSON.stringify(_propertiesToStrings(_recursiveUnionMember2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -13424,21 +13389,12 @@ export namespace RecursiveUnionMember1 {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "RecursiveUnionMember1" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "RecursiveUnionMember1" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -13947,15 +13903,10 @@ export namespace RecursiveUnionMember1 {
     });
   }
 
-  export function $toString(this: RecursiveUnionMember1): string;
   export function $toString(
     _recursiveUnionMember1: RecursiveUnionMember1,
-  ): string;
-  export function $toString(
-    this: RecursiveUnionMember1 | undefined,
-    _recursiveUnionMember1?: RecursiveUnionMember1,
   ): string {
-    return `RecursiveUnionMember1(${JSON.stringify(_propertiesToStrings((_recursiveUnionMember1 ?? this)!))})`;
+    return `RecursiveUnionMember1(${JSON.stringify(_propertiesToStrings(_recursiveUnionMember1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -14028,18 +13979,12 @@ export namespace PropertyPaths {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "PropertyPaths" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PropertyPaths" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -14652,13 +14597,8 @@ export namespace PropertyPaths {
     });
   }
 
-  export function $toString(this: PropertyPaths): string;
-  export function $toString(_propertyPaths: PropertyPaths): string;
-  export function $toString(
-    this: PropertyPaths | undefined,
-    _propertyPaths?: PropertyPaths,
-  ): string {
-    return `PropertyPaths(${JSON.stringify(_propertiesToStrings((_propertyPaths ?? this)!))})`;
+  export function $toString(_propertyPaths: PropertyPaths): string {
+    return `PropertyPaths(${JSON.stringify(_propertiesToStrings(_propertyPaths))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -14741,18 +14681,12 @@ export namespace PropertyNames {
       actualPropertyName3: Either.of(parameters.actualPropertyName3),
       actualPropertyName4: Either.of(parameters.actualPropertyName4),
       actualPropertyName5: Either.of(parameters.actualPropertyName5),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "PropertyNames" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PropertyNames" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -15559,13 +15493,8 @@ export namespace PropertyNames {
     });
   }
 
-  export function $toString(this: PropertyNames): string;
-  export function $toString(_propertyNames: PropertyNames): string;
-  export function $toString(
-    this: PropertyNames | undefined,
-    _propertyNames?: PropertyNames,
-  ): string {
-    return `PropertyNames(${JSON.stringify(_propertiesToStrings((_propertyNames ?? this)!))})`;
+  export function $toString(_propertyNames: PropertyNames): string {
+    return `PropertyNames(${JSON.stringify(_propertiesToStrings(_propertyNames))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -15665,21 +15594,12 @@ export namespace PropertyCardinalities {
         ),
       ),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "PropertyCardinalities" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PropertyCardinalities" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -16412,15 +16332,10 @@ export namespace PropertyCardinalities {
     });
   }
 
-  export function $toString(this: PropertyCardinalities): string;
   export function $toString(
     _propertyCardinalities: PropertyCardinalities,
-  ): string;
-  export function $toString(
-    this: PropertyCardinalities | undefined,
-    _propertyCardinalities?: PropertyCardinalities,
   ): string {
-    return `PropertyCardinalities(${JSON.stringify(_propertiesToStrings((_propertyCardinalities ?? this)!))})`;
+    return `PropertyCardinalities(${JSON.stringify(_propertiesToStrings(_propertyCardinalities))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -16475,21 +16390,12 @@ export namespace UnionMemberCommonParent {
       unionMemberCommonParentProperty: Either.of(
         parameters.unionMemberCommonParentProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "UnionMemberCommonParent" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "UnionMemberCommonParent" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -17016,15 +16922,10 @@ export namespace UnionMemberCommonParent {
     });
   }
 
-  export function $toString(this: UnionMemberCommonParent): string;
   export function $toString(
     _unionMemberCommonParent: UnionMemberCommonParent,
-  ): string;
-  export function $toString(
-    this: UnionMemberCommonParent | undefined,
-    _unionMemberCommonParent?: UnionMemberCommonParent,
   ): string {
-    return `UnionMemberCommonParent(${JSON.stringify(_propertiesToStrings((_unionMemberCommonParent ?? this)!))})`;
+    return `UnionMemberCommonParent(${JSON.stringify(_propertiesToStrings(_unionMemberCommonParent))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -17080,22 +16981,12 @@ export namespace UnionMember2 {
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
         unionMember2Property: Either.of(parameters.unionMember2Property),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "UnionMember2" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "UnionMember2" as const },
+          { toJson, $toString },
+        ),
+      ),
     );
   }
 
@@ -17602,13 +17493,8 @@ export namespace UnionMember2 {
     });
   }
 
-  export function $toString(this: UnionMember2): string;
-  export function $toString(_unionMember2: UnionMember2): string;
-  export function $toString(
-    this: UnionMember2 | undefined,
-    _unionMember2?: UnionMember2,
-  ): string {
-    return `UnionMember2(${JSON.stringify(_propertiesToStrings((_unionMember2 ?? this)!))})`;
+  export function $toString(_unionMember2: UnionMember2): string {
+    return `UnionMember2(${JSON.stringify(_propertiesToStrings(_unionMember2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -17663,21 +17549,12 @@ export namespace PartialUnionMember2 {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "PartialUnionMember2" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PartialUnionMember2" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -18162,13 +18039,8 @@ export namespace PartialUnionMember2 {
     });
   }
 
-  export function $toString(this: PartialUnionMember2): string;
-  export function $toString(_partialUnionMember2: PartialUnionMember2): string;
-  export function $toString(
-    this: PartialUnionMember2 | undefined,
-    _partialUnionMember2?: PartialUnionMember2,
-  ): string {
-    return `PartialUnionMember2(${JSON.stringify(_propertiesToStrings((_partialUnionMember2 ?? this)!))})`;
+  export function $toString(_partialUnionMember2: PartialUnionMember2): string {
+    return `PartialUnionMember2(${JSON.stringify(_propertiesToStrings(_partialUnionMember2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -18224,22 +18096,12 @@ export namespace UnionMember1 {
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
         unionMember1Property: Either.of(parameters.unionMember1Property),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "UnionMember1" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "UnionMember1" as const },
+          { toJson, $toString },
+        ),
+      ),
     );
   }
 
@@ -18746,13 +18608,8 @@ export namespace UnionMember1 {
     });
   }
 
-  export function $toString(this: UnionMember1): string;
-  export function $toString(_unionMember1: UnionMember1): string;
-  export function $toString(
-    this: UnionMember1 | undefined,
-    _unionMember1?: UnionMember1,
-  ): string {
-    return `UnionMember1(${JSON.stringify(_propertiesToStrings((_unionMember1 ?? this)!))})`;
+  export function $toString(_unionMember1: UnionMember1): string {
+    return `UnionMember1(${JSON.stringify(_propertiesToStrings(_unionMember1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -18807,21 +18664,12 @@ export namespace PartialUnionMember1 {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "PartialUnionMember1" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "PartialUnionMember1" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -19306,13 +19154,8 @@ export namespace PartialUnionMember1 {
     });
   }
 
-  export function $toString(this: PartialUnionMember1): string;
-  export function $toString(_partialUnionMember1: PartialUnionMember1): string;
-  export function $toString(
-    this: PartialUnionMember1 | undefined,
-    _partialUnionMember1?: PartialUnionMember1,
-  ): string {
-    return `PartialUnionMember1(${JSON.stringify(_propertiesToStrings((_partialUnionMember1 ?? this)!))})`;
+  export function $toString(_partialUnionMember1: PartialUnionMember1): string {
+    return `PartialUnionMember1(${JSON.stringify(_propertiesToStrings(_partialUnionMember1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -19365,18 +19208,12 @@ export namespace NewName {
   }): Either<Error, NewName> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NewName" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NewName" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -19758,13 +19595,8 @@ export namespace NewName {
     return $compactRecord({ $identifier: _newName.$identifier().toString() });
   }
 
-  export function $toString(this: NewName): string;
-  export function $toString(_newName: NewName): string;
-  export function $toString(
-    this: NewName | undefined,
-    _newName?: NewName,
-  ): string {
-    return `NewName(${JSON.stringify(_propertiesToStrings((_newName ?? this)!))})`;
+  export function $toString(_newName: NewName): string {
+    return `NewName(${JSON.stringify(_propertiesToStrings(_newName))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -19826,21 +19658,12 @@ export namespace OrderedProperties {
       orderedPropertyC: Either.of(parameters.orderedPropertyC),
       orderedPropertyB: Either.of(parameters.orderedPropertyB),
       orderedPropertyA: Either.of(parameters.orderedPropertyA),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "OrderedProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "OrderedProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -20363,13 +20186,8 @@ export namespace OrderedProperties {
     });
   }
 
-  export function $toString(this: OrderedProperties): string;
-  export function $toString(_orderedProperties: OrderedProperties): string;
-  export function $toString(
-    this: OrderedProperties | undefined,
-    _orderedProperties?: OrderedProperties,
-  ): string {
-    return `OrderedProperties(${JSON.stringify(_propertiesToStrings((_orderedProperties ?? this)!))})`;
+  export function $toString(_orderedProperties: OrderedProperties): string {
+    return `OrderedProperties(${JSON.stringify(_propertiesToStrings(_orderedProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -20582,21 +20400,12 @@ export namespace NumericProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "NumericProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NumericProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -22735,13 +22544,8 @@ export namespace NumericProperties {
     });
   }
 
-  export function $toString(this: NumericProperties): string;
-  export function $toString(_numericProperties: NumericProperties): string;
-  export function $toString(
-    this: NumericProperties | undefined,
-    _numericProperties?: NumericProperties,
-  ): string {
-    return `NumericProperties(${JSON.stringify(_propertiesToStrings((_numericProperties ?? this)!))})`;
+  export function $toString(_numericProperties: NumericProperties): string {
+    return `NumericProperties(${JSON.stringify(_propertiesToStrings(_numericProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -22830,18 +22634,12 @@ export namespace NodeKinds {
       literalNodeKindProperty: $convertToLiteral(
         parameters.literalNodeKindProperty,
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NodeKinds" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NodeKinds" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -23891,13 +23689,8 @@ export namespace NodeKinds {
     return $compactRecord({ $identifier: _nodeKinds.$identifier().toString() });
   }
 
-  export function $toString(this: NodeKinds): string;
-  export function $toString(_nodeKinds: NodeKinds): string;
-  export function $toString(
-    this: NodeKinds | undefined,
-    _nodeKinds?: NodeKinds,
-  ): string {
-    return `NodeKinds(${JSON.stringify(_propertiesToStrings((_nodeKinds ?? this)!))})`;
+  export function $toString(_nodeKinds: NodeKinds): string {
+    return `NodeKinds(${JSON.stringify(_propertiesToStrings(_nodeKinds))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -23952,21 +23745,12 @@ export namespace NoRdfTypeUnionMember2 {
       noRdfTypeUnionMember2Property: Either.of(
         parameters.noRdfTypeUnionMember2Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "NoRdfTypeUnionMember2" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NoRdfTypeUnionMember2" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -24354,15 +24138,10 @@ export namespace NoRdfTypeUnionMember2 {
     });
   }
 
-  export function $toString(this: NoRdfTypeUnionMember2): string;
   export function $toString(
     _noRdfTypeUnionMember2: NoRdfTypeUnionMember2,
-  ): string;
-  export function $toString(
-    this: NoRdfTypeUnionMember2 | undefined,
-    _noRdfTypeUnionMember2?: NoRdfTypeUnionMember2,
   ): string {
-    return `NoRdfTypeUnionMember2(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember2 ?? this)!))})`;
+    return `NoRdfTypeUnionMember2(${JSON.stringify(_propertiesToStrings(_noRdfTypeUnionMember2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -24417,21 +24196,12 @@ export namespace NoRdfTypeUnionMember1 {
       noRdfTypeUnionMember1Property: Either.of(
         parameters.noRdfTypeUnionMember1Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "NoRdfTypeUnionMember1" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NoRdfTypeUnionMember1" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -24819,15 +24589,10 @@ export namespace NoRdfTypeUnionMember1 {
     });
   }
 
-  export function $toString(this: NoRdfTypeUnionMember1): string;
   export function $toString(
     _noRdfTypeUnionMember1: NoRdfTypeUnionMember1,
-  ): string;
-  export function $toString(
-    this: NoRdfTypeUnionMember1 | undefined,
-    _noRdfTypeUnionMember1?: NoRdfTypeUnionMember1,
   ): string {
-    return `NoRdfTypeUnionMember1(${JSON.stringify(_propertiesToStrings((_noRdfTypeUnionMember1 ?? this)!))})`;
+    return `NoRdfTypeUnionMember1(${JSON.stringify(_propertiesToStrings(_noRdfTypeUnionMember1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -24887,21 +24652,12 @@ export namespace NamedUnionProperties {
       namedUnion2Property: $identityConversionFunction(
         parameters.namedUnion2Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "NamedUnionProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NamedUnionProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -25500,15 +25256,10 @@ export namespace NamedUnionProperties {
     });
   }
 
-  export function $toString(this: NamedUnionProperties): string;
   export function $toString(
     _namedUnionProperties: NamedUnionProperties,
-  ): string;
-  export function $toString(
-    this: NamedUnionProperties | undefined,
-    _namedUnionProperties?: NamedUnionProperties,
   ): string {
-    return `NamedUnionProperties(${JSON.stringify(_propertiesToStrings((_namedUnionProperties ?? this)!))})`;
+    return `NamedUnionProperties(${JSON.stringify(_propertiesToStrings(_namedUnionProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -25601,21 +25352,12 @@ export namespace MutableProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "MutableProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "MutableProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -26433,13 +26175,8 @@ export namespace MutableProperties {
     });
   }
 
-  export function $toString(this: MutableProperties): string;
-  export function $toString(_mutableProperties: MutableProperties): string;
-  export function $toString(
-    this: MutableProperties | undefined,
-    _mutableProperties?: MutableProperties,
-  ): string {
-    return `MutableProperties(${JSON.stringify(_propertiesToStrings((_mutableProperties ?? this)!))})`;
+  export function $toString(_mutableProperties: MutableProperties): string {
+    return `MutableProperties(${JSON.stringify(_propertiesToStrings(_mutableProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -26496,21 +26233,12 @@ export namespace ClassMultipleInheritanceParent2 {
       classMultipleInheritanceParent2Property: Either.of(
         parameters.classMultipleInheritanceParent2Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "ClassMultipleInheritanceParent2" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ClassMultipleInheritanceParent2" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -27040,17 +26768,10 @@ export namespace ClassMultipleInheritanceParent2 {
     });
   }
 
-  export function $toString(this: ClassMultipleInheritanceParent2): string;
   export function $toString(
     _classMultipleInheritanceParent2: ClassMultipleInheritanceParent2,
-  ): string;
-  export function $toString(
-    this: ClassMultipleInheritanceParent2 | undefined,
-    _classMultipleInheritanceParent2?: ClassMultipleInheritanceParent2,
   ): string {
-    return `ClassMultipleInheritanceParent2(${JSON.stringify(
-      _propertiesToStrings((_classMultipleInheritanceParent2 ?? this)!),
-    )})`;
+    return `ClassMultipleInheritanceParent2(${JSON.stringify(_propertiesToStrings(_classMultipleInheritanceParent2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -27107,21 +26828,12 @@ export namespace ClassMultipleInheritanceParent1 {
       classMultipleInheritanceParent1Property: Either.of(
         parameters.classMultipleInheritanceParent1Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "ClassMultipleInheritanceParent1" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ClassMultipleInheritanceParent1" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -27651,17 +27363,10 @@ export namespace ClassMultipleInheritanceParent1 {
     });
   }
 
-  export function $toString(this: ClassMultipleInheritanceParent1): string;
   export function $toString(
     _classMultipleInheritanceParent1: ClassMultipleInheritanceParent1,
-  ): string;
-  export function $toString(
-    this: ClassMultipleInheritanceParent1 | undefined,
-    _classMultipleInheritanceParent1?: ClassMultipleInheritanceParent1,
   ): string {
-    return `ClassMultipleInheritanceParent1(${JSON.stringify(
-      _propertiesToStrings((_classMultipleInheritanceParent1 ?? this)!),
-    )})`;
+    return `ClassMultipleInheritanceParent1(${JSON.stringify(_propertiesToStrings(_classMultipleInheritanceParent1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -27723,23 +27428,20 @@ export namespace ClassMultipleInheritanceChild {
           classMultipleInheritanceChildProperty: Either.of(
             parameters.classMultipleInheritanceChildProperty,
           ),
-        }).map((properties) => {
-          const finalObject = {
-            ...super0,
-            ...super1,
-            ...properties,
-            $type: "ClassMultipleInheritanceChild" as const,
-          };
-          if (
-            !globalThis.Object.prototype.hasOwnProperty.call(
-              finalObject,
-              "toString",
-            )
-          ) {
-            (finalObject as any).toString = $toString;
-          }
-          return finalObject;
-        }),
+        }).map((properties) =>
+          $monkeyPatchObject(
+            {
+              ...super0,
+              ...super1,
+              ...properties,
+              $type: "ClassMultipleInheritanceChild" as const,
+            },
+            {
+              toJson,
+              $toString,
+            },
+          ),
+        ),
       ),
     );
   }
@@ -28339,17 +28041,10 @@ export namespace ClassMultipleInheritanceChild {
     });
   }
 
-  export function $toString(this: ClassMultipleInheritanceChild): string;
   export function $toString(
     _classMultipleInheritanceChild: ClassMultipleInheritanceChild,
-  ): string;
-  export function $toString(
-    this: ClassMultipleInheritanceChild | undefined,
-    _classMultipleInheritanceChild?: ClassMultipleInheritanceChild,
   ): string {
-    return `ClassMultipleInheritanceChild(${JSON.stringify(
-      _propertiesToStrings((_classMultipleInheritanceChild ?? this)!),
-    )})`;
+    return `ClassMultipleInheritanceChild(${JSON.stringify(_propertiesToStrings(_classMultipleInheritanceChild))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -28436,18 +28131,12 @@ export namespace ListProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "ListProperties" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ListProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -29452,13 +29141,8 @@ export namespace ListProperties {
     });
   }
 
-  export function $toString(this: ListProperties): string;
-  export function $toString(_listProperties: ListProperties): string;
-  export function $toString(
-    this: ListProperties | undefined,
-    _listProperties?: ListProperties,
-  ): string {
-    return `ListProperties(${JSON.stringify(_propertiesToStrings((_listProperties ?? this)!))})`;
+  export function $toString(_listProperties: ListProperties): string {
+    return `ListProperties(${JSON.stringify(_propertiesToStrings(_listProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -29721,18 +29405,12 @@ export namespace LazyProperties {
         >(Partial.createUnsafe)(
           parameters.setPartialToResolvedBlankNodeOrIriIdentifierProperty,
         ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "LazyProperties" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "LazyProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -31973,13 +31651,8 @@ export namespace LazyProperties {
     });
   }
 
-  export function $toString(this: LazyProperties): string;
-  export function $toString(_lazyProperties: LazyProperties): string;
-  export function $toString(
-    this: LazyProperties | undefined,
-    _lazyProperties?: LazyProperties,
-  ): string {
-    return `LazyProperties(${JSON.stringify(_propertiesToStrings((_lazyProperties ?? this)!))})`;
+  export function $toString(_lazyProperties: LazyProperties): string {
+    return `LazyProperties(${JSON.stringify(_propertiesToStrings(_lazyProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -32038,21 +31711,12 @@ export namespace LazilyResolvedIriIdentifier {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "LazilyResolvedIriIdentifier" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "LazilyResolvedIriIdentifier" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -32445,17 +32109,10 @@ export namespace LazilyResolvedIriIdentifier {
     });
   }
 
-  export function $toString(this: LazilyResolvedIriIdentifier): string;
   export function $toString(
     _lazilyResolvedIriIdentifier: LazilyResolvedIriIdentifier,
-  ): string;
-  export function $toString(
-    this: LazilyResolvedIriIdentifier | undefined,
-    _lazilyResolvedIriIdentifier?: LazilyResolvedIriIdentifier,
   ): string {
-    return `LazilyResolvedIriIdentifier(${JSON.stringify(
-      _propertiesToStrings((_lazilyResolvedIriIdentifier ?? this)!),
-    )})`;
+    return `LazilyResolvedIriIdentifier(${JSON.stringify(_propertiesToStrings(_lazilyResolvedIriIdentifier))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -32510,21 +32167,12 @@ export namespace LazilyResolvedUnionMember2 {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "LazilyResolvedUnionMember2" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "LazilyResolvedUnionMember2" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -33021,17 +32669,10 @@ export namespace LazilyResolvedUnionMember2 {
     });
   }
 
-  export function $toString(this: LazilyResolvedUnionMember2): string;
   export function $toString(
     _lazilyResolvedUnionMember2: LazilyResolvedUnionMember2,
-  ): string;
-  export function $toString(
-    this: LazilyResolvedUnionMember2 | undefined,
-    _lazilyResolvedUnionMember2?: LazilyResolvedUnionMember2,
   ): string {
-    return `LazilyResolvedUnionMember2(${JSON.stringify(
-      _propertiesToStrings((_lazilyResolvedUnionMember2 ?? this)!),
-    )})`;
+    return `LazilyResolvedUnionMember2(${JSON.stringify(_propertiesToStrings(_lazilyResolvedUnionMember2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -33086,21 +32727,12 @@ export namespace LazilyResolvedUnionMember1 {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "LazilyResolvedUnionMember1" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "LazilyResolvedUnionMember1" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -33597,17 +33229,10 @@ export namespace LazilyResolvedUnionMember1 {
     });
   }
 
-  export function $toString(this: LazilyResolvedUnionMember1): string;
   export function $toString(
     _lazilyResolvedUnionMember1: LazilyResolvedUnionMember1,
-  ): string;
-  export function $toString(
-    this: LazilyResolvedUnionMember1 | undefined,
-    _lazilyResolvedUnionMember1?: LazilyResolvedUnionMember1,
   ): string {
-    return `LazilyResolvedUnionMember1(${JSON.stringify(
-      _propertiesToStrings((_lazilyResolvedUnionMember1 ?? this)!),
-    )})`;
+    return `LazilyResolvedUnionMember1(${JSON.stringify(_propertiesToStrings(_lazilyResolvedUnionMember1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -33665,21 +33290,18 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "LazilyResolvedBlankNodeOrIriIdentifier" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        {
+          ...properties,
+          $type: "LazilyResolvedBlankNodeOrIriIdentifier" as const,
+        },
+        {
+          toJson,
+          $toString,
+        },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -34190,17 +33812,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   }
 
   export function $toString(
-    this: LazilyResolvedBlankNodeOrIriIdentifier,
-  ): string;
-  export function $toString(
     _lazilyResolvedBlankNodeOrIriIdentifier: LazilyResolvedBlankNodeOrIriIdentifier,
-  ): string;
-  export function $toString(
-    this: LazilyResolvedBlankNodeOrIriIdentifier | undefined,
-    _lazilyResolvedBlankNodeOrIriIdentifier?: LazilyResolvedBlankNodeOrIriIdentifier,
   ): string {
     return `LazilyResolvedBlankNodeOrIriIdentifier(${JSON.stringify(
-      _propertiesToStrings((_lazilyResolvedBlankNodeOrIriIdentifier ?? this)!),
+      _propertiesToStrings(_lazilyResolvedBlankNodeOrIriIdentifier),
     )})`;
   }
 
@@ -34275,21 +33890,12 @@ export namespace LanguageInProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "LanguageInProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "LanguageInProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -34741,15 +34347,10 @@ export namespace LanguageInProperties {
     });
   }
 
-  export function $toString(this: LanguageInProperties): string;
   export function $toString(
     _languageInProperties: LanguageInProperties,
-  ): string;
-  export function $toString(
-    this: LanguageInProperties | undefined,
-    _languageInProperties?: LanguageInProperties,
   ): string {
-    return `LanguageInProperties(${JSON.stringify(_propertiesToStrings((_languageInProperties ?? this)!))})`;
+    return `LanguageInProperties(${JSON.stringify(_propertiesToStrings(_languageInProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -34813,21 +34414,12 @@ export namespace JsPrimitiveUnionProperty {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "JsPrimitiveUnionProperty" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "JsPrimitiveUnionProperty" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -35726,15 +35318,10 @@ export namespace JsPrimitiveUnionProperty {
     });
   }
 
-  export function $toString(this: JsPrimitiveUnionProperty): string;
   export function $toString(
     _jsPrimitiveUnionProperty: JsPrimitiveUnionProperty,
-  ): string;
-  export function $toString(
-    this: JsPrimitiveUnionProperty | undefined,
-    _jsPrimitiveUnionProperty?: JsPrimitiveUnionProperty,
   ): string {
-    return `JsPrimitiveUnionProperty(${JSON.stringify(_propertiesToStrings((_jsPrimitiveUnionProperty ?? this)!))})`;
+    return `JsPrimitiveUnionProperty(${JSON.stringify(_propertiesToStrings(_jsPrimitiveUnionProperty))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -35785,18 +35372,12 @@ export namespace IriIdentifier {
       $identifier: $convertToIriIdentifierProperty<string>(
         parameters.$identifier,
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "IriIdentifier" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "IriIdentifier" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -36186,13 +35767,8 @@ export namespace IriIdentifier {
     });
   }
 
-  export function $toString(this: IriIdentifier): string;
-  export function $toString(_iriIdentifier: IriIdentifier): string;
-  export function $toString(
-    this: IriIdentifier | undefined,
-    _iriIdentifier?: IriIdentifier,
-  ): string {
-    return `IriIdentifier(${JSON.stringify(_propertiesToStrings((_iriIdentifier ?? this)!))})`;
+  export function $toString(_iriIdentifier: IriIdentifier): string {
+    return `IriIdentifier(${JSON.stringify(_propertiesToStrings(_iriIdentifier))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -36254,21 +35830,12 @@ export namespace IndirectRecursiveHelper {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "IndirectRecursiveHelper" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "IndirectRecursiveHelper" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -36771,15 +36338,10 @@ export namespace IndirectRecursiveHelper {
     });
   }
 
-  export function $toString(this: IndirectRecursiveHelper): string;
   export function $toString(
     _indirectRecursiveHelper: IndirectRecursiveHelper,
-  ): string;
-  export function $toString(
-    this: IndirectRecursiveHelper | undefined,
-    _indirectRecursiveHelper?: IndirectRecursiveHelper,
   ): string {
-    return `IndirectRecursiveHelper(${JSON.stringify(_propertiesToStrings((_indirectRecursiveHelper ?? this)!))})`;
+    return `IndirectRecursiveHelper(${JSON.stringify(_propertiesToStrings(_indirectRecursiveHelper))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -36841,21 +36403,12 @@ export namespace IndirectRecursive {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "IndirectRecursive" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "IndirectRecursive" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -37357,13 +36910,8 @@ export namespace IndirectRecursive {
     });
   }
 
-  export function $toString(this: IndirectRecursive): string;
-  export function $toString(_indirectRecursive: IndirectRecursive): string;
-  export function $toString(
-    this: IndirectRecursive | undefined,
-    _indirectRecursive?: IndirectRecursive,
-  ): string {
-    return `IndirectRecursive(${JSON.stringify(_propertiesToStrings((_indirectRecursive ?? this)!))})`;
+  export function $toString(_indirectRecursive: IndirectRecursive): string {
+    return `IndirectRecursive(${JSON.stringify(_propertiesToStrings(_indirectRecursive))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -37496,18 +37044,12 @@ export namespace InProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "InProperties" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "InProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -38591,13 +38133,8 @@ export namespace InProperties {
     });
   }
 
-  export function $toString(this: InProperties): string;
-  export function $toString(_inProperties: InProperties): string;
-  export function $toString(
-    this: InProperties | undefined,
-    _inProperties?: InProperties,
-  ): string {
-    return `InProperties(${JSON.stringify(_propertiesToStrings((_inProperties ?? this)!))})`;
+  export function $toString(_inProperties: InProperties): string {
+    return `InProperties(${JSON.stringify(_propertiesToStrings(_inProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -38666,18 +38203,12 @@ export namespace InIdentifier {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "InIdentifier" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "InIdentifier" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -39231,13 +38762,8 @@ export namespace InIdentifier {
     });
   }
 
-  export function $toString(this: InIdentifier): string;
-  export function $toString(_inIdentifier: InIdentifier): string;
-  export function $toString(
-    this: InIdentifier | undefined,
-    _inIdentifier?: InIdentifier,
-  ): string {
-    return `InIdentifier(${JSON.stringify(_propertiesToStrings((_inIdentifier ?? this)!))})`;
+  export function $toString(_inIdentifier: InIdentifier): string {
+    return `InIdentifier(${JSON.stringify(_propertiesToStrings(_inIdentifier))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39298,21 +38824,12 @@ export namespace HasValueProperties {
         parameters.hasIriValueProperty,
       ),
       hasLiteralValueProperty: Either.of(parameters.hasLiteralValueProperty),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "HasValueProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "HasValueProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -39790,13 +39307,8 @@ export namespace HasValueProperties {
     });
   }
 
-  export function $toString(this: HasValueProperties): string;
-  export function $toString(_hasValueProperties: HasValueProperties): string;
-  export function $toString(
-    this: HasValueProperties | undefined,
-    _hasValueProperties?: HasValueProperties,
-  ): string {
-    return `HasValueProperties(${JSON.stringify(_propertiesToStrings((_hasValueProperties ?? this)!))})`;
+  export function $toString(_hasValueProperties: HasValueProperties): string {
+    return `HasValueProperties(${JSON.stringify(_propertiesToStrings(_hasValueProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -39851,21 +39363,12 @@ export namespace FlattenUnionMember3 {
       flattenUnionMember3Property: Either.of(
         parameters.flattenUnionMember3Property,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "FlattenUnionMember3" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "FlattenUnionMember3" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -40350,13 +39853,8 @@ export namespace FlattenUnionMember3 {
     });
   }
 
-  export function $toString(this: FlattenUnionMember3): string;
-  export function $toString(_flattenUnionMember3: FlattenUnionMember3): string;
-  export function $toString(
-    this: FlattenUnionMember3 | undefined,
-    _flattenUnionMember3?: FlattenUnionMember3,
-  ): string {
-    return `FlattenUnionMember3(${JSON.stringify(_propertiesToStrings((_flattenUnionMember3 ?? this)!))})`;
+  export function $toString(_flattenUnionMember3: FlattenUnionMember3): string {
+    return `FlattenUnionMember3(${JSON.stringify(_propertiesToStrings(_flattenUnionMember3))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -40419,18 +39917,12 @@ export namespace ExternProperty {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "ExternProperty" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ExternProperty" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -40934,13 +40426,8 @@ export namespace ExternProperty {
     });
   }
 
-  export function $toString(this: ExternProperty): string;
-  export function $toString(_externProperty: ExternProperty): string;
-  export function $toString(
-    this: ExternProperty | undefined,
-    _externProperty?: ExternProperty,
-  ): string {
-    return `ExternProperty(${JSON.stringify(_propertiesToStrings((_externProperty ?? this)!))})`;
+  export function $toString(_externProperty: ExternProperty): string {
+    return `ExternProperty(${JSON.stringify(_propertiesToStrings(_externProperty))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -40996,18 +40483,12 @@ export namespace BaseForExtern {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       baseForExternProperty: Either.of(parameters.baseForExternProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "BaseForExtern" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "BaseForExtern" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -41501,13 +40982,8 @@ export namespace BaseForExtern {
     });
   }
 
-  export function $toString(this: BaseForExtern): string;
-  export function $toString(_baseForExtern: BaseForExtern): string;
-  export function $toString(
-    this: BaseForExtern | undefined,
-    _baseForExtern?: BaseForExtern,
-  ): string {
-    return `BaseForExtern(${JSON.stringify(_propertiesToStrings((_baseForExtern ?? this)!))})`;
+  export function $toString(_baseForExtern: BaseForExtern): string {
+    return `BaseForExtern(${JSON.stringify(_propertiesToStrings(_baseForExtern))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -41565,18 +41041,12 @@ export namespace ExplicitRdfType {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       explicitRdfTypeProperty: Either.of(parameters.explicitRdfTypeProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "ExplicitRdfType" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ExplicitRdfType" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -42064,13 +41534,8 @@ export namespace ExplicitRdfType {
     });
   }
 
-  export function $toString(this: ExplicitRdfType): string;
-  export function $toString(_explicitRdfType: ExplicitRdfType): string;
-  export function $toString(
-    this: ExplicitRdfType | undefined,
-    _explicitRdfType?: ExplicitRdfType,
-  ): string {
-    return `ExplicitRdfType(${JSON.stringify(_propertiesToStrings((_explicitRdfType ?? this)!))})`;
+  export function $toString(_explicitRdfType: ExplicitRdfType): string {
+    return `ExplicitRdfType(${JSON.stringify(_propertiesToStrings(_explicitRdfType))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -42131,21 +41596,12 @@ export namespace ExplicitFromToRdfTypes {
       explicitFromToRdfTypesProperty: Either.of(
         parameters.explicitFromToRdfTypesProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "ExplicitFromToRdfTypes" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ExplicitFromToRdfTypes" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -42647,15 +42103,10 @@ export namespace ExplicitFromToRdfTypes {
     });
   }
 
-  export function $toString(this: ExplicitFromToRdfTypes): string;
   export function $toString(
     _explicitFromToRdfTypes: ExplicitFromToRdfTypes,
-  ): string;
-  export function $toString(
-    this: ExplicitFromToRdfTypes | undefined,
-    _explicitFromToRdfTypes?: ExplicitFromToRdfTypes,
   ): string {
-    return `ExplicitFromToRdfTypes(${JSON.stringify(_propertiesToStrings((_explicitFromToRdfTypes ?? this)!))})`;
+    return `ExplicitFromToRdfTypes(${JSON.stringify(_propertiesToStrings(_explicitFromToRdfTypes))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -42732,21 +42183,12 @@ export namespace DisplayProperties {
       implicitFalseDisplayProperty: Either.of(
         parameters.implicitFalseDisplayProperty,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "DisplayProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "DisplayProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -43410,13 +42852,8 @@ export namespace DisplayProperties {
     });
   }
 
-  export function $toString(this: DisplayProperties): string;
-  export function $toString(_displayProperties: DisplayProperties): string;
-  export function $toString(
-    this: DisplayProperties | undefined,
-    _displayProperties?: DisplayProperties,
-  ): string {
-    return `DisplayProperties(${JSON.stringify(_propertiesToStrings((_displayProperties ?? this)!))})`;
+  export function $toString(_displayProperties: DisplayProperties): string {
+    return `DisplayProperties(${JSON.stringify(_propertiesToStrings(_displayProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -43476,18 +42913,12 @@ export namespace DirectRecursive {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "DirectRecursive" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "DirectRecursive" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -43980,13 +43411,8 @@ export namespace DirectRecursive {
     });
   }
 
-  export function $toString(this: DirectRecursive): string;
-  export function $toString(_directRecursive: DirectRecursive): string;
-  export function $toString(
-    this: DirectRecursive | undefined,
-    _directRecursive?: DirectRecursive,
-  ): string {
-    return `DirectRecursive(${JSON.stringify(_propertiesToStrings((_directRecursive ?? this)!))})`;
+  export function $toString(_directRecursive: DirectRecursive): string {
+    return `DirectRecursive(${JSON.stringify(_propertiesToStrings(_directRecursive))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -44075,21 +43501,12 @@ export namespace DefaultValueProperties {
         $identityConversionFunction,
         true,
       )(parameters?.trueBooleanDefaultValueProperty),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "DefaultValueProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "DefaultValueProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -45160,15 +44577,10 @@ export namespace DefaultValueProperties {
     });
   }
 
-  export function $toString(this: DefaultValueProperties): string;
   export function $toString(
     _defaultValueProperties: DefaultValueProperties,
-  ): string;
-  export function $toString(
-    this: DefaultValueProperties | undefined,
-    _defaultValueProperties?: DefaultValueProperties,
   ): string {
-    return `DefaultValueProperties(${JSON.stringify(_propertiesToStrings((_defaultValueProperties ?? this)!))})`;
+    return `DefaultValueProperties(${JSON.stringify(_propertiesToStrings(_defaultValueProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -45285,21 +44697,12 @@ export namespace DateUnionProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "DateUnionProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "DateUnionProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -47609,13 +47012,8 @@ export namespace DateUnionProperties {
     });
   }
 
-  export function $toString(this: DateUnionProperties): string;
-  export function $toString(_dateUnionProperties: DateUnionProperties): string;
-  export function $toString(
-    this: DateUnionProperties | undefined,
-    _dateUnionProperties?: DateUnionProperties,
-  ): string {
-    return `DateUnionProperties(${JSON.stringify(_propertiesToStrings((_dateUnionProperties ?? this)!))})`;
+  export function $toString(_dateUnionProperties: DateUnionProperties): string {
+    return `DateUnionProperties(${JSON.stringify(_propertiesToStrings(_dateUnionProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -47827,21 +47225,12 @@ export namespace ConvertibleTypeProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "ConvertibleTypeProperties" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ConvertibleTypeProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -49911,15 +49300,10 @@ export namespace ConvertibleTypeProperties {
     });
   }
 
-  export function $toString(this: ConvertibleTypeProperties): string;
   export function $toString(
     _convertibleTypeProperties: ConvertibleTypeProperties,
-  ): string;
-  export function $toString(
-    this: ConvertibleTypeProperties | undefined,
-    _convertibleTypeProperties?: ConvertibleTypeProperties,
   ): string {
-    return `ConvertibleTypeProperties(${JSON.stringify(_propertiesToStrings((_convertibleTypeProperties ?? this)!))})`;
+    return `ConvertibleTypeProperties(${JSON.stringify(_propertiesToStrings(_convertibleTypeProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -49977,18 +49361,12 @@ export namespace Partial {
       lazilyResolvedStringProperty: Either.of(
         parameters.lazilyResolvedStringProperty,
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "Partial" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "Partial" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -50359,13 +49737,8 @@ export namespace Partial {
     return $compactRecord({ $identifier: _partial.$identifier().toString() });
   }
 
-  export function $toString(this: Partial): string;
-  export function $toString(_partial: Partial): string;
-  export function $toString(
-    this: Partial | undefined,
-    _partial?: Partial,
-  ): string {
-    return `Partial(${JSON.stringify(_propertiesToStrings((_partial ?? this)!))})`;
+  export function $toString(_partial: Partial): string {
+    return `Partial(${JSON.stringify(_propertiesToStrings(_partial))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -50421,18 +49794,12 @@ export namespace NonClass {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       nonClassProperty: Either.of(parameters.nonClassProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NonClass" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NonClass" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -50795,13 +50162,8 @@ export namespace NonClass {
     return $compactRecord({ $identifier: _nonClass.$identifier().toString() });
   }
 
-  export function $toString(this: NonClass): string;
-  export function $toString(_nonClass: NonClass): string;
-  export function $toString(
-    this: NonClass | undefined,
-    _nonClass?: NonClass,
-  ): string {
-    return `NonClass(${JSON.stringify(_propertiesToStrings((_nonClass ?? this)!))})`;
+  export function $toString(_nonClass: NonClass): string {
+    return `NonClass(${JSON.stringify(_propertiesToStrings(_nonClass))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -50927,18 +50289,12 @@ export namespace ClassProperties {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "ClassProperties" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ClassProperties" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -51898,13 +51254,8 @@ export namespace ClassProperties {
     });
   }
 
-  export function $toString(this: ClassProperties): string;
-  export function $toString(_classProperties: ClassProperties): string;
-  export function $toString(
-    this: ClassProperties | undefined,
-    _classProperties?: ClassProperties,
-  ): string {
-    return `ClassProperties(${JSON.stringify(_propertiesToStrings((_classProperties ?? this)!))})`;
+  export function $toString(_classProperties: ClassProperties): string {
+    return `ClassProperties(${JSON.stringify(_propertiesToStrings(_classProperties))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -51964,18 +51315,12 @@ export namespace ClassHierarchy0 {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       classHierarchy0Property: Either.of(parameters.classHierarchy0Property),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "ClassHierarchy0" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "ClassHierarchy0" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -52498,13 +51843,8 @@ export namespace ClassHierarchy0 {
     });
   }
 
-  export function $toString(this: ClassHierarchy0): string;
-  export function $toString(_classHierarchy0: ClassHierarchy0): string;
-  export function $toString(
-    this: ClassHierarchy0 | undefined,
-    _classHierarchy0?: ClassHierarchy0,
-  ): string {
-    return `ClassHierarchy0(${JSON.stringify(_propertiesToStrings((_classHierarchy0 ?? this)!))})`;
+  export function $toString(_classHierarchy0: ClassHierarchy0): string {
+    return `ClassHierarchy0(${JSON.stringify(_propertiesToStrings(_classHierarchy0))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -52557,22 +51897,12 @@ export namespace ClassHierarchy1 {
     return ClassHierarchy0.create(parameters).chain((super0) =>
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "ClassHierarchy1" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "ClassHierarchy1" as const },
+          { toJson, $toString },
+        ),
+      ),
     );
   }
 
@@ -53025,13 +52355,8 @@ export namespace ClassHierarchy1 {
     });
   }
 
-  export function $toString(this: ClassHierarchy1): string;
-  export function $toString(_classHierarchy1: ClassHierarchy1): string;
-  export function $toString(
-    this: ClassHierarchy1 | undefined,
-    _classHierarchy1?: ClassHierarchy1,
-  ): string {
-    return `ClassHierarchy1(${JSON.stringify(_propertiesToStrings((_classHierarchy1 ?? this)!))})`;
+  export function $toString(_classHierarchy1: ClassHierarchy1): string {
+    return `ClassHierarchy1(${JSON.stringify(_propertiesToStrings(_classHierarchy1))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -53087,22 +52412,12 @@ export namespace ClassHierarchy2 {
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
         classHierarchy2Property: Either.of(parameters.classHierarchy2Property),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "ClassHierarchy2" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "ClassHierarchy2" as const },
+          { toJson, $toString },
+        ),
+      ),
     );
   }
 
@@ -53634,13 +52949,8 @@ export namespace ClassHierarchy2 {
     });
   }
 
-  export function $toString(this: ClassHierarchy2): string;
-  export function $toString(_classHierarchy2: ClassHierarchy2): string;
-  export function $toString(
-    this: ClassHierarchy2 | undefined,
-    _classHierarchy2?: ClassHierarchy2,
-  ): string {
-    return `ClassHierarchy2(${JSON.stringify(_propertiesToStrings((_classHierarchy2 ?? this)!))})`;
+  export function $toString(_classHierarchy2: ClassHierarchy2): string {
+    return `ClassHierarchy2(${JSON.stringify(_propertiesToStrings(_classHierarchy2))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -53696,22 +53006,12 @@ export namespace ClassHierarchy3 {
       $sequenceRecord({
         $identifier: $convertToIdentifierProperty(parameters.$identifier),
         classHierarchy3Property: Either.of(parameters.classHierarchy3Property),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "ClassHierarchy3" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "ClassHierarchy3" as const },
+          { toJson, $toString },
+        ),
+      ),
     );
   }
 
@@ -54226,13 +53526,8 @@ export namespace ClassHierarchy3 {
     });
   }
 
-  export function $toString(this: ClassHierarchy3): string;
-  export function $toString(_classHierarchy3: ClassHierarchy3): string;
-  export function $toString(
-    this: ClassHierarchy3 | undefined,
-    _classHierarchy3?: ClassHierarchy3,
-  ): string {
-    return `ClassHierarchy3(${JSON.stringify(_propertiesToStrings((_classHierarchy3 ?? this)!))})`;
+  export function $toString(_classHierarchy3: ClassHierarchy3): string {
+    return `ClassHierarchy3(${JSON.stringify(_propertiesToStrings(_classHierarchy3))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -54285,21 +53580,12 @@ export namespace BlankNodeOrIriIdentifier {
   }): Either<Error, BlankNodeOrIriIdentifier> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "BlankNodeOrIriIdentifier" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "BlankNodeOrIriIdentifier" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -54709,15 +53995,10 @@ export namespace BlankNodeOrIriIdentifier {
     });
   }
 
-  export function $toString(this: BlankNodeOrIriIdentifier): string;
   export function $toString(
     _blankNodeOrIriIdentifier: BlankNodeOrIriIdentifier,
-  ): string;
-  export function $toString(
-    this: BlankNodeOrIriIdentifier | undefined,
-    _blankNodeOrIriIdentifier?: BlankNodeOrIriIdentifier,
   ): string {
-    return `BlankNodeOrIriIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeOrIriIdentifier ?? this)!))})`;
+    return `BlankNodeOrIriIdentifier(${JSON.stringify(_propertiesToStrings(_blankNodeOrIriIdentifier))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
@@ -54768,21 +54049,12 @@ export namespace BlankNodeIdentifier {
       $identifier: $convertToBlankNodeIdentifierProperty(
         parameters?.$identifier,
       ),
-    }).map((properties) => {
-      const finalObject = {
-        ...properties,
-        $type: "BlankNodeIdentifier" as const,
-      };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "BlankNodeIdentifier" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -55176,13 +54448,8 @@ export namespace BlankNodeIdentifier {
     });
   }
 
-  export function $toString(this: BlankNodeIdentifier): string;
-  export function $toString(_blankNodeIdentifier: BlankNodeIdentifier): string;
-  export function $toString(
-    this: BlankNodeIdentifier | undefined,
-    _blankNodeIdentifier?: BlankNodeIdentifier,
-  ): string {
-    return `BlankNodeIdentifier(${JSON.stringify(_propertiesToStrings((_blankNodeIdentifier ?? this)!))})`;
+  export function $toString(_blankNodeIdentifier: BlankNodeIdentifier): string {
+    return `BlankNodeIdentifier(${JSON.stringify(_propertiesToStrings(_blankNodeIdentifier))})`;
   }
 
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<

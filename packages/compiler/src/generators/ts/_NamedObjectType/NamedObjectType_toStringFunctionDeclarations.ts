@@ -44,10 +44,8 @@ export function _propertiesToStrings(${this.thisVariable}: ${this.name}): Record
 }`,
 
     code`\
-export function ${syntheticNamePrefix}toString(this: ${this.name}): string;
-export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.name}): string;
-export function ${syntheticNamePrefix}toString(this: ${this.name} | undefined, ${this.thisVariable}?: ${this.name}): string {
-  return ${toStringReturnExpression(code`_propertiesToStrings((${this.thisVariable} ?? this)!)`)};
+export function ${syntheticNamePrefix}toString(${this.thisVariable}: ${this.name}): string {
+  return ${toStringReturnExpression(code`_propertiesToStrings(${this.thisVariable})`)};
 }`,
   ];
 }

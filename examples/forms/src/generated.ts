@@ -133,6 +133,33 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Maybe";
 }
 
+function $monkeyPatchObject<T extends object>(
+  obj: T,
+  methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
+): T {
+  if (
+    methods.toJson &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+  ) {
+    const toJsonMethod = methods.toJson;
+    (obj as any).toJSON = function (this: T, _key: string) {
+      return toJsonMethod(this);
+    };
+  }
+
+  if (
+    methods.$toString &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+  ) {
+    const toStringMethod = methods.$toString;
+    (obj as any).toString = function (this: T) {
+      return toStringMethod(this);
+    };
+  }
+
+  return obj;
+}
+
 const $parseIdentifier = NTriplesIdentifier.parser(dataFactory);
 
 export type $PropertyPath = RdfxResourcePropertyPath;
@@ -368,18 +395,12 @@ export namespace NestedNodeShape {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters.$identifier),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "NestedNodeShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "NestedNodeShape" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -543,13 +564,8 @@ export namespace NestedNodeShape {
     });
   }
 
-  export function $toString(this: NestedNodeShape): string;
-  export function $toString(_nestedNodeShape: NestedNodeShape): string;
-  export function $toString(
-    this: NestedNodeShape | undefined,
-    _nestedNodeShape?: NestedNodeShape,
-  ): string {
-    return `NestedNodeShape(${JSON.stringify(_propertiesToStrings((_nestedNodeShape ?? this)!))})`;
+  export function $toString(_nestedNodeShape: NestedNodeShape): string {
+    return `NestedNodeShape(${JSON.stringify(_propertiesToStrings(_nestedNodeShape))})`;
   }
 } /**
  * Form
@@ -629,18 +645,12 @@ export namespace FormNodeShape {
       ),
       requiredIntProperty: Either.of(parameters.requiredIntProperty),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "FormNodeShape" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "FormNodeShape" as const },
+        { toJson, $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -972,13 +982,8 @@ export namespace FormNodeShape {
     });
   }
 
-  export function $toString(this: FormNodeShape): string;
-  export function $toString(_formNodeShape: FormNodeShape): string;
-  export function $toString(
-    this: FormNodeShape | undefined,
-    _formNodeShape?: FormNodeShape,
-  ): string {
-    return `FormNodeShape(${JSON.stringify(_propertiesToStrings((_formNodeShape ?? this)!))})`;
+  export function $toString(_formNodeShape: FormNodeShape): string {
+    return `FormNodeShape(${JSON.stringify(_propertiesToStrings(_formNodeShape))})`;
   }
 }
 export type $Object = FormNodeShape | NestedNodeShape;

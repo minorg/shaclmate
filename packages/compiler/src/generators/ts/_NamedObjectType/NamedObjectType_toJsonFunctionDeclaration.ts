@@ -32,6 +32,8 @@ export function NamedObjectType_toJsonFunctionDeclaration(
     );
   }
 
+  const returnType = this.jsonType().name;
+
   // 20241220: don't add @type until we're doing JSON-LD
   // switch (this.toRdfTypes.length) {
   //   case 0:
@@ -47,7 +49,7 @@ export function NamedObjectType_toJsonFunctionDeclaration(
   // }
 
   return Maybe.of(code`\
-export function toJson(${this.thisVariable}: ${this.name}): ${this.jsonType().name} {
+export function toJson(${this.thisVariable}: ${this.name}): ${returnType} {
   return JSON.parse(JSON.stringify({ ${joinCode(jsonObjectMembers, { on: "," })} } satisfies ${this.jsonType().name}));
 }`);
 }

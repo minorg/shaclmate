@@ -128,6 +128,12 @@ describe("toJson", () => {
     expect(jsonObject["@type"]).toStrictEqual("ClassHierarchy3");
   });
 
+  it("toJSON", ({ expect }) => {
+    expect(JSON.stringify(harnesses.classHierarchy0.instance)).toStrictEqual(
+      `{"@id":"http://example.com/instance","@type":"ClassHierarchy0","classHierarchy0Property":"0"}`,
+    );
+  });
+
   // it("property order", ({ expect }) => {
   //   const jsonObject =
   //     harnesses.nodeShapeWithOrderedProperties.instance.toJson();
