@@ -584,6 +584,33 @@ interface $MaybeSchema<ItemSchemaT> {
   readonly kind: "Maybe";
 }
 
+function $monkeyPatchObject<T extends object>(
+  obj: T,
+  methods: { toJson?: (obj: T) => object; $toString?: (obj: T) => string },
+): T {
+  if (
+    methods.toJson &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toJSON")
+  ) {
+    const toJsonMethod = methods.toJson;
+    (obj as any).toJSON = function (this: T, _key: string) {
+      return toJsonMethod(this);
+    };
+  }
+
+  if (
+    methods.$toString &&
+    !globalThis.Object.prototype.hasOwnProperty.call(obj, "toString")
+  ) {
+    const toStringMethod = methods.$toString;
+    (obj as any).toString = function (this: T) {
+      return toStringMethod(this);
+    };
+  }
+
+  return obj;
+}
+
 interface $NumericFilter<T> {
   readonly in?: readonly T[];
   readonly maxExclusive?: T;
@@ -875,18 +902,12 @@ export namespace $DefaultPartial {
   }): Either<Error, $DefaultPartial> {
     return $sequenceRecord({
       $identifier: $convertToIdentifierProperty(parameters?.$identifier),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "$DefaultPartial" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "$DefaultPartial" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -999,13 +1020,8 @@ export namespace $DefaultPartial {
     });
   }
 
-  export function $toString(this: $DefaultPartial): string;
-  export function $toString(_defaultPartial: $DefaultPartial): string;
-  export function $toString(
-    this: $DefaultPartial | undefined,
-    _defaultPartial?: $DefaultPartial,
-  ): string {
-    return `$DefaultPartial(${JSON.stringify(_propertiesToStrings((_defaultPartial ?? this)!))})`;
+  export function $toString(_defaultPartial: $DefaultPartial): string {
+    return `$DefaultPartial(${JSON.stringify(_propertiesToStrings(_defaultPartial))})`;
   }
 } /**
  * UnionMember1
@@ -1039,18 +1055,12 @@ export namespace UnionMember2 {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "UnionMember2" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "UnionMember2" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -1281,13 +1291,8 @@ export namespace UnionMember2 {
     });
   }
 
-  export function $toString(this: UnionMember2): string;
-  export function $toString(_unionMember2: UnionMember2): string;
-  export function $toString(
-    this: UnionMember2 | undefined,
-    _unionMember2?: UnionMember2,
-  ): string {
-    return `UnionMember2(${JSON.stringify(_propertiesToStrings((_unionMember2 ?? this)!))})`;
+  export function $toString(_unionMember2: UnionMember2): string {
+    return `UnionMember2(${JSON.stringify(_propertiesToStrings(_unionMember2))})`;
   }
 } /**
  * UnionMember1
@@ -1321,18 +1326,12 @@ export namespace UnionMember1 {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "UnionMember1" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "UnionMember1" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters?: {
@@ -1559,13 +1558,8 @@ export namespace UnionMember1 {
     });
   }
 
-  export function $toString(this: UnionMember1): string;
-  export function $toString(_unionMember1: UnionMember1): string;
-  export function $toString(
-    this: UnionMember1 | undefined,
-    _unionMember1?: UnionMember1,
-  ): string {
-    return `UnionMember1(${JSON.stringify(_propertiesToStrings((_unionMember1 ?? this)!))})`;
+  export function $toString(_unionMember1: UnionMember1): string {
+    return `UnionMember1(${JSON.stringify(_propertiesToStrings(_unionMember1))})`;
   }
 } /**
  * Nested
@@ -1618,18 +1612,12 @@ export namespace Nested {
         ),
       ),
       requiredStringProperty: Either.of(parameters.requiredStringProperty),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "Nested" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "Nested" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -1956,13 +1944,8 @@ export namespace Nested {
     return $compactRecord({ $identifier: _nested.$identifier().toString() });
   }
 
-  export function $toString(this: Nested): string;
-  export function $toString(_nested: Nested): string;
-  export function $toString(
-    this: Nested | undefined,
-    _nested?: Nested,
-  ): string {
-    return `Nested(${JSON.stringify(_propertiesToStrings((_nested ?? this)!))})`;
+  export function $toString(_nested: Nested): string {
+    return `Nested(${JSON.stringify(_propertiesToStrings(_nested))})`;
   }
 } /**
  * Parent
@@ -1994,18 +1977,12 @@ export namespace Parent {
           value,
         ),
       ),
-    }).map((properties) => {
-      const finalObject = { ...properties, $type: "Parent" as const };
-      if (
-        !globalThis.Object.prototype.hasOwnProperty.call(
-          finalObject,
-          "toString",
-        )
-      ) {
-        (finalObject as any).toString = $toString;
-      }
-      return finalObject;
-    });
+    }).map((properties) =>
+      $monkeyPatchObject(
+        { ...properties, $type: "Parent" as const },
+        { $toString },
+      ),
+    );
   }
 
   export function createUnsafe(parameters: {
@@ -2227,13 +2204,8 @@ export namespace Parent {
     return $compactRecord({ $identifier: _parent.$identifier().toString() });
   }
 
-  export function $toString(this: Parent): string;
-  export function $toString(_parent: Parent): string;
-  export function $toString(
-    this: Parent | undefined,
-    _parent?: Parent,
-  ): string {
-    return `Parent(${JSON.stringify(_propertiesToStrings((_parent ?? this)!))})`;
+  export function $toString(_parent: Parent): string {
+    return `Parent(${JSON.stringify(_propertiesToStrings(_parent))})`;
   }
 } /**
  * Child
@@ -2333,22 +2305,12 @@ export namespace Child {
           ),
         ),
         requiredStringProperty: Either.of(parameters.requiredStringProperty),
-      }).map((properties) => {
-        const finalObject = {
-          ...super0,
-          ...properties,
-          $type: "Child" as const,
-        };
-        if (
-          !globalThis.Object.prototype.hasOwnProperty.call(
-            finalObject,
-            "toString",
-          )
-        ) {
-          (finalObject as any).toString = $toString;
-        }
-        return finalObject;
-      }),
+      }).map((properties) =>
+        $monkeyPatchObject(
+          { ...super0, ...properties, $type: "Child" as const },
+          { $toString },
+        ),
+      ),
     );
   }
 
@@ -2940,10 +2902,8 @@ export namespace Child {
     });
   }
 
-  export function $toString(this: Child): string;
-  export function $toString(_child: Child): string;
-  export function $toString(this: Child | undefined, _child?: Child): string {
-    return `Child(${JSON.stringify(_propertiesToStrings((_child ?? this)!))})`;
+  export function $toString(_child: Child): string {
+    return `Child(${JSON.stringify(_propertiesToStrings(_child))})`;
   }
 }
 export type Union = UnionMember1 | UnionMember2;
