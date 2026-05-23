@@ -2,8 +2,8 @@
   "dependencies": {
     "@rdfjs/dataset": "~2.0.2",
     "@rdfjs/types": "~2.0.1",
-    "@rdfx/data-factory": "0.0.13",
-    "@rdfx/resource": "0.0.13",
+    "@rdfx/data-factory": "0.0.18",
+    "@rdfx/resource": "0.0.18",
     "decimal.js": "~10.6.0",
     "purify-ts": "~2.1.4",
     "sparqljs": "3.7.3",
@@ -12,7 +12,7 @@
   "devDependencies": {
     "@rdfjs/prefix-map": "~0.1.2",
     "@rdfjs/serializer-turtle": "~1.1.5",
-    "@rdfx/sparql-client": "0.0.13",
+    "@rdfx/sparql-client": "0.0.18",
     "@tpluscode/rdf-ns-builders": "~4.3.0",
     "@types/n3": "~1.26.0",
     "@types/rdfjs__dataset": "~2.0.7",
