@@ -360,6 +360,13 @@ const workspaces = {
         external: ["@types/n3", "n3"],
         // internal: ["kitchen-sink-example"],
       },
+      tsconfig: {
+        ...tsconfigDefault,
+        compilerOptions: {
+          ...tsconfigDefault.compilerOptions,
+          experimentalDecorators: true,
+        },
+      },
     },
     "shacl-ast": {
       dependencies: {
