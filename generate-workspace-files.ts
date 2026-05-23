@@ -5,9 +5,9 @@ import path from "node:path";
 import url from "node:url";
 import type { CompilerOptions } from "typescript";
 
-const VERSION = "4.0.37";
+const VERSION = "4.0.38";
 
-const rdfxVersion = "0.0.13";
+const rdfxVersion = "0.0.18";
 const vitestVersion = "~4.1.5";
 
 const externalDependencies = {
@@ -78,7 +78,7 @@ const externalDependencies = {
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
   tsx: "~4.16.2",
-  typescript: "5.9.3",
+  typescript: "6.0.3",
   "typescript-memoize": "~1.1.1",
   turbo: "~2.5.5",
   vite: "6.0.7",
@@ -104,7 +104,6 @@ const tsconfigDefault: Tsconfig = {
     declaration: true,
     declarationMap: true,
     exactOptionalPropertyTypes: false,
-    experimentalDecorators: true,
     forceConsistentCasingInFileNames: true,
     incremental: false,
     noUncheckedIndexedAccess: false,
@@ -191,7 +190,6 @@ const workspaces = {
       tsconfig: {
         compilerOptions: {
           exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
@@ -249,7 +247,6 @@ const workspaces = {
           lib: ["ES2020", "DOM", "DOM.Iterable"],
           module: "esnext" as any,
           skipLibCheck: true,
-
           moduleResolution: "bundler" as any,
           allowImportingTsExtensions: true,
           isolatedModules: true,
@@ -283,7 +280,6 @@ const workspaces = {
       tsconfig: {
         compilerOptions: {
           exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
@@ -363,6 +359,13 @@ const workspaces = {
       devDependencies: {
         external: ["@types/n3", "n3"],
         // internal: ["kitchen-sink-example"],
+      },
+      tsconfig: {
+        ...tsconfigDefault,
+        compilerOptions: {
+          ...tsconfigDefault.compilerOptions,
+          experimentalDecorators: true,
+        },
       },
     },
     "shacl-ast": {

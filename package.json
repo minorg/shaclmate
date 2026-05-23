@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
-    "@rdfx/testing": "0.0.13",
+    "@rdfx/testing": "0.0.18",
     "@tsconfig/node20": "^20",
     "@tsconfig/strictest": "~2.0.8",
     "@types/node": "^20",
@@ -10,7 +10,7 @@
     "rimraf": "~6.0.1",
     "tsx": "~4.16.2",
     "turbo": "~2.5.5",
-    "typescript": "5.9.3",
+    "typescript": "6.0.3",
     "vitest": "~4.1.5",
     "vitest-fetch-mock": "~0.4.5"
   },

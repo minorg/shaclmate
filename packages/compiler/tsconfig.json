@@ -3,7 +3,6 @@
     "declaration": true,
     "declarationMap": true,
     "exactOptionalPropertyTypes": false,
-    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": false,
     "noUncheckedIndexedAccess": false,
@@ -12,7 +11,8 @@
     "sourceMap": true,
     "types": [
       "node"
-    ]
+    ],
+    "experimentalDecorators": true
   },
   "extends": [
     "@tsconfig/strictest/tsconfig.json",

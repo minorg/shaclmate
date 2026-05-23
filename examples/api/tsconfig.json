@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
-    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "noUncheckedIndexedAccess": false,
