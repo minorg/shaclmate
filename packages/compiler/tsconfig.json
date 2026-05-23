@@ -3,7 +3,6 @@
     "declaration": true,
     "declarationMap": true,
     "exactOptionalPropertyTypes": false,
-    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": false,
     "noUncheckedIndexedAccess": false,

@@ -104,7 +104,6 @@ const tsconfigDefault: Tsconfig = {
     declaration: true,
     declarationMap: true,
     exactOptionalPropertyTypes: false,
-    experimentalDecorators: true,
     forceConsistentCasingInFileNames: true,
     incremental: false,
     noUncheckedIndexedAccess: false,
@@ -191,7 +190,6 @@ const workspaces = {
       tsconfig: {
         compilerOptions: {
           exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
@@ -249,7 +247,6 @@ const workspaces = {
           lib: ["ES2020", "DOM", "DOM.Iterable"],
           module: "esnext" as any,
           skipLibCheck: true,
-
           moduleResolution: "bundler" as any,
           allowImportingTsExtensions: true,
           isolatedModules: true,
@@ -283,7 +280,6 @@ const workspaces = {
       tsconfig: {
         compilerOptions: {
           exactOptionalPropertyTypes: false,
-          experimentalDecorators: true,
           forceConsistentCasingInFileNames: true,
           noEmit: true,
           noUncheckedIndexedAccess: false,
