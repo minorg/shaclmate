@@ -78,7 +78,7 @@ const externalDependencies = {
   "ts-poet": "~6.12.0",
   "ts-invariant": "~0.10.3",
   tsx: "~4.16.2",
-  typescript: "5.9.3",
+  typescript: "6.0.3",
   "typescript-memoize": "~1.1.1",
   turbo: "~2.5.5",
   vite: "6.0.7",

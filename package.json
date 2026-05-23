@@ -10,7 +10,7 @@
     "rimraf": "~6.0.1",
     "tsx": "~4.16.2",
     "turbo": "~2.5.5",
-    "typescript": "5.9.3",
+    "typescript": "6.0.3",
     "vitest": "~4.1.5",
     "vitest-fetch-mock": "~0.4.5"
   },
