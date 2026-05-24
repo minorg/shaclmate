@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
-import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
