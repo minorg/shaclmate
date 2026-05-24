@@ -25,12 +25,14 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     return super.constrained || this.languageIn.length > 0;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      languageIn:
-        this.languageIn.length > 0 ? this.languageIn.map(literalOf) : undefined,
-    };
+  protected override get schemaInitializers(): readonly Code[] {
+    let initializers = super.schemaInitializers;
+    if (this.languageIn.length > 0) {
+      initializers = initializers.concat(
+        code`languageIn: ${this.languageIn.map(literalOf)}`,
+      );
+    }
+    return initializers;
   }
 
   /**

@@ -43,17 +43,17 @@ export abstract class AbstractPrimitiveType<
     return Maybe.empty();
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.primitiveIn.length > 0
-          ? code`[${joinCode(
-              this.primitiveIn.map((in_) => this.literalExpression(in_)),
-              { on: ", " },
-            )}] as const`
-          : undefined,
-    };
+  protected override get schemaInitializers() {
+    let initializers = super.schemaInitializers;
+    if (this.primitiveIn.length > 0) {
+      initializers = initializers.concat(
+        code`primitiveIn: [${joinCode(
+          this.primitiveIn.map((in_) => this.literalExpression(in_)),
+          { on: ", " },
+        )}] as const`,
+      );
+    }
+    return initializers;
   }
 
   override fromJsonExpression({

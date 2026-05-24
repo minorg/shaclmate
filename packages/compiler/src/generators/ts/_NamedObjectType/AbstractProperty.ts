@@ -1,12 +1,13 @@
 import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
+import { Memoize } from "typescript-memoize";
 
 import type { NamedObjectType } from "../NamedObjectType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
 import type { Type } from "../Type.js";
-import { type Code, code } from "../ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
@@ -86,11 +87,6 @@ export abstract class AbstractProperty<
   abstract readonly recursive: boolean;
 
   /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  abstract readonly schema: Code;
-
-  /**
    * Property type
 .   */
   readonly type: TypeT;
@@ -121,6 +117,21 @@ export abstract class AbstractProperty<
       logger: this.logger,
       snippets: this.reusables.snippets,
     });
+  }
+
+  /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): Code {
+    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  }
+
+  /**
+   * Helper to compose the result of schema along the type hierarchy.
+   */
+  protected get schemaInitializers(): readonly Code[] {
+    return [code`code: ${literalOf(this.kind)} as const`];
   }
 
   /**

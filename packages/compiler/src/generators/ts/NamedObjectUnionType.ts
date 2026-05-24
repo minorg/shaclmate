@@ -306,11 +306,7 @@ export namespace Identifier {
     return singleEntryRecord(
       `schema`,
       code`\
-export const schema =
-${{
-  ...super.schemaObject,
-  properties: code`{ ${joinCode(propertiesObject, { on: ", " })} }`,
-}} as const;`,
+export const schema = { ${joinCode(super.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} } as const`), { on: ", " })} };`,
     );
   }
 

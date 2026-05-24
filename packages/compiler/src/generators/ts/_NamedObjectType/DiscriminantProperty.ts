@@ -1,8 +1,13 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import { removeUndefined } from "../removeUndefined.js";
-import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
@@ -49,12 +54,8 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`${removeUndefined({
-      kind: code`${literalOf("Discriminant")} as const`,
-      type: this.type.schema,
-    })}`;
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   }
 
   private get constValue(): Code {
@@ -155,11 +156,14 @@ export namespace DiscriminantProperty {
 
     @Memoize()
     get schema(): Code {
-      return code`${removeUndefined({
-        descendantValues:
-          this.descendantValues.length > 0 ? this.descendantValues : undefined,
-        ownValues: this.ownValues.length > 0 ? this.ownValues : undefined,
-      })}`;
+      const initializers: Code[] = [];
+      if (this.descendantValues.length > 0) {
+        initializers.push(code`descendantValues: ${this.descendantValues}`);
+      }
+      if (this.ownValues.length > 0) {
+        initializers.push(code`ownValues: ${this.ownValues}`);
+      }
+      return code`{ ${joinCode(initializers, { on: ", " })} }`;
     }
 
     @Memoize()

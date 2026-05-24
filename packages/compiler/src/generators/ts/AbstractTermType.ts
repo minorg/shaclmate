@@ -5,7 +5,6 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
@@ -66,22 +65,17 @@ export abstract class AbstractTermType<
     });
   }
 
-  @Memoize()
-  override get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in:
-        this.in_.length > 0
-          ? code`[${joinCode(
-              this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-              { on: ", " },
-            )}] as const`
-          : undefined,
-    };
+  protected override get schemaInitializers() {
+    let initializers = super.schemaInitializers;
+    if (this.in_.length > 0) {
+      initializers = initializers.concat(
+        code`in: [${joinCode(
+          this.in_.map((in_) => this.rdfjsTermExpression(in_)),
+          { on: ", " },
+        )}] as const`,
+      );
+    }
+    return initializers;
   }
 
   @Memoize()

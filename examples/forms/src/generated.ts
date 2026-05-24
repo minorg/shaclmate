@@ -21,7 +21,7 @@ export type $_ToRdfResourceFunction<
 ) => void;
 
 interface $CollectionSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
+  readonly itemType: ItemSchemaT;
   readonly kind: "List" | "Set";
   readonly minCount?: number;
 }
@@ -103,8 +103,8 @@ function $identityValidationFunction<T>(_schema: unknown, value: T): Either<Erro
 const $literalFactory = new LiteralFactory({ dataFactory: dataFactory });
 
 interface $MaybeSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
-  readonly kind: "Maybe";
+  readonly itemType: ItemSchemaT;
+  readonly kind: "Option";
 }
 
 function $monkeyPatchObject<T extends object>(
@@ -230,13 +230,13 @@ function $validateArray<ItemSchemaT, ItemValueT, Readonly extends boolean>(
       ) as Either<Error, EitherR>;
     }
 
-    return Either.sequence(valueArray.map((value) => validateItem(schema.item(), value))) as Either<Error, EitherR>;
+    return Either.sequence(valueArray.map((value) => validateItem(schema.itemType, value))) as Either<Error, EitherR>;
   };
 }
 
 function $validateMaybe<ItemSchemaT, ItemValueT>(validateItem: $ValidationFunction<ItemSchemaT, ItemValueT>) {
   return (schema: $MaybeSchema<ItemSchemaT>, valueMaybe: Maybe<ItemValueT>): Either<Error, Maybe<ItemValueT>> =>
-    valueMaybe.map((value) => validateItem(schema.item(), value).map(() => valueMaybe)).orDefault(
+    valueMaybe.map((value) => validateItem(schema.itemType, value).map(() => valueMaybe)).orDefault(
       Either.of(valueMaybe),
     );
 }
@@ -361,12 +361,12 @@ export namespace NestedNodeShape {
 
   export const schema = {
     properties: {
-      $identifier: { "kind": "Identifier" as const, "type": { "kind": "Identifier" as const } },
-      $type: { "kind": "Discriminant" as const, "type": { "ownValues": ["NestedNodeShape"] } },
+      $identifier: { code: "IdentifierProperty" as const, type: { kind: "Identifier" as const } },
+      $type: { code: "DiscriminantProperty" as const, type: { ownValues: NestedNodeShape } },
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        type: { "kind": "String" as const },
+        type: { kind: "String" as const },
       },
     },
   } as const;
@@ -604,37 +604,39 @@ export namespace FormNodeShape {
 
   export const schema = {
     properties: {
-      $identifier: { "kind": "Identifier" as const, "type": { "kind": "Identifier" as const } },
-      $type: { "kind": "Discriminant" as const, "type": { "ownValues": ["FormNodeShape"] } },
+      $identifier: { code: "IdentifierProperty" as const, type: { kind: "Identifier" as const } },
+      $type: { code: "DiscriminantProperty" as const, type: { ownValues: FormNodeShape } },
       emptyStringSetProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/emptyStringSetProperty"),
-        type: { "kind": "Set" as const, "item": () => ({ "kind": "String" as const }) },
+        type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       nestedObjectProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
-        type: NestedNodeShape.schema,
+        get type() {
+          return NestedNodeShape.schema;
+        },
       },
       nonEmptyStringSetProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/nonEmptyStringSetProperty"),
-        type: { "kind": "Set" as const, "item": () => ({ "kind": "String" as const }), "minCount": 1 },
+        type: { kind: "Set" as const, itemType: { kind: "String" as const }, minCount: 1 },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/optionalStringProperty"),
-        type: { "kind": "Maybe" as const, "item": () => ({ "kind": "String" as const }) },
+        type: { kind: "Option" as const, itemType: { kind: "String" as const } },
       },
       requiredIntProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/requiredIntProperty"),
-        type: { "kind": "Int" as const },
+        type: { kind: "Int" as const },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        type: { "kind": "String" as const },
+        type: { kind: "String" as const },
       },
     },
   } as const;
@@ -744,19 +746,19 @@ export namespace $Object {
   export type Json = FormNodeShape.Json | NestedNodeShape.Json;
 
   export const schema = {
-    "kind": "NamedObjectUnion" as const,
-    "members": {
+    kind: "NamedObjectUnion" as const,
+    members: {
       "FormNodeShape": { "discriminantValues": ["FormNodeShape"], "type": FormNodeShape.schema },
       "NestedNodeShape": { "discriminantValues": ["NestedNodeShape"], "type": NestedNodeShape.schema },
     },
-    "properties": {
+    properties: {
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        code: "ShaclProperty" as const,
         path: dataFactory.namedNode("http://example.com/requiredStringProperty"),
-        type: { "kind": "String" as const },
+        type: { kind: "String" as const },
       },
-    },
-  } as const;
+    } as const,
+  };
 
   export const toJson = (value: $Object): $Object.Json => {
     if (FormNodeShape.isFormNodeShape(value)) {

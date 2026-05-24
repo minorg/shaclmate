@@ -18,7 +18,6 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import type { NamedUnionType } from "./NamedUnionType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -58,11 +57,6 @@ export abstract class AbstractContainerType<
     return this.itemType.referencesObjectType;
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
-  }
-
   override get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
     return this.itemType.toRdfResourceValueTypes;
   }
@@ -85,11 +79,16 @@ export abstract class AbstractContainerType<
     return code`${this.reusables.snippets.identityValidationFunction}`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      item: code`() => (${this.itemType.schema})`,
-    };
+  protected override get schemaInitializers(): readonly Code[] {
+    const initializers = super.schemaInitializers.concat();
+    if (this.recursive || this.itemType.referencesObjectType) {
+      initializers.push(
+        code`get itemType() { return ${this.itemType.schema}; }`,
+      );
+    } else {
+      initializers.push(code`itemType: ${this.itemType.schema}`);
+    }
+    return initializers;
   }
 }
 

@@ -6,7 +6,6 @@ import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IriType } from "./IriType.js";
-import { removeUndefined } from "./removeUndefined.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
@@ -247,11 +246,6 @@ export abstract class AbstractUnionType<
 
   get referencesObjectType(): boolean {
     return this.members.some((member) => member.type.referencesObjectType);
-  }
-
-  @Memoize()
-  get schema(): Code {
-    return code`${removeUndefined(this.schemaObject)}`;
   }
 
   override get schemaType(): Code {
@@ -682,13 +676,9 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
 }) satisfies ${this.reusables.snippets.ValueSparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}>)`;
   }
 
-  protected override get schemaObject(): {
-    kind: Code;
-    members: Code;
-  } {
-    return {
-      ...super.schemaObject,
-      members: code`{ ${joinCode(
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`members: { ${joinCode(
         this.members.map(
           ({ discriminantValues, type, primaryDiscriminantValue }) =>
             code`${literalOf(primaryDiscriminantValue)}: ${{
@@ -698,7 +688,7 @@ unionPatterns.push({ patterns: ${type.valueSparqlWherePatternsFunction}({ ...oth
         ),
         { on: "," },
       )} }`,
-    };
+    );
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {

@@ -91,11 +91,10 @@ export class DefaultValueType<
     return code`${this.reusables.snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.valueSparqlWherePatternsFunction})`;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      defaultValue: this.defaultValueExpression,
-    };
+  protected override get schemaInitializers() {
+    return super.schemaInitializers.concat(
+      code`defaultValue: ${this.defaultValueExpression}`,
+    );
   }
 
   @Memoize()

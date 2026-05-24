@@ -6,7 +6,7 @@ import type { Reusables } from "./Reusables.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
@@ -112,11 +112,6 @@ export abstract class AbstractType {
   abstract readonly referencesObjectType: boolean;
 
   /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  abstract readonly schema: Code;
-
-  /**
    * TypeScript type describing .schema.
    */
   abstract readonly schemaType: Code;
@@ -197,12 +192,18 @@ export abstract class AbstractType {
   }
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): Code {
+    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  }
+
+  /**
    * Helper to compose the result of schema along the type hierarchy.
    */
-  protected get schemaObject() {
-    return {
-      kind: code`${literalOf(this.kind)} as const`,
-    };
+  protected get schemaInitializers(): readonly Code[] {
+    return [code`kind: ${literalOf(this.kind)} as const`];
   }
 
   /**

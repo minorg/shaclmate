@@ -73,15 +73,10 @@ export abstract class AbstractLazyObjectType<
     return this.partialType.recursive;
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`{ ${joinCode(
-      [
-        code`kind: ${super.schemaObject.kind}`,
-        code`get partialType() { return ${this.partialType.schema}; }`,
-      ],
-      { on: ", " },
-    )} }`;
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(
+      code`get partialType() { return ${this.partialType.schema}; }`,
+    );
   }
 
   @Memoize()
@@ -106,13 +101,6 @@ export abstract class AbstractLazyObjectType<
     return code`(({ schema, ...otherParameters }) => ${this.partialType.valueSparqlWherePatternsFunction}({ ...otherParameters, schema: schema.partialType }))`;
   }
 
-  // protected override get schemaObject() {
-  //   throw new Error("don't call");
-  //   return {
-  //     ...super.schemaObject,
-  //     partial: code`() => (${this.partialType.schema})`,
-  //   };
-  // }
   override jsonSchema(
     parameters: Parameters<AbstractType["jsonSchema"]>[0],
   ): Code {

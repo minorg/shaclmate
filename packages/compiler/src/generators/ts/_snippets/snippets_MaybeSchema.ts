@@ -7,6 +7,6 @@ export const snippets_MaybeSchema: SnippetFactory = ({ syntheticNamePrefix }) =>
     code`\
 interface ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>{
   readonly itemType: ItemSchemaT;
-  readonly kind: "Maybe";
+  readonly kind: "Option";
 }`,
   );

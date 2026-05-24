@@ -136,22 +136,21 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  @Memoize()
-  get schema(): Code {
-    const entries: Code[] = [code`kind: "Shacl" as const`];
+  protected override get schemaInitializers(): readonly Code[] {
+    const initializers = super.schemaInitializers.concat();
     if (
       this.configuration.features.has("Object.fromRdf") ||
       this.configuration.features.has("Object.toRdf")
     ) {
-      entries.push(code`path: ${this.propertyPathToCode(this.path)}`);
+      initializers.push(code`path: ${this.propertyPathToCode(this.path)}`);
     }
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
     if (this.recursive || this.type.referencesObjectType) {
-      entries.push(code`get type() { return ${this.type.schema}; }`);
+      initializers.push(code`get type() { return ${this.type.schema}; }`);
     } else {
-      entries.push(code`type: ${this.type.schema}`);
+      initializers.push(code`type: ${this.type.schema}`);
     }
-    return code`{ ${joinCode(entries, { on: ", " })} }`;
+    return initializers;
   }
 
   override constructorInitializer({

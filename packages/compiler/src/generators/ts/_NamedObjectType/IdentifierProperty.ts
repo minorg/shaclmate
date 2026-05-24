@@ -109,12 +109,8 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly "@id": string`);
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`${{
-      kind: code`"Identifier" as const`,
-      type: this.type.schema,
-    }}`;
+  protected override get schemaInitializers(): readonly Code[] {
+    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
   }
 
   override accessExpression({
