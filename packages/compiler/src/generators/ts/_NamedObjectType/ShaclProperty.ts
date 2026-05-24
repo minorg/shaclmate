@@ -7,6 +7,42 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
+function isObjectType(type: Type): boolean {
+  switch (type.kind) {
+    case "LazyObjectOptionType":
+    case "LazyObjectSetType":
+    case "LazyObjectType":
+    case "NamedObjectType":
+    case "NamedObjectUnionType":
+      return true;
+
+    case "AnonymousUnionType":
+    case "NamedUnionType":
+      return type.members.some((member) => isObjectType(member.type));
+
+    case "DefaultValueType":
+    case "ListType":
+    case "OptionType":
+    case "SetType":
+      return isObjectType(type.itemType);
+
+    case "BlankNodeType":
+    case "BigDecimalType":
+    case "BigIntType":
+    case "BooleanType":
+    case "DateTimeType":
+    case "DateType":
+    case "FloatType":
+    case "IdentifierType":
+    case "IntType":
+    case "IriType":
+    case "LiteralType":
+    case "StringType":
+    case "TermType":
+      return false;
+  }
+}
+
 export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
@@ -145,7 +181,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     ) {
       entries.push(code`path: ${this.propertyPathToCode(this.path)}`);
     }
-    if (this.recursive) {
+    // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
+    if (this.recursive || isObjectType(this.type)) {
       entries.push(code`get type() { return ${this.type.schema}; }`);
     } else {
       entries.push(code`type: ${this.type.schema}`);
