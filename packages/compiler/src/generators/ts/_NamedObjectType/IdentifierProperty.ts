@@ -22,7 +22,7 @@ export class IdentifierProperty extends AbstractProperty<
 > {
   private readonly typeAlias: Code;
 
-  override readonly kind = "IdentifierProperty";
+  override readonly kind = "Identifier";
   override readonly mutable = false;
   override readonly recursive = false;
 

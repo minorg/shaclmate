@@ -13,7 +13,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly display: boolean;
   private readonly label: Maybe<string>;
 
-  override readonly kind = "ShaclProperty";
+  override readonly kind = "Shacl";
   override readonly mutable: boolean;
   readonly path: PropertyPath;
   override readonly recursive: boolean;

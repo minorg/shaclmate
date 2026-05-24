@@ -67,7 +67,7 @@ export abstract class AbstractProperty<
   abstract readonly jsonSignature: Maybe<Code>;
 
   /**
-   * Property type discriminant e.g., "ShaclProperty".
+   * Property type discriminant e.g., "Shacl".
    */
   abstract readonly kind: string;
 
@@ -131,7 +131,7 @@ export abstract class AbstractProperty<
    * Helper to compose the result of schema along the type hierarchy.
    */
   protected get schemaInitializers(): readonly Code[] {
-    return [code`code: ${literalOf(this.kind)} as const`];
+    return [code`kind: ${literalOf(this.kind)} as const`];
   }
 
   /**

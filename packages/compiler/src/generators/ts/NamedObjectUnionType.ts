@@ -268,7 +268,7 @@ export namespace Identifier {
           (ancestorObjectType) => ancestorObjectType.properties,
         ),
       )) {
-        if (memberTypeProperty.kind !== "ShaclProperty") {
+        if (memberTypeProperty.kind !== "Shacl") {
           continue;
         }
         let commonProperty = commonPropertiesByName[memberTypeProperty.name];
