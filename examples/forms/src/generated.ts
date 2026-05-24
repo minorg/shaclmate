@@ -513,15 +513,11 @@ export namespace NestedNodeShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["NestedNodeShape"] } },
-      },
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -842,29 +838,25 @@ export namespace FormNodeShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["FormNodeShape"] } },
-      },
       emptyStringSetProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       nestedObjectProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/nestedObjectProperty"),
         get type() {
           return NestedNodeShape.schema;
         },
       },
       nonEmptyStringSetProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
@@ -875,7 +867,7 @@ export namespace FormNodeShape {
         },
       },
       optionalStringProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
@@ -885,12 +877,12 @@ export namespace FormNodeShape {
         },
       },
       requiredIntProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/requiredIntProperty"),
         type: { kind: "Int" as const },
       },
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
@@ -1062,14 +1054,14 @@ export namespace $Object {
     },
     properties: {
       requiredStringProperty: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
         type: { kind: "String" as const },
       },
-    } as const,
-  };
+    },
+  } as const;
 
   export const toJson = (value: $Object): $Object.Json => {
     if (FormNodeShape.isFormNodeShape(value)) {

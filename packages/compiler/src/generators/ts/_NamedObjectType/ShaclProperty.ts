@@ -336,12 +336,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         return code`{ members: [${joinCode(
           propertyPath.members.map((member) => this.propertyPathToCode(member)),
           { on: "," },
-        )}] as const, termType: ${literalOf(propertyPath.termType)} as const }`;
+        )}], termType: ${literalOf(propertyPath.termType)} }`;
       case "InversePath":
       case "OneOrMorePath":
       case "ZeroOrMorePath":
       case "ZeroOrOnePath":
-        return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} as const }`;
+        return code`{ path: ${this.propertyPathToCode(propertyPath.path)}, termType: ${literalOf(propertyPath.termType)} }`;
       case "NamedNode":
         return this.rdfjsTermExpression(propertyPath);
     }

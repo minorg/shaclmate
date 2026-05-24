@@ -398,7 +398,6 @@ describe("lazyProperties", () => {
             }
             break;
           case "$identifier":
-          case "$type":
             break;
           default:
             throw new Error(`not implemented: ${propertyName}`);

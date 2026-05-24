@@ -2225,15 +2225,11 @@ export namespace PropertyShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["PropertyShape"] } },
-      },
       and: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
         type: {
           kind: "Option" as const,
@@ -2244,12 +2240,12 @@ export namespace PropertyShape {
         },
       },
       classes: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -2259,12 +2255,12 @@ export namespace PropertyShape {
         },
       },
       datatype: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       deactivated: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
@@ -2272,12 +2268,12 @@ export namespace PropertyShape {
         },
       },
       defaultValue: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#defaultValue"),
         type: { kind: "Option" as const, itemType: { kind: "Term" as const } },
       },
       description: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#description"),
         type: {
           kind: "Option" as const,
@@ -2285,7 +2281,7 @@ export namespace PropertyShape {
         },
       },
       display: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#display",
         ),
@@ -2296,12 +2292,12 @@ export namespace PropertyShape {
         },
       },
       flags: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       groups: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
         type: {
           kind: "Set" as const,
@@ -2309,12 +2305,12 @@ export namespace PropertyShape {
         },
       },
       hasValues: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
         type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
       },
       in_: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
         type: {
           kind: "Option" as const,
@@ -2325,7 +2321,7 @@ export namespace PropertyShape {
         },
       },
       isDefinedBy: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
@@ -2335,7 +2331,7 @@ export namespace PropertyShape {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -2345,7 +2341,7 @@ export namespace PropertyShape {
         },
       },
       languageIn: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
         type: {
           kind: "Option" as const,
@@ -2356,7 +2352,7 @@ export namespace PropertyShape {
         },
       },
       maxCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
         type: {
           kind: "Option" as const,
@@ -2364,7 +2360,7 @@ export namespace PropertyShape {
         },
       },
       maxExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
         type: {
           kind: "Option" as const,
@@ -2372,7 +2368,7 @@ export namespace PropertyShape {
         },
       },
       maxInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
         type: {
           kind: "Option" as const,
@@ -2380,7 +2376,7 @@ export namespace PropertyShape {
         },
       },
       maxLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
@@ -2388,7 +2384,7 @@ export namespace PropertyShape {
         },
       },
       minCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
@@ -2396,7 +2392,7 @@ export namespace PropertyShape {
         },
       },
       minExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
         type: {
           kind: "Option" as const,
@@ -2404,7 +2400,7 @@ export namespace PropertyShape {
         },
       },
       minInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
         type: {
           kind: "Option" as const,
@@ -2412,7 +2408,7 @@ export namespace PropertyShape {
         },
       },
       minLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
@@ -2420,7 +2416,7 @@ export namespace PropertyShape {
         },
       },
       mutable: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#mutable",
         ),
@@ -2430,7 +2426,7 @@ export namespace PropertyShape {
         },
       },
       name: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
         type: {
           kind: "Option" as const,
@@ -2438,7 +2434,7 @@ export namespace PropertyShape {
         },
       },
       node: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
         type: {
           kind: "Option" as const,
@@ -2446,7 +2442,7 @@ export namespace PropertyShape {
         },
       },
       nodeKind: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
         type: {
           kind: "Option" as const,
@@ -2463,12 +2459,12 @@ export namespace PropertyShape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ] as const,
+            ],
           },
         },
       },
       not: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
         type: {
           kind: "Set" as const,
@@ -2476,7 +2472,7 @@ export namespace PropertyShape {
         },
       },
       or: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
         type: {
           kind: "Option" as const,
@@ -2487,24 +2483,24 @@ export namespace PropertyShape {
         },
       },
       order: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
         type: { kind: "Option" as const, itemType: { kind: "Float" as const } },
       },
       path: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
         get type() {
           return $PropertyPath.schema;
         },
       },
       patterns: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       resolve: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#resolve",
         ),
@@ -2514,7 +2510,7 @@ export namespace PropertyShape {
         },
       },
       shaclmateName: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
@@ -2522,7 +2518,7 @@ export namespace PropertyShape {
         },
       },
       uniqueLang: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#uniqueLang"),
         type: {
           kind: "Option" as const,
@@ -2530,7 +2526,7 @@ export namespace PropertyShape {
         },
       },
       xone: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
         type: {
           kind: "Option" as const,
@@ -3255,15 +3251,11 @@ export namespace PropertyGroup {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["PropertyGroup"] } },
-      },
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -3273,7 +3265,7 @@ export namespace PropertyGroup {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -3518,15 +3510,11 @@ export namespace Ontology {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["Ontology"] } },
-      },
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -3536,7 +3524,7 @@ export namespace Ontology {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -5275,15 +5263,11 @@ export namespace NodeShape {
   export const schema = {
     properties: {
       $identifier: {
-        kind: "Identifier" as const,
+        kind: "Identifier",
         type: { kind: "Identifier" as const },
       },
-      $type: {
-        kind: "Discriminant" as const,
-        type: { initializers: { ownValues: ["NodeShape"] } },
-      },
       and: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
         type: {
           kind: "Option" as const,
@@ -5294,12 +5278,12 @@ export namespace NodeShape {
         },
       },
       classes: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       closed: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
         type: {
           kind: "Option" as const,
@@ -5307,7 +5291,7 @@ export namespace NodeShape {
         },
       },
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -5317,12 +5301,12 @@ export namespace NodeShape {
         },
       },
       datatype: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       deactivated: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
@@ -5330,7 +5314,7 @@ export namespace NodeShape {
         },
       },
       discriminantValue: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#discriminantValue",
         ),
@@ -5340,7 +5324,7 @@ export namespace NodeShape {
         },
       },
       extern: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#extern",
         ),
@@ -5350,24 +5334,24 @@ export namespace NodeShape {
         },
       },
       flags: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       fromRdfType: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#fromRdfType",
         ),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       hasValues: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
         type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
       },
       ignoredProperties: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/ns/shacl#ignoredProperties",
         ),
@@ -5380,7 +5364,7 @@ export namespace NodeShape {
         },
       },
       in_: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
         type: {
           kind: "Option" as const,
@@ -5391,7 +5375,7 @@ export namespace NodeShape {
         },
       },
       isDefinedBy: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
@@ -5401,7 +5385,7 @@ export namespace NodeShape {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -5411,7 +5395,7 @@ export namespace NodeShape {
         },
       },
       languageIn: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
         type: {
           kind: "Option" as const,
@@ -5422,7 +5406,7 @@ export namespace NodeShape {
         },
       },
       maxCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
         type: {
           kind: "Option" as const,
@@ -5430,7 +5414,7 @@ export namespace NodeShape {
         },
       },
       maxExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
         type: {
           kind: "Option" as const,
@@ -5438,7 +5422,7 @@ export namespace NodeShape {
         },
       },
       maxInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
         type: {
           kind: "Option" as const,
@@ -5446,7 +5430,7 @@ export namespace NodeShape {
         },
       },
       maxLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
@@ -5454,7 +5438,7 @@ export namespace NodeShape {
         },
       },
       minCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
@@ -5462,7 +5446,7 @@ export namespace NodeShape {
         },
       },
       minExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
         type: {
           kind: "Option" as const,
@@ -5470,7 +5454,7 @@ export namespace NodeShape {
         },
       },
       minInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
         type: {
           kind: "Option" as const,
@@ -5478,7 +5462,7 @@ export namespace NodeShape {
         },
       },
       minLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
@@ -5486,7 +5470,7 @@ export namespace NodeShape {
         },
       },
       mutable: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#mutable",
         ),
@@ -5496,7 +5480,7 @@ export namespace NodeShape {
         },
       },
       node: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
         type: {
           kind: "Option" as const,
@@ -5504,7 +5488,7 @@ export namespace NodeShape {
         },
       },
       nodeKind: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
         type: {
           kind: "Option" as const,
@@ -5521,12 +5505,12 @@ export namespace NodeShape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ] as const,
+            ],
           },
         },
       },
       not: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
         type: {
           kind: "Set" as const,
@@ -5534,7 +5518,7 @@ export namespace NodeShape {
         },
       },
       or: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
         type: {
           kind: "Option" as const,
@@ -5545,12 +5529,12 @@ export namespace NodeShape {
         },
       },
       patterns: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       properties: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
         type: {
           kind: "Set" as const,
@@ -5558,14 +5542,14 @@ export namespace NodeShape {
         },
       },
       rdfType: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#rdfType",
         ),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       shaclmateName: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
@@ -5573,31 +5557,31 @@ export namespace NodeShape {
         },
       },
       subClassOf: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: $RdfVocabularies.rdfs.subClassOf,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       toRdfTypes: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#toRdfType",
         ),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       tsImports: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#tsImport",
         ),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       types: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: $RdfVocabularies.rdf.type,
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       xone: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
         type: {
           kind: "Option" as const,
@@ -6262,7 +6246,7 @@ export namespace Shape {
     },
     properties: {
       and: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
         type: {
           kind: "Option" as const,
@@ -6273,12 +6257,12 @@ export namespace Shape {
         },
       },
       classes: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
         type: { kind: "Set" as const, itemType: { kind: "Iri" as const } },
       },
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -6288,12 +6272,12 @@ export namespace Shape {
         },
       },
       datatype: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
         type: { kind: "Option" as const, itemType: { kind: "Iri" as const } },
       },
       deactivated: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#deactivated"),
         type: {
           kind: "Option" as const,
@@ -6301,17 +6285,17 @@ export namespace Shape {
         },
       },
       flags: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       hasValues: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
         type: { kind: "Set" as const, itemType: { kind: "Term" as const } },
       },
       in_: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#in"),
         type: {
           kind: "Option" as const,
@@ -6322,7 +6306,7 @@ export namespace Shape {
         },
       },
       isDefinedBy: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
         ),
@@ -6332,7 +6316,7 @@ export namespace Shape {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -6342,7 +6326,7 @@ export namespace Shape {
         },
       },
       languageIn: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#languageIn"),
         type: {
           kind: "Option" as const,
@@ -6353,7 +6337,7 @@ export namespace Shape {
         },
       },
       maxCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
         type: {
           kind: "Option" as const,
@@ -6361,7 +6345,7 @@ export namespace Shape {
         },
       },
       maxExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxExclusive"),
         type: {
           kind: "Option" as const,
@@ -6369,7 +6353,7 @@ export namespace Shape {
         },
       },
       maxInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxInclusive"),
         type: {
           kind: "Option" as const,
@@ -6377,7 +6361,7 @@ export namespace Shape {
         },
       },
       maxLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
         type: {
           kind: "Option" as const,
@@ -6385,7 +6369,7 @@ export namespace Shape {
         },
       },
       minCount: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
         type: {
           kind: "Option" as const,
@@ -6393,7 +6377,7 @@ export namespace Shape {
         },
       },
       minExclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minExclusive"),
         type: {
           kind: "Option" as const,
@@ -6401,7 +6385,7 @@ export namespace Shape {
         },
       },
       minInclusive: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minInclusive"),
         type: {
           kind: "Option" as const,
@@ -6409,7 +6393,7 @@ export namespace Shape {
         },
       },
       minLength: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
         type: {
           kind: "Option" as const,
@@ -6417,7 +6401,7 @@ export namespace Shape {
         },
       },
       mutable: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://purl.org/shaclmate/ontology#mutable",
         ),
@@ -6427,7 +6411,7 @@ export namespace Shape {
         },
       },
       node: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
         type: {
           kind: "Option" as const,
@@ -6435,7 +6419,7 @@ export namespace Shape {
         },
       },
       nodeKind: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
         type: {
           kind: "Option" as const,
@@ -6452,12 +6436,12 @@ export namespace Shape {
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRI"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#IRIOrLiteral"),
               dataFactory.namedNode("http://www.w3.org/ns/shacl#Literal"),
-            ] as const,
+            ],
           },
         },
       },
       not: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
         type: {
           kind: "Set" as const,
@@ -6465,7 +6449,7 @@ export namespace Shape {
         },
       },
       or: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#or"),
         type: {
           kind: "Option" as const,
@@ -6476,12 +6460,12 @@ export namespace Shape {
         },
       },
       patterns: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
         type: { kind: "Set" as const, itemType: { kind: "String" as const } },
       },
       shaclmateName: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://purl.org/shaclmate/ontology#name"),
         type: {
           kind: "Option" as const,
@@ -6489,7 +6473,7 @@ export namespace Shape {
         },
       },
       xone: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
         type: {
           kind: "Option" as const,
@@ -6499,8 +6483,8 @@ export namespace Shape {
           },
         },
       },
-    } as const,
-  };
+    },
+  } as const;
 
   export const toRdfResource: $ToRdfResourceFunction<Shape> = (
     object,
@@ -6665,7 +6649,7 @@ export namespace $Object {
     },
     properties: {
       comment: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#comment",
         ),
@@ -6675,7 +6659,7 @@ export namespace $Object {
         },
       },
       label: {
-        kind: "Shacl" as const,
+        kind: "Shacl",
         path: dataFactory.namedNode(
           "http://www.w3.org/2000/01/rdf-schema#label",
         ),
@@ -6684,8 +6668,8 @@ export namespace $Object {
           itemType: { kind: "String" as const },
         },
       },
-    } as const,
-  };
+    },
+  } as const;
 
   export const toRdfResource: $ToRdfResourceFunction<$Object> = (
     object,

@@ -45,7 +45,7 @@ export class LiteralType extends AbstractLiteralType {
     let initializers = super.schemaInitializers;
     if (this.in_.length > 0) {
       initializers = initializers.concat(
-        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))} as const`,
+        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))}`,
       );
     }
     return initializers;

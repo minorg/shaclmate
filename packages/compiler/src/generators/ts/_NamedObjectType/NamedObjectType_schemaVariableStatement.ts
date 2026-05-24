@@ -17,9 +17,9 @@ export const schema = { properties: { ${joinCode(
           code`...${parentObjectType.name}.schema.properties`,
       )
       .concat(
-        this.properties.map(
-          (property) => code`${property.name}: ${property.schema}`,
-        ),
+        this.properties.flatMap(property => property.schema.toList().map(propertySchema =>
+         code`${property.name}: ${propertySchema}`,
+        )),
       ),
     { on: ", " },
   )} } } as const;`);

@@ -300,13 +300,15 @@ export namespace Identifier {
       if (!memberTypesWithProperty.every((value) => value)) {
         continue;
       }
-      propertiesObject.push(code`${property.name}: ${property.schema}`);
+      property.schema.ifJust(propertySchema => {
+        propertiesObject.push(code`${property.name}: ${propertySchema}`);
+      });
     }
 
     return singleEntryRecord(
       `schema`,
       code`\
-export const schema = { ${joinCode(super.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} } as const`), { on: ", " })} };`,
+export const schema = { ${joinCode(super.schemaInitializers.concat(code`properties: { ${joinCode(propertiesObject, { on: ", " })} }`), { on: ", " })} } as const;`,
     );
   }
 

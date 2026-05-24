@@ -1,4 +1,4 @@
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
@@ -123,15 +123,15 @@ export abstract class AbstractProperty<
    * TypeScript object describing this type, for runtime use.
    */
   @Memoize()
-  get schema(): Code {
-    return code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`;
+  get schema(): Maybe<Code> {
+    return Maybe.of(code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`);
   }
 
   /**
    * Helper to compose the result of schema along the type hierarchy.
    */
   protected get schemaInitializers(): readonly Code[] {
-    return [code`kind: ${literalOf(this.kind)} as const`];
+    return [code`kind: ${literalOf(this.kind)}`];
   }
 
   /**

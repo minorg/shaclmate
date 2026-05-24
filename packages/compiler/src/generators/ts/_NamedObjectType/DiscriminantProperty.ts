@@ -48,9 +48,13 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
   }
 
-  protected override get schemaInitializers(): readonly Code[] {
-    return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
+  override get schema(): Maybe<Code> {
+    return Maybe.empty();
   }
+
+  // protected override get schemaInitializers(): readonly Code[] {
+  //   return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
+  // }
 
   private get constValue(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
@@ -150,14 +154,15 @@ export namespace DiscriminantProperty {
 
     @Memoize()
     get schema(): Code {
-      const initializers: Record<string, unknown> = {};
-      if (this.descendantValues.length > 0) {
-        initializers["descendantValues"] = this.descendantValues;
-      }
-      if (this.ownValues.length > 0) {
-        initializers["ownValues"] = this.ownValues;
-      }
-      return code`${{ initializers }}`;
+      throw new Error("should never be called");
+      // const initializers: Record<string, unknown> = {};
+      // if (this.descendantValues.length > 0) {
+      //   initializers["descendantValues"] = this.descendantValues;
+      // }
+      // if (this.ownValues.length > 0) {
+      //   initializers["ownValues"] = this.ownValues;
+      // }
+      // return code`${initializers}`;
     }
 
     @Memoize()
