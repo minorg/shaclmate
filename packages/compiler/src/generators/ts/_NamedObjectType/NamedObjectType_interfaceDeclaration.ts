@@ -16,6 +16,9 @@ ${this.comment
           .join(", ")}`
       : ""
   } {
-  ${joinCode(this.properties.map((property) => property.declaration))}
+  ${joinCode(
+    this.properties.map((property) => property.declaration),
+    { on: "\n\n" },
+  )}
 }`;
 }

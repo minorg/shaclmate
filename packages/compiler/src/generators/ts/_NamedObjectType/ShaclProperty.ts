@@ -136,25 +136,21 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     );
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      // comment: this.comment.map(JSON.stringify).extract(),
-      // description: this.description.map(JSON.stringify).extract(),
-      path:
-        this.configuration.features.has("Object.fromRdf") ||
-        this.configuration.features.has("Object.toRdf") ||
-        this.configuration.features.has("Object.SPARQL")
-          ? this.propertyPathToCode(this.path)
-          : undefined,
-      // label: this.label.map(JSON.stringify).extract(),
-      // mutable: this.mutable ? true : undefined,
-      // recursive: this.recursive ? true : undefined,
-      // visibility:
-      //   this.visibility !== "public"
-      //     ? `${JSON.stringify(this.visibility)} as const`
-      //     : undefined,
-    };
+  @Memoize()
+  get schema(): Code {
+    const entries: Code[] = [code`kind: "Shacl" as const`];
+    if (
+      this.configuration.features.has("Object.fromRdf") ||
+      this.configuration.features.has("Object.toRdf")
+    ) {
+      entries.push(code`path: ${this.propertyPathToCode(this.path)}`);
+    }
+    if (this.recursive) {
+      entries.push(code`get type() { return ${this.type.schema}; }`);
+    } else {
+      entries.push(code`type: ${this.type.schema}`);
+    }
+    return code`{ ${joinCode(entries, { on: ", " })} }`;
   }
 
   override constructorInitializer({
@@ -168,11 +164,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const validationFunction = this.type.validationFunction.extract();
     let rhs: Code;
     if (conversionFunction && validationFunction) {
-      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), value))`;
+      rhs = code`${conversionFunction}(${parameterVariable}).chain(value => ${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type, value))`;
     } else if (conversionFunction) {
       rhs = code`${conversionFunction}(${parameterVariable})`;
     } else if (validationFunction) {
-      rhs = code`${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type(), ${parameterVariable})`;
+      rhs = code`${validationFunction}(${this.namedObjectType.name}.schema.properties.${this.name}.type, ${parameterVariable})`;
     } else {
       rhs = code`${this.reusables.imports.Either}.of(${parameterVariable})`;
     }

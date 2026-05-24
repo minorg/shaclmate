@@ -87,7 +87,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlWherePatterns<FilterT, TypeSch
     ignoreRdfType,
     preferredLanguages,
     propertyPatterns,
-    schema: propertySchema.type(),
+    schema: propertySchema.type,
     valueVariable,
     variablePrefix: valueString
   });

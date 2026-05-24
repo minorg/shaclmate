@@ -91,7 +91,7 @@ function ${syntheticNamePrefix}shaclPropertySparqlConstructTriples<FilterT, Type
     .concat(typeSparqlConstructTriples({
       filter,
       ignoreRdfType,
-      schema: propertySchema.type(),
+      schema: propertySchema.type,
       valueVariable,
       variablePrefix: valueString
     }));

@@ -109,6 +109,14 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly "@id": string`);
   }
 
+  @Memoize()
+  get schema(): Code {
+    return code`${{
+      kind: code`"Identifier" as const`,
+      type: this.type.schema,
+    }}`;
+  }
+
   override accessExpression({
     variables,
   }: Parameters<
@@ -212,7 +220,7 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.namedObjectType.name}.schema.properties.${this.name}.type()`,
+        schema: code`${this.namedObjectType.name}.schema.properties.${this.name}.type`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

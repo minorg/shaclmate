@@ -49,6 +49,14 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
     return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
   }
 
+  @Memoize()
+  get schema(): Code {
+    return code`${removeUndefined({
+      kind: code`${literalOf("Discriminant")} as const`,
+      type: this.type.schema,
+    })}`;
+  }
+
   private get constValue(): Code {
     return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
   }
@@ -150,7 +158,6 @@ export namespace DiscriminantProperty {
       return code`${removeUndefined({
         descendantValues:
           this.descendantValues.length > 0 ? this.descendantValues : undefined,
-        kind: code`${literalOf("TypeDiscriminant")} as const`,
         ownValues: this.ownValues.length > 0 ? this.ownValues : undefined,
       })}`;
     }
