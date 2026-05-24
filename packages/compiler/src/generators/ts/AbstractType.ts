@@ -1,5 +1,4 @@
 import type { Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
