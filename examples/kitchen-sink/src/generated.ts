@@ -798,6 +798,30 @@ function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   };
 }
 
+function $ensureRdfResourceType(
+  resource: Resource,
+  types: readonly NamedNode[],
+  options: { graph: Exclude<Quad_Graph, Variable> | undefined },
+): Either<Error, undefined> {
+  return resource
+    .value($RdfVocabularies.rdf.type, options)
+    .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
+    .chain((actualRdfType) => {
+      // Check the expected type and its known subtypes
+      for (const type of types) {
+        if (resource.isInstanceOf(type, options)) {
+          return Right(undefined);
+        }
+      }
+
+      return Left(
+        new Error(
+          `${resource.identifier} has unexpected RDF type (actual: ${actualRdfType}, expected one of ${types})`,
+        ),
+      );
+    });
+}
+
 export type $EqualsResult = Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -12228,31 +12252,9 @@ export namespace TermProperties {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/TermProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(TermProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/TermProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [TermProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -13094,31 +13096,11 @@ export namespace RecursiveUnionMember2 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/RecursiveUnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(RecursiveUnionMember2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveUnionMember2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [RecursiveUnionMember2.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -13673,31 +13655,11 @@ export namespace RecursiveUnionMember1 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/RecursiveUnionMember1":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(RecursiveUnionMember1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveUnionMember1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [RecursiveUnionMember1.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -14350,31 +14312,9 @@ export namespace PropertyPaths {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/PropertyPaths":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PropertyPaths.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyPaths)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PropertyPaths.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -15198,31 +15138,9 @@ export namespace PropertyNames {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/PropertyNames":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PropertyNames.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PropertyNames)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PropertyNames.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -16697,33 +16615,15 @@ export namespace UnionMemberCommonParent {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMemberCommonParent":
-                case "http://example.com/UnionMember1":
-                case "http://example.com/UnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(UnionMemberCommonParent.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMemberCommonParent)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [
+              UnionMemberCommonParent.fromRdfType,
+              UnionMember1.fromRdfType,
+              UnionMember2.fromRdfType,
+            ],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -17275,31 +17175,9 @@ export namespace UnionMember2 {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(UnionMember2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [UnionMember2.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -17817,31 +17695,9 @@ export namespace PartialUnionMember2 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PartialUnionMember2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PartialUnionMember2.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -18380,31 +18236,9 @@ export namespace UnionMember1 {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember1":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(UnionMember1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [UnionMember1.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -18922,31 +18756,9 @@ export namespace PartialUnionMember1 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/UnionMember1":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PartialUnionMember1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/UnionMember1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PartialUnionMember1.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -19393,31 +19205,9 @@ export namespace NewName {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/OverrideName":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NewName.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/OverrideName)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [NewName.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -21677,31 +21467,9 @@ export namespace NumericProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/NumericProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NumericProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NumericProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [NumericProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -23249,31 +23017,9 @@ export namespace NodeKinds {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/NodeKinds":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NodeKinds.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NodeKinds)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [NodeKinds.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -24923,31 +24669,11 @@ export namespace NamedUnionProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/NamedUnionProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NamedUnionProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/NamedUnionProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [NamedUnionProperties.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -25734,31 +25460,9 @@ export namespace MutableProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/MutableProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(MutableProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/MutableProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [MutableProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -26475,33 +26179,14 @@ export namespace ClassMultipleInheritanceParent2 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassMultipleInheritanceParent2":
-                case "http://example.com/ClassMultipleInheritanceChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(
-                  ClassMultipleInheritanceParent2.fromRdfType,
-                  { graph: _$options.graph },
-                )
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceParent2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [
+              ClassMultipleInheritanceParent2.fromRdfType,
+              ClassMultipleInheritanceChild.fromRdfType,
+            ],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -27064,33 +26749,14 @@ export namespace ClassMultipleInheritanceParent1 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassMultipleInheritanceParent1":
-                case "http://example.com/ClassMultipleInheritanceChild":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(
-                  ClassMultipleInheritanceParent1.fromRdfType,
-                  { graph: _$options.graph },
-                )
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceParent1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [
+              ClassMultipleInheritanceParent1.fromRdfType,
+              ClassMultipleInheritanceChild.fromRdfType,
+            ],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -27710,32 +27376,13 @@ export namespace ClassMultipleInheritanceChild {
         ignoreRdfType: true,
       }).chain((super1) =>
         (!_$options.ignoreRdfType
-          ? $resource
-              .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-              .chain((actualRdfType) => actualRdfType.toIri())
-              .chain((actualRdfType) => {
-                // Check the expected type and its known subtypes
-                switch (actualRdfType.value) {
-                  case "http://example.com/ClassMultipleInheritanceChild":
-                    return Right(true as const);
-                }
-
-                // Check arbitrary rdfs:subClassOf's of the expected type
-                if (
-                  $resource.isInstanceOf(
-                    ClassMultipleInheritanceChild.fromRdfType,
-                    { graph: _$options.graph },
-                  )
-                ) {
-                  return Right(true as const);
-                }
-
-                return Left(
-                  new Error(
-                    `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassMultipleInheritanceChild)`,
-                  ),
-                );
-              })
+          ? $ensureRdfResourceType(
+              $resource,
+              [ClassMultipleInheritanceChild.fromRdfType],
+              {
+                graph: _$options.graph,
+              },
+            )
           : Right(true as const)
         ).chain((_rdfTypeCheck) =>
           $sequenceRecord({
@@ -28534,31 +28181,9 @@ export namespace ListProperties {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ListProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ListProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [ListProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -32431,31 +32056,11 @@ export namespace LazilyResolvedUnionMember2 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/LazilyResolvedUnionMember2":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(LazilyResolvedUnionMember2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedUnionMember2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [LazilyResolvedUnionMember2.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -32985,31 +32590,11 @@ export namespace LazilyResolvedUnionMember1 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/LazilyResolvedUnionMember1":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(LazilyResolvedUnionMember1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedUnionMember1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [LazilyResolvedUnionMember1.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -33554,32 +33139,13 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifier {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/LazilyResolvedBlankNodeOrIriIdentifier":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(
-                  LazilyResolvedBlankNodeOrIriIdentifier.fromRdfType,
-                  { graph: _$options.graph },
-                )
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifier)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [LazilyResolvedBlankNodeOrIriIdentifier.fromRdfType],
+            {
+              graph: _$options.graph,
+            },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -34946,31 +34512,11 @@ export namespace JsPrimitiveUnionProperty {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/JsPrimitiveUnionProperty":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(JsPrimitiveUnionProperty.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/JsPrimitiveUnionProperty)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [JsPrimitiveUnionProperty.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -35544,31 +35090,9 @@ export namespace IriIdentifier {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IriIdentifier":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(IriIdentifier.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifier)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [IriIdentifier.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -36046,31 +35570,11 @@ export namespace IndirectRecursiveHelper {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IndirectRecursiveHelper":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(IndirectRecursiveHelper.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveHelper)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [IndirectRecursiveHelper.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -36620,31 +36124,9 @@ export namespace IndirectRecursive {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/IndirectRecursive":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(IndirectRecursive.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursive)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [IndirectRecursive.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -37634,31 +37116,9 @@ export namespace InProperties {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/InProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(InProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [InProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -38470,31 +37930,9 @@ export namespace InIdentifier {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/InIdentifier":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(InIdentifier.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InIdentifier)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [InIdentifier.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -39575,31 +39013,9 @@ export namespace FlattenUnionMember3 {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/FlattenUnionMember3":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(FlattenUnionMember3.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenUnionMember3)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [FlattenUnionMember3.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -40132,31 +39548,9 @@ export namespace ExternProperty {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ExternProperty":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ExternProperty.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ExternProperty)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [ExternProperty.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -40705,32 +40099,11 @@ export namespace BaseForExtern {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/BaseForExtern":
-                case "http://example.com/Extern":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(BaseForExtern.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseForExtern)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [BaseForExtern.fromRdfType, Extern.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -41248,31 +40621,9 @@ export namespace ExplicitRdfType {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/RdfType":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ExplicitRdfType.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [ExplicitRdfType.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -41797,31 +41148,11 @@ export namespace ExplicitFromToRdfTypes {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/FromRdfType":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ExplicitFromToRdfTypes.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [ExplicitFromToRdfTypes.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -42499,31 +41830,9 @@ export namespace DisplayProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/DisplayProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(DisplayProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DisplayProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [DisplayProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -43090,31 +42399,9 @@ export namespace DirectRecursive {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/DirectRecursive":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(DirectRecursive.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DirectRecursive)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [DirectRecursive.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -44001,31 +43288,11 @@ export namespace DefaultValueProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/DefaultValueProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(DefaultValueProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DefaultValueProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [DefaultValueProperties.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -46068,31 +45335,9 @@ export namespace DateUnionProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/DateUnionProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(DateUnionProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DateUnionProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [DateUnionProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -48469,31 +47714,11 @@ export namespace ConvertibleTypeProperties {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ConvertibleTypeProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ConvertibleTypeProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypeProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [ConvertibleTypeProperties.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -50770,31 +49995,9 @@ export namespace ClassProperties {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassProperties":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ClassProperties.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassProperties)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [ClassProperties.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -51529,34 +50732,16 @@ export namespace ClassHierarchy0 {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassHierarchy0":
-                case "http://example.com/ClassHierarchy1":
-                case "http://example.com/ClassHierarchy2":
-                case "http://example.com/ClassHierarchy3":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ClassHierarchy0.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy0)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [
+              ClassHierarchy0.fromRdfType,
+              ClassHierarchy1.fromRdfType,
+              ClassHierarchy2.fromRdfType,
+              ClassHierarchy3.fromRdfType,
+            ],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -52058,33 +51243,15 @@ export namespace ClassHierarchy1 {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassHierarchy1":
-                case "http://example.com/ClassHierarchy2":
-                case "http://example.com/ClassHierarchy3":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ClassHierarchy1.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy1)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [
+              ClassHierarchy1.fromRdfType,
+              ClassHierarchy2.fromRdfType,
+              ClassHierarchy3.fromRdfType,
+            ],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -52619,32 +51786,13 @@ export namespace ClassHierarchy2 {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassHierarchy2":
-                case "http://example.com/ClassHierarchy3":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ClassHierarchy2.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy2)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [ClassHierarchy2.fromRdfType, ClassHierarchy3.fromRdfType],
+            {
+              graph: _$options.graph,
+            },
+          )
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -53193,31 +52341,9 @@ export namespace ClassHierarchy3 {
       ignoreRdfType: true,
     }).chain((super0) =>
       (!_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/ClassHierarchy3":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(ClassHierarchy3.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassHierarchy3)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [ClassHierarchy3.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
       ).chain((_rdfTypeCheck) =>
         $sequenceRecord({
@@ -53686,31 +52812,11 @@ export namespace BlankNodeOrIriIdentifier {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/BlankNodeOrIriIdentifier":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(BlankNodeOrIriIdentifier.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifier)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType(
+            $resource,
+            [BlankNodeOrIriIdentifier.fromRdfType],
+            { graph: _$options.graph },
+          )
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -54140,31 +53246,9 @@ export namespace BlankNodeIdentifier {
   > = ($resource, _$options) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://example.com/BlankNodeIdentifier":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(BlankNodeIdentifier.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifier)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [BlankNodeIdentifier.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({

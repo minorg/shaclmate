@@ -40,6 +40,7 @@ import { snippets_decodeBigDecimalLiteral } from "./_snippets/snippets_decodeBig
 import { snippets_deduplicateSparqlPatterns } from "./_snippets/snippets_deduplicateSparqlPatterns.js";
 import { snippets_defaultValueSparqlWherePatterns } from "./_snippets/snippets_defaultValueSparqlWherePatterns.js";
 import { snippets_EqualsResult } from "./_snippets/snippets_EqualsResult.js";
+import { snippets_ensureRdfResourceType } from "./_snippets/snippets_ensureRdfResourceType.js";
 import { snippets_FocusSparqlConstructTriplesFunction } from "./_snippets/snippets_FocusSparqlConstructTriplesFunction.js";
 import { snippets_FocusSparqlWherePatternsFunction } from "./_snippets/snippets_FocusSparqlWherePatternsFunction.js";
 import { snippets_FromRdfResourceFunction } from "./_snippets/snippets_FromRdfResourceFunction.js";
@@ -537,6 +538,11 @@ export class Snippets {
   @Memoize()
   get defaultValueSparqlWherePatterns(): Snippet {
     return this.snippet(snippets_defaultValueSparqlWherePatterns);
+  }
+
+  @Memoize()
+  get ensureRdfResourceType(): Snippet {
+    return this.snippet(snippets_ensureRdfResourceType);
   }
 
   @Memoize()
