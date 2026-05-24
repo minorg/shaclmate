@@ -30168,7 +30168,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30187,7 +30187,7 @@ export namespace LazyProperties {
             typeof $NamedDefaultPartial.schema
           >($NamedDefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30205,7 +30205,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30227,7 +30227,7 @@ export namespace LazyProperties {
             Partial.valueSparqlConstructTriples,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30245,7 +30245,7 @@ export namespace LazyProperties {
             Partial.valueSparqlConstructTriples,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30264,7 +30264,7 @@ export namespace LazyProperties {
             typeof PartialUnion.schema
           >(PartialUnion.valueSparqlConstructTriples)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30283,7 +30283,7 @@ export namespace LazyProperties {
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlConstructTriples({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30303,7 +30303,7 @@ export namespace LazyProperties {
         typeSparqlConstructTriples: ({ schema, ...otherParameters }) =>
           Partial.valueSparqlConstructTriples({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30323,7 +30323,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlConstructTriples)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30344,7 +30344,7 @@ export namespace LazyProperties {
             Partial.valueSparqlConstructTriples,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30387,7 +30387,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30407,7 +30407,7 @@ export namespace LazyProperties {
             typeof $NamedDefaultPartial.schema
           >($NamedDefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30426,7 +30426,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30449,7 +30449,7 @@ export namespace LazyProperties {
             Partial.valueSparqlWherePatterns,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30468,7 +30468,7 @@ export namespace LazyProperties {
             Partial.valueSparqlWherePatterns,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30488,7 +30488,7 @@ export namespace LazyProperties {
             typeof PartialUnion.schema
           >(PartialUnion.valueSparqlWherePatterns)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30508,7 +30508,7 @@ export namespace LazyProperties {
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           $DefaultPartial.valueSparqlWherePatterns({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30529,7 +30529,7 @@ export namespace LazyProperties {
         typeSparqlWherePatterns: ({ schema, ...otherParameters }) =>
           Partial.valueSparqlWherePatterns({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30550,7 +30550,7 @@ export namespace LazyProperties {
             typeof $DefaultPartial.schema
           >($DefaultPartial.valueSparqlWherePatterns)({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -30572,7 +30572,7 @@ export namespace LazyProperties {
             Partial.valueSparqlWherePatterns,
           )({
             ...otherParameters,
-            schema: schema.partial(),
+            schema: schema.partialType,
           }),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -31340,10 +31340,12 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => $DefaultPartial.schema,
-            }),
+            get partialType() {
+              return {
+                kind: "Maybe" as const,
+                item: () => $DefaultPartial.schema,
+              };
+            },
           };
         },
       },
@@ -31355,10 +31357,12 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => $NamedDefaultPartial.schema,
-            }),
+            get partialType() {
+              return {
+                kind: "Maybe" as const,
+                item: () => $NamedDefaultPartial.schema,
+              };
+            },
           };
         },
       },
@@ -31370,10 +31374,12 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => $DefaultPartial.schema,
-            }),
+            get partialType() {
+              return {
+                kind: "Maybe" as const,
+                item: () => $DefaultPartial.schema,
+              };
+            },
           };
         },
       },
@@ -31385,10 +31391,9 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => Partial.schema,
-            }),
+            get partialType() {
+              return { kind: "Maybe" as const, item: () => Partial.schema };
+            },
           };
         },
       },
@@ -31400,10 +31405,9 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => Partial.schema,
-            }),
+            get partialType() {
+              return { kind: "Maybe" as const, item: () => Partial.schema };
+            },
           };
         },
       },
@@ -31415,10 +31419,12 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectOption" as const,
-            partial: () => ({
-              kind: "Maybe" as const,
-              item: () => PartialUnion.schema,
-            }),
+            get partialType() {
+              return {
+                kind: "Maybe" as const,
+                item: () => PartialUnion.schema,
+              };
+            },
           };
         },
       },
@@ -31430,7 +31436,9 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObject" as const,
-            partial: () => $DefaultPartial.schema,
+            get partialType() {
+              return $DefaultPartial.schema;
+            },
           };
         },
       },
@@ -31440,7 +31448,12 @@ export namespace LazyProperties {
           "http://example.com/requiredPartialToResolvedBlankNodeOrIriIdentifierProperty",
         ),
         get type() {
-          return { kind: "LazyObject" as const, partial: () => Partial.schema };
+          return {
+            kind: "LazyObject" as const,
+            get partialType() {
+              return Partial.schema;
+            },
+          };
         },
       },
       setLazyToResolvedBlankNodeOrIriIdentifierProperty: {
@@ -31451,10 +31464,12 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectSet" as const,
-            partial: () => ({
-              kind: "Set" as const,
-              item: () => $DefaultPartial.schema,
-            }),
+            get partialType() {
+              return {
+                kind: "Set" as const,
+                item: () => $DefaultPartial.schema,
+              };
+            },
           };
         },
       },
@@ -31466,10 +31481,9 @@ export namespace LazyProperties {
         get type() {
           return {
             kind: "LazyObjectSet" as const,
-            partial: () => ({
-              kind: "Set" as const,
-              item: () => Partial.schema,
-            }),
+            get partialType() {
+              return { kind: "Set" as const, item: () => Partial.schema };
+            },
           };
         },
       },
