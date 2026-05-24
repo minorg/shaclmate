@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
@@ -63,19 +63,6 @@ export abstract class AbstractTermType<
       ownValues: [...this.nodeKinds].map(NodeKind.toTermType),
       type: "string" as const,
     });
-  }
-
-  protected override get schemaInitializers() {
-    let initializers = super.schemaInitializers;
-    if (this.in_.length > 0) {
-      initializers = initializers.concat(
-        code`in: [${joinCode(
-          this.in_.map((in_) => this.rdfjsTermExpression(in_)),
-          { on: ", " },
-        )}] as const`,
-      );
-    }
-    return initializers;
   }
 
   @Memoize()

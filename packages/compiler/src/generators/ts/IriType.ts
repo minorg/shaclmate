@@ -1,6 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import {
   arrayOf,
@@ -64,6 +66,16 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       return code`(identifier: string) => ${this.reusables.snippets.parseIri}(identifier).chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${this.reusables.imports.Right}(identifier as ${this.name});`))} default: return ${this.reusables.imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`;
     }
     return code`${this.reusables.snippets.parseIri}`;
+  }
+
+  protected override get schemaInitializers() {
+    let initializers = super.schemaInitializers;
+    if (this.in_.length > 0) {
+      initializers = initializers.concat(
+        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))} as const`,
+      );
+    }
+    return initializers;
   }
 
   override fromJsonExpression({

@@ -1,9 +1,11 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { Typeof } from "./Typeof.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
   override readonly name = code`${this.reusables.imports.Literal}`;
@@ -37,6 +39,16 @@ export class LiteralType extends AbstractLiteralType {
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  protected override get schemaInitializers() {
+    let initializers = super.schemaInitializers;
+    if (this.in_.length > 0) {
+      initializers = initializers.concat(
+        code`in: ${arrayOf(...this.in_.map((in_) => this.rdfjsTermExpression(in_)))} as const`,
+      );
+    }
+    return initializers;
   }
 
   override fromJsonExpression({

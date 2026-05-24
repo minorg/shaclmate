@@ -4,7 +4,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends bigint | boolean | Date | string | number,
@@ -47,10 +47,7 @@ export abstract class AbstractPrimitiveType<
     let initializers = super.schemaInitializers;
     if (this.primitiveIn.length > 0) {
       initializers = initializers.concat(
-        code`primitiveIn: [${joinCode(
-          this.primitiveIn.map((in_) => this.literalExpression(in_)),
-          { on: ", " },
-        )}] as const`,
+        code`in: ${arrayOf(...this.primitiveIn.map((in_) => this.literalExpression(in_)))} as const`,
       );
     }
     return initializers;

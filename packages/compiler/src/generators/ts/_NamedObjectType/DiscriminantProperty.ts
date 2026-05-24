@@ -1,13 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "../ts-poet-wrapper.js";
+import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.Type> {
@@ -156,14 +150,14 @@ export namespace DiscriminantProperty {
 
     @Memoize()
     get schema(): Code {
-      const initializers: Code[] = [];
+      const initializers: Record<string, unknown> = {};
       if (this.descendantValues.length > 0) {
-        initializers.push(code`descendantValues: ${this.descendantValues}`);
+        initializers["descendantValues"] = this.descendantValues;
       }
       if (this.ownValues.length > 0) {
-        initializers.push(code`ownValues: ${this.ownValues}`);
+        initializers["ownValues"] = this.ownValues;
       }
-      return code`{ ${joinCode(initializers, { on: ", " })} }`;
+      return code`${{ initializers }}`;
     }
 
     @Memoize()
