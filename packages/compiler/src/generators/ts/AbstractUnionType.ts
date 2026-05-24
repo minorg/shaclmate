@@ -254,10 +254,7 @@ export abstract class AbstractUnionType<
     invariant(this.kind.endsWith("Type"));
 
     return code`${{
-      // discriminant: {
-      //   kind: '"extrinsic" | "intrinsic" | "typeof"',
-      // },
-      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))}`,
+      kind: this.schemaObject.kind,
       members: code`{ ${joinCode(
         this.members.map(
           ({ type, primaryDiscriminantValue }) =>
