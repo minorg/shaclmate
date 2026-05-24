@@ -55,6 +55,7 @@ export class NamedObjectType extends AbstractType {
   override readonly kind = "NamedObjectType";
   override readonly name: string;
   override readonly recursive: boolean;
+  override readonly referencesObjectType = true;
   readonly synthetic: boolean;
   override readonly typeofs = ["object" as const];
   override readonly validationFunction: Maybe<Code> = Maybe.empty();

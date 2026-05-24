@@ -7,42 +7,6 @@ import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
-function isObjectType(type: Type): boolean {
-  switch (type.kind) {
-    case "LazyObjectOption":
-    case "LazyObjectSet":
-    case "LazyObject":
-    case "NamedObjectType":
-    case "NamedObjectUnion":
-      return true;
-
-    case "AnonymousUnion":
-    case "NamedUnion":
-      return type.members.some((member) => isObjectType(member.type));
-
-    case "DefaultValue":
-    case "List":
-    case "Option":
-    case "Set":
-      return isObjectType(type.itemType);
-
-    case "BlankNode":
-    case "BigDecimal":
-    case "BigInt":
-    case "Boolean":
-    case "DateTime":
-    case "Date":
-    case "Float":
-    case "Identifier":
-    case "Int":
-    case "Iri":
-    case "Literal":
-    case "String":
-    case "Term":
-      return false;
-  }
-}
-
 export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
@@ -182,7 +146,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       entries.push(code`path: ${this.propertyPathToCode(this.path)}`);
     }
     // Use a getter if the type is recursive or the type is an object type, which may have forward references in the file
-    if (this.recursive || isObjectType(this.type)) {
+    if (this.recursive || this.type.referencesObjectType) {
       entries.push(code`get type() { return ${this.type.schema}; }`);
     } else {
       entries.push(code`type: ${this.type.schema}`);

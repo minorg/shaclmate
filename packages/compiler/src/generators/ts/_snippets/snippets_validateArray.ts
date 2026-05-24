@@ -16,7 +16,7 @@ function ${syntheticNamePrefix}validateArray<ItemSchemaT, ItemValueT, Readonly e
       return ${imports.Left}(new Error(\`value array has length (\${valueArray.length}) less than minCount (\${schema.minCount})\`)) as ${imports.Either}<Error, EitherR>;
     }
 
-    return ${imports.Either}.sequence(valueArray.map(value => validateItem(schema.item(), value))) as ${imports.Either}<Error, EitherR>;
+    return ${imports.Either}.sequence(valueArray.map(value => validateItem(schema.itemType, value))) as ${imports.Either}<Error, EitherR>;
   }
 }`,
   );

@@ -107,6 +107,11 @@ export abstract class AbstractType {
   abstract readonly recursive: boolean;
 
   /**
+   * Is this type an ObjectType or does it reference an object type?
+   */
+  abstract readonly referencesObjectType: boolean;
+
+  /**
    * TypeScript object describing this type, for runtime use.
    */
   abstract readonly schema: Code;

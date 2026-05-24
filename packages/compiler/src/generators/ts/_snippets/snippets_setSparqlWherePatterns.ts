@@ -10,7 +10,7 @@ export const snippets_setSparqlWherePatterns: SnippetFactory = ({
     code`\
 function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.ValueSparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.ValueSparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
-    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item() });
+    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.itemType });
 
     const minCount = filter?.${syntheticNamePrefix}minCount ?? schema.minCount ?? 0;
     if (minCount > 0) {

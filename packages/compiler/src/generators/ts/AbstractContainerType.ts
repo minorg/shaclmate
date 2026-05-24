@@ -54,6 +54,10 @@ export abstract class AbstractContainerType<
     return this.itemType.recursive;
   }
 
+  get referencesObjectType(): boolean {
+    return this.itemType.referencesObjectType;
+  }
+
   @Memoize()
   get schema(): Code {
     return code`${removeUndefined(this.schemaObject)}`;

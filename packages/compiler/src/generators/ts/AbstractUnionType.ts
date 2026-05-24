@@ -245,6 +245,10 @@ export abstract class AbstractUnionType<
     return this.members.some((member) => member.type.mutable);
   }
 
+  get referencesObjectType(): boolean {
+    return this.members.some((member) => member.type.referencesObjectType);
+  }
+
   @Memoize()
   get schema(): Code {
     return code`${removeUndefined(this.schemaObject)}`;

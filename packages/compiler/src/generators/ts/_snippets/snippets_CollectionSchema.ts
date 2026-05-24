@@ -8,7 +8,7 @@ export const snippets_CollectionSchema: SnippetFactory = ({
     `${syntheticNamePrefix}CollectionSchema`,
     code`\
 interface ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> {
-  readonly item: () => ItemSchemaT;
+  readonly itemType: ItemSchemaT;
   readonly kind: "List" | "Set";
   readonly minCount?: number;
 }`,
