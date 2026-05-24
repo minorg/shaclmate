@@ -251,10 +251,8 @@ export abstract class AbstractUnionType<
   }
 
   override get schemaType(): Code {
-    invariant(this.kind.endsWith("Type"));
-
     return code`${{
-      kind: this.schemaObject.kind,
+      kind: this.kind,
       members: code`{ ${joinCode(
         this.members.map(
           ({ type, primaryDiscriminantValue }) =>

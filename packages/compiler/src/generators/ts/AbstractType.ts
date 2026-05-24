@@ -196,9 +196,8 @@ export abstract class AbstractType {
    * Helper to compose the result of schema along the type hierarchy.
    */
   protected get schemaObject() {
-    invariant(this.kind.endsWith("Type"));
     return {
-      kind: code`${literalOf(this.kind.substring(0, this.kind.length - "Type".length))} as const`,
+      kind: code`${literalOf(this.kind)} as const`,
     };
   }
 
