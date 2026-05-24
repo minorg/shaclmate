@@ -13,7 +13,7 @@ import {
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
-  override readonly kind = "IriType";
+  override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
   override readonly schemaType = code`${this.reusables.snippets.IriSchema}`;
   override readonly valueSparqlWherePatternsFunction =

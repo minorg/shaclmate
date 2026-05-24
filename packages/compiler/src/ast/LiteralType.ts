@@ -10,7 +10,7 @@ import {
 
 export class LiteralType extends AbstractTermType<Literal, Literal> {
   readonly datatype: Maybe<NamedNode>;
-  override readonly kind = "LiteralType";
+  override readonly kind = "Literal";
   override readonly nodeKinds = nodeKinds;
   readonly languageIn: readonly string[];
   readonly maxExclusive: Maybe<Literal>;

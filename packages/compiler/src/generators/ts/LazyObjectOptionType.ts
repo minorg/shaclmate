@@ -17,7 +17,7 @@ const Super = AbstractLazyObjectType<
 
 export class LazyObjectOptionType extends Super {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "LazyObjectOptionType";
+  override readonly kind = "LazyObjectOption";
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {

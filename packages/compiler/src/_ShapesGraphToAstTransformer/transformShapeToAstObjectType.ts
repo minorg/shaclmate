@@ -16,30 +16,30 @@ function isObjectTypePropertyRequired(property: {
   type: ast.ObjectType.Property["type"];
 }): boolean {
   switch (property.type.kind) {
-    case "DefaultValueType":
+    case "DefaultValue":
       return false;
-    case "LazyObjectOptionType":
+    case "LazyObjectOption":
       return false;
-    case "LazyObjectSetType":
+    case "LazyObjectSet":
       return property.type.partialType.minCount > 0n;
-    case "OptionType":
+    case "Option":
       return false;
-    case "SetType":
+    case "Set":
       return property.type.minCount > 0;
-    case "UnionType":
+    case "Union":
       return property.type.members.every((member) =>
         isObjectTypePropertyRequired({ type: member.type }),
       );
-    case "BlankNodeType":
-    case "IdentifierType":
-    case "IriType":
-    case "LazyObjectType":
-    case "ListType":
-    case "LiteralType":
-    case "ObjectType":
-    case "TermType":
+    case "BlankNode":
+    case "Identifier":
+    case "Iri":
+    case "LazyObject":
+    case "List":
+    case "Literal":
+    case "Object":
+    case "Term":
       return true;
-    case "IntersectionType":
+    case "Intersection":
       throw new Error("unsupported");
     default:
       property.type satisfies never;
@@ -189,7 +189,7 @@ export function transformShapeToAstObjectType(
                 .toMaybe()
                 .toList(),
             )
-            .filter((astType) => astType.kind === "ObjectType");
+            .filter((astType) => astType.kind === "Object");
         };
         objectType.addAncestorObjectTypes(
           ...relatedObjectTypes(ancestorNodeShapes),

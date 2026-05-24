@@ -111,8 +111,8 @@ export abstract class AbstractUnionType<
 
             if (discriminant.kind === "intrinsic" && !json) {
               switch (member.type.kind) {
-                case "NamedObjectUnionType":
-                case "NamedUnionType":
+                case "NamedObjectUnion":
+                case "NamedUnion":
                 case "NamedObjectType":
                   return code`${member.type.name}.is${member.type.name}(${instance})`;
               }
@@ -748,11 +748,11 @@ function termTypes(
   type: Type,
 ): ReadonlySet<"BlankNode" | "Literal" | "NamedNode"> {
   switch (type.kind) {
-    case "BlankNodeType":
-    case "IriType":
-    case "IdentifierType":
-    case "LiteralType":
-    case "TermType":
+    case "BlankNode":
+    case "Iri":
+    case "Identifier":
+    case "Literal":
+    case "Term":
       return type.termTypes;
     default:
       return emptyTermTypesSet;

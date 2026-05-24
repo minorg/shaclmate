@@ -10,7 +10,7 @@ export class IdentifierType extends AbstractTermType<
   NamedNode,
   BlankNode | NamedNode
 > {
-  override readonly kind = "IdentifierType";
+  override readonly kind = "Identifier";
   override readonly nodeKinds = nodeKinds;
 
   constructor(

@@ -115,7 +115,7 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
   return this.#objectsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
 }`);
             }
-            case "NamedObjectUnionType":
+            case "NamedObjectUnion":
               return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]> {
   return this.#objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([

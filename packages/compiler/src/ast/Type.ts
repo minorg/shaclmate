@@ -38,35 +38,35 @@ export namespace Type {
     }
 
     switch (left.kind) {
-      case "BlankNodeType":
+      case "BlankNode":
         return left.equals(right as BlankNodeType);
-      case "DefaultValueType":
+      case "DefaultValue":
         return left.equals(right as DefaultValueType);
-      case "IdentifierType":
+      case "Identifier":
         return left.equals(right as IdentifierType);
-      case "IntersectionType":
+      case "Intersection":
         return left.equals(right as IntersectionType);
-      case "IriType":
+      case "Iri":
         return left.equals(right as IriType);
-      case "LiteralType":
+      case "Literal":
         return left.equals(right as LiteralType);
-      case "LazyObjectOptionType":
+      case "LazyObjectOption":
         return left.equals(right as LazyObjectOptionType);
-      case "LazyObjectSetType":
+      case "LazyObjectSet":
         return left.equals(right as LazyObjectSetType);
-      case "LazyObjectType":
+      case "LazyObject":
         return left.equals(right as LazyObjectType);
-      case "ListType":
+      case "List":
         return left.equals(right as ListType);
-      case "ObjectType":
+      case "Object":
         return left.equals(right as ObjectType);
-      case "OptionType":
+      case "Option":
         return left.equals(right as OptionType);
-      case "TermType":
+      case "Term":
         return left.equals(right as TermType);
-      case "UnionType":
+      case "Union":
         return left.equals(right as UnionType);
-      case "SetType":
+      case "Set":
         return left.equals(right as SetType);
     }
   }

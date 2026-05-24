@@ -71,11 +71,11 @@ export namespace ObjectCompoundType {
 
     for (const member of objectCompoundType.members) {
       switch (member.type.kind) {
-        case "ObjectType":
+        case "Object":
           memberObjectTypes_.push(member.type);
           break;
-        case "IntersectionType":
-        case "UnionType": {
+        case "Intersection":
+        case "Union": {
           invariant(member.type.kind === objectCompoundType.kind);
           memberObjectTypes_.push(...memberObjectTypes(member.type));
           break;

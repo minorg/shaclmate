@@ -84,7 +84,7 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get jsonSchema(): AbstractProperty<IdentifierType>["jsonSchema"] {
     let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "IriType") {
+    if (this.type.in_.length > 0 && this.type.kind === "Iri") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       schema = code`${this.reusables.imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;

@@ -12,7 +12,7 @@ export class TermType extends AbstractTermType<
   Literal | NamedNode,
   BlankNode | Literal | NamedNode
 > {
-  override readonly kind = "TermType";
+  override readonly kind = "Term";
   override readonly nodeKinds: ReadonlySet<NodeKind>;
 
   constructor({

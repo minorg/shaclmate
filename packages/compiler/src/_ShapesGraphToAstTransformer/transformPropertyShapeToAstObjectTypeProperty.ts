@@ -17,12 +17,12 @@ function synthesizePartialAstObjectType({
 }): ast.ObjectType {
   let syntheticName: string;
   switch (identifierType.kind) {
-    case "BlankNodeType":
+    case "BlankNode":
       throw new Error("should never happen");
-    case "IdentifierType":
+    case "Identifier":
       syntheticName = "DefaultPartial";
       break;
-    case "IriType":
+    case "Iri":
       syntheticName = "NamedDefaultPartial";
       break;
   }
@@ -130,7 +130,7 @@ function transformPropertyShapeToAstType(
         maxCount = minCount;
       }
 
-      if (propertyShapeAstType.kind === "DefaultValueType") {
+      if (propertyShapeAstType.kind === "DefaultValue") {
         if (minCount > 0n) {
           return Left(
             new Error(
@@ -213,11 +213,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         .call(this, propertyShapeResolve.unsafeCoerce(), shapeStack)
         .chain((astResolveType) => {
           switch (astResolveType.kind) {
-            case "ObjectType":
+            case "Object":
               return Either.of<Error, ast.ObjectType | ast.ObjectUnionType>(
                 astResolveType,
               );
-            case "UnionType":
+            case "Union":
               if (
                 // This check relies on .members being populated, which may not happen in cycles
                 astResolveType.members.length > 0 &&
@@ -249,15 +249,15 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     if (astResolveItemType) {
       let astItemType: AbstractContainerType.ItemType;
       switch (astType.kind) {
-        case "DefaultValueType":
-        case "OptionType":
-        case "SetType":
+        case "DefaultValue":
+        case "Option":
+        case "Set":
           astItemType = astType.itemType;
           break;
-        case "LazyObjectOptionType":
-        case "LazyObjectSetType":
+        case "LazyObjectOption":
+        case "LazyObjectSet":
         // biome-ignore lint/suspicious/noFallthroughSwitchClause: break is unreachable
-        case "LazyObjectType":
+        case "LazyObject":
           invariant(
             false,
             `lazy types should not appear here: ${astType.kind}`,
@@ -269,17 +269,17 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 
       let astPartialItemType: ast.ObjectType | ast.ObjectUnionType;
       switch (astItemType.kind) {
-        case "BlankNodeType":
-        case "IdentifierType":
-        case "IriType":
+        case "BlankNode":
+        case "Identifier":
+        case "Iri":
           astPartialItemType = synthesizePartialAstObjectType({
             identifierType: astItemType,
           });
           break;
-        case "ObjectType":
+        case "Object":
           astPartialItemType = astItemType;
           break;
-        case "UnionType":
+        case "Union":
           if (!astItemType.isObjectUnionType()) {
             return Left(
               new Error(
@@ -305,18 +305,18 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       };
 
       switch (astType.kind) {
-        case "BlankNodeType":
-        case "IdentifierType":
-        case "IriType":
-        case "ObjectType":
-        case "UnionType":
+        case "BlankNode":
+        case "Identifier":
+        case "Iri":
+        case "Object":
+        case "Union":
           astType = new ast.LazyObjectType({
             ...astAbstractTypeProperties,
             partialType: astPartialItemType,
             resolveType: astResolveItemType,
           });
           break;
-        case "OptionType":
+        case "Option":
           astType = new ast.LazyObjectOptionType({
             ...astAbstractTypeProperties,
             partialType: new ast.OptionType({
@@ -327,7 +327,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             }),
           });
           break;
-        case "SetType":
+        case "Set":
           astType = new ast.LazyObjectSetType({
             ...astAbstractTypeProperties,
             partialType: new ast.SetType({

@@ -20,7 +20,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
   readonly #identifierType: BlankNodeType | IdentifierType | IriType;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "NamedObjectUnionType";
+  readonly kind = "NamedObjectUnion";
   readonly synthetic: boolean;
 
   constructor({

@@ -36,7 +36,7 @@ export class IdentifierType extends AbstractIdentifierType<
     code`${this.reusables.snippets.IdentifierFilter}`;
   override readonly parseFunction =
     code`${this.reusables.snippets.parseIdentifier};`;
-  override readonly kind = "IdentifierType";
+  override readonly kind = "Identifier";
   override readonly name =
     code`(${this.reusables.imports.BlankNode} | ${this.reusables.imports.NamedNode})`;
   override readonly nodeKinds = nodeKinds;

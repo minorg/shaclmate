@@ -48,7 +48,7 @@ export namespace ${namedObjectType.name} {
     for (const astNamedUnionType of ast_.namedUnionTypes.map(
       (astNamedUnionType) => typeFactory.createUnionType(astNamedUnionType),
     )) {
-      invariant(astNamedUnionType.kind !== "AnonymousUnionType");
+      invariant(astNamedUnionType.kind !== "AnonymousUnion");
       declarations.push(code`\
 export namespace ${astNamedUnionType.name} {
   ${astNamedUnionType.jsonTypeAliasDeclaration}

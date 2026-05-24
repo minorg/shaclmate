@@ -9,7 +9,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "LazyObjectType";
+  override readonly kind = "LazyObject";
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {

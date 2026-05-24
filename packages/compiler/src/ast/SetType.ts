@@ -6,7 +6,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 export class SetType<
   ItemTypeT extends SetType.ItemType = SetType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
-  override readonly kind = "SetType";
+  override readonly kind = "Set";
 
   /**
    * Minimum number of items in the set.

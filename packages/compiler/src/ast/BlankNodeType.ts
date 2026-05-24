@@ -6,7 +6,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
  * A type corresponding to sh:nodeKind sh:BlankNode.
  */
 export class BlankNodeType extends AbstractTermType<NamedNode, BlankNode> {
-  override readonly kind = "BlankNodeType";
+  override readonly kind = "BlankNode";
   override readonly nodeKinds = nodeKinds;
 
   constructor(

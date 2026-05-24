@@ -8,7 +8,7 @@ import { type Code, code } from "./ts-poet-wrapper.js";
 export class AnonymousUnionType extends AbstractUnionType<Type> {
   override readonly declaration: Maybe<Code> = Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "AnonymousUnionType";
+  override readonly kind = "AnonymousUnion";
 
   override get equalsFunction(): Code {
     return this.inlineEqualsFunction;

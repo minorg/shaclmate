@@ -15,9 +15,9 @@ export abstract class AbstractLazyObjectType<
   ResolveTypeT extends AbstractLazyObjectType.ResolveTypeConstraint,
 > extends AbstractType {
   abstract override readonly kind:
-    | "LazyObjectOptionType"
-    | "LazyObjectSetType"
-    | "LazyObjectType";
+    | "LazyObjectOption"
+    | "LazyObjectSet"
+    | "LazyObject";
   readonly partialType: PartialTypeT;
   readonly resolveType: ResolveTypeT;
 

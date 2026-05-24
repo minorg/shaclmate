@@ -195,12 +195,12 @@ export class ShapesGraphToAstTransformer {
       const nodeShapeAstType = nodeShapeAstTypeEither.unsafeCoerce();
 
       switch (nodeShapeAstType.kind) {
-        case "IntersectionType":
+        case "Intersection":
           if (nodeShapeAstType.name.isJust()) {
             astNamedIntersectionTypes.push(nodeShapeAstType);
           }
           break;
-        case "ObjectType": {
+        case "Object": {
           invariant(
             nodeShapeAstType.name.isJust(),
             `node shape missing name: ${nodeShapeAstType.shapeIdentifier}`,
@@ -208,17 +208,17 @@ export class ShapesGraphToAstTransformer {
           astObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
             switch (property.type.kind) {
-              case "LazyObjectOptionType":
-              case "LazyObjectSetType":
-              case "LazyObjectType": {
+              case "LazyObjectOption":
+              case "LazyObjectSet":
+              case "LazyObject": {
                 const partialItemType =
-                  property.type.partialType.kind === "ObjectType" ||
-                  property.type.partialType.kind === "UnionType"
+                  property.type.partialType.kind === "Object" ||
+                  property.type.partialType.kind === "Union"
                     ? property.type.partialType
                     : property.type.partialType.itemType;
 
                 if (
-                  partialItemType.kind === "ObjectType" &&
+                  partialItemType.kind === "Object" &&
                   partialItemType.synthetic
                 ) {
                   const partialItemTypeName =
@@ -234,7 +234,7 @@ export class ShapesGraphToAstTransformer {
 
           break;
         }
-        case "UnionType":
+        case "Union":
           if (nodeShapeAstType.name.isJust()) {
             astNamedUnionTypes.push(nodeShapeAstType);
           }
@@ -248,9 +248,9 @@ export class ShapesGraphToAstTransformer {
       lazyTypesCount: [...this.cachedAstTypesByShapeIdentifier.values()].reduce(
         (acc, astType) => {
           switch (astType.kind) {
-            case "LazyObjectType":
-            case "LazyObjectOptionType":
-            case "LazyObjectSetType":
+            case "LazyObject":
+            case "LazyObjectOption":
+            case "LazyObjectSet":
               return acc + 1;
             default:
               return acc;

@@ -337,7 +337,7 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "IriType" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
+    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "Iri" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()

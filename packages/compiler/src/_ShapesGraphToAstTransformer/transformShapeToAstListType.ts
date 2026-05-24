@@ -172,7 +172,7 @@ export function transformShapeToAstListType(
                 })
                 .chain((restProperty) => {
                   if (
-                    restProperty.type.kind !== "ListType" ||
+                    restProperty.type.kind !== "List" ||
                     !restProperty.type.shapeIdentifier.equals(
                       nodeShape.$identifier(),
                     )

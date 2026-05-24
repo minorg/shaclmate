@@ -16,7 +16,7 @@ export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType = DefaultValueType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   readonly defaultValue: Literal | NamedNode;
-  override readonly kind = "DefaultValueType";
+  override readonly kind = "DefaultValue";
 
   constructor({
     defaultValue,
@@ -59,7 +59,7 @@ export namespace DefaultValueType {
   export type ItemType = Exclude<AbstractContainerType.ItemType, BlankNodeType>;
 
   export function isItemType(type: Type): type is ItemType {
-    if (type.kind === "BlankNodeType") {
+    if (type.kind === "BlankNode") {
       return false;
     }
     return AbstractContainerType.isItemType(type);

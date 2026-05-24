@@ -17,7 +17,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
       type: code`${this.reusables.imports.GraphQLInt}`,
     },
   });
-  override readonly kind = "LazyObjectSetType";
+  override readonly kind = "LazyObjectSet";
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {

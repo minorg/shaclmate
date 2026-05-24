@@ -4,5 +4,5 @@ export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 > {
-  override readonly kind = "LazyObjectType";
+  override readonly kind = "LazyObject";
 }

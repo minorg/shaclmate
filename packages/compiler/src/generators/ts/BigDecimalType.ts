@@ -14,7 +14,7 @@ export class BigDecimalType extends AbstractLiteralType {
     code`${this.reusables.snippets.NumericFilter}<${this.reusables.imports.BigDecimal}>`;
   override readonly hashFunction =
     code`${this.reusables.snippets.hashBigDecimal}`;
-  override readonly kind = "BigDecimalType";
+  override readonly kind = "BigDecimal";
   override readonly schemaType =
     code`${this.reusables.snippets.NumericSchema}<${this.reusables.imports.BigDecimal}>`;
   override readonly valueSparqlWherePatternsFunction =

@@ -33,7 +33,7 @@ export class ListType<
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
 
-  override readonly kind = "ListType";
+  override readonly kind = "List";
 
   constructor({
     identifierNodeKind,
@@ -170,31 +170,31 @@ export namespace ListType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
-      case "AnonymousUnionType":
-      case "BigDecimalType":
-      case "BigIntType":
-      case "BlankNodeType":
-      case "BooleanType":
-      case "DateTimeType":
-      case "DateType":
-      case "FloatType":
-      case "IdentifierType":
-      case "IriType":
-      case "IntType":
-      case "LiteralType":
-      case "NamedObjectUnionType":
-      case "NamedUnionType":
+      case "AnonymousUnion":
+      case "BigDecimal":
+      case "BigInt":
+      case "BlankNode":
+      case "Boolean":
+      case "DateTime":
+      case "Date":
+      case "Float":
+      case "Identifier":
+      case "Iri":
+      case "Int":
+      case "Literal":
+      case "NamedObjectUnion":
+      case "NamedUnion":
       case "NamedObjectType":
-      case "StringType":
-      case "TermType":
+      case "String":
+      case "Term":
         return true;
-      case "DefaultValueType":
-      case "LazyObjectOptionType":
-      case "LazyObjectSetType":
-      case "LazyObjectType":
-      case "ListType":
-      case "OptionType":
-      case "SetType":
+      case "DefaultValue":
+      case "LazyObjectOption":
+      case "LazyObjectSet":
+      case "LazyObject":
+      case "List":
+      case "Option":
+      case "Set":
         return false;
     }
   }

@@ -5,5 +5,5 @@ export class LazyObjectOptionType extends AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
 > {
-  override readonly kind = "LazyObjectOptionType";
+  override readonly kind = "LazyObjectOption";
 }

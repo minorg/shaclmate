@@ -16,14 +16,14 @@ export abstract class AbstractPrimitiveType<
   override readonly equalsFunction =
     code`${this.reusables.snippets.strictEquals}`;
   abstract override readonly kind:
-    | "BigIntType"
-    | "BooleanType"
-    | "DateTimeType"
-    | "DateType"
-    | "FloatType"
-    | "IntType"
+    | "BigInt"
+    | "Boolean"
+    | "DateTime"
+    | "Date"
+    | "Float"
+    | "Int"
     | "NumberType"
-    | "StringType";
+    | "String";
   readonly primitiveIn: readonly ValueT[];
 
   constructor({

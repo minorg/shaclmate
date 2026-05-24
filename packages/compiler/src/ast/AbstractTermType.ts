@@ -21,11 +21,11 @@ export abstract class AbstractTermType<
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   abstract override readonly kind:
-    | "BlankNodeType"
-    | "IdentifierType"
-    | "IriType"
-    | "LiteralType"
-    | "TermType";
+    | "BlankNode"
+    | "Identifier"
+    | "Iri"
+    | "Literal"
+    | "Term";
   override readonly recursive = false;
 
   constructor({

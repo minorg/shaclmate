@@ -17,7 +17,7 @@ export class DefaultValueType<
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  override readonly kind = "DefaultValueType";
+  override readonly kind = "DefaultValue";
   override readonly typeofs = ["object" as const];
   override readonly validationFunction: Maybe<Code> =
     this.itemType.validationFunction;
@@ -101,16 +101,16 @@ export class DefaultValueType<
   @Memoize()
   private get defaultValueExpression() {
     switch (this.itemType.kind) {
-      case "IdentifierType":
-      case "IriType":
-      case "LiteralType":
-      case "TermType":
+      case "Identifier":
+      case "Iri":
+      case "Literal":
+      case "Term":
         return this.rdfjsTermExpression(this.defaultValue);
-      case "AnonymousUnionType":
-      case "ListType":
+      case "AnonymousUnion":
+      case "List":
       case "NamedObjectType":
-      case "NamedObjectUnionType":
-      case "NamedUnionType":
+      case "NamedObjectUnion":
+      case "NamedUnion":
         throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
 
@@ -189,7 +189,7 @@ export namespace DefaultValueType {
   export type ItemType = Exclude<AbstractContainerType.ItemType, BlankNodeType>;
 
   export function isItemType(type: Type): type is ItemType {
-    if (type.kind === "BlankNodeType") {
+    if (type.kind === "BlankNode") {
       return false;
     }
     return AbstractContainerType.isItemType(type);

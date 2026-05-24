@@ -104,7 +104,7 @@ export function transformShapeToAstTermType(
       return shapeStack.defaultValue
         .map((defaultValue) => {
           switch (termType.kind) {
-            case "BlankNodeType":
+            case "BlankNode":
               return Left(
                 new Error(
                   `${shape}: blank node identifier types cannot have default values`,

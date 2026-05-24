@@ -26,7 +26,7 @@ export class ListType<
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
-  override readonly kind = "ListType";
+  override readonly kind = "List";
 
   /**
    * rdf:type's that will be added to this object when it's serialized toRdf.
@@ -69,22 +69,22 @@ export namespace ListType {
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
-      case "BlankNodeType":
-      case "IdentifierType":
-      case "IntersectionType":
-      case "IriType":
-      case "LiteralType":
-      case "ObjectType":
-      case "TermType":
-      case "UnionType":
+      case "BlankNode":
+      case "Identifier":
+      case "Intersection":
+      case "Iri":
+      case "Literal":
+      case "Object":
+      case "Term":
+      case "Union":
         return true;
-      case "DefaultValueType":
-      case "LazyObjectOptionType":
-      case "LazyObjectSetType":
-      case "LazyObjectType":
-      case "ListType":
-      case "OptionType":
-      case "SetType":
+      case "DefaultValue":
+      case "LazyObjectOption":
+      case "LazyObjectSet":
+      case "LazyObject":
+      case "List":
+      case "Option":
+      case "Set":
         return false;
     }
   }

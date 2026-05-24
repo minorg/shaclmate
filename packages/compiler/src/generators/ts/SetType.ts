@@ -10,7 +10,7 @@ export class SetType<
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
-  override readonly kind = "SetType";
+  override readonly kind = "Set";
 
   @Memoize()
   override get valueSparqlConstructTriplesFunction(): Code {

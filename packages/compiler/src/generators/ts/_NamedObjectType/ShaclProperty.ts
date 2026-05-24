@@ -9,36 +9,36 @@ import { AbstractProperty } from "./AbstractProperty.js";
 
 function isObjectType(type: Type): boolean {
   switch (type.kind) {
-    case "LazyObjectOptionType":
-    case "LazyObjectSetType":
-    case "LazyObjectType":
+    case "LazyObjectOption":
+    case "LazyObjectSet":
+    case "LazyObject":
     case "NamedObjectType":
-    case "NamedObjectUnionType":
+    case "NamedObjectUnion":
       return true;
 
-    case "AnonymousUnionType":
-    case "NamedUnionType":
+    case "AnonymousUnion":
+    case "NamedUnion":
       return type.members.some((member) => isObjectType(member.type));
 
-    case "DefaultValueType":
-    case "ListType":
-    case "OptionType":
-    case "SetType":
+    case "DefaultValue":
+    case "List":
+    case "Option":
+    case "Set":
       return isObjectType(type.itemType);
 
-    case "BlankNodeType":
-    case "BigDecimalType":
-    case "BigIntType":
-    case "BooleanType":
-    case "DateTimeType":
-    case "DateType":
-    case "FloatType":
-    case "IdentifierType":
-    case "IntType":
-    case "IriType":
-    case "LiteralType":
-    case "StringType":
-    case "TermType":
+    case "BlankNode":
+    case "BigDecimal":
+    case "BigInt":
+    case "Boolean":
+    case "DateTime":
+    case "Date":
+    case "Float":
+    case "Identifier":
+    case "Int":
+    case "Iri":
+    case "Literal":
+    case "String":
+    case "Term":
       return false;
   }
 }

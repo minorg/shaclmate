@@ -174,8 +174,8 @@ export abstract class AbstractLazyObjectType<
       return code`${partialType.name}.createUnsafe`;
     }
 
-    invariant(partialType.kind === "NamedObjectUnionType");
-    invariant(resolveType.kind === "NamedObjectUnionType");
+    invariant(partialType.kind === "NamedObjectUnion");
+    invariant(resolveType.kind === "NamedObjectUnion");
 
     invariant(partialType.members.length === resolveType.members.length);
 

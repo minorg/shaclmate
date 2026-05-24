@@ -7,7 +7,7 @@ export abstract class AbstractCollectionType<
   ItemTypeT extends
     AbstractCollectionType.ItemType = AbstractCollectionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  abstract override readonly kind: "ListType" | "SetType";
+  abstract override readonly kind: "List" | "Set";
 
   /**
    * The collection should be mutable in generated code.
