@@ -117,7 +117,7 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToIri<IriT extends string = string>(
+function $convertToIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
@@ -160,6 +160,30 @@ function $convertToMaybe<ItemSourceT, ItemTargetT>(
 
     return convertToItem(value).map(Maybe.of);
   };
+}
+
+function $ensureRdfResourceType(
+  resource: Resource,
+  types: readonly NamedNode[],
+  options: { graph: Exclude<Quad_Graph, Variable> | undefined },
+): Either<Error, undefined> {
+  return resource
+    .value($RdfVocabularies.rdf.type, options)
+    .chain((actualRdfTypeValue) => actualRdfTypeValue.toIri())
+    .chain((actualRdfType) => {
+      // Check the expected type and its known subtypes
+      for (const type of types) {
+        if (resource.isInstanceOf(type, options)) {
+          return Right(undefined);
+        }
+      }
+
+      return Left(
+        new Error(
+          `${resource.identifier} has unexpected RDF type (actual: ${actualRdfType}, expected one of ${types})`,
+        ),
+      );
+    });
 }
 
 function $fromRdfPreferredLanguages(
@@ -687,12 +711,14 @@ export namespace PropertyShape {
       | string
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal"
+      | (
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        )
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -1064,12 +1090,14 @@ export namespace PropertyShape {
       | string
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal"
+      | (
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        )
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -1116,31 +1144,9 @@ export namespace PropertyShape {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://www.w3.org/ns/shacl#PropertyShape":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PropertyShape.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyShape)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PropertyShape.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -2844,31 +2850,9 @@ export namespace PropertyGroup {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://www.w3.org/ns/shacl#PropertyGroup":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(PropertyGroup.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#PropertyGroup)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [PropertyGroup.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -3105,31 +3089,9 @@ export namespace Ontology {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://www.w3.org/2002/07/owl#Ontology":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(Ontology.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/2002/07/owl#Ontology)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [Ontology.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
@@ -3440,12 +3402,14 @@ export namespace NodeShape {
       | string
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal"
+      | (
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        )
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -3816,12 +3780,14 @@ export namespace NodeShape {
       | string
       | Maybe<BlankNode | NamedNode>;
     readonly nodeKind?:
-      | "http://www.w3.org/ns/shacl#BlankNode"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
-      | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
-      | "http://www.w3.org/ns/shacl#IRI"
-      | "http://www.w3.org/ns/shacl#IRIOrLiteral"
-      | "http://www.w3.org/ns/shacl#Literal"
+      | (
+          | "http://www.w3.org/ns/shacl#BlankNode"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
+          | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral"
+          | "http://www.w3.org/ns/shacl#IRI"
+          | "http://www.w3.org/ns/shacl#IRIOrLiteral"
+          | "http://www.w3.org/ns/shacl#Literal"
+        )
       | NamedNode<
           | "http://www.w3.org/ns/shacl#BlankNode"
           | "http://www.w3.org/ns/shacl#BlankNodeOrIRI"
@@ -3873,31 +3839,9 @@ export namespace NodeShape {
   ) => {
     return (
       !_$options.ignoreRdfType
-        ? $resource
-            .value($RdfVocabularies.rdf.type, { graph: _$options.graph })
-            .chain((actualRdfType) => actualRdfType.toIri())
-            .chain((actualRdfType) => {
-              // Check the expected type and its known subtypes
-              switch (actualRdfType.value) {
-                case "http://www.w3.org/ns/shacl#NodeShape":
-                  return Right(true as const);
-              }
-
-              // Check arbitrary rdfs:subClassOf's of the expected type
-              if (
-                $resource.isInstanceOf(NodeShape.fromRdfType, {
-                  graph: _$options.graph,
-                })
-              ) {
-                return Right(true as const);
-              }
-
-              return Left(
-                new Error(
-                  `${$resource.identifier} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://www.w3.org/ns/shacl#NodeShape)`,
-                ),
-              );
-            })
+        ? $ensureRdfResourceType($resource, [NodeShape.fromRdfType], {
+            graph: _$options.graph,
+          })
         : Right(true as const)
     ).chain((_rdfTypeCheck) =>
       $sequenceRecord({
