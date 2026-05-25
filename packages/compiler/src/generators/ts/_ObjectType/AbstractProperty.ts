@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import { Memoize } from "typescript-memoize";
 
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import type { Reusables } from "../Reusables.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { TsGenerator } from "../TsGenerator.js";
@@ -14,7 +14,7 @@ export abstract class AbstractProperty<
 > {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
-  protected readonly namedObjectType: NamedObjectType;
+  protected readonly namedObjectType: ObjectType;
   protected readonly reusables: Reusables;
 
   /**
@@ -82,7 +82,7 @@ export abstract class AbstractProperty<
   readonly name: string;
 
   /**
-   * Is the property's type the NamedObjectType or does its type indirectly reference the NamedObjectType?
+   * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
    */
   abstract readonly recursive: boolean;
 
@@ -102,7 +102,7 @@ export abstract class AbstractProperty<
     configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
-    namedObjectType: NamedObjectType;
+    namedObjectType: ObjectType;
     reusables: Reusables;
     type: TypeT;
   }) {
@@ -124,7 +124,9 @@ export abstract class AbstractProperty<
    */
   @Memoize()
   get schema(): Maybe<Code> {
-    return Maybe.of(code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`);
+    return Maybe.of(
+      code`{ ${joinCode(this.schemaInitializers.concat(), { on: ", " })} }`,
+    );
   }
 
   /**

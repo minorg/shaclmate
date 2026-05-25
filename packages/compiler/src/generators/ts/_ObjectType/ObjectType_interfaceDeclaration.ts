@@ -1,8 +1,8 @@
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 
-export function ObjectType_interfaceDeclaration(this: NamedObjectType): Code {
+export function ObjectType_interfaceDeclaration(this: ObjectType): Code {
   return code`\
 ${this.comment
   .alt(this.label)

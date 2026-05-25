@@ -1,9 +1,7 @@
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
-export function identifierTypeDeclarations(
-  this: NamedObjectType,
-): readonly Code[] {
+export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
   if (!this.configuration.features.has("Object.type")) {
     return [];
   }

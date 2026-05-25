@@ -1,8 +1,8 @@
 import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { ObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
-import { ObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
+import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
 import { Reusables } from "./Reusables.js";
 import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";

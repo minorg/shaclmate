@@ -1,9 +1,9 @@
 import { Maybe } from "purify-ts";
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_filterTypeDeclaration(
-  this: NamedObjectType,
+  this: ObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.filter")) {
     return Maybe.empty();

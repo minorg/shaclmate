@@ -1,6 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const variables = {
@@ -11,7 +11,7 @@ const variables = {
 };
 
 export function ObjectType_focusSparqlWherePatternsFunctionDeclaration(
-  this: NamedObjectType,
+  this: ObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.SPARQL")) {
     return Maybe.empty();

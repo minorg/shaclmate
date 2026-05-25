@@ -1,10 +1,10 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function ObjectType_toRdfResourceFunctionDeclaration(
-  this: NamedObjectType,
+  this: ObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.toRdf")) {
     return Maybe.empty();

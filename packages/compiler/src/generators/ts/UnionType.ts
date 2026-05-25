@@ -672,7 +672,7 @@ ${joinCode(
           { on: "|" },
         )})`;
       case "Intrinsic":
-        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated NamedObjectType "type"),
+        // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
         // just join their names with "|"
         return code`(${joinCode(
           this.members.map(({ type }) => code`${type.name}`),

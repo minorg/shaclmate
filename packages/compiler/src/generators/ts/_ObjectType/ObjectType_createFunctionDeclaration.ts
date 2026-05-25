@@ -1,10 +1,10 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import type { NamedObjectType } from "../NamedObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function ObjectType_createFunctionDeclaration(
-  this: NamedObjectType,
+  this: ObjectType,
 ): Maybe<Code> {
   if (!this.configuration.features.has("Object.create")) {
     return Maybe.empty();

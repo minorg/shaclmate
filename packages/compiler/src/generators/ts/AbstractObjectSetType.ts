@@ -1,5 +1,5 @@
 import type { Logger } from "ts-log";
-import type { NamedObjectType } from "./NamedObjectType.js";
+import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
@@ -9,7 +9,7 @@ export abstract class AbstractObjectSetType {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
-  protected readonly namedObjectTypes: readonly NamedObjectType[];
+  protected readonly namedObjectTypes: readonly ObjectType[];
   protected readonly namedObjectUnionTypes: readonly ObjectUnionType[];
 
   constructor({
@@ -21,7 +21,7 @@ export abstract class AbstractObjectSetType {
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
-    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectTypes: readonly ObjectType[];
     namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }) {
@@ -38,7 +38,7 @@ export abstract class AbstractObjectSetType {
     namedObjectType: {
       readonly filterType: Code;
       readonly identifierTypeAlias: Code;
-      readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
+      readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
       readonly name: Code | string;
     },
     options?: {
@@ -47,7 +47,7 @@ export abstract class AbstractObjectSetType {
     },
   ): Readonly<
     Record<
-      keyof NamedObjectType.ObjectSetMethodNames,
+      keyof ObjectType.ObjectSetMethodNames,
       {
         readonly name: string;
         readonly parameters: Code;

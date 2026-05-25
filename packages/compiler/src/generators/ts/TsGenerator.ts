@@ -9,8 +9,8 @@ import { BlankNodeType } from "./BlankNodeType.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
+import type { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
@@ -159,7 +159,7 @@ export class TsGenerator implements Generator {
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectTypes: readonly ObjectType[];
     namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }): readonly Code[] {
@@ -206,7 +206,7 @@ export class TsGenerator implements Generator {
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectTypes: readonly ObjectType[];
     reusables: Reusables;
   }): ObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(

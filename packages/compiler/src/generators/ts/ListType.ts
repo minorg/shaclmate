@@ -17,7 +17,7 @@ import type { IntType } from "./IntType.js";
 import type { IriType } from "./IriType.js";
 
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
+import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
@@ -160,7 +160,7 @@ export namespace ListType {
     | IriType
     | LiteralType
     | ObjectUnionType
-    | NamedObjectType
+    | ObjectType
     | StringType
     | TermType
     | UnionType<Type>;

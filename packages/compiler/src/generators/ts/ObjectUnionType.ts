@@ -2,16 +2,16 @@ import { PropertyPath } from "@rdfx/resource";
 
 import { pascalCase } from "change-case";
 import { Memoize } from "typescript-memoize";
-import { ObjectType_objectSetMethodNames } from "./_NamedObjectType/ObjectType_objectSetMethodNames.js";
-import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
-import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import type { ObjectType } from "./ObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 import { UnionType } from "./UnionType.js";
 
-export class ObjectUnionType extends UnionType<NamedObjectType> {
+export class ObjectUnionType extends UnionType<ObjectType> {
   override readonly kind = "ObjectUnion";
 
   @Memoize()
@@ -20,7 +20,7 @@ export class ObjectUnionType extends UnionType<NamedObjectType> {
   }
 
   @Memoize()
-  get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
     return this._name
       .map((name) =>
         ObjectType_objectSetMethodNames.call({
@@ -236,7 +236,7 @@ export namespace Identifier {
       string,
       {
         memberTypesWithProperty: boolean[];
-        property: NamedObjectType.ShaclProperty<Type>;
+        property: ObjectType.ShaclProperty<Type>;
       }
     > = {};
 
