@@ -66,7 +66,7 @@ export class TsGenerator implements Generator {
 
     const namedObjectTypesToposorted = ast.ObjectType.toposort(
       ast_.namedObjectTypes,
-    ).map((astObjectType) => typeFactory.createNamedObjectType(astObjectType));
+    ).map((astObjectType) => typeFactory.createObjectType(astObjectType));
 
     const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())

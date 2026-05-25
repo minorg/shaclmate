@@ -28,7 +28,7 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
-import { NamedObjectType } from "./NamedObjectType.js";
+import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
@@ -45,17 +45,17 @@ export class TypeFactory {
   private readonly logger: Logger;
   private readonly reusables: Reusables;
 
-  private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    NamedObjectType.Property
-  > = new TermMap();
-  private cachedObjectTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    NamedObjectType
-  > = new TermMap();
   private cachedObjectUnionTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectUnionType
+  > = new TermMap();
+  private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
+    BlankNode | NamedNode,
+    ObjectType.Property
+  > = new TermMap();
+  private cachedObjectTypesByShapeIdentifier: TermMap<
+    BlankNode | NamedNode,
+    ObjectType
   > = new TermMap();
 
   constructor({
@@ -72,7 +72,7 @@ export class TypeFactory {
     this.reusables = reusables;
   }
 
-  createNamedObjectType(astType: ast.ObjectType): NamedObjectType {
+  createObjectType(astType: ast.ObjectType): ObjectType {
     {
       const cachedObjectType = this.cachedObjectTypesByShapeIdentifier.get(
         astType.shapeIdentifier,
@@ -88,7 +88,7 @@ export class TypeFactory {
       synthetic: astType.synthetic,
     });
 
-    const namedObjectType = new NamedObjectType({
+    const namedObjectType = new ObjectType({
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
@@ -97,17 +97,17 @@ export class TypeFactory {
       label: astType.label,
       lazyAncestorObjectTypes: () =>
         astType.ancestorObjectTypes.map((astType) =>
-          this.createNamedObjectType(astType),
+          this.createObjectType(astType),
         ),
       lazyChildObjectTypes: () =>
         astType.childObjectTypes.map((astType) =>
-          this.createNamedObjectType(astType),
+          this.createObjectType(astType),
         ),
       lazyDescendantObjectTypes: () =>
         astType.descendantObjectTypes.map((astType) =>
-          this.createNamedObjectType(astType),
+          this.createObjectType(astType),
         ),
-      lazyDiscriminantProperty: (namedObjectType: NamedObjectType) => {
+      lazyDiscriminantProperty: (namedObjectType: ObjectType) => {
         // Discriminant property
         const discriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of namedObjectType.descendantObjectTypes) {
@@ -116,13 +116,13 @@ export class TypeFactory {
           );
         }
 
-        return new NamedObjectType.DiscriminantProperty({
+        return new ObjectType.DiscriminantProperty({
           configuration: this.configuration,
           logger: this.logger,
           name: `${this.configuration.syntheticNamePrefix}type`,
           namedObjectType,
           reusables: this.reusables,
-          type: new NamedObjectType.DiscriminantProperty.Type({
+          type: new ObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
             ownValues: [namedObjectType.discriminantValue],
@@ -131,10 +131,10 @@ export class TypeFactory {
       },
       lazyParentObjectTypes: () =>
         astType.parentObjectTypes.map((astType) =>
-          this.createNamedObjectType(astType),
+          this.createObjectType(astType),
         ),
-      lazyProperties: (namedObjectType: NamedObjectType) => {
-        const properties: NamedObjectType.Property[] = astType.properties
+      lazyProperties: (namedObjectType: ObjectType) => {
+        const properties: ObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
             if (left.order < right.order) {
               return -1;
@@ -158,7 +158,7 @@ export class TypeFactory {
         properties.splice(
           0,
           0,
-          new NamedObjectType.IdentifierProperty({
+          new ObjectType.IdentifierProperty({
             configuration: this.configuration,
             logger: this.logger,
             name: `${this.configuration.syntheticNamePrefix}identifier`,
@@ -209,7 +209,7 @@ export class TypeFactory {
       members: ast.ObjectCompoundType.memberObjectTypes(astType).map(
         (namedObjectType) => ({
           discriminantValue: Maybe.empty(),
-          type: this.createNamedObjectType(namedObjectType),
+          type: this.createObjectType(namedObjectType),
         }),
       ),
       name: astType.name.map((name) => this.tsName(name)),
@@ -252,7 +252,7 @@ export class TypeFactory {
       case "Literal":
         return this.createLiteralType(astType, parameters);
       case "Object":
-        return this.createNamedObjectType(astType);
+        return this.createObjectType(astType);
       case "Option":
         return this.createOptionType(astType);
       case "Set":
@@ -350,10 +350,10 @@ export class TypeFactory {
       label: astType.label,
       logger: this.logger,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        NamedObjectType | ObjectUnionType
+        ObjectType | ObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        NamedObjectType | ObjectUnionType
+        ObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
     });
@@ -366,10 +366,10 @@ export class TypeFactory {
       label: astType.label,
       logger: this.logger,
       partialType: this.createSetType(astType.partialType) as SetType<
-        NamedObjectType | ObjectUnionType
+        ObjectType | ObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        NamedObjectType | ObjectUnionType
+        ObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
     });
@@ -382,10 +382,10 @@ export class TypeFactory {
       label: astType.label,
       logger: this.logger,
       partialType: this.createType(astType.partialType) as
-        | NamedObjectType
+        | ObjectType
         | ObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
-        | NamedObjectType
+        | ObjectType
         | ObjectUnionType,
       reusables: this.reusables,
     });
@@ -570,8 +570,8 @@ export class TypeFactory {
     namedObjectType,
   }: {
     astObjectTypeProperty: ast.ObjectType.Property;
-    namedObjectType: NamedObjectType;
-  }): NamedObjectType.Property {
+    namedObjectType: ObjectType;
+  }): ObjectType.Property {
     {
       const cachedProperty =
         this.cachedObjectTypePropertiesByShapeIdentifier.get(
@@ -582,7 +582,7 @@ export class TypeFactory {
       }
     }
 
-    const property = new NamedObjectType.ShaclProperty({
+    const property = new ObjectType.ShaclProperty({
       comment: astObjectTypeProperty.comment,
       configuration: this.configuration,
       description: astObjectTypeProperty.description,

@@ -31,9 +31,7 @@ export class ZodGenerator implements Generator {
 
     for (const namedObjectType of ast.ObjectType.toposort(
       ast_.namedObjectTypes,
-    ).map((astObjectType) =>
-      typeFactory.createNamedObjectType(astObjectType),
-    )) {
+    ).map((astObjectType) => typeFactory.createObjectType(astObjectType))) {
       declarations.push(code`\
 export namespace ${namedObjectType.name} {
   ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
