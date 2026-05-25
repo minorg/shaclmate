@@ -1,9 +1,11 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { NodeKind } from "@shaclmate/shacl-ast";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
@@ -42,12 +44,8 @@ export class TermType<
     );
   }
 
-  override get graphqlType(): AbstractTermType.GraphqlType {
-    throw new Error("not implemented");
-  }
-
   @Memoize()
-  override get name(): Code {
+  override get expression(): Code {
     return code`(${joinCode(
       [...this.nodeKinds]
         .map((nodeKind) => {
@@ -68,10 +66,14 @@ export class TermType<
     )})`;
   }
 
+  override get graphqlType(): AbstractTermType.GraphqlType {
+    throw new Error("not implemented");
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${[
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${[
       ...this.nodeKinds,
     ].reduce(
       (expression, nodeKind) => {
@@ -103,18 +105,6 @@ export class TermType<
     throw new Error("not implemented");
   }
 
-  @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
-    return new AbstractTermType.JsonType(
-      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-        .filter((nodeKind) => nodeKind !== "Literal")
-        .map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`)
-        .join(
-          " | ",
-        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
-    );
-  }
-
   override jsonSchema(
     _parameters: Parameters<AbstractTermType["jsonSchema"]>[0],
   ): Code {
@@ -132,6 +122,18 @@ export class TermType<
       }),
       { on: "," },
     )}])`;
+  }
+
+  @Memoize()
+  override jsonType(): AbstractTermType.JsonType {
+    return new AbstractTermType.JsonType(
+      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+        .filter((nodeKind) => nodeKind !== "Literal")
+        .map((nodeKind) => `"${NodeKind.toTermType(nodeKind)}"`)
+        .join(
+          " | ",
+        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
+    );
   }
 
   override toJsonExpression({

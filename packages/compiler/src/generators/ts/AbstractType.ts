@@ -17,6 +17,11 @@ export abstract class AbstractType {
   protected readonly reusables: Reusables;
 
   /**
+   * Alias for this type.
+   */
+  readonly alias: Maybe<string>;
+
+  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;
@@ -47,6 +52,11 @@ export abstract class AbstractType {
    * $EqualsResult.
    */
   abstract readonly equalsFunction: Code;
+
+  /**
+   * TypeScript type expression.
+   */
+  abstract readonly expression: Code;
 
   /**
    * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
@@ -95,11 +105,6 @@ export abstract class AbstractType {
    * Is a value of this type mutable?
    */
   abstract readonly mutable: boolean;
-
-  /**
-   * TypeScript name of the type.
-   */
-  abstract readonly name: Code | string;
 
   /**
    * Does this type directly or indirectly reference itself?
@@ -167,18 +172,21 @@ export abstract class AbstractType {
   abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
+    alias,
     comment,
     configuration,
     label,
     logger,
     reusables,
   }: {
+    alias: Maybe<string>;
     comment: Maybe<string>;
     configuration: TsGenerator.Configuration;
     label: Maybe<string>;
     logger: Logger;
     reusables: Reusables;
   }) {
+    this.alias = alias;
     this.comment = comment;
     this.configuration = configuration;
     this.label = label;
@@ -219,7 +227,7 @@ export abstract class AbstractType {
    * An expression that converts a Either<Error, rdfjsResource.Resource.Values> to a
    * Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
-   * These expressions are used to deserialize property values in an NamedObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
+   * These expressions are used to deserialize property values in an ObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
    * that has a type parameter of this Type).
    *
    * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
@@ -228,7 +236,7 @@ export abstract class AbstractType {
    * Values may also need to be sorted. For example, specifying preferredLanguages should sort the values in the order of the specified languages so that the first value
    * (if it exists) is always of the first preferred language.
    *
-   * variables are runtime variables, most derived from the parameters of the NamedObjectType's fromRdf function:
+   * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
    *   context: unanticipated properties (...) passed to Object.fromRdf
    *   graph: DefaultGraph | NamedNode | undefined to match (subject, predicate, object) triples in; if undefined, match triples in all graphs
    *   ignoreRdfType: whether the RDF type of objects/object unions should be ignored
@@ -265,7 +273,7 @@ export abstract class AbstractType {
    * Zod schema for the JSON type of this type.
    *
    * This method is called in two contexts:
-   * "property": from a ShaclProperty, while generating the z.object properties of an NamedObjectType
+   * "property": from a ShaclProperty, while generating the z.object properties of an ObjectType
    * "type": from another Type e.g., an OptionType or UnionType
    *
    * z.lazy() should only be returned for "property".
@@ -304,7 +312,7 @@ export abstract class AbstractType {
    * An expression that converts a property value of this type to a value or an array of values that can be .add'd to a Resource with
    *   resource.add(predicate, convertedValue, graph)
    *
-   * variables are runtime variables, most derived from the parameters of the NamedObjectType's fromRdf function:
+   * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
    *   graph: DefaultGraph | NamedNode | undefined to .add to; if undefined, add to the default graph
    *   propertyPath: predicate path (NamedNode) or InversePath on a predicate path
    *   resource: the Resource to .add to
@@ -335,7 +343,7 @@ export namespace AbstractType {
   export interface ConversionFunction {
     readonly code: Code;
     readonly sourceTypes: {
-      readonly name: Code | string;
+      readonly expression: Code;
       readonly typeof: Typeof;
     }[];
   }

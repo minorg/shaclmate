@@ -16,18 +16,21 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly kind = "Boolean";
-  override readonly schemaType =
-    code`${this.reusables.snippets.BooleanSchema}<${this.name}>`;
   override readonly typeofs = ["boolean" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;
 
   @Memoize()
-  override get name(): string {
+  override get expression(): Code {
     if (this.primitiveIn.length > 0) {
-      return `${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
+      return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
     }
-    return `boolean`;
+    return code`boolean`;
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`${this.reusables.snippets.BooleanSchema}<${this.expression}>`;
   }
 
   override jsonSchema(

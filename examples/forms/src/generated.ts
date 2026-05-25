@@ -1041,7 +1041,7 @@ export namespace $Object {
   export type Json = FormNodeShape.Json | NestedNodeShape.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       FormNodeShape: {
         discriminantValues: ["FormNodeShape"],

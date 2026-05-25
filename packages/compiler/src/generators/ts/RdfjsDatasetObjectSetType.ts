@@ -60,7 +60,7 @@ async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${
 }`,
             // objectSync
             code`\
-${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${this.reusables.imports.Either}<Error, ${namedObjectType.name}> {
+${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${this.reusables.imports.Either}<Error, ${namedObjectType.expression}> {
   return this.${methodSignatures.objects.name}Sync({ identifiers: [identifier], preferredLanguages: options?.preferredLanguages }).map(objects => objects[0]);
 }`,
 
@@ -98,27 +98,27 @@ async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): 
             filterFunction: Code,
             namedObjectType: {
               descendantFromRdfTypeVariables: readonly Code[];
-              name: string;
+              expression: Code;
               fromRdfTypeVariable: Maybe<Code>;
             },
           ): Code => {
             const fromRdfTypes = namedObjectType.fromRdfTypeVariable
               .toList()
               .concat(namedObjectType.descendantFromRdfTypeVariables);
-            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.name}.fromRdfResource, fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+            return code`{ filter: ${filterFunction}, fromRdfResource: ${namedObjectType.expression}.fromRdfResource, fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
           };
 
           switch (namedObjectType.kind) {
-            case "NamedObjectType": {
+            case "Object": {
               return delegatingMethods.concat(code`\
-${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]> {
-  return this.#objectsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
+  return this.#objectsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType(namedObjectType.filterFunction, namedObjectType)}, query);
 }`);
             }
-            case "NamedObjectUnion":
+            case "ObjectUnion":
               return delegatingMethods.concat(code`\
-${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]> {
-  return this.#objectUnionsSync<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
+${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${this.reusables.imports.Either}<Error, readonly ${namedObjectType.expression}[]> {
+  return this.#objectUnionsSync<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>([
     ${joinCode(
       namedObjectType.members.map((member) =>
         runtimeObjectType(namedObjectType.filterFunction, member.type),

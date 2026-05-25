@@ -1,6 +1,7 @@
+import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -9,8 +10,8 @@ export abstract class AbstractObjectSetType {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
   protected readonly reusables: Reusables;
-  protected readonly namedObjectTypes: readonly NamedObjectType[];
-  protected readonly namedObjectUnionTypes: readonly NamedObjectUnionType[];
+  protected readonly namedObjectTypes: readonly ObjectType[];
+  protected readonly namedObjectUnionTypes: readonly ObjectUnionType[];
 
   constructor({
     configuration,
@@ -21,8 +22,8 @@ export abstract class AbstractObjectSetType {
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
-    namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+    namedObjectTypes: readonly ObjectType[];
+    namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }) {
     this.configuration = configuration;
@@ -36,10 +37,10 @@ export abstract class AbstractObjectSetType {
 
   protected methodSignatures(
     namedObjectType: {
+      readonly alias: Maybe<string>;
       readonly filterType: Code;
       readonly identifierTypeAlias: Code;
-      readonly objectSetMethodNames: NamedObjectType.ObjectSetMethodNames;
-      readonly name: string;
+      readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
     },
     options?: {
       parameterNamePrefix?: string;
@@ -47,7 +48,7 @@ export abstract class AbstractObjectSetType {
     },
   ): Readonly<
     Record<
-      keyof NamedObjectType.ObjectSetMethodNames,
+      keyof ObjectType.ObjectSetMethodNames,
       {
         readonly name: string;
         readonly parameters: Code;
@@ -65,7 +66,7 @@ export abstract class AbstractObjectSetType {
       object: {
         name: methodNames.object,
         parameters: code`${parameterNamePrefix}identifier: ${namedObjectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.name}>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.alias.unsafeCoerce()}>>`,
       },
       objectCount: {
         name: methodNames.objectCount,
@@ -80,7 +81,7 @@ export abstract class AbstractObjectSetType {
       objects: {
         name: methodNames.objects,
         parameters: code`${parameterNamePrefix}query?: ${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.alias.unsafeCoerce()}[]>>`,
       },
     };
   }

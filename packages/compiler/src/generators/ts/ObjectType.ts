@@ -1,0 +1,470 @@
+import type { NamedNode } from "@rdfjs/types";
+import { NodeKind } from "@shaclmate/shacl-ast";
+
+import { camelCase } from "change-case";
+import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
+import { DiscriminantProperty as _DiscriminantProperty } from "./_ObjectType/DiscriminantProperty.js";
+import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
+import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
+import { ObjectType_createFunctionDeclaration } from "./_ObjectType/ObjectType_createFunctionDeclaration.js";
+import { ObjectType_equalsFunctionDeclaration } from "./_ObjectType/ObjectType_equalsFunctionDeclaration.js";
+import { ObjectType_filterFunctionDeclaration } from "./_ObjectType/ObjectType_filterFunctionDeclaration.js";
+import { ObjectType_filterTypeDeclaration } from "./_ObjectType/ObjectType_filterTypeDeclaration.js";
+import { ObjectType_focusSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlConstructTriplesFunctionDeclaration.js";
+import { ObjectType_focusSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_focusSparqlWherePatternsFunctionDeclaration.js";
+import { ObjectType_fromJsonFunctionDeclaration } from "./_ObjectType/ObjectType_fromJsonFunctionDeclaration.js";
+import { ObjectType_fromRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceFunctionDeclaration.js";
+import { ObjectType_fromRdfResourceValuesFunctionDeclaration } from "./_ObjectType/ObjectType_fromRdfResourceValuesFunctionDeclaration.js";
+import { ObjectType_fromRdfTypeVariableStatement } from "./_ObjectType/ObjectType_fromRdfTypeVariableStatement.js";
+import { ObjectType_graphqlTypeVariableStatement } from "./_ObjectType/ObjectType_graphqlTypeVariableStatement.js";
+import { ObjectType_hashFunctionDeclarations } from "./_ObjectType/ObjectType_hashFunctionDeclarations.js";
+import { ObjectType_interfaceDeclaration } from "./_ObjectType/ObjectType_interfaceDeclaration.js";
+import { ObjectType_isTypeFunctionDeclaration } from "./_ObjectType/ObjectType_isTypeFunctionDeclaration.js";
+import { ObjectType_jsonParseFunctionDeclaration } from "./_ObjectType/ObjectType_jsonParseFunctionDeclaration.js";
+import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
+import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonUiSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonUiSchemaFunctionDeclaration.js";
+import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
+import { ObjectType_schemaVariableStatement } from "./_ObjectType/ObjectType_schemaVariableStatement.js";
+import { ObjectType_sparqlConstructQueryFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryFunctionDeclaration.js";
+import { ObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_ObjectType/ObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
+import { ObjectType_toJsonFunctionDeclaration } from "./_ObjectType/ObjectType_toJsonFunctionDeclaration.js";
+import { ObjectType_toRdfResourceFunctionDeclaration } from "./_ObjectType/ObjectType_toRdfResourceFunctionDeclaration.js";
+import { ObjectType_toStringFunctionDeclarations } from "./_ObjectType/ObjectType_toStringFunctionDeclarations.js";
+import { ObjectType_valueSparqlConstructTriplesFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlConstructTriplesFunctionDeclaration.js";
+import { ObjectType_valueSparqlWherePatternsFunctionDeclaration } from "./_ObjectType/ObjectType_valueSparqlWherePatternsFunctionDeclaration.js";
+import type { Property as _Property } from "./_ObjectType/Property.js";
+import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
+import { AbstractType } from "./AbstractType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { IdentifierType } from "./IdentifierType.js";
+import type { IriType } from "./IriType.js";
+import type { Type } from "./Type.js";
+import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
+
+export class ObjectType extends AbstractType {
+  protected readonly toRdfTypes: readonly NamedNode[];
+
+  override readonly conversionFunction: Maybe<AbstractType.ConversionFunction> =
+    Maybe.empty();
+  readonly extern: boolean;
+  readonly fromRdfType: Maybe<NamedNode>;
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  readonly identifierType: BlankNodeType | IdentifierType | IriType;
+  override readonly kind = "Object";
+  override readonly recursive: boolean;
+  override readonly referencesObjectType = true;
+  readonly synthetic: boolean;
+  override readonly typeofs = ["object" as const];
+  override readonly validationFunction: Maybe<Code> = Maybe.empty();
+
+  constructor({
+    extern,
+    fromRdfType,
+    identifierType,
+    lazyAncestorObjectTypes,
+    lazyChildObjectTypes,
+    lazyDescendantObjectTypes,
+    lazyDiscriminantProperty,
+    lazyParentObjectTypes,
+    lazyProperties,
+    recursive,
+    synthetic,
+    toRdfTypes,
+    ...superParameters
+  }: {
+    comment: Maybe<string>;
+    extern: boolean;
+    fromRdfType: Maybe<NamedNode>;
+    identifierType: BlankNodeType | IdentifierType | IriType;
+    label: Maybe<string>;
+    lazyAncestorObjectTypes: () => readonly ObjectType[];
+    lazyChildObjectTypes: () => readonly ObjectType[];
+    lazyDiscriminantProperty: (
+      namedObjectType: ObjectType,
+    ) => ObjectType.DiscriminantProperty;
+    lazyDescendantObjectTypes: () => readonly ObjectType[];
+    lazyParentObjectTypes: () => readonly ObjectType[];
+    lazyProperties: (
+      namedObjectType: ObjectType,
+    ) => readonly ObjectType.Property[];
+    recursive: boolean;
+    synthetic: boolean;
+    toRdfTypes: readonly NamedNode[];
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
+    this.extern = extern;
+    this.fromRdfType = fromRdfType;
+    this.identifierType = identifierType;
+    // Lazily initialize some members in getters to avoid recursive construction
+    this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
+    this.lazyChildObjectTypes = lazyChildObjectTypes;
+    this.lazyDescendantObjectTypes = lazyDescendantObjectTypes;
+    this.lazyDiscriminantProperty = lazyDiscriminantProperty;
+    this.lazyParentObjectTypes = lazyParentObjectTypes;
+    this.lazyProperties = lazyProperties;
+    this.recursive = recursive;
+    this.synthetic = synthetic;
+    this.toRdfTypes = toRdfTypes;
+  }
+
+  @Memoize()
+  get _discriminantProperty(): ObjectType.DiscriminantProperty {
+    return this.lazyDiscriminantProperty(this);
+  }
+
+  @Memoize()
+  get ancestorObjectTypes(): readonly ObjectType[] {
+    return this.lazyAncestorObjectTypes();
+  }
+
+  @Memoize()
+  get childObjectTypes(): readonly ObjectType[] {
+    return this.lazyChildObjectTypes();
+  }
+
+  override get declaration(): Maybe<Code> {
+    const alias = this.alias.extract();
+    if (!alias) {
+      return Maybe.empty();
+    }
+
+    const declarations: Code[] = [];
+
+    if (!this.extern) {
+      const staticModuleDeclarations: Code[] = [];
+
+      if (this.configuration.features.has("Object.type")) {
+        declarations.push(ObjectType_interfaceDeclaration.call(this));
+      }
+
+      staticModuleDeclarations.push(
+        ...ObjectType_createFunctionDeclaration.call(this).toList(),
+        ...ObjectType_equalsFunctionDeclaration.call(this).toList(),
+        ...ObjectType_hashFunctionDeclarations.call(this),
+      );
+
+      const jsonModuleDeclarations: Code[] = [
+        ...ObjectType_jsonParseFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonSchemaFunctionDeclaration.call(this).toList(),
+        ...ObjectType_jsonUiSchemaFunctionDeclaration.call(this).toList(),
+      ];
+
+      staticModuleDeclarations.push(
+        ...ObjectType_graphqlTypeVariableStatement.call(this).toList(),
+        ...identifierTypeDeclarations.call(this),
+        ...ObjectType_jsonTypeAliasDeclaration.call(this).toList(),
+        ...(jsonModuleDeclarations.length > 0
+          ? [
+              code`export namespace Json { ${joinCode(jsonModuleDeclarations, { on: "\n\n" })} }`,
+            ]
+          : []),
+        ...ObjectType_filterFunctionDeclaration.call(this).toList(),
+        ...ObjectType_filterTypeDeclaration.call(this).toList(),
+        ...ObjectType_focusSparqlConstructTriplesFunctionDeclaration.call(
+          this,
+        ).toList(),
+        ...ObjectType_focusSparqlWherePatternsFunctionDeclaration.call(
+          this,
+        ).toList(),
+        ...ObjectType_fromJsonFunctionDeclaration.call(this).toList(),
+        ...ObjectType_fromRdfResourceFunctionDeclaration.call(this).toList(),
+        ...ObjectType_fromRdfResourceValuesFunctionDeclaration.call(
+          this,
+        ).toList(),
+        ...ObjectType_fromRdfTypeVariableStatement.call(this).toList(),
+        ...ObjectType_isTypeFunctionDeclaration.call(this).toList(),
+        ...ObjectType_schemaVariableStatement.call(this).toList(),
+        ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+          alias,
+          configuration: this.configuration,
+          filterType: this.filterType,
+          reusables: this.reusables,
+        }).toList(),
+        ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
+          alias,
+          configuration: this.configuration,
+          filterType: this.filterType,
+          reusables: this.reusables,
+        }).toList(),
+        ...ObjectType_toJsonFunctionDeclaration.call(this).toList(),
+        ...ObjectType_toRdfResourceFunctionDeclaration.call(this).toList(),
+        ...ObjectType_toStringFunctionDeclarations.call(this),
+        ...ObjectType_valueSparqlConstructTriplesFunctionDeclaration.call(
+          this,
+        ).toList(),
+        ...ObjectType_valueSparqlWherePatternsFunctionDeclaration.call(
+          this,
+        ).toList(),
+      );
+
+      if (staticModuleDeclarations.length > 0) {
+        declarations.push(code`\
+export namespace ${def(alias)} {
+${joinCode(staticModuleDeclarations, { on: "\n\n" })}
+}`);
+      }
+    }
+
+    if (declarations.length === 0) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
+  }
+
+  @Memoize()
+  get descendantFromRdfTypeVariables(): readonly Code[] {
+    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
+      descendantObjectType.fromRdfTypeVariable.toList(),
+    );
+  }
+
+  @Memoize()
+  get descendantFromRdfTypes(): readonly NamedNode[] {
+    return this.descendantObjectTypes.flatMap((descendantObjectType) =>
+      descendantObjectType.fromRdfType.toList(),
+    );
+  }
+
+  @Memoize()
+  get descendantObjectTypes(): readonly ObjectType[] {
+    return this.lazyDescendantObjectTypes();
+  }
+
+  @Memoize()
+  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
+    return Maybe.of({
+      jsonName: this._discriminantProperty.jsonName,
+      name: this._discriminantProperty.name,
+      ownValues: this._discriminantProperty.type.ownValues,
+      descendantValues: this._discriminantProperty.type.descendantValues,
+    });
+  }
+
+  @Memoize()
+  get discriminantValue(): string {
+    return this.alias.unsafeCoerce();
+  }
+
+  @Memoize()
+  override get equalsFunction(): Code {
+    return code`${this.alias.unsafeCoerce()}.equals`;
+  }
+
+  @Memoize()
+  get expression(): Code {
+    return code`${this.alias.unsafeCoerce()}`;
+  }
+
+  @Memoize()
+  get filterFunction(): Code {
+    return code`${this.alias.unsafeCoerce()}.filter`;
+  }
+
+  @Memoize()
+  get filterType(): Code {
+    return code`${this.alias.unsafeCoerce()}.Filter`;
+  }
+
+  @Memoize()
+  get fromRdfTypeVariable(): Maybe<Code> {
+    return this.fromRdfType.map(
+      () => code`${this.alias.unsafeCoerce()}.fromRdfType`,
+    );
+  }
+
+  @Memoize()
+  get graphqlType(): AbstractType.GraphqlType {
+    return new AbstractType.GraphqlType(
+      code`${this.alias.unsafeCoerce()}.GraphQL`,
+      this.reusables,
+    );
+  }
+
+  @Memoize()
+  override get hashFunction(): Code {
+    return code`${this.alias.unsafeCoerce()}.hash`;
+  }
+
+  @Memoize()
+  get identifierTypeAlias(): Code {
+    return code`${this.alias.unsafeCoerce()}.Identifier`;
+  }
+
+  @Memoize()
+  override get mutable(): boolean {
+    return this.properties.some((property) => property.mutable);
+  }
+
+  @Memoize()
+  get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
+    return ObjectType_objectSetMethodNames.call({
+      alias: this.alias.unsafeCoerce(),
+      configuration: this.configuration,
+    });
+  }
+
+  @Memoize()
+  get parentObjectTypes(): readonly ObjectType[] {
+    return this.lazyParentObjectTypes();
+  }
+
+  @Memoize()
+  get properties(): readonly ObjectType.Property[] {
+    const properties = this.lazyProperties(this);
+    const propertyNames = new Set<string>();
+    for (const property of properties) {
+      if (propertyNames.has(property.name)) {
+        throw new Error(`duplicate property '${property.name}'`);
+      }
+    }
+    return properties;
+  }
+
+  @Memoize()
+  override get schema(): Code {
+    return code`${this.alias.unsafeCoerce()}.schema`;
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`typeof ${this.schema}`;
+  }
+
+  @Memoize()
+  get toRdfResourceValueTypes(): AbstractType["toRdfResourceValueTypes"] {
+    return new Set([...this.identifierType.nodeKinds].map(NodeKind.toTermType));
+  }
+
+  @Memoize()
+  get toRdfjsResourceType(): Code {
+    if (this.parentObjectTypes.length > 0) {
+      return this.parentObjectTypes[0].toRdfjsResourceType;
+    }
+
+    return code`${this.reusables.imports.Resource}${this.identifierType.kind === "Iri" ? code`<${this.reusables.imports.NamedNode}>` : ""}`;
+  }
+
+  @Memoize()
+  override get valueSparqlConstructTriplesFunction(): Code {
+    return code`${this.alias.unsafeCoerce()}.valueSparqlConstructTriples`;
+  }
+
+  @Memoize()
+  override get valueSparqlWherePatternsFunction(): Code {
+    return code`${this.alias.unsafeCoerce()}.valueSparqlWherePatterns`;
+  }
+
+  @Memoize()
+  protected get thisVariable(): Code {
+    return code`_${camelCase(this.alias.unsafeCoerce())}`;
+  }
+
+  override fromJsonExpression({
+    variables,
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
+    // Assumes the JSON object has been recursively validated already.
+    return code`${this.alias.unsafeCoerce()}.fromJson(${variables.value})`;
+  }
+
+  override fromRdfResourceValuesExpression({
+    variables,
+  }: Parameters<AbstractType["fromRdfResourceValuesExpression"]>[0]): Code {
+    const {
+      resourceValues: resourceValuesVariable,
+      ...fromRdfResourceValuesOptionsTemp
+    } = variables;
+    const fromRdfResourceValuesOptions: Record<string, boolean | Code> =
+      fromRdfResourceValuesOptionsTemp;
+    if (!this.configuration.features.has("ObjectSet")) {
+      delete fromRdfResourceValuesOptions["objectSet"];
+    }
+    return code`${this.alias.unsafeCoerce()}.fromRdfResourceValues(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
+  }
+
+  override graphqlResolveExpression({
+    variables,
+  }: {
+    variables: { value: Code };
+  }): Code {
+    return variables.value;
+  }
+
+  override jsonSchema({
+    context,
+  }: Parameters<AbstractType["jsonSchema"]>[0]): Code {
+    let expression = code`${this.alias.unsafeCoerce()}.Json.schema()`;
+    if (
+      context === "property" &&
+      this.properties.some((property) => property.recursive)
+    ) {
+      expression = code`${this.reusables.imports.z}.lazy((): ${this.reusables.imports.z}.ZodType<${this.alias.unsafeCoerce()}.Json> => ${expression})`;
+    }
+    return expression;
+  }
+
+  @Memoize()
+  override jsonType(): AbstractType.JsonType {
+    return new AbstractType.JsonType(code`${this.alias.unsafeCoerce()}.Json`);
+  }
+
+  override jsonUiSchemaElement({
+    variables,
+  }: Parameters<AbstractType["jsonUiSchemaElement"]>[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.alias.unsafeCoerce()}.Json.uiSchema({ scopePrefix: ${variables.scopePrefix} })`,
+    );
+  }
+
+  override toJsonExpression({
+    variables,
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
+    return code`${this.alias.unsafeCoerce()}.toJson(${variables.value})`;
+  }
+
+  override toRdfResourceValuesExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfResourceValuesExpression"]>[0]): Code {
+    return code`[${this.alias.unsafeCoerce()}.toRdfResource(${variables.value}, { graph: ${variables.graph}, resourceSet: ${variables.resourceSet} }).identifier]`;
+  }
+
+  override toStringExpression({
+    variables,
+  }: Parameters<AbstractType["toStringExpression"]>[0]): Code {
+    return code`${this.alias.unsafeCoerce()}.${this.configuration.syntheticNamePrefix}toString(${variables.value})`;
+  }
+
+  private readonly lazyAncestorObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyChildObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyDescendantObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyDiscriminantProperty: (
+    namedObjectType: ObjectType,
+  ) => ObjectType.DiscriminantProperty;
+
+  private readonly lazyParentObjectTypes: () => readonly ObjectType[];
+
+  private readonly lazyProperties: (
+    namedObjectType: ObjectType,
+  ) => readonly ObjectType.Property[];
+}
+
+export namespace ObjectType {
+  export const IdentifierProperty = _IdentifierProperty;
+  export type IdentifierProperty = _IdentifierProperty;
+  export type ObjectSetMethodNames = {
+    readonly object: string;
+    readonly objectCount: string;
+    readonly objectIdentifiers: string;
+    readonly objects: string;
+  };
+  export type Property = _Property;
+  export const ShaclProperty = _ShaclProperty;
+  export type ShaclProperty<TypeT extends Type> = _ShaclProperty<TypeT>;
+  export const DiscriminantProperty = _DiscriminantProperty;
+  export type DiscriminantProperty = _DiscriminantProperty;
+}

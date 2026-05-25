@@ -143,11 +143,11 @@ export abstract class AbstractTermType<
         { on: ", " },
       )}])`;
     } else if (this.nodeKinds.size < 3) {
-      const eitherTypeParameters = code`<Error, ${this.name}>`;
+      const eitherTypeParameters = code`<Error, ${this.expression}>`;
       valueToExpression = code`value.toTerm().chain(term => {
   switch (term.termType) {
   ${[...this.nodeKinds].map((nodeKind) => `case "${NodeKind.toTermType(nodeKind)}":`).join("\n")} return ${this.reusables.imports.Either}.of${eitherTypeParameters}(term);
-  default: return ${this.reusables.imports.Left}${eitherTypeParameters}(new ${this.reusables.imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.propertyPath }}));
+  default: return ${this.reusables.imports.Left}${eitherTypeParameters}(new ${this.reusables.imports.Resource}.MistypedTermValueError(${{ actualValue: code`term`, expectedValueType: code`${this.expression}`.toCodeString([]), focusResource: variables.resource, propertyPath: variables.propertyPath }}));
   }})`;
     } else {
       valueToExpression = code`value.toTerm()`;

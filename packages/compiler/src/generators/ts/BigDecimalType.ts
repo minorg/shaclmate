@@ -1,13 +1,15 @@
 import type { Literal } from "@rdfjs/types";
+
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class BigDecimalType extends AbstractLiteralType {
-  override readonly name = code`${this.reusables.imports.BigDecimal}`;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.empty();
+  override readonly expression = code`${this.reusables.imports.BigDecimal}`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterBigDecimal}`;
   override readonly filterType =
@@ -31,7 +33,7 @@ export class BigDecimalType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.encase<Error, ${this.name}>(() => new ${this.name}(${variables.value}))`;
+    return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => new ${this.expression}(${variables.value}))`;
   }
 
   override graphqlResolveExpression({

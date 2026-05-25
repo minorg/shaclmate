@@ -1,4 +1,3 @@
-import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -15,16 +14,15 @@ import type { LazyObjectSetType } from "./LazyObjectSetType.js";
 import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { NamedUnionType } from "./NamedUnionType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
+import type { UnionType } from "./UnionType.js";
 
 export type Type =
-  | AnonymousUnionType
   | BigDecimalType
   | BigIntType
   | BlankNodeType
@@ -41,10 +39,10 @@ export type Type =
   | LazyObjectType
   | ListType<ListType.ItemType>
   | LiteralType
-  | NamedObjectUnionType
-  | NamedUnionType
-  | NamedObjectType
+  | ObjectUnionType
+  | ObjectType
   | OptionType<OptionType.ItemType>
   | SetType<SetType.ItemType>
   | StringType
-  | TermType;
+  | TermType
+  | UnionType<Type>;

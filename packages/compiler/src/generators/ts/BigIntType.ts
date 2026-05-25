@@ -23,9 +23,9 @@ export class BigIntType extends AbstractNumericType<bigint> {
   }: Parameters<AbstractNumericType<bigint>["fromJsonExpression"]>[0]): Code {
     let expression = code`BigInt(${variables.value})`;
     if (this.primitiveIn.length > 0) {
-      expression = code`${expression} as ${this.name}`;
+      expression = code`${expression} as ${this.expression}`;
     }
-    return code`${this.reusables.imports.Either}.encase<Error, ${this.name}>(() => ${expression})`;
+    return code`${this.reusables.imports.Either}.encase<Error, ${this.expression}>(() => ${expression})`;
   }
 
   override jsonSchema(

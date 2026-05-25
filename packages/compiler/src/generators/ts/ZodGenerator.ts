@@ -1,9 +1,8 @@
-import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { NamedObjectType_jsonSchemaFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_jsonSchemaFunctionDeclaration.js";
-import { NamedObjectType_jsonTypeAliasDeclaration } from "./_NamedObjectType/NamedObjectType_jsonTypeAliasDeclaration.js";
+import { ObjectType_jsonSchemaFunctionDeclaration } from "./_ObjectType/ObjectType_jsonSchemaFunctionDeclaration.js";
+import { ObjectType_jsonTypeAliasDeclaration } from "./_ObjectType/ObjectType_jsonTypeAliasDeclaration.js";
 import { Reusables } from "./Reusables.js";
 import { TsGenerator } from "./TsGenerator.js";
 import { TypeFactory } from "./TypeFactory.js";
@@ -32,15 +31,13 @@ export class ZodGenerator implements Generator {
 
     for (const namedObjectType of ast.ObjectType.toposort(
       ast_.namedObjectTypes,
-    ).map((astObjectType) =>
-      typeFactory.createNamedObjectType(astObjectType),
-    )) {
+    ).map((astObjectType) => typeFactory.createObjectType(astObjectType))) {
       declarations.push(code`\
-export namespace ${namedObjectType.name} {
-  ${joinCode(NamedObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
+export namespace ${namedObjectType.alias.unsafeCoerce()} {
+  ${joinCode(ObjectType_jsonTypeAliasDeclaration.call(namedObjectType).toList())}
 
   export namespace Json {
-    ${joinCode(NamedObjectType_jsonSchemaFunctionDeclaration.call(namedObjectType).toList())}
+    ${joinCode(ObjectType_jsonSchemaFunctionDeclaration.call(namedObjectType).toList())}
   }
 }`);
     }
@@ -48,9 +45,8 @@ export namespace ${namedObjectType.name} {
     for (const astNamedUnionType of ast_.namedUnionTypes.map(
       (astNamedUnionType) => typeFactory.createUnionType(astNamedUnionType),
     )) {
-      invariant(astNamedUnionType.kind !== "AnonymousUnion");
       declarations.push(code`\
-export namespace ${astNamedUnionType.name} {
+export namespace ${astNamedUnionType.alias.unsafeCoerce()} {
   ${astNamedUnionType.jsonTypeAliasDeclaration}
   export namespace Json {
     ${astNamedUnionType.jsonSchemaFunctionDeclaration}

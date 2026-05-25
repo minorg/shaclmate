@@ -22,14 +22,14 @@ export abstract class AbstractNumericType<
   }
 
   @Memoize()
-  override get name(): Code | string {
+  override get expression(): Code {
     if (this.primitiveIn.length > 0) {
       return code`${joinCode(
         this.primitiveIn.map((value) => this.literalExpression(value)),
         { on: " | " },
       )}`;
     }
-    return this.typeofs[0];
+    return code`${this.typeofs[0]}`;
   }
 
   @Memoize()

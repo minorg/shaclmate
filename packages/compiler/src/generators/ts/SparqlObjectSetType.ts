@@ -44,7 +44,7 @@ ${joinCode(
         queryT: `${syntheticNamePrefix}SparqlObjectSet.Query`,
       });
 
-      const runtimeObjectType = namedObjectType.name;
+      const runtimeObjectType = namedObjectType.expression;
 
       return [
         code`\
@@ -61,7 +61,7 @@ async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdenti
 }`,
         code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
-  return this.#objects<${namedObjectType.name}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
+  return this.#objects<${namedObjectType.expression}, ${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>(${runtimeObjectType}, query);
 }`,
       ];
     },

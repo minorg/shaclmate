@@ -27,11 +27,11 @@ export class OptionType<
         itemConversionFunction.sourceTypes as AbstractContainerType.ConversionFunction["sourceTypes"]
       ).concat(
         {
-          name: this.name,
+          expression: this.expression,
           typeof: "object",
         },
         {
-          name: code`undefined`,
+          expression: code`undefined`,
           typeof: "undefined",
         },
       ),
@@ -44,8 +44,13 @@ export class OptionType<
   }
 
   @Memoize()
+  override get expression(): Code {
+    return code`${this.reusables.imports.Maybe}<${this.itemType.expression}>`;
+  }
+
+  @Memoize()
   get filterFunction(): Code {
-    return code`${this.reusables.snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${this.reusables.snippets.filterMaybe}<${this.itemType.expression}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
@@ -72,11 +77,6 @@ export class OptionType<
 
   override get mutable(): boolean {
     return this.itemType.mutable;
-  }
-
-  @Memoize()
-  override get name(): Code {
-    return code`${this.reusables.imports.Maybe}<${this.itemType.name}>`;
   }
 
   @Memoize()
@@ -121,7 +121,7 @@ export class OptionType<
     >[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.reusables.imports.Maybe}.of(value)) : ${this.reusables.imports.Resource}.Values.fromValue<${this.reusables.imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.reusables.imports.Maybe}.empty() }))`;
+    return code`${this.itemType.fromRdfResourceValuesExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${this.reusables.imports.Maybe}.of(value)) : ${this.reusables.imports.Resource}.Values.fromValue<${this.reusables.imports.Maybe}<${this.itemType.expression}>>({ focusResource: ${variables.resource}, propertyPath: ${variables.propertyPath}, value: ${this.reusables.imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(

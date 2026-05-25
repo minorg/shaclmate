@@ -14,14 +14,14 @@ export class LazyObjectType extends AbstractLazyObjectType<
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
+      code: code`${this.reusables.snippets.convertToLazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType, resolveType: this.resolveType })})`,
       sourceTypes: [
         {
-          name: this.name,
+          expression: this.expression,
           typeof: "object",
         },
         {
-          name: this.resolveType.name,
+          expression: this.resolveType.expression,
           typeof: "object",
         },
       ],
@@ -31,7 +31,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.name}, ${this.resolveType.name}>`,
+      name: code`${this.reusables.snippets.LazyObject}<${this.resolveType.identifierTypeAlias}, ${this.partialType.expression}, ${this.resolveType.expression}>`,
       partialPropertyName: "partial",
       rawName: code`${this.reusables.snippets.LazyObject}`,
     };

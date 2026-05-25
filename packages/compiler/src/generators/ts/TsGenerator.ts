@@ -9,9 +9,9 @@ import { BlankNodeType } from "./BlankNodeType.js";
 import { GraphqlSchema } from "./GraphqlSchema.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
-import type { NamedObjectType } from "./NamedObjectType.js";
-import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
+import type { ObjectType } from "./ObjectType.js";
+import { ObjectUnionType } from "./ObjectUnionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
@@ -66,12 +66,12 @@ export class TsGenerator implements Generator {
 
     const namedObjectTypesToposorted = ast.ObjectType.toposort(
       ast_.namedObjectTypes,
-    ).map((astObjectType) => typeFactory.createNamedObjectType(astObjectType));
+    ).map((astObjectType) => typeFactory.createObjectType(astObjectType));
 
     const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())
       .map((astObjectUnionType) =>
-        typeFactory.createNamedObjectUnionType(astObjectUnionType),
+        typeFactory.createObjectUnionType(astObjectUnionType),
       );
     for (const namedObjectType of namedObjectTypesToposorted) {
       declarations = declarations.concat(namedObjectType.declaration.toList());
@@ -83,12 +83,15 @@ export class TsGenerator implements Generator {
     }
 
     const namedObjectTypesNameSorted = namedObjectTypesToposorted.toSorted(
-      (left, right) => left.name.localeCompare(right.name),
+      (left, right) =>
+        left.alias.unsafeCoerce().localeCompare(right.alias.unsafeCoerce()),
     );
 
     const namedObjectUnionTypesNameSorted =
       namedObjectUnionTypesToposorted.toSorted((left, right) =>
-        left.name.localeCompare(right.name),
+        (left.alias.unsafeCoerce() as string).localeCompare(
+          right.alias.unsafeCoerce(),
+        ),
       );
 
     switch (namedObjectTypesNameSorted.length) {
@@ -96,7 +99,7 @@ export class TsGenerator implements Generator {
         break;
       case 1:
         declarations.push(
-          code`type ${configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].name};`,
+          code`type ${configuration.syntheticNamePrefix}Object = ${namedObjectTypesNameSorted[0].expression};`,
         );
         break;
       default: {
@@ -159,8 +162,8 @@ export class TsGenerator implements Generator {
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+    namedObjectTypes: readonly ObjectType[];
+    namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }): readonly Code[] {
     const constructorParameters: ConstructorParameters<
@@ -206,9 +209,9 @@ export class TsGenerator implements Generator {
     reusables,
   }: {
     configuration: TsGenerator.Configuration;
-    namedObjectTypes: readonly NamedObjectType[];
+    namedObjectTypes: readonly ObjectType[];
     reusables: Reusables;
-  }): NamedObjectUnionType {
+  }): ObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
       (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
     );
@@ -227,6 +230,7 @@ export class TsGenerator implements Generator {
     let identifierType: BlankNodeType | IdentifierType | IriType;
     if (nodeKinds.size === 2) {
       identifierType = new IdentifierType({
+        alias: Maybe.empty(),
         comment: Maybe.empty(),
         configuration,
         label: Maybe.empty(),
@@ -237,6 +241,7 @@ export class TsGenerator implements Generator {
       switch ([...nodeKinds][0]) {
         case "BlankNode":
           identifierType = new BlankNodeType({
+            alias: Maybe.empty(),
             comment: Maybe.empty(),
             configuration,
             label: Maybe.empty(),
@@ -246,6 +251,7 @@ export class TsGenerator implements Generator {
           break;
         case "IRI":
           identifierType = new IriType({
+            alias: Maybe.empty(),
             comment: Maybe.empty(),
             configuration,
             hasValues: [],
@@ -258,17 +264,17 @@ export class TsGenerator implements Generator {
       }
     }
 
-    return new NamedObjectUnionType({
+    return new ObjectUnionType({
+      alias: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
       comment: Maybe.empty(),
       configuration,
-      identifierType,
+      identifierType: Maybe.of(identifierType),
       label: Maybe.empty(),
       logger: this.logger,
       members: filteredNamedObjectTypes.map((namedObjectType) => ({
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
-      name: `${configuration.syntheticNamePrefix}Object`,
       recursive: false,
       reusables,
       synthetic: true,

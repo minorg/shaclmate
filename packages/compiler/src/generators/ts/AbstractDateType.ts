@@ -1,21 +1,21 @@
 import { Memoize } from "typescript-memoize";
-import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly equalsFunction =
     code`${this.reusables.snippets.dateEquals}`;
+  override readonly expression = code`Date`;
   override readonly filterFunction =
     code`${this.reusables.snippets.filterDate}`;
   override readonly filterType = code`${this.reusables.snippets.DateFilter}`;
   abstract override readonly kind: "DateTime" | "Date";
   override readonly mutable = false;
-  override readonly name = "Date";
   override readonly schemaType = code`${this.reusables.snippets.DateSchema}`;
+  override readonly typeofs = ["object" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.dateSparqlWherePatterns}`;
-  override readonly typeofs = ["object" as const];
 
   override fromJsonExpression({
     variables,
@@ -36,6 +36,12 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return code`[${this.reusables.snippets.literalFactory}.date(${variables.value}, ${this.rdfjsTermExpression(this.datatype)})]`;
   }
 
+  protected abstract fromRdfResourceValueExpression(variables: {
+    variables: {
+      value: Code;
+    };
+  }): Code;
+
   protected override fromRdfResourceValuesExpressionChain({
     variables,
   }: Parameters<
@@ -54,12 +60,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       )}))`,
     };
   }
-
-  protected abstract fromRdfResourceValueExpression(variables: {
-    variables: {
-      value: Code;
-    };
-  }): Code;
 }
 
 export namespace AbstractDateType {

@@ -3429,7 +3429,7 @@ export namespace NamedUnion1 {
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion1.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
@@ -3465,7 +3465,7 @@ export namespace NamedUnion1 {
   }) satisfies $ValueSparqlConstructTriplesFunction<
     NamedUnion1.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
@@ -3482,7 +3482,7 @@ export namespace NamedUnion1 {
   export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     NamedUnion1.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
@@ -3520,7 +3520,7 @@ export namespace NamedUnion1 {
   }) satisfies $ValueSparqlWherePatternsFunction<
     NamedUnion1.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
@@ -3708,7 +3708,7 @@ export namespace NamedUnion2 {
   export const valueSparqlConstructTriples: $ValueSparqlConstructTriplesFunction<
     NamedUnion2.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly date: {
           discriminantValues: readonly (number | string)[];
@@ -3744,7 +3744,7 @@ export namespace NamedUnion2 {
   }) satisfies $ValueSparqlConstructTriplesFunction<
     NamedUnion2.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly date: {
           discriminantValues: readonly (number | string)[];
@@ -3761,7 +3761,7 @@ export namespace NamedUnion2 {
   export const valueSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
     NamedUnion2.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly date: {
           discriminantValues: readonly (number | string)[];
@@ -3799,7 +3799,7 @@ export namespace NamedUnion2 {
   }) satisfies $ValueSparqlWherePatternsFunction<
     NamedUnion2.Filter,
     {
-      kind: "NamedUnion";
+      kind: "Union";
       members: {
         readonly date: {
           discriminantValues: readonly (number | string)[];
@@ -6640,7 +6640,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -6681,7 +6681,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -6712,7 +6712,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -6753,7 +6753,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -6784,7 +6784,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -6825,7 +6825,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -6857,7 +6857,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -6911,7 +6911,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -6972,7 +6972,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7029,7 +7029,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7086,7 +7086,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7152,7 +7152,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7187,7 +7187,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7228,7 +7228,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7259,7 +7259,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7300,7 +7300,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7331,7 +7331,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7372,7 +7372,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7404,7 +7404,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7458,7 +7458,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7514,7 +7514,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7557,7 +7557,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7589,7 +7589,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7632,7 +7632,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7664,7 +7664,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7707,7 +7707,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7740,7 +7740,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7797,7 +7797,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -7856,7 +7856,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -7911,7 +7911,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -7966,7 +7966,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -8031,7 +8031,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -8067,7 +8067,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -8110,7 +8110,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
@@ -8142,7 +8142,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -8185,7 +8185,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
@@ -8217,7 +8217,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -8260,7 +8260,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -8293,7 +8293,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -8350,7 +8350,7 @@ export namespace UnionDiscriminants {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly UnionMember1: {
                 discriminantValues: readonly (number | string)[];
@@ -10128,7 +10128,7 @@ export namespace UnionDiscriminants {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
@@ -10150,7 +10150,7 @@ export namespace UnionDiscriminants {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               object: {
                 discriminantValues: ["object"],
@@ -10174,7 +10174,7 @@ export namespace UnionDiscriminants {
             kind: "Option" as const,
             get itemType() {
               return {
-                kind: "AnonymousUnion" as const,
+                kind: "Union" as const,
                 members: {
                   UnionMember1: {
                     discriminantValues: ["UnionMember1"],
@@ -10200,7 +10200,7 @@ export namespace UnionDiscriminants {
             kind: "Option" as const,
             get itemType() {
               return {
-                kind: "AnonymousUnion" as const,
+                kind: "Union" as const,
                 members: {
                   UnionMember1: {
                     discriminantValues: ["UnionMember1"],
@@ -10226,7 +10226,7 @@ export namespace UnionDiscriminants {
           "http://example.com/requiredIriOrLiteralProperty",
         ),
         type: {
-          kind: "AnonymousUnion" as const,
+          kind: "Union" as const,
           members: {
             NamedNode: {
               discriminantValues: ["NamedNode"],
@@ -10245,7 +10245,7 @@ export namespace UnionDiscriminants {
           "http://example.com/requiredIriOrStringProperty",
         ),
         type: {
-          kind: "AnonymousUnion" as const,
+          kind: "Union" as const,
           members: {
             object: {
               discriminantValues: ["object"],
@@ -10265,7 +10265,7 @@ export namespace UnionDiscriminants {
         ),
         get type() {
           return {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               UnionMember1: {
                 discriminantValues: ["UnionMember1"],
@@ -10286,7 +10286,7 @@ export namespace UnionDiscriminants {
         ),
         get type() {
           return {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               UnionMember1: {
                 discriminantValues: ["UnionMember1"],
@@ -10312,7 +10312,7 @@ export namespace UnionDiscriminants {
         type: {
           kind: "Set" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
@@ -10334,7 +10334,7 @@ export namespace UnionDiscriminants {
         type: {
           kind: "Set" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               object: {
                 discriminantValues: ["object"],
@@ -10358,7 +10358,7 @@ export namespace UnionDiscriminants {
             kind: "Set" as const,
             get itemType() {
               return {
-                kind: "AnonymousUnion" as const,
+                kind: "Union" as const,
                 members: {
                   UnionMember1: {
                     discriminantValues: ["UnionMember1"],
@@ -10384,7 +10384,7 @@ export namespace UnionDiscriminants {
             kind: "Set" as const,
             get itemType() {
               return {
-                kind: "AnonymousUnion" as const,
+                kind: "Union" as const,
                 members: {
                   UnionMember1: {
                     discriminantValues: ["UnionMember1"],
@@ -16945,12 +16945,9 @@ export namespace UnionMember2 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = UnionMemberCommonParent.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = UnionMemberCommonParent.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -18006,12 +18003,9 @@ export namespace UnionMember1 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = UnionMemberCommonParent.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = UnionMemberCommonParent.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -24764,7 +24758,7 @@ export namespace NamedUnionProperties {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedUnion1Property"),
         type: {
-          kind: "NamedUnion" as const,
+          kind: "Union" as const,
           members: {
             object: {
               discriminantValues: ["object"],
@@ -24781,7 +24775,7 @@ export namespace NamedUnionProperties {
         kind: "Shacl",
         path: dataFactory.namedNode("http://example.com/namedUnion2Property"),
         type: {
-          kind: "NamedUnion" as const,
+          kind: "Union" as const,
           members: {
             date: {
               discriminantValues: ["date"],
@@ -27111,12 +27105,9 @@ export namespace ClassMultipleInheritanceChild {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassMultipleInheritanceParent1.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassMultipleInheritanceParent1.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -34234,7 +34225,7 @@ export namespace JsPrimitiveUnionProperty {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
@@ -34288,7 +34279,7 @@ export namespace JsPrimitiveUnionProperty {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
@@ -34387,7 +34378,7 @@ export namespace JsPrimitiveUnionProperty {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
@@ -34444,7 +34435,7 @@ export namespace JsPrimitiveUnionProperty {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
@@ -34649,7 +34640,7 @@ export namespace JsPrimitiveUnionProperty {
         type: {
           kind: "Set" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               boolean: {
                 discriminantValues: ["boolean"],
@@ -44566,7 +44557,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44607,7 +44598,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44638,7 +44629,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44679,7 +44670,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44710,7 +44701,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly dateTime: {
                 discriminantValues: readonly (number | string)[];
@@ -44751,7 +44742,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly dateTime: {
                 discriminantValues: readonly (number | string)[];
@@ -44782,7 +44773,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -44823,7 +44814,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -44917,7 +44908,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44960,7 +44951,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44992,7 +44983,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -45035,7 +45026,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -45067,7 +45058,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly dateTime: {
                 discriminantValues: readonly (number | string)[];
@@ -45110,7 +45101,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly dateTime: {
                 discriminantValues: readonly (number | string)[];
@@ -45142,7 +45133,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -45185,7 +45176,7 @@ export namespace DateUnionProperties {
             };
           },
           {
-            kind: "AnonymousUnion";
+            kind: "Union";
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
@@ -45784,7 +45775,7 @@ export namespace DateUnionProperties {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               date: {
                 discriminantValues: ["date"],
@@ -45804,7 +45795,7 @@ export namespace DateUnionProperties {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               date: {
                 discriminantValues: ["date"],
@@ -45826,7 +45817,7 @@ export namespace DateUnionProperties {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               dateTime: {
                 discriminantValues: ["dateTime"],
@@ -45846,7 +45837,7 @@ export namespace DateUnionProperties {
         type: {
           kind: "Option" as const,
           itemType: {
-            kind: "AnonymousUnion" as const,
+            kind: "Union" as const,
             members: {
               string: {
                 discriminantValues: ["string"],
@@ -51047,12 +51038,9 @@ export namespace ClassHierarchy1 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy0.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy0.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -51553,12 +51541,9 @@ export namespace ClassHierarchy2 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy1.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy1.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -52122,12 +52107,9 @@ export namespace ClassHierarchy3 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy2.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy2.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -53789,7 +53771,7 @@ export namespace FlattenUnion {
     | FlattenUnionMember3.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -54274,7 +54256,7 @@ export namespace Union {
   export type Json = UnionMember1.Json | UnionMember2.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -54763,7 +54745,7 @@ export namespace LazilyResolvedUnion {
     | LazilyResolvedUnionMember2.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       LazilyResolvedUnionMember1: {
         discriminantValues: ["LazilyResolvedUnionMember1"],
@@ -55234,7 +55216,7 @@ export namespace PartialUnion {
   export type Json = PartialUnionMember1.Json | PartialUnionMember2.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       PartialUnionMember1: {
         discriminantValues: ["PartialUnionMember1"],
@@ -55706,7 +55688,7 @@ export namespace NoRdfTypeUnion {
   export type Json = NoRdfTypeUnionMember1.Json | NoRdfTypeUnionMember2.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       NoRdfTypeUnionMember1: {
         discriminantValues: ["NoRdfTypeUnionMember1"],
@@ -56170,7 +56152,7 @@ export namespace RecursiveUnion {
   export type Json = RecursiveUnionMember1.Json | RecursiveUnionMember2.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       RecursiveUnionMember1: {
         discriminantValues: ["RecursiveUnionMember1"],
@@ -60467,7 +60449,7 @@ export namespace $Object {
     | $NamedDefaultPartial.Json;
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       BlankNodeIdentifier: {
         discriminantValues: ["BlankNodeIdentifier"],

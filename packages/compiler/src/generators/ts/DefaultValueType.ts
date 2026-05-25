@@ -42,7 +42,7 @@ export class DefaultValueType<
       sourceTypes: itemConversionFunction.sourceTypes
         .filter((sourceType) => sourceType.typeof !== "undefined")
         .concat({
-          name: "undefined",
+          expression: code`undefined`,
           typeof: "undefined",
         }),
     });
@@ -50,6 +50,10 @@ export class DefaultValueType<
 
   override get equalsFunction(): Code {
     return this.itemType.equalsFunction;
+  }
+
+  override get expression(): Code {
+    return this.itemType.expression;
   }
 
   override get filterFunction(): Code {
@@ -72,13 +76,9 @@ export class DefaultValueType<
     return this.itemType.mutable;
   }
 
-  override get name(): Code | string {
-    return this.itemType.name;
-  }
-
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.name}, ${this.itemType.schemaType}>`;
+    return code`${this.reusables.snippets.DefaultValueSchema}<${this.itemType.expression}, ${this.itemType.schemaType}>`;
   }
 
   @Memoize()
@@ -105,11 +105,10 @@ export class DefaultValueType<
       case "Literal":
       case "Term":
         return this.rdfjsTermExpression(this.defaultValue);
-      case "AnonymousUnion":
       case "List":
-      case "NamedObjectType":
-      case "NamedObjectUnion":
-      case "NamedUnion":
+      case "Object":
+      case "ObjectUnion":
+      case "Union":
         throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
 

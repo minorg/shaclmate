@@ -22,22 +22,22 @@ export class LazyObjectOptionType extends Super {
   @Memoize()
   override get conversionFunction(): Maybe<AbstractLazyObjectType.ConversionFunction> {
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToLazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
+      code: code`${this.reusables.snippets.convertToLazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>(${this.resolveToPartialFunction({ partialType: this.partialType.itemType, resolveType: this.resolveType.itemType })})`,
       sourceTypes: [
         {
-          name: this.name,
+          expression: this.expression,
           typeof: "object",
         },
         {
-          name: this.resolveType.name,
+          expression: this.resolveType.expression,
           typeof: "object",
         },
         {
-          name: this.resolveType.itemType.name,
+          expression: this.resolveType.itemType.expression,
           typeof: "object",
         },
         {
-          name: "undefined",
+          expression: code`undefined`,
           typeof: "undefined",
         },
       ],
@@ -47,7 +47,7 @@ export class LazyObjectOptionType extends Super {
   @Memoize()
   protected override get runtimeClass() {
     return {
-      name: code`${this.reusables.snippets.LazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.name}, ${this.resolveType.itemType.name}>`,
+      name: code`${this.reusables.snippets.LazyObjectOption}<${this.resolveType.itemType.identifierTypeAlias}, ${this.partialType.itemType.expression}, ${this.resolveType.itemType.expression}>`,
       partialPropertyName: "partial",
       rawName: code`${this.reusables.snippets.LazyObjectOption}`,
     };

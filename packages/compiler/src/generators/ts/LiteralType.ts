@@ -8,7 +8,7 @@ import type { Typeof } from "./Typeof.js";
 import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
-  override readonly name = code`${this.reusables.imports.Literal}`;
+  override readonly expression = code`${this.reusables.imports.Literal}`;
   override readonly conversionFunction: Maybe<AbstractLiteralType.ConversionFunction> =
     Maybe.of({
       code: code`${this.reusables.snippets.convertToLiteral}`,
@@ -16,15 +16,15 @@ export class LiteralType extends AbstractLiteralType {
         ...(
           ["bigint", "boolean", "number", "string"] satisfies readonly Typeof[]
         ).map((typeof_) => ({
-          name: typeof_,
+          expression: code`${typeof_}`,
           typeof: typeof_,
         })),
         {
-          name: "Date",
+          expression: code`Date`,
           typeof: "object",
         },
         {
-          name: code`${this.reusables.imports.Literal}`,
+          expression: code`${this.reusables.imports.Literal}`,
           typeof: "object",
         },
       ],
@@ -54,7 +54,7 @@ export class LiteralType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${this.reusables.imports.Either}.of<Error, ${this.name}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined)))`;
+    return code`${this.reusables.imports.Either}.of<Error, ${this.expression}>(${this.reusables.imports.dataFactory}.literal(${variables.value}["@value"], ${variables.value}["@language"] !== undefined ? ${variables.value}["@language"] : (${variables.value}["@type"] !== undefined ? ${this.reusables.imports.dataFactory}.namedNode(${variables.value}["@type"]!) : undefined)))`;
   }
 
   override graphqlResolveExpression(
