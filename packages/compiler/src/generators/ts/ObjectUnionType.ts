@@ -1,76 +1,52 @@
 import { PropertyPath } from "@rdfx/resource";
 
 import { pascalCase } from "change-case";
-import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { NamedObjectType_objectSetMethodNames } from "./_NamedObjectType/NamedObjectType_objectSetMethodNames.js";
 import { NamedObjectType_sparqlConstructQueryFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryFunctionDeclaration.js";
 import { NamedObjectType_sparqlConstructQueryStringFunctionDeclaration } from "./_NamedObjectType/NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.js";
-import { AbstractNamedUnionType } from "./AbstractNamedUnionType.js";
-import { AbstractType } from "./AbstractType.js";
-import type { BlankNodeType } from "./BlankNodeType.js";
-import type { IdentifierType } from "./IdentifierType.js";
-import type { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import { UnionType } from "./UnionType.js";
 
-export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType> {
-  readonly #identifierType: BlankNodeType | IdentifierType | IriType;
-
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly kind = "NamedObjectUnion";
-  readonly synthetic: boolean;
-
-  constructor({
-    identifierType,
-    synthetic,
-    ...superParameters
-  }: {
-    identifierType: BlankNodeType | IdentifierType | IriType;
-    synthetic: boolean;
-  } & Omit<
-    ConstructorParameters<typeof AbstractNamedUnionType<NamedObjectType>>[0],
-    "identifierType"
-  >) {
-    super({ ...superParameters, identifierType: Maybe.of(identifierType) });
-    this.#identifierType = identifierType;
-    this.synthetic = synthetic;
-  }
-
-  @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
-    return new AbstractType.GraphqlType(
-      code`${this._name}.GraphQL`,
-      this.reusables,
-    );
-  }
+export class ObjectUnionType extends UnionType<NamedObjectType> {
+  override readonly kind = "ObjectUnion";
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return code`${this.name}.Identifier`;
+    return this._name.map((name) => code`${name}.Identifier`).unsafeCoerce();
   }
 
   @Memoize()
   get objectSetMethodNames(): NamedObjectType.ObjectSetMethodNames {
-    return NamedObjectType_objectSetMethodNames.call({
-      configuration: this.configuration,
-      name: this.name,
-    });
+    return this._name
+      .map((name) =>
+        NamedObjectType_objectSetMethodNames.call({
+          configuration: this.configuration,
+          name,
+        }),
+      )
+      .unsafeCoerce();
   }
 
   @Memoize()
   override get schema(): Code {
-    return code`${this.name}.schema`;
+    return this._name
+      .map((name) => code`${name}.schema`)
+      .orDefault(super.schema);
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return code`typeof ${this.schema}`;
+    return this._name
+      .map(() => code`typeof ${this.schema}`)
+      .orDefault(super.schemaType);
   }
 
   protected override get staticModuleDeclarations(): Record<string, Code> {
+    const name = this._name.unsafeCoerce();
     return {
       ...super.staticModuleDeclarations,
       ...this.identifierTypeDeclarations,
@@ -83,7 +59,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       ...NamedObjectType_sparqlConstructQueryFunctionDeclaration.call({
         configuration: this.configuration,
         filterType: this.filterType,
-        name: this.name,
+        name,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
@@ -91,7 +67,7 @@ export class NamedObjectUnionType extends AbstractNamedUnionType<NamedObjectType
       ...NamedObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
         configuration: this.configuration,
         filterType: this.filterType,
-        name: this.name,
+        name,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQueryString`, code_))
@@ -139,12 +115,12 @@ ${joinCode([
   code`let patterns: ${this.reusables.snippets.SparqlPattern}[] = [];`,
   code`\
 if (focusIdentifier.termType === "Variable") {
-  patterns = patterns.concat(${this.#identifierType.valueSparqlWherePatternsFunction}({
+  patterns = patterns.concat(${this.identifierType.unsafeCoerce().valueSparqlWherePatternsFunction}({
       filter: filter?.${this.configuration.syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages,
       propertyPatterns: [],
-      schema: ${this.#identifierType.schema},
+      schema: ${this.identifierType.unsafeCoerce().schema},
       valueVariable: focusIdentifier,
       variablePrefix,
   }));
@@ -218,10 +194,10 @@ export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
     return singleEntryRecord(
       `Identifier`,
       code`\
-export type Identifier = ${this.#identifierType.name};
+export type Identifier = ${this.identifierType.unsafeCoerce().name};
 export namespace Identifier {
-  export const parse = ${this.#identifierType.parseFunction};
-  export const stringify = ${this.#identifierType.stringifyFunction};
+  export const parse = ${this.identifierType.unsafeCoerce().parseFunction};
+  export const stringify = ${this.identifierType.unsafeCoerce().stringifyFunction};
 }`,
     );
   }
@@ -231,14 +207,16 @@ export namespace Identifier {
       return {};
     }
 
-    if (this._name === `${this.configuration.syntheticNamePrefix}Object`) {
+    if (
+      this._name.extract() === `${this.configuration.syntheticNamePrefix}Object`
+    ) {
       return {};
     }
 
     return singleEntryRecord(
-      `is${this._name}`,
+      `is${this.name}`,
       code`\
-    export function is${this._name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
+    export function is${this.name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
       return ${joinCode(
         this.members.map(
           (member) => code`${member.type.name}.is${member.type.name}(object)`,
@@ -300,7 +278,7 @@ export namespace Identifier {
       if (!memberTypesWithProperty.every((value) => value)) {
         continue;
       }
-      property.schema.ifJust(propertySchema => {
+      property.schema.ifJust((propertySchema) => {
         propertiesObject.push(code`${property.name}: ${propertySchema}`);
       });
     }
@@ -331,13 +309,5 @@ ${joinCode(
 )}
 };`,
     );
-  }
-
-  override graphqlResolveExpression({
-    variables,
-  }: {
-    variables: { value: Code };
-  }): Code {
-    return variables.value;
   }
 }

@@ -1,6 +1,6 @@
 import type { Logger } from "ts-log";
 import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Reusables } from "./Reusables.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import { type Code, code } from "./ts-poet-wrapper.js";
@@ -9,7 +9,7 @@ export class GraphqlSchema {
   private readonly configuration: TsGenerator.Configuration;
   private readonly reusables: Reusables;
   private readonly namedObjectTypes: readonly NamedObjectType[];
-  private readonly namedObjectUnionTypes: readonly NamedObjectUnionType[];
+  private readonly namedObjectUnionTypes: readonly ObjectUnionType[];
 
   constructor({
     configuration,
@@ -20,7 +20,7 @@ export class GraphqlSchema {
     configuration: TsGenerator.Configuration;
     logger: Logger;
     namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+    namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }) {
     this.configuration = configuration;

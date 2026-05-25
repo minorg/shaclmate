@@ -10,8 +10,8 @@ import { GraphqlSchema } from "./GraphqlSchema.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IriType } from "./IriType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
-import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
 import { ObjectSetType } from "./ObjectSetType.js";
+import { ObjectUnionType } from "./ObjectUnionType.js";
 import { RdfjsDatasetObjectSetType } from "./RdfjsDatasetObjectSetType.js";
 import { Reusables } from "./Reusables.js";
 import { SparqlObjectSetType } from "./SparqlObjectSetType.js";
@@ -71,7 +71,7 @@ export class TsGenerator implements Generator {
     const namedObjectUnionTypesToposorted = ast_.namedUnionTypes
       .filter((_) => _.isObjectUnionType())
       .map((astObjectUnionType) =>
-        typeFactory.createNamedObjectUnionType(astObjectUnionType),
+        typeFactory.createObjectUnionType(astObjectUnionType),
       );
     for (const namedObjectType of namedObjectTypesToposorted) {
       declarations = declarations.concat(namedObjectType.declaration.toList());
@@ -88,7 +88,7 @@ export class TsGenerator implements Generator {
 
     const namedObjectUnionTypesNameSorted =
       namedObjectUnionTypesToposorted.toSorted((left, right) =>
-        left.name.localeCompare(right.name),
+        (left.name as string).localeCompare(right.name as string),
       );
 
     switch (namedObjectTypesNameSorted.length) {
@@ -160,7 +160,7 @@ export class TsGenerator implements Generator {
   }: {
     configuration: TsGenerator.Configuration;
     namedObjectTypes: readonly NamedObjectType[];
-    namedObjectUnionTypes: readonly NamedObjectUnionType[];
+    namedObjectUnionTypes: readonly ObjectUnionType[];
     reusables: Reusables;
   }): readonly Code[] {
     const constructorParameters: ConstructorParameters<
@@ -208,7 +208,7 @@ export class TsGenerator implements Generator {
     configuration: TsGenerator.Configuration;
     namedObjectTypes: readonly NamedObjectType[];
     reusables: Reusables;
-  }): NamedObjectUnionType {
+  }): ObjectUnionType {
     const filteredNamedObjectTypes = namedObjectTypes.filter(
       (namedObjectType) => !namedObjectType.extern, // && !namedObjectType.name.startsWith(syntheticNamePrefix),
     );
@@ -258,17 +258,17 @@ export class TsGenerator implements Generator {
       }
     }
 
-    return new NamedObjectUnionType({
+    return new ObjectUnionType({
       comment: Maybe.empty(),
       configuration,
-      identifierType,
+      identifierType: Maybe.of(identifierType),
       label: Maybe.empty(),
       logger: this.logger,
       members: filteredNamedObjectTypes.map((namedObjectType) => ({
         discriminantValue: Maybe.empty(),
         type: namedObjectType,
       })),
-      name: `${configuration.syntheticNamePrefix}Object`,
+      name: Maybe.of(`${configuration.syntheticNamePrefix}Object`),
       recursive: false,
       reusables,
       synthetic: true,

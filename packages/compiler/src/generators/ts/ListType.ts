@@ -5,7 +5,6 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AnonymousUnionType } from "./AnonymousUnionType.js";
 import type { BigDecimalType } from "./BigDecimalType.js";
 import type { BigIntType } from "./BigIntType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -19,13 +18,12 @@ import type { IriType } from "./IriType.js";
 
 import type { LiteralType } from "./LiteralType.js";
 import type { NamedObjectType } from "./NamedObjectType.js";
-import type { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import type { NamedUnionType } from "./NamedUnionType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
-
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import type { UnionType } from "./UnionType.js";
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,
@@ -150,7 +148,6 @@ export class ListType<
 
 export namespace ListType {
   export type ItemType =
-    | AnonymousUnionType
     | BigDecimalType
     | BigIntType
     | BlankNodeType
@@ -162,15 +159,14 @@ export namespace ListType {
     | IntType
     | IriType
     | LiteralType
-    | NamedObjectUnionType
-    | NamedUnionType
+    | ObjectUnionType
     | NamedObjectType
     | StringType
-    | TermType;
+    | TermType
+    | UnionType<Type>;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
-      case "AnonymousUnion":
       case "BigDecimal":
       case "BigInt":
       case "BlankNode":
@@ -182,11 +178,11 @@ export namespace ListType {
       case "Iri":
       case "Int":
       case "Literal":
-      case "NamedObjectUnion":
-      case "NamedUnion":
-      case "NamedObjectType":
+      case "ObjectUnion":
+      case "NamedObject":
       case "String":
       case "Term":
+      case "Union":
         return true;
       case "DefaultValue":
       case "LazyObjectOption":

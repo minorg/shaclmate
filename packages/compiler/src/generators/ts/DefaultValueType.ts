@@ -105,11 +105,10 @@ export class DefaultValueType<
       case "Literal":
       case "Term":
         return this.rdfjsTermExpression(this.defaultValue);
-      case "AnonymousUnion":
       case "List":
-      case "NamedObjectType":
-      case "NamedObjectUnion":
-      case "NamedUnion":
+      case "NamedObject":
+      case "ObjectUnion":
+      case "Union":
         throw new RangeError(`not implemented ${this.itemType.kind}`);
     }
 

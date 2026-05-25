@@ -1,4 +1,3 @@
-import { invariant } from "ts-invariant";
 import type { Logger } from "ts-log";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
@@ -48,7 +47,6 @@ export namespace ${namedObjectType.name} {
     for (const astNamedUnionType of ast_.namedUnionTypes.map(
       (astNamedUnionType) => typeFactory.createUnionType(astNamedUnionType),
     )) {
-      invariant(astNamedUnionType.kind !== "AnonymousUnion");
       declarations.push(code`\
 export namespace ${astNamedUnionType.name} {
   ${astNamedUnionType.jsonTypeAliasDeclaration}

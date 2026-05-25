@@ -52,7 +52,7 @@ export class NamedObjectType extends AbstractType {
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
-  override readonly kind = "NamedObjectType";
+  override readonly kind = "NamedObject";
   override readonly name: string;
   override readonly recursive: boolean;
   override readonly referencesObjectType = true;

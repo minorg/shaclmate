@@ -12,7 +12,6 @@ import type { Logger } from "ts-log";
 
 import * as ast from "../../ast/index.js";
 
-import { AnonymousUnionType } from "./AnonymousUnionType.js";
 import { BigDecimalType } from "./BigDecimalType.js";
 import { BigIntType } from "./BigIntType.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -30,8 +29,7 @@ import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
 import { NamedObjectType } from "./NamedObjectType.js";
-import { NamedObjectUnionType } from "./NamedObjectUnionType.js";
-import { NamedUnionType } from "./NamedUnionType.js";
+import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import type { Reusables } from "./Reusables.js";
 import { SetType } from "./SetType.js";
@@ -40,16 +38,13 @@ import { TermType } from "./TermType.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Type } from "./Type.js";
 import { code } from "./ts-poet-wrapper.js";
+import { UnionType } from "./UnionType.js";
 
 export class TypeFactory {
   private readonly configuration: TsGenerator.Configuration;
   private readonly logger: Logger;
   private readonly reusables: Reusables;
 
-  private cachedNamedObjectUnionTypesByShapeIdentifier: TermMap<
-    BlankNode | NamedNode,
-    NamedObjectUnionType
-  > = new TermMap();
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     NamedObjectType.Property
@@ -57,6 +52,10 @@ export class TypeFactory {
   private cachedObjectTypesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     NamedObjectType
+  > = new TermMap();
+  private cachedObjectUnionTypesByShapeIdentifier: TermMap<
+    BlankNode | NamedNode,
+    ObjectUnionType
   > = new TermMap();
 
   constructor({
@@ -186,24 +185,24 @@ export class TypeFactory {
     return namedObjectType;
   }
 
-  createNamedObjectUnionType(
-    astType: ast.ObjectUnionType,
-  ): NamedObjectUnionType {
+  createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
     {
-      const cachedNamedObjectUnionType =
-        this.cachedNamedObjectUnionTypesByShapeIdentifier.get(
+      const cachedObjectUnionType =
+        this.cachedObjectUnionTypesByShapeIdentifier.get(
           astType.shapeIdentifier,
         );
-      if (cachedNamedObjectUnionType) {
-        return cachedNamedObjectUnionType;
+      if (cachedObjectUnionType) {
+        return cachedObjectUnionType;
       }
     }
 
-    const namedObjectUnionType = new NamedObjectUnionType({
+    const namedObjectUnionType = new ObjectUnionType({
       comment: astType.comment,
       configuration: this.configuration,
-      identifierType: this.createIdentifierType(
-        ast.ObjectCompoundType.identifierType(astType),
+      identifierType: Maybe.of(
+        this.createIdentifierType(
+          ast.ObjectCompoundType.identifierType(astType),
+        ),
       ),
       label: astType.label,
       logger: this.logger,
@@ -213,13 +212,13 @@ export class TypeFactory {
           type: this.createNamedObjectType(namedObjectType),
         }),
       ),
-      name: this.tsName(astType.name.unsafeCoerce()),
+      name: astType.name.map((name) => this.tsName(name)),
       recursive: astType.recursive,
       reusables: this.reusables,
       synthetic: astType.synthetic,
     });
 
-    this.cachedNamedObjectUnionTypesByShapeIdentifier.set(
+    this.cachedObjectUnionTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
       namedObjectUnionType,
     );
@@ -265,47 +264,26 @@ export class TypeFactory {
     }
   }
 
-  createUnionType(
-    astType: ast.UnionType,
-  ): AnonymousUnionType | NamedUnionType | NamedObjectUnionType {
+  createUnionType(astType: ast.UnionType): ObjectUnionType | UnionType<Type> {
     if (astType.isObjectUnionType()) {
-      return this.createNamedObjectUnionType(astType);
+      return this.createObjectUnionType(astType);
     }
 
-    return astType.name
-      .map<AnonymousUnionType | NamedUnionType>(
-        (name) =>
-          new NamedUnionType({
-            comment: astType.comment,
-            configuration: this.configuration,
-            identifierType: Maybe.empty(),
-            label: astType.label,
-            logger: this.logger,
-            members: astType.members.map((member) => ({
-              discriminantValue: member.discriminantValue,
-              type: this.createType(member.type),
-            })),
-            name,
-            recursive: astType.recursive,
-            reusables: this.reusables,
-          }),
-      )
-      .orDefaultLazy(
-        () =>
-          new AnonymousUnionType({
-            comment: astType.comment,
-            configuration: this.configuration,
-            label: astType.label,
-            identifierType: Maybe.empty(),
-            logger: this.logger,
-            members: astType.members.map((member) => ({
-              discriminantValue: member.discriminantValue,
-              type: this.createType(member.type),
-            })),
-            recursive: astType.recursive,
-            reusables: this.reusables,
-          }),
-      );
+    return new UnionType<Type>({
+      comment: astType.comment,
+      configuration: this.configuration,
+      identifierType: Maybe.empty(),
+      label: astType.label,
+      logger: this.logger,
+      members: astType.members.map((member) => ({
+        discriminantValue: member.discriminantValue,
+        type: this.createType(member.type),
+      })),
+      name: astType.name,
+      recursive: astType.recursive,
+      reusables: this.reusables,
+      synthetic: astType.synthetic,
+    });
   }
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
@@ -372,10 +350,10 @@ export class TypeFactory {
       label: astType.label,
       logger: this.logger,
       partialType: this.createOptionType(astType.partialType) as OptionType<
-        NamedObjectType | NamedObjectUnionType
+        NamedObjectType | ObjectUnionType
       >,
       resolveType: this.createOptionType(astType.resolveType) as OptionType<
-        NamedObjectType | NamedObjectUnionType
+        NamedObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
     });
@@ -388,10 +366,10 @@ export class TypeFactory {
       label: astType.label,
       logger: this.logger,
       partialType: this.createSetType(astType.partialType) as SetType<
-        NamedObjectType | NamedObjectUnionType
+        NamedObjectType | ObjectUnionType
       >,
       resolveType: this.createSetType(astType.resolveType) as SetType<
-        NamedObjectType | NamedObjectUnionType
+        NamedObjectType | ObjectUnionType
       >,
       reusables: this.reusables,
     });
@@ -405,10 +383,10 @@ export class TypeFactory {
       logger: this.logger,
       partialType: this.createType(astType.partialType) as
         | NamedObjectType
-        | NamedObjectUnionType,
+        | ObjectUnionType,
       resolveType: this.createType(astType.resolveType) as
         | NamedObjectType
-        | NamedObjectUnionType,
+        | ObjectUnionType,
       reusables: this.reusables,
     });
   }
