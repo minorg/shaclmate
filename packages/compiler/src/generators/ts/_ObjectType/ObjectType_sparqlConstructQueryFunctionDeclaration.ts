@@ -5,9 +5,9 @@ import type { TsGenerator } from "../TsGenerator.js";
 import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function ObjectType_sparqlConstructQueryFunctionDeclaration(this: {
+  readonly alias: string;
   readonly configuration: TsGenerator.Configuration;
   readonly filterType: Code;
-  readonly name: string;
   readonly reusables: Reusables;
 }): Maybe<Code> {
   if (!this.configuration.features.has("Object.SPARQL")) {
@@ -16,7 +16,7 @@ export function ObjectType_sparqlConstructQueryFunctionDeclaration(this: {
 
   return Maybe.of(code`\
 export function sparqlConstructQuery({ filter, ignoreRdfType, preferredLanguages, prefixes, subject, ...queryParameters }: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject: ${this.reusables.imports.NamedNode} | ${this.reusables.imports.Variable} } & Omit<${this.reusables.imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${this.reusables.imports.sparqljs}.ConstructQuery {
-  const variablePrefix = subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}";
+  const variablePrefix = subject.termType === "Variable" ? subject.value : "${camelCase(this.alias)}";
 
   return {
     ...queryParameters,

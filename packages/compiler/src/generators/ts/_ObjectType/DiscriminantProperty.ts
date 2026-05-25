@@ -24,7 +24,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }
 
   override get declaration(): Code {
-    return code`readonly ${this.name}: ${this.type.name};`;
+    return code`readonly ${this.name}: ${this.type.expression};`;
   }
 
   @Memoize()
@@ -45,7 +45,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.name}`);
+    return Maybe.of(code`readonly "${this.jsonName}": ${this.type.expression}`);
   }
 
   override get schema(): Maybe<Code> {
@@ -57,7 +57,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   // }
 
   private get constValue(): Code {
-    return code`${literalOf(this.namedObjectType.discriminantValue)} as const`;
+    return code`${literalOf(this.objectType.discriminantValue)} as const`;
   }
 
   override constructorInitializer(): Maybe<Code> {
@@ -77,7 +77,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly Code[] {
-    if (this.namedObjectType.parentObjectTypes.length > 0) {
+    if (this.objectType.parentObjectTypes.length > 0) {
       return [];
     }
 
@@ -89,7 +89,7 @@ export class DiscriminantProperty extends AbstractProperty<DiscriminantProperty.
   }: Parameters<
     AbstractProperty<DiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    if (this.namedObjectType.parentObjectTypes.length > 0) {
+    if (this.objectType.parentObjectTypes.length > 0) {
       return Maybe.empty();
     }
 
@@ -148,8 +148,8 @@ export namespace DiscriminantProperty {
     }
 
     @Memoize()
-    get name(): string {
-      return `${this.values.map((name) => `"${name}"`).join(" | ")}`;
+    get expression(): Code {
+      return code`${this.values.map((name) => `"${name}"`).join(" | ")}`;
     }
 
     @Memoize()

@@ -10,11 +10,14 @@ import type { Type } from "../Type.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
-  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
+  TypeT extends Pick<
+    Type,
+    "expression" | "filterFunction" | "mutable" | "schema"
+  >,
 > {
   protected readonly configuration: TsGenerator.Configuration;
   protected readonly logger: Logger;
-  protected readonly namedObjectType: ObjectType;
+  protected readonly objectType: ObjectType;
   protected readonly reusables: Reusables;
 
   /**
@@ -95,21 +98,21 @@ export abstract class AbstractProperty<
     configuration,
     logger,
     name,
-    namedObjectType,
+    objectType,
     reusables,
     type,
   }: {
     configuration: TsGenerator.Configuration;
     logger: Logger;
     name: string;
-    namedObjectType: ObjectType;
+    objectType: ObjectType;
     reusables: Reusables;
     type: TypeT;
   }) {
     this.configuration = configuration;
     this.logger = logger;
     this.name = name;
-    this.namedObjectType = namedObjectType;
+    this.objectType = objectType;
     this.reusables = reusables;
     this.type = type;
     this.rdfjsTermExpression = rdfjsTermExpression.bind({

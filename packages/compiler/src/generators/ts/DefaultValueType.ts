@@ -52,6 +52,10 @@ export class DefaultValueType<
     return this.itemType.equalsFunction;
   }
 
+  override get expression(): Code {
+    return this.itemType.expression;
+  }
+
   override get filterFunction(): Code {
     return this.itemType.filterFunction;
   }
@@ -70,10 +74,6 @@ export class DefaultValueType<
 
   override get mutable(): boolean {
     return this.itemType.mutable;
-  }
-
-  override get name(): Code | string {
-    return this.itemType.name;
   }
 
   @Memoize()

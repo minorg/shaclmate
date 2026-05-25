@@ -16,16 +16,16 @@ export class ObjectUnionType extends UnionType<ObjectType> {
 
   @Memoize()
   get identifierTypeAlias(): Code {
-    return this._name.map((name) => code`${name}.Identifier`).unsafeCoerce();
+    return this.alias.map((alias) => code`${alias}.Identifier`).unsafeCoerce();
   }
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return this._name
-      .map((name) =>
+    return this.alias
+      .map((alias) =>
         ObjectType_objectSetMethodNames.call({
           configuration: this.configuration,
-          name,
+          name: alias,
         }),
       )
       .unsafeCoerce();
@@ -33,20 +33,20 @@ export class ObjectUnionType extends UnionType<ObjectType> {
 
   @Memoize()
   override get schema(): Code {
-    return this._name
-      .map((name) => code`${name}.schema`)
+    return this.alias
+      .map((alias) => code`${alias}.schema`)
       .orDefault(super.schema);
   }
 
   @Memoize()
   override get schemaType(): Code {
-    return this._name
+    return this.alias
       .map(() => code`typeof ${this.schema}`)
       .orDefault(super.schemaType);
   }
 
   protected override get staticModuleDeclarations(): Record<string, Code> {
-    const name = this._name.unsafeCoerce();
+    const alias = this.alias.unsafeCoerce();
     return {
       ...super.staticModuleDeclarations,
       ...this.identifierTypeDeclarations,
@@ -57,9 +57,9 @@ export class ObjectUnionType extends UnionType<ObjectType> {
       ...this.isTypeFunctionDeclaration,
       ...this.schemaVariableStatement,
       ...ObjectType_sparqlConstructQueryFunctionDeclaration.call({
+        alias,
         configuration: this.configuration,
         filterType: this.filterType,
-        name,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQuery`, code_))
@@ -67,7 +67,7 @@ export class ObjectUnionType extends UnionType<ObjectType> {
       ...ObjectType_sparqlConstructQueryStringFunctionDeclaration.call({
         configuration: this.configuration,
         filterType: this.filterType,
-        name,
+        name: alias,
         reusables: this.reusables,
       })
         .map((code_) => singleEntryRecord(`sparqlConstructQueryString`, code_))
@@ -91,7 +91,7 @@ export function focusSparqlConstructTriples({ filter, focusIdentifier, variableP
   return [${joinCode(
     this.members.map(
       (member) =>
-        code`...${member.type.name}.focusSparqlConstructTriples({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
+        code`...${member.type.alias.unsafeCoerce()}.focusSparqlConstructTriples({ filter: filter?.on?.${member.type.alias.unsafeCoerce()}, focusIdentifier, ignoreRdfType: false, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.alias.unsafeCoerce())}\` }).concat()`,
     ),
     { on: ", " },
   )}];
@@ -129,7 +129,7 @@ if (focusIdentifier.termType === "Variable") {
     this.members.map(
       (member) =>
         code`${{
-          patterns: code`${member.type.name}.focusSparqlWherePatterns({ filter: filter?.on?.${member.type.name}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.name)}\` }).concat()`,
+          patterns: code`${member.type.alias.unsafeCoerce()}.focusSparqlWherePatterns({ filter: filter?.on?.${member.type.alias.unsafeCoerce()}, focusIdentifier, ignoreRdfType: false, preferredLanguages, variablePrefix: \`\${variablePrefix}${pascalCase(member.type.alias.unsafeCoerce())}\` }).concat()`,
           type: literalOf("group"),
         }}`,
     ),
@@ -146,13 +146,15 @@ if (focusIdentifier.termType === "Variable") {
       return {};
     }
 
+    const alias = this.alias.unsafeCoerce();
+
     return singleEntryRecord(
       `fromRdfResource`,
       code`\
-export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${this.name}> = (resource, options) => 
+export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}<${alias}> = (resource, options) => 
   ${this.members.reduce(
     (expression, member) => {
-      const memberTypeExpression = code`(${member.type.name}.fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${this.reusables.imports.Either}<Error, ${this.name}>)`;
+      const memberTypeExpression = code`(${member.type.alias.unsafeCoerce()}.fromRdfResource(resource, { ...options, ignoreRdfType: false }) as ${this.reusables.imports.Either}<Error, ${alias}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -171,13 +173,15 @@ export const fromRdfResource: ${this.reusables.snippets.FromRdfResourceFunction}
       return {};
     }
 
+    const alias = this.alias.unsafeCoerce();
+
     return singleEntryRecord(
       `GraphQL`,
       code`\
 export const GraphQL = new ${this.reusables.imports.GraphQLUnionType}(${{
         description: this.comment.map(JSON.stringify).extract(),
-        name: this.name,
-        resolveType: code`(value: ${this.name}) => value.${this.configuration.syntheticNamePrefix}type`,
+        name: alias,
+        resolveType: code`(value: ${alias}) => value.${this.configuration.syntheticNamePrefix}type`,
         types: code`[${joinCode(
           this.members.map((member) => member.type.graphqlType.nullableName),
           { on: ", " },
@@ -207,19 +211,20 @@ export namespace Identifier {
       return {};
     }
 
-    if (
-      this._name.extract() === `${this.configuration.syntheticNamePrefix}Object`
-    ) {
+    const alias = this.alias.unsafeCoerce();
+
+    if (alias === `${this.configuration.syntheticNamePrefix}Object`) {
       return {};
     }
 
     return singleEntryRecord(
-      `is${this.name}`,
+      `is${alias}`,
       code`\
-    export function is${this.name}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${this.name} {
+    export function is${alias}(object: ${this.configuration.syntheticNamePrefix}Object): object is ${alias} {
       return ${joinCode(
         this.members.map(
-          (member) => code`${member.type.name}.is${member.type.name}(object)`,
+          (member) =>
+            code`${member.type.alias.unsafeCoerce()}.is${member.type.alias.unsafeCoerce()}(object)`,
         ),
         { on: " || " },
       )};
@@ -295,15 +300,17 @@ export const schema = { ${joinCode(super.schemaInitializers.concat(code`properti
       return {};
     }
 
+    const alias = this.alias.unsafeCoerce();
+
     return singleEntryRecord(
       `toRdfResource`,
       code`\
-export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${this.name}> = (object, options) => {
+export const toRdfResource: ${this.reusables.snippets.ToRdfResourceFunction}<${alias}> = (object, options) => {
 ${joinCode(
   this.members
     .map(
       (member) =>
-        code`if (${member.type.name}.is${member.type.name}(object)) { return ${member.type.name}.toRdfResource(object, options); }`,
+        code`if (${member.type.alias.unsafeCoerce()}.is${member.type.alias.unsafeCoerce()}(object)) { return ${member.type.alias.unsafeCoerce()}.toRdfResource(object, options); }`,
     )
     .concat(code`throw new Error("unrecognized type");`),
 )}

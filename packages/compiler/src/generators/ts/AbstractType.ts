@@ -17,6 +17,11 @@ export abstract class AbstractType {
   protected readonly reusables: Reusables;
 
   /**
+   * Alias for this type.
+   */
+  readonly alias: Maybe<string>;
+
+  /**
    * Comment from rdfs:comment.
    */
   readonly comment: Maybe<string>;
@@ -47,6 +52,11 @@ export abstract class AbstractType {
    * $EqualsResult.
    */
   abstract readonly equalsFunction: Code;
+
+  /**
+   * TypeScript type expression.
+   */
+  abstract readonly expression: Code;
 
   /**
    * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
@@ -95,11 +105,6 @@ export abstract class AbstractType {
    * Is a value of this type mutable?
    */
   abstract readonly mutable: boolean;
-
-  /**
-   * TypeScript name of the type.
-   */
-  abstract readonly name: Code | string;
 
   /**
    * Does this type directly or indirectly reference itself?
@@ -167,18 +172,21 @@ export abstract class AbstractType {
   abstract readonly valueSparqlWherePatternsFunction: Code;
 
   constructor({
+    alias,
     comment,
     configuration,
     label,
     logger,
     reusables,
   }: {
+    alias: Maybe<string>;
     comment: Maybe<string>;
     configuration: TsGenerator.Configuration;
     label: Maybe<string>;
     logger: Logger;
     reusables: Reusables;
   }) {
+    this.alias = alias;
     this.comment = comment;
     this.configuration = configuration;
     this.label = label;

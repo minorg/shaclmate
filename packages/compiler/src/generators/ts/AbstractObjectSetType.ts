@@ -1,3 +1,4 @@
+import type { Maybe } from "purify-ts";
 import type { Logger } from "ts-log";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -36,10 +37,10 @@ export abstract class AbstractObjectSetType {
 
   protected methodSignatures(
     namedObjectType: {
+      readonly alias: Maybe<string>;
       readonly filterType: Code;
       readonly identifierTypeAlias: Code;
       readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
-      readonly name: Code | string;
     },
     options?: {
       parameterNamePrefix?: string;
@@ -65,7 +66,7 @@ export abstract class AbstractObjectSetType {
       object: {
         name: methodNames.object,
         parameters: code`${parameterNamePrefix}identifier: ${namedObjectType.identifierTypeAlias}, options?: { preferredLanguages?: readonly string[]; }`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.name}>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, ${namedObjectType.alias.unsafeCoerce()}>>`,
       },
       objectCount: {
         name: methodNames.objectCount,
@@ -80,7 +81,7 @@ export abstract class AbstractObjectSetType {
       objects: {
         name: methodNames.objects,
         parameters: code`${parameterNamePrefix}query?: ${queryT}<${namedObjectType.filterType}, ${namedObjectType.identifierTypeAlias}>`,
-        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.name}[]>>`,
+        returnType: code`Promise<${this.reusables.imports.Either}<Error, readonly ${namedObjectType.alias.unsafeCoerce()}[]>>`,
       },
     };
   }

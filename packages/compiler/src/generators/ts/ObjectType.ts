@@ -53,7 +53,6 @@ export class ObjectType extends AbstractType {
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | IriType;
   override readonly kind = "Object";
-  override readonly name: string;
   override readonly recursive: boolean;
   override readonly referencesObjectType = true;
   readonly synthetic: boolean;
@@ -91,7 +90,6 @@ export class ObjectType extends AbstractType {
     lazyProperties: (
       namedObjectType: ObjectType,
     ) => readonly ObjectType.Property[];
-    name: string;
     recursive: boolean;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
@@ -107,7 +105,6 @@ export class ObjectType extends AbstractType {
     this.lazyDiscriminantProperty = lazyDiscriminantProperty;
     this.lazyParentObjectTypes = lazyParentObjectTypes;
     this.lazyProperties = lazyProperties;
-    this.name = name;
     this.recursive = recursive;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;

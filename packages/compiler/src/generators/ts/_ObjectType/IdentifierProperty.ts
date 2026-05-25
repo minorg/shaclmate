@@ -20,27 +20,14 @@ import { AbstractProperty } from "./AbstractProperty.js";
 export class IdentifierProperty extends AbstractProperty<
   BlankNodeType | IdentifierType | IriType
 > {
-  private readonly typeAlias: Code;
-
   override readonly kind = "Identifier";
   override readonly mutable = false;
   override readonly recursive = false;
 
-  constructor({
-    typeAlias,
-    ...superParameters
-  }: {
-    type: BlankNodeType | IdentifierType | IriType;
-    typeAlias: Code;
-  } & ConstructorParameters<typeof AbstractProperty>[0]) {
-    super(superParameters);
-    this.typeAlias = typeAlias;
-  }
-
   @Memoize()
   override get constructorParameter(): Maybe<Code> {
     let hasQuestionToken: boolean = false;
-    const typeNames: Code[] = [code`(() => ${this.typeAlias})`];
+    const typeNames: Code[] = [code`(() => ${this.typeExpression})`];
     for (const type of this.type.conversionFunction.unsafeCoerce()
       .sourceTypes) {
       if (type.typeof === "undefined") {
@@ -57,7 +44,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get declaration(): Code {
-    return code`readonly ${this.name}: () => ${this.typeAlias};`;
+    return code`readonly ${this.name}: () => ${this.typeExpression};`;
   }
 
   @Memoize()
@@ -76,7 +63,7 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: code`(source) => ${this.typeAlias}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
+      resolve: code`(source) => ${this.typeExpression}.stringify(${this.accessExpression({ variables: { object: code`source` } })})`,
       type: this.type.graphqlType.name,
     });
   }
@@ -111,6 +98,13 @@ export class IdentifierProperty extends AbstractProperty<
 
   protected override get schemaInitializers(): readonly Code[] {
     return super.schemaInitializers.concat(code`type: ${this.type.schema}`);
+  }
+
+  @Memoize()
+  private get typeExpression(): Code {
+    return this.objectType.alias
+      .map((objectTypeAlias) => code`${objectTypeAlias}.Identifier`)
+      .orDefault(this.type.expression);
   }
 
   override accessExpression({
@@ -216,7 +210,12 @@ export class IdentifierProperty extends AbstractProperty<
         ignoreRdfType: true, // Unused
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: code`[]`,
-        schema: code`${this.namedObjectType.name}.schema.properties.${this.name}.type`,
+        schema: this.objectType.alias
+          .map(
+            (objectTypeAlias) =>
+              code`${objectTypeAlias}.schema.properties.${this.name}.type`,
+          )
+          .orDefault(this.type.schema),
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       }})`,

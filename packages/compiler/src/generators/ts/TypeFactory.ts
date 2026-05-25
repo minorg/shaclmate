@@ -37,7 +37,6 @@ import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
 import type { TsGenerator } from "./TsGenerator.js";
 import type { Type } from "./Type.js";
-import { code } from "./ts-poet-wrapper.js";
 import { UnionType } from "./UnionType.js";
 
 export class TypeFactory {
@@ -84,11 +83,10 @@ export class TypeFactory {
 
     const identifierType = this.createIdentifierType(astType.identifierType);
 
-    const name = this.tsName(astType.name.unsafeCoerce(), {
-      synthetic: astType.synthetic,
-    });
-
-    const namedObjectType = new ObjectType({
+    const objectType = new ObjectType({
+      alias: astType.name.map((name) =>
+        this.tsName(name, { synthetic: astType.synthetic }),
+      ),
       comment: astType.comment,
       configuration: this.configuration,
       extern: astType.extern,
@@ -107,10 +105,10 @@ export class TypeFactory {
         astType.descendantObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
-      lazyDiscriminantProperty: (namedObjectType: ObjectType) => {
+      lazyDiscriminantProperty: (objectType: ObjectType) => {
         // Discriminant property
         const discriminantDescendantValues = new Set<string>();
-        for (const descendantObjectType of namedObjectType.descendantObjectTypes) {
+        for (const descendantObjectType of objectType.descendantObjectTypes) {
           discriminantDescendantValues.add(
             descendantObjectType.discriminantValue,
           );
@@ -120,12 +118,12 @@ export class TypeFactory {
           configuration: this.configuration,
           logger: this.logger,
           name: `${this.configuration.syntheticNamePrefix}type`,
-          namedObjectType,
+          objectType,
           reusables: this.reusables,
           type: new ObjectType.DiscriminantProperty.Type({
             descendantValues: [...discriminantDescendantValues].sort(),
             mutable: false,
-            ownValues: [namedObjectType.discriminantValue],
+            ownValues: [objectType.discriminantValue],
           }),
         });
       },
@@ -133,7 +131,7 @@ export class TypeFactory {
         astType.parentObjectTypes.map((astType) =>
           this.createObjectType(astType),
         ),
-      lazyProperties: (namedObjectType: ObjectType) => {
+      lazyProperties: (objectType: ObjectType) => {
         const properties: ObjectType.Property[] = astType.properties
           .toSorted((left, right) => {
             if (left.order < right.order) {
@@ -149,11 +147,11 @@ export class TypeFactory {
           .map((astProperty) =>
             this.createObjectTypeProperty({
               astObjectTypeProperty: astProperty,
-              namedObjectType,
+              objectType,
             }),
           );
 
-        properties.splice(0, 0, namedObjectType._discriminantProperty);
+        properties.splice(0, 0, objectType._discriminantProperty);
 
         properties.splice(
           0,
@@ -162,17 +160,15 @@ export class TypeFactory {
             configuration: this.configuration,
             logger: this.logger,
             name: `${this.configuration.syntheticNamePrefix}identifier`,
-            namedObjectType,
+            objectType,
             reusables: this.reusables,
             type: identifierType,
-            typeAlias: code`${name}.Identifier`,
           }),
         );
 
         return properties;
       },
       logger: this.logger,
-      name,
       recursive: astType.recursive,
       reusables: this.reusables,
       synthetic: astType.synthetic,
@@ -180,9 +176,9 @@ export class TypeFactory {
     });
     this.cachedObjectTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
-      namedObjectType,
+      objectType,
     );
-    return namedObjectType;
+    return objectType;
   }
 
   createObjectUnionType(astType: ast.ObjectUnionType): ObjectUnionType {
@@ -196,7 +192,8 @@ export class TypeFactory {
       }
     }
 
-    const namedObjectUnionType = new ObjectUnionType({
+    const objectUnionType = new ObjectUnionType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.of(
@@ -212,7 +209,6 @@ export class TypeFactory {
           type: this.createObjectType(namedObjectType),
         }),
       ),
-      name: astType.name.map((name) => this.tsName(name)),
       recursive: astType.recursive,
       reusables: this.reusables,
       synthetic: astType.synthetic,
@@ -220,10 +216,10 @@ export class TypeFactory {
 
     this.cachedObjectUnionTypesByShapeIdentifier.set(
       astType.shapeIdentifier,
-      namedObjectUnionType,
+      objectUnionType,
     );
 
-    return namedObjectUnionType;
+    return objectUnionType;
   }
 
   createType(
@@ -270,6 +266,7 @@ export class TypeFactory {
     }
 
     return new UnionType<Type>({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       identifierType: Maybe.empty(),
@@ -279,7 +276,6 @@ export class TypeFactory {
         discriminantValue: member.discriminantValue,
         type: this.createType(member.type),
       })),
-      name: astType.name,
       recursive: astType.recursive,
       reusables: this.reusables,
       synthetic: astType.synthetic,
@@ -288,6 +284,7 @@ export class TypeFactory {
 
   private createBlankNodeType(astType: ast.BlankNodeType): BlankNodeType {
     return new BlankNodeType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -302,6 +299,7 @@ export class TypeFactory {
     });
     invariant(DefaultValueType.isItemType(itemType));
     return new DefaultValueType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       defaultValue: astType.defaultValue,
@@ -320,6 +318,7 @@ export class TypeFactory {
         return this.createBlankNodeType(astType);
       case "Identifier":
         return new IdentifierType({
+          alias: astType.name.map((name) => this.tsName(name)),
           comment: astType.comment,
           configuration: this.configuration,
           label: astType.label,
@@ -333,6 +332,7 @@ export class TypeFactory {
 
   private createIriType(astType: ast.IriType): IriType {
     return new IriType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       hasValues: astType.hasValues,
@@ -345,6 +345,7 @@ export class TypeFactory {
 
   private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
     return new LazyObjectOptionType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -361,6 +362,7 @@ export class TypeFactory {
 
   private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
     return new LazyObjectSetType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -377,6 +379,7 @@ export class TypeFactory {
 
   private createLazyObjectType(astType: ast.LazyObjectType): Type {
     return new LazyObjectType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       label: astType.label,
@@ -395,6 +398,7 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(ListType.isItemType(itemType));
     return new ListType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       identifierNodeKind: astType.identifierNodeKind,
@@ -440,6 +444,7 @@ export class TypeFactory {
         switch (datatypeDefinition.kind) {
           case "bigdecimal":
             return new BigDecimalType({
+              alias: astType.name.map((name) => this.tsName(name)),
               comment: astType.comment,
               configuration: this.configuration,
               hasValues: astType.hasValues,
@@ -451,6 +456,7 @@ export class TypeFactory {
             });
           case "bigint":
             return new BigIntType({
+              alias: astType.name.map((name) => this.tsName(name)),
               comment: astType.comment,
               configuration: this.configuration,
               datatype,
@@ -466,6 +472,7 @@ export class TypeFactory {
             });
           case "boolean":
             return new BooleanType({
+              alias: astType.name.map((name) => this.tsName(name)),
               comment: astType.comment,
               configuration: this.configuration,
               datatype,
@@ -484,6 +491,7 @@ export class TypeFactory {
             return new (
               datatypeDefinition.kind === "date" ? DateType : DateTimeType
             )({
+              alias: astType.name.map((name) => this.tsName(name)),
               comment: astType.comment,
               configuration: this.configuration,
               datatype,
@@ -504,6 +512,7 @@ export class TypeFactory {
             return new (
               datatypeDefinition.kind === "float" ? FloatType : IntType
             )({
+              alias: astType.name.map((name) => this.tsName(name)),
               comment: astType.comment,
               configuration: this.configuration,
               datatype,
@@ -522,6 +531,7 @@ export class TypeFactory {
           case "string":
             if (!datatype.equals(rdf.langString)) {
               return new StringType({
+                alias: astType.name.map((name) => this.tsName(name)),
                 comment: astType.comment,
                 configuration: this.configuration,
                 datatype,
@@ -554,6 +564,7 @@ export class TypeFactory {
     // }
 
     return new LiteralType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       hasValues: astType.hasValues,
@@ -567,10 +578,10 @@ export class TypeFactory {
 
   private createObjectTypeProperty({
     astObjectTypeProperty,
-    namedObjectType,
+    objectType,
   }: {
     astObjectTypeProperty: ast.ObjectType.Property;
-    namedObjectType: ObjectType;
+    objectType: ObjectType;
   }): ObjectType.Property {
     {
       const cachedProperty =
@@ -590,7 +601,7 @@ export class TypeFactory {
       label: astObjectTypeProperty.label,
       logger: this.logger,
       mutable: astObjectTypeProperty.mutable,
-      namedObjectType,
+      objectType,
       name: this.tsName(astObjectTypeProperty.name),
       path: astObjectTypeProperty.path,
       recursive: !!astObjectTypeProperty.recursive,
@@ -610,6 +621,7 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(OptionType.isItemType(itemType));
     return new OptionType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       itemType,
@@ -623,6 +635,7 @@ export class TypeFactory {
     const itemType = this.createType(astType.itemType);
     invariant(SetType.isItemType(itemType));
     return new SetType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       itemType,
@@ -636,6 +649,7 @@ export class TypeFactory {
 
   private createTermType(astType: ast.TermType) {
     return new TermType({
+      alias: astType.name.map((name) => this.tsName(name)),
       comment: astType.comment,
       configuration: this.configuration,
       hasValues: astType.hasValues,
