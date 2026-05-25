@@ -8,7 +8,7 @@ export const snippets_stringSparqlWherePatterns: SnippetFactory = ({
   conditionalOutput(
     `${syntheticNamePrefix}stringSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.StringFilter}, ${snippets.StringSchema}> =
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${snippets.ValueSparqlWherePatternsFunction}<${snippets.StringFilter}, ${snippets.StringSchema}<string>> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 

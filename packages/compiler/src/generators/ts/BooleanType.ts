@@ -16,7 +16,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   );
   override readonly hashFunction = code`${this.reusables.snippets.hashBoolean}`;
   override readonly kind = "Boolean";
-  override readonly schemaType = code`${this.reusables.snippets.BooleanSchema}`;
+  override readonly schemaType =
+    code`${this.reusables.snippets.BooleanSchema}<${this.name}>`;
   override readonly typeofs = ["boolean" as const];
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.booleanSparqlWherePatterns}`;

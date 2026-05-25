@@ -250,14 +250,14 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
-interface $BooleanSchema {
+interface $BooleanSchema<T extends boolean> {
+  readonly in?: readonly T[];
   readonly kind: "Boolean";
-  readonly in?: readonly boolean[];
 }
 
 const $booleanSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   $BooleanFilter,
-  $BooleanSchema
+  $BooleanSchema<boolean>
 > = ({ filter, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
@@ -392,7 +392,7 @@ function $convertToIdentifierProperty(
   }
 }
 
-function $convertToIri<IriT extends string = string>(
+function $convertToIri<IriT extends string>(
   value: IriT | NamedNode<IriT>,
 ): Either<Error, NamedNode<IriT>> {
   switch (typeof value) {
@@ -1398,14 +1398,14 @@ interface $IriFilter {
   readonly in?: readonly NamedNode[];
 }
 
-interface $IriSchema {
-  readonly in?: readonly NamedNode[];
+interface $IriSchema<IriT extends string = string> {
+  readonly in?: readonly NamedNode<IriT>[];
   readonly kind: "Iri";
 }
 
 const $iriSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   $IriFilter,
-  $IriSchema
+  $IriSchema<string>
 > = ({ filter, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
@@ -2919,14 +2919,14 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-interface $StringSchema {
-  readonly in?: readonly string[];
+interface $StringSchema<T extends string> {
+  readonly in?: readonly T[];
   readonly kind: "String";
 }
 
 const $stringSparqlWherePatterns: $ValueSparqlWherePatternsFunction<
   $StringFilter,
-  $StringSchema
+  $StringSchema<string>
 > = ({ filter, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
@@ -3433,11 +3433,11 @@ export namespace NamedUnion1 {
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
-          type: $IriSchema;
+          type: $IriSchema<string>;
         };
         readonly string: {
           discriminantValues: readonly (number | string)[];
-          type: $StringSchema;
+          type: $StringSchema<string>;
         };
       };
     }
@@ -3469,11 +3469,11 @@ export namespace NamedUnion1 {
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
-          type: $IriSchema;
+          type: $IriSchema<string>;
         };
         readonly string: {
           discriminantValues: readonly (number | string)[];
-          type: $StringSchema;
+          type: $StringSchema<string>;
         };
       };
     }
@@ -3486,11 +3486,11 @@ export namespace NamedUnion1 {
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
-          type: $IriSchema;
+          type: $IriSchema<string>;
         };
         readonly string: {
           discriminantValues: readonly (number | string)[];
-          type: $StringSchema;
+          type: $StringSchema<string>;
         };
       };
     }
@@ -3524,11 +3524,11 @@ export namespace NamedUnion1 {
       members: {
         readonly object: {
           discriminantValues: readonly (number | string)[];
-          type: $IriSchema;
+          type: $IriSchema<string>;
         };
         readonly string: {
           discriminantValues: readonly (number | string)[];
-          type: $StringSchema;
+          type: $StringSchema<string>;
         };
       };
     }
@@ -6644,7 +6644,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -6685,7 +6685,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -6716,11 +6716,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -6757,11 +6757,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -6869,7 +6869,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -6923,7 +6923,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -6976,7 +6976,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7033,11 +7033,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7164,7 +7164,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7191,7 +7191,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7232,7 +7232,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7263,11 +7263,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7304,11 +7304,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7416,7 +7416,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7470,7 +7470,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7518,7 +7518,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7561,7 +7561,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7593,11 +7593,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7636,11 +7636,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7752,7 +7752,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7809,7 +7809,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -7860,7 +7860,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -7915,11 +7915,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -8043,7 +8043,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -8071,7 +8071,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -8114,7 +8114,7 @@ export namespace UnionDiscriminants {
             members: {
               readonly NamedNode: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly Literal: {
                 discriminantValues: readonly (number | string)[];
@@ -8146,11 +8146,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -8189,11 +8189,11 @@ export namespace UnionDiscriminants {
             members: {
               readonly object: {
                 discriminantValues: readonly (number | string)[];
-                type: $IriSchema;
+                type: $IriSchema<string>;
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -8305,7 +8305,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -8362,7 +8362,7 @@ export namespace UnionDiscriminants {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -11870,7 +11870,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.booleanTermProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<boolean>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11912,7 +11912,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.iriTermProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -11954,7 +11954,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.stringTermProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12060,7 +12060,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.booleanTermProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<boolean>
         >($booleanSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12105,7 +12105,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.iriTermProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -12150,7 +12150,7 @@ export namespace TermProperties {
         propertySchema: schema.properties.stringTermProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14170,7 +14170,7 @@ export namespace PropertyPaths {
         propertySchema: schema.properties.inversePathProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14184,7 +14184,7 @@ export namespace PropertyPaths {
         propertySchema: schema.properties.predicatePathProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14261,7 +14261,7 @@ export namespace PropertyPaths {
         propertySchema: schema.properties.inversePathProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -14276,7 +14276,7 @@ export namespace PropertyPaths {
         propertySchema: schema.properties.predicatePathProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15808,7 +15808,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.emptyStringSetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15822,7 +15822,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.nonEmptyStringSetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15836,7 +15836,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.optionalStringProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15882,7 +15882,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.emptyStringSetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15897,7 +15897,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.nonEmptyStringSetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -15912,7 +15912,7 @@ export namespace PropertyCardinalities {
         propertySchema: schema.properties.optionalStringProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -25277,9 +25277,9 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableListProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema>
+          $CollectionSchema<$StringSchema<string>>
         >(
-          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
             (_: object) => [],
           ),
         ),
@@ -25295,7 +25295,7 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableSetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -25309,7 +25309,7 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableStringProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -25386,9 +25386,9 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableListProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema>
+          $CollectionSchema<$StringSchema<string>>
         >(
-          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
             $stringSparqlWherePatterns,
           ),
         ),
@@ -25405,7 +25405,7 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableSetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -25420,7 +25420,7 @@ export namespace MutableProperties {
         propertySchema: schema.properties.mutableStringProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -27973,9 +27973,9 @@ export namespace ListProperties {
         propertySchema: schema.properties.iriListProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$IriFilter>,
-          $CollectionSchema<$IriSchema>
+          $CollectionSchema<$IriSchema<string>>
         >(
-          $listSparqlConstructTriples<$IriFilter, $IriSchema>(
+          $listSparqlConstructTriples<$IriFilter, $IriSchema<string>>(
             (_: object) => [],
           ),
         ),
@@ -28009,9 +28009,9 @@ export namespace ListProperties {
         propertySchema: schema.properties.stringListProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema>
+          $CollectionSchema<$StringSchema<string>>
         >(
-          $listSparqlConstructTriples<$StringFilter, $StringSchema>(
+          $listSparqlConstructTriples<$StringFilter, $StringSchema<string>>(
             (_: object) => [],
           ),
         ),
@@ -28090,9 +28090,9 @@ export namespace ListProperties {
         propertySchema: schema.properties.iriListProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$IriFilter>,
-          $CollectionSchema<$IriSchema>
+          $CollectionSchema<$IriSchema<string>>
         >(
-          $listSparqlWherePatterns<$IriFilter, $IriSchema>(
+          $listSparqlWherePatterns<$IriFilter, $IriSchema<string>>(
             $iriSparqlWherePatterns,
           ),
         ),
@@ -28128,9 +28128,9 @@ export namespace ListProperties {
         propertySchema: schema.properties.stringListProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $CollectionFilter<$StringFilter>,
-          $CollectionSchema<$StringSchema>
+          $CollectionSchema<$StringSchema<string>>
         >(
-          $listSparqlWherePatterns<$StringFilter, $StringSchema>(
+          $listSparqlWherePatterns<$StringFilter, $StringSchema<string>>(
             $stringSparqlWherePatterns,
           ),
         ),
@@ -34238,7 +34238,7 @@ export namespace JsPrimitiveUnionProperty {
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema;
+                type: $BooleanSchema<boolean>;
               };
               readonly number: {
                 discriminantValues: readonly (number | string)[];
@@ -34246,7 +34246,7 @@ export namespace JsPrimitiveUnionProperty {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -34292,7 +34292,7 @@ export namespace JsPrimitiveUnionProperty {
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema;
+                type: $BooleanSchema<boolean>;
               };
               readonly number: {
                 discriminantValues: readonly (number | string)[];
@@ -34300,7 +34300,7 @@ export namespace JsPrimitiveUnionProperty {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -34391,7 +34391,7 @@ export namespace JsPrimitiveUnionProperty {
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema;
+                type: $BooleanSchema<boolean>;
               };
               readonly number: {
                 discriminantValues: readonly (number | string)[];
@@ -34399,7 +34399,7 @@ export namespace JsPrimitiveUnionProperty {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -34448,7 +34448,7 @@ export namespace JsPrimitiveUnionProperty {
             members: {
               readonly boolean: {
                 discriminantValues: readonly (number | string)[];
-                type: $BooleanSchema;
+                type: $BooleanSchema<boolean>;
               };
               readonly number: {
                 discriminantValues: readonly (number | string)[];
@@ -34456,7 +34456,7 @@ export namespace JsPrimitiveUnionProperty {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -36409,8 +36409,10 @@ export namespace InProperties {
     readonly inDoublesProperty?: 1 | 2 | Maybe<1 | 2>;
     readonly inIntegersProperty?: 1n | 2n | Maybe<1n | 2n>;
     readonly inIrisProperty?:
-      | "http://example.com/InPropertiesIri1"
-      | "http://example.com/InPropertiesIri2"
+      | (
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        )
       | NamedNode<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
@@ -36495,8 +36497,10 @@ export namespace InProperties {
     readonly inDoublesProperty?: 1 | 2 | Maybe<1 | 2>;
     readonly inIntegersProperty?: 1n | 2n | Maybe<1n | 2n>;
     readonly inIrisProperty?:
-      | "http://example.com/InPropertiesIri1"
-      | "http://example.com/InPropertiesIri2"
+      | (
+          | "http://example.com/InPropertiesIri1"
+          | "http://example.com/InPropertiesIri2"
+        )
       | NamedNode<
           | "http://example.com/InPropertiesIri1"
           | "http://example.com/InPropertiesIri2"
@@ -36838,7 +36842,7 @@ export namespace InProperties {
         propertySchema: schema.properties.inBooleansProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<true>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36894,7 +36898,10 @@ export namespace InProperties {
         propertySchema: schema.properties.inIrisProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<
+            | "http://example.com/InPropertiesIri1"
+            | "http://example.com/InPropertiesIri2"
+          >
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36908,7 +36915,7 @@ export namespace InProperties {
         propertySchema: schema.properties.inStringsProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<"text" | "html">
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -36985,7 +36992,7 @@ export namespace InProperties {
         propertySchema: schema.properties.inBooleansProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<true>
         >($booleanSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -37045,7 +37052,10 @@ export namespace InProperties {
         propertySchema: schema.properties.inIrisProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<
+            | "http://example.com/InPropertiesIri1"
+            | "http://example.com/InPropertiesIri2"
+          >
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -37060,7 +37070,7 @@ export namespace InProperties {
         propertySchema: schema.properties.inStringsProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<"text" | "html">
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -37584,8 +37594,10 @@ export namespace InIdentifier {
   export function create(parameters: {
     readonly $identifier:
       | (() => InIdentifier.Identifier)
-      | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2"
+      | (
+          | "http://example.com/InIdentifierInstance1"
+          | "http://example.com/InIdentifierInstance2"
+        )
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
@@ -37616,8 +37628,10 @@ export namespace InIdentifier {
   export function createUnsafe(parameters: {
     readonly $identifier:
       | (() => InIdentifier.Identifier)
-      | "http://example.com/InIdentifierInstance1"
-      | "http://example.com/InIdentifierInstance2"
+      | (
+          | "http://example.com/InIdentifierInstance1"
+          | "http://example.com/InIdentifierInstance2"
+        )
       | NamedNode<
           | "http://example.com/InIdentifierInstance1"
           | "http://example.com/InIdentifierInstance2"
@@ -37822,7 +37836,7 @@ export namespace InIdentifier {
         propertySchema: schema.properties.inIdentifierProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -37899,7 +37913,7 @@ export namespace InIdentifier {
         propertySchema: schema.properties.inIdentifierProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -43200,7 +43214,7 @@ export namespace DefaultValueProperties {
         propertySchema: schema.properties.falseBooleanDefaultValueProperty,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<boolean>
         >($booleanSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -43230,7 +43244,7 @@ export namespace DefaultValueProperties {
         propertySchema: schema.properties.stringDefaultValueProperty,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $StringFilter,
-          $StringSchema
+          $StringSchema<string>
         >($stringSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -43245,7 +43259,7 @@ export namespace DefaultValueProperties {
         propertySchema: schema.properties.trueBooleanDefaultValueProperty,
         typeSparqlWherePatterns: $defaultValueSparqlWherePatterns<
           $BooleanFilter,
-          $BooleanSchema
+          $BooleanSchema<boolean>
         >($booleanSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -44632,7 +44646,7 @@ export namespace DateUnionProperties {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -44673,7 +44687,7 @@ export namespace DateUnionProperties {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -44772,7 +44786,7 @@ export namespace DateUnionProperties {
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44813,7 +44827,7 @@ export namespace DateUnionProperties {
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -44986,7 +45000,7 @@ export namespace DateUnionProperties {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -45029,7 +45043,7 @@ export namespace DateUnionProperties {
               };
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
             };
           }
@@ -45132,7 +45146,7 @@ export namespace DateUnionProperties {
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -45175,7 +45189,7 @@ export namespace DateUnionProperties {
             members: {
               readonly string: {
                 discriminantValues: readonly (number | string)[];
-                type: $StringSchema;
+                type: $StringSchema<string>;
               };
               readonly date: {
                 discriminantValues: readonly (number | string)[];
@@ -47150,7 +47164,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriNonEmptySetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47164,7 +47178,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriOptionProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47189,7 +47203,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriSetProperty,
         typeSparqlConstructTriples: $setSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47372,7 +47386,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriNonEmptySetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47387,7 +47401,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriOptionProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -47414,7 +47428,7 @@ export namespace ConvertibleTypeProperties {
         propertySchema: schema.properties.convertibleIriSetProperty,
         typeSparqlWherePatterns: $setSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -49745,7 +49759,7 @@ export namespace ClassProperties {
         propertySchema: schema.properties.iriClassProperty,
         typeSparqlConstructTriples: $maybeSparqlConstructTriples<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >((_: object) => []),
         variablePrefix: parameters.variablePrefix,
       }),
@@ -49878,7 +49892,7 @@ export namespace ClassProperties {
         propertySchema: schema.properties.iriClassProperty,
         typeSparqlWherePatterns: $maybeSparqlWherePatterns<
           $IriFilter,
-          $IriSchema
+          $IriSchema<string>
         >($iriSparqlWherePatterns),
         variablePrefix: parameters.variablePrefix,
       }),

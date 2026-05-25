@@ -4,38 +4,25 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
-import {
-  arrayOf,
-  type Code,
-  code,
-  joinCode,
-  literalOf,
-} from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class IriType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${this.reusables.snippets.filterIri}`;
   override readonly filterType = code`${this.reusables.snippets.IriFilter}`;
   override readonly kind = "Iri";
   override readonly nodeKinds = nodeKinds;
-  override readonly schemaType = code`${this.reusables.snippets.IriSchema}`;
+  override readonly schemaType =
+    code`${this.reusables.snippets.IriSchema}<${this.valueTypeName}>`;
   override readonly valueSparqlWherePatternsFunction =
     code`${this.reusables.snippets.iriSparqlWherePatterns}`;
 
   @Memoize()
   override get conversionFunction(): Maybe<AbstractIdentifierType.ConversionFunction> {
-    const IriT =
-      this.in_.length > 0
-        ? code`${joinCode(
-            this.in_.map((iri) => code`${literalOf(iri.value)}`),
-            { on: "| " },
-          )}`
-        : code`string`;
-
     return Maybe.of({
-      code: code`${this.reusables.snippets.convertToIri}<${IriT}>`,
+      code: code`${this.reusables.snippets.convertToIri}<${this.valueTypeName}>`,
       sourceTypes: [
         {
-          name: IriT,
+          name: this.valueTypeName,
           typeof: "string" as const,
         },
         {
@@ -49,15 +36,17 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   override get name(): Code {
     if (this.in_.length > 0) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return code`${this.reusables.imports.NamedNode}<${joinCode(
-        this.in_.map((iri) => code`${literalOf(iri.value)}`),
-        { on: "| " },
-      )}>`;
+      return code`${this.reusables.imports.NamedNode}<${this.valueTypeName}>`;
     }
 
     return code`${this.reusables.imports.NamedNode}`;
+  }
+
+  @Memoize()
+  private get valueTypeName(): string {
+    return this.in_.length > 0
+      ? `(${this.in_.map((in_) => `"${in_.value}"`).join(" | ")})`
+      : "string";
   }
 
   @Memoize()
@@ -113,16 +102,8 @@ export class IriType extends AbstractIdentifierType<NamedNode> {
       ? `, readonly termType: "NamedNode"`
       : "";
 
-    if (this.in_.length > 0) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new AbstractIdentifierType.JsonType(
-        code`{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
-      );
-    }
-
     return new AbstractIdentifierType.JsonType(
-      code`{ readonly "@id": string${discriminantProperty} }`,
+      code`{ readonly "@id": ${this.valueTypeName}${discriminantProperty} }`,
     );
   }
 
