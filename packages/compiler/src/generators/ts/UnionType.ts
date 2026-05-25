@@ -1138,20 +1138,26 @@ export namespace Discriminant {
     // extrinsic with inferred values
     {
       let memberValues: readonly AbstractType.DiscriminantProperty.Value[];
-      if (memberTypes.every((memberType) => memberType.alias.isJust())) {
-        memberValues = memberTypes.map(
-          (memberType) => memberType.alias.extract()!,
+      {
+        const memberTypeNames: readonly string[] = memberTypes.map(
+          (memberType) => memberType.alias.orDefault(memberType.typeofs[0]),
         );
-      } else {
-        memberValues = memberTypes.map((_, memberTypeI) => memberTypeI);
+        const memberTypeNamesSet = new Set(memberTypeNames);
+        if (memberTypeNamesSet.size === memberTypeNames.length) {
+          memberValues = memberTypeNames;
+        } else {
+          // Otherwise prefix the non-unique strings with an index and use those as the discriminant values.
+          memberValues = memberTypeNames.map(
+            (memberTypeName, memberTypeI) => `${memberTypeI}-${memberTypeName}`,
+          );
+        }
       }
       invariant(memberValues.length === memberTypes.length);
-
       return {
         jsonName: "type",
         kind: "Extrinsic",
         name: "type",
-        memberValues: memberValues,
+        memberValues,
       };
     }
   }

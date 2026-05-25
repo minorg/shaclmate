@@ -16945,12 +16945,9 @@ export namespace UnionMember2 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = UnionMemberCommonParent.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = UnionMemberCommonParent.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -18006,12 +18003,9 @@ export namespace UnionMember1 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = UnionMemberCommonParent.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = UnionMemberCommonParent.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -27111,12 +27105,9 @@ export namespace ClassMultipleInheritanceChild {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassMultipleInheritanceParent1.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassMultipleInheritanceParent1.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -51047,12 +51038,9 @@ export namespace ClassHierarchy1 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy0.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy0.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -51553,12 +51541,9 @@ export namespace ClassHierarchy2 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy1.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy1.Identifier;
 
   export type Json = {
     readonly "@id": string;
@@ -52122,12 +52107,9 @@ export namespace ClassHierarchy3 {
     return hasher;
   }
 
-  export type Identifier = BlankNode | NamedNode;
+  export type Identifier = ClassHierarchy2.Identifier;
 
-  export namespace Identifier {
-    export const parse = $parseIdentifier;
-    export const stringify = NTriplesTerm.stringify;
-  }
+  export const Identifier = ClassHierarchy2.Identifier;
 
   export type Json = {
     readonly "@id": string;
