@@ -2927,7 +2927,7 @@ export namespace Union {
   }
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       UnionMember1: {
         discriminantValues: ["UnionMember1"],
@@ -3205,7 +3205,7 @@ export namespace $Object {
   }
 
   export const schema = {
-    kind: "NamedObjectUnion" as const,
+    kind: "ObjectUnion" as const,
     members: {
       Child: { discriminantValues: ["Child"], type: Child.schema },
       Parent: { discriminantValues: ["Parent"], type: Parent.schema },

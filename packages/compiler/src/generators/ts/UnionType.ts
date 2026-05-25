@@ -905,7 +905,7 @@ export namespace Json {
     if (!this.configuration.features.has("ObjectSet")) {
       delete fromRdfResourceValuesOptions["objectSet"];
     }
-    return code`${this._name.map((name) => code`${name}fromRdfResourceValues`).orDefault(this.inlineFromRdfResourceValuesFunction)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
+    return code`${this._name.map((name) => code`${name}.fromRdfResourceValues`).orDefault(this.inlineFromRdfResourceValuesFunction)}(${resourceValuesVariable}, ${fromRdfResourceValuesOptions})`;
   }
 
   override graphqlResolveExpression({
